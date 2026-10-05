@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-10-05T11:06:41.708Z",
+  "node": "v22.22.0",
+  "results": [
+    {
+      "name": "backend-build",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 3077,
+      "log": "backend-build.log"
+    },
+    {
+      "name": "mobile-typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 3554,
+      "log": "mobile-typecheck.log"
+    },
+    {
+      "name": "source-regressions",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 1786,
+      "log": "source-regressions.log"
+    },
+    {
+      "name": "ranking-unit-tests",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 147,
+      "log": "ranking-unit-tests.log"
+    },
+    {
+      "name": "android-js-bundle",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 2965,
+      "log": "android-js-bundle.log"
+    },
+    {
+      "name": "ios-js-bundle",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 2863,
+      "log": "ios-js-bundle.log"
+    },
+    {
+      "name": "database-integration",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 43320,
+      "log": "database-integration.log"
+    }
+  ],
+  "notVerified": [
+    "Android APK/AAB build and signing",
+    "iOS Xcode archive and signing",
+    "physical-device behavior and performance",
+    "live Google/SMS providers",
+    "production hosting and backups",
+    "full product specification completion"
+  ],
+  "releaseReady": false
+}

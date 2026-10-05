@@ -12,6 +12,10 @@ interface AuthContextValue extends AuthState {
   acceptSession: (session:{user:PublicUser;tokens:StoredTokens})=>Promise<void>;
   signup: (input: authApi.SignupPayload) => Promise<void>;
   login: (input: authApi.LoginPayload) => Promise<void>;
+  /** Emailed-code reset; signs this device in on success. */
+  resetPassword: (email: string, code: string, newPassword: string) => Promise<void>;
+  /** Replaces this device's tokens (after a password change ended every other session). */
+  adoptTokens: (tokens: StoredTokens) => Promise<void>;
   logout: () => Promise<void>;
   deleteAccount: (password: string) => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -104,6 +108,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
   const acceptSession = useCallback((session:{user:PublicUser;tokens:StoredTokens}) => runAuthAction(async()=>session), [runAuthAction]);
   const signup = useCallback((input: authApi.SignupPayload) => runAuthAction(() => authApi.signup(input)), [runAuthAction]);
   const login = useCallback((input: authApi.LoginPayload) => runAuthAction(() => authApi.login(input)), [runAuthAction]);
+  const resetPassword = useCallback(
+    (email: string, code: string, newPassword: string) => runAuthAction(() => authApi.resetPassword(email, code, newPassword)),
+    [runAuthAction],
+  );
+  const adoptTokens = useCallback(async (tokens: StoredTokens) => {
+    if (refreshInFlight.current) await refreshInFlight.current.catch(() => undefined);
+    await saveTokens(tokens);
+    tokensRef.current = tokens;
+    knownTokens.current = new Set([tokens.accessToken]);
+    setState((current) => (current.status === "signedIn" ? { ...current, accessToken: tokens.accessToken } : current));
+  }, []);
   const endLocalSession = useCallback(async () => {
     tokensRef.current = null;
     knownTokens.current.clear();
@@ -136,8 +151,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
   }, []);
   const clearError = useCallback(() => { setError(null); setFieldErrors(undefined); }, []);
   const value = useMemo<AuthContextValue>(
-    () => ({ ...state, acceptSession, signup, login, logout, deleteAccount, refreshUser, applyProfile, error, fieldErrors, clearError }),
-    [state, acceptSession, signup, login, logout, deleteAccount, refreshUser, applyProfile, error, fieldErrors, clearError],
+    () => ({ ...state, acceptSession, signup, login, resetPassword, adoptTokens, logout, deleteAccount, refreshUser, applyProfile, error, fieldErrors, clearError }),
+    [state, acceptSession, signup, login, resetPassword, adoptTokens, logout, deleteAccount, refreshUser, applyProfile, error, fieldErrors, clearError],
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -47,6 +47,9 @@ services:
       PGPASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:?set JWT_ACCESS_SECRET in .env}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?set JWT_REFRESH_SECRET in .env}
+      EMAIL_PROVIDER: ses
+      EMAIL_FROM: ${EMAIL_FROM:?set EMAIL_FROM in .env (a verified SES sender)}
+      AWS_REGION: ${AWS_REGION:-ap-south-1}
     volumes:
       - media_data:/app/data/media
     expose:

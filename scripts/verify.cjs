@@ -18,7 +18,7 @@ function run(name,cwd,argv,timeout=300000) {
 }
 const built=run('backend-build','backend',['node_modules/typescript/bin/tsc','-p','tsconfig.json']);
 run('mobile-typecheck','mobile',['node_modules/typescript/bin/tsc','--noEmit']);
-run('source-regressions','',['--test','verification/regressions.cjs','verification/network.cjs','verification/release-config.cjs','verification/profile-metadata.cjs','verification/release-hardening.cjs','verification/secure-storage.cjs','verification/upload-queue.cjs','verification/elf-alignment.test.cjs']);
+run('source-regressions','',['--test','verification/regressions.cjs','verification/network.cjs','verification/release-config.cjs','verification/profile-metadata.cjs','verification/release-hardening.cjs','verification/secure-storage.cjs','verification/upload-queue.cjs','verification/elf-alignment.test.cjs','verification/account-links.cjs']);
 if(built)run('ranking-unit-tests','backend',['--test','dist/test/scoring.test.js']);
 if(args.includes('--bundle')) {
  fs.mkdirSync(path.join(root,'mobile/build'),{recursive:true});

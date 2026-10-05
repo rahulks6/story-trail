@@ -1,0 +1,347 @@
+TAP version 13
+# Subtest: profile links keep working and normalize case
+ok 1 - profile links keep working and normalize case
+  ---
+  duration_ms: 2.205616
+  type: 'test'
+  ...
+# Subtest: story links from the Share sheet resolve, malformed ids are ignored
+ok 2 - story links from the Share sheet resolve, malformed ids are ignored
+  ---
+  duration_ms: 0.377976
+  type: 'test'
+  ...
+# Subtest: reset links prefill only well-formed email and code
+ok 3 - reset links prefill only well-formed email and code
+  ---
+  duration_ms: 0.423148
+  type: 'test'
+  ...
+# Subtest: device labels never invent detail
+ok 4 - device labels never invent detail
+  ---
+  duration_ms: 0.346276
+  type: 'test'
+  ...
+# Subtest: client password rules mirror the server minimums
+ok 5 - client password rules mirror the server minimums
+  ---
+  duration_ms: 0.237895
+  type: 'test'
+  ...
+# Subtest: reads PT_LOAD alignment and the ABI from e_machine
+ok 6 - reads PT_LOAD alignment and the ABI from e_machine
+  ---
+  duration_ms: 4.097251
+  type: 'test'
+  ...
+# Subtest: passes 16 KB aligned 64-bit libraries inside an AAB
+ok 7 - passes 16 KB aligned 64-bit libraries inside an AAB
+  ---
+  duration_ms: 3.595087
+  type: 'test'
+  ...
+# Subtest: fails a 4 KB aligned arm64 library even when its directory name lies about the ABI
+ok 8 - fails a 4 KB aligned arm64 library even when its directory name lies about the ABI
+  ---
+  duration_ms: 1.43568
+  type: 'test'
+  ...
+# Subtest: 32-bit libraries are informational and never fail the gate
+ok 9 - 32-bit libraries are informational and never fail the gate
+  ---
+  duration_ms: 1.064104
+  type: 'test'
+  ...
+# Subtest: an APK with an uncompressed library at an unaligned zip offset fails
+ok 10 - an APK with an uncompressed library at an unaligned zip offset fails
+  ---
+  duration_ms: 0.696477
+  type: 'test'
+  ...
+# Subtest: an APK whose stored library starts on a 16 KB boundary passes
+ok 11 - an APK whose stored library starts on a 16 KB boundary passes
+  ---
+  duration_ms: 1.08245
+  type: 'test'
+  ...
+# Subtest: an archive without any 64-bit library cannot pass
+ok 12 - an archive without any 64-bit library cannot pass
+  ---
+  duration_ms: 0.750296
+  type: 'test'
+  ...
+# Subtest: deadline aborts native work even when transport ignores cancellation
+ok 13 - deadline aborts native work even when transport ignores cancellation
+  ---
+  duration_ms: 128.266463
+  type: 'test'
+  ...
+# Subtest: already cancelled request never starts work
+ok 14 - already cancelled request never starts work
+  ---
+  duration_ms: 30.900971
+  type: 'test'
+  ...
+# Subtest: external cancellation interrupts an active request
+ok 15 - external cancellation interrupts an active request
+  ---
+  duration_ms: 31.574785
+  type: 'test'
+  ...
+# Subtest: HTML gateway failure preserves HTTP status and hides response contents
+ok 16 - HTML gateway failure preserves HTTP status and hides response contents
+  ---
+  duration_ms: 44.61548
+  type: 'test'
+  ...
+# Subtest: empty and malformed successes cannot be treated as valid API data
+ok 17 - empty and malformed successes cannot be treated as valid API data
+  ---
+  duration_ms: 54.904542
+  type: 'test'
+  ...
+# Subtest: valid 204 remains supported
+ok 18 - valid 204 remains supported
+  ---
+  duration_ms: 20.455425
+  type: 'test'
+  ...
+# Subtest: validation errors retain field details
+ok 19 - validation errors retain field details
+  ---
+  duration_ms: 27.281148
+  type: 'test'
+  ...
+# Subtest: server failures do not automatically replay a write
+ok 20 - server failures do not automatically replay a write
+  ---
+  duration_ms: 25.318121
+  type: 'test'
+  ...
+# Subtest: Headers and lowercase authorization are refreshed correctly
+ok 21 - Headers and lowercase authorization are refreshed correctly
+  ---
+  duration_ms: 12.698691
+  type: 'test'
+  ...
+# Subtest: configured origin with trailing slash does not create a double-slash API route
+ok 22 - configured origin with trailing slash does not create a double-slash API route
+  ---
+  duration_ms: 32.947604
+  type: 'test'
+  ...
+# Subtest: deadline includes a stalled response body
+ok 23 - deadline includes a stalled response body
+  ---
+  duration_ms: 27.43838
+  type: 'test'
+  ...
+# Subtest: profile metadata trims and de-duplicates username/interests
+ok 24 - profile metadata trims and de-duplicates username/interests
+  ---
+  duration_ms: 71.129586
+  type: 'test'
+  ...
+# Subtest: profile metadata rejects reserved, malformed and oversized values
+ok 25 - profile metadata rejects reserved, malformed and oversized values
+  ---
+  duration_ms: 20.534315
+  type: 'test'
+  ...
+# Subtest: profile update keeps avatar and profile fields in one repository UPDATE
+ok 26 - profile update keeps avatar and profile fields in one repository UPDATE
+  ---
+  duration_ms: 0.419763
+  type: 'test'
+  ...
+# Parsed 223 TypeScript files
+# Subtest: all TypeScript and TSX sources parse
+ok 27 - all TypeScript and TSX sources parse
+  ---
+  duration_ms: 586.437245
+  type: 'test'
+  ...
+# Subtest: concurrent refresh requests issue only one replacement token pair
+ok 28 - concurrent refresh requests issue only one replacement token pair
+  ---
+  duration_ms: 99.462447
+  type: 'test'
+  ...
+# Subtest: invalid Highlight cover causes no writes
+ok 29 - invalid Highlight cover causes no writes
+  ---
+  duration_ms: 30.732118
+  type: 'test'
+  ...
+# Subtest: authenticated requests retry once with a fresh token and preserve body
+ok 30 - authenticated requests retry once with a fresh token and preserve body
+  ---
+  duration_ms: 18.340663
+  type: 'test'
+  ...
+# Subtest: persistent 401 does not cause an infinite retry
+ok 31 - persistent 401 does not cause an infinite retry
+  ---
+  duration_ms: 14.70412
+  type: 'test'
+  ...
+# Subtest: login failures never enter the refresh flow
+ok 32 - login failures never enter the refresh flow
+  ---
+  duration_ms: 28.137412
+  type: 'test'
+  ...
+# Subtest: Android checks do not require an iOS identifier or project
+ok 33 - Android checks do not require an iOS identifier or project
+  ---
+  duration_ms: 9.276002
+  type: 'test'
+  ...
+# Subtest: iOS checks do not require Android SDK target or signing
+ok 34 - iOS checks do not require Android SDK target or signing
+  ---
+  duration_ms: 12.027877
+  type: 'test'
+  ...
+# Subtest: release rejects placeholder origins, paths and embedded credentials
+ok 35 - release rejects placeholder origins, paths and embedded credentials
+  ---
+  duration_ms: 17.175774
+  type: 'test'
+  ...
+# Subtest: missing signing inputs and development identifiers block release
+ok 36 - missing signing inputs and development identifiers block release
+  ---
+  duration_ms: 3.221814
+  type: 'test'
+  ...
+# Subtest: a renamed copy of the public debug key is rejected
+ok 37 - a renamed copy of the public debug key is rejected
+  ---
+  duration_ms: 28.104593
+  type: 'test'
+  ...
+# Subtest: outdated native target and native identifier mismatch remain blocked
+ok 38 - outdated native target and native identifier mismatch remain blocked
+  ---
+  duration_ms: 5.764436
+  type: 'test'
+  ...
+# Subtest: API 36 alone cannot clear an old framework and AGP
+ok 39 - API 36 alone cannot clear an old framework and AGP
+  ---
+  duration_ms: 6.371448
+  type: 'test'
+  ...
+# Subtest: missing iOS icons and empty privacy declaration block release
+ok 40 - missing iOS icons and empty privacy declaration block release
+  ---
+  duration_ms: 3.097377
+  type: 'test'
+  ...
+# Subtest: policy links and boolean confirmation are required
+ok 41 - policy links and boolean confirmation are required
+  ---
+  duration_ms: 6.225645
+  type: 'test'
+  ...
+# Subtest: draft restore, count and deletion are isolated across accounts and legacy keys
+ok 42 - draft restore, count and deletion are isolated across accounts and legacy keys
+  ---
+  duration_ms: 85.575519
+  type: 'test'
+  ...
+# Subtest: corrupted and mismatched saved drafts cannot enter the editor
+ok 43 - corrupted and mismatched saved drafts cannot enter the editor
+  ---
+  duration_ms: 47.777048
+  type: 'test'
+  ...
+# Subtest: avatar ownership, kind and readiness failures never write profile fields
+ok 44 - avatar ownership, kind and readiness failures never write profile fields
+  ---
+  duration_ms: 150.469057
+  type: 'test'
+  ...
+# Subtest: valid profile and avatar commit together; explicit null removes avatar
+ok 45 - valid profile and avatar commit together; explicit null removes avatar
+  ---
+  duration_ms: 20.574138
+  type: 'test'
+  ...
+# Subtest: username conflicts are controlled without hiding unrelated database failures
+ok 46 - username conflicts are controlled without hiding unrelated database failures
+  ---
+  duration_ms: 54.296581
+  type: 'test'
+  ...
+# Subtest: malformed route escaping returns 400
+ok 47 - malformed route escaping returns 400
+  ---
+  duration_ms: 14.479407
+  type: 'test'
+  ...
+# Subtest: profile link parser accepts only valid profile paths
+ok 48 - profile link parser accepts only valid profile paths
+  ---
+  duration_ms: 5.314608
+  type: 'test'
+  ...
+# Subtest: email signup reserves official-looking usernames
+ok 49 - email signup reserves official-looking usernames
+  ---
+  duration_ms: 18.339731
+  type: 'test'
+  ...
+# Subtest: legacy credentials migrate only after secure write succeeds
+ok 50 - legacy credentials migrate only after secure write succeeds
+  ---
+  duration_ms: 75.238123
+  type: 'test'
+  ...
+# Subtest: secure write failure preserves recoverable legacy credentials
+ok 51 - secure write failure preserves recoverable legacy credentials
+  ---
+  duration_ms: 21.647966
+  type: 'test'
+  ...
+# Subtest: token writes and logout are serialized so stale writes cannot resurrect a session
+ok 52 - token writes and logout are serialized so stale writes cannot resurrect a session
+  ---
+  duration_ms: 24.979826
+  type: 'test'
+  ...
+# Subtest: retains media and request identity across restart, retries publish without uploading twice
+ok 53 - retains media and request identity across restart, retries publish without uploading twice
+  ---
+  duration_ms: 124.304258
+  type: 'test'
+  ...
+# Subtest: double taps share one in-flight upload and publication
+ok 54 - double taps share one in-flight upload and publication
+  ---
+  duration_ms: 43.510577
+  type: 'test'
+  ...
+# Subtest: account change between upload and publish stops publication and preserves retry metadata
+ok 55 - account change between upload and publish stops publication and preserves retry metadata
+  ---
+  duration_ms: 30.911628
+  type: 'test'
+  ...
+# Subtest: removing a queued upload leaves the original file intact and rejects unsafe file identifiers
+ok 56 - removing a queued upload leaves the original file intact and rejects unsafe file identifiers
+  ---
+  duration_ms: 27.432759
+  type: 'test'
+  ...
+1..56
+# tests 56
+# suites 0
+# pass 56
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1729.870847

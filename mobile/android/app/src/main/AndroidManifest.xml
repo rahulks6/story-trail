@@ -28,13 +28,14 @@
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
-        <!-- katkee://user/<username> and katkee://story/<id> (Share sheet links). -->
+        <!-- katkee://user/<username>, katkee://story/<id> (Share sheet) and katkee://reset-password (reset email). -->
         <intent-filter>
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
             <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="katkee" android:host="user" />
             <data android:scheme="katkee" android:host="story" />
+            <data android:scheme="katkee" android:host="reset-password" />
         </intent-filter>
       </activity>
     </application>

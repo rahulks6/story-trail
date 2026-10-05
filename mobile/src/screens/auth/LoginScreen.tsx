@@ -65,6 +65,14 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
         }}
       />
       {fieldErrors?.password ? <Text style={styles.fieldError}>{fieldErrors.password}</Text> : null}
+      <Pressable
+        style={styles.forgot}
+        onPress={() => navigation.navigate("ForgotPassword", email ? { email } : undefined)}
+        accessibilityRole="button"
+        hitSlop={8}
+      >
+        <Text style={styles.linkAccent}>Forgot password?</Text>
+      </Pressable>
 
       <Pressable
         style={[styles.primaryButton, submitting && styles.primaryButtonDisabled]}
@@ -123,5 +131,6 @@ const styles = StyleSheet.create({
   primaryButtonDisabled: { opacity: 0.5 },
   primaryLabel: { color: colors.onAccent, fontWeight: "700", fontSize: 16 },
   linkButton: { marginTop: spacing.lg, alignItems: "center" },
+  forgot: { alignSelf: "flex-end", minHeight: 44, justifyContent: "center" },
   linkAccent: { color: colors.accent, fontWeight: "600" },
 });

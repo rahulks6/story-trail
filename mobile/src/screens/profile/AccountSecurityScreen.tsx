@@ -4,6 +4,7 @@ import {apiGet,apiPost} from '../../api/client';
 import {ProviderEntry} from '../auth/ProviderEntry';
 import {useAuth} from '../../state/AuthContext';
 import {colors} from '../../theme';
+import {SignInSecuritySection} from './SignInSecuritySection';
 interface Identities {items:Array<{provider:'GOOGLE'|'PHONE';verified_at:string}>;hasPassword:boolean}
 export function AccountSecurityScreen():React.JSX.Element {
  const {accessToken,logout}=useAuth();const [identities,setIdentities]=useState<Identities|null>(null),[password,setPassword]=useState(''),[ticket,setTicket]=useState<string|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false);
@@ -17,6 +18,7 @@ export function AccountSecurityScreen():React.JSX.Element {
  const change=(provider:string)=>Alert.alert('Unlink '+provider+'?','You must keep another usable sign-in method. You will be signed out.',[{text:'Cancel',style:'cancel'},{text:'Unlink',style:'destructive',onPress:()=>void run(async()=>{await apiPost('/api/v1/auth/provider/unlink',{provider,reauthTicket:ticket,confirmed:true},accessToken??undefined);await logout();})}]);
  const remove=()=>Alert.alert('Delete your Katkee account?','Your account and public content will become unavailable. This cannot be undone from the app.',[{text:'Cancel',style:'cancel'},{text:'Delete account',style:'destructive',onPress:()=>void run(async()=>{await apiPost('/api/v1/auth/account/delete',{reauthTicket:ticket,confirmed:true},accessToken??undefined);await logout();})}]);
  return <ScrollView style={styles.root} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+  {identities?<SignInSecuritySection hasPassword={identities.hasPassword}/>:null}
   <Text style={styles.title}>Sign-in methods</Text>
   {identities?<Text style={styles.text}>{[...(identities.hasPassword?['Email and password']:[]),...identities.items.map(i=>i.provider)].join(', ')||'No linked provider'}</Text>:<ActivityIndicator color={colors.accent}/>}
   {error?<Text accessibilityRole="alert" style={styles.error}>{error}</Text>:null}

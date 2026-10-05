@@ -9,5 +9,6 @@ services:
       ADS_ENABLED: ${ADS_ENABLED:-false}
       SPONSORED_STORIES_ENABLED: ${SPONSORED_STORIES_ENABLED:-false}
       AD_REPORTING_ENABLED: ${AD_REPORTING_ENABLED:-false}
+      ADMIN_MFA_ENCRYPTION_KEY: ${ADMIN_MFA_ENCRYPTION_KEY:?set ADMIN_MFA_ENCRYPTION_KEY (64 hex chars) to enable the Admin console}
     volumes:
       - ../admin:/app/admin:ro

@@ -4,9 +4,10 @@ import {AppealsScreen} from '../screens/profile/AppealsScreen';
 import React, { useEffect, useMemo, useRef } from "react";
 import { ActivityIndicator, Linking, View } from "react-native";
 import { NavigationContainer, type LinkingOptions } from "@react-navigation/native";
-import { profileUsernameFromPath } from "./profileLinks";
+import { deepLinkTarget } from "./profileLinks";
+import { StoryLinkScreen } from "../screens/story/StoryLinkScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import type { RootStackParamList } from "./types";
+import type { AuthStackParamList, RootStackParamList } from "./types";
 import { colors } from "../theme";
 import { useAuth } from "../state/AuthContext";
 import { AuthNavigator } from "./AuthNavigator";
@@ -42,6 +43,7 @@ function SignedInNavigator(): React.JSX.Element {
       <Stack.Screen name="UploadQueue" component={UploadQueueScreen} options={{headerShown:true,title:'Story uploads',headerStyle:{backgroundColor:colors.background},headerTintColor:colors.textPrimary}}/>
       <Stack.Screen name="Appeals" component={AppealsScreen} options={{headerShown:true,title:'Account review',headerStyle:{backgroundColor:colors.background},headerTintColor:colors.textPrimary}}/>
       <Stack.Screen name="StoryViewer" component={StoryViewerScreen} options={{ presentation: "fullScreenModal" }} />
+      <Stack.Screen name="StoryLink" component={StoryLinkScreen} options={{ presentation: "fullScreenModal" }} />
       <Stack.Screen name="HighlightViewer" component={HighlightViewerScreen} options={{ presentation: "fullScreenModal" }} />
       <Stack.Screen
         name="HighlightEditor"
@@ -187,10 +189,12 @@ function SignedInNavigator(): React.JSX.Element {
 export function RootNavigator(): React.JSX.Element {
   const { status, user } = useAuth();
   const pendingLink = useRef<string | null>(null);
+  // A profile or Story link that arrives while signed out opens after sign-in.
   useEffect(() => {
     if (status === "signedIn") return;
     const subscription = Linking.addEventListener("url", ({url}) => {
-      if (url.startsWith("katkee://") && profileUsernameFromPath(url.slice(9))) pendingLink.current = url;
+      const target = url.startsWith("katkee://") ? deepLinkTarget(url.slice(9)) : null;
+      if (target && target.kind !== "resetPassword") pendingLink.current = url;
     });
     return () => subscription.remove();
   }, [status]);
@@ -202,9 +206,22 @@ export function RootNavigator(): React.JSX.Element {
       return url;
     },
     getStateFromPath: path => {
-      const username = profileUsernameFromPath(path);
-      if (!username) return undefined;
-      return { routes: [{name: "Main", state: {routes: [{name: "Search", state: {routes: [{name: "UserProfile", params: {username}}]}}]}}] };
+      const target = deepLinkTarget(path);
+      if (target?.kind === "profile") {
+        return { routes: [{name: "Main", state: {routes: [{name: "Search", state: {routes: [{name: "UserProfile", params: {username: target.username}}]}}]}}] };
+      }
+      if (target?.kind === "story") return { routes: [{ name: "Main" }, { name: "StoryLink", params: { storyId: target.storyId } }] };
+      return undefined;
+    },
+  }), []);
+  // Signed out, only password-reset links are meaningful.
+  const signedOutLinking = useMemo<LinkingOptions<AuthStackParamList>>(() => ({
+    prefixes: ["katkee://"],
+    getStateFromPath: path => {
+      const target = deepLinkTarget(path);
+      if (target?.kind !== "resetPassword") return undefined;
+      const { kind: _kind, ...params } = target;
+      return { routes: [{ name: "Login" }, { name: "ResetPassword", params }] };
     },
   }), []);
 
@@ -216,5 +233,8 @@ export function RootNavigator(): React.JSX.Element {
     );
   }
 
-  return <NavigationContainer key={user?.id ?? "signedOut"} linking={status === "signedIn" ? linking : undefined}>{status === "signedIn" ? <SignedInNavigator /> : <AuthNavigator />}</NavigationContainer>;
+  if (status === "signedIn") {
+    return <NavigationContainer key={user?.id ?? "signedIn"} linking={linking}><SignedInNavigator /></NavigationContainer>;
+  }
+  return <NavigationContainer key="signedOut" linking={signedOutLinking}><AuthNavigator /></NavigationContainer>;
 }
