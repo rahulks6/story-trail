@@ -1,0 +1,26 @@
+# Dependencies and build output
+node_modules/
+dist/
+mobile/build/
+mobile/android/.gradle/
+mobile/android/app/.cxx/
+mobile/android/build/
+mobile/android/app/build/
+mobile/android/local.properties
+web/dist/
+
+# Local secrets and signing material — never commit
+.env
+.env.*
+!.env.example
+!.env.prod.example
+*.jks
+*.p12
+*.pem
+*.mobileprovision
+/release-signing/
+
+# Local runtime data
+backend/data/
+*.log
+!docs/**/*.log
