@@ -1,0 +1,47 @@
+{
+  "context": "Local Windows loopback, sequential requests, six organic creators, ads disabled, milliseconds; not device or production load test",
+  "results": [
+    {
+      "name": "baseline",
+      "label": "auth_me",
+      "samples": 20,
+      "p50": 43,
+      "p95": 177
+    },
+    {
+      "name": "baseline",
+      "label": "home_6_creators",
+      "samples": 10,
+      "p50": 2996,
+      "p95": 3418
+    },
+    {
+      "name": "baseline",
+      "label": "media",
+      "samples": 20,
+      "p50": 488,
+      "p95": 631
+    },
+    {
+      "name": "admin_ads",
+      "label": "auth_me",
+      "samples": 20,
+      "p50": 2,
+      "p95": 2
+    },
+    {
+      "name": "admin_ads",
+      "label": "home_6_creators",
+      "samples": 10,
+      "p50": 6,
+      "p95": 7
+    },
+    {
+      "name": "admin_ads",
+      "label": "media",
+      "samples": 20,
+      "p50": 4,
+      "p95": 4
+    }
+  ]
+}

@@ -1,0 +1,433 @@
+TAP version 13
+# {"ts":"2026-09-25T15:56:50.806Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":225,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:50.878Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":63,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:50.894Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":12,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:50.922Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":22,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:50.949Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":45,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:50.956Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":51,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:50.961Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":55,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:50.966Z","method":"POST","path":"/api/v1/stories","status":409,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:50.978Z","method":"POST","path":"/api/v1/stories","status":404,"durationMs":7,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:50.984Z","method":"GET","path":"/api/v1/stories/mine/active","status":200,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:50.992Z","method":"DELETE","path":"/api/v1/stories/96dadb84-bb11-422d-94d4-3785b36362ba","status":204,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:50.995Z","method":"POST","path":"/api/v1/stories","status":404,"durationMs":2,"ip":"127.0.0.1"}
+# Subtest: publishing
+    # Subtest: replays concurrent publish retries once and rejects changed payloads and deleted Story resurrection
+    ok 1 - replays concurrent publish retries once and rejects changed payloads and deleted Story resurrection
+      ---
+      duration_ms: 461.4352
+      ...
+# {"ts":"2026-09-25T15:56:51.060Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":61,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.069Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":7,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.073Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+    # Subtest: publishes an owned, ready media as a Story
+    ok 2 - publishes an owned, ready media as a Story
+      ---
+      duration_ms: 76.9801
+      ...
+# {"ts":"2026-09-25T15:56:51.142Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":67,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.150Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.156Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.160Z","method":"POST","path":"/api/v1/stories","status":409,"durationMs":2,"ip":"127.0.0.1"}
+    # Subtest: rejects publishing the same media twice
+    ok 3 - rejects publishing the same media twice
+      ---
+      duration_ms: 87.4251
+      ...
+# {"ts":"2026-09-25T15:56:51.226Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":63,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.288Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":61,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.297Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":7,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.300Z","method":"POST","path":"/api/v1/stories","status":404,"durationMs":2,"ip":"127.0.0.1"}
+    # Subtest: rejects publishing someone else's media
+    ok 4 - rejects publishing someone else's media
+      ---
+      duration_ms: 139.6294
+      ...
+# {"ts":"2026-09-25T15:56:51.364Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":61,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.366Z","method":"POST","path":"/api/v1/stories","status":422,"durationMs":1,"ip":"127.0.0.1"}
+    # Subtest: rejects an invalid mediaId
+    ok 5 - rejects an invalid mediaId
+      ---
+      duration_ms: 65.228
+      ...
+    1..5
+ok 1 - publishing
+  ---
+  duration_ms: 831.948
+  type: 'suite'
+  ...
+# {"ts":"2026-09-25T15:56:51.428Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.492Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":62,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.508Z","method":"POST","path":"/api/v1/users/test_330f6535/follow","status":200,"durationMs":15,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.520Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":7,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.524Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.663Z","method":"GET","path":"/api/v1/stories/aec8fab3-3412-477a-bb09-d781ab9605a6","status":200,"durationMs":138,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.687Z","method":"POST","path":"/api/v1/stories/aec8fab3-3412-477a-bb09-d781ab9605a6/view","status":204,"durationMs":22,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.691Z","method":"POST","path":"/api/v1/stories/aec8fab3-3412-477a-bb09-d781ab9605a6/view","status":204,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.694Z","method":"GET","path":"/api/v1/stories/aec8fab3-3412-477a-bb09-d781ab9605a6/views","status":200,"durationMs":3,"ip":"127.0.0.1"}
+# Subtest: viewing and audience rules
+    # Subtest: a public Story is visible to a follower and records exactly one view despite repeats
+    ok 1 - a public Story is visible to a follower and records exactly one view despite repeats
+      ---
+      duration_ms: 327.7521
+      ...
+# {"ts":"2026-09-25T15:56:51.763Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":67,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.776Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":12,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.783Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":5,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.785Z","method":"POST","path":"/api/v1/stories/b88d9fcd-2eb2-4237-ac22-dbfe128f3a13/view","status":204,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.788Z","method":"GET","path":"/api/v1/stories/b88d9fcd-2eb2-4237-ac22-dbfe128f3a13/views","status":200,"durationMs":2,"ip":"127.0.0.1"}
+    # Subtest: the owner's own view never counts
+    ok 2 - the owner's own view never counts
+      ---
+      duration_ms: 94.1548
+      ...
+# {"ts":"2026-09-25T15:56:51.855Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":65,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.918Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":62,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.984Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":65,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.991Z","method":"POST","path":"/api/v1/users/test_5d5a8a6b/follow","status":200,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:51.999Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":7,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.003Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.007Z","method":"POST","path":"/api/v1/stories/0f2f41c9-f5fc-4557-9c55-f472ef957f49/view","status":204,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.012Z","method":"GET","path":"/api/v1/stories/0f2f41c9-f5fc-4557-9c55-f472ef957f49/views","status":200,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.014Z","method":"GET","path":"/api/v1/stories/0f2f41c9-f5fc-4557-9c55-f472ef957f49/viewers","status":404,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.017Z","method":"GET","path":"/api/v1/stories/0f2f41c9-f5fc-4557-9c55-f472ef957f49/viewers","status":404,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.021Z","method":"GET","path":"/api/v1/stories/0f2f41c9-f5fc-4557-9c55-f472ef957f49/viewers","status":200,"durationMs":3,"ip":"127.0.0.1"}
+    # Subtest: the view count is visible to any viewer who can watch the Story, not just its owner — but who they are is owner-only
+    ok 3 - the view count is visible to any viewer who can watch the Story, not just its owner — but who they are is owner-only
+      ---
+      duration_ms: 232.9085
+      ...
+# {"ts":"2026-09-25T15:56:52.089Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":66,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.154Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":64,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.161Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":5,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.165Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.169Z","method":"GET","path":"/api/v1/stories/ef22d18a-7d0c-4f05-b293-8cf3e98b1a41/views","status":403,"durationMs":3,"ip":"127.0.0.1"}
+    # Subtest: a stranger can't see the view count of a Story they aren't allowed to watch
+    ok 4 - a stranger can't see the view count of a Story they aren't allowed to watch
+      ---
+      duration_ms: 147.7441
+      ...
+# {"ts":"2026-09-25T15:56:52.234Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":63,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.294Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.299Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.307Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":7,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.311Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.317Z","method":"GET","path":"/api/v1/stories/c52edf24-0640-47f4-ac2d-278ab634dcbb","status":403,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.321Z","method":"GET","path":"/api/v1/users/test_10801c14/stories","status":403,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.326Z","method":"POST","path":"/api/v1/users/test_10801c14/follow","status":200,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.329Z","method":"GET","path":"/api/v1/follow-requests","status":200,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.335Z","method":"POST","path":"/api/v1/follow-requests/c29c18fb-07eb-403a-a26b-04dc5be3cb56/accept","status":204,"durationMs":5,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.338Z","method":"GET","path":"/api/v1/stories/c52edf24-0640-47f4-ac2d-278ab634dcbb","status":200,"durationMs":3,"ip":"127.0.0.1"}
+    # Subtest: a private account gates every Story regardless of its own audience setting, until followed
+    ok 5 - a private account gates every Story regardless of its own audience setting, until followed
+      ---
+      duration_ms: 169.1628
+      ...
+# {"ts":"2026-09-25T15:56:52.401Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":61,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.466Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":64,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.474Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":7,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.479Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.483Z","method":"GET","path":"/api/v1/stories/d077f4d6-6009-4b0e-8ed2-5930edeb6cf2","status":403,"durationMs":3,"ip":"127.0.0.1"}
+    # Subtest: a 'followers' audience Story on a public account is hidden from non-followers
+    ok 6 - a 'followers' audience Story on a public account is hidden from non-followers
+      ---
+      duration_ms: 144.2186
+      ...
+# {"ts":"2026-09-25T15:56:52.551Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":67,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.611Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.618Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.622Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.626Z","method":"POST","path":"/api/v1/users/test_0086cacf/block","status":204,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.629Z","method":"GET","path":"/api/v1/stories/371c87c8-8797-4bd3-85f2-7d5587e0ed5f","status":404,"durationMs":2,"ip":"127.0.0.1"}
+    # Subtest: blocked users get 404, not 403, for each other's Stories
+    ok 7 - blocked users get 404, not 403, for each other's Stories
+      ---
+      duration_ms: 146.276
+      ...
+    1..7
+ok 2 - viewing and audience rules
+  ---
+  duration_ms: 1262.9067
+  type: 'suite'
+  ...
+# {"ts":"2026-09-25T15:56:52.697Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":66,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.758Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.820Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":61,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.827Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.830Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.833Z","method":"GET","path":"/api/v1/stories/dc43086c-573e-4df6-bdda-8137d2570e9b/owner","status":200,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.836Z","method":"GET","path":"/api/v1/stories/dc43086c-573e-4df6-bdda-8137d2570e9b/owner","status":403,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.841Z","method":"POST","path":"/api/v1/users/test_3429679a/follow","status":200,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.845Z","method":"GET","path":"/api/v1/stories/dc43086c-573e-4df6-bdda-8137d2570e9b/owner","status":200,"durationMs":3,"ip":"127.0.0.1"}
+# Subtest: owner-username lookup
+    # Subtest: resolves a Story's owner username for anyone permitted to view it, using the same access rules as the Story itself
+    ok 1 - resolves a Story's owner username for anyone permitted to view it, using the same access rules as the Story itself
+      ---
+      duration_ms: 215.5845
+      ...
+    1..1
+ok 3 - owner-username lookup
+  ---
+  duration_ms: 215.7336
+  type: 'suite'
+  ...
+# {"ts":"2026-09-25T15:56:52.907Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.968Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:52.999Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":30,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.002Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.008Z","method":"GET","path":"/api/v1/media/0d1c577d-05fc-4850-b8ed-0cea92eaafac/file","status":200,"durationMs":5,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.014Z","method":"GET","path":"/api/v1/media/0d1c577d-05fc-4850-b8ed-0cea92eaafac/file","status":404,"durationMs":5,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.019Z","method":"POST","path":"/api/v1/users/test_9891d3b4/follow","status":200,"durationMs":4,"ip":"127.0.0.1"}
+# Subtest: media access via a published Story
+    # Subtest: lets a permitted viewer fetch the underlying media file, byte-for-byte
+    ok 1 - lets a permitted viewer fetch the underlying media file, byte-for-byte
+      ---
+      duration_ms: 183.9678
+      ...
+# {"ts":"2026-09-25T15:56:53.031Z","method":"GET","path":"/api/v1/media/0d1c577d-05fc-4850-b8ed-0cea92eaafac/file","status":200,"durationMs":10,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.090Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.150Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.157Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":5,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.159Z","method":"GET","path":"/api/v1/media/58d8efd4-2379-4eda-b3e4-53029bf52134/file","status":404,"durationMs":1,"ip":"127.0.0.1"}
+    # Subtest: still denies media access when no Story exists for it at all
+    ok 2 - still denies media access when no Story exists for it at all
+      ---
+      duration_ms: 130.1836
+      ...
+    1..2
+ok 4 - media access via a published Story
+  ---
+  duration_ms: 314.3299
+  type: 'suite'
+  ...
+# {"ts":"2026-09-25T15:56:53.221Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.281Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.288Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.291Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.293Z","method":"DELETE","path":"/api/v1/stories/33e271c6-8dc8-402a-ad3c-6a39695b2647","status":404,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.296Z","method":"DELETE","path":"/api/v1/stories/33e271c6-8dc8-402a-ad3c-6a39695b2647","status":204,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.297Z","method":"GET","path":"/api/v1/stories/33e271c6-8dc8-402a-ad3c-6a39695b2647","status":404,"durationMs":1,"ip":"127.0.0.1"}
+# Subtest: deletion
+    # Subtest: only the owner can delete, and deletion is final even for the owner
+    ok 1 - only the owner can delete, and deletion is final even for the owner
+      ---
+      duration_ms: 138.047
+      ...
+    1..1
+ok 5 - deletion
+  ---
+  duration_ms: 138.1778
+  type: 'suite'
+  ...
+# {"ts":"2026-09-25T15:56:53.364Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":65,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.370Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":5,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.374Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.391Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":16,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.395Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.397Z","method":"GET","path":"/api/v1/stories/mine/active","status":200,"durationMs":1,"ip":"127.0.0.1"}
+# Subtest: feeds and listings
+    # Subtest: mine/active only lists the caller's own non-expired Stories, oldest first
+    ok 1 - mine/active only lists the caller's own non-expired Stories, oldest first
+      ---
+      duration_ms: 99.8791
+      ...
+# {"ts":"2026-09-25T15:56:53.458Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.525Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":66,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.586Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.590Z","method":"POST","path":"/api/v1/users/test_c5a4aadf/follow","status":200,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.597Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.601Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.607Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":5,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.611Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.614Z","method":"GET","path":"/api/v1/stories/feed/following","status":200,"durationMs":3,"ip":"127.0.0.1"}
+    # Subtest: the following feed includes only followed owners (and self), not strangers
+    ok 2 - the following feed includes only followed owners (and self), not strangers
+      ---
+      duration_ms: 217.0669
+      ...
+    1..2
+ok 6 - feeds and listings
+  ---
+  duration_ms: 317.1155
+  type: 'suite'
+  ...
+# {"ts":"2026-09-25T15:56:53.676Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.742Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":65,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.747Z","method":"POST","path":"/api/v1/users/test_43a2cf49/follow","status":200,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.753Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":5,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.755Z","method":"GET","path":"/api/v1/auth/me","status":200,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:53.761Z","method":"GET","path":"/api/v1/stories/26e79ed9-12fe-45e0-b11b-da1b45b9b34c","status":200,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:54.969Z","method":"GET","path":"/api/v1/stories/26e79ed9-12fe-45e0-b11b-da1b45b9b34c","status":404,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:54.974Z","method":"GET","path":"/api/v1/stories/mine/active","status":200,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:54.976Z","method":"GET","path":"/api/v1/stories/26e79ed9-12fe-45e0-b11b-da1b45b9b34c","status":200,"durationMs":1,"ip":"127.0.0.1"}
+# Subtest: the 24-hour lifecycle
+    # Subtest: really expires: a Story published with a 1-second TTL becomes inaccessible to others and drops out of active listings, while the owner can still fetch it directly
+    ok 1 - really expires: a Story published with a 1-second TTL becomes inaccessible to others and drops out of active listings, while the owner can still fetch it directly
+      ---
+      duration_ms: 1361.5193
+      ...
+    1..1
+ok 7 - the 24-hour lifecycle
+  ---
+  duration_ms: 1361.6667
+  type: 'suite'
+  ...
+# {"ts":"2026-09-25T15:56:55.046Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":68,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.116Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":69,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.176Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.180Z","method":"POST","path":"/api/v1/users/test_794c9fbd/follow","status":200,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.187Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.192Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.199Z","method":"POST","path":"/api/v1/stories/6db7288f-d984-4063-be3c-a7e584d4f9af/view","status":204,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.206Z","method":"POST","path":"/api/v1/events","status":204,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.210Z","method":"POST","path":"/api/v1/stories/6db7288f-d984-4063-be3c-a7e584d4f9af/view","status":204,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.213Z","method":"POST","path":"/api/v1/events","status":204,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.221Z","method":"GET","path":"/api/v1/stories/6db7288f-d984-4063-be3c-a7e584d4f9af/insights","status":200,"durationMs":7,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.224Z","method":"GET","path":"/api/v1/stories/6db7288f-d984-4063-be3c-a7e584d4f9af/insights","status":404,"durationMs":1,"ip":"127.0.0.1"}
+# Subtest: Story Insights
+    # Subtest: computes view count, completion rate, following-vs-discovery split, and profile-visit rate
+    ok 1 - computes view count, completion rate, following-vs-discovery split, and profile-visit rate
+      ---
+      duration_ms: 247.3953
+      ...
+# {"ts":"2026-09-25T15:56:55.287Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":62,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.294Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":5,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.298Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.301Z","method":"GET","path":"/api/v1/stories/f40f5551-a9db-4ddf-b8f1-fdc6bbdbd0c9/insights","status":200,"durationMs":2,"ip":"127.0.0.1"}
+    # Subtest: is all zeros for a Story nobody has viewed yet
+    ok 2 - is all zeros for a Story nobody has viewed yet
+      ---
+      duration_ms: 77.3901
+      ...
+# {"ts":"2026-09-25T15:56:55.369Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":66,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.438Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":68,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.444Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":5,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.448Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.455Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.459Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.463Z","method":"POST","path":"/api/v1/stories/ebacf87f-94e4-4dd0-bec0-7572a480867d/view","status":204,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.467Z","method":"POST","path":"/api/v1/stories/a399fc2b-4bc9-4d9b-8767-697e93f8e4fc/view","status":204,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.469Z","method":"POST","path":"/api/v1/events","status":204,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.472Z","method":"GET","path":"/api/v1/stories/mine/sequence-insights","status":200,"durationMs":2,"ip":"127.0.0.1"}
+    # Subtest: aggregates per-sequence Insights across every currently-active Story the caller owns
+    ok 3 - aggregates per-sequence Insights across every currently-active Story the caller owns
+      ---
+      duration_ms: 170.6495
+      ...
+# {"ts":"2026-09-25T15:56:55.533Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.603Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":69,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.610Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.613Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.618Z","method":"POST","path":"/api/v1/stories/a4acee01-77f7-4cbf-84ed-6263abf517e3/view","status":204,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.620Z","method":"GET","path":"/api/v1/stories/a4acee01-77f7-4cbf-84ed-6263abf517e3/insights","status":200,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.625Z","method":"POST","path":"/api/v1/users/test_49424424/follow","status":200,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.628Z","method":"GET","path":"/api/v1/stories/a4acee01-77f7-4cbf-84ed-6263abf517e3/insights","status":200,"durationMs":2,"ip":"127.0.0.1"}
+    # Subtest: following-vs-discovery is a real snapshot from view time, not a live lookup
+    ok 4 - following-vs-discovery is a real snapshot from view time, not a live lookup
+      ---
+      duration_ms: 155.4734
+      ...
+    1..4
+ok 8 - Story Insights
+  ---
+  duration_ms: 651.1646
+  type: 'suite'
+  ...
+# {"ts":"2026-09-25T15:56:55.694Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":62,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.701Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.705Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.708Z","method":"GET","path":"/api/v1/stories/740ddfea-3cd3-46ec-96f0-3cd01d9354f4","status":200,"durationMs":2,"ip":"127.0.0.1"}
+# Subtest: Camera + Editor: overlays, filter, and drawing survive publish
+    # Subtest: a published Story returns exactly the overlays, filter, and drawing it was published with
+    ok 1 - a published Story returns exactly the overlays, filter, and drawing it was published with
+      ---
+      duration_ms: 80.1006
+      ...
+# {"ts":"2026-09-25T15:56:55.770Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.777Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.780Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+    # Subtest: audioMuted defaults to false — original recorded audio is kept by default
+    ok 2 - audioMuted defaults to false — original recorded audio is kept by default
+      ---
+      duration_ms: 71.994
+      ...
+# {"ts":"2026-09-25T15:56:55.841Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.848Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.852Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.857Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.861Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.863Z","method":"GET","path":"/api/v1/stories/d55085c2-5a18-43e1-99ee-abaa599b0898","status":200,"durationMs":1,"ip":"127.0.0.1"}
+    # Subtest: crop defaults to no zoom/no pan, and a real crop round-trips exactly
+    ok 3 - crop defaults to no zoom/no pan, and a real crop round-trips exactly
+      ---
+      duration_ms: 83.3232
+      ...
+# {"ts":"2026-09-25T15:56:55.926Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":61,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.933Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":5,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:55.936Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+    # Subtest: clamps an out-of-range crop instead of rejecting the publish
+    ok 4 - clamps an out-of-range crop instead of rejecting the publish
+      ---
+      duration_ms: 73.0787
+      ...
+# {"ts":"2026-09-25T15:56:56.007Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":69,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.013Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":5,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.017Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+    # Subtest: drops malformed overlay entries instead of rejecting the whole publish
+    ok 5 - drops malformed overlay entries instead of rejecting the whole publish
+      ---
+      duration_ms: 81.2462
+      ...
+# {"ts":"2026-09-25T15:56:56.089Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":70,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.148Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":58,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.208Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":58,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.210Z","method":"GET","path":"/api/v1/auth/me","status":200,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.217Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":5,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.222Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.228Z","method":"GET","path":"/api/v1/stories/58e961e4-6ad4-4362-b8e0-58e45296dcd8","status":200,"durationMs":6,"ip":"127.0.0.1"}
+    # Subtest: resolves a mention to the mentioned user's live username, unresolved by whoever posted it
+    ok 6 - resolves a mention to the mentioned user's live username, unresolved by whoever posted it
+      ---
+      duration_ms: 210.2073
+      ...
+# {"ts":"2026-09-25T15:56:56.289Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.349Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.409Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.411Z","method":"GET","path":"/api/v1/auth/me","status":200,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.414Z","method":"POST","path":"/api/v1/users/test_e45abbe1/block","status":204,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.420Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":5,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.425Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.432Z","method":"GET","path":"/api/v1/stories/0b13f2eb-4bd3-4b7d-aaf0-dcf1b00ae9f3","status":200,"durationMs":4,"ip":"127.0.0.1"}
+    # Subtest: hides a mention from a viewer who has blocked (or is blocked by) the mentioned user
+    ok 7 - hides a mention from a viewer who has blocked (or is blocked by) the mentioned user
+      ---
+      duration_ms: 204.3455
+      ...
+# {"ts":"2026-09-25T15:56:56.493Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.563Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":69,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.624Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.626Z","method":"GET","path":"/api/v1/auth/me","status":200,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.633Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.639Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":5,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.716Z","method":"DELETE","path":"/api/v1/users/me","status":204,"durationMs":75,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:56.722Z","method":"GET","path":"/api/v1/stories/99e9d0f5-4cf3-42c1-9472-9527a305a889","status":200,"durationMs":4,"ip":"127.0.0.1"}
+    # Subtest: drops a mention of an account that has since been deleted
+    ok 8 - drops a mention of an account that has since been deleted
+      ---
+      duration_ms: 289.6475
+      ...
+    1..8
+ok 9 - Camera + Editor: overlays, filter, and drawing survive publish
+  ---
+  duration_ms: 1094.3977
+  type: 'suite'
+  ...
+1..9
+# tests 31
+# suites 9
+# pass 31
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6610.5585

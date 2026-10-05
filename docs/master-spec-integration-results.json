@@ -1,0 +1,146 @@
+[
+  {
+    "file": "adminAds.test.js",
+    "status": 0,
+    "ms": 4839,
+    "database": "katkee_suite_adminadstestjs_1790330169164",
+    "tests": 4,
+    "pass": 4,
+    "fail": 0
+  },
+  {
+    "file": "auth.test.js",
+    "status": 0,
+    "ms": 1541,
+    "database": "katkee_suite_authtestjs_1790330169164",
+    "tests": 13,
+    "pass": 13,
+    "fail": 0
+  },
+  {
+    "file": "conversations.test.js",
+    "status": 0,
+    "ms": 3117,
+    "database": "katkee_suite_conversationstestjs_1790330169164",
+    "tests": 13,
+    "pass": 13,
+    "fail": 0
+  },
+  {
+    "file": "database.test.js",
+    "status": 0,
+    "ms": 330,
+    "database": "katkee_suite_databasetestjs_1790330169164",
+    "tests": 1,
+    "pass": 1,
+    "fail": 0
+  },
+  {
+    "file": "engagement.test.js",
+    "status": 0,
+    "ms": 2954,
+    "database": "katkee_suite_engagementtestjs_1790330169164",
+    "tests": 10,
+    "pass": 10,
+    "fail": 0
+  },
+  {
+    "file": "featureFlags.test.js",
+    "status": 0,
+    "ms": 630,
+    "database": "katkee_suite_featureflagstestjs_1790330169164",
+    "tests": 1,
+    "pass": 1,
+    "fail": 0
+  },
+  {
+    "file": "highlights.test.js",
+    "status": 0,
+    "ms": 4400,
+    "database": "katkee_suite_highlightstestjs_1790330169164",
+    "tests": 16,
+    "pass": 16,
+    "fail": 0
+  },
+  {
+    "file": "media.test.js",
+    "status": 0,
+    "ms": 1712,
+    "database": "katkee_suite_mediatestjs_1790330169164",
+    "tests": 10,
+    "pass": 10,
+    "fail": 0
+  },
+  {
+    "file": "moderation.test.js",
+    "status": 0,
+    "ms": 3341,
+    "database": "katkee_suite_moderationtestjs_1790330169164",
+    "tests": 12,
+    "pass": 12,
+    "fail": 0
+  },
+  {
+    "file": "notifications.test.js",
+    "status": 0,
+    "ms": 3711,
+    "database": "katkee_suite_notificationstestjs_1790330169164",
+    "tests": 17,
+    "pass": 17,
+    "fail": 0
+  },
+  {
+    "file": "providers.test.js",
+    "status": 0,
+    "ms": 1601,
+    "database": "katkee_suite_providerstestjs_1790330169164",
+    "tests": 3,
+    "pass": 3,
+    "fail": 0
+  },
+  {
+    "file": "rateLimiting.test.js",
+    "status": 0,
+    "ms": 1282,
+    "database": "katkee_suite_ratelimitingtestjs_1790330169164",
+    "tests": 6,
+    "pass": 6,
+    "fail": 0
+  },
+  {
+    "file": "recommendations.test.js",
+    "status": 0,
+    "ms": 3056,
+    "database": "katkee_suite_recommendationstestjs_1790330169164",
+    "tests": 15,
+    "pass": 15,
+    "fail": 0
+  },
+  {
+    "file": "scoring.test.js",
+    "status": 0,
+    "ms": 209,
+    "database": "katkee_suite_scoringtestjs_1790330169164",
+    "tests": 14,
+    "pass": 14,
+    "fail": 0
+  },
+  {
+    "file": "social.test.js",
+    "status": 0,
+    "ms": 3757,
+    "database": "katkee_suite_socialtestjs_1790330169164",
+    "tests": 16,
+    "pass": 16,
+    "fail": 0
+  },
+  {
+    "file": "stories.test.js",
+    "status": 0,
+    "ms": 7178,
+    "database": "katkee_suite_storiestestjs_1790330169164",
+    "tests": 30,
+    "pass": 30,
+    "fail": 0
+  }
+]

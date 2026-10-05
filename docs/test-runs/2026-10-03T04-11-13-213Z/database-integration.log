@@ -1,0 +1,1578 @@
+apply 0001_init
+apply 0002_search_indexes
+apply 0003_fix_username_trgm_index
+apply 0004_media
+apply 0005_stories
+apply 0006_engagement
+apply 0007_recommendations
+apply 0008_notifications
+apply 0009_conversations
+apply 0010_highlights
+apply 0011_moderation
+apply 0012_message_delivery
+apply 0013_highlight_order
+apply 0014_story_view_follow_snapshot
+apply 0015_story_overlays
+apply 0016_story_audio_muted
+apply 0017_story_crop
+apply 0018_notification_preferences
+apply 0019_highlight_cover
+apply 0020_admin_ads
+apply 0021_atomic_moderation
+apply 0022_ad_delivery
+apply 0023_admin_hardening
+apply 0024_provider_auth
+apply 0025_feed_snapshots
+apply 0026_publish_retries
+apply 0027_profile_metadata
+Migrations complete.
+skip  0001_init (already applied)
+skip  0002_search_indexes (already applied)
+skip  0003_fix_username_trgm_index (already applied)
+skip  0004_media (already applied)
+skip  0005_stories (already applied)
+skip  0006_engagement (already applied)
+skip  0007_recommendations (already applied)
+skip  0008_notifications (already applied)
+skip  0009_conversations (already applied)
+skip  0010_highlights (already applied)
+skip  0011_moderation (already applied)
+skip  0012_message_delivery (already applied)
+skip  0013_highlight_order (already applied)
+skip  0014_story_view_follow_snapshot (already applied)
+skip  0015_story_overlays (already applied)
+skip  0016_story_audio_muted (already applied)
+skip  0017_story_crop (already applied)
+skip  0018_notification_preferences (already applied)
+skip  0019_highlight_cover (already applied)
+skip  0020_admin_ads (already applied)
+skip  0021_atomic_moderation (already applied)
+skip  0022_ad_delivery (already applied)
+skip  0023_admin_hardening (already applied)
+skip  0024_provider_auth (already applied)
+skip  0025_feed_snapshots (already applied)
+skip  0026_publish_retries (already applied)
+skip  0027_profile_metadata (already applied)
+Nothing to do — schema is up to date.
+{"ts":"2026-10-03T04:11:25.148Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":53,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.193Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":39,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.234Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.245Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":6,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.251Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.256Z","method":"GET","path":"/api/v1/stories/637276c8-59c3-4513-8dc2-7ea8ce94d89c","status":404,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.262Z","method":"GET","path":"/api/v1/media/b75d05b1-7da8-41d1-a123-fa904ac53cba/file","status":404,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.265Z","method":"GET","path":"/api/v1/users/ad_55fcfdb5","status":404,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.269Z","method":"GET","path":"/api/v1/users/ad_55fcfdb5/stories","status":404,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.271Z","method":"GET","path":"/api/v1/users/ad_55fcfdb5/highlights","status":404,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.274Z","method":"GET","path":"/api/v1/search/users","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.314Z","method":"POST","path":"/api/v1/moderation/access","status":200,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.352Z","method":"POST","path":"/api/v1/moderation/access","status":200,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.355Z","method":"POST","path":"/api/v1/moderation/appeal/submit","status":401,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.358Z","method":"POST","path":"/api/v1/moderation/appeal/submit","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.361Z","method":"POST","path":"/api/v1/moderation/appeal/submit","status":401,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.398Z","method":"POST","path":"/api/v1/moderation/access","status":200,"durationMs":35,"ip":"127.0.0.1"}
+✔ lets suspended users appeal only their own notices using expiring, single-use access (335.904036ms)
+{"ts":"2026-10-03T04:11:25.434Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.469Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.508Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.512Z","method":"GET","path":"/api/v1/admin/reports","status":401,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.548Z","method":"POST","path":"/api/v1/admin/login","status":403,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.589Z","method":"POST","path":"/api/v1/admin/login","status":200,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.626Z","method":"POST","path":"/api/v1/admin/login","status":200,"durationMs":33,"ip":"127.0.0.1"}
+{"event":"admin_authorization_denied","actor":"132361a6-5a44-4534-8810-6563e4549674","permission":"admins.read"}
+{"ts":"2026-10-03T04:11:25.629Z","method":"GET","path":"/api/v1/admin/admins","status":403,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.631Z","method":"POST","path":"/api/v1/admin/moderate","status":403,"durationMs":0,"ip":"127.0.0.1"}
+{"event":"admin_authorization_denied","actor":"132361a6-5a44-4534-8810-6563e4549674","permission":"admins.create"}
+{"ts":"2026-10-03T04:11:25.634Z","method":"POST","path":"/api/v1/admin/admins","status":403,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.637Z","method":"POST","path":"/api/v1/admin/admins","status":403,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.640Z","method":"POST","path":"/api/v1/admin/admins","status":403,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.644Z","method":"POST","path":"/api/v1/admin/admins","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.679Z","method":"POST","path":"/api/v1/admin/login","status":200,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.682Z","method":"GET","path":"/api/v1/admin/reports","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.686Z","method":"POST","path":"/api/v1/admin/admins","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.688Z","method":"GET","path":"/api/v1/admin/reports","status":401,"durationMs":0,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.728Z","method":"POST","path":"/api/v1/admin/reauthenticate","status":204,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.764Z","method":"POST","path":"/api/v1/moderation/notices","status":200,"durationMs":33,"ip":"127.0.0.1"}
+✔ rejects USER, missing sessions, CSRF violations and self-escalation; grants are live (366.488853ms)
+{"ts":"2026-10-03T04:11:25.803Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.841Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.877Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.916Z","method":"POST","path":"/api/v1/admin/login","status":200,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.922Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.927Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.931Z","method":"POST","path":"/api/v1/reports","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.936Z","method":"POST","path":"/api/v1/admin/moderate","status":200,"durationMs":4,"ip":"127.0.0.1"}
+{"event":"moderation_action_failed","actor":"37b20d47-1c2d-4bfc-a408-712f0caf525e","action":"remove"}
+{"ts":"2026-10-03T04:11:25.938Z","method":"POST","path":"/api/v1/admin/moderate","status":409,"durationMs":5,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.941Z","method":"GET","path":"/api/v1/media/00fa66d6-814a-412a-bc22-c30528e0d7c3/file","status":404,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.944Z","method":"GET","path":"/api/v1/stories/f8d057e0-7d0d-482a-9f9d-4f968ec579a5","status":404,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.946Z","method":"GET","path":"/api/v1/admin/evidence/eeb9f419-9963-40ae-a9af-8a603d1580bc","status":401,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.951Z","method":"GET","path":"/api/v1/admin/evidence/eeb9f419-9963-40ae-a9af-8a603d1580bc","status":200,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:25.987Z","method":"POST","path":"/api/v1/moderation/notices","status":200,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.023Z","method":"POST","path":"/api/v1/moderation/appeal","status":200,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.027Z","method":"GET","path":"/api/v1/stories/f8d057e0-7d0d-482a-9f9d-4f968ec579a5","status":404,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.031Z","method":"POST","path":"/api/v1/admin/moderate","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.040Z","method":"GET","path":"/api/v1/stories/f8d057e0-7d0d-482a-9f9d-4f968ec579a5","status":200,"durationMs":7,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.048Z","method":"POST","path":"/api/v1/admin/moderate","status":200,"durationMs":6,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.053Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.055Z","method":"POST","path":"/api/v1/stories","status":403,"durationMs":0,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.060Z","method":"POST","path":"/api/v1/admin/moderate","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.062Z","method":"GET","path":"/api/v1/auth/me","status":403,"durationMs":0,"ip":"127.0.0.1"}
+✔ moderation is atomic, concurrent-safe, hides direct media, and allows explicit restoration and appeals (297.219103ms)
+{"ts":"2026-10-03T04:11:26.099Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.136Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.174Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.210Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.246Z","method":"POST","path":"/api/v1/admin/login","status":200,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.283Z","method":"POST","path":"/api/v1/admin/login","status":200,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.286Z","method":"POST","path":"/api/v1/admin/advertisers","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.290Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.295Z","method":"POST","path":"/api/v1/admin/campaigns","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.304Z","method":"GET","path":"/api/v1/ads/placements","status":200,"durationMs":5,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.307Z","method":"POST","path":"/api/v1/admin/campaigns/2cbd9384-4efc-468d-8198-d6fde3633de9/transition","status":409,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.313Z","method":"POST","path":"/api/v1/admin/campaigns/2cbd9384-4efc-468d-8198-d6fde3633de9/transition","status":200,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.316Z","method":"POST","path":"/api/v1/admin/campaigns/2cbd9384-4efc-468d-8198-d6fde3633de9/transition","status":409,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.322Z","method":"POST","path":"/api/v1/admin/campaigns/2cbd9384-4efc-468d-8198-d6fde3633de9/transition","status":200,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.325Z","method":"POST","path":"/api/v1/admin/campaigns/2cbd9384-4efc-468d-8198-d6fde3633de9/transition","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.333Z","method":"GET","path":"/api/v1/ads/placements","status":200,"durationMs":6,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.336Z","method":"GET","path":"/api/v1/ads/placements","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:26.339Z","method":"GET","path":"/api/v1/ads/deliveries/71a527d1-3373-4975-8e1b-0e679fd3d5ff","status":404,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.445Z","method":"POST","path":"/api/v1/ads/events","status":204,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.449Z","method":"POST","path":"/api/v1/ads/deliveries/71a527d1-3373-4975-8e1b-0e679fd3d5ff/report","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.452Z","method":"POST","path":"/api/v1/ads/events","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.455Z","method":"GET","path":"/api/v1/ads/deliveries/71a527d1-3373-4975-8e1b-0e679fd3d5ff","status":404,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.458Z","method":"POST","path":"/api/v1/admin/campaigns/2cbd9384-4efc-468d-8198-d6fde3633de9/transition","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.462Z","method":"GET","path":"/api/v1/ads/placements","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.466Z","method":"POST","path":"/api/v1/admin/campaigns/2cbd9384-4efc-468d-8198-d6fde3633de9/edit","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.472Z","method":"POST","path":"/api/v1/admin/campaigns/2cbd9384-4efc-468d-8198-d6fde3633de9/transition","status":409,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.475Z","method":"POST","path":"/api/v1/admin/campaigns/2cbd9384-4efc-468d-8198-d6fde3633de9/transition","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.480Z","method":"POST","path":"/api/v1/admin/campaigns/2cbd9384-4efc-468d-8198-d6fde3633de9/transition","status":409,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.518Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.555Z","method":"POST","path":"/api/v1/admin/login","status":200,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.561Z","method":"POST","path":"/api/v1/admin/campaigns/2cbd9384-4efc-468d-8198-d6fde3633de9/transition","status":200,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.564Z","method":"POST","path":"/api/v1/admin/campaigns/2cbd9384-4efc-468d-8198-d6fde3633de9/transition","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.573Z","method":"GET","path":"/api/v1/ads/placements","status":200,"durationMs":7,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.577Z","method":"GET","path":"/api/v1/ads/deliveries/55fc0306-3680-4e94-b73d-81e2705d8f20","status":404,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.582Z","method":"POST","path":"/api/v1/admin/moderate","status":200,"durationMs":3,"ip":"127.0.0.1"}
+✔ ads require independent approval, enforce caps/ownership/hide and create real reports/events (1520.102419ms)
+{"ts":"2026-10-03T04:11:27.620Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.656Z","method":"POST","path":"/api/v1/admin/login","status":200,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.660Z","method":"GET","path":"/api/v1/admin/campaigns","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.663Z","method":"GET","path":"/api/v1/admin/advertisers","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"event":"admin_authorization_denied","actor":"babde34f-33ce-4202-8f90-5a2dcb3b896a","permission":"ads.analytics.read"}
+{"ts":"2026-10-03T04:11:27.665Z","method":"GET","path":"/api/v1/admin/campaigns/bd75e3b6-5a77-47aa-af51-719c273bf924/analytics","status":403,"durationMs":1,"ip":"127.0.0.1"}
+{"event":"admin_authorization_denied","actor":"babde34f-33ce-4202-8f90-5a2dcb3b896a","permission":"reports.read"}
+{"ts":"2026-10-03T04:11:27.667Z","method":"GET","path":"/api/v1/admin/reports","status":403,"durationMs":0,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.703Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.740Z","method":"POST","path":"/api/v1/admin/login","status":200,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:27.743Z","method":"GET","path":"/api/v1/admin/campaigns","status":403,"durationMs":1,"ip":"127.0.0.1"}
+✔ ad operators can read required resources without gaining analytics or moderation access (160.29395ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2831.653287
+{"ts":"2026-10-03T04:11:28.009Z","method":"GET","path":"/health","status":200,"durationMs":13,"ip":"127.0.0.1"}
+▶ health
+  ✔ responds 200 ok (42.973018ms)
+✔ health (43.582071ms)
+{"ts":"2026-10-03T04:11:28.064Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":44,"ip":"127.0.0.1"}
+▶ signup
+  ✔ creates a user and returns a token pair (50.207583ms)
+{"ts":"2026-10-03T04:11:28.105Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":38,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.108Z","method":"POST","path":"/api/v1/auth/signup","status":409,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ rejects a duplicate username or email with 409 (43.61499ms)
+{"ts":"2026-10-03T04:11:28.110Z","method":"POST","path":"/api/v1/auth/signup","status":422,"durationMs":0,"ip":"127.0.0.1"}
+  ✔ rejects invalid input with 422 and per-field messages (2.034049ms)
+✔ signup (96.315032ms)
+{"ts":"2026-10-03T04:11:28.151Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.161Z","method":"POST","path":"/api/v1/auth/refresh","status":200,"durationMs":6,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.162Z","method":"POST","path":"/api/v1/auth/refresh","status":401,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.162Z","method":"POST","path":"/api/v1/auth/refresh","status":401,"durationMs":5,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.164Z","method":"POST","path":"/api/v1/auth/refresh","status":401,"durationMs":5,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.164Z","method":"POST","path":"/api/v1/auth/refresh","status":401,"durationMs":6,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.165Z","method":"POST","path":"/api/v1/auth/refresh","status":401,"durationMs":5,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.169Z","method":"POST","path":"/api/v1/auth/refresh","status":200,"durationMs":2,"ip":"127.0.0.1"}
+▶ login
+  ✔ allows only one concurrent refresh of the same token (58.393139ms)
+{"ts":"2026-10-03T04:11:28.213Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":42,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.252Z","method":"POST","path":"/api/v1/auth/login","status":200,"durationMs":37,"ip":"127.0.0.1"}
+  ✔ logs in with correct credentials (82.495174ms)
+{"ts":"2026-10-03T04:11:28.288Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.323Z","method":"POST","path":"/api/v1/auth/login","status":401,"durationMs":33,"ip":"127.0.0.1"}
+  ✔ rejects a wrong password with 401 (70.801412ms)
+{"ts":"2026-10-03T04:11:28.326Z","method":"POST","path":"/api/v1/auth/login","status":401,"durationMs":0,"ip":"127.0.0.1"}
+  ✔ rejects an unknown email with 401 (not 404 — avoids user enumeration) (3.184696ms)
+✔ login (215.343277ms)
+{"ts":"2026-10-03T04:11:28.362Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.365Z","method":"GET","path":"/api/v1/auth/me","status":200,"durationMs":1,"ip":"127.0.0.1"}
+▶ /api/v1/auth/me
+  ✔ returns the authenticated user for a valid access token (38.983327ms)
+{"ts":"2026-10-03T04:11:28.368Z","method":"GET","path":"/api/v1/auth/me","status":401,"durationMs":0,"ip":"127.0.0.1"}
+  ✔ returns 401 with no Authorization header (2.429966ms)
+{"ts":"2026-10-03T04:11:28.369Z","method":"GET","path":"/api/v1/auth/me","status":401,"durationMs":0,"ip":"127.0.0.1"}
+  ✔ returns 401 for a garbage token (0.973946ms)
+✔ /api/v1/auth/me (42.686242ms)
+{"ts":"2026-10-03T04:11:28.404Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.408Z","method":"POST","path":"/api/v1/auth/refresh","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.410Z","method":"POST","path":"/api/v1/auth/refresh","status":401,"durationMs":0,"ip":"127.0.0.1"}
+▶ refresh token rotation
+  ✔ issues a new token pair and revokes the old refresh token (41.194028ms)
+{"ts":"2026-10-03T04:11:28.446Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.449Z","method":"POST","path":"/api/v1/auth/logout","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.452Z","method":"POST","path":"/api/v1/auth/refresh","status":401,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ rejects an already-used-then-logged-out refresh token (41.193126ms)
+✔ refresh token rotation (82.631056ms)
+ℹ tests 13
+ℹ suites 5
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 623.49928
+{"ts":"2026-10-03T04:11:28.755Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":57,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.799Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":38,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.805Z","method":"POST","path":"/api/v1/users/test_eb56e0d2/conversation","status":200,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.809Z","method":"POST","path":"/api/v1/users/test_eb56e0d2/conversation","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.813Z","method":"POST","path":"/api/v1/users/test_74be0baf/conversation","status":200,"durationMs":1,"ip":"127.0.0.1"}
+▶ opening a conversation
+  ✔ creates a conversation on first contact and returns the same one on a second call (142.111325ms)
+{"ts":"2026-10-03T04:11:28.851Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.855Z","method":"POST","path":"/api/v1/users/test_c5b86c31/conversation","status":400,"durationMs":2,"ip":"127.0.0.1"}
+  ✔ rejects messaging yourself with 400 (41.25228ms)
+{"ts":"2026-10-03T04:11:28.892Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.931Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.935Z","method":"POST","path":"/api/v1/users/test_6005028d/block","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.938Z","method":"POST","path":"/api/v1/users/test_6005028d/conversation","status":404,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:28.941Z","method":"POST","path":"/api/v1/users/test_6067a45b/conversation","status":404,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ a blocked relationship prevents opening a conversation, in either direction (86.274823ms)
+✔ opening a conversation (270.421872ms)
+{"ts":"2026-10-03T04:11:28.977Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.012Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.015Z","method":"POST","path":"/api/v1/users/test_3b1ab85c/conversation","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.019Z","method":"POST","path":"/api/v1/conversations/d28c1950-0853-4ff7-9652-5564dbc114b0/messages","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.023Z","method":"POST","path":"/api/v1/conversations/d28c1950-0853-4ff7-9652-5564dbc114b0/messages","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.029Z","method":"GET","path":"/api/v1/conversations/d28c1950-0853-4ff7-9652-5564dbc114b0/messages","status":200,"durationMs":4,"ip":"127.0.0.1"}
+▶ sending and listing messages
+  ✔ sends text messages and lists them, newest first (87.848138ms)
+{"ts":"2026-10-03T04:11:29.066Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.101Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.105Z","method":"POST","path":"/api/v1/users/test_e99ea1cd/conversation","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.108Z","method":"POST","path":"/api/v1/conversations/a00e7d11-da9f-4abc-82f4-091b1ab2e246/messages","status":422,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ rejects an empty message with no body and no storyId with 422 (78.461642ms)
+{"ts":"2026-10-03T04:11:29.145Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.180Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.215Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.219Z","method":"POST","path":"/api/v1/users/test_43705a76/conversation","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.223Z","method":"POST","path":"/api/v1/conversations/776dbf48-3039-4279-867d-ef7964a6b382/messages","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.225Z","method":"GET","path":"/api/v1/conversations/776dbf48-3039-4279-867d-ef7964a6b382/messages","status":404,"durationMs":0,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.228Z","method":"POST","path":"/api/v1/conversations/776dbf48-3039-4279-867d-ef7964a6b382/messages","status":404,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ a non-participant can't read or send messages in someone else's conversation (119.969081ms)
+{"ts":"2026-10-03T04:11:29.263Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.299Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.302Z","method":"POST","path":"/api/v1/users/test_d23b0245/conversation","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.307Z","method":"POST","path":"/api/v1/conversations/2d2a8d7f-cf7d-4cf7-9cd0-1d1fd96a680e/messages","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.311Z","method":"POST","path":"/api/v1/users/test_b44b0756/block","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.314Z","method":"POST","path":"/api/v1/conversations/2d2a8d7f-cf7d-4cf7-9cd0-1d1fd96a680e/messages","status":404,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ sending a message to a since-blocked participant is denied (85.617034ms)
+✔ sending and listing messages (372.414073ms)
+{"ts":"2026-10-03T04:11:29.349Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.383Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.392Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":5,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.396Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.398Z","method":"POST","path":"/api/v1/users/test_1d0613aa/conversation","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.403Z","method":"POST","path":"/api/v1/conversations/231aa187-c949-4b1c-a34f-9bb7be644cbf/messages","status":201,"durationMs":3,"ip":"127.0.0.1"}
+▶ sharing a Story via DM
+  ✔ attaches a shared Story to the message when sharing is allowed (88.880855ms)
+{"ts":"2026-10-03T04:11:29.437Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.473Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.478Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.482Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.485Z","method":"POST","path":"/api/v1/users/test_cb78bc6c/conversation","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.488Z","method":"POST","path":"/api/v1/conversations/ca83dc6e-6ec2-4b95-9d31-2d906df21003/messages","status":403,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ enforces allowSharing the same way the Share sheet's other options do (85.186109ms)
+{"ts":"2026-10-03T04:11:29.524Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.560Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.596Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.601Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.604Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.607Z","method":"POST","path":"/api/v1/users/test_208c2bde/conversation","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.611Z","method":"POST","path":"/api/v1/conversations/e9d531ee-9f5d-4282-8a46-7f229f4f90c2/messages","status":403,"durationMs":2,"ip":"127.0.0.1"}
+  ✔ can't share a Story the sender can't themselves view (122.948427ms)
+✔ sharing a Story via DM (297.444797ms)
+{"ts":"2026-10-03T04:11:29.646Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":32,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.685Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.688Z","method":"POST","path":"/api/v1/users/test_25f13553/conversation","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.691Z","method":"GET","path":"/api/v1/conversations/unread-count","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.697Z","method":"POST","path":"/api/v1/conversations/58814c8e-29e7-48ce-bb94-38accfc4b42e/messages","status":201,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.700Z","method":"GET","path":"/api/v1/conversations/unread-count","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.702Z","method":"GET","path":"/api/v1/conversations/unread-count","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.705Z","method":"POST","path":"/api/v1/conversations/58814c8e-29e7-48ce-bb94-38accfc4b42e/read","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.708Z","method":"GET","path":"/api/v1/conversations/unread-count","status":200,"durationMs":2,"ip":"127.0.0.1"}
+▶ unread count and mark-read
+  ✔ receiving a message marks the conversation unread for the recipient only, and mark-read clears it (96.238234ms)
+✔ unread count and mark-read (96.534564ms)
+{"ts":"2026-10-03T04:11:29.745Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.786Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":38,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.789Z","method":"POST","path":"/api/v1/users/test_21fc245a/conversation","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.793Z","method":"POST","path":"/api/v1/conversations/d21778b1-49f4-4c16-8d75-bc6c516f340c/messages","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.795Z","method":"GET","path":"/api/v1/conversations/d21778b1-49f4-4c16-8d75-bc6c516f340c/messages","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.798Z","method":"GET","path":"/api/v1/conversations/d21778b1-49f4-4c16-8d75-bc6c516f340c/messages","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.800Z","method":"GET","path":"/api/v1/conversations/d21778b1-49f4-4c16-8d75-bc6c516f340c/messages","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.803Z","method":"GET","path":"/api/v1/conversations/d21778b1-49f4-4c16-8d75-bc6c516f340c/messages","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.806Z","method":"POST","path":"/api/v1/conversations/d21778b1-49f4-4c16-8d75-bc6c516f340c/read","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.808Z","method":"GET","path":"/api/v1/conversations/d21778b1-49f4-4c16-8d75-bc6c516f340c/messages","status":200,"durationMs":1,"ip":"127.0.0.1"}
+▶ message delivery status
+  ✔ progresses sent -> delivered -> read as the recipient fetches, then reads (100.523693ms)
+✔ message delivery status (100.762096ms)
+{"ts":"2026-10-03T04:11:29.847Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.888Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":38,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.923Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.927Z","method":"POST","path":"/api/v1/users/test_1e64bb3a/conversation","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.930Z","method":"POST","path":"/api/v1/users/test_46c8443b/conversation","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.934Z","method":"POST","path":"/api/v1/conversations/0882c03c-9b92-428a-b5bd-8b2fe24f1b8b/messages","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.937Z","method":"POST","path":"/api/v1/conversations/7dd737d8-bd3f-4c05-8fb8-5f99d8c6fa8a/messages","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:29.941Z","method":"GET","path":"/api/v1/conversations","status":200,"durationMs":2,"ip":"127.0.0.1"}
+▶ conversation list
+  ✔ lists conversations most-recently-active first with the other participant and last message (132.060405ms)
+✔ conversation list (132.248514ms)
+ℹ tests 13
+ℹ suites 6
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1414.579512
+✔ psql parameters round-trip Unicode, quotes, newlines and metacommand-looking input (9.678788ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 71.197625
+{"ts":"2026-10-03T04:11:30.420Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":55,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.465Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":39,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.476Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":6,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.482Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.487Z","method":"POST","path":"/api/v1/stories/e70e4632-f810-4b36-8366-f86efc1f743d/like","status":204,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.492Z","method":"POST","path":"/api/v1/stories/e70e4632-f810-4b36-8366-f86efc1f743d/like","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.500Z","method":"GET","path":"/api/v1/stories/e70e4632-f810-4b36-8366-f86efc1f743d","status":200,"durationMs":6,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.506Z","method":"DELETE","path":"/api/v1/stories/e70e4632-f810-4b36-8366-f86efc1f743d/like","status":204,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.510Z","method":"GET","path":"/api/v1/stories/e70e4632-f810-4b36-8366-f86efc1f743d","status":200,"durationMs":3,"ip":"127.0.0.1"}
+▶ likes
+  ✔ like is idempotent, unlike removes it, and counts/viewerHasLiked reflect reality (178.853239ms)
+{"ts":"2026-10-03T04:11:30.549Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.590Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.595Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.598Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.602Z","method":"POST","path":"/api/v1/stories/bd51376a-43ad-40c9-aead-522cef10c1cf/like","status":403,"durationMs":2,"ip":"127.0.0.1"}
+  ✔ liking a Story you can't view is denied the same way viewing it is (90.0269ms)
+✔ likes (269.984437ms)
+{"ts":"2026-10-03T04:11:30.637Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.674Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.679Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.682Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.688Z","method":"POST","path":"/api/v1/stories/ddd1f90f-9ecf-4381-930d-a3f0672744a9/comments","status":201,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.692Z","method":"POST","path":"/api/v1/stories/ddd1f90f-9ecf-4381-930d-a3f0672744a9/comments","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.695Z","method":"GET","path":"/api/v1/stories/ddd1f90f-9ecf-4381-930d-a3f0672744a9/comments","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.698Z","method":"GET","path":"/api/v1/stories/ddd1f90f-9ecf-4381-930d-a3f0672744a9","status":200,"durationMs":2,"ip":"127.0.0.1"}
+▶ comments
+  ✔ creates, lists in order, and reflects in commentCount (95.23022ms)
+{"ts":"2026-10-03T04:11:30.734Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.739Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.743Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.745Z","method":"POST","path":"/api/v1/stories/10b731e9-14c9-454d-8b61-a30ffd76e0a4/comments","status":422,"durationMs":0,"ip":"127.0.0.1"}
+  ✔ rejects an empty or all-whitespace comment with 422 (47.729259ms)
+{"ts":"2026-10-03T04:11:30.781Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.821Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":38,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.826Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.829Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.832Z","method":"POST","path":"/api/v1/stories/7d089b2c-3668-444d-8365-839aa2492201/comments","status":403,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.836Z","method":"POST","path":"/api/v1/stories/7d089b2c-3668-444d-8365-839aa2492201/comments","status":201,"durationMs":2,"ip":"127.0.0.1"}
+  ✔ 'disabled' blocks everyone except the owner (90.394966ms)
+{"ts":"2026-10-03T04:11:30.872Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.909Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.913Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.918Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.922Z","method":"POST","path":"/api/v1/stories/f7b2cbdd-d258-455b-b9a6-bf75eb6f4891/comments","status":403,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.926Z","method":"POST","path":"/api/v1/users/test_6718375c/follow","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:30.932Z","method":"POST","path":"/api/v1/stories/f7b2cbdd-d258-455b-b9a6-bf75eb6f4891/comments","status":201,"durationMs":4,"ip":"127.0.0.1"}
+  ✔ 'followers' blocks non-followers, then allows once followed (95.746766ms)
+{"ts":"2026-10-03T04:11:30.968Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.002Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":32,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.036Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":32,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.041Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.045Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.050Z","method":"POST","path":"/api/v1/stories/32415dd3-2cd3-466b-a47b-a434fc80d57c/comments","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.054Z","method":"POST","path":"/api/v1/stories/32415dd3-2cd3-466b-a47b-a434fc80d57c/comments","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.057Z","method":"DELETE","path":"/api/v1/comments/81c0820f-29c3-46dc-a939-9d51944e0e96","status":403,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.059Z","method":"DELETE","path":"/api/v1/comments/81c0820f-29c3-46dc-a939-9d51944e0e96","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.061Z","method":"DELETE","path":"/api/v1/comments/2a0727ae-1455-49e4-9d8e-5d09037473d0","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.064Z","method":"GET","path":"/api/v1/stories/32415dd3-2cd3-466b-a47b-a434fc80d57c/comments","status":200,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ deletion: author can delete their own; the Story owner can delete anyone's; a third party cannot (131.999219ms)
+{"ts":"2026-10-03T04:11:31.099Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.135Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.142Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":5,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.145Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.148Z","method":"POST","path":"/api/v1/stories/9f999a9b-76e5-47b9-8d27-809e3b8f3e9e/comments","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.150Z","method":"GET","path":"/api/v1/stories/9f999a9b-76e5-47b9-8d27-809e3b8f3e9e/comments","status":200,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ reading comments only requires Story view access, not comment-post permission (86.429042ms)
+✔ comments (548.248559ms)
+{"ts":"2026-10-03T04:11:31.184Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":32,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.219Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.223Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.227Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.230Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.233Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.237Z","method":"POST","path":"/api/v1/stories/34d49ed7-73e7-46b4-823c-5b33315feda5/share","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.240Z","method":"POST","path":"/api/v1/stories/8c594dc6-1466-4296-8c12-8f99946d9a46/share","status":403,"durationMs":2,"ip":"127.0.0.1"}
+▶ sharing
+  ✔ succeeds when allowSharing is true and is denied when false (89.162437ms)
+{"ts":"2026-10-03T04:11:31.273Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":32,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.309Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.313Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.316Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.319Z","method":"POST","path":"/api/v1/stories/931d587f-48ec-4e09-af5e-270e56af76d2/share","status":403,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ sharing a Story you can't view is denied (79.321298ms)
+✔ sharing (168.799273ms)
+ℹ tests 10
+ℹ suites 3
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1146.315471
+{"ts":"2026-10-03T04:11:31.559Z","method":"GET","path":"/admin","status":404,"durationMs":5,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.568Z","method":"GET","path":"/api/v1/admin/reports","status":404,"durationMs":1,"ip":"127.0.0.1"}
+✔ new features default off and unauthenticated admin routes remain inaccessible (44.185953ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 204.798189
+{"ts":"2026-10-03T04:11:31.897Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":53,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.910Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":6,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.916Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.924Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":5,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.928Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.935Z","method":"POST","path":"/api/v1/highlights","status":201,"durationMs":5,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.939Z","method":"PATCH","path":"/api/v1/highlights/8f54f0c2-bb93-46ed-988c-465eafc709f6","status":422,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.942Z","method":"GET","path":"/api/v1/highlights/8f54f0c2-bb93-46ed-988c-465eafc709f6","status":200,"durationMs":1,"ip":"127.0.0.1"}
+▶ creating and editing a Highlight
+  ✔ does not change items or title when the proposed cover is invalid (127.45113ms)
+{"ts":"2026-10-03T04:11:31.981Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.987Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.991Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:31.995Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.000Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.005Z","method":"POST","path":"/api/v1/highlights","status":201,"durationMs":3,"ip":"127.0.0.1"}
+  ✔ creates a Highlight from your own Stories and reports a real cover/item count (62.319194ms)
+{"ts":"2026-10-03T04:11:32.044Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.078Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":32,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.083Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.087Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.089Z","method":"POST","path":"/api/v1/highlights","status":404,"durationMs":0,"ip":"127.0.0.1"}
+  ✔ rejects creating a Highlight from someone else's Story (83.726272ms)
+{"ts":"2026-10-03T04:11:32.125Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.128Z","method":"POST","path":"/api/v1/highlights","status":422,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ rejects an empty storyIds array with 422 (38.210457ms)
+{"ts":"2026-10-03T04:11:32.165Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.170Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.173Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.177Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.180Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.184Z","method":"POST","path":"/api/v1/highlights","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.188Z","method":"PATCH","path":"/api/v1/highlights/1b22257f-bfe9-432e-a977-e6464ef41f8b","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.193Z","method":"PATCH","path":"/api/v1/highlights/1b22257f-bfe9-432e-a977-e6464ef41f8b","status":200,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.196Z","method":"PATCH","path":"/api/v1/highlights/1b22257f-bfe9-432e-a977-e6464ef41f8b","status":422,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ renames and replaces the item set via PATCH, but refuses to empty it (67.861988ms)
+{"ts":"2026-10-03T04:11:32.231Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.270Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.274Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.277Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.281Z","method":"POST","path":"/api/v1/highlights","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.283Z","method":"PATCH","path":"/api/v1/highlights/b6a6d2b2-e797-4919-affe-90fe9aa7facd","status":404,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.285Z","method":"DELETE","path":"/api/v1/highlights/b6a6d2b2-e797-4919-affe-90fe9aa7facd","status":404,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.287Z","method":"DELETE","path":"/api/v1/highlights/b6a6d2b2-e797-4919-affe-90fe9aa7facd","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.290Z","method":"GET","path":"/api/v1/highlights/b6a6d2b2-e797-4919-affe-90fe9aa7facd","status":404,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ only the owner can update or delete their Highlight (93.89621ms)
+✔ creating and editing a Highlight (474.527379ms)
+{"ts":"2026-10-03T04:11:32.326Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.333Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.337Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.340Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.342Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.347Z","method":"POST","path":"/api/v1/highlights","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.350Z","method":"PATCH","path":"/api/v1/highlights/3b606cff-6039-423b-8ffb-e100883e4871","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.353Z","method":"PATCH","path":"/api/v1/highlights/3b606cff-6039-423b-8ffb-e100883e4871","status":200,"durationMs":1,"ip":"127.0.0.1"}
+▶ Highlight cover override
+  ✔ defaults to the first item, can be overridden to any other member Story, and cleared back to the default (63.358906ms)
+{"ts":"2026-10-03T04:11:32.390Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.394Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.398Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.401Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.403Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.408Z","method":"POST","path":"/api/v1/highlights","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.411Z","method":"PATCH","path":"/api/v1/highlights/91ad06eb-b3a9-4ff9-bf28-fcfa2308661a","status":422,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ rejects a coverStoryId that isn't one of the Highlight's own Stories (56.961255ms)
+{"ts":"2026-10-03T04:11:32.449Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.452Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.455Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.459Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.462Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.466Z","method":"POST","path":"/api/v1/highlights","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.469Z","method":"PATCH","path":"/api/v1/highlights/80f785a9-c69f-431a-8d46-1888e0fd8db5","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.473Z","method":"PATCH","path":"/api/v1/highlights/80f785a9-c69f-431a-8d46-1888e0fd8db5","status":200,"durationMs":2,"ip":"127.0.0.1"}
+  ✔ dropping the cover Story from the item set falls back to the default cover (62.224343ms)
+✔ Highlight cover override (182.987533ms)
+{"ts":"2026-10-03T04:11:32.510Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.544Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":32,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.580Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.585Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.590Z","method":"POST","path":"/api/v1/users/test_94be685a/follow","status":200,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.592Z","method":"GET","path":"/api/v1/follow-requests","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.596Z","method":"POST","path":"/api/v1/follow-requests/770547b2-e40b-41d6-ac65-0299985486d2/accept","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.600Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.603Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.607Z","method":"POST","path":"/api/v1/highlights","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.609Z","method":"GET","path":"/api/v1/users/test_94be685a/highlights","status":403,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.612Z","method":"GET","path":"/api/v1/highlights/e5dc4d35-050d-4930-bbdd-eb4b94a3d128","status":403,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.614Z","method":"GET","path":"/api/v1/users/test_94be685a/highlights","status":200,"durationMs":1,"ip":"127.0.0.1"}
+▶ viewing another user's Highlights
+  ✔ gates the list and detail the same way a private account gates everything else (141.185987ms)
+{"ts":"2026-10-03T04:11:32.650Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.685Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.689Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.692Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.696Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.699Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.705Z","method":"POST","path":"/api/v1/highlights","status":201,"durationMs":5,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.707Z","method":"GET","path":"/api/v1/highlights/21c51383-4083-4509-a328-339e79b0b6f1","status":200,"durationMs":0,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.710Z","method":"GET","path":"/api/v1/highlights/21c51383-4083-4509-a328-339e79b0b6f1","status":200,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ hides a followers-only item from a non-follower while still counting it for the owner (95.899653ms)
+✔ viewing another user's Highlights (237.332366ms)
+{"ts":"2026-10-03T04:11:32.746Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.781Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.785Z","method":"POST","path":"/api/v1/users/test_6edc9b6a/follow","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.790Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.792Z","method":"GET","path":"/api/v1/auth/me","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:32.796Z","method":"POST","path":"/api/v1/highlights","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.000Z","method":"GET","path":"/api/v1/stories/cc64cf5a-d5c6-43b9-b784-a9ca270f2967","status":404,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.009Z","method":"GET","path":"/api/v1/highlights/31b4f565-207c-4d84-9a0b-5c36ec59343a/items/cc64cf5a-d5c6-43b9-b784-a9ca270f2967","status":200,"durationMs":7,"ip":"127.0.0.1"}
+▶ Highlights survive a Story's normal 24h expiry
+  ✔ keeps an expired Story reachable through its Highlight for a permitted viewer, while the plain Story endpoint still 404s them (1306.932061ms)
+{"ts":"2026-10-03T04:11:34.018Z","method":"GET","path":"/api/v1/media/f2ff9d07-497f-4838-aeb6-b08a23ac317c/file","status":200,"durationMs":7,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.054Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.057Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.060Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.063Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.066Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.071Z","method":"POST","path":"/api/v1/highlights","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.073Z","method":"GET","path":"/api/v1/highlights/a43dbe9c-f9f9-4082-99ed-2d95c55008a5/items/cece5cdc-b4ae-41d6-a09a-f74fea9db233","status":404,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ refuses the Highlight-item endpoint for a real Story that isn't actually a member of that Highlight (55.518747ms)
+✔ Highlights survive a Story's normal 24h expiry (1362.682963ms)
+{"ts":"2026-10-03T04:11:34.109Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.114Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.118Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.121Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.124Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.129Z","method":"POST","path":"/api/v1/highlights","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.132Z","method":"DELETE","path":"/api/v1/stories/4b7d7b93-3b7e-4ca0-a9f5-742bcd8a7841","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.134Z","method":"GET","path":"/api/v1/highlights/d548889a-03fc-4228-ad72-79efcea24032","status":200,"durationMs":0,"ip":"127.0.0.1"}
+▶ deleting a Story removes it from every Highlight
+  ✔ drops a deleted Story out of its Highlight's item list and item count (61.177183ms)
+✔ deleting a Story removes it from every Highlight (61.345753ms)
+{"ts":"2026-10-03T04:11:34.171Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.175Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.179Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.183Z","method":"POST","path":"/api/v1/highlights","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.187Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.194Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":5,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.201Z","method":"POST","path":"/api/v1/highlights","status":201,"durationMs":5,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.205Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.208Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.211Z","method":"POST","path":"/api/v1/highlights","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.213Z","method":"GET","path":"/api/v1/users/test_3b07db36/highlights","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.217Z","method":"POST","path":"/api/v1/highlights/reorder","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.220Z","method":"GET","path":"/api/v1/users/test_3b07db36/highlights","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.222Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.225Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.228Z","method":"POST","path":"/api/v1/highlights","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.230Z","method":"GET","path":"/api/v1/users/test_3b07db36/highlights","status":200,"durationMs":1,"ip":"127.0.0.1"}
+▶ reordering Highlights
+  ✔ reorders to exactly the given order and a fresh Highlight still joins the end (95.320385ms)
+{"ts":"2026-10-03T04:11:34.265Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.268Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.271Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.275Z","method":"POST","path":"/api/v1/highlights","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.278Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.281Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.284Z","method":"POST","path":"/api/v1/highlights","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.287Z","method":"POST","path":"/api/v1/highlights/reorder","status":422,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.321Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.324Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.327Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.331Z","method":"POST","path":"/api/v1/highlights","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.334Z","method":"POST","path":"/api/v1/highlights/reorder","status":422,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ rejects a partial or stale set with 422 rather than silently dropping a Highlight (103.709312ms)
+✔ reordering Highlights (199.292527ms)
+ℹ tests 16
+ℹ suites 6
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2663.693421
+{"ts":"2026-10-03T04:11:34.645Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":52,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.688Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.698Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":6,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.704Z","method":"GET","path":"/api/v1/media/e40e1bb0-d2d6-4a89-be62-95f171aae2ec/file","status":206,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.709Z","method":"GET","path":"/api/v1/media/e40e1bb0-d2d6-4a89-be62-95f171aae2ec/file","status":206,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.711Z","method":"GET","path":"/api/v1/media/e40e1bb0-d2d6-4a89-be62-95f171aae2ec/file","status":416,"durationMs":0,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.714Z","method":"GET","path":"/api/v1/media/e40e1bb0-d2d6-4a89-be62-95f171aae2ec/file","status":416,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.717Z","method":"GET","path":"/api/v1/media/e40e1bb0-d2d6-4a89-be62-95f171aae2ec/file","status":416,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.720Z","method":"GET","path":"/api/v1/media/e40e1bb0-d2d6-4a89-be62-95f171aae2ec/file","status":416,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.723Z","method":"GET","path":"/api/v1/media/e40e1bb0-d2d6-4a89-be62-95f171aae2ec/file","status":404,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.725Z","method":"GET","path":"/api/v1/media/e40e1bb0-d2d6-4a89-be62-95f171aae2ec/file","status":401,"durationMs":0,"ip":"127.0.0.1"}
+▶ media upload — photos
+  ✔ supports authenticated byte ranges and rejects invalid ranges without disclosing private media (167.210498ms)
+{"ts":"2026-10-03T04:11:34.731Z","method":"GET","path":"/api/v1/media/e40e1bb0-d2d6-4a89-be62-95f171aae2ec/file","status":200,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.768Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.773Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+  ✔ accepts a real PNG and extracts its true dimensions (43.826936ms)
+{"ts":"2026-10-03T04:11:34.808Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.813Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+  ✔ accepts a real JPEG and extracts its true dimensions (40.024264ms)
+{"ts":"2026-10-03T04:11:34.847Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.851Z","method":"POST","path":"/api/v1/media/photos","status":415,"durationMs":2,"ip":"127.0.0.1"}
+  ✔ rejects a Content-Type that doesn't match the actual file bytes (38.390139ms)
+{"ts":"2026-10-03T04:11:34.887Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.891Z","method":"POST","path":"/api/v1/media/photos","status":415,"durationMs":2,"ip":"127.0.0.1"}
+  ✔ rejects bytes that aren't a real image at all (39.446406ms)
+{"ts":"2026-10-03T04:11:34.929Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.931Z","method":"POST","path":"/api/v1/media/photos","status":400,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ rejects an empty body (40.349596ms)
+{"ts":"2026-10-03T04:11:34.934Z","method":"POST","path":"/api/v1/media/photos","status":401,"durationMs":0,"ip":"127.0.0.1"}
+  ✔ requires authentication (2.474411ms)
+✔ media upload — photos (372.830402ms)
+{"ts":"2026-10-03T04:11:34.970Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:34.975Z","method":"POST","path":"/api/v1/media/videos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+▶ media upload — videos
+  ✔ accepts a real MP4 container (40.446139ms)
+{"ts":"2026-10-03T04:11:35.009Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.013Z","method":"POST","path":"/api/v1/media/videos","status":415,"durationMs":2,"ip":"127.0.0.1"}
+  ✔ rejects a photo posted to the video endpoint (38.318142ms)
+✔ media upload — videos (79.187349ms)
+{"ts":"2026-10-03T04:11:35.048Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":32,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.053Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.056Z","method":"GET","path":"/api/v1/media/4fcc2487-c846-4ae5-80fb-4771915204d4","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.060Z","method":"GET","path":"/api/v1/media/4fcc2487-c846-4ae5-80fb-4771915204d4/file","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.097Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.102Z","method":"GET","path":"/api/v1/media/4fcc2487-c846-4ae5-80fb-4771915204d4","status":404,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.105Z","method":"GET","path":"/api/v1/media/4fcc2487-c846-4ae5-80fb-4771915204d4/file","status":404,"durationMs":1,"ip":"127.0.0.1"}
+▶ media retrieval and ownership
+  ✔ round-trips the exact original bytes and enforces owner-only access (91.227313ms)
+{"ts":"2026-10-03T04:11:35.140Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.143Z","method":"GET","path":"/api/v1/media/00000000-0000-0000-0000-000000000000","status":404,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ returns 404 for a nonexistent media id (38.379062ms)
+✔ media retrieval and ownership (129.877838ms)
+ℹ tests 11
+ℹ suites 3
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 732.729053
+{"ts":"2026-10-03T04:11:35.435Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":56,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.484Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":41,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.497Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":8,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.506Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.512Z","method":"POST","path":"/api/v1/stories/8bf9f21c-a5cf-40ee-9611-287910567962/comments","status":201,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.516Z","method":"POST","path":"/api/v1/reports","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.521Z","method":"POST","path":"/api/v1/reports","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.525Z","method":"POST","path":"/api/v1/reports","status":201,"durationMs":2,"ip":"127.0.0.1"}
+▶ filing a report
+  ✔ reports a Story, a comment, and a user account (172.960214ms)
+{"ts":"2026-10-03T04:11:35.566Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":39,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.572Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.576Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.580Z","method":"POST","path":"/api/v1/stories/7462dee9-8645-4cad-a29f-07d303e53ce9/comments","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.583Z","method":"POST","path":"/api/v1/reports","status":400,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.585Z","method":"POST","path":"/api/v1/reports","status":400,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.587Z","method":"POST","path":"/api/v1/reports","status":400,"durationMs":0,"ip":"127.0.0.1"}
+  ✔ rejects reporting your own Story, comment, or account (61.804908ms)
+{"ts":"2026-10-03T04:11:35.624Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.668Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":41,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.673Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.677Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.681Z","method":"DELETE","path":"/api/v1/stories/f5a55624-4579-4e46-9cfc-84a7381a594e","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.684Z","method":"POST","path":"/api/v1/reports","status":404,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ 404s on a nonexistent or already-deleted target (96.186911ms)
+{"ts":"2026-10-03T04:11:35.726Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":41,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.769Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":41,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.775Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.779Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.781Z","method":"POST","path":"/api/v1/reports","status":422,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ rejects an invalid reason or targetType with 422 (97.246353ms)
+✔ filing a report (429.182636ms)
+{"ts":"2026-10-03T04:11:35.820Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.824Z","method":"GET","path":"/api/v1/moderation/reports","status":403,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.827Z","method":"POST","path":"/api/v1/moderation/users/test_57c1be57/suspend","status":403,"durationMs":1,"ip":"127.0.0.1"}
+▶ the moderation queue is moderator-only
+  ✔ denies a non-moderator (45.25834ms)
+{"ts":"2026-10-03T04:11:35.865Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.904Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.939Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.943Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.946Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.949Z","method":"POST","path":"/api/v1/reports","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.952Z","method":"POST","path":"/api/v1/reports","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:35.958Z","method":"GET","path":"/api/v1/moderation/reports","status":200,"durationMs":4,"ip":"127.0.0.1"}
+  ✔ lists pending reports oldest-first with denormalized reporter/target info (130.851633ms)
+✔ the moderation queue is moderator-only (176.476045ms)
+{"ts":"2026-10-03T04:11:35.997Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.034Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.069Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":32,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.074Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.077Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.079Z","method":"POST","path":"/api/v1/reports","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.085Z","method":"POST","path":"/api/v1/moderation/reports/37453fee-0581-4a0b-8f8b-8f63f3dac0a3/resolve","status":200,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.089Z","method":"GET","path":"/api/v1/moderation/reports","status":200,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.092Z","method":"GET","path":"/api/v1/moderation/reports","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"event":"moderation_action_failed","actor":"e1b6a669-5936-4286-83ab-9bbd08169fe7","action":"keep"}
+{"ts":"2026-10-03T04:11:36.096Z","method":"POST","path":"/api/v1/moderation/reports/37453fee-0581-4a0b-8f8b-8f63f3dac0a3/resolve","status":409,"durationMs":2,"ip":"127.0.0.1"}
+▶ resolving a report
+  ✔ dismiss moves it out of the pending queue and into dismissed (137.951226ms)
+{"ts":"2026-10-03T04:11:36.135Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.175Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.210Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.214Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.218Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.221Z","method":"POST","path":"/api/v1/reports","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.227Z","method":"POST","path":"/api/v1/moderation/reports/c8a096f6-b891-40f1-931b-a4f5a8475832/resolve","status":200,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.232Z","method":"GET","path":"/api/v1/stories/47e7895d-fc08-4c44-b9d6-9a43aa0d48d9","status":404,"durationMs":3,"ip":"127.0.0.1"}
+  ✔ remove_content actually deletes a reported Story (135.796991ms)
+{"ts":"2026-10-03T04:11:36.268Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.305Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.340Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.344Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.348Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.382Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.389Z","method":"POST","path":"/api/v1/stories/80e1bff3-76d1-465e-a89a-e15aa894f4f5/comments","status":201,"durationMs":5,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.393Z","method":"POST","path":"/api/v1/reports","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.398Z","method":"POST","path":"/api/v1/moderation/reports/db195aeb-c08f-4190-a680-7b1cd2c5bd59/resolve","status":200,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.401Z","method":"GET","path":"/api/v1/stories/80e1bff3-76d1-465e-a89a-e15aa894f4f5/comments","status":200,"durationMs":2,"ip":"127.0.0.1"}
+  ✔ remove_content actually deletes a reported comment (169.435308ms)
+{"ts":"2026-10-03T04:11:36.437Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.475Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.510Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.515Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.518Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.521Z","method":"POST","path":"/api/v1/reports","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.523Z","method":"POST","path":"/api/v1/moderation/reports/30cf30a4-abe5-4951-924e-82c18179c2a0/resolve","status":400,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.525Z","method":"POST","path":"/api/v1/reports","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.530Z","method":"POST","path":"/api/v1/moderation/reports/928372d6-46ba-4515-b06e-516224c9ee31/resolve","status":400,"durationMs":3,"ip":"127.0.0.1"}
+  ✔ rejects remove_content on a user report, and suspend_user on a story report (128.116995ms)
+{"ts":"2026-10-03T04:11:36.568Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.603Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.639Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.643Z","method":"POST","path":"/api/v1/reports","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.648Z","method":"POST","path":"/api/v1/moderation/reports/7dd7664c-4d9f-408c-835c-76e216c57640/resolve","status":200,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.650Z","method":"POST","path":"/api/v1/auth/login","status":401,"durationMs":0,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.653Z","method":"POST","path":"/api/v1/auth/refresh","status":401,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ suspend_user actually blocks login and immediately invalidates the user's outstanding refresh token (122.975527ms)
+✔ resolving a report (694.835055ms)
+{"ts":"2026-10-03T04:11:36.691Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.729Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.734Z","method":"POST","path":"/api/v1/moderation/users/test_097149eb/suspend","status":204,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.736Z","method":"POST","path":"/api/v1/auth/login","status":401,"durationMs":0,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.740Z","method":"POST","path":"/api/v1/moderation/users/test_097149eb/unsuspend","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:36.775Z","method":"POST","path":"/api/v1/auth/login","status":200,"durationMs":34,"ip":"127.0.0.1"}
+▶ standalone suspend/unsuspend
+  ✔ suspends and reverses without needing a report on file (122.711625ms)
+✔ standalone suspend/unsuspend (122.935357ms)
+ℹ tests 12
+ℹ suites 4
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1565.88608
+{"ts":"2026-10-03T04:11:37.078Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":56,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.122Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":38,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.133Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":7,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.139Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.146Z","method":"POST","path":"/api/v1/stories/3e0d716e-f4d1-47b4-a37b-53567b30f625/like","status":204,"durationMs":5,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.150Z","method":"POST","path":"/api/v1/stories/3e0d716e-f4d1-47b4-a37b-53567b30f625/like","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.154Z","method":"POST","path":"/api/v1/stories/3e0d716e-f4d1-47b4-a37b-53567b30f625/like","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.158Z","method":"GET","path":"/api/v1/notifications","status":200,"durationMs":2,"ip":"127.0.0.1"}
+▶ notifications — likes and comments
+  ✔ a like fires exactly one notification, even when the like endpoint is called repeatedly (161.970543ms)
+{"ts":"2026-10-03T04:11:37.201Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":39,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.206Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.211Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.214Z","method":"POST","path":"/api/v1/stories/e7cad8e3-f848-459f-aef1-63d13a4cfabd/like","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.217Z","method":"GET","path":"/api/v1/notifications","status":200,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ liking your own Story does not notify yourself (58.38847ms)
+{"ts":"2026-10-03T04:11:37.254Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.294Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.299Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.303Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.310Z","method":"POST","path":"/api/v1/stories/a601e412-4e1c-4aa9-b824-a318aec9503b/comments","status":201,"durationMs":5,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.313Z","method":"GET","path":"/api/v1/notifications","status":200,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ a comment fires a comment notification to the Story owner (96.150546ms)
+{"ts":"2026-10-03T04:11:37.351Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.356Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.360Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.363Z","method":"POST","path":"/api/v1/stories/b9a7fe6d-becb-4d88-a5d2-6ae9f016b804/comments","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.366Z","method":"GET","path":"/api/v1/notifications","status":200,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ commenting on your own Story does not notify yourself (52.266027ms)
+{"ts":"2026-10-03T04:11:37.406Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":38,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.440Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.475Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.479Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.483Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.491Z","method":"POST","path":"/api/v1/stories/082c9194-8ad9-4964-88b3-36635234a86f/comments","status":201,"durationMs":6,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.493Z","method":"GET","path":"/api/v1/notifications","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.496Z","method":"GET","path":"/api/v1/notifications","status":200,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ @mentioning a real, distinct user in a comment notifies them; unknown usernames and self-mentions are ignored (130.063523ms)
+✔ notifications — likes and comments (500.138777ms)
+{"ts":"2026-10-03T04:11:37.533Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.571Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.606Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.611Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.615Z","method":"POST","path":"/api/v1/users/test_a34dd713/follow","status":200,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.618Z","method":"GET","path":"/api/v1/notifications","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.621Z","method":"POST","path":"/api/v1/users/test_d27ab4b6/follow","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.624Z","method":"GET","path":"/api/v1/notifications","status":200,"durationMs":1,"ip":"127.0.0.1"}
+▶ notifications — follow
+  ✔ following a public account notifies them; following a private one notifies a follow request instead (127.309246ms)
+{"ts":"2026-10-03T04:11:37.659Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.695Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.698Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.703Z","method":"POST","path":"/api/v1/users/test_c315bedf/follow","status":200,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.705Z","method":"GET","path":"/api/v1/follow-requests","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.710Z","method":"POST","path":"/api/v1/follow-requests/fd5af686-82ba-4255-9815-1adbdae3eb2a/accept","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.712Z","method":"GET","path":"/api/v1/notifications","status":200,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ accepting a follow request notifies the original requester that they're now following (88.330475ms)
+{"ts":"2026-10-03T04:11:37.748Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.783Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.787Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.791Z","method":"POST","path":"/api/v1/users/test_73c39737/follow","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.794Z","method":"POST","path":"/api/v1/users/test_73c39737/follow","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.796Z","method":"GET","path":"/api/v1/notifications","status":200,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ re-requesting a follow while already pending does not duplicate the follow_request notification (84.423959ms)
+✔ notifications — follow (300.547147ms)
+{"ts":"2026-10-03T04:11:37.833Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.868Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.905Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.909Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.915Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.918Z","method":"POST","path":"/api/v1/stories/2f53537f-44c5-444b-b3c8-34b21f126567/like","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.922Z","method":"POST","path":"/api/v1/stories/2f53537f-44c5-444b-b3c8-34b21f126567/comments","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.925Z","method":"GET","path":"/api/v1/notifications/unread-count","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.927Z","method":"GET","path":"/api/v1/notifications","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.930Z","method":"POST","path":"/api/v1/notifications/4c96855b-cf4a-4e96-8c0e-98071bae9cb8/read","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.932Z","method":"GET","path":"/api/v1/notifications/unread-count","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.934Z","method":"POST","path":"/api/v1/notifications/read-all","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.936Z","method":"GET","path":"/api/v1/notifications/unread-count","status":200,"durationMs":0,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:37.939Z","method":"GET","path":"/api/v1/notifications","status":200,"durationMs":1,"ip":"127.0.0.1"}
+▶ notifications — pagination, unread count, and mark-read
+  ✔ unread count reflects reality, mark-one-read only affects that notification, mark-all-read clears everything (141.932574ms)
+{"ts":"2026-10-03T04:11:37.976Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.009Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":32,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.048Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.055Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.059Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.064Z","method":"POST","path":"/api/v1/stories/6c2e2ab5-ffdd-4e2f-863c-5aadc2de3cb7/like","status":204,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.067Z","method":"GET","path":"/api/v1/notifications","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.069Z","method":"POST","path":"/api/v1/notifications/dfe309eb-e1ed-48f6-a154-77bf8dc7cccd/read","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.071Z","method":"GET","path":"/api/v1/notifications","status":200,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ marking read is ownership-scoped — a notification can only be marked read by its recipient (131.928369ms)
+{"ts":"2026-10-03T04:11:38.108Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.111Z","method":"POST","path":"/api/v1/notifications/not-a-uuid/read","status":404,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ rejects a malformed notification id with 404 rather than erroring (39.841548ms)
+{"ts":"2026-10-03T04:11:38.148Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.183Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":32,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.188Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.191Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.194Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.197Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.201Z","method":"POST","path":"/api/v1/stories/184df60e-4076-4418-8c5e-a8c4b0487efb/like","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.204Z","method":"POST","path":"/api/v1/stories/8911d7a5-cb62-4f30-8d68-200dfd6ba143/like","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.207Z","method":"GET","path":"/api/v1/notifications","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.209Z","method":"GET","path":"/api/v1/notifications","status":200,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ paginates with limit/offset (98.449277ms)
+✔ notifications — pagination, unread count, and mark-read (412.566393ms)
+{"ts":"2026-10-03T04:11:38.244Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.247Z","method":"GET","path":"/api/v1/notifications/preferences","status":200,"durationMs":0,"ip":"127.0.0.1"}
+▶ notifications — preferences
+  ✔ default preferences are all-enabled when the user has never touched them (38.359162ms)
+{"ts":"2026-10-03T04:11:38.283Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.319Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.323Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.327Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.330Z","method":"PATCH","path":"/api/v1/notifications/preferences","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.334Z","method":"POST","path":"/api/v1/stories/4495395f-be72-4915-82ef-4be41dbf4d66/like","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.338Z","method":"POST","path":"/api/v1/stories/4495395f-be72-4915-82ef-4be41dbf4d66/comments","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.341Z","method":"GET","path":"/api/v1/notifications","status":200,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ turning off likes suppresses only like notifications, leaving comments unaffected (92.510556ms)
+{"ts":"2026-10-03T04:11:38.376Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.411Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.413Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.416Z","method":"PATCH","path":"/api/v1/notifications/preferences","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.419Z","method":"POST","path":"/api/v1/users/test_c2cc5a58/follow","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.422Z","method":"GET","path":"/api/v1/notifications","status":200,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ follow_request notifications are never suppressible, even with follows disabled (80.908483ms)
+{"ts":"2026-10-03T04:11:38.457Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.492Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.529Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.533Z","method":"PATCH","path":"/api/v1/notifications/preferences","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.536Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.540Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.544Z","method":"POST","path":"/api/v1/stories/e9070ae8-72fd-4487-9e14-48e74b85eda3/comments","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.547Z","method":"GET","path":"/api/v1/notifications","status":200,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ disabling mentions suppresses @mention notifications from comments (125.18542ms)
+{"ts":"2026-10-03T04:11:38.582Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:38.585Z","method":"PATCH","path":"/api/v1/notifications/preferences","status":422,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ rejects a non-boolean preference value (38.53245ms)
+✔ notifications — preferences (375.9599ms)
+ℹ tests 17
+ℹ suites 4
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1736.898127
+{"ts":"2026-10-03T04:11:38.849Z","method":"POST","path":"/api/v1/auth/google","status":401,"durationMs":6,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:39.012Z","method":"POST","path":"/api/v1/auth/google","status":200,"durationMs":11,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:39.015Z","method":"POST","path":"/api/v1/auth/provider/complete","status":422,"durationMs":1,"ip":"127.0.0.1"}
+{"event":"provider_login_succeeded"}
+{"ts":"2026-10-03T04:11:39.026Z","method":"POST","path":"/api/v1/auth/provider/complete","status":200,"durationMs":8,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:39.030Z","method":"POST","path":"/api/v1/auth/provider/complete","status":401,"durationMs":1,"ip":"127.0.0.1"}
+{"event":"provider_login_succeeded"}
+{"ts":"2026-10-03T04:11:39.040Z","method":"POST","path":"/api/v1/auth/google","status":200,"durationMs":8,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:39.045Z","method":"POST","path":"/api/v1/auth/google","status":403,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:39.090Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":42,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:39.095Z","method":"POST","path":"/api/v1/auth/google","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:39.099Z","method":"POST","path":"/api/v1/auth/provider/complete","status":409,"durationMs":2,"ip":"127.0.0.1"}
+✔ Google creates one canonical user, safely rejects collisions/replay, and enforces account state (290.733055ms)
+{"event":"otp_requested"}
+{"ts":"2026-10-03T04:11:39.109Z","method":"POST","path":"/api/v1/auth/phone/request","status":200,"durationMs":5,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:39.113Z","method":"POST","path":"/api/v1/auth/phone/request","status":429,"durationMs":2,"ip":"127.0.0.1"}
+{"event":"otp_failed"}
+{"ts":"2026-10-03T04:11:39.117Z","method":"POST","path":"/api/v1/auth/phone/verify","status":401,"durationMs":3,"ip":"127.0.0.1"}
+{"event":"otp_verified"}
+{"ts":"2026-10-03T04:11:39.121Z","method":"POST","path":"/api/v1/auth/phone/verify","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:39.123Z","method":"POST","path":"/api/v1/auth/phone/verify","status":401,"durationMs":0,"ip":"127.0.0.1"}
+{"event":"provider_login_succeeded"}
+{"ts":"2026-10-03T04:11:39.128Z","method":"POST","path":"/api/v1/auth/provider/complete","status":200,"durationMs":3,"ip":"127.0.0.1"}
+✔ Phone verification enforces cooldown, attempts, single-use challenges, and private identities (26.201825ms)
+{"ts":"2026-10-03T04:11:39.169Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":38,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:39.172Z","method":"POST","path":"/api/v1/auth/google","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:39.176Z","method":"POST","path":"/api/v1/auth/provider/link","status":401,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:39.217Z","method":"POST","path":"/api/v1/auth/reauthenticate","status":200,"durationMs":39,"ip":"127.0.0.1"}
+{"event":"auth_account_linked"}
+{"ts":"2026-10-03T04:11:39.222Z","method":"POST","path":"/api/v1/auth/provider/link","status":204,"durationMs":3,"ip":"127.0.0.1"}
+{"event":"provider_login_succeeded"}
+{"ts":"2026-10-03T04:11:39.227Z","method":"POST","path":"/api/v1/auth/google","status":200,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:39.230Z","method":"POST","path":"/api/v1/auth/google","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:39.233Z","method":"POST","path":"/api/v1/auth/provider/reauthenticate","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:39.237Z","method":"POST","path":"/api/v1/auth/provider/unlink","status":409,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:39.244Z","method":"POST","path":"/api/v1/auth/account/delete","status":204,"durationMs":6,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:39.248Z","method":"POST","path":"/api/v1/auth/google","status":403,"durationMs":2,"ip":"127.0.0.1"}
+✔ Linking requires recent ownership proof, preserves the user, and cannot remove the last method (119.360063ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 589.422956
+✔ accepts forwarded IPs only from an explicitly trusted proxy and uses its last hop (4.641257ms)
+▶ RateLimiter (unit)
+  ✔ allows up to max requests per window, then throws an HttpError shaped like a 429 (0.716663ms)
+  ✔ tracks each key's budget independently (0.24954ms)
+  ✔ resets a key's budget once its window has really elapsed (250.665143ms)
+  ✔ reset() clears all state immediately, for tests that need a clean slate (0.80172ms)
+✔ RateLimiter (unit) (253.282807ms)
+{"ts":"2026-10-03T04:11:39.865Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":63,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:39.913Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":39,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:39.956Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":40,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:39.959Z","method":"POST","path":"/api/v1/auth/signup","status":429,"durationMs":1,"ip":"127.0.0.1"}
+▶ the auth rate limiter is wired into signup/login/refresh
+  ✔ returns 429 once the per-IP auth budget (3, for this file) is exhausted (203.16892ms)
+{"ts":"2026-10-03T04:11:39.964Z","method":"POST","path":"/api/v1/auth/login","status":429,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ shares that same exhausted budget with login — one budget per IP across the whole auth family (5.056322ms)
+✔ the auth rate limiter is wired into signup/login/refresh (208.936927ms)
+ℹ tests 7
+ℹ suites 2
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 656.113921
+{"ts":"2026-10-03T04:11:40.339Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":67,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.347Z","method":"POST","path":"/api/v1/events","status":422,"durationMs":2,"ip":"127.0.0.1"}
+▶ events
+  ✔ rejects an unknown eventType (110.671691ms)
+{"ts":"2026-10-03T04:11:40.397Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":46,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.401Z","method":"POST","path":"/api/v1/events","status":422,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ requires storyId for story-scoped event types (53.452431ms)
+{"ts":"2026-10-03T04:11:40.448Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":44,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.451Z","method":"POST","path":"/api/v1/events","status":422,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ requires creatorId for creator-scoped event types (49.654967ms)
+{"ts":"2026-10-03T04:11:40.498Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":45,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.539Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":39,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.551Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":7,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.558Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.561Z","method":"POST","path":"/api/v1/events","status":422,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.564Z","method":"POST","path":"/api/v1/events","status":422,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.570Z","method":"POST","path":"/api/v1/events","status":204,"durationMs":5,"ip":"127.0.0.1"}
+  ✔ requires a valid valueMs for watch_duration (118.46316ms)
+{"ts":"2026-10-03T04:11:40.615Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":43,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.667Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":47,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.672Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.676Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.680Z","method":"POST","path":"/api/v1/events","status":403,"durationMs":2,"ip":"127.0.0.1"}
+  ✔ rejects a storyId the viewer isn't allowed to see, reusing Story access rules (109.603164ms)
+{"ts":"2026-10-03T04:11:40.722Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":41,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.724Z","method":"POST","path":"/api/v1/events","status":404,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ rejects a creatorId that isn't a real user (43.943314ms)
+{"ts":"2026-10-03T04:11:40.760Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.763Z","method":"POST","path":"/api/v1/events","status":204,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ silently no-ops for a self-directed event rather than erroring (39.387615ms)
+{"ts":"2026-10-03T04:11:40.800Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.854Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":52,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.858Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.862Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.868Z","method":"POST","path":"/api/v1/events","status":204,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.872Z","method":"POST","path":"/api/v1/events","status":204,"durationMs":3,"ip":"127.0.0.1"}
+  ✔ accepts creator_impression and story_impression, deduplicating repeats within the window (108.313998ms)
+✔ events (635.329678ms)
+{"ts":"2026-10-03T04:11:40.921Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":47,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:40.969Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":45,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.011Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":40,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.016Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.020Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.032Z","method":"GET","path":"/api/v1/stories/feed/home","status":200,"durationMs":10,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.035Z","method":"POST","path":"/api/v1/events","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.040Z","method":"GET","path":"/api/v1/stories/feed/home","status":200,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.044Z","method":"GET","path":"/api/v1/stories/feed/home","status":200,"durationMs":3,"ip":"127.0.0.1"}
+▶ not interested
+  ✔ excludes that creator from the viewer's home feed, and only that viewer's (172.259827ms)
+✔ not interested (172.550287ms)
+{"ts":"2026-10-03T04:11:41.092Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":44,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.135Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":41,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.140Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.144Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.147Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.150Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.155Z","method":"GET","path":"/api/v1/stories/feed/home","status":200,"durationMs":4,"ip":"127.0.0.1"}
+▶ home feed
+  ✔ never includes followers-only Story metadata for a stranger, even beside a public Story (110.458043ms)
+{"ts":"2026-10-03T04:11:41.191Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.228Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.232Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.236Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.242Z","method":"GET","path":"/api/v1/stories/feed/home","status":200,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.245Z","method":"GET","path":"/api/v1/stories/feed/home","status":410,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.250Z","method":"GET","path":"/api/v1/stories/feed/home","status":200,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.254Z","method":"POST","path":"/api/v1/users/test_244e863a/block","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.258Z","method":"GET","path":"/api/v1/stories/feed/home","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.261Z","method":"GET","path":"/api/v1/stories/feed/home","status":422,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ binds bounded cursors to their viewer and rechecks blocks between pages (105.814835ms)
+{"ts":"2026-10-03T04:11:41.300Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.336Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.341Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.345Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.350Z","method":"GET","path":"/api/v1/stories/feed/home","status":200,"durationMs":3,"ip":"127.0.0.1"}
+  ✔ includes public creators with an active Story even when not followed (real discovery) (89.422525ms)
+{"ts":"2026-10-03T04:11:41.387Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.422Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.426Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.430Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.433Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.438Z","method":"GET","path":"/api/v1/stories/feed/home","status":200,"durationMs":3,"ip":"127.0.0.1"}
+  ✔ excludes a private creator's Stories from a non-follower's feed (87.554799ms)
+{"ts":"2026-10-03T04:11:41.474Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.509Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.517Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":5,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.521Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.524Z","method":"POST","path":"/api/v1/users/test_90ed1104/block","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.528Z","method":"GET","path":"/api/v1/stories/feed/home","status":200,"durationMs":3,"ip":"127.0.0.1"}
+  ✔ excludes a blocked creator's Stories (90.289666ms)
+{"ts":"2026-10-03T04:11:41.569Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":38,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.606Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.611Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.614Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.617Z","method":"POST","path":"/api/v1/users/test_78555483/mute","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.621Z","method":"GET","path":"/api/v1/stories/feed/home","status":200,"durationMs":3,"ip":"127.0.0.1"}
+  ✔ excludes a muted creator's Stories (92.941133ms)
+{"ts":"2026-10-03T04:11:41.657Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.695Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.700Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.703Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.707Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.710Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.715Z","method":"GET","path":"/api/v1/stories/feed/home","status":200,"durationMs":3,"ip":"127.0.0.1"}
+  ✔ puts the viewer's own active Stories first, unscored, ahead of everything else (93.453979ms)
+{"ts":"2026-10-03T04:11:41.754Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.791Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.825Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":32,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.830Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.833Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.836Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.839Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.843Z","method":"POST","path":"/api/v1/users/test_ed866626/follow","status":200,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:41.848Z","method":"GET","path":"/api/v1/stories/feed/home","status":200,"durationMs":4,"ip":"127.0.0.1"}
+  ✔ ranks a followed creator above an otherwise-identical non-followed one (132.925273ms)
+✔ home feed (803.549556ms)
+ℹ tests 17
+ℹ suites 3
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1768.736343
+▶ bayesianSmooth
+  ✔ pulls a small sample toward the prior (0.61301ms)
+  ✔ converges to the true rate as observations grow (0.874348ms)
+  ✔ returns exactly the prior with zero observations (0.151025ms)
+✔ bayesianSmooth (2.39731ms)
+▶ freshness
+  ✔ is 1.0 for a Story published this instant (0.195731ms)
+  ✔ decays toward the floor as expiry approaches, never reaching zero (0.151605ms)
+  ✔ is monotonically decreasing over time (0.103914ms)
+✔ freshness (0.755302ms)
+▶ explorationMultiplier
+  ✔ gives brand-new creators the strongest boost, fading to 1.0 as they accumulate impressions (0.221028ms)
+✔ explorationMultiplier (0.367826ms)
+▶ creatorAffinity
+  ✔ a follower scores meaningfully higher than a stranger with identical other signals (0.256872ms)
+  ✔ returning on multiple distinct days scores higher than a single burst of engagement (1.012974ms)
+  ✔ never returns exactly zero, even with no positive signal at all (0.334617ms)
+  ✔ meaningful replies increase the score (0.112998ms)
+✔ creatorAffinity (2.100618ms)
+▶ storyQuality
+  ✔ a highly-engaged Story scores higher than a barely-engaged one at the same view count (0.144454ms)
+  ✔ smooths a tiny sample instead of trusting a lucky early ratio (0.166998ms)
+  ✔ stays within [0.05, 1] regardless of extreme input (0.125476ms)
+✔ storyQuality (0.671787ms)
+ℹ tests 14
+ℹ suites 5
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 60.699295
+{"ts":"2026-10-03T04:11:42.294Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":56,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.305Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.308Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":6,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.309Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":6,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.313Z","method":"GET","path":"/api/v1/auth/me","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.317Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.320Z","method":"GET","path":"/api/v1/auth/me","status":200,"durationMs":1,"ip":"127.0.0.1"}
+▶ profile
+  ✔ concurrent profile edits never overwrite an omitted privacy setting (111.688145ms)
+{"ts":"2026-10-03T04:11:42.361Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.403Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":39,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.409Z","method":"GET","path":"/api/v1/users/test_5400738c","status":200,"durationMs":3,"ip":"127.0.0.1"}
+  ✔ returns public profile fields for another user (88.85447ms)
+{"ts":"2026-10-03T04:11:42.447Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.450Z","method":"GET","path":"/api/v1/users/nobody_at_all_xyz","status":404,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ returns 404 for a nonexistent username (40.42407ms)
+{"ts":"2026-10-03T04:11:42.489Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.493Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.496Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ updates the caller's own profile and preserves untouched fields (45.689721ms)
+✔ profile (287.597904ms)
+{"ts":"2026-10-03T04:11:42.532Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.535Z","method":"DELETE","path":"/api/v1/users/me","status":422,"durationMs":1,"ip":"127.0.0.1"}
+▶ account deletion
+  ✔ requires a password in the request body at all (38.595876ms)
+{"ts":"2026-10-03T04:11:42.571Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.606Z","method":"DELETE","path":"/api/v1/users/me","status":401,"durationMs":32,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.611Z","method":"GET","path":"/api/v1/users/test_fed148e7","status":200,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ rejects the wrong password without deleting anything (76.197329ms)
+{"ts":"2026-10-03T04:11:42.646Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.685Z","method":"DELETE","path":"/api/v1/users/me","status":204,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.720Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.722Z","method":"GET","path":"/api/v1/users/test_ccbd71e1","status":404,"durationMs":0,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.725Z","method":"POST","path":"/api/v1/auth/login","status":401,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.728Z","method":"POST","path":"/api/v1/auth/refresh","status":401,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.763Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+  ✔ deletes the account for real: hides the profile, blocks login, invalidates the outstanding refresh token, and frees the username/email for reuse (152.042636ms)
+{"ts":"2026-10-03T04:11:42.797Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":32,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.805Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.810Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.850Z","method":"DELETE","path":"/api/v1/users/me","status":204,"durationMs":38,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.887Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.889Z","method":"GET","path":"/api/v1/stories/11e3be8d-6a54-4830-b892-6abd0f4404f8","status":404,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ soft-deletes the account's own active Stories as part of deletion (125.243649ms)
+✔ account deletion (392.593123ms)
+{"ts":"2026-10-03T04:11:42.925Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.959Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":32,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.965Z","method":"POST","path":"/api/v1/users/test_bfb50dae/follow","status":200,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.969Z","method":"GET","path":"/api/v1/users/test_bfb50dae","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:42.972Z","method":"GET","path":"/api/v1/users/test_bfb50dae/followers","status":200,"durationMs":1,"ip":"127.0.0.1"}
+▶ follow — public account
+  ✔ follows immediately and shows up in followers/following lists (83.334565ms)
+{"ts":"2026-10-03T04:11:43.009Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.044Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.048Z","method":"POST","path":"/api/v1/users/test_eb8ec7d2/follow","status":200,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.051Z","method":"DELETE","path":"/api/v1/users/test_eb8ec7d2/follow","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.053Z","method":"DELETE","path":"/api/v1/users/test_eb8ec7d2/follow","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.057Z","method":"GET","path":"/api/v1/users/test_eb8ec7d2","status":200,"durationMs":2,"ip":"127.0.0.1"}
+  ✔ unfollow is idempotent and removes the relationship (84.530091ms)
+{"ts":"2026-10-03T04:11:43.093Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.096Z","method":"POST","path":"/api/v1/users/test_7b1cd70c/follow","status":400,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ rejects following yourself with 400 (39.009074ms)
+✔ follow — public account (207.319181ms)
+{"ts":"2026-10-03T04:11:43.130Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":32,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.171Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":39,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.174Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.178Z","method":"POST","path":"/api/v1/users/test_b336a7a8/follow","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.182Z","method":"GET","path":"/api/v1/users/test_b336a7a8","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.185Z","method":"GET","path":"/api/v1/users/test_b336a7a8/followers","status":403,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.188Z","method":"GET","path":"/api/v1/follow-requests","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.191Z","method":"POST","path":"/api/v1/follow-requests/b7897bac-26d0-4410-9a7c-5a69d3ee3da5/accept","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.194Z","method":"GET","path":"/api/v1/users/test_b336a7a8","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.198Z","method":"POST","path":"/api/v1/follow-requests/b7897bac-26d0-4410-9a7c-5a69d3ee3da5/accept","status":409,"durationMs":1,"ip":"127.0.0.1"}
+▶ follow — private account
+  ✔ creates a pending request instead of following directly, then accept grants the follow (100.926908ms)
+{"ts":"2026-10-03T04:11:43.233Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.269Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.271Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.275Z","method":"POST","path":"/api/v1/users/test_e6f7cd7b/follow","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.278Z","method":"GET","path":"/api/v1/follow-requests","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.282Z","method":"POST","path":"/api/v1/follow-requests/4a040dac-af7a-4015-8c6e-aa3d7c0d5383/decline","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.285Z","method":"GET","path":"/api/v1/users/test_e6f7cd7b","status":200,"durationMs":2,"ip":"127.0.0.1"}
+  ✔ decline resolves the request without creating a follow (87.490765ms)
+✔ follow — private account (188.720593ms)
+{"ts":"2026-10-03T04:11:43.319Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":32,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.354Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.358Z","method":"POST","path":"/api/v1/users/test_e37bc458/follow","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.362Z","method":"POST","path":"/api/v1/users/test_efee4435/block","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.365Z","method":"GET","path":"/api/v1/users/test_e37bc458","status":404,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.367Z","method":"GET","path":"/api/v1/users/test_efee4435","status":404,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.369Z","method":"POST","path":"/api/v1/users/test_e37bc458/follow","status":404,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.372Z","method":"GET","path":"/api/v1/blocks","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.374Z","method":"DELETE","path":"/api/v1/users/test_efee4435/block","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.377Z","method":"GET","path":"/api/v1/users/test_e37bc458","status":200,"durationMs":1,"ip":"127.0.0.1"}
+▶ blocking
+  ✔ severs any existing follow relationship in both directions and hides both profiles (92.172556ms)
+✔ blocking (92.371422ms)
+{"ts":"2026-10-03T04:11:43.413Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.449Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.452Z","method":"POST","path":"/api/v1/users/test_81bab8f4/mute","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.455Z","method":"GET","path":"/api/v1/mutes","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.458Z","method":"DELETE","path":"/api/v1/users/test_81bab8f4/mute","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.460Z","method":"GET","path":"/api/v1/mutes","status":200,"durationMs":1,"ip":"127.0.0.1"}
+▶ mute
+  ✔ persists and lists muted users without affecting the follow graph (82.40503ms)
+✔ mute (82.58707ms)
+{"ts":"2026-10-03T04:11:43.496Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.534Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.538Z","method":"GET","path":"/api/v1/search/users","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.541Z","method":"POST","path":"/api/v1/users/test_96c1878f/block","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.544Z","method":"GET","path":"/api/v1/search/users","status":200,"durationMs":1,"ip":"127.0.0.1"}
+▶ search
+  ✔ finds users by username substring, excluding blocked relationships and the searcher (83.533095ms)
+{"ts":"2026-10-03T04:11:43.579Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.582Z","method":"GET","path":"/api/v1/search/users","status":422,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ rejects an empty query with 422 (37.927548ms)
+✔ search (121.749402ms)
+ℹ tests 17
+ℹ suites 7
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1516.237969
+{"ts":"2026-10-03T04:11:43.887Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":53,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.936Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":43,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.946Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":6,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.955Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":6,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.958Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":7,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.960Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":8,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.961Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":9,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.967Z","method":"POST","path":"/api/v1/stories","status":409,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.972Z","method":"POST","path":"/api/v1/stories","status":404,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.977Z","method":"GET","path":"/api/v1/stories/mine/active","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.981Z","method":"DELETE","path":"/api/v1/stories/7d5b9fc5-1d2e-49fd-8f41-1981725f298a","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:43.984Z","method":"POST","path":"/api/v1/stories","status":404,"durationMs":1,"ip":"127.0.0.1"}
+▶ publishing
+  ✔ replays concurrent publish retries once and rejects changed payloads and deleted Story resurrection (179.22422ms)
+{"ts":"2026-10-03T04:11:44.032Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":46,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.037Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.041Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+  ✔ publishes an owned, ready media as a Story (56.589034ms)
+{"ts":"2026-10-03T04:11:44.079Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.083Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.087Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.090Z","method":"POST","path":"/api/v1/stories","status":409,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ rejects publishing the same media twice (48.811857ms)
+{"ts":"2026-10-03T04:11:44.127Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.165Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.170Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.173Z","method":"POST","path":"/api/v1/stories","status":404,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ rejects publishing someone else's media (82.993274ms)
+{"ts":"2026-10-03T04:11:44.214Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":38,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.219Z","method":"POST","path":"/api/v1/stories","status":422,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ rejects an invalid mediaId (46.086487ms)
+✔ publishing (414.724464ms)
+{"ts":"2026-10-03T04:11:44.262Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":40,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.301Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.307Z","method":"POST","path":"/api/v1/users/test_8a28527d/follow","status":200,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.311Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.317Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.324Z","method":"GET","path":"/api/v1/stories/b22772b6-d2e2-4317-8af7-43710778e6fe","status":200,"durationMs":5,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.330Z","method":"POST","path":"/api/v1/stories/b22772b6-d2e2-4317-8af7-43710778e6fe/view","status":204,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.334Z","method":"POST","path":"/api/v1/stories/b22772b6-d2e2-4317-8af7-43710778e6fe/view","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.336Z","method":"GET","path":"/api/v1/stories/b22772b6-d2e2-4317-8af7-43710778e6fe/views","status":200,"durationMs":1,"ip":"127.0.0.1"}
+▶ viewing and audience rules
+  ✔ a public Story is visible to a follower and records exactly one view despite repeats (116.223743ms)
+{"ts":"2026-10-03T04:11:44.374Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.379Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.382Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.383Z","method":"POST","path":"/api/v1/stories/f9931989-7cdc-4006-bd15-6d5bcc1edd20/view","status":204,"durationMs":0,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.384Z","method":"GET","path":"/api/v1/stories/f9931989-7cdc-4006-bd15-6d5bcc1edd20/views","status":200,"durationMs":0,"ip":"127.0.0.1"}
+  ✔ the owner's own view never counts (48.09634ms)
+{"ts":"2026-10-03T04:11:44.420Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.455Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.489Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.494Z","method":"POST","path":"/api/v1/users/test_e24396cf/follow","status":200,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.498Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.502Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.506Z","method":"POST","path":"/api/v1/stories/2d69c2f4-8097-48ed-a822-cfb71eae8780/view","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.510Z","method":"GET","path":"/api/v1/stories/2d69c2f4-8097-48ed-a822-cfb71eae8780/views","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.514Z","method":"GET","path":"/api/v1/stories/2d69c2f4-8097-48ed-a822-cfb71eae8780","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.517Z","method":"GET","path":"/api/v1/stories/2d69c2f4-8097-48ed-a822-cfb71eae8780/viewers","status":404,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.519Z","method":"GET","path":"/api/v1/stories/2d69c2f4-8097-48ed-a822-cfb71eae8780/viewers","status":404,"durationMs":0,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.522Z","method":"GET","path":"/api/v1/stories/2d69c2f4-8097-48ed-a822-cfb71eae8780/viewers","status":200,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ the view count is visible to any viewer who can watch the Story, not just its owner — but who they are is owner-only (137.919776ms)
+{"ts":"2026-10-03T04:11:44.560Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.595Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.600Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.603Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.610Z","method":"GET","path":"/api/v1/stories/cefe9743-be5e-4e9d-99ca-43164d9cd49c/views","status":403,"durationMs":5,"ip":"127.0.0.1"}
+  ✔ a stranger can't see the view count of a Story they aren't allowed to watch (87.399644ms)
+{"ts":"2026-10-03T04:11:44.645Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.681Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.684Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.688Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.691Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.694Z","method":"GET","path":"/api/v1/stories/d7a369c6-2769-48d2-bf9e-8949e0bc233c","status":403,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.696Z","method":"GET","path":"/api/v1/users/test_1c7b2420/stories","status":403,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.700Z","method":"POST","path":"/api/v1/users/test_1c7b2420/follow","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.702Z","method":"GET","path":"/api/v1/follow-requests","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.706Z","method":"POST","path":"/api/v1/follow-requests/f79f547a-6815-4273-8bd5-9df34447dd5b/accept","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.710Z","method":"GET","path":"/api/v1/stories/d7a369c6-2769-48d2-bf9e-8949e0bc233c","status":200,"durationMs":3,"ip":"127.0.0.1"}
+  ✔ a private account gates every Story regardless of its own audience setting, until followed (99.477928ms)
+{"ts":"2026-10-03T04:11:44.745Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.782Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.787Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.791Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.794Z","method":"GET","path":"/api/v1/stories/ec9a9f57-85f1-4177-bb39-d34be42268b3","status":403,"durationMs":2,"ip":"127.0.0.1"}
+  ✔ a 'followers' audience Story on a public account is hidden from non-followers (83.98373ms)
+{"ts":"2026-10-03T04:11:44.829Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.864Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.868Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.872Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.875Z","method":"POST","path":"/api/v1/users/test_ae29b9af/block","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.877Z","method":"GET","path":"/api/v1/stories/83148f9b-409c-4f6c-a645-38eeaf701198","status":404,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ blocked users get 404, not 403, for each other's Stories (83.234529ms)
+✔ viewing and audience rules (657.147694ms)
+{"ts":"2026-10-03T04:11:44.915Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.950Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.985Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.989Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.992Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.995Z","method":"GET","path":"/api/v1/stories/3d48a388-a16c-4f78-b68b-25fa71852ff3/owner","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:44.999Z","method":"GET","path":"/api/v1/stories/3d48a388-a16c-4f78-b68b-25fa71852ff3/owner","status":403,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.001Z","method":"POST","path":"/api/v1/users/test_5a4b82f7/follow","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.004Z","method":"GET","path":"/api/v1/stories/3d48a388-a16c-4f78-b68b-25fa71852ff3/owner","status":200,"durationMs":1,"ip":"127.0.0.1"}
+▶ owner-username lookup
+  ✔ resolves a Story's owner username for anyone permitted to view it, using the same access rules as the Story itself (126.886872ms)
+✔ owner-username lookup (127.126207ms)
+{"ts":"2026-10-03T04:11:45.040Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.076Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.083Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":5,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.086Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.090Z","method":"GET","path":"/api/v1/media/c74ac1da-7985-411d-9632-fe76fc4e7704/file","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.094Z","method":"GET","path":"/api/v1/media/c74ac1da-7985-411d-9632-fe76fc4e7704/file","status":404,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.097Z","method":"POST","path":"/api/v1/users/test_50f4e344/follow","status":200,"durationMs":2,"ip":"127.0.0.1"}
+▶ media access via a published Story
+  ✔ lets a permitted viewer fetch the underlying media file, byte-for-byte (96.54753ms)
+{"ts":"2026-10-03T04:11:45.102Z","method":"GET","path":"/api/v1/media/c74ac1da-7985-411d-9632-fe76fc4e7704/file","status":200,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.136Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.174Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.178Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.181Z","method":"GET","path":"/api/v1/media/7890d05c-e53e-44bf-acee-d1dccb75e537/file","status":404,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ still denies media access when no Story exists for it at all (79.585115ms)
+✔ media access via a published Story (176.413021ms)
+{"ts":"2026-10-03T04:11:45.216Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.252Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.256Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.259Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.261Z","method":"DELETE","path":"/api/v1/stories/50d8fb23-367c-4990-a20c-43234446fd2e","status":404,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.264Z","method":"DELETE","path":"/api/v1/stories/50d8fb23-367c-4990-a20c-43234446fd2e","status":204,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.266Z","method":"GET","path":"/api/v1/stories/50d8fb23-367c-4990-a20c-43234446fd2e","status":404,"durationMs":1,"ip":"127.0.0.1"}
+▶ deletion
+  ✔ only the owner can delete, and deletion is final even for the owner (85.229408ms)
+✔ deletion (85.543765ms)
+{"ts":"2026-10-03T04:11:45.306Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.310Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.312Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.316Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.319Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.321Z","method":"GET","path":"/api/v1/stories/mine/active","status":200,"durationMs":1,"ip":"127.0.0.1"}
+▶ feeds and listings
+  ✔ mine/active only lists the caller's own non-expired Stories, oldest first (54.634486ms)
+{"ts":"2026-10-03T04:11:45.357Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.398Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":40,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.433Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.436Z","method":"POST","path":"/api/v1/users/test_783bf8f3/follow","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.440Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.443Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.446Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.450Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.453Z","method":"GET","path":"/api/v1/stories/feed/following","status":200,"durationMs":2,"ip":"127.0.0.1"}
+  ✔ the following feed includes only followed owners (and self), not strangers (131.632143ms)
+✔ feeds and listings (186.504523ms)
+{"ts":"2026-10-03T04:11:45.491Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.526Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.532Z","method":"POST","path":"/api/v1/users/test_54c0fa82/follow","status":200,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.536Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.538Z","method":"GET","path":"/api/v1/auth/me","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:45.543Z","method":"GET","path":"/api/v1/stories/c5f399d0-6d46-47d9-8b02-4f864e793cb8","status":200,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:46.748Z","method":"GET","path":"/api/v1/stories/c5f399d0-6d46-47d9-8b02-4f864e793cb8","status":404,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:46.751Z","method":"GET","path":"/api/v1/stories/mine/active","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:46.755Z","method":"GET","path":"/api/v1/stories/c5f399d0-6d46-47d9-8b02-4f864e793cb8","status":200,"durationMs":2,"ip":"127.0.0.1"}
+▶ the 24-hour lifecycle
+  ✔ really expires: a Story published with a 1-second TTL becomes inaccessible to others and drops out of active listings, while the owner can still fetch it directly (1302.02234ms)
+✔ the 24-hour lifecycle (1302.220313ms)
+{"ts":"2026-10-03T04:11:46.793Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:46.846Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:46.882Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:46.886Z","method":"POST","path":"/api/v1/users/test_4b14e4df/follow","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:46.891Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:46.894Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:46.898Z","method":"POST","path":"/api/v1/stories/8257131d-9cdc-46a4-b9ce-8e2909c951d1/view","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:46.903Z","method":"POST","path":"/api/v1/events","status":204,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:46.907Z","method":"POST","path":"/api/v1/stories/8257131d-9cdc-46a4-b9ce-8e2909c951d1/view","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:46.909Z","method":"POST","path":"/api/v1/events","status":204,"durationMs":0,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:46.912Z","method":"GET","path":"/api/v1/stories/8257131d-9cdc-46a4-b9ce-8e2909c951d1/insights","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:46.915Z","method":"GET","path":"/api/v1/stories/8257131d-9cdc-46a4-b9ce-8e2909c951d1/insights","status":404,"durationMs":0,"ip":"127.0.0.1"}
+▶ Story Insights
+  ✔ computes view count, completion rate, following-vs-discovery split, and profile-visit rate (159.999355ms)
+{"ts":"2026-10-03T04:11:46.965Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":46,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:46.971Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:46.974Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:46.976Z","method":"GET","path":"/api/v1/stories/4620c865-15d9-4ce3-b287-3d89be8b2d64/insights","status":200,"durationMs":0,"ip":"127.0.0.1"}
+  ✔ is all zeros for a Story nobody has viewed yet (61.176912ms)
+{"ts":"2026-10-03T04:11:47.013Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.049Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.055Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.058Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.062Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.065Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.070Z","method":"POST","path":"/api/v1/stories/25153947-f2aa-477d-88ab-0c36bf84f846/view","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.076Z","method":"POST","path":"/api/v1/stories/1806632b-7461-478d-a116-d9f89db823f8/view","status":204,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.081Z","method":"POST","path":"/api/v1/events","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.084Z","method":"GET","path":"/api/v1/stories/mine/sequence-insights","status":200,"durationMs":2,"ip":"127.0.0.1"}
+  ✔ aggregates per-sequence Insights across every currently-active Story the caller owns (107.363297ms)
+{"ts":"2026-10-03T04:11:47.120Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.155Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.159Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.164Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.168Z","method":"POST","path":"/api/v1/stories/2b972752-69a8-4581-b8e7-ef580438eeaa/view","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.171Z","method":"GET","path":"/api/v1/stories/2b972752-69a8-4581-b8e7-ef580438eeaa/insights","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.174Z","method":"POST","path":"/api/v1/users/test_1dfe6c85/follow","status":200,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.176Z","method":"GET","path":"/api/v1/stories/2b972752-69a8-4581-b8e7-ef580438eeaa/insights","status":200,"durationMs":0,"ip":"127.0.0.1"}
+  ✔ following-vs-discovery is a real snapshot from view time, not a live lookup (92.586108ms)
+✔ Story Insights (421.614097ms)
+{"ts":"2026-10-03T04:11:47.214Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.220Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":4,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.225Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.229Z","method":"GET","path":"/api/v1/stories/8093eda8-99e2-43b1-8c94-98540c367915","status":200,"durationMs":2,"ip":"127.0.0.1"}
+▶ Camera + Editor: overlays, filter, and drawing survive publish
+  ✔ a published Story returns exactly the overlays, filter, and drawing it was published with (52.235378ms)
+{"ts":"2026-10-03T04:11:47.272Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":40,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.277Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":3,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.283Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":3,"ip":"127.0.0.1"}
+  ✔ audioMuted defaults to false — original recorded audio is kept by default (53.561971ms)
+{"ts":"2026-10-03T04:11:47.320Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":36,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.324Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.328Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.332Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.337Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.340Z","method":"GET","path":"/api/v1/stories/48e034d2-0bf7-4035-83c3-2b1dda9fda66","status":200,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ crop defaults to no zoom/no pan, and a real crop round-trips exactly (57.395944ms)
+{"ts":"2026-10-03T04:11:47.380Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":38,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.384Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.388Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+  ✔ clamps an out-of-range crop instead of rejecting the publish (47.367125ms)
+{"ts":"2026-10-03T04:11:47.422Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":32,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.426Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.429Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+  ✔ drops malformed overlay entries instead of rejecting the whole publish (41.482545ms)
+{"ts":"2026-10-03T04:11:47.465Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.501Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.538Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":35,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.540Z","method":"GET","path":"/api/v1/auth/me","status":200,"durationMs":0,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.544Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.547Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.551Z","method":"GET","path":"/api/v1/stories/566d3b08-f3af-46c5-88e5-cad1c39c1d3e","status":200,"durationMs":2,"ip":"127.0.0.1"}
+  ✔ resolves a mention to the mentioned user's live username, unresolved by whoever posted it (121.736717ms)
+{"ts":"2026-10-03T04:11:47.586Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.625Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":37,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.666Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":38,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.669Z","method":"GET","path":"/api/v1/auth/me","status":200,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.672Z","method":"POST","path":"/api/v1/users/test_ee694fa2/block","status":204,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.675Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":1,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.679Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.682Z","method":"GET","path":"/api/v1/stories/edf15996-ad18-4b53-a003-c91f8b874b99","status":200,"durationMs":2,"ip":"127.0.0.1"}
+  ✔ hides a mention from a viewer who has blocked (or is blocked by) the mentioned user (130.897768ms)
+{"ts":"2026-10-03T04:11:47.717Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.753Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":34,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.788Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.790Z","method":"GET","path":"/api/v1/auth/me","status":200,"durationMs":0,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.794Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.798Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":2,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.833Z","method":"DELETE","path":"/api/v1/users/me","status":204,"durationMs":33,"ip":"127.0.0.1"}
+{"ts":"2026-10-03T04:11:47.848Z","method":"GET","path":"/api/v1/stories/d0af9cfd-512c-4577-b85a-76fb7cd4759e","status":200,"durationMs":10,"ip":"127.0.0.1"}
+  ✔ drops a mention of an account that has since been deleted (166.517965ms)
+✔ Camera + Editor: overlays, filter, and drawing survive publish (672.083819ms)
+ℹ tests 31
+ℹ suites 9
+ℹ pass 31
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4186.372797
+Generated local test databases retained for inspection. No existing data was reset.
+psql:/workspace/scratch/5a3363283020/inspect/katkee/backend/migrations/0027_profile_metadata.sql:4: NOTICE:  constraint "users_interests_json_valid" of relation "users" does not exist, skipping
+NOTICE:  relation "schema_migrations" already exists, skipping

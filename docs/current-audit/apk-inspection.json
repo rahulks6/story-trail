@@ -1,0 +1,560 @@
+{
+  "artifact": "Katkee-Android-Debug-2026-10-03.apk",
+  "bytes": 168724446,
+  "sha256": "8df7d1f4a2fe86dc2add66089ea52a2d4239c71830e7c3f6e7f3e714b3a5fbab",
+  "debugOnly": true,
+  "nativeLibraries": [
+    {
+      "library": "lib/arm64-v8a/libVisionCamera.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libc++_shared.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libconceal.so",
+      "loadAlignment": 65536,
+      "atLeast16KB": true
+    },
+    {
+      "library": "lib/arm64-v8a/libdatastore_shared_counter.so",
+      "loadAlignment": 16384,
+      "atLeast16KB": true
+    },
+    {
+      "library": "lib/arm64-v8a/libfabricjni.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libfbjni.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libfolly_runtime.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libglog.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libhermes.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libhermes_executor.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libhermesinstancejni.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libimage_processing_util_jni.so",
+      "loadAlignment": 16384,
+      "atLeast16KB": true
+    },
+    {
+      "library": "lib/arm64-v8a/libimagepipeline.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libjscinstance.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libjsi.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libjsijniprofiler.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libjsinspector.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libmapbufferjni.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libnative-filters.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libnative-imagetranscoder.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_codegen_rncore.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_debug.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_devsupportjni.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_featureflags.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_featureflagsjni.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_nativemodule_core.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_nativemodule_defaults.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_nativemodule_dom.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_nativemodule_featureflags.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_nativemodule_microtasks.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_newarchdefaults.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_performance_timeline.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_render_componentregistry.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_render_consistency.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_render_core.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_render_debug.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_render_element.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_render_graphics.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_render_imagemanager.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_render_mapbuffer.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_render_observers_events.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_render_uimanager_consistency.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreact_utils.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreactnativeblob.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libreactnativejni.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/librninstance.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/librnscreens.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/librrc_image.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/librrc_legacyviewmanagerinterop.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/librrc_textinput.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/librrc_view.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libruntimeexecutor.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libturbomodulejsijni.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libuimanagerjni.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/arm64-v8a/libyoga.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libVisionCamera.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libc++_shared.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libconceal.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libdatastore_shared_counter.so",
+      "loadAlignment": 16384,
+      "atLeast16KB": true
+    },
+    {
+      "library": "lib/x86_64/libfabricjni.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libfbjni.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libfolly_runtime.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libglog.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libhermes.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libhermes_executor.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libhermesinstancejni.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libimage_processing_util_jni.so",
+      "loadAlignment": 16384,
+      "atLeast16KB": true
+    },
+    {
+      "library": "lib/x86_64/libimagepipeline.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libjscinstance.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libjsi.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libjsijniprofiler.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libjsinspector.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libmapbufferjni.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libnative-filters.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libnative-imagetranscoder.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_codegen_rncore.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_debug.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_devsupportjni.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_featureflags.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_featureflagsjni.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_nativemodule_core.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_nativemodule_defaults.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_nativemodule_dom.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_nativemodule_featureflags.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_nativemodule_microtasks.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_newarchdefaults.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_performance_timeline.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_render_componentregistry.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_render_consistency.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_render_core.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_render_debug.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_render_element.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_render_graphics.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_render_imagemanager.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_render_mapbuffer.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_render_observers_events.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_render_uimanager_consistency.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreact_utils.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreactnativeblob.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libreactnativejni.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/librninstance.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/librnscreens.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/librrc_image.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/librrc_legacyviewmanagerinterop.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/librrc_textinput.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/librrc_view.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libruntimeexecutor.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libturbomodulejsijni.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libuimanagerjni.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    },
+    {
+      "library": "lib/x86_64/libyoga.so",
+      "loadAlignment": 4096,
+      "atLeast16KB": false
+    }
+  ],
+  "librariesBelow16KB": 105,
+  "deviceTested": false
+}

@@ -1,0 +1,10 @@
+Release is blocked:
+- Upgrade React Native to a supported release with 16 KB native-library support.
+- Configure privacyPolicyUrl with your live public HTTPS page.
+- Configure termsUrl with your live public HTTPS page.
+- Configure supportUrl with your live public HTTPS page.
+- Set productionApiUrl to your deployed HTTPS API origin (no path, credentials, query or fragment).
+- Confirm your permanent application identifiers in build-config.json.
+- Set iosBundleId to your permanent release identifier.
+- Populate the iOS AppIcon catalog with approved artwork.
+- Complete the iOS privacy manifest and store disclosures for actual data collection.

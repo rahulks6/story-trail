@@ -1,0 +1,13 @@
+{
+  "generatedAt": "2026-10-03T04:08:53.263Z",
+  "platform": "ios",
+  "results": [],
+  "artifact": null,
+  "reason": "iOS native compilation requires macOS with Xcode.",
+  "releaseReady": false,
+  "notVerified": [
+    "production signing",
+    "physical-device acceptance",
+    "store submission"
+  ]
+}

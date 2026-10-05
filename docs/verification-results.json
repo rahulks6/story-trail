@@ -1,0 +1,140 @@
+{
+  "fullBackendSuite": [
+    {
+      "file": "adminAds.test.js",
+      "tests": 3,
+      "pass": 3,
+      "fail": 0
+    },
+    {
+      "file": "auth.test.js",
+      "tests": 13,
+      "pass": 13,
+      "fail": 0
+    },
+    {
+      "file": "conversations.test.js",
+      "tests": 13,
+      "pass": 13,
+      "fail": 0
+    },
+    {
+      "file": "database.test.js",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0
+    },
+    {
+      "file": "engagement.test.js",
+      "tests": 10,
+      "pass": 10,
+      "fail": 0
+    },
+    {
+      "file": "featureFlags.test.js",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0
+    },
+    {
+      "file": "highlights.test.js",
+      "tests": 16,
+      "pass": 16,
+      "fail": 0
+    },
+    {
+      "file": "media.test.js",
+      "tests": 10,
+      "pass": 10,
+      "fail": 0
+    },
+    {
+      "file": "moderation.test.js",
+      "tests": 12,
+      "pass": 12,
+      "fail": 0
+    },
+    {
+      "file": "notifications.test.js",
+      "tests": 17,
+      "pass": 17,
+      "fail": 0
+    },
+    {
+      "file": "rateLimiting.test.js",
+      "tests": 6,
+      "pass": 6,
+      "fail": 0
+    },
+    {
+      "file": "recommendations.test.js",
+      "tests": 15,
+      "pass": 15,
+      "fail": 0
+    },
+    {
+      "file": "scoring.test.js",
+      "tests": 14,
+      "pass": 14,
+      "fail": 0
+    },
+    {
+      "file": "social.test.js",
+      "tests": 16,
+      "pass": 16,
+      "fail": 0
+    },
+    {
+      "file": "stories.test.js",
+      "tests": 30,
+      "pass": 30,
+      "fail": 0
+    }
+  ],
+  "browser": {
+    "passed": [
+      "Super Admin login",
+      "dashboard real data",
+      "create limited Admin with explicit confirmation",
+      "limited navigation",
+      "report review/media preview",
+      "remove Story and verify consumer 404",
+      "audit history visible",
+      "campaign creation form"
+    ],
+    "pageErrors": []
+  },
+  "additionalChecks": [
+    "Backend TypeScript build",
+    "Mobile TypeScript typecheck",
+    "Six source/pure regressions",
+    "Real migration runner fresh apply and repeat no-op",
+    "Four local EXPLAIN ANALYZE plans recorded (small test dataset only)",
+    "Ad-only operator permissions and exact password handling verified"
+  ],
+  "limitations": [
+    "Full native device regression unavailable",
+    "Production staging copy unavailable",
+    "Performance gate not passed"
+  ],
+  "finalFocusedSuite": [
+    {
+      "file": "adminAds.test.js",
+      "tests": 4,
+      "pass": 4,
+      "fail": 0
+    },
+    {
+      "file": "media.test.js",
+      "tests": 10,
+      "pass": 10,
+      "fail": 0
+    },
+    {
+      "file": "featureFlags.test.js",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0
+    }
+  ]
+}

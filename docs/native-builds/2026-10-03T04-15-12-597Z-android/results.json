@@ -1,0 +1,20 @@
+{
+  "generatedAt": "2026-10-03T04:18:27.481Z",
+  "platform": "android",
+  "results": [
+    {
+      "name": "assemble-debug",
+      "status": "failed",
+      "exitCode": 1,
+      "durationMs": 194882
+    }
+  ],
+  "artifact": null,
+  "reason": null,
+  "releaseReady": false,
+  "notVerified": [
+    "production signing",
+    "physical-device acceptance",
+    "store submission"
+  ]
+}

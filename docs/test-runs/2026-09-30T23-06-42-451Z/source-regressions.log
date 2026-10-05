@@ -1,0 +1,39 @@
+✔ deadline aborts native work even when transport ignores cancellation (109.224244ms)
+✔ already cancelled request never starts work (24.986765ms)
+✔ external cancellation interrupts an active request (18.189043ms)
+✔ HTML gateway failure preserves HTTP status and hides response contents (14.664359ms)
+✔ empty and malformed successes cannot be treated as valid API data (49.950865ms)
+✔ valid 204 remains supported (15.110051ms)
+✔ validation errors retain field details (15.547191ms)
+✔ server failures do not automatically replay a write (9.398192ms)
+✔ Headers and lowercase authorization are refreshed correctly (9.992594ms)
+✔ configured origin with trailing slash does not create a double-slash API route (10.242276ms)
+✔ deadline includes a stalled response body (24.190442ms)
+Parsed 206 TypeScript files
+✔ all TypeScript and TSX sources parse (297.157167ms)
+✔ concurrent refresh requests issue only one replacement token pair (56.061702ms)
+✔ invalid Highlight cover causes no writes (20.867509ms)
+✔ authenticated requests retry once with a fresh token and preserve body (15.390182ms)
+✔ persistent 401 does not cause an infinite retry (8.84443ms)
+✔ login failures never enter the refresh flow (8.62874ms)
+✔ Android checks do not require an iOS identifier or project (3.450793ms)
+✔ iOS checks do not require Android SDK target or signing (2.211392ms)
+✔ release rejects placeholder origins, paths and embedded credentials (3.258797ms)
+✔ missing signing inputs and development identifiers block release (1.079292ms)
+✔ a renamed copy of the public debug key is rejected (1.194523ms)
+✔ outdated native target and native identifier mismatch remain blocked (1.256235ms)
+✔ legacy credentials migrate only after secure write succeeds (86.856998ms)
+✔ secure write failure preserves recoverable legacy credentials (18.432024ms)
+✔ token writes and logout are serialized so stale writes cannot resurrect a session (7.747972ms)
+✔ retains media and request identity across restart, retries publish without uploading twice (113.31029ms)
+✔ double taps share one in-flight upload and publication (40.233579ms)
+✔ account change between upload and publish stops publication and preserves retry metadata (18.861271ms)
+✔ removing a queued upload leaves the original file intact and rejects unsafe file identifiers (18.831046ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 681.375214

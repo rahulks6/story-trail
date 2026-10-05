@@ -1,0 +1,30 @@
+node:child_process:981
+    throw err;
+    ^
+
+<ref *1> Error: spawnSync createdb ENOENT
+    at Object.spawnSync (node:internal/child_process:1160:20)
+    at spawnSync (node:child_process:928:24)
+    at Object.execFileSync (node:child_process:971:15)
+    at dbCommand (/workspace/scratch/5a3363283020/inspect/katkee/backend/scripts/run-tests.cjs:8:33)
+    at Object.<anonymous> (/workspace/scratch/5a3363283020/inspect/katkee/backend/scripts/run-tests.cjs:9:1)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'spawnSync createdb',
+  path: 'createdb',
+  spawnargs: [ 'katkee_test_template_1790858466554' ],
+  error: [Circular *1],
+  status: null,
+  signal: null,
+  output: null,
+  pid: 0,
+  stdout: undefined,
+  stderr: undefined
+}
+
+Node.js v24.19.0

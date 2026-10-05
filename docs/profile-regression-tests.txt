@@ -1,0 +1,230 @@
+TAP version 13
+# {"ts":"2026-09-25T21:31:59.764Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":294,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:31:59.786Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":10,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:31:59.811Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":35,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:31:59.927Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":150,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:31:59.930Z","method":"GET","path":"/api/v1/auth/me","status":200,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:31:59.935Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:31:59.938Z","method":"GET","path":"/api/v1/auth/me","status":200,"durationMs":2,"ip":"127.0.0.1"}
+# Subtest: profile
+    # Subtest: concurrent profile edits never overwrite an omitted privacy setting
+    ok 1 - concurrent profile edits never overwrite an omitted privacy setting
+      ---
+      duration_ms: 557.7192
+      ...
+# {"ts":"2026-09-25T21:32:00.009Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":68,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:00.072Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":61,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:00.094Z","method":"GET","path":"/api/v1/users/test_02e3ca2e","status":200,"durationMs":20,"ip":"127.0.0.1"}
+    # Subtest: returns public profile fields for another user
+    ok 2 - returns public profile fields for another user
+      ---
+      duration_ms: 155.3617
+      ...
+# {"ts":"2026-09-25T21:32:00.158Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":62,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:00.160Z","method":"GET","path":"/api/v1/users/nobody_at_all_xyz","status":404,"durationMs":1,"ip":"127.0.0.1"}
+    # Subtest: returns 404 for a nonexistent username
+    ok 3 - returns 404 for a nonexistent username
+      ---
+      duration_ms: 66.1478
+      ...
+# {"ts":"2026-09-25T21:32:00.224Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":61,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:00.228Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:00.231Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":2,"ip":"127.0.0.1"}
+    # Subtest: updates the caller's own profile and preserves untouched fields
+    ok 4 - updates the caller's own profile and preserves untouched fields
+      ---
+      duration_ms: 70.9788
+      ...
+    1..4
+ok 1 - profile
+  ---
+  duration_ms: 851.1431
+  type: 'suite'
+  ...
+# {"ts":"2026-09-25T21:32:00.294Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:00.296Z","method":"DELETE","path":"/api/v1/users/me","status":422,"durationMs":1,"ip":"127.0.0.1"}
+# Subtest: account deletion
+    # Subtest: requires a password in the request body at all
+    ok 1 - requires a password in the request body at all
+      ---
+      duration_ms: 63.7363
+      ...
+# {"ts":"2026-09-25T21:32:00.360Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":63,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:00.427Z","method":"DELETE","path":"/api/v1/users/me","status":401,"durationMs":65,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:00.435Z","method":"GET","path":"/api/v1/users/test_20fa09e9","status":200,"durationMs":2,"ip":"127.0.0.1"}
+    # Subtest: rejects the wrong password without deleting anything
+    ok 2 - rejects the wrong password without deleting anything
+      ---
+      duration_ms: 139.3599
+      ...
+# {"ts":"2026-09-25T21:32:00.498Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:00.567Z","method":"DELETE","path":"/api/v1/users/me","status":204,"durationMs":68,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:00.627Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:00.630Z","method":"GET","path":"/api/v1/users/test_3366b2d6","status":404,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:00.633Z","method":"POST","path":"/api/v1/auth/login","status":401,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:00.636Z","method":"POST","path":"/api/v1/auth/refresh","status":401,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:00.698Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":61,"ip":"127.0.0.1"}
+    # Subtest: deletes the account for real: hides the profile, blocks login, invalidates the outstanding refresh token, and frees the username/email for reuse
+    ok 3 - deletes the account for real: hides the profile, blocks login, invalidates the outstanding refresh token, and frees the username/email for reuse
+      ---
+      duration_ms: 262.7246
+      ...
+# {"ts":"2026-09-25T21:32:00.760Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:00.783Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":19,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:00.789Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":5,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:00.858Z","method":"DELETE","path":"/api/v1/users/me","status":204,"durationMs":67,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:00.918Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:00.922Z","method":"GET","path":"/api/v1/stories/ddc99240-3d0b-495b-8c32-4eca1a040d5a","status":404,"durationMs":1,"ip":"127.0.0.1"}
+    # Subtest: soft-deletes the account's own active Stories as part of deletion
+    ok 4 - soft-deletes the account's own active Stories as part of deletion
+      ---
+      duration_ms: 224.5394
+      ...
+    1..4
+ok 2 - account deletion
+  ---
+  duration_ms: 691.0234
+  type: 'suite'
+  ...
+# {"ts":"2026-09-25T21:32:01.000Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":75,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.068Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":67,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.083Z","method":"POST","path":"/api/v1/users/test_d032f76f/follow","status":200,"durationMs":14,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.087Z","method":"GET","path":"/api/v1/users/test_d032f76f","status":200,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.092Z","method":"GET","path":"/api/v1/users/test_d032f76f/followers","status":200,"durationMs":3,"ip":"127.0.0.1"}
+# Subtest: follow — public account
+    # Subtest: follows immediately and shows up in followers/following lists
+    ok 1 - follows immediately and shows up in followers/following lists
+      ---
+      duration_ms: 168.9225
+      ...
+# {"ts":"2026-09-25T21:32:01.154Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.214Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.218Z","method":"POST","path":"/api/v1/users/test_c569f93e/follow","status":200,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.222Z","method":"DELETE","path":"/api/v1/users/test_c569f93e/follow","status":204,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.225Z","method":"DELETE","path":"/api/v1/users/test_c569f93e/follow","status":204,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.228Z","method":"GET","path":"/api/v1/users/test_c569f93e","status":200,"durationMs":3,"ip":"127.0.0.1"}
+    # Subtest: unfollow is idempotent and removes the relationship
+    ok 2 - unfollow is idempotent and removes the relationship
+      ---
+      duration_ms: 136.4837
+      ...
+# {"ts":"2026-09-25T21:32:01.291Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":61,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.293Z","method":"POST","path":"/api/v1/users/test_d174b4db/follow","status":400,"durationMs":1,"ip":"127.0.0.1"}
+    # Subtest: rejects following yourself with 400
+    ok 3 - rejects following yourself with 400
+      ---
+      duration_ms: 64.8795
+      ...
+    1..3
+ok 3 - follow — public account
+  ---
+  duration_ms: 370.6351
+  type: 'suite'
+  ...
+# {"ts":"2026-09-25T21:32:01.354Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":58,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.415Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.417Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.424Z","method":"POST","path":"/api/v1/users/test_08f4092a/follow","status":200,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.427Z","method":"GET","path":"/api/v1/users/test_08f4092a","status":200,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.430Z","method":"GET","path":"/api/v1/users/test_08f4092a/followers","status":403,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.433Z","method":"GET","path":"/api/v1/follow-requests","status":200,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.438Z","method":"POST","path":"/api/v1/follow-requests/6e2f9823-0bd5-4b2e-9fa7-b9a794f01172/accept","status":204,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.442Z","method":"GET","path":"/api/v1/users/test_08f4092a","status":200,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.444Z","method":"POST","path":"/api/v1/follow-requests/6e2f9823-0bd5-4b2e-9fa7-b9a794f01172/accept","status":409,"durationMs":1,"ip":"127.0.0.1"}
+# Subtest: follow — private account
+    # Subtest: creates a pending request instead of following directly, then accept grants the follow
+    ok 1 - creates a pending request instead of following directly, then accept grants the follow
+      ---
+      duration_ms: 150.427
+      ...
+# {"ts":"2026-09-25T21:32:01.505Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.566Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.569Z","method":"PATCH","path":"/api/v1/users/me","status":200,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.574Z","method":"POST","path":"/api/v1/users/test_c54838b3/follow","status":200,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.576Z","method":"GET","path":"/api/v1/follow-requests","status":200,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.579Z","method":"POST","path":"/api/v1/follow-requests/c985750f-f231-499c-b1e0-496328cca273/decline","status":204,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.583Z","method":"GET","path":"/api/v1/users/test_c54838b3","status":200,"durationMs":3,"ip":"127.0.0.1"}
+    # Subtest: decline resolves the request without creating a follow
+    ok 2 - decline resolves the request without creating a follow
+      ---
+      duration_ms: 138.4939
+      ...
+    1..2
+ok 4 - follow — private account
+  ---
+  duration_ms: 289.1068
+  type: 'suite'
+  ...
+# {"ts":"2026-09-25T21:32:01.648Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":63,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.709Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.713Z","method":"POST","path":"/api/v1/users/test_af6f78ad/follow","status":200,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.719Z","method":"POST","path":"/api/v1/users/test_2de58d96/block","status":204,"durationMs":5,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.721Z","method":"GET","path":"/api/v1/users/test_af6f78ad","status":404,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.724Z","method":"GET","path":"/api/v1/users/test_2de58d96","status":404,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.727Z","method":"POST","path":"/api/v1/users/test_af6f78ad/follow","status":404,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.729Z","method":"GET","path":"/api/v1/blocks","status":200,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.732Z","method":"DELETE","path":"/api/v1/users/test_2de58d96/block","status":204,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.735Z","method":"GET","path":"/api/v1/users/test_af6f78ad","status":200,"durationMs":3,"ip":"127.0.0.1"}
+# Subtest: blocking
+    # Subtest: severs any existing follow relationship in both directions and hides both profiles
+    ok 1 - severs any existing follow relationship in both directions and hides both profiles
+      ---
+      duration_ms: 152.1972
+      ...
+    1..1
+ok 5 - blocking
+  ---
+  duration_ms: 152.3367
+  type: 'suite'
+  ...
+# {"ts":"2026-09-25T21:32:01.797Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.860Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":62,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.863Z","method":"POST","path":"/api/v1/users/test_b010966f/mute","status":204,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.865Z","method":"GET","path":"/api/v1/mutes","status":200,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.868Z","method":"DELETE","path":"/api/v1/users/test_b010966f/mute","status":204,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.869Z","method":"GET","path":"/api/v1/mutes","status":200,"durationMs":1,"ip":"127.0.0.1"}
+# Subtest: mute
+    # Subtest: persists and lists muted users without affecting the follow graph
+    ok 1 - persists and lists muted users without affecting the follow graph
+      ---
+      duration_ms: 134.3352
+      ...
+    1..1
+ok 6 - mute
+  ---
+  duration_ms: 134.4788
+  type: 'suite'
+  ...
+# {"ts":"2026-09-25T21:32:01.931Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.991Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:01.999Z","method":"GET","path":"/api/v1/search/users","status":200,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:02.003Z","method":"POST","path":"/api/v1/users/test_2f63006c/block","status":204,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:02.005Z","method":"GET","path":"/api/v1/search/users","status":200,"durationMs":1,"ip":"127.0.0.1"}
+# Subtest: search
+    # Subtest: finds users by username substring, excluding blocked relationships and the searcher
+    ok 1 - finds users by username substring, excluding blocked relationships and the searcher
+      ---
+      duration_ms: 135.8556
+      ...
+# {"ts":"2026-09-25T21:32:02.067Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T21:32:02.068Z","method":"GET","path":"/api/v1/search/users","status":422,"durationMs":1,"ip":"127.0.0.1"}
+    # Subtest: rejects an empty query with 422
+    ok 2 - rejects an empty query with 422
+      ---
+      duration_ms: 62.574
+      ...
+    1..2
+ok 7 - search
+  ---
+  duration_ms: 198.5966
+  type: 'suite'
+  ...
+1..7
+# tests 17
+# suites 7
+# pass 17
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5852.9424

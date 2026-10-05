@@ -1,0 +1,20 @@
+{
+  "generatedAt": "2026-10-03T04:21:38.097Z",
+  "platform": "android",
+  "results": [
+    {
+      "name": "assemble-debug",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 104380
+    }
+  ],
+  "artifact": "mobile/android/app/build/outputs/apk/debug/app-debug.apk",
+  "reason": null,
+  "releaseReady": false,
+  "notVerified": [
+    "production signing",
+    "physical-device acceptance",
+    "store submission"
+  ]
+}

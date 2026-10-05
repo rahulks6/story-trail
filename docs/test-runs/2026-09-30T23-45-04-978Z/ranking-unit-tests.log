@@ -1,0 +1,32 @@
+▶ bayesianSmooth
+  ✔ pulls a small sample toward the prior (0.670134ms)
+  ✔ converges to the true rate as observations grow (0.153568ms)
+  ✔ returns exactly the prior with zero observations (0.130153ms)
+✔ bayesianSmooth (1.840993ms)
+▶ freshness
+  ✔ is 1.0 for a Story published this instant (0.211764ms)
+  ✔ decays toward the floor as expiry approaches, never reaching zero (0.243732ms)
+  ✔ is monotonically decreasing over time (0.156262ms)
+✔ freshness (0.893076ms)
+▶ explorationMultiplier
+  ✔ gives brand-new creators the strongest boost, fading to 1.0 as they accumulate impressions (0.25582ms)
+✔ explorationMultiplier (0.423879ms)
+▶ creatorAffinity
+  ✔ a follower scores meaningfully higher than a stranger with identical other signals (0.375528ms)
+  ✔ returning on multiple distinct days scores higher than a single burst of engagement (0.187599ms)
+  ✔ never returns exactly zero, even with no positive signal at all (0.30319ms)
+  ✔ meaningful replies increase the score (0.116643ms)
+✔ creatorAffinity (1.228063ms)
+▶ storyQuality
+  ✔ a highly-engaged Story scores higher than a barely-engaged one at the same view count (0.258364ms)
+  ✔ smooths a tiny sample instead of trusting a lucky early ratio (0.126648ms)
+  ✔ stays within [0.05, 1] regardless of extreme input (0.138646ms)
+✔ storyQuality (0.69377ms)
+ℹ tests 14
+ℹ suites 5
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 93.185267

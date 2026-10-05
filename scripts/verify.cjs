@@ -1,0 +1,35 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process');
+const root=path.resolve(__dirname,'..'),args=process.argv.slice(2);
+if(args.some(a=>!['--bundle','--integration'].includes(a))) {
+ console.error('Usage: node scripts/verify.cjs [--bundle] [--integration]');process.exit(2);
+}
+const stamp=new Date().toISOString().replace(/[:.]/g,'-');
+const output=path.join(root,'docs','test-runs',stamp);fs.mkdirSync(output,{recursive:true});
+const results=[];
+function run(name,cwd,argv,timeout=300000) {
+ const started=Date.now();
+ const result=cp.spawnSync(process.execPath,argv,{cwd:path.join(root,cwd),encoding:'utf8',timeout,maxBuffer:20*1024*1024});
+ const status=result.status===0&&!result.error?'passed':'failed';
+ fs.writeFileSync(path.join(output,name+'.log'),(result.stdout||'')+(result.stderr||'')+(result.error?'\n'+result.error.message:''));
+ results.push({name,status,exitCode:result.status,durationMs:Date.now()-started,log:name+'.log'});
+ console.log(name+': '+status);
+ return status==='passed';
+}
+const built=run('backend-build','backend',['node_modules/typescript/bin/tsc','-p','tsconfig.json']);
+run('mobile-typecheck','mobile',['node_modules/typescript/bin/tsc','--noEmit']);
+run('source-regressions','',['--test','verification/regressions.cjs','verification/network.cjs','verification/release-config.cjs','verification/profile-metadata.cjs','verification/release-hardening.cjs','verification/secure-storage.cjs','verification/upload-queue.cjs']);
+if(built)run('ranking-unit-tests','backend',['--test','dist/test/scoring.test.js']);
+if(args.includes('--bundle')) {
+ fs.mkdirSync(path.join(root,'mobile/build'),{recursive:true});
+ run('android-js-bundle','mobile',['node_modules/react-native/cli.js','bundle','--platform','android','--dev','false','--entry-file','index.js','--bundle-output','build/index.android.bundle','--assets-dest','build/android','--max-workers','2'],600000);
+ run('ios-js-bundle','mobile',['node_modules/react-native/cli.js','bundle','--platform','ios','--dev','false','--entry-file','index.js','--bundle-output','build/main.jsbundle','--assets-dest','build/ios','--max-workers','2'],600000);
+}
+if(args.includes('--integration')&&built)run('database-integration','backend',['scripts/run-tests.cjs'],900000);
+const report={generatedAt:new Date().toISOString(),node:process.version,results,
+ notVerified:['Android APK/AAB build and signing','iOS Xcode archive and signing','physical-device behavior and performance','live Google/SMS providers','production hosting and backups','full product specification completion',...(!args.includes('--integration')?['database integration tests']:[])],
+ releaseReady:false};
+fs.writeFileSync(path.join(output,'results.json'),JSON.stringify(report,null,2)+'\n');
+console.log('Evidence: '+path.relative(root,output));
+console.log('These checks do not certify a publish-ready app. See RELEASE_READINESS.md.');
+process.exitCode=results.some(r=>r.status==='failed')?1:0;

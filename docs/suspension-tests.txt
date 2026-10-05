@@ -1,0 +1,143 @@
+TAP version 13
+# {"ts":"2026-09-25T15:56:57.848Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":223,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:57.917Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:57.986Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":66,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.011Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":19,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.026Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":13,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.038Z","method":"GET","path":"/api/v1/stories/090d7ec5-fd08-45b3-bac8-aeddae441a7e","status":404,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.049Z","method":"GET","path":"/api/v1/media/1d74704c-4765-41f9-be58-9b47e61b35ac/file","status":404,"durationMs":9,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.053Z","method":"GET","path":"/api/v1/users/ad_3780729a","status":404,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.056Z","method":"GET","path":"/api/v1/users/ad_3780729a/stories","status":404,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.061Z","method":"GET","path":"/api/v1/users/ad_3780729a/highlights","status":404,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.067Z","method":"GET","path":"/api/v1/search/users","status":200,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.134Z","method":"POST","path":"/api/v1/moderation/access","status":200,"durationMs":65,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.195Z","method":"POST","path":"/api/v1/moderation/access","status":200,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.198Z","method":"POST","path":"/api/v1/moderation/appeal/submit","status":401,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.202Z","method":"POST","path":"/api/v1/moderation/appeal/submit","status":200,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.205Z","method":"POST","path":"/api/v1/moderation/appeal/submit","status":401,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.270Z","method":"POST","path":"/api/v1/moderation/access","status":200,"durationMs":64,"ip":"127.0.0.1"}
+# Subtest: lets suspended users appeal only their own notices using expiring, single-use access
+ok 1 - lets suspended users appeal only their own notices using expiring, single-use access
+  ---
+  duration_ms: 684.231
+  ...
+# {"ts":"2026-09-25T15:56:58.338Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":65,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.399Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.461Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.463Z","method":"GET","path":"/api/v1/admin/reports","status":401,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.524Z","method":"POST","path":"/api/v1/admin/login","status":403,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.588Z","method":"POST","path":"/api/v1/admin/login","status":200,"durationMs":62,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.657Z","method":"POST","path":"/api/v1/admin/login","status":200,"durationMs":67,"ip":"127.0.0.1"}
+# {"event":"admin_authorization_denied","actor":"1bb61757-b63a-424b-8938-b69ed7630806","permission":"admins.read"}
+# {"ts":"2026-09-25T15:56:58.662Z","method":"GET","path":"/api/v1/admin/admins","status":403,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.664Z","method":"POST","path":"/api/v1/admin/moderate","status":403,"durationMs":1,"ip":"127.0.0.1"}
+# {"event":"admin_authorization_denied","actor":"1bb61757-b63a-424b-8938-b69ed7630806","permission":"admins.create"}
+# {"ts":"2026-09-25T15:56:58.667Z","method":"POST","path":"/api/v1/admin/admins","status":403,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.669Z","method":"POST","path":"/api/v1/admin/admins","status":403,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.672Z","method":"POST","path":"/api/v1/admin/admins","status":403,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.676Z","method":"POST","path":"/api/v1/admin/admins","status":200,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.740Z","method":"POST","path":"/api/v1/admin/login","status":200,"durationMs":62,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.745Z","method":"GET","path":"/api/v1/admin/reports","status":200,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.748Z","method":"POST","path":"/api/v1/admin/admins","status":200,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.750Z","method":"GET","path":"/api/v1/admin/reports","status":401,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.844Z","method":"POST","path":"/api/v1/admin/reauthenticate","status":204,"durationMs":90,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:58.912Z","method":"POST","path":"/api/v1/moderation/notices","status":200,"durationMs":67,"ip":"127.0.0.1"}
+# Subtest: rejects USER, missing sessions, CSRF violations and self-escalation; grants are live
+ok 2 - rejects USER, missing sessions, CSRF violations and self-escalation; grants are live
+  ---
+  duration_ms: 641.1477
+  ...
+# {"ts":"2026-09-25T15:56:58.979Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":65,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.043Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":63,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.106Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":62,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.175Z","method":"POST","path":"/api/v1/admin/login","status":200,"durationMs":67,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.184Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":7,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.192Z","method":"POST","path":"/api/v1/stories","status":201,"durationMs":7,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.197Z","method":"POST","path":"/api/v1/reports","status":201,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.210Z","method":"POST","path":"/api/v1/admin/moderate","status":200,"durationMs":11,"ip":"127.0.0.1"}
+# {"event":"moderation_action_failed","actor":"7e6f1a55-4407-4823-935a-46a3c5c326f9","action":"remove"}
+# {"ts":"2026-09-25T15:56:59.237Z","method":"POST","path":"/api/v1/admin/moderate","status":409,"durationMs":36,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.243Z","method":"GET","path":"/api/v1/media/cde903db-1fc7-46a3-a28e-09a157a00c13/file","status":404,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.244Z","method":"GET","path":"/api/v1/stories/ba36227d-115b-4fa0-b1cf-1d8b668bee09","status":404,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.245Z","method":"GET","path":"/api/v1/admin/evidence/da11ffb8-e7bf-4014-a416-3a2978c35452","status":401,"durationMs":0,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.250Z","method":"GET","path":"/api/v1/admin/evidence/da11ffb8-e7bf-4014-a416-3a2978c35452","status":200,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.309Z","method":"POST","path":"/api/v1/moderation/notices","status":200,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.369Z","method":"POST","path":"/api/v1/moderation/appeal","status":200,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.371Z","method":"GET","path":"/api/v1/stories/ba36227d-115b-4fa0-b1cf-1d8b668bee09","status":404,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.375Z","method":"POST","path":"/api/v1/admin/moderate","status":200,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.412Z","method":"GET","path":"/api/v1/stories/ba36227d-115b-4fa0-b1cf-1d8b668bee09","status":200,"durationMs":36,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.427Z","method":"POST","path":"/api/v1/admin/moderate","status":200,"durationMs":14,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.436Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":7,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.438Z","method":"POST","path":"/api/v1/stories","status":403,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.445Z","method":"POST","path":"/api/v1/admin/moderate","status":200,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.447Z","method":"GET","path":"/api/v1/auth/me","status":403,"durationMs":1,"ip":"127.0.0.1"}
+# Subtest: moderation is atomic, concurrent-safe, hides direct media, and allows explicit restoration and appeals
+ok 3 - moderation is atomic, concurrent-safe, hides direct media, and allows explicit restoration and appeals
+  ---
+  duration_ms: 534.3525
+  ...
+# {"ts":"2026-09-25T15:56:59.515Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":66,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.577Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.639Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.705Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":65,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.766Z","method":"POST","path":"/api/v1/admin/login","status":200,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.826Z","method":"POST","path":"/api/v1/admin/login","status":200,"durationMs":59,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.831Z","method":"POST","path":"/api/v1/admin/advertisers","status":201,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.838Z","method":"POST","path":"/api/v1/media/photos","status":201,"durationMs":5,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.852Z","method":"POST","path":"/api/v1/admin/campaigns","status":201,"durationMs":12,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.867Z","method":"GET","path":"/api/v1/ads/placements","status":200,"durationMs":14,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.873Z","method":"POST","path":"/api/v1/admin/campaigns/236f1a65-b9f7-43f2-9639-70159793c4bc/transition","status":409,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.889Z","method":"POST","path":"/api/v1/admin/campaigns/236f1a65-b9f7-43f2-9639-70159793c4bc/transition","status":200,"durationMs":14,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.893Z","method":"POST","path":"/api/v1/admin/campaigns/236f1a65-b9f7-43f2-9639-70159793c4bc/transition","status":409,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.900Z","method":"POST","path":"/api/v1/admin/campaigns/236f1a65-b9f7-43f2-9639-70159793c4bc/transition","status":200,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.903Z","method":"POST","path":"/api/v1/admin/campaigns/236f1a65-b9f7-43f2-9639-70159793c4bc/transition","status":200,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.920Z","method":"GET","path":"/api/v1/ads/placements","status":200,"durationMs":16,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.925Z","method":"GET","path":"/api/v1/ads/placements","status":200,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:56:59.928Z","method":"GET","path":"/api/v1/ads/deliveries/32f3182e-0bb3-44c6-bad5-8e54d67538f7","status":404,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.055Z","method":"POST","path":"/api/v1/ads/events","status":204,"durationMs":12,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.061Z","method":"POST","path":"/api/v1/ads/deliveries/32f3182e-0bb3-44c6-bad5-8e54d67538f7/report","status":200,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.064Z","method":"POST","path":"/api/v1/ads/events","status":204,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.067Z","method":"GET","path":"/api/v1/ads/deliveries/32f3182e-0bb3-44c6-bad5-8e54d67538f7","status":404,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.070Z","method":"POST","path":"/api/v1/admin/campaigns/236f1a65-b9f7-43f2-9639-70159793c4bc/transition","status":200,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.077Z","method":"GET","path":"/api/v1/ads/placements","status":200,"durationMs":6,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.082Z","method":"POST","path":"/api/v1/admin/campaigns/236f1a65-b9f7-43f2-9639-70159793c4bc/edit","status":200,"durationMs":4,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.085Z","method":"POST","path":"/api/v1/admin/campaigns/236f1a65-b9f7-43f2-9639-70159793c4bc/transition","status":409,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.123Z","method":"POST","path":"/api/v1/admin/campaigns/236f1a65-b9f7-43f2-9639-70159793c4bc/transition","status":200,"durationMs":37,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.126Z","method":"POST","path":"/api/v1/admin/campaigns/236f1a65-b9f7-43f2-9639-70159793c4bc/transition","status":409,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.317Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":190,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.387Z","method":"POST","path":"/api/v1/admin/login","status":200,"durationMs":67,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.399Z","method":"POST","path":"/api/v1/admin/campaigns/236f1a65-b9f7-43f2-9639-70159793c4bc/transition","status":200,"durationMs":11,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.402Z","method":"POST","path":"/api/v1/admin/campaigns/236f1a65-b9f7-43f2-9639-70159793c4bc/transition","status":200,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.422Z","method":"GET","path":"/api/v1/ads/placements","status":200,"durationMs":20,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.426Z","method":"GET","path":"/api/v1/ads/deliveries/b8661245-5766-4c84-9869-d9415c46b2fc","status":404,"durationMs":2,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.437Z","method":"POST","path":"/api/v1/admin/moderate","status":200,"durationMs":10,"ip":"127.0.0.1"}
+# Subtest: ads require independent approval, enforce caps/ownership/hide and create real reports/events
+ok 4 - ads require independent approval, enforce caps/ownership/hide and create real reports/events
+  ---
+  duration_ms: 1990.8622
+  ...
+# {"ts":"2026-09-25T15:57:01.499Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.564Z","method":"POST","path":"/api/v1/admin/login","status":200,"durationMs":63,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.567Z","method":"GET","path":"/api/v1/admin/campaigns","status":200,"durationMs":3,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.569Z","method":"GET","path":"/api/v1/admin/advertisers","status":200,"durationMs":1,"ip":"127.0.0.1"}
+# {"event":"admin_authorization_denied","actor":"e94fd57a-4cd9-485f-9c5e-d68905b67bb5","permission":"ads.analytics.read"}
+# {"ts":"2026-09-25T15:57:01.571Z","method":"GET","path":"/api/v1/admin/campaigns/15984ff0-9516-4ecc-bf8a-98f35e33724d/analytics","status":403,"durationMs":1,"ip":"127.0.0.1"}
+# {"event":"admin_authorization_denied","actor":"e94fd57a-4cd9-485f-9c5e-d68905b67bb5","permission":"reports.read"}
+# {"ts":"2026-09-25T15:57:01.573Z","method":"GET","path":"/api/v1/admin/reports","status":403,"durationMs":1,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.633Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":60,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.705Z","method":"POST","path":"/api/v1/admin/login","status":200,"durationMs":70,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:57:01.707Z","method":"GET","path":"/api/v1/admin/campaigns","status":403,"durationMs":1,"ip":"127.0.0.1"}
+# Subtest: ad operators can read required resources without gaining analytics or moderation access
+ok 5 - ad operators can read required resources without gaining analytics or moderation access
+  ---
+  duration_ms: 269.5206
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4518.3848

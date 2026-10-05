@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: accepts forwarded IPs only from an explicitly trusted proxy and uses its last hop
+ok 1 - accepts forwarded IPs only from an explicitly trusted proxy and uses its last hop
+  ---
+  duration_ms: 6.4815
+  ...
+# Subtest: RateLimiter (unit)
+    # Subtest: allows up to max requests per window, then throws an HttpError shaped like a 429
+    ok 1 - allows up to max requests per window, then throws an HttpError shaped like a 429
+      ---
+      duration_ms: 0.73
+      ...
+    # Subtest: tracks each key's budget independently
+    ok 2 - tracks each key's budget independently
+      ---
+      duration_ms: 0.3908
+      ...
+    # Subtest: resets a key's budget once its window has really elapsed
+    ok 3 - resets a key's budget once its window has really elapsed
+      ---
+      duration_ms: 264.4431
+      ...
+    # Subtest: reset() clears all state immediately, for tests that need a clean slate
+    ok 4 - reset() clears all state immediately, for tests that need a clean slate
+      ---
+      duration_ms: 0.3979
+      ...
+    1..4
+ok 2 - RateLimiter (unit)
+  ---
+  duration_ms: 266.5164
+  type: 'suite'
+  ...
+# {"ts":"2026-09-25T15:41:51.759Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":110,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:41:51.837Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":69,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:41:51.904Z","method":"POST","path":"/api/v1/auth/signup","status":201,"durationMs":64,"ip":"127.0.0.1"}
+# {"ts":"2026-09-25T15:41:51.906Z","method":"POST","path":"/api/v1/auth/signup","status":429,"durationMs":0,"ip":"127.0.0.1"}
+# Subtest: the auth rate limiter is wired into signup/login/refresh
+    # Subtest: returns 429 once the per-IP auth budget (3, for this file) is exhausted
+    ok 1 - returns 429 once the per-IP auth budget (3, for this file) is exhausted
+      ---
+      duration_ms: 292.0917
+      ...
+# {"ts":"2026-09-25T15:41:51.910Z","method":"POST","path":"/api/v1/auth/login","status":429,"durationMs":1,"ip":"127.0.0.1"}
+    # Subtest: shares that same exhausted budget with login — one budget per IP across the whole auth family
+    ok 2 - shares that same exhausted budget with login — one budget per IP across the whole auth family
+      ---
+      duration_ms: 4.0782
+      ...
+    1..2
+ok 3 - the auth rate limiter is wired into signup/login/refresh
+  ---
+  duration_ms: 296.8536
+  type: 'suite'
+  ...
+1..3
+# tests 7
+# suites 2
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1036.1602

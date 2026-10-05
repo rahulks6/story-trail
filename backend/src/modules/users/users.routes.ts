@@ -1,0 +1,76 @@
+import type { Router } from "../../http/router";
+import { requireAuth } from "../../http/middleware/auth.middleware";
+import { sendJson } from "../../http/respond";
+import { parsePagination, parseQueryString } from "../../http/pagination";
+import { parseUsernameParam } from "../../shared/validation";
+import { parseDeleteAccountInput, parseUpdateProfileInput } from "./dto";
+import * as profilesService from "./profiles.service";
+import * as usersRepo from "./users.repository";
+import * as mediaRepo from "../media/media.repository";
+import * as socialRepo from "../social/social.repository";
+import { mediaStorage } from "../media/instance";
+import { streamMedia } from "../media/stream";
+import { HttpError } from "../../http/errors";
+
+export function registerUserRoutes(router: Router): void {
+  router.get("/api/v1/users/:username/avatar/file", async (req, res) => {
+    requireAuth(req);
+    const username = parseUsernameParam(req.params.username);
+    const user = await usersRepo.findUserByUsername(username);
+    if (!user || !user.isActive || !user.avatarMediaId) throw new HttpError(404, "Avatar not found.");
+    if (user.id !== req.userId && await socialRepo.anyBlockBetween(req.userId as string, user.id)) {
+      throw new HttpError(404, "Avatar not found.");
+    }
+    const media = await mediaRepo.findMediaById(user.avatarMediaId, true);
+    if (!media || media.ownerId !== user.id || media.kind !== "photo" || media.status !== "ready") throw new HttpError(404, "Avatar not found.");
+    await streamMedia(req, res, media, mediaStorage);
+  });
+
+  router.get("/api/v1/users/:username", async (req, res) => {
+    requireAuth(req);
+    const username = parseUsernameParam(req.params.username);
+    const profile = await profilesService.getProfileByUsername(username, req.userId as string);
+    sendJson(res, 200, { profile });
+  });
+
+  router.patch("/api/v1/users/me", async (req, res) => {
+    requireAuth(req);
+    const input = parseUpdateProfileInput(req.body);
+    const user = await profilesService.updateMyProfile(req.userId as string, input);
+    sendJson(res, 200, {
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        displayName: user.displayName,
+        bio: user.bio,
+        avatarMediaId: user.avatarMediaId,
+        interests: user.interests,
+        isPrivate: user.isPrivate,
+      },
+    });
+  });
+
+  router.delete("/api/v1/users/me", async (req, res) => {
+    requireAuth(req);
+    const { password } = parseDeleteAccountInput(req.body);
+    await profilesService.deleteMyAccount(req.userId as string, password);
+    sendJson(res, 204, undefined);
+  });
+
+  router.get("/api/v1/users/:username/followers", async (req, res) => {
+    requireAuth(req);
+    const username = parseUsernameParam(req.params.username);
+    const { limit, offset } = parsePagination(parseQueryString(req.url ?? ""));
+    const followers = await profilesService.getFollowers(username, req.userId as string, limit, offset);
+    sendJson(res, 200, { followers, limit, offset });
+  });
+
+  router.get("/api/v1/users/:username/following", async (req, res) => {
+    requireAuth(req);
+    const username = parseUsernameParam(req.params.username);
+    const { limit, offset } = parsePagination(parseQueryString(req.url ?? ""));
+    const following = await profilesService.getFollowing(username, req.userId as string, limit, offset);
+    sendJson(res, 200, { following, limit, offset });
+  });
+}

@@ -1,0 +1,15 @@
+# Optional exact-proxy trust for the bundled private Docker network.
+# Keep backend port 4000 unexposed; Caddy is the public entry point.
+services:
+  backend:
+    environment:
+      TRUSTED_PROXY_IPS: ${KATKEE_PROXY_IP:-172.30.50.3}
+  caddy:
+    networks:
+      default:
+        ipv4_address: ${KATKEE_PROXY_IP:-172.30.50.3}
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: ${KATKEE_NETWORK_SUBNET:-172.30.50.0/24}

@@ -1,0 +1,37 @@
+{
+  "baseArchive": "Katkee-Final-Source-Public-View-Count-2026-09-26.zip",
+  "changed": [
+    "katkee/DEPLOYMENT.md",
+    "katkee/FINAL_SOURCE_STATUS.md",
+    "katkee/README.md",
+    "katkee/mobile/scripts/check-release.cjs",
+    "katkee/mobile/scripts/ios-bundle.sh",
+    "katkee/mobile/src/api/client.ts",
+    "katkee/mobile/src/api/media.ts",
+    "katkee/verification/regressions.cjs"
+  ],
+  "added": [
+    "katkee/RELEASE_READINESS.md",
+    "katkee/docs/APPROVED_MASTER_SPEC.pdf",
+    "katkee/docs/current-audit/android-release-check.log",
+    "katkee/docs/current-audit/backend-audit.json",
+    "katkee/docs/current-audit/mobile-audit.json",
+    "katkee/docs/test-runs/2026-09-30T23-04-32-987Z/android-js-bundle.log",
+    "katkee/docs/test-runs/2026-09-30T23-04-32-987Z/backend-build.log",
+    "katkee/docs/test-runs/2026-09-30T23-04-32-987Z/mobile-typecheck.log",
+    "katkee/docs/test-runs/2026-09-30T23-04-32-987Z/ranking-unit-tests.log",
+    "katkee/docs/test-runs/2026-09-30T23-04-32-987Z/results.json",
+    "katkee/docs/test-runs/2026-09-30T23-04-32-987Z/source-regressions.log",
+    "katkee/docs/test-runs/2026-09-30T23-06-42-451Z/android-js-bundle.log",
+    "katkee/docs/test-runs/2026-09-30T23-06-42-451Z/backend-build.log",
+    "katkee/docs/test-runs/2026-09-30T23-06-42-451Z/mobile-typecheck.log",
+    "katkee/docs/test-runs/2026-09-30T23-06-42-451Z/ranking-unit-tests.log",
+    "katkee/docs/test-runs/2026-09-30T23-06-42-451Z/results.json",
+    "katkee/docs/test-runs/2026-09-30T23-06-42-451Z/source-regressions.log",
+    "katkee/package.json",
+    "katkee/scripts/verify.cjs",
+    "katkee/verification/network.cjs",
+    "katkee/verification/release-config.cjs"
+  ],
+  "releaseReady": false
+}

@@ -1,0 +1,53 @@
+✔ deadline aborts native work even when transport ignores cancellation (128.657264ms)
+✔ already cancelled request never starts work (34.329854ms)
+✔ external cancellation interrupts an active request (19.739924ms)
+✔ HTML gateway failure preserves HTTP status and hides response contents (17.647078ms)
+✔ empty and malformed successes cannot be treated as valid API data (53.507914ms)
+✔ valid 204 remains supported (21.567476ms)
+✔ validation errors retain field details (22.396226ms)
+✔ server failures do not automatically replay a write (12.952251ms)
+✔ Headers and lowercase authorization are refreshed correctly (6.313729ms)
+✔ configured origin with trailing slash does not create a double-slash API route (8.819938ms)
+✔ deadline includes a stalled response body (15.645127ms)
+✔ profile metadata trims and de-duplicates username/interests (66.021544ms)
+✔ profile metadata rejects reserved, malformed and oversized values (10.625748ms)
+✔ profile update keeps avatar and profile fields in one repository UPDATE (0.376069ms)
+Parsed 208 TypeScript files
+✔ all TypeScript and TSX sources parse (364.245421ms)
+✔ concurrent refresh requests issue only one replacement token pair (61.298395ms)
+✔ invalid Highlight cover causes no writes (19.564263ms)
+✔ authenticated requests retry once with a fresh token and preserve body (20.186777ms)
+✔ persistent 401 does not cause an infinite retry (9.464525ms)
+✔ login failures never enter the refresh flow (7.363267ms)
+✔ Android checks do not require an iOS identifier or project (4.054284ms)
+✔ iOS checks do not require Android SDK target or signing (5.466479ms)
+✔ release rejects placeholder origins, paths and embedded credentials (4.096667ms)
+✔ missing signing inputs and development identifiers block release (1.310164ms)
+✔ a renamed copy of the public debug key is rejected (1.286749ms)
+✔ outdated native target and native identifier mismatch remain blocked (1.0245ms)
+✔ API 36 alone cannot clear an old framework and AGP (1.012382ms)
+✔ missing iOS icons and empty privacy declaration block release (1.302662ms)
+✔ policy links and boolean confirmation are required (1.313498ms)
+✔ draft restore, count and deletion are isolated across accounts and legacy keys (93.945503ms)
+✔ corrupted and mismatched saved drafts cannot enter the editor (12.307443ms)
+✔ avatar ownership, kind and readiness failures never write profile fields (72.370586ms)
+✔ valid profile and avatar commit together; explicit null removes avatar (17.003472ms)
+✔ username conflicts are controlled without hiding unrelated database failures (29.592715ms)
+✔ malformed route escaping returns 400 (19.197709ms)
+✔ profile link parser accepts only valid profile paths (2.609893ms)
+✔ email signup reserves official-looking usernames (15.645328ms)
+✔ legacy credentials migrate only after secure write succeeds (104.048335ms)
+✔ secure write failure preserves recoverable legacy credentials (32.382175ms)
+✔ token writes and logout are serialized so stale writes cannot resurrect a session (29.210748ms)
+✔ retains media and request identity across restart, retries publish without uploading twice (103.243937ms)
+✔ double taps share one in-flight upload and publication (34.435512ms)
+✔ account change between upload and publish stops publication and preserves retry metadata (22.436765ms)
+✔ removing a queued upload leaves the original file intact and rejects unsafe file identifiers (23.635564ms)
+ℹ tests 44
+ℹ suites 0
+ℹ pass 44
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 740.861841

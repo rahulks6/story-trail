@@ -1,0 +1,16 @@
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':react-native-async-storage_async-storage:compileDebugJavaWithJavac'.
+> Could not resolve all files for configuration ':react-native-async-storage_async-storage:androidJdkImage'.
+   > Failed to transform core-for-system-modules.jar to match attributes {artifactType=_internal_android_jdk_image, org.gradle.libraryelements=jar, org.gradle.usage=java-runtime}.
+      > Execution failed for JdkImageTransform: /workspace/scratch/5a3363283020/toolchains/android/platforms/android-36/core-for-system-modules.jar.
+         > jlink executable /usr/lib/jvm/java-17-openjdk-amd64/bin/jlink does not exist.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 3m 14s

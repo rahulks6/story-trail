@@ -1,0 +1,13 @@
+node_modules/
+build/
+android/.gradle/
+android/local.properties
+android/app/build/
+ios/Pods/
+ios/build/
+ios/.xcode.env.local
+*.log
+*.jks
+*.p12
+*.mobileprovision
+.expo/

@@ -1,0 +1,47 @@
+{
+  "context": "Local Windows loopback, sequential requests, six organic creators, ads disabled, milliseconds; not device or production load test; baseline database adapter normalized to updated Windows-compatible adapter because original failed on CRLF",
+  "results": [
+    {
+      "name": "baseline",
+      "label": "auth_me",
+      "samples": 20,
+      "p50": 42,
+      "p95": 160
+    },
+    {
+      "name": "baseline",
+      "label": "home_6_creators",
+      "samples": 10,
+      "p50": 3034,
+      "p95": 3711
+    },
+    {
+      "name": "baseline",
+      "label": "media",
+      "samples": 20,
+      "p50": 479,
+      "p95": 620
+    },
+    {
+      "name": "admin_ads",
+      "label": "auth_me",
+      "samples": 20,
+      "p50": 200,
+      "p95": 227
+    },
+    {
+      "name": "admin_ads",
+      "label": "home_6_creators",
+      "samples": 10,
+      "p50": 2795,
+      "p95": 3642
+    },
+    {
+      "name": "admin_ads",
+      "label": "media",
+      "samples": 20,
+      "p50": 550,
+      "p95": 756
+    }
+  ]
+}

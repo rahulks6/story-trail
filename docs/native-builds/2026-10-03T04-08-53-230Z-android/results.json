@@ -1,0 +1,13 @@
+{
+  "generatedAt": "2026-10-03T04:08:53.233Z",
+  "platform": "android",
+  "results": [],
+  "artifact": null,
+  "reason": "Install Android SDK platform 36 and set ANDROID_HOME. See docs/NATIVE_BUILD_HANDOFF.md.",
+  "releaseReady": false,
+  "notVerified": [
+    "production signing",
+    "physical-device acceptance",
+    "store submission"
+  ]
+}

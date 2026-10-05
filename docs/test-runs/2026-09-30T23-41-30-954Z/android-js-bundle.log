@@ -1,0 +1,12 @@
+                Welcome to Metro v0.80.12
+              Fast - Scalable - Integrated
+
+
+transform[stderr]: (node:143) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+transform[stderr]: (Use `node --trace-warnings ...` to show where the warning was created)
+transform[stderr]: (node:144) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+transform[stderr]: (Use `node --trace-warnings ...` to show where the warning was created)
+info Writing bundle output to: build/index.android.bundle
+info Done writing bundle output
+info Copying 6 asset files
+info Done copying assets

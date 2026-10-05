@@ -1,0 +1,37 @@
+✔ deadline aborts native work even when transport ignores cancellation (119.549636ms)
+✔ already cancelled request never starts work (21.680157ms)
+✔ external cancellation interrupts an active request (17.857012ms)
+✔ HTML gateway failure preserves HTTP status and hides response contents (23.042565ms)
+✔ empty and malformed successes cannot be treated as valid API data (59.488763ms)
+✔ valid 204 remains supported (15.049251ms)
+✔ validation errors retain field details (10.039724ms)
+✔ server failures do not automatically replay a write (10.588469ms)
+✔ Headers and lowercase authorization are refreshed correctly (8.287482ms)
+Parsed 206 TypeScript files
+✔ all TypeScript and TSX sources parse (296.092913ms)
+✔ concurrent refresh requests issue only one replacement token pair (55.920852ms)
+✔ invalid Highlight cover causes no writes (21.13759ms)
+✔ authenticated requests retry once with a fresh token and preserve body (15.833391ms)
+✔ persistent 401 does not cause an infinite retry (9.885726ms)
+✔ login failures never enter the refresh flow (10.372408ms)
+✔ Android checks do not require an iOS identifier or project (4.270264ms)
+✔ iOS checks do not require Android SDK target or signing (1.53487ms)
+✔ release rejects placeholder origins, paths and embedded credentials (2.973548ms)
+✔ missing signing inputs and development identifiers block release (1.093975ms)
+✔ a renamed copy of the public debug key is rejected (1.189987ms)
+✔ outdated native target and native identifier mismatch remain blocked (1.499608ms)
+✔ legacy credentials migrate only after secure write succeeds (80.473266ms)
+✔ secure write failure preserves recoverable legacy credentials (18.572851ms)
+✔ token writes and logout are serialized so stale writes cannot resurrect a session (28.014567ms)
+✔ retains media and request identity across restart, retries publish without uploading twice (115.355375ms)
+✔ double taps share one in-flight upload and publication (24.870676ms)
+✔ account change between upload and publish stops publication and preserves retry metadata (23.407918ms)
+✔ removing a queued upload leaves the original file intact and rejects unsafe file identifiers (18.896141ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 677.57395

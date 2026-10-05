@@ -1,0 +1,42 @@
+✔ deadline aborts native work even when transport ignores cancellation (119.199415ms)
+✔ already cancelled request never starts work (22.167803ms)
+✔ external cancellation interrupts an active request (16.457859ms)
+✔ HTML gateway failure preserves HTTP status and hides response contents (18.346962ms)
+✔ empty and malformed successes cannot be treated as valid API data (42.979739ms)
+✔ valid 204 remains supported (21.633531ms)
+✔ validation errors retain field details (14.070745ms)
+✔ server failures do not automatically replay a write (9.637925ms)
+✔ Headers and lowercase authorization are refreshed correctly (7.085527ms)
+✔ configured origin with trailing slash does not create a double-slash API route (7.300096ms)
+✔ deadline includes a stalled response body (17.86724ms)
+✔ profile metadata trims and de-duplicates username/interests (67.880288ms)
+✔ profile metadata rejects reserved, malformed and oversized values (17.093201ms)
+✔ profile update keeps avatar and profile fields in one repository UPDATE (0.468355ms)
+Parsed 206 TypeScript files
+✔ all TypeScript and TSX sources parse (273.18301ms)
+✔ concurrent refresh requests issue only one replacement token pair (67.597674ms)
+✔ invalid Highlight cover causes no writes (23.620309ms)
+✔ authenticated requests retry once with a fresh token and preserve body (24.466706ms)
+✔ persistent 401 does not cause an infinite retry (13.019365ms)
+✔ login failures never enter the refresh flow (11.346962ms)
+✔ Android checks do not require an iOS identifier or project (3.896404ms)
+✔ iOS checks do not require Android SDK target or signing (1.497613ms)
+✔ release rejects placeholder origins, paths and embedded credentials (3.385876ms)
+✔ missing signing inputs and development identifiers block release (1.089928ms)
+✔ a renamed copy of the public debug key is rejected (1.272068ms)
+✔ outdated native target and native identifier mismatch remain blocked (1.20556ms)
+✔ legacy credentials migrate only after secure write succeeds (91.245635ms)
+✔ secure write failure preserves recoverable legacy credentials (40.641224ms)
+✔ token writes and logout are serialized so stale writes cannot resurrect a session (18.977087ms)
+✔ retains media and request identity across restart, retries publish without uploading twice (121.789765ms)
+✔ double taps share one in-flight upload and publication (22.847526ms)
+✔ account change between upload and publish stops publication and preserves retry metadata (13.281654ms)
+✔ removing a queued upload leaves the original file intact and rejects unsafe file identifiers (15.568758ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 675.696402
