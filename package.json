@@ -9,6 +9,8 @@
     "check:android-release": "node mobile/scripts/check-release.cjs --android",
     "check:ios-release": "node mobile/scripts/check-release.cjs --ios",
     "build:android-debug": "node scripts/build-native.cjs android",
-    "build:ios-simulator": "node scripts/build-native.cjs ios"
+    "build:ios-simulator": "node scripts/build-native.cjs ios",
+    "build:android-release": "node scripts/build-native.cjs android-release",
+    "check:16kb": "node verification/elf-alignment.cjs"
   }
 }

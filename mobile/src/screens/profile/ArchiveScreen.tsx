@@ -157,7 +157,7 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
           contentContainerStyle={styles.listContent}
           onEndReachedThreshold={0.4}
           onEndReached={onEndReached}
-          ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} /> : null}
+          ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} /> : undefined}
           renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
           renderItem={({ item: row }) => (
             <View style={[styles.row, { gap: GAP }]}>
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   thumbWrapper: { borderRadius: radii.sm, overflow: "hidden", backgroundColor: colors.surfaceElevated },
   thumb: { width: "100%", height: "100%" },
   selectedOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: "rgba(0,0,0,0.35)",
     alignItems: "center",
     justifyContent: "center",

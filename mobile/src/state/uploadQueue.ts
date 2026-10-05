@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import RNFS from 'react-native-fs';
+import * as RNFS from '@dr.pogodin/react-native-fs';
 import {uploadPhoto,uploadVideo} from '../api/media';
 import {publishStory,type PublishStoryInput} from '../api/stories';
 import {storyPublished} from './storyChanges';
@@ -18,8 +18,8 @@ export function subscribeUploads(fn:()=>void){listeners.add(fn);return ()=>{list
 async function save(job:UploadJob){await AsyncStorage.setItem(key(job.ownerId,job.id),JSON.stringify(job));notify();}
 export async function listUploads(ownerId:string):Promise<UploadJob[]>{
  const keys=(await AsyncStorage.getAllKeys()).filter(k=>k.startsWith(PREFIX+ownerId+'.'));
- const rows=await AsyncStorage.multiGet(keys);
- return rows.flatMap(([,raw])=>{try{const job=JSON.parse(raw||'null') as UploadJob;if(!job||job.ownerId!==ownerId)return [];validate(ownerId,job.id);return [job];}catch{return [];}}).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
+ const rows=Object.values(await AsyncStorage.getMany(keys));
+ return rows.flatMap(raw=>{try{const job=JSON.parse(raw||'null') as UploadJob;if(!job||job.ownerId!==ownerId)return [];validate(ownerId,job.id);return [job];}catch{return [];}}).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
 }
 export function enqueueUpload(ownerId:string,uri:string,kind:UploadJob['kind'],mimeType:string,payload:UploadJob['payload']):Promise<UploadJob>{return serial(async()=>{
  const existing=await listUploads(ownerId);if(existing.filter(j=>j.status!=='published').length>=10)throw Error('Finish or remove a pending upload before adding another.');

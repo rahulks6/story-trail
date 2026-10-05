@@ -1,0 +1,58 @@
+{
+  "generatedAt": "2026-10-05T10:40:27.039Z",
+  "node": "v22.22.0",
+  "results": [
+    {
+      "name": "backend-build",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 2822,
+      "log": "backend-build.log"
+    },
+    {
+      "name": "mobile-typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 4023,
+      "log": "mobile-typecheck.log"
+    },
+    {
+      "name": "source-regressions",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 1810,
+      "log": "source-regressions.log"
+    },
+    {
+      "name": "ranking-unit-tests",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 161,
+      "log": "ranking-unit-tests.log"
+    },
+    {
+      "name": "android-js-bundle",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 2268,
+      "log": "android-js-bundle.log"
+    },
+    {
+      "name": "ios-js-bundle",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 2394,
+      "log": "ios-js-bundle.log"
+    }
+  ],
+  "notVerified": [
+    "Android APK/AAB build and signing",
+    "iOS Xcode archive and signing",
+    "physical-device behavior and performance",
+    "live Google/SMS providers",
+    "production hosting and backups",
+    "full product specification completion",
+    "database integration tests"
+  ],
+  "releaseReady": false
+}

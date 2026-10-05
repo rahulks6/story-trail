@@ -70,7 +70,7 @@ export async function clearAllPendingDrafts(ownerId: string): Promise<void> {
   try {
     const keys = await AsyncStorage.getAllKeys();
     const draftKeys = keys.filter((key) => key.startsWith(ownerPrefix(ownerId)));
-    if (draftKeys.length > 0) await AsyncStorage.multiRemove(draftKeys);
+    if (draftKeys.length > 0) await AsyncStorage.removeMany(draftKeys);
   } catch {
     // Best-effort — same rationale as clearPendingDraft above.
   }

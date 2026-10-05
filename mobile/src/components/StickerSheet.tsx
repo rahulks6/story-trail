@@ -285,7 +285,7 @@ export function StickerSheet({ visible, onClose, onAdd, editingOverlay, onEditDo
                 ListEmptyComponent={
                   debouncedMentionQuery.trim().length >= 2 && !mentionSearching ? (
                     <Text style={styles.emptyText}>No one found.</Text>
-                  ) : null
+                  ) : undefined
                 }
               />
             </View>

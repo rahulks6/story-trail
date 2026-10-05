@@ -361,7 +361,7 @@ export function ActivityScreen(): React.JSX.Element {
               </Pressable>
             );
           }}
-          ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} /> : null}
+          ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} /> : undefined}
         />
       )}
     </View>

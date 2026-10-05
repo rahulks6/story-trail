@@ -20,13 +20,13 @@ async function write(tokens:StoredTokens):Promise<void> {
 }
 export function loadTokens():Promise<StoredTokens|null> {return serialized(async()=>{
  const credentials=await Keychain.getGenericPassword({service:SERVICE});
- if(credentials){const tokens=parse(JSON.parse(credentials.password));await AsyncStorage.multiRemove(LEGACY_KEYS);return tokens;}
- const old=await AsyncStorage.multiGet(LEGACY_KEYS);
- const accessToken=old[0]?.[1],refreshToken=old[1]?.[1];
- if(!accessToken||!refreshToken){await AsyncStorage.multiRemove(LEGACY_KEYS);return null;}
+ if(credentials){const tokens=parse(JSON.parse(credentials.password));await AsyncStorage.removeMany(LEGACY_KEYS);return tokens;}
+ const old=await AsyncStorage.getMany(LEGACY_KEYS);
+ const accessToken=old[LEGACY_KEYS[0]!],refreshToken=old[LEGACY_KEYS[1]!];
+ if(!accessToken||!refreshToken){await AsyncStorage.removeMany(LEGACY_KEYS);return null;}
  const tokens={accessToken,refreshToken};
  // Never delete a working legacy session until encrypted storage confirms its write.
- await write(tokens);await AsyncStorage.multiRemove(LEGACY_KEYS);return tokens;
+ await write(tokens);await AsyncStorage.removeMany(LEGACY_KEYS);return tokens;
 });}
-export function saveTokens(tokens:StoredTokens):Promise<void> {return serialized(async()=>{await write(tokens);await AsyncStorage.multiRemove(LEGACY_KEYS);});}
-export function clearTokens():Promise<void> {return serialized(async()=>{await Keychain.resetGenericPassword({service:SERVICE});await AsyncStorage.multiRemove(LEGACY_KEYS);});}
+export function saveTokens(tokens:StoredTokens):Promise<void> {return serialized(async()=>{await write(tokens);await AsyncStorage.removeMany(LEGACY_KEYS);});}
+export function clearTokens():Promise<void> {return serialized(async()=>{await Keychain.resetGenericPassword({service:SERVICE});await AsyncStorage.removeMany(LEGACY_KEYS);});}

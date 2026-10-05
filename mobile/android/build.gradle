@@ -1,11 +1,14 @@
 buildscript {
     ext {
-        buildToolsVersion = "36.0.0"
-        minSdkVersion = 23
-        compileSdkVersion = 36
+        // React Native 0.87 toolchain (matches @react-native-community/template 0.87.1).
+        // NDK 27.1 + the React Native Gradle plugin build every native library with
+        // 16 KB-compatible ELF alignment; scripts/build-native.cjs verifies the result.
+        buildToolsVersion = "37.0.0"
+        minSdkVersion = 24
+        compileSdkVersion = 37
         targetSdkVersion = 36
-        ndkVersion = "26.1.10909125"
-        kotlinVersion = "1.9.24"
+        ndkVersion = "27.1.12297006"
+        kotlinVersion = "2.2.0"
     }
     repositories {
         google()

@@ -229,7 +229,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
         onEndReachedThreshold={0.4}
         onEndReached={() => void loadMoreArchive()}
         ListEmptyComponent={<Text style={typography.caption}>No Stories in your Archive yet.</Text>}
-        ListFooterComponent={archiveLoadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} /> : null}
+        ListFooterComponent={archiveLoadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} /> : undefined}
         renderItem={({ item }) => {
           const order = selected.indexOf(item.id);
           const isSelected = order !== -1;

@@ -253,6 +253,6 @@ const styles = StyleSheet.create({
   closeIcon: { color: "#fff", fontSize: 20 },
   editButton: { position: "absolute", top: spacing.xl + 10, right: spacing.xxl + spacing.sm, padding: spacing.xs },
   editIcon: { color: "#fff", fontSize: 18 },
-  tapZones: { ...StyleSheet.absoluteFillObject, flexDirection: "row" },
+  tapZones: { ...StyleSheet.absoluteFill, flexDirection: "row" },
   tapZone: { flex: 1 },
 });

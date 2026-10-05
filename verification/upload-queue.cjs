@@ -3,12 +3,12 @@ const ts=require('../backend/node_modules/typescript');
 const owner='11111111-1111-4111-8111-111111111111',other='22222222-2222-4222-8222-222222222222';
 function fixture(){
  const store=new Map(),files=new Map([['/original',1234]]);let uploads=0,publishes=0,failResponse=true,session={ownerId:owner,token:'private-token'},duringUpload;
- const storage={getAllKeys:async()=>[...store.keys()],multiGet:async keys=>keys.map(k=>[k,store.get(k)??null]),getItem:async k=>store.get(k)??null,setItem:async(k,v)=>store.set(k,v),removeItem:async k=>store.delete(k)};
+ const storage={getAllKeys:async()=>[...store.keys()],getMany:async keys=>Object.fromEntries(keys.map(k=>[k,store.get(k)??null])),getItem:async k=>store.get(k)??null,setItem:async(k,v)=>store.set(k,v),removeItem:async k=>store.delete(k)};
  const native={DocumentDirectoryPath:'/private',mkdir:async()=>{},copyFile:async(src,dest)=>{if(!files.has(src))throw Error('missing');files.set(dest,files.get(src));},stat:async p=>({size:files.get(p)}),exists:async p=>files.has(p),unlink:async p=>files.delete(p)};
  const media={uploadPhoto:async()=>{uploads++;await Promise.resolve();duringUpload?.();return {id:'owned-media'};}};media.uploadVideo=media.uploadPhoto;
  const story={publishStory:async input=>{publishes++;assert.ok(input.requestId);if(failResponse){failResponse=false;throw Error('Response lost after server commit');}return {story:{id:'same-story'}};}};
  const code=ts.transpileModule(fs.readFileSync(path.join(__dirname,'../mobile/src/state/uploadQueue.ts'),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText;
- function load(){const module={exports:{}};vm.runInNewContext(code,{module,exports:module.exports,require:n=>({'@react-native-async-storage/async-storage':storage,'react-native-fs':native,'../api/media':media,'../api/stories':story,'./storyChanges':{storyPublished(){}}}[n])});return module.exports;}
+ function load(){const module={exports:{}};vm.runInNewContext(code,{module,exports:module.exports,require:n=>({'@react-native-async-storage/async-storage':storage,'@dr.pogodin/react-native-fs':native,'../api/media':media,'../api/stories':story,'./storyChanges':{storyPublished(){}}}[n])});return module.exports;}
  return {load,store,files,get uploads(){return uploads;},get publishes(){return publishes;},session:()=>session,logoutDuringUpload(){duringUpload=()=>{session=null;};},succeed(){failResponse=false;}};
 }
 test('retains media and request identity across restart, retries publish without uploading twice',async()=>{

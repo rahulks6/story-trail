@@ -1,0 +1,15 @@
+{
+  "generatedAt": "2026-10-05T10:39:16.875Z",
+  "platform": "android-release",
+  "results": [],
+  "checks": [],
+  "artifacts": [],
+  "artifact": null,
+  "reason": "Release is blocked:\n- Configure privacyPolicyUrl with your live public HTTPS page.\n- Configure termsUrl with your live public HTTPS page.\n- Configure supportUrl with your live public HTTPS page.\n- Set productionApiUrl to your deployed HTTPS API origin (no path, credentials, query or fragment).\n- Confirm your permanent application identifiers in build-config.json.\n- Set androidApplicationId to your permanent release identifier.\n- Configure KATKEE_UPLOAD_STORE_FILE in your private build environment.\n- Configure KATKEE_UPLOAD_STORE_PASSWORD in your private build environment.\n- Configure KATKEE_UPLOAD_KEY_ALIAS in your private build environment.\n- Configure KATKEE_UPLOAD_KEY_PASSWORD in your private build environment.",
+  "releaseReady": false,
+  "notVerified": [
+    "production signing identity",
+    "physical-device acceptance",
+    "store submission"
+  ]
+}

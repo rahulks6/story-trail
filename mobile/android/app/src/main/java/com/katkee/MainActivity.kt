@@ -8,6 +8,8 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnable
 import com.facebook.react.defaults.DefaultReactActivityDelegate
 
 class MainActivity : ReactActivity() {
+  // react-native-screens: never restore fragments after process death; the
+  // navigator rebuilds its own state, and restoring stale fragments crashes.
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(null)
   }

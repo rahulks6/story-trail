@@ -4,10 +4,13 @@ import {Alert,AppState,Linking, PanResponder, Pressable, StyleSheet, Text, View,
 import {useIsFocused} from '@react-navigation/native';
 import {
   Camera,
+  type CameraRef,
+  type Recorder,
   useCameraDevice,
   useCameraPermission,
   useMicrophonePermission,
-  type CameraPosition,
+  usePhotoOutput,
+  useVideoOutput,
 } from "react-native-vision-camera";
 import { launchImageLibrary } from "react-native-image-picker";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -23,6 +26,8 @@ const MAX_RECORDING_SECONDS = 60;
 const RECORD_HOLD_DELAY_MS = 250;
 const RECORD_DRAG_ZOOM_SENSITIVITY = 4; // px of vertical drag per 1x of zoom
 const ZOOM_INDICATOR_HOLD_MS = 900;
+
+type CameraPosition = "back" | "front";
 
 function touchDistance(a: { pageX: number; pageY: number }, b: { pageX: number; pageY: number }): number {
   return Math.sqrt((b.pageX - a.pageX) ** 2 + (b.pageY - a.pageY) ** 2);
@@ -46,10 +51,10 @@ function clamp(n: number, min: number, max: number): number {
  * resolve on a real build). The rest of this codebase already proves a
  * dependency-free multitouch pattern works (DraggableCanvasObject.tsx), so
  * this follows it instead of introducing a new native dependency for one
- * screen. Camera access itself (react-native-vision-camera) can't be
- * exercised in this sandbox — no device, no npm install — so this is
- * correct-by-inspection TypeScript against that library's real v4 API, not
- * verified by running it. See mobile/README.md.
+ * screen. Capture uses react-native-vision-camera v5 (photo and video
+ * outputs on one session). Photos are JPEG on every platform because the
+ * backend accepts JPEG/PNG only; videos are MP4. Device behavior still
+ * needs physical-device acceptance (see docs/MANUAL_TEST_PLAN_CAMERA.md).
  */
 export function CameraScreen({ navigation }: Props): React.JSX.Element {
   const { hasPermission: hasCameraPermission, requestPermission: requestCameraPermission } = useCameraPermission();
@@ -57,13 +62,17 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   const [position, setPosition] = useState<CameraPosition>("back");
   const [flash, setFlash] = useState<"off" | "on">("off");
   const [timerSeconds, setTimerSeconds] = useState<0 | 3 | 10>(0);
+  const [countdown, setCountdown] = useState(0);
   const [zoom, setZoom] = useState(1);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [zoomIndicator, setZoomIndicator] = useState<{ visible: boolean; label: string }>({ visible: false, label: "" });
 
   const device = useCameraDevice(position);
-  const camera = useRef<Camera>(null);
+  const camera = useRef<CameraRef>(null);
+  const photoOutput = usePhotoOutput({ containerFormat: "jpeg", quality: 0.9 });
+  const videoOutput = useVideoOutput({ enableAudio: hasMicPermission, fileType: "mp4" });
+  const recorderRef = useRef<Recorder | null>(null);
   const focused=useIsFocused();
   const [foreground,setForeground]=useState(AppState.currentState==='active');
   const activeRef=useRef(false);activeRef.current=focused&&foreground;
@@ -131,49 +140,69 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
     if (!camera.current||capturingRef.current||recordingRef.current||!activeRef.current) return;
     capturingRef.current=true;
     try{
-      if(timerSeconds>0)await new Promise<void>(resolve=>setTimeout(resolve,timerSeconds*1000));
+      for(let remaining=timerSeconds;remaining>0;remaining--){
+        setCountdown(remaining);
+        await new Promise<void>(resolve=>setTimeout(resolve,1000));
+        if(!activeRef.current)return;
+      }
+      setCountdown(0);
       if(!camera.current||!activeRef.current)return;
-      const photo=await camera.current.takePhoto({flash:device?.hasFlash?flash:'off'});
-      goToEditor(`file://${photo.path}`,'photo',photo.width,photo.height);
+      const photo=await photoOutput.capturePhoto({flashMode:device?.hasFlash?flash:'off'},{});
+      try{
+        // Sensor-native dimensions are landscape for a portrait capture; swap them
+        // so the editor sizes the media the way the person framed it.
+        const quarterTurn=photo.orientation==='left'||photo.orientation==='right';
+        const width=quarterTurn?photo.height:photo.width,height=quarterTurn?photo.width:photo.height;
+        const path=await photo.saveToTemporaryFileAsync();
+        goToEditor(path.startsWith('file://')?path:`file://${path}`,'photo',width,height,'image/jpeg');
+      }finally{photo.dispose();}
     }catch{if(activeRef.current)Alert.alert('Could not take photo','Please try again.');}
-    finally{capturingRef.current=false;}
-  }, [flash, timerSeconds, goToEditor,device?.hasFlash]);
+    finally{capturingRef.current=false;setCountdown(0);}
+  }, [flash, timerSeconds, goToEditor,device?.hasFlash,photoOutput]);
+
+  const finishRecordingState = useCallback(() => {
+    if (recordingTimer.current) clearInterval(recordingTimer.current);
+    recordingTimer.current = null;
+    setIsRecording(false);
+    recordingRef.current=false;stoppingRef.current=false;recorderRef.current=null;
+  }, []);
 
   const startRecording = useCallback(() => {
     if (!camera.current || recordingRef.current||capturingRef.current||!activeRef.current) return;
     recordingRef.current=true;
     setIsRecording(true);
     setRecordingSeconds(0);
-    recordingTimer.current = setInterval(() => {
-      setRecordingSeconds((s) => {
-        if (s + 1 >= MAX_RECORDING_SECONDS && camera.current) {
-          void camera.current.stopRecording().catch(()=>undefined);
-        }
-        return s + 1;
-      });
-    }, 1000);
-
-    try{camera.current.startRecording({
-      flash:device?.hasFlash?flash:'off',
-      onRecordingFinished: (video) => {
-        if (recordingTimer.current) clearInterval(recordingTimer.current);
-        setIsRecording(false);
-        recordingRef.current=false;stoppingRef.current=false;
-        goToEditor(`file://${video.path}`, "video", null, null);
-      },
-      onRecordingError: () => {
-        if (recordingTimer.current) clearInterval(recordingTimer.current);
-        setIsRecording(false);
-        recordingRef.current=false;stoppingRef.current=false;
-        if(activeRef.current)Alert.alert('Could not record video','Please try again.');
-      },
-    });}catch{recordingRef.current=false;setIsRecording(false);if(recordingTimer.current)clearInterval(recordingTimer.current);Alert.alert('Could not start recording','Please try again.');}
-  }, [flash, goToEditor,device?.hasFlash]);
+    recordingTimer.current = setInterval(() => setRecordingSeconds((s) => s + 1), 1000);
+    void (async () => {
+      try{
+        // maxDuration is enforced natively, so a stalled JS thread can't overrun the Story limit.
+        const recorder=await videoOutput.createRecorder({maxDuration:MAX_RECORDING_SECONDS});
+        recorderRef.current=recorder;
+        await recorder.startRecording(
+          (filePath) => {
+            finishRecordingState();
+            goToEditor(filePath.startsWith('file://')?filePath:`file://${filePath}`, "video", null, null, 'video/mp4');
+          },
+          () => {
+            finishRecordingState();
+            if(activeRef.current)Alert.alert('Could not record video','Please try again.');
+          },
+        );
+        // A release that happened while the recorder was still being created.
+        if(stoppingRef.current)await recorder.stopRecording();
+      }catch{
+        finishRecordingState();
+        if(activeRef.current)Alert.alert('Could not start recording','Please try again.');
+      }
+    })();
+  }, [goToEditor,videoOutput,finishRecordingState]);
 
   const stopRecording = useCallback(async () => {
-    if (!camera.current || !recordingRef.current||stoppingRef.current) return;
+    if (!recordingRef.current||stoppingRef.current) return;
     stoppingRef.current=true;
-    try{await camera.current.stopRecording();}catch{stoppingRef.current=false;if(activeRef.current)Alert.alert('Could not stop recording','Try stopping again.');}
+    const recorder=recorderRef.current;
+    if(!recorder)return; // startRecording stops it as soon as it exists.
+    try{await recorder.stopRecording();}catch{stoppingRef.current=false;if(activeRef.current)Alert.alert('Could not stop recording','Try stopping again.');}
   }, []);
   useEffect(()=>{if(!focused||!foreground)void stopRecording();},[focused,foreground,stopRecording]);
 
@@ -191,7 +220,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
 
   const onPreviewTap = useTapGesture(
     (x, y) => {
-      void camera.current?.focus({ x, y }).catch(()=>undefined);
+      void camera.current?.focusTo({ x, y }).catch(()=>undefined);
     },
     () => {if(!recordingRef.current&&!capturingRef.current)setPosition((p) => (p === "back" ? "front" : "back"));},
   );
@@ -204,7 +233,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   // reliably mean by "focus the camera."
   const onFocusCenterAccessibilityAction = useCallback(() => {
     const { width, height } = previewSize.current;
-    if (width > 0 && height > 0) void camera.current?.focus({ x: width / 2, y: height / 2 }).catch(()=>undefined);
+    if (width > 0 && height > 0) void camera.current?.focusTo({ x: width / 2, y: height / 2 }).catch(()=>undefined);
   }, []);
 
   // Two-finger pinch-zoom + single-tap-to-focus/double-tap-to-flip on the
@@ -348,7 +377,16 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
           else if (event.nativeEvent.actionName === "activate" && !recordingRef.current && !capturingRef.current) setPosition((p) => (p === "back" ? "front" : "back"));
         }}
       >
-        <Camera ref={camera} style={StyleSheet.absoluteFill} device={device} isActive={focused&&foreground} photo video audio={hasMicPermission} zoom={zoom} />
+        <Camera
+          ref={camera}
+          style={StyleSheet.absoluteFill}
+          device={device}
+          isActive={focused&&foreground}
+          outputs={[photoOutput, videoOutput]}
+          zoom={zoom}
+          torchMode={isRecording && flash === "on" && device.hasTorch ? "on" : "off"}
+          onError={() => { if (activeRef.current) Alert.alert("Camera unavailable", "Close the camera and try again."); }}
+        />
       </View>
 
       {zoomIndicator.visible ? (
@@ -383,6 +421,12 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
           </Pressable>
         </View>
       </View>
+
+      {countdown > 0 ? (
+        <View style={styles.countdown} pointerEvents="none" accessibilityLiveRegion="assertive">
+          <Text style={styles.countdownLabel} accessibilityLabel={`Taking photo in ${countdown}`}>{countdown}</Text>
+        </View>
+      ) : null}
 
       {isRecording ? (
         <View style={styles.recordingBadge}>
@@ -504,4 +548,6 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   captureButtonRecording: { backgroundColor: colors.danger, borderColor: colors.danger },
+  countdown: { ...StyleSheet.absoluteFill, alignItems: "center", justifyContent: "center" },
+  countdownLabel: { color: colors.textPrimary, fontSize: 96, fontWeight: "700" },
 });

@@ -266,7 +266,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
             </View>
           );
         }}
-        ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} /> : null}
+        ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} /> : undefined}
         ListEmptyComponent={
           <View style={styles.emptyState}>
             <Text style={typography.body}>Say hi to @{otherUsername} 👋</Text>

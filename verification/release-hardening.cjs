@@ -10,7 +10,7 @@ function load(file,mocks={}) {
 class HttpError extends Error {constructor(status,message){super(message);this.status=status;}}
 class DatabaseError extends Error {constructor(detail){super(detail);this.detail=detail;}}
 test('draft restore, count and deletion are isolated across accounts and legacy keys',async()=>{
- const data=new Map(),storage={getItem:async k=>data.get(k)??null,setItem:async(k,v)=>data.set(k,v),removeItem:async k=>data.delete(k),getAllKeys:async()=>[...data.keys()],multiRemove:async keys=>keys.forEach(k=>data.delete(k))};
+ const data=new Map(),storage={getItem:async k=>data.get(k)??null,setItem:async(k,v)=>data.set(k,v),removeItem:async k=>data.delete(k),getAllKeys:async()=>[...data.keys()],removeMany:async keys=>keys.forEach(k=>data.delete(k))};
  const validator=load('mobile/src/state/validateSavedDraft.ts');
  const d=load('mobile/src/state/draftStorage.ts',{'@react-native-async-storage/async-storage':{default:storage},'./validateSavedDraft':validator});
  const a='11111111-1111-4111-8111-111111111111',b='22222222-2222-4222-8222-222222222222',uri='file:///same.jpg';

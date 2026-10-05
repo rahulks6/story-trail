@@ -694,7 +694,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#000" },
   centered: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background },
-  heartBurst: { ...StyleSheet.absoluteFillObject, alignItems: "center", justifyContent: "center" },
+  heartBurst: { ...StyleSheet.absoluteFill, alignItems: "center", justifyContent: "center" },
   heartBurstIcon: { fontSize: 96, color: colors.textPrimary },
   progressRow: {
     position: "absolute",
