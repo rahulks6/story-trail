@@ -47,6 +47,8 @@ export interface NotificationPreferences {
   commentsEnabled: boolean;
   followsEnabled: boolean;
   mentionsEnabled: boolean;
+  messagesEnabled: boolean;
+  pushEnabled: boolean;
 }
 
 const DEFAULT_PREFERENCES: NotificationPreferences = {
@@ -54,12 +56,14 @@ const DEFAULT_PREFERENCES: NotificationPreferences = {
   commentsEnabled: true,
   followsEnabled: true,
   mentionsEnabled: true,
+  messagesEnabled: true,
+  pushEnabled: true,
 };
 
 /** No row yet means the recipient never touched their preferences — everything defaults to on. */
 export async function getPreferences(userId: string): Promise<NotificationPreferences> {
   const row = await queryOne(
-    `SELECT likes_enabled, comments_enabled, follows_enabled, mentions_enabled
+    `SELECT likes_enabled, comments_enabled, follows_enabled, mentions_enabled, messages_enabled, push_enabled
      FROM notification_preferences WHERE user_id = :'user_id'`,
     { user_id: userId },
   );
@@ -69,6 +73,8 @@ export async function getPreferences(userId: string): Promise<NotificationPrefer
     commentsEnabled: row.comments_enabled === "t",
     followsEnabled: row.follows_enabled === "t",
     mentionsEnabled: row.mentions_enabled === "t",
+    messagesEnabled: row.messages_enabled === "t",
+    pushEnabled: row.push_enabled === "t",
   };
 }
 
@@ -76,13 +82,15 @@ export async function upsertPreferences(userId: string, patch: Partial<Notificat
   const current = await getPreferences(userId);
   const next: NotificationPreferences = { ...current, ...patch };
   await query(
-    `INSERT INTO notification_preferences (user_id, likes_enabled, comments_enabled, follows_enabled, mentions_enabled, updated_at)
-     VALUES (:'user_id', :'likes_enabled', :'comments_enabled', :'follows_enabled', :'mentions_enabled', now())
+    `INSERT INTO notification_preferences (user_id, likes_enabled, comments_enabled, follows_enabled, mentions_enabled, messages_enabled, push_enabled, updated_at)
+     VALUES (:'user_id', :'likes_enabled', :'comments_enabled', :'follows_enabled', :'mentions_enabled', :'messages_enabled', :'push_enabled', now())
      ON CONFLICT (user_id) DO UPDATE SET
        likes_enabled = EXCLUDED.likes_enabled,
        comments_enabled = EXCLUDED.comments_enabled,
        follows_enabled = EXCLUDED.follows_enabled,
        mentions_enabled = EXCLUDED.mentions_enabled,
+       messages_enabled = EXCLUDED.messages_enabled,
+       push_enabled = EXCLUDED.push_enabled,
        updated_at = now()`,
     {
       user_id: userId,
@@ -90,6 +98,8 @@ export async function upsertPreferences(userId: string, patch: Partial<Notificat
       comments_enabled: next.commentsEnabled,
       follows_enabled: next.followsEnabled,
       mentions_enabled: next.mentionsEnabled,
+      messages_enabled: next.messagesEnabled,
+      push_enabled: next.pushEnabled,
     },
   );
   return next;
@@ -124,9 +134,20 @@ export async function createNotification(input: {
   if (input.actorId && input.actorId === input.recipientId) return; // never notify someone about their own action
   if (!(await isTypeEnabled(input.recipientId, input.type))) return;
 
+  // One statement: the notification, its push (sent by the worker) and the realtime
+  // event (published on commit) exist together or not at all.
   await query(
-    `INSERT INTO notifications (recipient_id, actor_id, type, story_id, comment_id, follow_request_id)
-     VALUES (:'recipient_id', ${nullable("actor_id", "uuid")}, :'type', ${nullable("story_id", "uuid")}, ${nullable("comment_id", "uuid")}, ${nullable("follow_request_id", "uuid")})`,
+    `WITH n AS (
+       INSERT INTO notifications (recipient_id, actor_id, type, story_id, comment_id, follow_request_id)
+       VALUES (:'recipient_id', ${nullable("actor_id", "uuid")}, :'type', ${nullable("story_id", "uuid")}, ${nullable("comment_id", "uuid")}, ${nullable("follow_request_id", "uuid")})
+       RETURNING id, recipient_id, actor_id, type, story_id),
+     p AS (
+       INSERT INTO push_outbox (user_id, kind, actor_id, ref_id)
+       SELECT recipient_id, type, actor_id, story_id FROM n RETURNING id)
+     SELECT pg_notify('realtime', json_build_object('u', json_build_array(n.recipient_id),
+              'e', json_build_object('type', 'notification', 'id', n.id, 'kind', n.type))::text),
+            (SELECT count(*) FROM p) AS queued
+     FROM n`,
     {
       recipient_id: input.recipientId,
       actor_id: input.actorId,

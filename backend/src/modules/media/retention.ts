@@ -223,6 +223,9 @@ export async function expiredRecords(): Promise<number> {
   total += await deleteWhere("story_publish_requests", "state <> 'waiting' AND resolved_at < now() - interval '30 days'");
   total += await deleteWhere("auth_security_events", "created_at < now() - make_interval(days => :'days'::integer)", { days: config.retention.securityEventDays });
   total += await deleteWhere("retention_runs", "started_at < now() - interval '400 days'");
+  total += await deleteWhere("realtime_tickets", "expires_at < now() - interval '1 hour'");
+  total += await deleteWhere("push_outbox", "status IN ('sent', 'failed', 'skipped') AND finished_at < now() - interval '30 days'");
+  total += await deleteWhere("push_devices", "disabled_at < now() - interval '90 days'");
   return total;
 }
 

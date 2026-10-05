@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Android 13+: asked in context (first visit to Messages or Activity), never at launch. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -28,7 +30,8 @@
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
-        <!-- katkee://user/<username>, katkee://story/<id> (Share sheet) and katkee://reset-password (reset email). -->
+        <!-- katkee://user/<username>, katkee://story/<id> (Share sheet), katkee://reset-password (reset email),
+             katkee://conversation/<id> and katkee://activity (push notifications). -->
         <intent-filter>
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
@@ -36,6 +39,8 @@
             <data android:scheme="katkee" android:host="user" />
             <data android:scheme="katkee" android:host="story" />
             <data android:scheme="katkee" android:host="reset-password" />
+            <data android:scheme="katkee" android:host="conversation" />
+            <data android:scheme="katkee" android:host="activity" />
         </intent-filter>
       </activity>
     </application>

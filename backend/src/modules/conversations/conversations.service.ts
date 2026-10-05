@@ -38,16 +38,19 @@ export async function openConversationWith(viewerId: string, targetUsername: str
   };
 }
 
-export async function listConversations(viewerId: string, limit: number, offset: number): Promise<ConversationSummary[]> {
-  return conversationsRepo.listConversationsForUser(viewerId, limit, offset);
+export async function listConversations(viewerId: string, limit: number, offset: number, search = ""): Promise<ConversationSummary[]> {
+  return conversationsRepo.listConversationsForUser(viewerId, limit, offset, search.trim().slice(0, 60));
 }
 
 export async function getUnreadConversationCount(viewerId: string): Promise<number> {
   return conversationsRepo.countUnreadConversations(viewerId);
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 async function requireParticipant(conversationId: string, viewerId: string): Promise<ConversationRow> {
-  const conversation = await conversationsRepo.findConversationById(conversationId);
+  // A malformed id is just "not found" (and never reaches the uuid cast in SQL).
+  const conversation = UUID_RE.test(conversationId) ? await conversationsRepo.findConversationById(conversationId) : null;
   if (!conversation || (conversation.userAId !== viewerId && conversation.userBId !== viewerId)) {
     throw new HttpError(404, "Conversation not found.");
   }
@@ -58,14 +61,34 @@ function otherParticipant(conversation: ConversationRow, viewerId: string): stri
   return conversation.userAId === viewerId ? conversation.userBId : conversation.userAId;
 }
 
+/** One of the viewer's conversations, e.g. to open a thread from a push notification's link. */
+export async function getConversation(viewerId: string, conversationId: string): Promise<ConversationWithOtherUser> {
+  const conversation = await requireParticipant(conversationId, viewerId);
+  const other = await usersRepo.findUserById(otherParticipant(conversation, viewerId));
+  if (!other) throw new HttpError(404, "Conversation not found.");
+  return {
+    id: conversation.id,
+    createdAt: conversation.createdAt,
+    otherUser: { id: other.id, username: other.username, displayName: other.displayName },
+  };
+}
+
 export interface SendMessageInput {
   body: string | null;
   storyId: string | null;
+  /** The device's id for this message: a retried send with the same id never duplicates it. */
+  clientMessageId: string | null;
 }
 
-export async function sendMessage(viewerId: string, conversationId: string, input: SendMessageInput): Promise<MessageRow> {
+export async function sendMessage(viewerId: string, conversationId: string, input: SendMessageInput): Promise<{ message: MessageRow; created: boolean }> {
   const conversation = await requireParticipant(conversationId, viewerId);
   const otherId = otherParticipant(conversation, viewerId);
+
+  if (input.clientMessageId) {
+    // A retry of a send whose response was lost: answer with the original, no side effects.
+    const existing = await conversationsRepo.findMessageByClientId(conversationId, viewerId, input.clientMessageId);
+    if (existing) return replayed(existing, input);
+  }
   await assertNotBlocked(viewerId, otherId); // re-checked at send time, not just at conversation creation
 
   if (input.storyId) {
@@ -77,7 +100,15 @@ export async function sendMessage(viewerId: string, conversationId: string, inpu
     await engagementService.shareStory(viewerId, input.storyId);
   }
 
-  return conversationsRepo.createMessage(conversationId, viewerId, input.body, input.storyId);
+  const result = await conversationsRepo.createMessage(conversationId, viewerId, input.body, input.storyId, input.clientMessageId);
+  return result.created ? result : replayed(result.message, input);
+}
+
+function replayed(message: MessageRow, input: SendMessageInput): { message: MessageRow; created: boolean } {
+  if (message.body !== input.body || message.sharedStoryId !== input.storyId) {
+    throw new HttpError(409, "This message id was already used for a different message.");
+  }
+  return { message, created: false };
 }
 
 export type MessageDeliveryStatus = "sent" | "delivered" | "read";
@@ -96,12 +127,15 @@ export async function listMessages(
   conversationId: string,
   limit: number,
   offset: number,
-): Promise<MessageWithStatus[]> {
+  cursor?: { before: string } | { after: string },
+): Promise<{ messages: MessageWithStatus[]; hasMore: boolean | null }> {
   const conversation = await requireParticipant(conversationId, viewerId);
   const otherId = otherParticipant(conversation, viewerId);
 
-  const [rows] = await Promise.all([
-    conversationsRepo.listMessages(conversationId, limit, offset),
+  const [page] = await Promise.all([
+    cursor
+      ? conversationsRepo.listMessagesByCursor(conversationId, cursor, limit)
+      : conversationsRepo.listMessages(conversationId, limit, offset).then((messages) => ({ messages, hasMore: null })),
     // Fetching messages at all is itself the real "my client received
     // this" signal (see markDelivered's own comment) — every fetch, not
     // just the first page, since even loading older history proves the
@@ -109,20 +143,28 @@ export async function listMessages(
     conversationsRepo.markDelivered(conversationId, viewerId),
   ]);
 
+  // The device id of a message is the sender's business only.
+  const rows = page.messages.map((m) => (m.senderId === viewerId || m.clientMessageId === undefined ? m : withoutClientId(m)));
   const mine = rows.filter((m) => m.senderId === viewerId);
-  if (mine.length === 0) return rows;
+  if (mine.length === 0) return { messages: rows, hasMore: page.hasMore };
 
   const otherState = await conversationsRepo.getReadState(conversationId, otherId);
   const lastReadMs = new Date(otherState.lastReadAt).getTime();
   const lastDeliveredMs = new Date(otherState.lastDeliveredAt).getTime();
 
-  return rows.map((m) => {
+  const messages = rows.map((m): MessageWithStatus => {
     if (m.senderId !== viewerId) return m;
     const createdAtMs = new Date(m.createdAt).getTime();
     const status: MessageDeliveryStatus =
       createdAtMs <= lastReadMs ? "read" : createdAtMs <= lastDeliveredMs ? "delivered" : "sent";
     return { ...m, status };
   });
+  return { messages, hasMore: page.hasMore };
+}
+
+function withoutClientId(message: MessageRow): MessageRow {
+  const { clientMessageId: _hidden, ...rest } = message;
+  return rest;
 }
 
 export async function markConversationRead(viewerId: string, conversationId: string): Promise<void> {

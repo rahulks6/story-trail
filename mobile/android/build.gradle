@@ -18,6 +18,9 @@ buildscript {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        // Reads app/google-services.json for Firebase Cloud Messaging; the version is the
+        // one @react-native-firebase/app 26.4.0 declares (sdkVersions.android.gmsGoogleServicesGradle).
+        classpath("com.google.gms:google-services:4.5.0")
     }
 }
 

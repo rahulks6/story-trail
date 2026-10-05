@@ -46,6 +46,10 @@ export interface NotificationPreferences {
   commentsEnabled: boolean;
   followsEnabled: boolean;
   mentionsEnabled: boolean;
+  /** Push notifications for new direct messages (never include the message text). */
+  messagesEnabled: boolean;
+  /** Push notifications at all, on every device signed in to this account. */
+  pushEnabled: boolean;
 }
 
 export function getNotificationPreferences(accessToken: string): Promise<{ preferences: NotificationPreferences }> {

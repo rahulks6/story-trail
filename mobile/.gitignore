@@ -11,3 +11,8 @@ ios/.xcode.env.local
 *.p12
 *.mobileprovision
 .expo/
+
+# Firebase (push notifications): per-environment config, supplied by the build environment.
+android/app/google-services.json
+ios/GoogleService-Info.plist
+ios/KatkeeMobile/GoogleService-Info.plist

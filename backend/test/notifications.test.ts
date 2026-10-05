@@ -258,6 +258,9 @@ describe("notifications — preferences", () => {
       commentsEnabled: true,
       followsEnabled: true,
       mentionsEnabled: true,
+      // Phase 3 (push): also on by default.
+      messagesEnabled: true,
+      pushEnabled: true,
     });
   });
 

@@ -17,6 +17,8 @@
     "@react-native-async-storage/async-storage": "3.1.1",
     "@react-native-clipboard/clipboard": "1.16.3",
     "@react-native-community/geolocation": "3.4.0",
+    "@react-native-firebase/app": "26.4.0",
+    "@react-native-firebase/messaging": "26.4.0",
     "@react-native-google-signin/google-signin": "16.1.5",
     "@react-navigation/bottom-tabs": "7.20.0",
     "@react-navigation/native": "7.5.0",
@@ -48,5 +50,8 @@
   },
   "engines": {
     "node": ">= 22.11.0"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "1.14.5"
   }
 }

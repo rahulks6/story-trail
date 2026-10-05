@@ -3,6 +3,18 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
 /**
+ * Push notifications (Firebase Cloud Messaging). google-services.json is per environment
+ * and never committed: put it in android/app/ for builds that should receive pushes.
+ * Without it the app builds and runs normally, with push turned off
+ * (see src/push/pushNotifications.ts).
+ */
+if (file("google-services.json").exists()) {
+    apply plugin: "com.google.gms.google-services"
+} else {
+    logger.lifecycle("katkee: android/app/google-services.json not found; building without push notifications")
+}
+
+/**
  * React Native Android app configuration. See
  * https://reactnative.dev/docs/react-native-gradle-plugin for every option.
  */

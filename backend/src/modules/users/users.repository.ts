@@ -1,3 +1,4 @@
+import { containsPattern } from "../../shared/validation";
 import { nullable, query, queryOne } from "../../db/psql";
 
 export interface UserRecord {
@@ -187,7 +188,7 @@ export async function searchUsers(
        )
      ORDER BY u.username ASC
      LIMIT :'limit' OFFSET :'offset'`,
-    { exclude_id: excludeUserId, pattern: `%${searchTerm}%`, limit, offset },
+    { exclude_id: excludeUserId, pattern: containsPattern(searchTerm), limit, offset },
   );
   return rows.map((row) => ({
     id: row.id as string,

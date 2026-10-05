@@ -18,7 +18,7 @@ function run(name,cwd,argv,timeout=300000) {
 }
 const built=run('backend-build','backend',['node_modules/typescript/bin/tsc','-p','tsconfig.json']);
 run('mobile-typecheck','mobile',['node_modules/typescript/bin/tsc','--noEmit']);
-run('source-regressions','',['--test','verification/regressions.cjs','verification/network.cjs','verification/release-config.cjs','verification/profile-metadata.cjs','verification/release-hardening.cjs','verification/secure-storage.cjs','verification/upload-queue.cjs','verification/elf-alignment.test.cjs','verification/account-links.cjs']);
+run('source-regressions','',['--test','verification/regressions.cjs','verification/network.cjs','verification/release-config.cjs','verification/profile-metadata.cjs','verification/release-hardening.cjs','verification/secure-storage.cjs','verification/upload-queue.cjs','verification/elf-alignment.test.cjs','verification/account-links.cjs','verification/dm-outbox.cjs','verification/realtime-client.cjs','verification/dm-thread.cjs','verification/push-notifications.cjs']);
 if(built)run('ranking-unit-tests','backend',['--test','dist/test/scoring.test.js']);
 if(args.includes('--bundle')) {
  fs.mkdirSync(path.join(root,'mobile/build'),{recursive:true});
@@ -28,7 +28,7 @@ if(args.includes('--bundle')) {
 // Includes real image/video processing and local S3/SQS servers (see backend/scripts/install-media-test-servers.sh).
 if(args.includes('--integration')&&built)run('database-integration','backend',['scripts/run-tests.cjs'],1800000);
 const report={generatedAt:new Date().toISOString(),node:process.version,results,
- notVerified:['Android APK/AAB build and signing','iOS Xcode archive and signing','physical-device behavior and performance','live Google/SMS providers','live AWS S3/CloudFront/SQS/SES (tested against local S3/SQS servers and signature verification)','production hosting and backups','full product specification completion',...(!args.includes('--integration')?['database integration tests']:[])],
+ notVerified:['Android APK/AAB build and signing','iOS Xcode archive and signing','physical-device behavior and performance','live Google/SMS providers','live AWS S3/CloudFront/SQS/SES (tested against local S3/SQS servers and signature verification)','live FCM/APNs push delivery (tested against local FCM/OAuth and HTTP/2 APNs servers that verify the signed credentials)','realtime and push behavior on physical devices (background, network switches, notification taps)','production hosting and backups','full product specification completion',...(!args.includes('--integration')?['database integration tests']:[])],
  releaseReady:false};
 fs.writeFileSync(path.join(output,'results.json'),JSON.stringify(report,null,2)+'\n');
 console.log('Evidence: '+path.relative(root,output));

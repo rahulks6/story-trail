@@ -505,7 +505,9 @@ else this sandbox couldn't fully build (no npm registry, no Docker
 daemon, no image library) — "Delivered" here means what it can actually
 mean with no push/WebSocket channel available: the recipient's client
 performed a real fetch and received the message, not "pushed to their
-device while backgrounded."
+device while backgrounded." **Still true after Phase 3:** "Delivered" is still a real fetch by the
+recipient's app (now prompted by a realtime event or a push), never assumed
+from a push having been handed to FCM/APNs.
 
 `conversation_reads` already tracked `last_read_at` per participant
 (Phase 8); migration `0012_message_delivery.sql` adds a second watermark,
@@ -813,7 +815,10 @@ shortcut. Both notifications and DMs are delivered by polling (`GET
 /api/v1/conversations/unread-count`) — there's no push/websocket channel
 in this sandbox, so a real client has to poll or a later phase has to add
 one; see mobile/README.md for the polling intervals this build settled on
-(20s for both unread badges, 4s for an actively open conversation thread).
+(20s for both unread badges, 4s for an actively open conversation thread). **Superseded (Phase 3, October 2026):** events now arrive over a WebSocket
+(`/api/v1/realtime`) and push notifications (FCM, plus direct APNs) reach phones in
+the background; polling remains only as a fallback while the connection is down.
+See `../docs/REALTIME_AND_PUSH.md`.
 
 ## Camera + Editor module: overlay/filter/drawing storage (migration 0015)
 

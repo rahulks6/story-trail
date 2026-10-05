@@ -209,6 +209,42 @@ describe("retention", () => {
     fs.rmSync(freshDir, { recursive: true, force: true });
   });
 
+  it("clears expired realtime tickets, old finished pushes and long-disabled devices, keeping current ones", async () => {
+    const user = await signup();
+    await query(
+      `INSERT INTO realtime_tickets (token_hash, user_id, access_issued_at, access_expires_at, expires_at)
+       VALUES ('ret-ticket-old', :'u', now(), now() + interval '15 minutes', now() - interval '2 hours'),
+              ('ret-ticket-new', :'u', now(), now() + interval '15 minutes', now() + interval '1 minute')`,
+      { u: user.id },
+    );
+    await query(
+      `INSERT INTO push_outbox (user_id, kind, status, created_at, finished_at) VALUES
+         (:'u', 'follow', 'sent', now() - interval '40 days', now() - interval '31 days'),
+         (:'u', 'follow', 'skipped', now() - interval '40 days', now() - interval '31 days'),
+         (:'u', 'follow', 'sent', now() - interval '2 days', now() - interval '2 days'),
+         (:'u', 'follow', 'queued', now() - interval '40 days', NULL)`,
+      { u: user.id },
+    );
+    await query(
+      `INSERT INTO push_devices (user_id, provider, platform, token, disabled_at, disabled_reason) VALUES
+         (:'u', 'fcm', 'android', 'ret-device-old-0123456789', now() - interval '91 days', 'signed_out'),
+         (:'u', 'fcm', 'android', 'ret-device-recent-0123456', now() - interval '3 days', 'signed_out'),
+         (:'u', 'fcm', 'android', 'ret-device-live-012345678', NULL, NULL)`,
+      { u: user.id },
+    );
+    assert.ok((await expiredRecords()) >= 4);
+    assert.deepEqual((await query(`SELECT token_hash FROM realtime_tickets WHERE user_id = :'u'`, { u: user.id })).map((r) => r.token_hash), ["ret-ticket-new"]);
+    assert.deepEqual(
+      (await query(`SELECT status FROM push_outbox WHERE user_id = :'u' ORDER BY status`, { u: user.id })).map((r) => r.status),
+      ["queued", "sent"],
+      "an unsent push is never dropped by age",
+    );
+    assert.deepEqual(
+      (await query(`SELECT token FROM push_devices WHERE user_id = :'u' ORDER BY token`, { u: user.id })).map((r) => r.token),
+      ["ret-device-live-012345678", "ret-device-recent-0123456"],
+    );
+  });
+
   it("runs on one worker at a time, at most once per interval, and records every task", async () => {
     const [a, b] = [await openDedicatedConnection(), await openDedicatedConnection()];
     try {

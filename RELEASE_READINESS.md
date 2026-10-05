@@ -40,8 +40,8 @@ These are unresolved items from the source status and specification, not feature
 
 - Password-reset/recovery delivery and remaining settings.
 - Full editor preview/export parity, render validation, and physical-device gesture testing.
-- Background media processing, optimized renditions/posters, authenticated object storage/CDN, and OS-managed background uploads. Current queued uploads retry while the app is open.
-- Realtime/push messaging/notifications and Activity grouping completion.
+- OS-managed background uploads (the resumable outbox continues while the app is open). Background processing, renditions/posters and S3/CloudFront delivery were implemented in Phase 2 and verified against local S3/SQS servers; live AWS is not verified.
+- Live push delivery and on-device realtime behavior: WebSocket realtime and FCM/APNs push were implemented in Phase 3 and verified against local protocol servers, not with real credentials or devices. Activity grouping completion also remains.
 - Retention/cleanup jobs, production monitoring, database/media backup and restore exercises, and load testing.
 
 ## Android and publishing gates

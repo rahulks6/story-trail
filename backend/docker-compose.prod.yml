@@ -18,8 +18,10 @@
 #   node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
 #
 # Media is stored in S3 and delivered through CloudFront signed URLs; nothing is
-# kept on the server's disk. The worker service processes uploads (and runs
-# retention); scale it separately from the API.
+# kept on the server's disk. The worker service processes uploads, sends push
+# notifications and runs retention; scale it separately from the API. Realtime
+# connections (WebSocket, /api/v1/realtime) go through Caddy to the API like any
+# request; API instances share events through Postgres, so no sticky sessions.
 
 x-app-environment: &app-environment
   NODE_ENV: production
@@ -42,6 +44,13 @@ x-app-environment: &app-environment
   CLOUDFRONT_PRIVATE_KEY: ${CLOUDFRONT_PRIVATE_KEY:?set CLOUDFRONT_PRIVATE_KEY in .env}
   MEDIA_QUEUE: ${MEDIA_QUEUE:-postgres}
   MEDIA_SQS_QUEUE_URL: ${MEDIA_SQS_QUEUE_URL:-}
+  # Push notifications, sent by the worker (empty = that provider is off).
+  FCM_SERVICE_ACCOUNT_JSON: ${FCM_SERVICE_ACCOUNT_JSON:-}
+  APNS_KEY_ID: ${APNS_KEY_ID:-}
+  APNS_TEAM_ID: ${APNS_TEAM_ID:-}
+  APNS_PRIVATE_KEY: ${APNS_PRIVATE_KEY:-}
+  APNS_BUNDLE_ID: ${APNS_BUNDLE_ID:-}
+  APNS_ENVIRONMENT: ${APNS_ENVIRONMENT:-production}
 
 services:
   postgres:

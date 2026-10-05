@@ -10,3 +10,8 @@ export function parseUsernameParam(value: string | undefined): string {
   }
   return username;
 }
+
+/** A substring pattern for ILIKE that treats %, _ and \ in user input literally. */
+export function containsPattern(term: string): string {
+  return `%${term.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+}

@@ -1,7 +1,7 @@
-import {AppState} from 'react-native';
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { createContext, useContext, useMemo } from "react";
 import { getUnreadConversationCount } from "../api/conversations";
-import { useAuth } from "./AuthContext";
+import type { RealtimeEvent } from "../realtime/realtimeClient";
+import { useLiveCount } from "./useLiveCount";
 
 interface DMContextValue {
   unreadCount: number;
@@ -10,49 +10,18 @@ interface DMContextValue {
 
 const DMContext = createContext<DMContextValue | null>(null);
 
-const POLL_INTERVAL_MS = 20_000;
+/** A new message (either way) or this account reading a thread, maybe on another device. */
+const changesUnread = (event: RealtimeEvent, me: string | undefined) =>
+  event.type === "message" || (event.type === "receipt" && event.userId === me);
 
 /**
- * Mirrors NotificationsContext.tsx's shape exactly, for the DM tab's own
- * unread badge — a separate count from Activity's, the same way a real
- * app's message badge and notification badge are independent numbers.
- * Polling only, same reason: no push/websocket channel in this sandbox.
+ * The DM tab's own unread badge — a separate count from Activity's, the same
+ * way a real app's message badge and notification badge are independent
+ * numbers. Kept current over the realtime connection (see useLiveCount.ts).
  */
 export function DMProvider({ children }: { children: React.ReactNode }): React.JSX.Element {
-  const { accessToken } = useAuth();
-  const [unreadCount, setUnreadCount] = useState(0);
-  const requestVersion=useRef(0);
-  const accessTokenRef = useRef(accessToken);
-  accessTokenRef.current = accessToken;
-
-  const refreshUnreadCount = useCallback(async () => {
-    const version=++requestVersion.current;
-    const token = accessTokenRef.current;
-    if (!token) {
-      setUnreadCount(0);
-      return;
-    }
-    try {
-      const { count } = await getUnreadConversationCount(token);
-      if(accessTokenRef.current===token&&requestVersion.current===version)setUnreadCount(count);
-    } catch {
-      // Best-effort badge — a transient failure just leaves the last known count.
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!accessToken) {
-      setUnreadCount(0);
-      return;
-    }
-    void refreshUnreadCount();
-    const interval = setInterval(() => {if(AppState.currentState==="active")void refreshUnreadCount();}, POLL_INTERVAL_MS);
-    const subscription=AppState.addEventListener("change",state=>{if(state==="active")void refreshUnreadCount();});
-    return () => {clearInterval(interval);subscription.remove();};
-  }, [accessToken, refreshUnreadCount]);
-
-  const value = useMemo<DMContextValue>(() => ({ unreadCount, refreshUnreadCount }), [unreadCount, refreshUnreadCount]);
-
+  const { count, refresh } = useLiveCount(getUnreadConversationCount, changesUnread);
+  const value = useMemo<DMContextValue>(() => ({ unreadCount: count, refreshUnreadCount: refresh }), [count, refresh]);
   return <DMContext.Provider value={value}>{children}</DMContext.Provider>;
 }
 
@@ -61,4 +30,3 @@ export function useDM(): DMContextValue {
   if (!ctx) throw new Error("useDM must be used within a DMProvider");
   return ctx;
 }
-

@@ -5,6 +5,8 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { ActivityIndicator, Linking, View } from "react-native";
 import { NavigationContainer, type LinkingOptions } from "@react-navigation/native";
 import { deepLinkTarget } from "./profileLinks";
+import { initialNotificationLink, onNotificationOpened } from "../push/pushNotifications";
+import { usePushRegistration } from "../push/usePushRegistration";
 import { StoryLinkScreen } from "../screens/story/StoryLinkScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { AuthStackParamList, RootStackParamList } from "./types";
@@ -188,6 +190,7 @@ function SignedInNavigator(): React.JSX.Element {
 
 export function RootNavigator(): React.JSX.Element {
   const { status, user } = useAuth();
+  usePushRegistration();
   const pendingLink = useRef<string | null>(null);
   // A profile or Story link that arrives while signed out opens after sign-in.
   useEffect(() => {
@@ -201,9 +204,18 @@ export function RootNavigator(): React.JSX.Element {
   const linking = useMemo<LinkingOptions<RootStackParamList>>(() => ({
     prefixes: ["katkee://"],
     getInitialURL: async () => {
-      const url = pendingLink.current ?? await Linking.getInitialURL();
+      const url = pendingLink.current ?? await Linking.getInitialURL() ?? await initialNotificationLink();
       pendingLink.current = null;
       return url;
+    },
+    // Links opened from outside, plus taps on push notifications while the app runs.
+    subscribe: listener => {
+      const links = Linking.addEventListener("url", ({ url }) => listener(url));
+      const stopNotifications = onNotificationOpened(listener);
+      return () => {
+        links.remove();
+        stopNotifications();
+      };
     },
     getStateFromPath: path => {
       const target = deepLinkTarget(path);
@@ -211,6 +223,10 @@ export function RootNavigator(): React.JSX.Element {
         return { routes: [{name: "Main", state: {routes: [{name: "Search", state: {routes: [{name: "UserProfile", params: {username: target.username}}]}}]}}] };
       }
       if (target?.kind === "story") return { routes: [{ name: "Main" }, { name: "StoryLink", params: { storyId: target.storyId } }] };
+      if (target?.kind === "conversation") {
+        return { routes: [{ name: "Main", state: { routes: [{ name: "DM", state: { routes: [{ name: "DMInbox" }, { name: "Conversation", params: { conversationId: target.conversationId } }] } }] } }] };
+      }
+      if (target?.kind === "activity") return { routes: [{ name: "Main", state: { routes: [{ name: "Activity" }] } }] };
       return undefined;
     },
   }), []);

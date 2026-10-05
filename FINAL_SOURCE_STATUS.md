@@ -72,7 +72,7 @@ These gaps need implementation, not just credentials:
 - Full editor preview/export parity and native/GPU gesture performance acceptance.
 - Username/avatar/interests source paths are now implemented and covered by fresh source checks; avatar crop and full recovery/settings flows remain.
 - Email password-reset/recovery delivery and remaining settings inventory.
-- Realtime/push messaging/notification infrastructure beyond current polling, and Activity grouping.
+- Live FCM/APNs delivery and on-device realtime behavior (Phase 3 implemented WebSocket realtime, push and the DM outbox, verified against local protocol servers only), and Activity grouping.
 - Production retention/cleanup jobs, observability dashboards and full load/performance testing.
 
 Do not represent this archive as a complete implementation of the 74-page master specification until these and native acceptance gates are closed.

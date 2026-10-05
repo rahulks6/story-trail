@@ -1,0 +1,17 @@
+/**
+ * Milliseconds since the epoch for a timestamp from the API, or NaN.
+ *
+ * The API returns Postgres text timestamps ("2026-10-05 16:49:38.646456+00") and
+ * JSON-built ones ("2026-10-05T16:49:38.646456+00:00"). Neither is guaranteed to parse
+ * with every JavaScript engine's Date.parse (Hermes follows the ECMAScript format
+ * strictly), so normalize to "2026-10-05T16:49:38.646+00:00" first.
+ */
+export function serverTimeMs(value: string | null | undefined): number {
+  if (!value) return NaN;
+  const match = /^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}(?::\d{2})?)(?:\.(\d+))?(Z|[+-]\d{2}(?::?\d{2})?)?$/.exec(value.trim());
+  if (!match) return Date.parse(value);
+  const [, date, time, fraction = "", zone = "Z"] = match;
+  const millis = (fraction + "000").slice(0, 3);
+  const offset = zone === "Z" ? "Z" : zone.length === 3 ? `${zone}:00` : zone.includes(":") ? zone : `${zone.slice(0, 3)}:${zone.slice(3)}`;
+  return Date.parse(`${date}T${time!.length === 5 ? `${time}:00` : time}.${millis}${offset}`);
+}

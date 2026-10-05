@@ -5,6 +5,10 @@ export interface UpdateNotificationPreferencesInput {
   commentsEnabled?: boolean;
   followsEnabled?: boolean;
   mentionsEnabled?: boolean;
+  /** Push for new direct messages. */
+  messagesEnabled?: boolean;
+  /** Master switch for push on this account (Activity in the app is unaffected). */
+  pushEnabled?: boolean;
 }
 
 export function parseUpdateNotificationPreferencesInput(body: unknown): UpdateNotificationPreferencesInput {
@@ -17,6 +21,8 @@ export function parseUpdateNotificationPreferencesInput(body: unknown): UpdateNo
     ["commentsEnabled", "commentsEnabled"],
     ["followsEnabled", "followsEnabled"],
     ["mentionsEnabled", "mentionsEnabled"],
+    ["messagesEnabled", "messagesEnabled"],
+    ["pushEnabled", "pushEnabled"],
   ];
 
   for (const [key, bodyKey] of fields) {

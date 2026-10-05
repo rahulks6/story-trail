@@ -142,6 +142,22 @@ export const config = {
       jobTimeoutSeconds: optionalInt("MEDIA_JOB_TIMEOUT_SECONDS", 10 * 60),
     },
   },
+  push: {
+    // Firebase service account key JSON (or base64 of it), from the secret store.
+    fcmServiceAccount: process.env.FCM_SERVICE_ACCOUNT_JSON ?? "",
+    // Test servers only; never set in production.
+    fcmEndpoint: process.env.FCM_ENDPOINT ?? "https://fcm.googleapis.com",
+    apns: {
+      keyId: process.env.APNS_KEY_ID ?? "",
+      teamId: process.env.APNS_TEAM_ID ?? "",
+      // The .p8 key (PEM, or base64 of it), from the secret store.
+      privateKey: process.env.APNS_PRIVATE_KEY ?? "",
+      bundleId: process.env.APNS_BUNDLE_ID ?? "",
+      host: process.env.APNS_HOST ?? (process.env.APNS_ENVIRONMENT === "sandbox" ? "https://api.sandbox.push.apple.com" : "https://api.push.apple.com"),
+    },
+    pollMs: optionalInt("PUSH_WORKER_POLL_MS", 5000),
+    maxAttempts: optionalInt("PUSH_MAX_ATTEMPTS", 5),
+  },
   retention: {
     enabled: process.env.RETENTION_ENABLED !== "false",
     intervalMinutes: optionalInt("RETENTION_INTERVAL_MINUTES", 60),
@@ -223,6 +239,11 @@ if (config.nodeEnv === "production") {
   if (!config.media.cdn.domain) throw new Error("Production requires MEDIA_CDN_DOMAIN (CloudFront) with signed URLs.");
   if (config.media.s3.endpoint || config.media.queue.sqsEndpoint) throw new Error("MEDIA_S3_ENDPOINT/MEDIA_SQS_ENDPOINT are for local test servers only.");
   if (config.media.worker.inProcess) throw new Error("Run the media worker as its own service in production (MEDIA_WORKER_IN_PROCESS must be unset).");
+  if (process.env.FCM_ENDPOINT || process.env.APNS_HOST) throw new Error("FCM_ENDPOINT/APNS_HOST are for local test servers only.");
+}
+const apns = config.push.apns;
+if ([apns.keyId, apns.teamId, apns.privateKey, apns.bundleId].some(Boolean) && ![apns.keyId, apns.teamId, apns.privateKey, apns.bundleId].every(Boolean)) {
+  throw new Error("APNs needs all of APNS_KEY_ID, APNS_TEAM_ID, APNS_PRIVATE_KEY and APNS_BUNDLE_ID.");
 }
 
 if (config.features.admin && config.nodeEnv === "production") {

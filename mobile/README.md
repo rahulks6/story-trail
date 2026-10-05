@@ -238,7 +238,9 @@ both stores require in the listing itself.
   `ActivityScreen` and a new amber badge on the Activity tab icon in
   `BottomTabBar.tsx`, polling `GET /api/v1/notifications/unread-count`
   every 20s while signed in (there's no push/websocket channel available
-  in this sandbox — see `backend/README.md`).
+  in this sandbox — see `backend/README.md`). **Superseded (Phase 3):** the
+  count now refreshes on realtime events (`src/state/useLiveCount.ts`);
+  polling is the fallback (20s offline, 2 min safety net while connected).
 - `src/navigation/types.ts` — `MainTabParamList`'s `Search` entry is now
   typed with `NavigatorScreenParams<SearchStackParamList>` so a sibling tab
   (Activity) can deep-link into Search's nested `UserProfile` screen via
@@ -258,6 +260,9 @@ both stores require in the listing itself.
   a composer that actually posts via `POST
   /api/v1/conversations/:id/messages`, mark-read on focus, and a 4s poll
   for new messages while the screen is open (see "Phase 8 specifically").
+  **Superseded (Phase 3):** new messages and read receipts arrive over the
+  realtime connection, sends go through the persisted DM outbox
+  (`src/state/dmOutbox.ts`), and history uses message-id cursors.
   A shared-Story bubble resolves its real owner via the new
   `GET /api/v1/stories/:id/owner` and opens it in `StoryViewer`,
   falling back to doing nothing if the Story's no longer accessible.
@@ -271,7 +276,8 @@ both stores require in the listing itself.
 - `src/state/DMContext.tsx` — mirrors `NotificationsContext.tsx` exactly:
   shares the DM tab's own unread count (independent of Activity's) with a
   matching amber badge on the DM tab icon, polling
-  `GET /api/v1/conversations/unread-count` every 20s.
+  `GET /api/v1/conversations/unread-count` every 20s (Phase 3: refreshed by
+  realtime events, polling only as the fallback).
 - `src/api/stories.ts`'s `getStoryOwnerUsername()` — the Phase 8 backend
   addition (`GET /api/v1/stories/:id/owner`) used by both the DM
   shared-Story bubble and, retroactively, `ActivityScreen.tsx`'s mention
@@ -467,7 +473,9 @@ both stores require in the listing itself.
   since the user is actively looking at the screen) — there's no
   push/websocket channel in this sandbox (see backend/README.md). A real
   chat product would want a persistent connection; this is the honest
-  approximation available here, not a stub.
+  approximation available here, not a stub. **Superseded (Phase 3):** the
+  app now keeps a realtime connection while open and receives push
+  notifications in the background; see `../docs/REALTIME_AND_PUSH.md`.
 - **A "Shared a Story" bubble that's no longer accessible just does
   nothing when tapped**, rather than showing an error — the owner-lookup
   call fails the same way `getStoryForViewer` would for any expired,
@@ -508,7 +516,7 @@ both stores require in the listing itself.
   not the missing-feature one this note originally flagged.
 - **The unread badge is polled, not pushed**, per the
   `NotificationsContext.tsx` note above — a 20s worst-case staleness
-  window, not a stub.
+  window, not a stub. (Superseded in Phase 3: realtime events refresh it.)
 
 ### Phase 4 specifically
 

@@ -2,7 +2,7 @@ import { ValidationError } from "../auth/dto";
 import type { SendMessageInput } from "./conversations.service";
 
 const MAX_BODY_LENGTH = 2000;
-const UUID_RE = /^[0-9a-f-]{36}$/i;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export function parseSendMessageInput(body: unknown): SendMessageInput {
   const errors: Record<string, string> = {};
@@ -35,6 +35,15 @@ export function parseSendMessageInput(body: unknown): SendMessageInput {
     errors.body = "A message needs text, a shared Story, or both.";
   }
 
+  let clientMessageId: string | null = null;
+  if (b.clientMessageId !== undefined && b.clientMessageId !== null) {
+    if (typeof b.clientMessageId !== "string" || !/^[A-Za-z0-9_-]{16,64}$/.test(b.clientMessageId)) {
+      errors.clientMessageId = "clientMessageId must be 16-64 letters, digits, '-' or '_'.";
+    } else {
+      clientMessageId = b.clientMessageId;
+    }
+  }
+
   if (Object.keys(errors).length > 0) throw new ValidationError(errors);
-  return { body: messageBody, storyId };
+  return { body: messageBody, storyId, clientMessageId };
 }

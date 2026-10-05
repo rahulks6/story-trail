@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { DMStackParamList } from "../../navigation/types";
@@ -6,7 +6,7 @@ import { colors, radii, spacing, typography } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { useDM } from "../../state/DMContext";
 import { searchUsers, type SearchResult } from "../../api/users";
-import { openConversation, sendMessage } from "../../api/conversations";
+import { newClientMessageId, openConversation, sendMessage } from "../../api/conversations";
 import { ApiError } from "../../api/client";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { EmptyState } from "../../components/EmptyState";
@@ -32,6 +32,8 @@ export function SendStoryScreen({ route, navigation }: Props): React.JSX.Element
   const [sendingTo, setSendingTo] = useState<string | null>(null);
   const [sentTo, setSentTo] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
+  // One id per recipient until it goes through: retrying after a lost response can't send the Story twice.
+  const messageIds = useRef(new Map<string, string>());
 
   useEffect(() => {
     if (!debouncedQuery || !accessToken) {
@@ -61,7 +63,10 @@ export function SendStoryScreen({ route, navigation }: Props): React.JSX.Element
     setError(null);
     try {
       const { conversation } = await openConversation(username, accessToken);
-      await sendMessage(conversation.id, { storyId }, accessToken);
+      const clientMessageId = messageIds.current.get(username) ?? newClientMessageId();
+      messageIds.current.set(username, clientMessageId);
+      await sendMessage(conversation.id, { storyId, clientMessageId }, accessToken);
+      messageIds.current.delete(username);
       setSentTo((current) => new Set(current).add(username));
       void refreshUnreadCount();
     } catch (err) {

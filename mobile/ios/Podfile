@@ -9,11 +9,12 @@ platform :ios, min_ios_version_supported
 File.chmod(0755, File.expand_path('../scripts/ios-bundle.sh', __dir__))
 prepare_react_native_project!
 
-linkage = ENV['USE_FRAMEWORKS']
-if linkage != nil
-  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
-  use_frameworks! :linkage => linkage.to_sym
-end
+# @react-native-firebase (push notifications) requires static frameworks; USE_FRAMEWORKS
+# can still override the linkage.
+$RNFirebaseAsStaticFramework = true
+linkage = ENV['USE_FRAMEWORKS'] || 'static'
+Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+use_frameworks! :linkage => linkage.to_sym
 
 target 'KatkeeMobile' do
   config = use_native_modules!

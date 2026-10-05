@@ -4,6 +4,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider } from "./src/state/AuthContext";
 import { NotificationsProvider } from "./src/state/NotificationsContext";
 import { DMProvider } from "./src/state/DMContext";
+import { RealtimeProvider } from "./src/state/RealtimeContext";
 import { RootNavigator } from "./src/navigation/RootNavigator";
 import { ErrorBoundary } from "./src/components/ErrorBoundary";
 
@@ -15,11 +16,13 @@ export default function App(): React.JSX.Element {
       <SafeAreaProvider>
         <StatusBar barStyle="light-content" />
         <AuthProvider>
-          <NotificationsProvider>
-            <DMProvider>
-              <RootNavigator />
-            </DMProvider>
-          </NotificationsProvider>
+          <RealtimeProvider>
+            <NotificationsProvider>
+              <DMProvider>
+                <RootNavigator />
+              </DMProvider>
+            </NotificationsProvider>
+          </RealtimeProvider>
         </AuthProvider>
       </SafeAreaProvider>
     </ErrorBoundary>

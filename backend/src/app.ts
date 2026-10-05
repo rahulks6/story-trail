@@ -21,6 +21,9 @@ import { registerModerationRoutes } from "./modules/moderation/moderation.routes
 import { registerAdminRoutes } from "./modules/admin/admin.routes";
 import { registerAdsRoutes } from "./modules/ads/ads.routes";
 import { registerAppealRoutes } from "./modules/admin/appeals.routes";
+import { registerRealtimeRoutes } from "./realtime/realtime.routes";
+import { registerPushRoutes } from "./modules/push/push.routes";
+import { RealtimeHub } from "./realtime/hub";
 
 export function buildApp(providers?:ProviderGateway): Server {
   const router = new Router();
@@ -55,6 +58,16 @@ export function buildApp(providers?:ProviderGateway): Server {
   registerAdminRoutes(router);
   registerAdsRoutes(router);
   registerAppealRoutes(router);
+  registerRealtimeRoutes(router);
+  registerPushRoutes(router);
 
-  return createServer(router);
+  const server = createServer(router);
+  // Realtime connections share the HTTP port; closing the server also closes them.
+  const hub = new RealtimeHub().attach(server);
+  const close = server.close.bind(server);
+  server.close = ((callback?: (error?: Error) => void) => {
+    void hub.stop();
+    return close(callback);
+  }) as typeof server.close;
+  return server;
 }

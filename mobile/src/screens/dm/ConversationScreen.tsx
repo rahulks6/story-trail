@@ -2,6 +2,8 @@ import { Icon } from "../../components/Icon";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
+  AppState,
   FlatList,
   KeyboardAvoidingView,
   Platform,
@@ -17,13 +19,31 @@ import type { DMStackParamList, RootStackParamList } from "../../navigation/type
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { useDM } from "../../state/DMContext";
-import { listMessages, markConversationRead, sendMessage, type Message } from "../../api/conversations";
+import { useRealtime, useRealtimeEvents } from "../../state/RealtimeContext";
+import {
+  discardMessage,
+  enqueueMessage,
+  flushOutbox,
+  loadOutbox,
+  onOutboxSent,
+  pendingMessages,
+  retryMessage,
+  subscribeOutbox,
+  type OutboxMessage,
+} from "../../state/dmOutbox";
+import { getConversation, listMessages, markConversationRead, MAX_MESSAGE_LENGTH, type Message } from "../../api/conversations";
+import { ApiError } from "../../api/client";
 import { getStoryOwnerUsername } from "../../api/stories";
+import { applyReceipt, mergeMessages, newestId, oldestId } from "./threadState";
 
 type Props = NativeStackScreenProps<DMStackParamList, "Conversation">;
 
 const PAGE_SIZE = 30;
-const POLL_INTERVAL_MS = 4_000;
+/** Fallback polling: often while the live connection is down, rarely (a safety net) while it's up. */
+const POLL_OFFLINE_MS = 4_000;
+const POLL_LIVE_MS = 30_000;
+/** Catching up after a long gap: past this many pages, reload the latest page instead. */
+const MAX_CATCH_UP_PAGES = 5;
 
 // A fixed, client-only emoji set — there's no attachment/media pipeline in
 // this DM module (see conversations/dto.ts's parseSendMessageInput, body
@@ -36,27 +56,23 @@ const EMOJIS = [
 ];
 
 /**
- * A locally-echoed outgoing message, before (and unless) the server
- * confirms it — spec's Sending/Failed states, which are purely
- * client-local: a message that actually exists server-side is
- * definitionally at least "sent" (see backend/.../conversations.service.ts's
- * listMessages, which is where Sent/Delivered/Read come from instead).
+ * A message not yet stored by the server (spec's Sending/Failed states), from the
+ * persisted DM outbox (state/dmOutbox.ts): it survives the app closing and is sent
+ * once, in order, as soon as possible. A message that exists server-side is
+ * definitionally at least "sent" (Sent/Delivered/Read come from the server and
+ * from realtime read receipts).
  */
-interface PendingMessage {
-  kind: "pending";
-  tempId: string;
-  body: string;
-  status: "sending" | "failed";
-}
-
-type ListRow = PendingMessage | (Message & { kind: "sent" });
+type ListRow = (OutboxMessage & { kind: "pending" }) | (Message & { kind: "sent" });
 
 function rowKey(row: ListRow): string {
-  return row.kind === "pending" ? row.tempId : row.id;
+  return row.kind === "pending" ? row.clientMessageId : row.id;
 }
 
 function statusLabel(row: ListRow): string {
-  if (row.kind === "pending") return row.status === "failed" ? "Failed · Tap to retry" : "Sending…";
+  if (row.kind === "pending") {
+    if (row.status === "failed") return `${row.error ?? "Not sent"} · Tap to retry`;
+    return row.status === "waiting" && row.attempts > 0 ? "Waiting for connection…" : "Sending…";
+  }
   switch (row.status) {
     case "read":
       return "Read";
@@ -68,128 +84,194 @@ function statusLabel(row: ListRow): string {
 }
 
 /**
- * Real message thread (spec sections 32-33), backed by the Phase 8 backend.
- * The list is `inverted` with data kept in the backend's own newest-first
- * order — that's the standard React Native chat pattern (bottom of screen
- * = index 0), and it means "load older" is just `onEndReached` on this
- * same list, no reversing needed. Pending (unsent) messages are always
- * newer than anything confirmed, so they're simply prepended ahead of it.
+ * Real message thread (spec sections 32-33). The list is `inverted` with data
+ * kept in the backend's own newest-first order — the standard React Native chat
+ * pattern (bottom of screen = index 0), so "load older" is just `onEndReached`.
+ * New messages and read receipts arrive over the realtime connection; history
+ * pages use message-id cursors, which don't shift as new messages arrive.
  */
 export function ConversationScreen({ route }: Props): React.JSX.Element {
   const { conversationId, otherUsername } = route.params;
   const { accessToken, user } = useAuth();
   const { refreshUnreadCount } = useDM();
+  const { connected } = useRealtime();
+  const navigation = useNavigation<NativeStackNavigationProp<DMStackParamList>>();
   const rootNavigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const [messages, setMessages] = useState<Message[] | null>(null);
-  const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
-  const [pending, setPending] = useState<PendingMessage[]>([]);
+  const [composerError, setComposerError] = useState<string | null>(null);
+  const [outbox, setOutbox] = useState<OutboxMessage[]>([]);
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
   const focusedRef = useRef(true);
+  const messagesRef = useRef<Message[] | null>(null);
+  messagesRef.current = messages;
+  const tokenRef = useRef(accessToken);
+  tokenRef.current = accessToken;
+  const userId = user?.id;
+  const getToken = useCallback(() => tokenRef.current, []);
 
-  const loadFirstPage = useCallback(async () => {
-    if (!accessToken) return;
-    const { messages: page } = await listMessages(conversationId, accessToken, { limit: PAGE_SIZE, offset: 0 });
-    setMessages(page);
-    setOffset(page.length);
-    setHasMore(page.length === PAGE_SIZE);
-    await markConversationRead(conversationId, accessToken).catch(() => {});
-    void refreshUnreadCount();
-  }, [accessToken, conversationId, refreshUnreadCount]);
+  // A notification link carries only the conversation id: fill in who it's with.
+  useEffect(() => {
+    if (otherUsername || !accessToken) return;
+    getConversation(conversationId, accessToken)
+      .then(({ conversation }) => navigation.setParams({
+        otherUsername: conversation.otherUser.username,
+        otherDisplayName: conversation.otherUser.displayName,
+      }))
+      .catch((error: unknown) => {
+        if (error instanceof ApiError && error.status === 404) setLoadError("This conversation isn't available.");
+      });
+  }, [accessToken, conversationId, navigation, otherUsername]);
 
-  // Polls for new activity while this thread is open — there's no
-  // push/websocket channel in this sandbox (see backend/README.md), so a
-  // 4s poll is the real-time approximation for an actively open chat, a
-  // tighter interval than Activity/DM's 20s badge polling since the user
-  // is actively looking at this screen. Also refreshes already-known
-  // messages' `status` (not just appends new ones) — otherwise a sent
-  // message's tick would never progress to Delivered/Read once it first
-  // landed in state.
-  const pollForNew = useCallback(async () => {
-    if (!accessToken || !focusedRef.current) return;
-    const { messages: latest } = await listMessages(conversationId, accessToken, { limit: PAGE_SIZE, offset: 0 });
-    const latestById = new Map(latest.map((m) => [m.id, m]));
-    setMessages((current) => {
-      if (!current) return latest;
-      const knownIds = new Set(current.map((m) => m.id));
-      const fresh = latest.filter((m) => !knownIds.has(m.id));
-      const refreshed = current.map((m) => latestById.get(m.id) ?? m);
-      return [...fresh, ...refreshed];
+  // Unsent messages for this thread, kept in sync with the persisted outbox.
+  useEffect(() => {
+    if (!userId) return;
+    const sync = () => setOutbox(pendingMessages(userId, conversationId));
+    const unsubscribe = subscribeOutbox(sync);
+    void loadOutbox(userId).then(sync);
+    const unsubscribeSent = onOutboxSent((owner, _entry, message) => {
+      if (owner === userId && message.conversationId === conversationId) {
+        setMessages((current) => mergeMessages(current ?? [], [message]));
+      }
     });
-    if (latest.some((m) => m.senderId !== user?.id)) {
-      await markConversationRead(conversationId, accessToken).catch(() => {});
-      void refreshUnreadCount();
+    return () => { unsubscribe(); unsubscribeSent(); };
+  }, [conversationId, userId]);
+
+  const markRead = useCallback(() => {
+    const token = tokenRef.current;
+    if (!token || !focusedRef.current || AppState.currentState !== "active") return;
+    void markConversationRead(conversationId, token).catch(() => undefined).then(() => refreshUnreadCount());
+  }, [conversationId, refreshUnreadCount]);
+
+  /**
+   * The latest page. Merged into the thread (which also refreshes the statuses of
+   * recent messages), or replacing it when `replace` (after a gap too long to fill).
+   */
+  const loadLatest = useCallback(async (replace = false) => {
+    const token = tokenRef.current;
+    if (!token) return;
+    try {
+      const page = await listMessages(conversationId, token, { limit: PAGE_SIZE });
+      const first = messagesRef.current === null;
+      setMessages((current) => (replace || !current ? page.messages : mergeMessages(current, page.messages)));
+      if (first || replace) setHasMore(page.messages.length === PAGE_SIZE);
+      setLoadError(null);
+      if (page.messages.some((m) => m.senderId !== userId)) markRead();
+    } catch (error) {
+      if (messagesRef.current === null) {
+        setLoadError(error instanceof ApiError && error.status === 404 ? "This conversation isn't available." : "Couldn't load messages. Check your connection and try again.");
+      }
     }
-  }, [accessToken, conversationId, refreshUnreadCount, user?.id]);
+  }, [conversationId, markRead, userId]);
+
+  const catchingUp = useRef<Promise<void> | null>(null);
+  /** Fetches everything newer than what the thread has, page by page. */
+  const catchUp = useCallback(async () => {
+    if (catchingUp.current) return catchingUp.current;
+    const work = (async () => {
+      const token = tokenRef.current;
+      const known = messagesRef.current;
+      const after = known ? newestId(known) : null;
+      if (!token || !after) return loadLatest();
+      try {
+        let cursor = after;
+        let receivedFromOther = false;
+        for (let page = 0; page < MAX_CATCH_UP_PAGES; page++) {
+          const result = await listMessages(conversationId, token, { after: cursor, limit: PAGE_SIZE });
+          if (result.messages.length) {
+            setMessages((current) => mergeMessages(current ?? [], result.messages));
+            receivedFromOther ||= result.messages.some((m) => m.senderId !== userId);
+            cursor = result.messages[0]!.id;
+          }
+          if (!result.hasMore) {
+            if (receivedFromOther) markRead();
+            return;
+          }
+        }
+        await loadLatest(true); // a very long gap: start again from the latest page
+      } catch {
+        // Offline: the next event, resync or poll tries again.
+      }
+    })();
+    catchingUp.current = work;
+    try { await work; } finally { catchingUp.current = null; }
+  }, [conversationId, loadLatest, markRead, userId]);
+
+  /** Everything new since the thread was last current, then fresh statuses for recent messages. */
+  const syncThread = useCallback(async () => {
+    await catchUp();
+    await loadLatest();
+  }, [catchUp, loadLatest]);
+
+  useRealtimeEvents((event) => {
+    if (event.type === "resync") {
+      void syncThread(); // reconnected: anything could have happened meanwhile
+    } else if (event.type === "message" && event.conversationId === conversationId) {
+      void catchUp();
+    } else if (event.type === "receipt" && event.conversationId === conversationId && userId && event.userId !== userId) {
+      setMessages((current) => (current ? applyReceipt(current, userId, event) : current));
+    }
+  });
 
   useFocusEffect(
     useCallback(() => {
       focusedRef.current = true;
-      void loadFirstPage();
-      const interval = setInterval(() => void pollForNew(), POLL_INTERVAL_MS);
+      void syncThread();
+      const interval = setInterval(() => {
+        if (AppState.currentState === "active") void catchUp();
+      }, connected ? POLL_LIVE_MS : POLL_OFFLINE_MS);
       return () => {
         focusedRef.current = false;
         clearInterval(interval);
       };
-    }, [loadFirstPage, pollForNew]),
+    }, [catchUp, connected, syncThread]),
   );
 
   const loadOlder = useCallback(async () => {
-    if (!accessToken || loadingMore || !hasMore || messages === null) return;
+    const token = tokenRef.current;
+    const current = messagesRef.current;
+    const before = current ? oldestId(current) : null;
+    if (!token || loadingMore || !hasMore || !before) return;
     setLoadingMore(true);
     try {
-      const { messages: page } = await listMessages(conversationId, accessToken, { limit: PAGE_SIZE, offset });
-      setMessages((current) => [...(current ?? []), ...page]);
-      setOffset((current) => current + page.length);
-      setHasMore(page.length === PAGE_SIZE);
+      const page = await listMessages(conversationId, token, { before, limit: PAGE_SIZE });
+      setMessages((existing) => mergeMessages(existing ?? [], page.messages));
+      setHasMore(page.hasMore ?? page.messages.length === PAGE_SIZE);
+    } catch {
+      // Scrolling up again retries.
     } finally {
       setLoadingMore(false);
     }
-  }, [accessToken, conversationId, loadingMore, hasMore, messages, offset]);
+  }, [conversationId, hasMore, loadingMore]);
 
-  // Shared by a fresh send and a retry — a retry is just re-attempting the
-  // same pending entry, not creating a new one (so its position in the
-  // list doesn't jump).
-  const attemptSend = useCallback(
-    async (tempId: string, body: string) => {
-      if (!accessToken) return;
-      setPending((current) => current.map((p) => (p.tempId === tempId ? { ...p, status: "sending" } : p)));
-      try {
-        const { message } = await sendMessage(conversationId, { body }, accessToken);
-        setPending((current) => current.filter((p) => p.tempId !== tempId));
-        setMessages((current) => {
-          if (!current) return [message];
-          // A concurrent poll (every 4s while this thread is open) can beat
-          // this response back with the same message already included.
-          if (current.some((m) => m.id === message.id)) return current;
-          return [message, ...current];
-        });
-      } catch {
-        setPending((current) => current.map((p) => (p.tempId === tempId ? { ...p, status: "failed" } : p)));
-      }
-    },
-    [accessToken, conversationId],
-  );
-
-  const onSend = () => {
+  const onSend = async () => {
     const body = draft.trim();
-    if (!body) return;
-    setDraft("");
-    const tempId = `local-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-    setPending((current) => [{ kind: "pending", tempId, body, status: "sending" }, ...current]);
-    void attemptSend(tempId, body);
+    if (!body || !userId) return;
+    try {
+      await enqueueMessage(userId, conversationId, { body });
+      setDraft("");
+      setComposerError(null);
+      void flushOutbox(userId, getToken, { force: true });
+    } catch (error) {
+      setComposerError(error instanceof Error ? error.message : "Couldn't send that message.");
+    }
   };
 
-  const onRetry = (p: PendingMessage) => {
-    if (p.status !== "failed") return;
-    void attemptSend(p.tempId, p.body);
+  const onPendingPress = (row: OutboxMessage) => {
+    if (!userId || row.status === "sending") return;
+    Alert.alert(row.status === "failed" ? "Message not sent" : "Message waiting to send", row.error ?? undefined, [
+      { text: "Try again", onPress: () => void retryMessage(userId, row.clientMessageId, getToken) },
+      { text: "Delete", style: "destructive", onPress: () => void discardMessage(userId, row.clientMessageId) },
+      { text: "Cancel", style: "cancel" },
+    ]);
   };
 
   const onInsertEmoji = (emoji: string) => {
-    setDraft((current) => current + emoji);
+    setDraft((current) => (current + emoji).slice(0, MAX_MESSAGE_LENGTH));
   };
 
   const onOpenSharedStory = async (storyId: string) => {
@@ -202,27 +284,40 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     }
   };
 
-  const rows: ListRow[] = useMemo(
-    () => [...pending, ...(messages ?? []).map((m) => ({ ...m, kind: "sent" as const }))],
-    [pending, messages],
-  );
+  const rows: ListRow[] = useMemo(() => {
+    const stored = messages ?? [];
+    // An outbox entry the server already stored (seen via realtime before the send
+    // response came back) is shown once, as the stored message.
+    const storedIds = new Set(stored.flatMap((m) => (m.clientMessageId ? [m.clientMessageId] : [])));
+    const pending = outbox.filter((m) => !storedIds.has(m.clientMessageId)).reverse().map((m) => ({ ...m, kind: "pending" as const }));
+    return [...pending, ...stored.map((m) => ({ ...m, kind: "sent" as const }))];
+  }, [outbox, messages]);
 
   // A status caption only ever makes sense under the single most recent
   // message *you* sent — same convention as iMessage/WhatsApp. If the
   // newest row in the thread is pending, that's it; if it's a confirmed
   // message but from the other person (they replied after your last
-  // message), nothing shows at all.
+  // message), nothing shows at all. Failed messages always show theirs.
   const statusRowKey = useMemo(() => {
     const first = rows[0];
     if (!first) return null;
-    if (first.kind === "pending") return first.tempId;
-    return first.senderId === user?.id ? first.id : null;
-  }, [rows, user?.id]);
+    if (first.kind === "pending") return first.clientMessageId;
+    return first.senderId === userId ? first.id : null;
+  }, [rows, userId]);
 
   if (messages === null) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={colors.accent} />
+        {loadError ? (
+          <>
+            <Text style={[typography.body, styles.loadError]}>{loadError}</Text>
+            <Pressable style={styles.retryButton} onPress={() => void loadLatest(true)} accessibilityRole="button">
+              <Text style={styles.retryButtonText}>Try again</Text>
+            </Pressable>
+          </>
+        ) : (
+          <ActivityIndicator color={colors.accent} />
+        )}
       </View>
     );
   }
@@ -249,15 +344,24 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
             <View style={[styles.bubbleRow, mine ? styles.bubbleRowMine : styles.bubbleRowTheirs]}>
               <View style={[styles.bubbleColumn, mine ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
                 <Pressable
-                  style={[styles.bubble, mine ? styles.bubbleMine : styles.bubbleTheirs, failed && styles.bubbleFailed]}
-                  disabled={row.kind === "sent" ? !row.sharedStoryId : !failed}
+                  style={[
+                    styles.bubble,
+                    mine ? styles.bubbleMine : styles.bubbleTheirs,
+                    row.kind === "pending" && styles.bubblePending,
+                    failed && styles.bubbleFailed,
+                  ]}
+                  disabled={row.kind === "sent" ? !row.sharedStoryId : row.status === "sending"}
                   onPress={() => {
-                    if (row.kind === "pending") onRetry(row);
+                    if (row.kind === "pending") onPendingPress(row);
                     else if (row.sharedStoryId) void onOpenSharedStory(row.sharedStoryId);
                   }}
+                  accessibilityHint={row.kind === "pending" && row.status !== "sending" ? "Retry or delete this message" : undefined}
                 >
                   {row.kind === "sent" && row.sharedStoryId ? (
                     <Text style={mine ? styles.bubbleTextMine : styles.bubbleTextTheirs}>Shared a Story — tap to view</Text>
+                  ) : null}
+                  {row.kind === "pending" && row.storyId ? (
+                    <Text style={styles.bubbleTextMine}>Shared a Story</Text>
                   ) : null}
                   {row.body ? <Text style={mine ? styles.bubbleTextMine : styles.bubbleTextTheirs}>{row.body}</Text> : null}
                 </Pressable>
@@ -269,7 +373,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} /> : undefined}
         ListEmptyComponent={
           <View style={styles.emptyState}>
-            <Text style={typography.body}>Say hi to @{otherUsername} 👋</Text>
+            <Text style={typography.body}>{otherUsername ? `Say hi to @${otherUsername} 👋` : "Say hi 👋"}</Text>
           </View>
         }
       />
@@ -287,6 +391,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           />
         </View>
       ) : null}
+      {composerError ? <Text style={styles.composerError}>{composerError}</Text> : null}
       <View style={styles.composerRow}>
         <Pressable
           style={styles.emojiToggle}
@@ -304,12 +409,13 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           value={draft}
           onChangeText={setDraft}
           onFocus={() => setEmojiPickerOpen(false)}
+          maxLength={MAX_MESSAGE_LENGTH}
           multiline
         />
         <Pressable
           style={[styles.sendButton, !draft.trim() && styles.sendButtonDisabled]}
           disabled={!draft.trim()}
-          onPress={onSend}
+          onPress={() => void onSend()}
           accessibilityRole="button"
           accessibilityLabel="Send"
         >
@@ -322,7 +428,11 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  centered: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background },
+  centered: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background, padding: spacing.lg },
+  loadError: { textAlign: "center", marginBottom: spacing.md },
+  retryButton: { backgroundColor: colors.accent, borderRadius: radii.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
+  retryButtonText: { color: colors.onAccent, fontWeight: "700" },
+  composerError: { color: colors.danger, fontSize: 12, paddingHorizontal: spacing.md, paddingTop: spacing.xs },
   list: { flex: 1 },
   listContent: { paddingHorizontal: spacing.md, paddingVertical: spacing.sm, flexGrow: 1 },
   bubbleRow: { flexDirection: "row", marginVertical: spacing.xs / 2 },
@@ -334,7 +444,8 @@ const styles = StyleSheet.create({
   bubble: { borderRadius: radii.md, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, gap: 2 },
   bubbleMine: { backgroundColor: colors.accent },
   bubbleTheirs: { backgroundColor: colors.surfaceElevated },
-  bubbleFailed: { backgroundColor: colors.danger },
+  bubblePending: { opacity: 0.75 },
+  bubbleFailed: { backgroundColor: colors.danger, opacity: 1 },
   bubbleTextMine: { color: colors.onAccent, fontSize: 15 },
   bubbleTextTheirs: { color: colors.textPrimary, fontSize: 15 },
   statusCaption: { color: colors.textDisabled, fontSize: 11, marginTop: 2 },

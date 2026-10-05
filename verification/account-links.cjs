@@ -31,6 +31,14 @@ test('story links from the Share sheet resolve, malformed ids are ignored', () =
   assert.equal(deepLinkTarget('story/../../admin'), null);
 });
 
+test('push notification links open a DM thread or Activity, and nothing malformed', () => {
+  assert.deepEqual(deepLinkTarget('conversation/0F3C2B1A-1111-4222-8333-444455556666'), { kind: 'conversation', conversationId: '0f3c2b1a-1111-4222-8333-444455556666' });
+  assert.deepEqual(deepLinkTarget('/activity/'), { kind: 'activity' });
+  assert.equal(deepLinkTarget('conversation/not-a-uuid'), null);
+  assert.equal(deepLinkTarget('conversation/0f3c2b1a-1111-4222-8333-444455556666/extra'), null);
+  assert.equal(deepLinkTarget('activity/everything'), null);
+});
+
 test('reset links prefill only well-formed email and code', () => {
   assert.deepEqual(deepLinkTarget('reset-password?email=Person%40Example.com&code=123456'), { kind: 'resetPassword', email: 'person@example.com', code: '123456' });
   assert.deepEqual(deepLinkTarget('reset-password?email=bad&code=12ab56'), { kind: 'resetPassword' });

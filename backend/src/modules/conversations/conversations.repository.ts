@@ -1,4 +1,5 @@
 import { nullable, query, queryOne, type Row } from "../../db/psql";
+import { containsPattern } from "../../shared/validation";
 
 export interface ConversationRow {
   id: string;
@@ -57,6 +58,8 @@ export interface MessageRow {
   body: string | null;
   sharedStoryId: string | null;
   createdAt: string;
+  /** The sender's device id for the message; only ever shown to the sender (see conversations.service.ts). */
+  clientMessageId?: string;
 }
 
 function mapMessageRow(row: Row): MessageRow {
@@ -67,25 +70,61 @@ function mapMessageRow(row: Row): MessageRow {
     body: (row.body as string | null) ?? null,
     sharedStoryId: (row.shared_story_id as string | null) ?? null,
     createdAt: row.created_at as string,
+    ...(row.client_message_id ? { clientMessageId: row.client_message_id as string } : {}),
   };
 }
 
+const MESSAGE_COLUMNS = "id, conversation_id, sender_id, body, shared_story_id, created_at, client_message_id";
+
+/**
+ * Inserts a message, or — when `clientMessageId` was already used by this sender in
+ * this conversation (a retried send) — returns the original instead of a duplicate.
+ * The push to the recipient and the realtime event to both participants are written
+ * in the same statement, so they exist only for a message that was really created.
+ */
 export async function createMessage(
   conversationId: string,
   senderId: string,
   body: string | null,
   sharedStoryId: string | null,
-): Promise<MessageRow> {
+  clientMessageId: string | null = null,
+): Promise<{ message: MessageRow; created: boolean }> {
   const row = await queryOne(
-    `INSERT INTO messages (conversation_id, sender_id, body, shared_story_id)
-     VALUES (:'conversation_id', :'sender_id', ${nullable("body")}, ${nullable("shared_story_id", "uuid")})
-     RETURNING id, conversation_id, sender_id, body, shared_story_id, created_at`,
-    { conversation_id: conversationId, sender_id: senderId, body: body ?? "", shared_story_id: sharedStoryId ?? "" },
+    `WITH m AS (
+       INSERT INTO messages (conversation_id, sender_id, body, shared_story_id, client_message_id)
+       VALUES (:'conversation_id', :'sender_id', ${nullable("body")}, ${nullable("shared_story_id", "uuid")}, ${nullable("client_message_id")})
+       ON CONFLICT (conversation_id, sender_id, client_message_id) WHERE client_message_id IS NOT NULL DO NOTHING
+       RETURNING ${MESSAGE_COLUMNS}),
+     c AS (SELECT CASE WHEN user_a_id = :'sender_id' THEN user_b_id ELSE user_a_id END AS recipient_id
+           FROM conversations WHERE id = :'conversation_id'),
+     p AS (INSERT INTO push_outbox (user_id, kind, actor_id, ref_id)
+           SELECT c.recipient_id, 'message', m.sender_id, m.conversation_id FROM m, c RETURNING id),
+     n AS (SELECT pg_notify('realtime', json_build_object('u', json_build_array(m.sender_id, c.recipient_id),
+             'e', json_build_object('type', 'message', 'conversationId', m.conversation_id, 'messageId', m.id,
+                                    'senderId', m.sender_id, 'createdAt', m.created_at))::text) AS sent
+           FROM m, c)
+     SELECT m.*, (SELECT count(*) FROM p) AS queued, (SELECT count(*) FROM n) AS notified FROM m`,
+    {
+      conversation_id: conversationId, sender_id: senderId, body: body ?? "",
+      shared_story_id: sharedStoryId ?? "", client_message_id: clientMessageId ?? "",
+    },
   );
-  if (!row) throw new Error("Message insert returned no row");
-  // Sending a message is itself an implicit "I've seen everything up to here."
-  await markRead(conversationId, senderId);
-  return mapMessageRow(row);
+  if (row) {
+    await markRead(conversationId, senderId);
+    return { message: mapMessageRow(row), created: true };
+  }
+  const existing = clientMessageId ? await findMessageByClientId(conversationId, senderId, clientMessageId) : null;
+  if (!existing) throw new Error("Message insert returned no row");
+  return { message: existing, created: false };
+}
+
+export async function findMessageByClientId(conversationId: string, senderId: string, clientMessageId: string): Promise<MessageRow | null> {
+  const row = await queryOne(
+    `SELECT ${MESSAGE_COLUMNS} FROM messages
+     WHERE conversation_id = :'conversation_id' AND sender_id = :'sender_id' AND client_message_id = :'client_message_id'`,
+    { conversation_id: conversationId, sender_id: senderId, client_message_id: clientMessageId },
+  );
+  return row ? mapMessageRow(row) : null;
 }
 
 /**
@@ -96,42 +135,82 @@ export async function createMessage(
  */
 export async function listMessages(conversationId: string, limit: number, offset: number): Promise<MessageRow[]> {
   const rows = await query(
-    `SELECT id, conversation_id, sender_id, body, shared_story_id, created_at
+    `SELECT ${MESSAGE_COLUMNS}
      FROM messages
      WHERE conversation_id = :'conversation_id'
-     ORDER BY created_at DESC
+     ORDER BY created_at DESC, id DESC
      LIMIT :'limit' OFFSET :'offset'`,
     { conversation_id: conversationId, limit, offset },
   );
   return rows.map(mapMessageRow);
 }
 
-/** Reading obviously implies delivery too, so this bumps both watermarks. */
-export async function markRead(conversationId: string, userId: string): Promise<void> {
+/**
+ * Keyset pages that don't shift while new messages arrive: `before` returns older
+ * messages than the cursor message, `after` the next newer ones (what a client asks
+ * for when a realtime event says something new arrived). Always newest first.
+ */
+export async function listMessagesByCursor(
+  conversationId: string,
+  cursor: { before: string } | { after: string },
+  limit: number,
+): Promise<{ messages: MessageRow[]; hasMore: boolean }> {
+  const older = "before" in cursor;
+  const rows = await query(
+    `SELECT ${MESSAGE_COLUMNS} FROM messages
+     WHERE conversation_id = :'conversation_id'
+       AND (created_at, id) ${older ? "<" : ">"} (SELECT created_at, id FROM messages WHERE id = :'cursor' AND conversation_id = :'conversation_id')
+     ORDER BY created_at ${older ? "DESC" : "ASC"}, id ${older ? "DESC" : "ASC"}
+     LIMIT :'limit'`,
+    { conversation_id: conversationId, cursor: older ? cursor.before : cursor.after, limit: limit + 1 },
+  );
+  const page = rows.slice(0, limit).map(mapMessageRow);
+  return { messages: older ? page : page.reverse(), hasMore: rows.length > limit };
+}
+
+/**
+ * Moves a participant's read/delivered watermarks forward and, when that changed what
+ * the other participant sees (one of their messages became delivered/read), tells both
+ * participants' devices in realtime.
+ */
+async function advanceWatermarks(conversationId: string, userId: string, read: boolean): Promise<void> {
   await query(
-    `INSERT INTO conversation_reads (conversation_id, user_id, last_read_at, last_delivered_at)
-     VALUES (:'conversation_id', :'user_id', now(), now())
-     ON CONFLICT (conversation_id, user_id) DO UPDATE SET
-       last_read_at = now(),
-       last_delivered_at = GREATEST(conversation_reads.last_delivered_at, now())`,
+    `WITH prev AS (
+       SELECT last_read_at, last_delivered_at FROM conversation_reads WHERE conversation_id = :'conversation_id' AND user_id = :'user_id'),
+     up AS (
+       INSERT INTO conversation_reads (conversation_id, user_id, last_read_at, last_delivered_at)
+       VALUES (:'conversation_id', :'user_id', ${read ? "now()" : "'epoch'"}, now())
+       ON CONFLICT (conversation_id, user_id) DO UPDATE SET
+         last_read_at = ${read ? "now()" : "conversation_reads.last_read_at"},
+         last_delivered_at = GREATEST(conversation_reads.last_delivered_at, now())
+       RETURNING last_read_at, last_delivered_at),
+     other AS (
+       SELECT CASE WHEN user_a_id = :'user_id' THEN user_b_id ELSE user_a_id END AS id FROM conversations WHERE id = :'conversation_id'),
+     changed AS (
+       SELECT 1 FROM messages m, other
+       WHERE m.conversation_id = :'conversation_id' AND m.sender_id = other.id
+         AND m.created_at > coalesce((SELECT ${read ? "last_read_at" : "last_delivered_at"} FROM prev), 'epoch')
+       LIMIT 1)
+     SELECT pg_notify('realtime', json_build_object('u', json_build_array(other.id, :'user_id'::uuid),
+              'e', json_build_object('type', 'receipt', 'conversationId', :'conversation_id'::uuid, 'userId', :'user_id'::uuid,
+                                     'lastReadAt', up.last_read_at, 'lastDeliveredAt', up.last_delivered_at))::text)
+     FROM up, other WHERE EXISTS (SELECT 1 FROM changed)`,
     { conversation_id: conversationId, user_id: userId },
   );
 }
 
+/** Reading obviously implies delivery too, so this bumps both watermarks. */
+export function markRead(conversationId: string, userId: string): Promise<void> {
+  return advanceWatermarks(conversationId, userId, true);
+}
+
 /**
  * Bumped whenever a participant's client successfully fetches messages
- * (see conversations.service.ts's listMessages) — the real, honestly-
- * scoped "delivered" signal this backend can observe with no push/
- * WebSocket channel: the recipient's app actually received the data on a
- * real fetch, not just "the server has it" (that's `sent`, the default).
+ * (see conversations.service.ts's listMessages) — the recipient's app actually
+ * received the data on a real fetch, not just "the server has it" (that's `sent`).
  */
-export async function markDelivered(conversationId: string, userId: string): Promise<void> {
-  await query(
-    `INSERT INTO conversation_reads (conversation_id, user_id, last_delivered_at)
-     VALUES (:'conversation_id', :'user_id', now())
-     ON CONFLICT (conversation_id, user_id) DO UPDATE SET last_delivered_at = GREATEST(conversation_reads.last_delivered_at, now())`,
-    { conversation_id: conversationId, user_id: userId },
-  );
+export function markDelivered(conversationId: string, userId: string): Promise<void> {
+  return advanceWatermarks(conversationId, userId, false);
 }
 
 export interface ReadState {
@@ -189,7 +268,7 @@ function mapConversationSummaryRow(row: Row): ConversationSummary {
   };
 }
 
-export async function listConversationsForUser(userId: string, limit: number, offset: number): Promise<ConversationSummary[]> {
+export async function listConversationsForUser(userId: string, limit: number, offset: number, search = ""): Promise<ConversationSummary[]> {
   const rows = await query(
     `SELECT
        c.id, c.created_at,
@@ -207,10 +286,11 @@ export async function listConversationsForUser(userId: string, limit: number, of
        LIMIT 1
      ) lm ON true
      LEFT JOIN conversation_reads cr ON cr.conversation_id = c.id AND cr.user_id = :'user_id'
-     WHERE c.user_a_id = :'user_id' OR c.user_b_id = :'user_id'
+     WHERE (c.user_a_id = :'user_id' OR c.user_b_id = :'user_id')
+       AND (:'search' = '' OR ou.username::text ILIKE :'pattern' OR ou.display_name ILIKE :'pattern')
      ORDER BY COALESCE(lm.created_at, c.created_at) DESC
      LIMIT :'limit' OFFSET :'offset'`,
-    { user_id: userId, limit, offset },
+    { user_id: userId, limit, offset, search, pattern: containsPattern(search) },
   );
   return rows.map(mapConversationSummaryRow);
 }

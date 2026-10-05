@@ -4,6 +4,7 @@ import { AuthError } from "../modules/auth/auth.service";
 import { DatabaseError } from "../db/psql";
 import { queryOne } from "../db/psql";
 import { verifyAccessToken } from "../modules/auth/tokens";
+import { checkAccessSession } from "../modules/auth/session-check";
 import { HttpError } from "./errors";
 import { sendJson } from "./respond";
 import { globalRateLimiter } from "./rateLimiters";
@@ -116,17 +117,9 @@ export function createServer(router: Router): http.Server {
             // One indexed lookup per authenticated request: account state, "sign out
             // everywhere"/password changes, and explicitly ended sign-ins all take effect
             // immediately instead of when the 15-minute access token expires.
-            const user = await queryOne(
-              `SELECT u.is_active,
-                      floor(extract(epoch FROM u.sessions_revoked_at))::bigint AS revoked_before,
-                      EXISTS (SELECT 1 FROM revoked_sessions r WHERE r.session_id = NULLIF(:'sid', '')::uuid) AS session_ended
-               FROM users u WHERE u.id = :'id' AND u.deleted_at IS NULL`,
-              { id: claims.sub, sid: claims.sid && /^[0-9a-f-]{36}$/i.test(claims.sid) ? claims.sid : "" },
-            );
-            if (!user || user.is_active !== "t") throw new HttpError(403, "Account unavailable.");
-            if (user.session_ended === "t" || (user.revoked_before !== null && claims.iat < Number(user.revoked_before))) {
-              throw new HttpError(401, "Your session has ended. Sign in again.");
-            }
+            const state = await checkAccessSession(claims);
+            if (state === "account_unavailable") throw new HttpError(403, "Account unavailable.");
+            if (state === "session_ended") throw new HttpError(401, "Your session has ended. Sign in again.");
           }
         }
         if (url.startsWith("/api/v1/admin/")) res.setHeader("Cache-Control", "no-store");

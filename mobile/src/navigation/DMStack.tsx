@@ -38,7 +38,7 @@ export function DMStack(): React.JSX.Element {
           ),
         })}
       />
-      <Stack.Screen name="Conversation" component={ConversationScreen} options={({ route }) => ({ title: route.params.otherDisplayName })} />
+      <Stack.Screen name="Conversation" component={ConversationScreen} options={({ route }) => ({ title: route.params.otherDisplayName ?? "" })} />
       <Stack.Screen name="SendStory" component={SendStoryScreen} options={{ title: "Send to…" }} />
       <Stack.Screen name="NewChat" component={NewChatScreen} options={{ title: "New Chat" }} />
     </Stack.Navigator>

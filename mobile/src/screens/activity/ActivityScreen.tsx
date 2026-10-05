@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, RefreshControl, SectionList, StyleSheet, Text, View } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -8,6 +8,8 @@ import type { MainTabParamList, RootStackParamList } from "../../navigation/type
 import { colors, radii, spacing, typography } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { useNotifications } from "../../state/NotificationsContext";
+import { useRealtimeEvents } from "../../state/RealtimeContext";
+import { askForPushOnce } from "../../push/usePushRegistration";
 import {
   listNotifications,
   markAllNotificationsRead,
@@ -175,11 +177,36 @@ export function ActivityScreen(): React.JSX.Element {
     void refreshUnreadCount();
   }, [accessToken, refreshUnreadCount]);
 
+  // First visit: the moment notification permission makes sense to ask for (once).
+  const askedForPush = useRef(false);
+  useEffect(() => {
+    if (askedForPush.current || !user?.id || !accessToken) return;
+    askedForPush.current = true;
+    void askForPushOnce(user.id, accessToken);
+  }, [accessToken, user?.id]);
+
+  const focused = useRef(false);
+  const reloadTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useFocusEffect(
     useCallback(() => {
-      void loadFirstPage();
+      focused.current = true;
+      void loadFirstPage().catch(() => undefined);
+      return () => {
+        focused.current = false;
+      };
     }, [loadFirstPage]),
   );
+  useEffect(() => () => {
+    if (reloadTimer.current) clearTimeout(reloadTimer.current);
+  }, []);
+  // New Activity arrives over the realtime connection; a burst reloads once.
+  useRealtimeEvents((event) => {
+    if ((event.type !== "notification" && event.type !== "resync") || !focused.current || reloadTimer.current) return;
+    reloadTimer.current = setTimeout(() => {
+      reloadTimer.current = null;
+      void loadFirstPage().catch(() => undefined);
+    }, 300);
+  });
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

@@ -2,6 +2,18 @@
 import * as authApi from "../api/auth";
 import { ApiError, setSessionHandler, type PublicUser } from "../api/client";
 import { clearTokens, loadTokens, saveTokens, type StoredTokens } from "./tokenStorage";
+import { unregisterForPush } from "../push/pushNotifications";
+import { clearOutbox } from "./dmOutbox";
+
+/**
+ * Sign-out housekeeping on this device: stop its pushes for the account and forget the
+ * account's unsent messages. Bounded, so a dead network never holds sign-out up (the
+ * server also disables the device's pushes when the sign-in ends).
+ */
+async function forgetDeviceState(userId: string | undefined, accessToken: string | null): Promise<void> {
+  const work = Promise.allSettled([unregisterForPush(accessToken), userId ? clearOutbox(userId) : Promise.resolve()]);
+  await Promise.race([work, new Promise<void>((resolve) => setTimeout(() => resolve(), 3000))]);
+}
 
 interface AuthState {
   status: "loading" | "signedOut" | "signedIn";
@@ -29,6 +41,8 @@ const signedOut: AuthState = { status: "signedOut", user: null, accessToken: nul
 
 export function AuthProvider({ children }: { children: React.ReactNode }): React.JSX.Element {
   const [state, setState] = useState<AuthState>({ ...signedOut, status: "loading" });
+  const userIdRef = useRef<string | undefined>(undefined);
+  userIdRef.current = state.user?.id;
   const tokensRef = useRef<StoredTokens | null>(null);
   const knownTokens = useRef(new Set<string>());
   const refreshInFlight = useRef<Promise<string> | null>(null);
@@ -128,6 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
   const logout = useCallback(async () => {
     if (refreshInFlight.current) await refreshInFlight.current.catch(() => undefined);
     const refreshToken = tokensRef.current?.refreshToken;
+    await forgetDeviceState(userIdRef.current, tokensRef.current?.accessToken ?? null);
     await endLocalSession();
     if (refreshToken) await authApi.logout(refreshToken).catch(() => undefined);
   }, [endLocalSession]);
@@ -135,6 +150,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
     if (!state.accessToken) return;
     await authApi.deleteMyAccount(password, state.accessToken);
     if (refreshInFlight.current) await refreshInFlight.current.catch(() => undefined);
+    await forgetDeviceState(userIdRef.current, null); // the account is gone; the server already disabled its devices
     await endLocalSession();
   }, [state.accessToken, endLocalSession]);
   const refreshUser = useCallback(async () => {

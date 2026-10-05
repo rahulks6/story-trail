@@ -1,0 +1,70 @@
+{
+  "measuredAt": "2026-10-05T20:18:47.371Z",
+  "what": "Realtime DM event delivery across two API instances (events cross through Postgres NOTIFY)",
+  "machine": {
+    "cpus": 4,
+    "cpuModel": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+    "memoryGb": 16,
+    "node": "v22.22.0",
+    "postgres": "16.14 (Ubuntu 16.14-0ubuntu0.24.04.1)"
+  },
+  "setup": {
+    "users": 200,
+    "socketsPerUser": 10,
+    "totalSockets": 2000,
+    "messages": 1000,
+    "concurrency": 50,
+    "note": "client, both API instances and Postgres share one machine"
+  },
+  "connect": {
+    "totalMs": 1026,
+    "handshakeMs": {
+      "n": 2000,
+      "p50": 65.6,
+      "p95": 162.1,
+      "p99": 165.4,
+      "max": 169.3
+    }
+  },
+  "memory": {
+    "rssMbBeforeSockets": [
+      151,
+      80
+    ],
+    "rssMbWithSockets": [
+      164,
+      95
+    ],
+    "rssMbAfterMessages": [
+      186,
+      102
+    ],
+    "kbPerSocket": 14
+  },
+  "delivery": {
+    "postResponseMs": {
+      "n": 1000,
+      "p50": 67.3,
+      "p95": 109.7,
+      "p99": 153.6,
+      "max": 169.6
+    },
+    "toFirstRecipientSocketMs": {
+      "n": 1000,
+      "p50": 52.3,
+      "p95": 86.8,
+      "p99": 104.5,
+      "max": 130.9
+    },
+    "toAllRecipientSocketsMs": {
+      "n": 1000,
+      "p50": 52.6,
+      "p95": 87.4,
+      "p99": 104.6,
+      "max": 131
+    },
+    "delivered": "1000/1000 messages reached all 10 recipient sockets",
+    "messagesPerSecond": 678
+  },
+  "database": "katkee_bench_1791231509580"
+}
