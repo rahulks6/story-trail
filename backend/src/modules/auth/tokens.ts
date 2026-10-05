@@ -11,6 +11,8 @@ import { config } from "../../config/env";
 export interface AccessTokenClaims {
   [key: string]: unknown;
   sub: string; // user id
+  /** Session (one sign-in on one device). Absent on tokens minted before sessions existed. */
+  sid?: string;
   type: "access";
   iat: number;
   exp: number;
@@ -61,10 +63,11 @@ function verify<T>(token: string, secret: string): T | null {
   return claims;
 }
 
-export function issueAccessToken(userId: string): string {
+export function issueAccessToken(userId: string, sessionId?: string): string {
   const now = Math.floor(Date.now() / 1000);
   const claims: AccessTokenClaims = {
     sub: userId,
+    ...(sessionId ? { sid: sessionId } : {}),
     type: "access",
     iat: now,
     exp: now + config.jwt.accessTtlSeconds,

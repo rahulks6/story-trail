@@ -13,3 +13,10 @@ process.env.MEDIA_STORAGE_ROOT = process.env.MEDIA_STORAGE_ROOT_TEST ?? path.joi
 // each test file into its own process) to actually exercise a real 429.
 process.env.RATE_LIMIT_AUTH_MAX ??= "100000";
 process.env.RATE_LIMIT_GLOBAL_MAX ??= "1000000";
+process.env.RATE_LIMIT_SIGNUP_PER_HOUR ??= "1000000";
+process.env.RATE_LIMIT_RESET_REQUESTS_PER_HOUR ??= "1000000";
+process.env.RATE_LIMIT_RESET_VERIFY_PER_HOUR ??= "1000000";
+process.env.RATE_LIMIT_ADMIN_LOGIN_PER_IP ??= "1000000";
+
+// Password reset and security alerts are captured in memory, never sent.
+process.env.EMAIL_PROVIDER ??= "memory";

@@ -2,6 +2,8 @@
 import {query,queryOne,DatabaseError,nullable} from '../../db/psql';
 import {HttpError} from '../../http/errors';
 import {getPublicUserById,issueTokenPair} from './auth.service';
+import {recordLoginSuccess,type ClientContext} from './account-security';
+import {findUserById} from '../users/users.repository';
 import {providerConfig,type VerifiedGoogle} from './providers';
 export const opaque=()=>randomBytes(32).toString('hex');
 export const hash=(v:string)=>createHash('sha256').update(v).digest('hex');
@@ -22,18 +24,18 @@ export function identityError(e:unknown):never {
  }
  throw e;
 }
-export async function complete(proof:string,username:unknown,name:unknown,userAgent:string|null){
+export async function complete(proof:string,username:unknown,name:unknown,client:ClientContext){
  if(username!==undefined&&(typeof username!=='string'||!/^[a-z0-9_.]{3,30}$/.test(username)||['admin','katkee','support','moderator','superadmin'].includes(username)))throw new HttpError(422,'Choose a valid available username (3–30 letters, numbers, dots or underscores).');
  if(name!==undefined&&(typeof name!=='string'||name.length>60))throw new HttpError(422,'Display name must be at most 60 characters.');
  try{
   const row=await queryOne(`SELECT complete_provider_proof(:'hash',:'username',:'name') AS id`,{hash:proofToken(proof),username:typeof username==='string'?username:'',name:typeof name==='string'?name:''});
   if(!row?.id)throw new HttpError(401,'Verification expired.');
-  const user=await getPublicUserById(row.id);const tokens=await issueTokenPair(row.id,userAgent);console.info(JSON.stringify({event:'provider_login_succeeded'}));return {user,tokens};
+  const user=await getPublicUserById(row.id);const tokens=await issueTokenPair(row.id,client.userAgent);await recordLoginSuccess(row.id,(await findUserById(row.id))?.email??null,client);console.info(JSON.stringify({event:'provider_login_succeeded'}));return {user,tokens};
  }catch(e){identityError(e);}
 }
-export async function resultFor(proof:string,userAgent:string|null){
+export async function resultFor(proof:string,client:ClientContext){
  const row=await queryOne(`SELECT i.user_id FROM auth_provider_proofs p JOIN auth_identities i ON i.provider=p.provider AND i.subject=p.subject WHERE p.token_hash=:'hash'`,{hash:hash(proof)});
- if(row)return complete(proof,undefined,undefined,userAgent);
+ if(row)return complete(proof,undefined,undefined,client);
  return {onboardingRequired:true as const,proof,expiresIn:300};
 }
 export async function reauthTicket(userId:string){const ticket=opaque();await query(`INSERT INTO auth_reauth_tickets(token_hash,user_id) VALUES(:'hash',:'user')`,{hash:hash(ticket),user:userId});return {reauthTicket:ticket,expiresIn:300};}

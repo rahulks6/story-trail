@@ -1,5 +1,5 @@
 import { HttpError } from "../../http/errors";
-export const permissions = ["reports.read", "reports.review", "content.remove", "content.restore", "users.view", "users.restrict", "users.suspend", "moderation.history.read", "ads.create", "ads.edit", "ads.review", "ads.pause", "ads.analytics.read", "admins.read", "admins.create", "admins.update", "admins.disable", "audit.read"] as const;
+export const permissions = ["reports.read", "reports.review", "content.remove", "content.restore", "users.view", "users.restrict", "users.suspend", "moderation.history.read", "ads.create", "ads.edit", "ads.review", "ads.pause", "ads.analytics.read", "admins.read", "admins.create", "admins.update", "admins.disable", "audit.read", "analytics.read", "security.alerts.read"] as const;
 export type Permission = typeof permissions[number];
 export interface Principal {
     userId: string;
@@ -7,6 +7,7 @@ export interface Principal {
     permissions: string[];
     sessionHash?: string;
     recent?: boolean;
+    mfaVerified?: boolean;
 }
 export function authorize(principal: Principal | null, permission: Permission, superOnly = false): asserts principal is Principal {
     if (!principal || (superOnly && principal.role !== "SUPER_ADMIN") || (principal.role !== "SUPER_ADMIN" && !principal.permissions.includes(permission)))

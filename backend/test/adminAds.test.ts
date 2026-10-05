@@ -7,6 +7,7 @@ import { buildApp } from '../src/app';
 import { query, queryOne } from '../src/db/psql';
 import { buildTestPng } from './fixtures';
 import { permissions } from '../src/modules/admin/policy';
+import { adminSignIn, nextSecondFactor } from './adminSession';
 const server = buildApp();
 let base: string;
 before(async () => { await new Promise<void>(r => server.listen(0, r)); base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`; });
@@ -14,7 +15,8 @@ after(async () => { await new Promise<void>(r => server.close(() => r())); });
 async function request(path: string, method = 'GET', data?: unknown, headers: Record<string, string> = {}) { const r = await fetch(base + path, { method, headers: { 'Content-Type': 'application/json', ...headers }, ...(data === undefined ? {} : { body: JSON.stringify(data) }) }); return { status: r.status, body: r.status === 204 ? null : await r.json() as any, cookie: r.headers.get('set-cookie')?.split(';')[0] ?? '' }; }
 async function account(role?: 'ADMIN' | 'SUPER_ADMIN', granted: readonly string[] = permissions, password = 'correcthorsebattery') { const tag = randomUUID().slice(0, 8); const input = { email: `ad_${tag}@example.com`, username: `ad_${tag}`, password, displayName: 'Test operator' }; const r = await request('/api/v1/auth/signup', 'POST', input); assert.equal(r.status, 201); const id = r.body.user.id as string; const token = r.body.tokens.accessToken as string; if (role)
     await query(`INSERT INTO admin_grants(user_id,role,permissions) VALUES(:'id',:'role',:'permissions'::jsonb)`, { id, role, permissions: JSON.stringify(granted) }); return { id, token, input }; }
-async function login(a: Awaited<ReturnType<typeof account>>) { const r = await request('/api/v1/admin/login', 'POST', { email: a.input.email, password: a.input.password }, { Origin: 'http://admin.test' }); assert.equal(r.status, 200, JSON.stringify(r.body)); assert.match(r.cookie, /katkee_admin=/); return { Cookie: r.cookie, Origin: 'http://admin.test', 'X-CSRF-Token': r.body.csrf as string }; }
+// Real sign-in: password, then TOTP enrollment/verification (see test/adminSession.ts).
+async function login(a: Awaited<ReturnType<typeof account>>) { return adminSignIn(base, a.input.email, a.input.password); }
 async function photo(a: Awaited<ReturnType<typeof account>>) { const r = await fetch(base + '/api/v1/media/photos', { method: 'POST', headers: { Authorization: `Bearer ${a.token}`, 'Content-Type': 'image/png' }, body: buildTestPng(4, 4) }); assert.equal(r.status, 201); return ((await r.json()) as any).media.id as string; }
 it('lets suspended users appeal only their own notices using expiring, single-use access',async()=>{
     const owner=await account(),other=await account(),admin=await account('SUPER_ADMIN');
@@ -58,7 +60,9 @@ it('rejects USER, missing sessions, CSRF violations and self-escalation; grants 
     assert.equal(disabled.status, 200);
     assert.equal((await request('/api/v1/admin/reports', 'GET', undefined, uh)).status, 401);
     await assert.rejects(query('UPDATE admin_audit SET action=action WHERE false'));
- assert.equal((await request('/api/v1/admin/reauthenticate', 'POST', {password:admin.input.password}, ah)).status, 204);
+ // Step-up needs the second factor too once MFA is set up.
+ assert.equal((await request('/api/v1/admin/reauthenticate', 'POST', {password:admin.input.password}, ah)).status, 401);
+ assert.equal((await request('/api/v1/admin/reauthenticate', 'POST', {password:admin.input.password, code:nextSecondFactor(admin.input.email)}, ah)).status, 204);
  assert.equal((await request('/api/v1/moderation/notices', 'POST', admin.input)).status, 200);
 });
 it('moderation is atomic, concurrent-safe, hides direct media, and allows explicit restoration and appeals', async () => {

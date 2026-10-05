@@ -72,6 +72,23 @@ export const config = {
   admin: {
     origin: process.env.ADMIN_ORIGIN ?? "http://localhost:4000",
     staticRoot: process.env.ADMIN_STATIC_ROOT ?? path.resolve(process.cwd(), "../admin"),
+    // TOTP is mandatory for every admin unless explicitly disabled outside production.
+    mfaRequired: process.env.NODE_ENV === "production" || process.env.ADMIN_MFA_REQUIRED !== "false",
+    // 32-byte key (hex or base64) that encrypts TOTP secrets at rest.
+    mfaEncryptionKey: process.env.ADMIN_MFA_ENCRYPTION_KEY ?? "",
+    idleTimeoutMinutes: optionalInt("ADMIN_SESSION_IDLE_MINUTES", 30),
+    absoluteTimeoutMinutes: optionalInt("ADMIN_SESSION_ABSOLUTE_MINUTES", 8 * 60),
+    recentAuthMinutes: optionalInt("ADMIN_RECENT_AUTH_MINUTES", 5),
+  },
+  email: {
+    // ses (production), log (development only: prints messages), memory (tests), disabled.
+    provider: (process.env.EMAIL_PROVIDER ?? (process.env.NODE_ENV === "production" ? "" : "log")) as "ses" | "log" | "memory" | "disabled" | "",
+    from: process.env.EMAIL_FROM ?? "",
+    awsRegion: process.env.AWS_REGION ?? "ap-south-1",
+  },
+  appLinks: {
+    // Deep link the reset email opens; the code is appended as a query parameter.
+    passwordReset: process.env.PASSWORD_RESET_LINK ?? "katkee://reset-password",
   },
   nodeEnv: process.env.NODE_ENV ?? "development",
   port: optionalInt("PORT", 4000),
@@ -110,11 +127,31 @@ export const config = {
     authMax: optionalInt("RATE_LIMIT_AUTH_MAX", 10),
     globalWindowMs: optionalInt("RATE_LIMIT_GLOBAL_WINDOW_MS", 60 * 1000),
     globalMax: optionalInt("RATE_LIMIT_GLOBAL_MAX", 600),
+    // Shared (PostgreSQL-backed) per-network budgets, per hour.
+    signupPerHour: optionalInt("RATE_LIMIT_SIGNUP_PER_HOUR", 20),
+    resetRequestsPerHour: optionalInt("RATE_LIMIT_RESET_REQUESTS_PER_HOUR", 10),
+    resetVerifyPerHour: optionalInt("RATE_LIMIT_RESET_VERIFY_PER_HOUR", 20),
+    // Admin sign-in attempts per network address per 15 minutes (per-account limits are separate).
+    adminLoginPerIp: optionalInt("RATE_LIMIT_ADMIN_LOGIN_PER_IP", 30),
   },
 } as const;
 
 if (config.jwt.accessSecret === config.jwt.refreshSecret) {
   throw new Error("JWT_ACCESS_SECRET and JWT_REFRESH_SECRET must be different values.");
+}
+
+if (!["ses", "log", "memory", "disabled"].includes(config.email.provider)) {
+  throw new Error("EMAIL_PROVIDER must be one of ses, log, memory or disabled.");
+}
+if (config.nodeEnv === "production" && config.email.provider !== "ses") {
+  throw new Error("Production requires EMAIL_PROVIDER=ses so password reset and security alerts are delivered.");
+}
+if (config.email.provider === "ses" && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(config.email.from.replace(/^.*<(.+)>$/, "$1"))) {
+  throw new Error("EMAIL_FROM must be a verified sender address when EMAIL_PROVIDER=ses.");
+}
+if (config.features.admin && !/^([0-9a-f]{64}|[A-Za-z0-9+/]{43}=)$/i.test(config.admin.mfaEncryptionKey)) {
+  throw new Error("ADMIN_CONSOLE_ENABLED requires ADMIN_MFA_ENCRYPTION_KEY: 32 random bytes as 64 hex characters or base64. " +
+    `Generate one with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`);
 }
 
 if (config.features.admin && config.nodeEnv === "production") {

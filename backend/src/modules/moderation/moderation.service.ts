@@ -1,4 +1,3 @@
-import { grant } from "../admin/security";
 import { authorize, type Permission, type Principal } from "../admin/policy";
 import { moderate } from "../admin/admin.service";
 import { queryOne } from "../../db/psql";
@@ -13,8 +12,8 @@ import * as moderationRepo from "./moderation.repository";
 import type { ReportRow, ReportStatus, TargetType } from "./moderation.repository";
 import type { CreateReportInput, ResolveReportInput } from "./dto";
 
-async function requireModerator(viewerId: string, permission: Permission = "reports.read"): Promise<Principal> {
- const principal = await grant(viewerId);
+/** Callers pass the Admin-session principal from requireAdmin; this re-checks the specific permission. */
+function requireModerator(principal: Principal, permission: Permission = "reports.read"): Principal {
  authorize(principal, permission);
  return principal;
 }
@@ -83,12 +82,12 @@ async function denormalizeTarget(report: ReportRow): Promise<ReportTarget> {
 }
 
 export async function listReportsQueue(
-  moderatorId: string,
+  moderator: Principal,
   status: ReportStatus,
   limit: number,
   offset: number,
 ): Promise<ReportQueueEntry[]> {
-  await requireModerator(moderatorId);
+  requireModerator(moderator);
   const reports = await moderationRepo.listReports(status, limit, offset);
   const entries: ReportQueueEntry[] = [];
   for (const report of reports) {
@@ -103,19 +102,19 @@ export async function listReportsQueue(
   return entries;
 }
 
-export async function resolveReport(moderatorId: string, reportId: string, input: ResolveReportInput): Promise<ReportRow> {
- const p=await requireModerator(moderatorId,"reports.review");
+export async function resolveReport(moderator: Principal, reportId: string, input: ResolveReportInput): Promise<ReportRow> {
+ const p=requireModerator(moderator,"reports.review");
  const row=await queryOne(`SELECT version,target_type FROM reports WHERE id=:'id'`,{id:reportId});
  if(!row)throw new HttpError(404,"Report not found.");
  if(input.action==='remove_content' && row.target_type==='user' || input.action==='suspend_user' && row.target_type!=='user') throw new HttpError(400,"This action does not apply to the report target.");
  await moderate(p,{reportId,version:Number(row.version),action:input.action==="dismiss"?"keep":input.action==="remove_content"?"remove":"suspend",reason:input.note??"Reviewed through moderation API",confirmed:true});
  const result=await moderationRepo.findReportById(reportId);if(!result)throw new HttpError(404,"Report not found.");return result;
 }
-export async function suspendUserByUsername(moderatorId:string,username:string):Promise<void>{
- const p=await requireModerator(moderatorId,"users.suspend"); const user=await usersRepo.findUserByUsername(username);if(!user)throw new HttpError(404,"User not found.");
+export async function suspendUserByUsername(moderator:Principal,username:string):Promise<void>{
+ const p=requireModerator(moderator,"users.suspend"); const user=await usersRepo.findUserByUsername(username);if(!user)throw new HttpError(404,"User not found.");
  await moderate(p,{targetType:"user",targetId:user.id,action:"suspend",reason:"Suspended through moderation API",confirmed:true});
 }
-export async function unsuspendUserByUsername(moderatorId:string,username:string):Promise<void>{
- const p=await requireModerator(moderatorId,"users.suspend"); const user=await usersRepo.findUserByUsername(username);if(!user)throw new HttpError(404,"User not found.");
+export async function unsuspendUserByUsername(moderator:Principal,username:string):Promise<void>{
+ const p=requireModerator(moderator,"users.suspend"); const user=await usersRepo.findUserByUsername(username);if(!user)throw new HttpError(404,"User not found.");
  await moderate(p,{targetType:"user",targetId:user.id,action:"restore_account",reason:"Restored through moderation API",confirmed:true});
 }

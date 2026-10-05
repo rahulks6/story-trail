@@ -1,4 +1,4 @@
-import "./env";
+import "./admin-env";
 import { after, before, describe, it } from "node:test";
 import assert from "node:assert/strict";
 import type { AddressInfo } from "node:net";
@@ -6,6 +6,7 @@ import { buildApp } from "../src/app";
 import { authHeader, makeClient, uniqueUser } from "./helpers";
 import { buildTestPng } from "./fixtures";
 import { query } from "../src/db/psql";
+import { adminSignIn } from "./adminSession";
 
 let client: ReturnType<typeof makeClient>;
 let baseUrl: string;
@@ -125,15 +126,34 @@ describe("the moderation queue is moderator-only", () => {
   it("denies a non-moderator", async () => {
     const someone = await signupUser();
     const list = await client.get("/api/v1/moderation/reports", authHeader(someone.accessToken));
-    assert.equal(list.status, 403);
+    assert.equal(list.status, 401, "a consumer access token is never an Admin credential");
 
     const suspend = await client.post(`/api/v1/moderation/users/${someone.input.username}/suspend`, undefined, authHeader(someone.accessToken));
-    assert.equal(suspend.status, 403);
+    assert.equal(suspend.status, 401);
+
+    const consoleLogin = await fetch(`${baseUrl}/api/v1/admin/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Origin: "http://admin.test" },
+      body: JSON.stringify({ email: someone.input.email, password: someone.input.password }),
+    });
+    assert.equal(consoleLogin.status, 403, "an account without an Admin grant can't open an Admin session");
+  });
+
+  it("a moderator's consumer bearer token cannot reach moderator endpoints (no MFA bypass)", async () => {
+    const moderator = await signupUser();
+    await promoteToModerator(moderator.id);
+    const target = await signupUser();
+    assert.equal((await client.get("/api/v1/moderation/reports", authHeader(moderator.accessToken))).status, 401);
+    assert.equal((await client.post(`/api/v1/moderation/users/${target.input.username}/suspend`, undefined, authHeader(moderator.accessToken))).status, 401);
+    const stillActive = await client.post("/api/v1/auth/login", { email: target.input.email, password: target.input.password });
+    assert.equal(stillActive.status, 200, "the refused request changed nothing");
   });
 
   it("lists pending reports oldest-first with denormalized reporter/target info", async () => {
     const moderator = await signupUser();
     await promoteToModerator(moderator.id);
+    // Moderator endpoints need the Admin console session (password + two-step verification).
+    const mh = await adminSignIn(baseUrl, moderator.input.email, moderator.input.password);
     const reporter = await signupUser();
     const owner = await signupUser();
     const storyId = await publishStory(owner.accessToken);
@@ -141,7 +161,7 @@ describe("the moderation queue is moderator-only", () => {
     await client.post("/api/v1/reports", { targetType: "story", targetId: storyId, reason: "nudity", details: "see attached" }, authHeader(reporter.accessToken));
     await client.post("/api/v1/reports", { targetType: "user", targetId: owner.id, reason: "harassment" }, authHeader(reporter.accessToken));
 
-    const queue = await client.get("/api/v1/moderation/reports?status=pending", authHeader(moderator.accessToken));
+    const queue = await client.get("/api/v1/moderation/reports?status=pending", mh);
     assert.equal(queue.status, 200);
     assert.ok(queue.body.reports.length >= 2);
     const storyEntry = queue.body.reports.find((r: any) => r.targetType === "story" && r.targetId === storyId);
@@ -160,34 +180,38 @@ describe("resolving a report", () => {
   it("dismiss moves it out of the pending queue and into dismissed", async () => {
     const moderator = await signupUser();
     await promoteToModerator(moderator.id);
+    // Moderator endpoints need the Admin console session (password + two-step verification).
+    const mh = await adminSignIn(baseUrl, moderator.input.email, moderator.input.password);
     const reporter = await signupUser();
     const owner = await signupUser();
     const storyId = await publishStory(owner.accessToken);
     const report = await client.post("/api/v1/reports", { targetType: "story", targetId: storyId, reason: "other" }, authHeader(reporter.accessToken));
     const reportId = report.body.report.id;
 
-    const resolve = await client.post(`/api/v1/moderation/reports/${reportId}/resolve`, { action: "dismiss", note: "not actually spam" }, authHeader(moderator.accessToken));
+    const resolve = await client.post(`/api/v1/moderation/reports/${reportId}/resolve`, { action: "dismiss", note: "not actually spam" }, mh);
     assert.equal(resolve.status, 200);
     assert.equal(resolve.body.report.status, "dismissed");
 
-    const pending = await client.get("/api/v1/moderation/reports?status=pending", authHeader(moderator.accessToken));
+    const pending = await client.get("/api/v1/moderation/reports?status=pending", mh);
     assert.ok(!pending.body.reports.some((r: any) => r.id === reportId));
-    const dismissed = await client.get("/api/v1/moderation/reports?status=dismissed", authHeader(moderator.accessToken));
+    const dismissed = await client.get("/api/v1/moderation/reports?status=dismissed", mh);
     assert.ok(dismissed.body.reports.some((r: any) => r.id === reportId));
 
-    const reResolve = await client.post(`/api/v1/moderation/reports/${reportId}/resolve`, { action: "dismiss" }, authHeader(moderator.accessToken));
+    const reResolve = await client.post(`/api/v1/moderation/reports/${reportId}/resolve`, { action: "dismiss" }, mh);
     assert.equal(reResolve.status, 409, "an already-resolved report can't be resolved again");
   });
 
   it("remove_content actually deletes a reported Story", async () => {
     const moderator = await signupUser();
     await promoteToModerator(moderator.id);
+    // Moderator endpoints need the Admin console session (password + two-step verification).
+    const mh = await adminSignIn(baseUrl, moderator.input.email, moderator.input.password);
     const reporter = await signupUser();
     const owner = await signupUser();
     const storyId = await publishStory(owner.accessToken);
     const report = await client.post("/api/v1/reports", { targetType: "story", targetId: storyId, reason: "violence" }, authHeader(reporter.accessToken));
 
-    const resolve = await client.post(`/api/v1/moderation/reports/${report.body.report.id}/resolve`, { action: "remove_content" }, authHeader(moderator.accessToken));
+    const resolve = await client.post(`/api/v1/moderation/reports/${report.body.report.id}/resolve`, { action: "remove_content" }, mh);
     assert.equal(resolve.status, 200);
     assert.equal(resolve.body.report.status, "actioned");
 
@@ -198,6 +222,8 @@ describe("resolving a report", () => {
   it("remove_content actually deletes a reported comment", async () => {
     const moderator = await signupUser();
     await promoteToModerator(moderator.id);
+    // Moderator endpoints need the Admin console session (password + two-step verification).
+    const mh = await adminSignIn(baseUrl, moderator.input.email, moderator.input.password);
     const reporter = await signupUser();
     const owner = await signupUser();
     const storyId = await publishStory(owner.accessToken);
@@ -205,7 +231,7 @@ describe("resolving a report", () => {
     const comment = await client.post(`/api/v1/stories/${storyId}/comments`, { body: "gross" }, authHeader(commenter.accessToken));
     const report = await client.post("/api/v1/reports", { targetType: "comment", targetId: comment.body.comment.id, reason: "harassment" }, authHeader(reporter.accessToken));
 
-    const resolve = await client.post(`/api/v1/moderation/reports/${report.body.report.id}/resolve`, { action: "remove_content" }, authHeader(moderator.accessToken));
+    const resolve = await client.post(`/api/v1/moderation/reports/${report.body.report.id}/resolve`, { action: "remove_content" }, mh);
     assert.equal(resolve.status, 200);
 
     const list = await client.get(`/api/v1/stories/${storyId}/comments`, authHeader(owner.accessToken));
@@ -215,27 +241,31 @@ describe("resolving a report", () => {
   it("rejects remove_content on a user report, and suspend_user on a story report", async () => {
     const moderator = await signupUser();
     await promoteToModerator(moderator.id);
+    // Moderator endpoints need the Admin console session (password + two-step verification).
+    const mh = await adminSignIn(baseUrl, moderator.input.email, moderator.input.password);
     const reporter = await signupUser();
     const owner = await signupUser();
     const storyId = await publishStory(owner.accessToken);
 
     const userReport = await client.post("/api/v1/reports", { targetType: "user", targetId: owner.id, reason: "other" }, authHeader(reporter.accessToken));
-    const badRemove = await client.post(`/api/v1/moderation/reports/${userReport.body.report.id}/resolve`, { action: "remove_content" }, authHeader(moderator.accessToken));
+    const badRemove = await client.post(`/api/v1/moderation/reports/${userReport.body.report.id}/resolve`, { action: "remove_content" }, mh);
     assert.equal(badRemove.status, 400);
 
     const storyReport = await client.post("/api/v1/reports", { targetType: "story", targetId: storyId, reason: "other" }, authHeader(reporter.accessToken));
-    const badSuspend = await client.post(`/api/v1/moderation/reports/${storyReport.body.report.id}/resolve`, { action: "suspend_user" }, authHeader(moderator.accessToken));
+    const badSuspend = await client.post(`/api/v1/moderation/reports/${storyReport.body.report.id}/resolve`, { action: "suspend_user" }, mh);
     assert.equal(badSuspend.status, 400);
   });
 
   it("suspend_user actually blocks login and immediately invalidates the user's outstanding refresh token", async () => {
     const moderator = await signupUser();
     await promoteToModerator(moderator.id);
+    // Moderator endpoints need the Admin console session (password + two-step verification).
+    const mh = await adminSignIn(baseUrl, moderator.input.email, moderator.input.password);
     const reporter = await signupUser();
     const target = await signupUser();
 
     const report = await client.post("/api/v1/reports", { targetType: "user", targetId: target.id, reason: "harassment" }, authHeader(reporter.accessToken));
-    const resolve = await client.post(`/api/v1/moderation/reports/${report.body.report.id}/resolve`, { action: "suspend_user" }, authHeader(moderator.accessToken));
+    const resolve = await client.post(`/api/v1/moderation/reports/${report.body.report.id}/resolve`, { action: "suspend_user" }, mh);
     assert.equal(resolve.status, 200);
 
     const login = await client.post("/api/v1/auth/login", { email: target.input.email, password: target.input.password });
@@ -250,15 +280,17 @@ describe("standalone suspend/unsuspend", () => {
   it("suspends and reverses without needing a report on file", async () => {
     const moderator = await signupUser();
     await promoteToModerator(moderator.id);
+    // Moderator endpoints need the Admin console session (password + two-step verification).
+    const mh = await adminSignIn(baseUrl, moderator.input.email, moderator.input.password);
     const target = await signupUser();
 
-    const suspend = await client.post(`/api/v1/moderation/users/${target.input.username}/suspend`, undefined, authHeader(moderator.accessToken));
+    const suspend = await client.post(`/api/v1/moderation/users/${target.input.username}/suspend`, undefined, mh);
     assert.equal(suspend.status, 204);
 
     const loginWhileSuspended = await client.post("/api/v1/auth/login", { email: target.input.email, password: target.input.password });
     assert.equal(loginWhileSuspended.status, 401);
 
-    const unsuspend = await client.post(`/api/v1/moderation/users/${target.input.username}/unsuspend`, undefined, authHeader(moderator.accessToken));
+    const unsuspend = await client.post(`/api/v1/moderation/users/${target.input.username}/unsuspend`, undefined, mh);
     assert.equal(unsuspend.status, 204);
 
     const loginAfterUnsuspend = await client.post("/api/v1/auth/login", { email: target.input.email, password: target.input.password });

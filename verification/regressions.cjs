@@ -48,9 +48,11 @@ test('concurrent refresh requests issue only one replacement token pair', async 
     './refresh-tokens.repository': {
       findActiveRefreshToken: async () => ({ id: 'old', userId: 'user' }),
       consumeRefreshToken: async () => { if (consumed) return false; consumed = true; return true; },
-      insertRefreshToken: async () => { issued++; return 'new'; },
+      insertRefreshToken: async () => { issued++; return { id: 'new', sessionId: 'session' }; },
       finalizeRefreshToken: async () => {},
     },
+    './account-security': {},
+    '../../http/errors': { HttpError: class HttpError extends Error {} },
     './password': {},
     './tokens': { verifyRefreshToken: () => ({ jti: 'old' }), issueAccessToken: () => 'access', issueRefreshToken: () => 'refresh' },
   });

@@ -53,7 +53,7 @@ else
     a.rel = 'noopener noreferrer';
     box.append(a);
 } container.append(box); }
-const sections = [['Dashboard', 'reports.read'], ['Reports', 'reports.read'], ['Moderation', 'moderation.history.read'], ['Users', 'users.view'], ['Ads', 'ads.analytics.read'], ['Appeals', 'reports.review'], ['Admins', 'admins.read'], ['Audit Logs', 'audit.read'], ['Settings', 'ads.analytics.read']];
+const sections = [['Dashboard', 'reports.read'], ['Reports', 'reports.read'], ['Moderation', 'moderation.history.read'], ['Users', 'users.view'], ['Ads', 'ads.analytics.read'], ['Appeals', 'reports.review'], ['Admins', 'admins.read'], ['Audit Logs', 'audit.read'], ['Security', 'security.alerts.read'], ['Settings', 'ads.analytics.read']];
 async function render() { const version = ++renderVersion; for (const url of objectUrls)
     URL.revokeObjectURL(url); objectUrls = []; $('title').textContent = page; const c = $('content'); c.replaceChildren(el('p', 'Loading…', 'muted')); for (const n of $('navigation').children)
     n.setAttribute('aria-current', n.textContent === page ? 'page' : 'false'); try {
@@ -67,6 +67,22 @@ async function render() { const version = ++renderVersion; for (const url of obj
             grid.append(box);
         }
         c.append(grid);
+        return;
+    }
+    if (page === 'Security') {
+        const data = await api('security-alerts?limit=50');
+        c.replaceChildren();
+        const mine = card('Your two-step verification');
+        mine.append(el('p', 'Backup codes sign you in once each if you lose your authenticator. Generating new ones invalidates the old set (requires recent verification).', 'muted'),
+            button('Generate new backup codes', async () => { if (!confirm('Replace all of your existing backup codes?')) return; const r = await api('mfa/backup-codes', 'POST', { confirmed: true }); const list = el('ol', undefined, 'codes'); for (const code of r.backupCodes) list.append(el('li', code)); mine.append(el('p', 'Save these now. They will not be shown again.'), list); }));
+        c.append(mine, el('h2', 'Open security alerts'));
+        if (!data.items.length) c.append(el('p', 'No open alerts.', 'muted'));
+        for (const alert of data.items) {
+            const box = card(alert.kind.replace(/_/g, ' '));
+            fields(box, { When: new Date(alert.created_at).toLocaleString(), Account: alert.user_id || '—', Details: JSON.stringify(alert.metadata) });
+            actions(box).append(button('Acknowledge', () => mutate('security-alerts/' + alert.id + '/acknowledge', {}, 'Mark this alert as reviewed?')));
+            c.append(box);
+        }
         return;
     }
     if (page === 'Settings') {
@@ -105,6 +121,12 @@ async function list(c, version) { const routes = { Reports: 'reports', Moderatio
     field(filters, 'reason', 'Reason', 'text', '', ['', 'spam', 'harassment', 'nudity', 'violence', 'hate_speech', 'other']);
     filters.append(button('Filter', async () => { const q = new URLSearchParams(values(filters)); const d = await api('reports?limit=20&' + q); const results = $('results'); results.replaceChildren(); await renderItems(results, d.items); }));
     c.append(filters);
+} if (page === 'Audit Logs') {
+    const filters = el('form', undefined, 'form-grid');
+    for (const [name, label, type] of [['action', 'Action starts with (e.g. MODERATION_)', 'text'], ['actor', 'Actor user ID', 'text'], ['from', 'From', 'datetime-local'], ['to', 'To', 'datetime-local']]) field(filters, name, label, type).required = false;
+    filters.append(button('Filter', async () => { const v = Object.fromEntries(Object.entries(values(filters)).filter(([, x]) => x).map(([k, x]) => [k, k === 'from' || k === 'to' ? new Date(x).toISOString() : k === 'action' ? x.toUpperCase() : x])); const d = await api('audit?limit=20&' + new URLSearchParams(v)); const results = $('results'); results.replaceChildren(); await renderItems(results, d.items); }),
+        button('Verify integrity', async () => { const r = await api('audit/verify'); message(r.intact ? `Audit chain intact: ${r.rows} records, head ${String(r.headHash).slice(0, 16)}…` : `TAMPERING DETECTED at record ${r.firstProblem.chain_seq}: ${r.firstProblem.problem}`); }, true));
+    c.append(filters);
 } const results = el('div'); results.id = 'results'; c.append(results); await renderItems(results, data.items); const pager = actions(c); if (offset > 0)
     pager.append(button('Previous', () => { offset = Math.max(0, offset - 20); return render(); }, true)); if (data.items.length === 20)
     pager.append(button('Next', () => { offset += 20; return render(); }, true)); }
@@ -129,7 +151,7 @@ async function renderItems(container, items) { if (!items.length) {
         a.append(button('Restore content', () => { const reason = prompt('Reason for restoring content'); if (reason)
             return mutate('moderate', { targetType: item.target_type, targetId: item.target_id, action: 'restore', reason }, 'Restore content subject to original privacy and expiry?'); }));
     if (page === 'Admins' && item.role === 'ADMIN')
-        a.append(button('Edit access', () => adminForm($('content'), item)));
+        a.append(button('Edit access', () => adminForm($('content'), item)), button('Reset two-step verification', () => mutate('admins/' + item.userId + '/mfa-reset', {}, 'Sign this admin out and require them to set up two-step verification again?'), true));
     if (page === 'Appeals' && item.status === 'OPEN')
         for (const decision of ['UPHELD', 'DENIED'])
             a.append(button(decision, () => { const reason = prompt('Resolution. An upheld appeal requires a separate authorized restore action.'); if (reason)
@@ -199,10 +221,50 @@ async function campaignForm(c) { c.replaceChildren(); const advertisers = await 
     return; const uploaded = await api('media/' + (selected.type.startsWith('video/') ? 'video' : 'photo'), 'POST', selected); delete v.file; for (const k of ['budgetMinor', 'impressionLimit', 'userCap', 'dailyCap'])
     v[k] = Number(v[k]); v.startAt = new Date(v.startAt).toISOString(); v.endAt = new Date(v.endAt).toISOString(); await api('campaigns', 'POST', { ...v, mediaId: uploaded.media.id, confirmed: true }); await render(); }), button('Cancel', render, true)); c.append(f); }
 if (document.body.dataset.page === 'login') {
+    // Step 1 password; step 2 enroll (QR + confirm + one-time backup codes) or verify (code or backup code).
+    // No Admin session cookie exists until the second factor succeeds.
+    const box = $('login').parentElement, status = $('message');
+    const finish = (result) => { sessionStorage.setItem('katkee.csrf', result.csrf); location.assign('/admin'); };
+    function showBackupCodes(result) {
+        const c = card('Save your backup codes');
+        c.append(el('p', 'Each code signs you in once if you lose your authenticator. They will not be shown again.'));
+        const list = el('ol', undefined, 'codes');
+        for (const code of result.backupCodes) list.append(el('li', code));
+        c.append(list, button('I saved these codes — continue', async () => finish(result)));
+        box.replaceChildren(c, status);
+    }
+    function codeForm(title, intro, submitLabel, onCode, allowBackup) {
+        const f = el('form'); f.append(el('h2', title), el('p', intro, 'muted'));
+        const code = field(f, 'code', allowBackup ? 'Authenticator code or backup code' : '6-digit code');
+        code.autocomplete = 'one-time-code'; code.inputMode = allowBackup ? 'text' : 'numeric';
+        f.append(button(submitLabel, async () => { if (!f.reportValidity()) return; await onCode(code.value.trim()); }));
+        f.onsubmit = (e) => { e.preventDefault(); f.querySelector('button').click(); };
+        setTimeout(() => code.focus(), 0);
+        return f;
+    }
+    async function enroll(challenge) {
+        const setup = await api('mfa/enroll', 'POST', { challenge });
+        const c = card('Set up two-step verification');
+        c.append(el('p', 'Two-step verification is required for every Admin. Scan this code with an authenticator app (Google Authenticator, Microsoft Authenticator, 1Password, Authy).'));
+        const svg = new DOMParser().parseFromString(setup.qrSvg, 'image/svg+xml').documentElement;
+        if (svg.nodeName === 'svg') { svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', 'QR code for your authenticator app'); svg.classList.add('qr'); c.append(document.importNode(svg, true)); }
+        const manual = el('details'); manual.append(el('summary', "Can't scan? Enter this key"), el('code', setup.secret.replace(/(.{4})/g, '$1 ').trim()));
+        c.append(manual, codeForm('Enter the code it shows', 'Codes refresh every 30 seconds.', 'Verify and finish setup', async (value) => showBackupCodes(await api('mfa/enroll/confirm', 'POST', { challenge, code: value })), false));
+        box.replaceChildren(c, status);
+    }
+    function verify(challenge) {
+        const c = card();
+        c.append(codeForm('Two-step verification', 'Enter the current code from your authenticator app, or one of your backup codes.', 'Verify', async (value) => {
+            const isBackup = /[a-z]/i.test(value) || value.replace(/\D/g, '').length !== 6;
+            finish(await api('login/mfa', 'POST', isBackup ? { challenge, backupCode: value } : { challenge, code: value }));
+        }, true));
+        box.replaceChildren(c, status);
+    }
     $('login').onsubmit = async (e) => { e.preventDefault(); const f = e.currentTarget; const submit = f.querySelector('button'); submit.disabled = true; try {
         const result = await api('login', 'POST', values(f));
-        sessionStorage.setItem('katkee.csrf', result.csrf);
-        location.assign('/admin');
+        if (result.mfaEnrollmentRequired) await enroll(result.challenge);
+        else if (result.mfaRequired) verify(result.challenge);
+        else finish(result);
     }
     catch (e) {
         message(e.message);
@@ -227,7 +289,8 @@ else {
             sessionStorage.removeItem('katkee.csrf');
             location.assign('/admin/login');
         } };
-        $('reauth').onclick = () => { const dialog = el('dialog', undefined, 'card'); const form = el('form'); form.append(el('h2', 'Verify your password'), el('p', 'Authorize sensitive changes for five minutes.')); const password = field(form, 'password', 'Password', 'password'); password.autocomplete = 'current-password'; form.append(button('Verify', async () => { await api('reauthenticate', 'POST', { password: password.value }); password.value = ''; dialog.close(); dialog.remove(); message('Password verified for five minutes.'); }), button('Cancel', () => { dialog.close(); dialog.remove(); }, true)); dialog.append(form); document.body.append(dialog); dialog.showModal(); password.focus(); };
+        // Step-up for sensitive changes: password plus the current authenticator (or backup) code.
+        $('reauth').onclick = () => { const dialog = el('dialog', undefined, 'card'); const form = el('form'); form.append(el('h2', 'Verify it\'s you'), el('p', 'Authorize sensitive changes for five minutes.')); const password = field(form, 'password', 'Password', 'password'); password.autocomplete = 'current-password'; const code = field(form, 'code', 'Authenticator code', 'text'); code.autocomplete = 'one-time-code'; code.required = principal.mfaVerified; form.append(button('Verify', async () => { await api('reauthenticate', 'POST', { password: password.value, code: code.value.trim() }); password.value = ''; code.value = ''; dialog.close(); dialog.remove(); message('Verified for five minutes.'); }), button('Cancel', () => { dialog.close(); dialog.remove(); }, true)); dialog.append(form); document.body.append(dialog); dialog.showModal(); password.focus(); };
         if (!allowed.length) {
             $('content').replaceChildren(el('p', 'No console permissions are assigned. Contact a Super Admin.'));
             return;
