@@ -170,7 +170,7 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
                     onLongPress={() => toggle(story.id)}
                     style={[styles.thumbWrapper, { width: thumbSize, height: thumbSize }]}
                   >
-                    <Image source={{ uri: mediaFileUrl(story.mediaId), headers: authHeaders }} style={styles.thumb} resizeMode="cover" />
+                    <Image source={{ uri: mediaFileUrl(story.mediaId, "thumbnail"), headers: authHeaders }} style={styles.thumb} resizeMode="cover" />
                     {isSelected ? (
                       <View style={styles.selectedOverlay}>
                         <View style={styles.selectedCheck}>

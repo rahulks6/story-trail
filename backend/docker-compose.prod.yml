@@ -13,8 +13,35 @@
 #
 # Requires a `.env` file next to this one (never committed — see
 # .dockerignore) with real values for POSTGRES_PASSWORD, JWT_ACCESS_SECRET,
-# JWT_REFRESH_SECRET, and DOMAIN. Generate the two JWT secrets with:
+# JWT_REFRESH_SECRET, DOMAIN, EMAIL_FROM and the media settings (S3 bucket,
+# CloudFront domain and signing key). Generate the two JWT secrets with:
 #   node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
+#
+# Media is stored in S3 and delivered through CloudFront signed URLs; nothing is
+# kept on the server's disk. The worker service processes uploads (and runs
+# retention); scale it separately from the API.
+
+x-app-environment: &app-environment
+  NODE_ENV: production
+  PGHOST: postgres
+  PGPORT: "5432"
+  PGDATABASE: katkee
+  PGUSER: katkee
+  PGPASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+  JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:?set JWT_ACCESS_SECRET in .env}
+  JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?set JWT_REFRESH_SECRET in .env}
+  EMAIL_PROVIDER: ses
+  EMAIL_FROM: ${EMAIL_FROM:?set EMAIL_FROM in .env (a verified SES sender)}
+  AWS_REGION: ${AWS_REGION:-ap-south-1}
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+  MEDIA_STORE: s3
+  MEDIA_S3_BUCKET: ${MEDIA_S3_BUCKET:?set MEDIA_S3_BUCKET in .env}
+  MEDIA_CDN_DOMAIN: ${MEDIA_CDN_DOMAIN:?set MEDIA_CDN_DOMAIN in .env (CloudFront)}
+  CLOUDFRONT_KEY_PAIR_ID: ${CLOUDFRONT_KEY_PAIR_ID:?set CLOUDFRONT_KEY_PAIR_ID in .env}
+  CLOUDFRONT_PRIVATE_KEY: ${CLOUDFRONT_PRIVATE_KEY:?set CLOUDFRONT_PRIVATE_KEY in .env}
+  MEDIA_QUEUE: ${MEDIA_QUEUE:-postgres}
+  MEDIA_SQS_QUEUE_URL: ${MEDIA_SQS_QUEUE_URL:-}
 
 services:
   postgres:
@@ -39,21 +66,20 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      NODE_ENV: production
-      PGHOST: postgres
-      PGPORT: "5432"
-      PGDATABASE: katkee
-      PGUSER: katkee
-      PGPASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
-      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:?set JWT_ACCESS_SECRET in .env}
-      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?set JWT_REFRESH_SECRET in .env}
-      EMAIL_PROVIDER: ses
-      EMAIL_FROM: ${EMAIL_FROM:?set EMAIL_FROM in .env (a verified SES sender)}
-      AWS_REGION: ${AWS_REGION:-ap-south-1}
-    volumes:
-      - media_data:/app/data/media
+      <<: *app-environment
     expose:
       - "4000"
+
+  worker:
+    build:
+      context: .
+      target: worker
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      <<: *app-environment
 
   caddy:
     image: caddy:2
@@ -72,6 +98,5 @@ services:
 
 volumes:
   postgres_data:
-  media_data:
   caddy_data:
   caddy_config:

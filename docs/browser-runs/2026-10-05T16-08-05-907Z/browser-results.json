@@ -1,0 +1,18 @@
+{
+  "passed": [
+    "Super Admin sign-in with TOTP enrollment (QR + setup key) and backup codes",
+    "dashboard real data",
+    "create limited Admin with explicit confirmation",
+    "limited Admin enrolls MFA and sees limited navigation",
+    "report review/media preview",
+    "remove Story and verify consumer 404",
+    "Super Admin repeat sign-in with a backup code",
+    "audit history visible",
+    "audit hash chain verified from the console",
+    "Security page",
+    "advertiser creation",
+    "campaign creation form",
+    "video creative processed before the draft is saved"
+  ],
+  "pageErrors": []
+}

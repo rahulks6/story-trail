@@ -1,5 +1,6 @@
 import { API_BASE_URL, apiDelete, apiGet, apiPost } from "./client";
 import type { Overlay, DrawStroke, StoryCrop } from "../models/storyDraft";
+import type { MediaDelivery } from "./media";
 
 /** Mirrors backend/src/modules/stories/stories.service.ts's PublicStory — kept in lockstep by hand, same as the rest of src/api/. */
 export interface PublicStory {
@@ -18,6 +19,8 @@ export interface PublicStory {
   filter: string;
   audioMuted: boolean;
   crop: StoryCrop;
+  /** URLs for this viewer: thumbnail, full-screen image/poster, video renditions (null from older servers). */
+  media?: MediaDelivery | null;
 }
 
 export interface FeedEntry {
@@ -46,8 +49,29 @@ export interface PublishStoryInput {
   crop?: StoryCrop;
 }
 
-export function publishStory(input: PublishStoryInput, accessToken: string): Promise<{ story: PublicStory }> {
+/**
+ * 201 `{story}` when published; 202 `{publish}` when the media is still processing,
+ * in which case the server publishes it as soon as processing finishes.
+ */
+export type PublishStoryResult =
+  | { story: PublicStory }
+  | { publish: { state: "processing"; requestId: string; mediaId: string } };
+
+export function publishStory(input: PublishStoryInput, accessToken: string): Promise<PublishStoryResult> {
   return apiPost("/api/v1/stories", input, accessToken);
+}
+
+export interface PublishRequestStatus {
+  state: "processing" | "published" | "failed";
+  storyId: string | null;
+  mediaId: string;
+  error: string | null;
+  retryable: boolean;
+}
+
+/** Where a publish request stands while its media processes. */
+export function getPublishRequest(requestId: string, accessToken: string): Promise<{ publish: PublishRequestStatus }> {
+  return apiGet(`/api/v1/stories/publish-requests/${encodeURIComponent(requestId)}`, accessToken);
 }
 
 export function getFollowingFeed(accessToken: string): Promise<{ feed: FeedEntry[] }> {
@@ -132,7 +156,10 @@ export function getStoryOwnerUsername(storyId: string, accessToken: string): Pro
   return apiGet(`/api/v1/stories/${storyId}/owner`, accessToken);
 }
 
-export function mediaFileUrl(mediaId: string): string {
+export type MediaVariant = "display" | "thumbnail" | "poster" | "video_720" | "video_480";
+
+export function mediaFileUrl(mediaId: string, variant?: MediaVariant): string {
   // Consumed with an Authorization header by the viewer (Image/Video source supports a `headers` field).
-  return `${API_BASE_URL}/api/v1/media/${mediaId}/file`;
+  // With a CDN the API answers with a redirect to a signed URL; small variants keep grids light.
+  return `${API_BASE_URL}/api/v1/media/${mediaId}/file${variant ? `?variant=${variant}` : ""}`;
 }

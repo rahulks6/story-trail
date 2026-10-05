@@ -34,6 +34,9 @@ const env = {
   SPONSORED_STORIES_ENABLED: 'true',
   EMAIL_PROVIDER: 'memory',
   MEDIA_STORAGE_ROOT: path.join(output, 'media'),
+  // Development-only in-process media worker, so uploaded video creatives get processed.
+  MEDIA_WORKER_IN_PROCESS: 'true',
+  MEDIA_WORKER_POLL_MS: '500',
 };
 
 cp.execFileSync('createdb', [database], { env, stdio: 'inherit' });

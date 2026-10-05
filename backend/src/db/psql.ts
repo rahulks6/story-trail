@@ -1,7 +1,7 @@
 /** Existing text-row query contract, now served by a bounded PostgreSQL pool.
  * DB_DRIVER=psql retains the previous CLI adapter for recovery/diagnostics.
  * Migrations continue to use their dedicated transactional runner. */
-import { Pool, escapeLiteral } from "pg";
+import { Client, Pool, escapeLiteral } from "pg";
 import { execFile } from "node:child_process";
 import { config } from "../config/env";
 
@@ -139,6 +139,17 @@ export async function query(sql: string, params: SqlParams = {}): Promise<Row[]>
  catch(error) { throw new DatabaseError('Database query failed',error instanceof Error?error.message:'Database unavailable'); }
 }
 export async function closeDatabase(): Promise<void> { const existing=pool;pool=undefined;await existing?.end(); }
+
+/**
+ * A connection outside the pool, for LISTEN/NOTIFY and session-level advisory
+ * locks, which must stay on one connection. The caller must end() it.
+ */
+export async function openDedicatedConnection(): Promise<Client> {
+ const client=new Client({ ...config.db, connectionTimeoutMillis: 5000 });
+ client.on('error', () => console.warn(JSON.stringify({event:'database_connection_error',connection:'dedicated'})));
+ await client.connect();
+ return client;
+}
 
 export async function queryOne(sql: string, params: SqlParams = {}): Promise<Row | null> {
   const rows = await query(sql, params);

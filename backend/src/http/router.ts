@@ -48,6 +48,9 @@ export class Router {
   patch(path: string, handler: Handler, options?: RouteOptions): void {
     this.add("PATCH", path, handler, options);
   }
+  put(path: string, handler: Handler, options?: RouteOptions): void {
+    this.add("PUT", path, handler, options);
+  }
 
   match(method: string, path: string): { handler: Handler; params: Record<string, string>; options: RouteOptions } | null {
     const requestSegments = splitPath(path.split("?")[0] ?? "");

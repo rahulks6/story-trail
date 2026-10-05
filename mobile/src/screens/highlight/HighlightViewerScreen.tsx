@@ -137,7 +137,8 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
 
   if (!currentItem) return <View style={styles.container} />;
 
-  const mediaUrl = mediaFileUrl(currentItem.mediaId);
+  // Processed variants: 720p video (poster first) or the display-size photo.
+  const mediaUrl = mediaFileUrl(currentItem.mediaId, mediaKind === "video" ? "video_720" : "display");
   const authHeaders = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
 
   return (
@@ -145,6 +146,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
       {mediaKind === "video" ? (
         <Video
           source={{ uri: mediaUrl, headers: authHeaders }}
+          poster={{ source: { uri: mediaFileUrl(currentItem.mediaId, "poster"), headers: authHeaders }, resizeMode: "cover" }}
           style={[StyleSheet.absoluteFill, mediaTransformStyle(detail?.crop ?? DEFAULT_CROP, containerSize.width, containerSize.height)]}
           resizeMode="cover"
           onLoad={(meta) => setVideoDurationMs(Math.max(1000, meta.duration * 1000))}

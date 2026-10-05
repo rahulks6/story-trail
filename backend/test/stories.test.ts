@@ -5,6 +5,7 @@ import type { AddressInfo } from "node:net";
 import { buildApp } from "../src/app";
 import { authHeader, makeClient, uniqueUser } from "./helpers";
 import { buildTestPng } from "./fixtures";
+import sharp from "sharp";
 import * as storiesService from "../src/modules/stories/stories.service";
 
 let client: ReturnType<typeof makeClient>;
@@ -234,7 +235,9 @@ describe("owner-username lookup", () => {
 });
 
 describe("media access via a published Story", () => {
-  it("lets a permitted viewer fetch the underlying media file, byte-for-byte", async () => {
+  // Phase 2 (media pipeline): viewers receive the processed, metadata-free variant; only the
+  // owner can fetch the exact original. Previously viewers received the original bytes.
+  it("lets a permitted viewer fetch the underlying media (processed variant; original stays owner-only)", async () => {
     const owner = await signupUser();
     const viewer = await signupUser();
     const original = buildTestPng(6, 6);
@@ -249,6 +252,7 @@ describe("media access via a published Story", () => {
 
     const asOwner = await fetch(`${baseUrl}/api/v1/media/${mediaId}/file`, { headers: authHeader(owner.accessToken) });
     assert.equal(asOwner.status, 200);
+    assert.ok(Buffer.from(await asOwner.arrayBuffer()).equals(original), "the owner still gets the byte-identical original");
 
     const beforeFollow = await fetch(`${baseUrl}/api/v1/media/${mediaId}/file`, { headers: authHeader(viewer.accessToken) });
     assert.equal(beforeFollow.status, 404, "a non-follower can't fetch media for a followers-only Story");
@@ -256,8 +260,14 @@ describe("media access via a published Story", () => {
     await client.post(`/api/v1/users/${owner.input.username}/follow`, undefined, authHeader(viewer.accessToken));
     const asViewer = await fetch(`${baseUrl}/api/v1/media/${mediaId}/file`, { headers: authHeader(viewer.accessToken) });
     assert.equal(asViewer.status, 200);
+    assert.equal(asViewer.headers.get("content-type"), "image/jpeg");
     const bytes = Buffer.from(await asViewer.arrayBuffer());
-    assert.ok(bytes.equals(original), "media served through a Story must still be byte-identical");
+    const served = await sharp(bytes).metadata();
+    assert.equal(served.width, 6);
+    assert.equal(served.height, 6);
+    assert.equal(served.exif, undefined, "viewers never receive metadata");
+    const originalAsViewer = await fetch(`${baseUrl}/api/v1/media/${mediaId}/file?variant=original`, { headers: authHeader(viewer.accessToken) });
+    assert.equal(originalAsViewer.status, 404, "originals are owner-only");
   });
 
   it("still denies media access when no Story exists for it at all", async () => {

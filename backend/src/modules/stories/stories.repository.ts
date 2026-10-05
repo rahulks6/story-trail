@@ -114,9 +114,54 @@ export async function findStoryById(id: string): Promise<StoryRecord | null> {
   return row ? mapRow(row) : null;
 }
 
-export async function createStoryOnce(ownerId:string,input:PublishStoryInput,hash:string,expiresAt:Date):Promise<StoryRecord>{
-  const row=await queryOne(`SELECT ${STORY_COLUMNS} FROM publish_story_once(:'owner',:'request',:'hash',:'payload'::jsonb,:'expires'::timestamptz)`,{owner:ownerId,request:input.requestId!,hash,payload:JSON.stringify(input),expires:expiresAt.toISOString()});
-  if(!row)throw Error('Publish did not return a Story');return mapRow(row);
+export interface PublishRequestOutcome {
+  state: "published" | "waiting" | "failed";
+  storyId?: string;
+  error?: string;
+  retryable?: boolean;
+}
+
+/**
+ * Publishes now when the media is ready; while it is still processing, records the
+ * request so the media worker publishes it the moment processing finishes (see
+ * request_story_publish in migrations/0030). The 24-hour clock starts at publish.
+ */
+export async function requestStoryPublish(ownerId: string, input: PublishStoryInput, hash: string, ttlSeconds: number): Promise<PublishRequestOutcome> {
+  const row = await queryOne(
+    `SELECT request_story_publish(:'owner', :'request', :'hash', :'payload'::jsonb, :'ttl'::integer) AS result`,
+    { owner: ownerId, request: input.requestId!, hash, payload: JSON.stringify(input), ttl: ttlSeconds },
+  );
+  if (!row?.result) throw new Error("Publish request returned nothing");
+  return JSON.parse(row.result) as PublishRequestOutcome;
+}
+
+export interface PublishRequestStatus {
+  state: "waiting" | "published" | "failed";
+  storyId: string | null;
+  mediaId: string;
+  error: string | null;
+  retryable: boolean;
+}
+
+export async function findPublishRequest(ownerId: string, requestId: string): Promise<PublishRequestStatus | null> {
+  const row = await queryOne(
+    `SELECT coalesce(r.state, 'published') AS state, coalesce(r.story_id, s.id) AS story_id, coalesce(r.media_id, s.media_id) AS media_id,
+            r.error, coalesce(m.status = 'failed' AND m.processing_error_retryable, false) AS retryable
+     FROM (SELECT :'owner'::uuid AS owner_id, :'request'::text AS request_id) q
+     LEFT JOIN story_publish_requests r ON r.owner_id = q.owner_id AND r.request_id = q.request_id
+     LEFT JOIN stories s ON s.owner_id = q.owner_id AND s.publish_request_id = q.request_id
+     LEFT JOIN media m ON m.id = coalesce(r.media_id, s.media_id)
+     WHERE r.request_id IS NOT NULL OR s.id IS NOT NULL`,
+    { owner: ownerId, request: requestId },
+  );
+  if (!row) return null;
+  return {
+    state: row.state as PublishRequestStatus["state"],
+    storyId: row.story_id ?? null,
+    mediaId: row.media_id as string,
+    error: row.error ?? null,
+    retryable: row.retryable === "t",
+  };
 }
 
 export async function findStoryByMediaId(mediaId: string): Promise<StoryRecord | null> {

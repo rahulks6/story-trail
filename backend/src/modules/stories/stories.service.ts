@@ -13,6 +13,8 @@ import * as highlightsRepo from "../highlights/highlights.repository";
 import type { StoryRecord } from "./stories.repository";
 import type { PublishStoryInput } from "./dto";
 import type { StoryOverlay, DrawStroke, FilterKey, StoryCrop } from "./overlays";
+import { deliveryFor, type MediaDelivery } from "../media/delivery";
+import type { MediaRecord } from "../media/media.repository";
 
 export interface PublicStory {
   id: string;
@@ -29,6 +31,8 @@ export interface PublicStory {
   filter: FilterKey;
   audioMuted: boolean;
   crop: StoryCrop;
+  /** Ready-to-use URLs for this viewer (thumbnail, full-screen image/poster, video renditions). */
+  media: MediaDelivery | null;
 }
 
 /**
@@ -64,7 +68,8 @@ async function resolveOverlaysForViewer(overlays: StoryOverlay[], viewerId: stri
   return resolved;
 }
 
-async function toPublicStory(story: StoryRecord, viewerId: string): Promise<PublicStory> {
+async function toPublicStory(story: StoryRecord, viewerId: string, preloaded?: MediaRecord | null): Promise<PublicStory> {
+  const media = preloaded === undefined ? await mediaRepo.findMediaById(story.mediaId) : preloaded;
   return {
     id: story.id,
     ownerId: story.ownerId,
@@ -80,7 +85,14 @@ async function toPublicStory(story: StoryRecord, viewerId: string): Promise<Publ
     filter: story.filter,
     audioMuted: story.audioMuted,
     crop: story.crop,
+    media: media ? deliveryFor(media, story.ownerId === viewerId) : null,
   };
+}
+
+/** Lists: one media query for every Story instead of one each. */
+async function toPublicStories(stories: StoryRecord[], viewerId: string): Promise<PublicStory[]> {
+  const media = await mediaRepo.findMediaByIds(stories.map((s) => s.mediaId));
+  return Promise.all(stories.map((s) => toPublicStory(s, viewerId, media.get(s.mediaId) ?? null)));
 }
 
 function isActive(story: StoryRecord): boolean {
@@ -94,18 +106,9 @@ export async function publishStory(
 ): Promise<PublicStory> {
   await assertCanContribute(ownerId);
   if(input.requestId){
-    try{
-      const hash=createHash('sha256').update(JSON.stringify(input)).digest('hex');
-      const result=await storiesRepo.createStoryOnce(ownerId,input,hash,new Date(Date.now()+(options.ttlSecondsOverride??config.stories.ttlSeconds)*1000));
-      return toPublicStory(result,ownerId);
-    }catch(e){
-      if(e instanceof DatabaseError){
-        if(/REQUEST_CONFLICT/.test(e.detail))throw new HttpError(409,'This upload was already submitted with different content.');
-        if(/STORY_UNAVAILABLE|MEDIA_NOT_FOUND/.test(e.detail))throw new HttpError(404,'Story or media unavailable.');
-        if(/MEDIA_NOT_READY|MEDIA_PUBLISHED|unique constraint/.test(e.detail))throw new HttpError(409,'Media is not available for this publish request.');
-        if(e.detail.includes('ACCOUNT_RESTRICTED'))throw new HttpError(403,'Your account cannot publish.');
-      }throw e;
-    }
+    const result=await requestPublish(ownerId,input,options);
+    if(result.state==='published')return result.story;
+    throw new HttpError(409,"This media is still processing. It will be published when it's ready.");
   }
   const media = await mediaRepo.findMediaById(input.mediaId);
   if (!media || media.ownerId !== ownerId) {
@@ -137,6 +140,55 @@ export async function publishStory(
     crop: input.crop,
   });
   return toPublicStory(story, ownerId);
+}
+
+/** Uploaded media that can't be processed; `retryable` says whether "Retry" can help. */
+export class MediaFailedError extends Error {
+  constructor(message: string, readonly retryable: boolean) {
+    super(message);
+  }
+}
+
+export type PublishResult =
+  | { state: "published"; story: PublicStory }
+  | { state: "processing"; requestId: string; mediaId: string };
+
+/**
+ * Idempotent publish keyed by the device's request id. If the media is still being
+ * processed, the request is recorded and the Story is published by the media worker
+ * as soon as processing finishes, so the uploader can leave the app.
+ */
+export async function requestPublish(ownerId: string, input: PublishStoryInput, options: { ttlSecondsOverride?: number } = {}): Promise<PublishResult> {
+  if (!input.requestId) return { state: "published", story: await publishStory(ownerId, input, options) };
+  await assertCanContribute(ownerId);
+  const hash = createHash("sha256").update(JSON.stringify(input)).digest("hex");
+  let outcome: storiesRepo.PublishRequestOutcome;
+  try {
+    outcome = await storiesRepo.requestStoryPublish(ownerId, input, hash, options.ttlSecondsOverride ?? config.stories.ttlSeconds);
+  } catch (e) {
+    if (e instanceof DatabaseError) {
+      if (/REQUEST_CONFLICT/.test(e.detail)) throw new HttpError(409, "This upload was already submitted with different content.");
+      if (/STORY_UNAVAILABLE|MEDIA_NOT_FOUND/.test(e.detail)) throw new HttpError(404, "Story or media unavailable.");
+      if (/MEDIA_NOT_UPLOADED/.test(e.detail)) throw new HttpError(409, "Finish uploading this media before publishing it.");
+      if (/MEDIA_NOT_READY|MEDIA_PUBLISHED|unique constraint/.test(e.detail)) throw new HttpError(409, "Media is not available for this publish request.");
+      if (e.detail.includes("ACCOUNT_RESTRICTED")) throw new HttpError(403, "Your account cannot publish.");
+      if (e.detail.includes("INVALID_REQUEST")) throw new HttpError(422, "Invalid publish request id.");
+    }
+    throw e;
+  }
+  if (outcome.state === "failed") throw new MediaFailedError(outcome.error ?? "This media couldn't be processed.", outcome.retryable === true);
+  if (outcome.state === "waiting") return { state: "processing", requestId: input.requestId, mediaId: input.mediaId };
+  const story = outcome.storyId ? await storiesRepo.findStoryById(outcome.storyId) : null;
+  if (!story) throw new HttpError(404, "Story or media unavailable.");
+  return { state: "published", story: await toPublicStory(story, ownerId) };
+}
+
+/** Where a publish request stands (the uploader's outbox polls this while media processes). */
+export async function getPublishRequest(ownerId: string, requestId: string): Promise<storiesRepo.PublishRequestStatus> {
+  if (!/^[A-Za-z0-9_-]{16,100}$/.test(requestId)) throw new HttpError(404, "Publish request not found.");
+  const status = await storiesRepo.findPublishRequest(ownerId, requestId);
+  if (!status) throw new HttpError(404, "Publish request not found.");
+  return status;
 }
 
 /**
@@ -250,7 +302,7 @@ export async function canAccessMediaViaStory(mediaId: string, viewerId: string):
 
 export async function listMyActiveStories(ownerId: string): Promise<PublicStory[]> {
   const stories = await storiesRepo.listActiveStoriesForOwner(ownerId);
-  return Promise.all(stories.map((s) => toPublicStory(s, ownerId)));
+  return toPublicStories(stories, ownerId);
 }
 
 export async function listUserActiveStories(username: string, viewerId: string): Promise<PublicStory[]> {
@@ -271,7 +323,7 @@ export async function listUserActiveStories(username: string, viewerId: string):
 
   const stories = await storiesRepo.listActiveStoriesForOwner(owner.id);
   const visible = stories.filter((s) => s.audience === "public" || relationship.isFollowing);
-  return Promise.all(visible.map((s) => toPublicStory(s, viewerId)));
+  return toPublicStories(visible, viewerId);
 }
 
 export interface FeedEntry {
@@ -288,7 +340,7 @@ export async function getFollowingFeed(viewerId: string): Promise<FeedEntry[]> {
     const stories = await storiesRepo.listActiveStoriesForOwner(ownerId);
     entries.push({
       owner: { id: owner.id, username: owner.username, displayName: owner.displayName },
-      stories: await Promise.all(stories.map((s) => toPublicStory(s, viewerId))),
+      stories: await toPublicStories(stories, viewerId),
     });
   }
   // Own Stories, if any, lead the feed — consistent with listActiveStoryOwnersForViewer's ordering intent.
@@ -329,7 +381,7 @@ export async function moderatorDeleteStory(storyId: string): Promise<void> {
 /** Every non-deleted Story an owner has ever published — the private Archive (spec), not shown to anyone else. */
 export async function listMyArchivedStories(ownerId: string, limit: number, offset: number): Promise<PublicStory[]> {
   const stories = await storiesRepo.listArchivedStoriesForOwner(ownerId, limit, offset);
-  return Promise.all(stories.map((s) => toPublicStory(s, ownerId)));
+  return toPublicStories(stories, ownerId);
 }
 
 /**

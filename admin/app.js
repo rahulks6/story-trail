@@ -7,6 +7,20 @@ function el(tag, text, cls) { const n = document.createElement(tag); if (tag ===
     n.textContent = String(text); if (cls)
     n.className = cls; return n; }
 function message(text) { $('message').textContent = text; }
+// Uploaded videos are processed (poster, renditions, metadata removed) before they can be used.
+async function processedMedia(media) {
+    for (let waited = 0; media.status === 'processing'; waited += 2) {
+        if (waited >= 600)
+            throw Error('The video is still processing. Save the draft again in a few minutes.');
+        message('Processing video… ' + waited + ' s');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        media = (await api('media/' + media.id)).media;
+    }
+    if (media.status !== 'ready')
+        throw Error(media.processingError || 'This media could not be processed. Choose a different file.');
+    message('');
+    return media;
+}
 async function api(path, method = 'GET', data) { const headers = {}; if (method !== 'GET')
     headers['X-CSRF-Token'] = sessionStorage.getItem('katkee.csrf') || ''; if (data && !(data instanceof Blob))
     headers['Content-Type'] = 'application/json'; if (data instanceof Blob)
@@ -27,8 +41,12 @@ finally {
 } }; return n; }
 function field(form, name, label, type = 'text', value = '', options) { const l = el('label', label); const n = el(options ? 'select' : type === 'textarea' ? 'textarea' : 'input'); n.name = name; if (!options && type !== 'textarea')
     n.type = type; if (options)
-    for (const v of options)
-        n.append(el('option', v)); n.value = value; n.required = true; l.append(n); form.append(l); return n; }
+    for (const v of options) {
+        // Explicit value: relabelling an option (e.g. id -> advertiser name) must not change what is submitted.
+        const o = el('option', v);
+        o.value = v;
+        n.append(o);
+    } n.value = value; n.required = true; l.append(n); form.append(l); return n; }
 function values(form) { return Object.fromEntries(new FormData(form)); }
 function card(title) { const c = el('article', undefined, 'card'); if (title)
     c.append(el('h2', title)); return c; }
@@ -218,8 +236,8 @@ async function campaignForm(c) { c.replaceChildren(); const advertisers = await 
     m.controls = true; box.append(m); previewBox.append(box); }; f.append(previewBox, button('Upload and save draft', async () => { if (!f.reportValidity())
     return; const v = values(f); const selected = file.files[0]; if (!selected)
     throw Error('Select a photo or video.'); if (!confirm('Upload this creative and save a draft for independent review?'))
-    return; const uploaded = await api('media/' + (selected.type.startsWith('video/') ? 'video' : 'photo'), 'POST', selected); delete v.file; for (const k of ['budgetMinor', 'impressionLimit', 'userCap', 'dailyCap'])
-    v[k] = Number(v[k]); v.startAt = new Date(v.startAt).toISOString(); v.endAt = new Date(v.endAt).toISOString(); await api('campaigns', 'POST', { ...v, mediaId: uploaded.media.id, confirmed: true }); await render(); }), button('Cancel', render, true)); c.append(f); }
+    return; const uploaded = await api('media/' + (selected.type.startsWith('video/') ? 'video' : 'photo'), 'POST', selected); const ready = await processedMedia(uploaded.media); delete v.file; for (const k of ['budgetMinor', 'impressionLimit', 'userCap', 'dailyCap'])
+    v[k] = Number(v[k]); v.startAt = new Date(v.startAt).toISOString(); v.endAt = new Date(v.endAt).toISOString(); await api('campaigns', 'POST', { ...v, mediaId: ready.id, confirmed: true }); await render(); }), button('Cancel', render, true)); c.append(f); }
 if (document.body.dataset.page === 'login') {
     // Step 1 password; step 2 enroll (QR + confirm + one-time backup codes) or verify (code or backup code).
     // No Admin session cookie exists until the second factor succeeds.

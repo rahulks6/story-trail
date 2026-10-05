@@ -133,7 +133,7 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange }: Props)
           <View style={styles.card}>
             {highlight.coverMediaId ? (
               <Image
-                source={{ uri: mediaFileUrl(highlight.coverMediaId), headers: authHeaders }}
+                source={{ uri: mediaFileUrl(highlight.coverMediaId, "thumbnail"), headers: authHeaders }}
                 style={styles.coverImage}
                 resizeMode="cover"
               />

@@ -1,10 +1,10 @@
 /**
- * Media validation using hand-parsed magic bytes and container structure —
- * no `file-type`/`sharp`/`ffprobe` package or binary is available in this
- * sandbox (npm/pip installs are blocked, and `apt-get install ffmpeg` was
- * also refused by the network policy — see backend/README.md). Everything
- * here reads real bytes against real published format specs; nothing is
- * guessed from a file extension or a client-supplied Content-Type alone.
+ * Fast first-pass validation for the single-request upload, from hand-parsed
+ * magic bytes and container structure, before anything is stored. It is not
+ * the last word: every upload is then fully decoded by the media worker
+ * (processing.ts: sharp for photos, ffprobe/ffmpeg for video), which rejects
+ * anything this pass lets through. Nothing is trusted from a file extension
+ * or a client-supplied Content-Type alone.
  */
 import { HttpError } from "../../http/errors";
 
@@ -112,9 +112,8 @@ export function validateVideo(buf: Buffer, declaredContentType: string): Validat
     throw new HttpError(415, `Content-Type ${declaredContentType} doesn't match the file's actual MP4/MOV data.`);
   }
 
-  // Width/height/duration require walking the moov→mvhd/tkhd atom tree (or a
-  // real decoder) to do properly — deferred rather than guessed; see
-  // media.service.ts. The container-format check above is real, not a stub.
+  // Width/height/duration come from ffprobe in the worker (processing.ts);
+  // this pass only confirms the container format.
   return { mimeType: declaredContentType, width: null, height: null, durationMs: null };
 }
 

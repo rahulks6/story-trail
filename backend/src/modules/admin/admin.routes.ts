@@ -12,6 +12,7 @@ import { rows, one, moderate, manageAdmin } from "./admin.service";
 import { mediaStorage } from "../media/instance";
 import { receiveUpload } from "../media/media.service";
 import { findMediaById } from "../media/media.repository";
+import { sendMediaFile } from "../media/delivery";
 export function registerAdminRoutes(router: Router): void {
     for (const [url, file, mime] of [['/admin/login', 'login.html', 'text/html'], ['/admin', 'index.html', 'text/html'], ['/admin/app.js', 'app.js', 'text/javascript'], ['/admin/style.css', 'style.css', 'text/css']]) {
         router.get(url!, async (req, res) => { enabled(); if (url === '/admin')
@@ -127,8 +128,11 @@ export function registerAdminRoutes(router: Router): void {
         throw new HttpError(422, 'Invalid decision.'); const result = await one(`WITH changed AS (UPDATE moderation_appeals SET status=:'decision',resolution=:'reason',reviewer_id=:'actor',version=version+1 WHERE id=:'id' AND status='OPEN' AND version=:'version' RETURNING *), audit AS(INSERT INTO admin_audit(actor_id,action,target_id,metadata) SELECT :'actor','APPEAL_REVIEWED',id,jsonb_build_object('decision',status,'resolution',resolution) FROM changed) SELECT to_jsonb(c) AS data FROM changed c`, { id: uuid(req.params.id), actor: p.userId, decision, reason: text(b.reason, 500), version: integer(b.version, 1, 2147483647) }); if (!result)
         throw new HttpError(409, 'Appeal already reviewed.'); sendJson(res, 200, result); });
     router.post('/api/v1/admin/media/:kind', async (req, res) => { const p = await requireAdmin(req, 'ads.create'); const kind = req.params.kind; if (kind !== 'photo' && kind !== 'video')
-        throw new HttpError(422, 'Invalid media kind.'); const media = await receiveUpload(req, p.userId, kind, mediaStorage); sendJson(res, 201, { media: { id: media.id, kind: media.kind } }); }, { rawBody: true });
+        throw new HttpError(422, 'Invalid media kind.'); const media = await receiveUpload(req, p.userId, kind, mediaStorage); sendJson(res, 201, { media: { id: media.id, kind: media.kind, status: media.status, processingError: media.processingError } }); }, { rawBody: true });
+    // Videos are processed after upload; the console polls this before creating a campaign.
+    router.get('/api/v1/admin/media/:id', async (req, res) => { const p = await requireAdmin(req, 'ads.create'); const media = await findMediaById(uuid(req.params.id)); if (!media || media.ownerId !== p.userId)
+        throw new HttpError(404, 'Media not found.'); sendJson(res, 200, { media: { id: media.id, kind: media.kind, status: media.status, processingError: media.processingError } }); });
     router.get('/api/v1/admin/evidence/:reportId', async (req, res) => { await requireAdmin(req, 'reports.read'); const row = await one(`SELECT jsonb_build_object('mediaId',CASE r.target_type WHEN 'story' THEN s.media_id ELSE c.media_id END) AS data FROM reports r LEFT JOIN stories s ON r.target_type='story' AND s.id=r.target_id LEFT JOIN ad_creatives c ON r.target_type='ad' AND c.id=r.target_id WHERE r.id=:'id'`, { id: uuid(req.params.reportId) }); if (!row?.mediaId)
         throw new HttpError(404, 'Evidence unavailable.'); const media = await findMediaById(String(row.mediaId)); if (!media)
-        throw new HttpError(404, 'Evidence unavailable.'); res.setHeader('Content-Type', media.mimeType); res.setHeader('Cache-Control', 'no-store'); mediaStorage.readStream(media.storageKey).on('error', () => res.destroy()).pipe(res); });
+        throw new HttpError(404, 'Evidence unavailable.'); await sendMediaFile(req, res, media, null, false, mediaStorage, { redirect: false }); });
 }

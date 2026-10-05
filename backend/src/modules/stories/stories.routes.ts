@@ -10,8 +10,21 @@ export function registerStoriesRoutes(router: Router): void {
   router.post("/api/v1/stories", async (req, res) => {
     requireAuth(req);
     const input = parsePublishStoryInput(req.body);
-    const story = await storiesService.publishStory(req.userId as string, input);
-    sendJson(res, 201, { story });
+    try {
+      const result = await storiesService.requestPublish(req.userId as string, input);
+      if (result.state === "published") sendJson(res, 201, { story: result.story });
+      else sendJson(res, 202, { publish: { state: "processing", requestId: result.requestId, mediaId: result.mediaId } });
+    } catch (error) {
+      if (!(error instanceof storiesService.MediaFailedError)) throw error;
+      sendJson(res, 422, { error: "media_failed", message: error.message, retryable: error.retryable });
+    }
+  });
+
+  // Registered before "/api/v1/stories/:id/..." routes so a request id is never read as a story id.
+  router.get("/api/v1/stories/publish-requests/:requestId", async (req, res) => {
+    requireAuth(req);
+    const publish = await storiesService.getPublishRequest(req.userId as string, req.params.requestId as string);
+    sendJson(res, 200, { publish: { ...publish, state: publish.state === "waiting" ? "processing" : publish.state } });
   });
 
   // Registered before "/api/v1/stories/:id" so "feed" is never mistaken for a story id.

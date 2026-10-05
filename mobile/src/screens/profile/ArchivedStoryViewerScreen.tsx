@@ -98,7 +98,8 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
     );
   }
 
-  const mediaUrl = mediaFileUrl(detail.mediaId);
+  // Processed variants: 720p video (poster first) or the display-size photo.
+  const mediaUrl = mediaFileUrl(detail.mediaId, mediaKind === "video" ? "video_720" : "display");
   const authHeaders = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
 
   return (
@@ -106,6 +107,7 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
       {mediaKind === "video" ? (
         <Video
           source={{ uri: mediaUrl, headers: authHeaders }}
+          poster={{ source: { uri: mediaFileUrl(detail.mediaId, "poster"), headers: authHeaders }, resizeMode: "cover" }}
           style={[StyleSheet.absoluteFill, mediaTransformStyle(detail.crop, containerSize.width, containerSize.height)]}
           resizeMode="cover"
           onLoad={(meta) => setVideoDurationMs(Math.max(1000, meta.duration * 1000))}

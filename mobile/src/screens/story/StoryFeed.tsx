@@ -6,7 +6,7 @@ import Video, {type VideoRef} from "react-native-video";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { getMyActiveStories, getUserActiveStories, getViewCount, mediaFileUrl, recordStoryView, type PublicStory } from "../../api/stories";
-import { getMedia } from "../../api/media";
+import { getMedia, mediaSource } from "../../api/media";
 import { getStoryDetail, likeStory, unlikeStory, type StoryDetail } from "../../api/engagement";
 import { recordEvent } from "../../api/events";
 import { EmptyState } from "../../components/EmptyState";
@@ -204,19 +204,21 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
     setViewCount(null);
     if (!focused || !foreground || !currentStory || !accessToken) return;
     setLoadError(null);
+    // Story lists carry the media's kind and URLs, so the media starts loading now, alongside the detail request.
+    if (currentStory.media?.kind) setMediaKind(currentStory.media.kind);
     let cancelled = false;
     (async () => {
       try {
         const [{ story }, media] = await Promise.all([
           getStoryDetail(currentStory.id, accessToken),
-          getMedia(currentStory.mediaId, accessToken),
+          currentStory.media ? Promise.resolve(null) : getMedia(currentStory.mediaId, accessToken),
         ]);
         if (cancelled) return;
         setDetail(story);
         // Show the public aggregate immediately from Story detail. After this viewer is recorded,
         // the count is refreshed; identities are never requested unless this is the owner Insights sheet.
         setViewCount(story.viewCount);
-        setMediaKind(media.kind);
+        if (media) setMediaKind(media.kind);
       } catch {
         if (!cancelled) setLoadError("Couldn't load this Story.");
       }
@@ -474,8 +476,12 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
     );
   }
 
-  const mediaUrl = mediaFileUrl(currentStory.mediaId);
+  // Processed variants only: signed CDN URLs when present (no token sent), otherwise this API with the token.
   const authHeaders = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
+  const delivery = currentStory.media ?? null;
+  const apiSource = (variant: "display" | "poster" | "video_720") => ({ uri: mediaFileUrl(currentStory.mediaId, variant), headers: authHeaders });
+  const imageSource = delivery?.imageUrl ? mediaSource(delivery.imageUrl, accessToken) : apiSource(mediaKind === "video" ? "poster" : "display");
+  const videoSource = delivery?.videos[0] ? mediaSource(delivery.videos[0].url, accessToken) : apiSource("video_720");
   const isOwnStory = authUser?.username === currentUsername;
 
   return (
@@ -483,7 +489,8 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       {mediaKind === "video" ? (
         <Video
           ref={videoRef}
-          source={{ uri: mediaUrl, headers: authHeaders }}
+          source={videoSource}
+          poster={{ source: imageSource, resizeMode: "cover" }}
           style={[StyleSheet.absoluteFill, mediaTransformStyle(detail?.crop ?? currentStory.crop, containerSize.width, containerSize.height)]}
           resizeMode="cover"
           muted={detail?.audioMuted ?? currentStory.audioMuted}
@@ -502,7 +509,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         <Image
           onLoad={() => setMediaReady(true)}
           onError={() => setLoadError("Couldn't load this photo.")}
-          source={{ uri: mediaUrl, headers: authHeaders }}
+          source={imageSource}
           style={[StyleSheet.absoluteFill, mediaTransformStyle(detail?.crop ?? currentStory.crop, containerSize.width, containerSize.height)]}
           resizeMode="cover"
         />

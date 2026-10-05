@@ -35,15 +35,17 @@ under `src/` therefore uses only Node.js built-ins:
   with `node:crypto` instead of the `jsonwebtoken` package.
 - Validation (`dto.ts`) and the HTTP router/server are hand-written instead
   of using `zod`/`express`/`NestJS`.
-- `src/modules/media/validation.ts` sniffs real magic bytes and parses real
-  PNG/JPEG chunk structure by hand (no `file-type`/`sharp`) — even
-  `apt-get install ffmpeg` was refused by this session's network policy
-  (403 on every package, not just npm/pip), so there's no way to transcode
-  video, generate thumbnails, or read a video's real duration/dimensions
-  yet; `media.service.ts` documents exactly where that plugs in later.
-- `src/modules/media/storage.ts` stores uploaded files on local disk
-  behind a `MediaStorage` interface instead of an S3 SDK — no cloud
-  credentials are available here either.
+- ~~`src/modules/media/validation.ts` sniffs real magic bytes … no way to
+  transcode video, generate thumbnails, or read a video's real
+  duration/dimensions yet.~~ **Superseded (Phase 2, October 2026):** uploads
+  are decoded and re-encoded by sharp (photos) and ffmpeg (video): EXIF/GPS
+  stripped, orientation applied, display/thumbnail/poster images and 720p/480p
+  H.264 renditions produced by a separate worker. See `docs/MEDIA_PIPELINE.md`.
+- ~~`src/modules/media/storage.ts` stores uploaded files on local disk.~~
+  **Superseded (Phase 2):** production stores media in Amazon S3 (direct,
+  resumable, signed uploads) and delivers it through CloudFront signed URLs;
+  local disk remains for development and tests only and is refused in
+  production.
 
 Every one of these is swappable behind its existing function signatures —
 once npm access is available, replace `psql.ts` with the `pg` driver first

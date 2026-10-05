@@ -196,7 +196,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
                 return (
                   <View style={styles.selectedThumbWrapper}>
                     <Image
-                      source={{ uri: mediaFileUrl(story.mediaId), headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined }}
+                      source={{ uri: mediaFileUrl(story.mediaId, "thumbnail"), headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined }}
                       style={styles.selectedThumb}
                       resizeMode="cover"
                     />
@@ -236,7 +236,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
           return (
             <Pressable style={styles.thumbWrapper} onPress={() => toggle(item.id)}>
               <Image
-                source={{ uri: mediaFileUrl(item.mediaId), headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined }}
+                source={{ uri: mediaFileUrl(item.mediaId, "thumbnail"), headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined }}
                 style={[styles.thumb, isSelected && styles.thumbSelected]}
                 resizeMode="cover"
               />

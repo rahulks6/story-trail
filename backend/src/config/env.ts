@@ -102,7 +102,56 @@ export const config = {
   media: {
     // Resolved from cwd (this package's root), matching loadDotEnvIfPresent's
     // reasoning above — __dirname would point into dist/ once compiled.
+    // Local disk is for development and tests only; production requires s3.
     storageRoot: process.env.MEDIA_STORAGE_ROOT || path.resolve(process.cwd(), "data", "media"),
+    store: (process.env.MEDIA_STORE ?? "local") as "local" | "s3",
+    s3: {
+      bucket: process.env.MEDIA_S3_BUCKET ?? "",
+      region: process.env.AWS_REGION ?? "ap-south-1",
+      // Only for S3-compatible test servers; never set in AWS.
+      endpoint: process.env.MEDIA_S3_ENDPOINT ?? "",
+      forcePathStyle: process.env.MEDIA_S3_FORCE_PATH_STYLE === "true",
+    },
+    cdn: {
+      // CloudFront distribution (origin access control to the bucket, trusted key group).
+      domain: process.env.MEDIA_CDN_DOMAIN ?? "",
+      keyPairId: process.env.CLOUDFRONT_KEY_PAIR_ID ?? "",
+      // PEM, or base64 of the PEM. Supplied by the secret store, never committed.
+      privateKey: process.env.CLOUDFRONT_PRIVATE_KEY ?? "",
+      urlTtlSeconds: optionalInt("MEDIA_URL_TTL_SECONDS", 3600),
+    },
+    queue: {
+      driver: (process.env.MEDIA_QUEUE ?? "postgres") as "postgres" | "sqs",
+      sqsQueueUrl: process.env.MEDIA_SQS_QUEUE_URL ?? "",
+      sqsEndpoint: process.env.MEDIA_SQS_ENDPOINT ?? "",
+    },
+    partSizeBytes: optionalInt("MEDIA_UPLOAD_PART_BYTES", 8 * 1024 * 1024),
+    partUrlTtlSeconds: optionalInt("MEDIA_PART_URL_TTL_SECONDS", 3600),
+    uploadSessionHours: optionalInt("MEDIA_UPLOAD_SESSION_HOURS", 24),
+    uploadsPerHour: optionalInt("MEDIA_UPLOADS_PER_HOUR", 60),
+    maxOpenUploads: optionalInt("MEDIA_MAX_OPEN_UPLOADS", 5),
+    maxVideoSeconds: optionalInt("MEDIA_MAX_VIDEO_SECONDS", 60),
+    ffmpegPath: process.env.FFMPEG_PATH ?? "ffmpeg",
+    ffprobePath: process.env.FFPROBE_PATH ?? "ffprobe",
+    worker: {
+      // Run the processing worker inside the API process (development only).
+      inProcess: process.env.MEDIA_WORKER_IN_PROCESS === "true",
+      concurrency: optionalInt("MEDIA_WORKER_CONCURRENCY", 1),
+      leaseSeconds: optionalInt("MEDIA_JOB_LEASE_SECONDS", 15 * 60),
+      pollMs: optionalInt("MEDIA_WORKER_POLL_MS", 5000),
+      jobTimeoutSeconds: optionalInt("MEDIA_JOB_TIMEOUT_SECONDS", 10 * 60),
+    },
+  },
+  retention: {
+    enabled: process.env.RETENTION_ENABLED !== "false",
+    intervalMinutes: optionalInt("RETENTION_INTERVAL_MINUTES", 60),
+    batchSize: optionalInt("RETENTION_BATCH_SIZE", 200),
+    unusedMediaHours: optionalInt("RETENTION_UNUSED_MEDIA_HOURS", 48),
+    deletedStoryDays: optionalInt("RETENTION_DELETED_STORY_DAYS", 30),
+    moderationEvidenceDays: optionalInt("RETENTION_MODERATION_EVIDENCE_DAYS", 180),
+    deletedAccountDays: optionalInt("RETENTION_DELETED_ACCOUNT_DAYS", 30),
+    originalMediaDays: optionalInt("RETENTION_ORIGINAL_MEDIA_DAYS", 30),
+    securityEventDays: optionalInt("RETENTION_SECURITY_EVENT_DAYS", 400),
   },
   stories: {
     // Overridable so tests can exercise real expiry without waiting 24h —
@@ -152,6 +201,28 @@ if (config.email.provider === "ses" && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(config
 if (config.features.admin && !/^([0-9a-f]{64}|[A-Za-z0-9+/]{43}=)$/i.test(config.admin.mfaEncryptionKey)) {
   throw new Error("ADMIN_CONSOLE_ENABLED requires ADMIN_MFA_ENCRYPTION_KEY: 32 random bytes as 64 hex characters or base64. " +
     `Generate one with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`);
+}
+
+if (!["local", "s3"].includes(config.media.store)) throw new Error("MEDIA_STORE must be local or s3.");
+if (!["postgres", "sqs"].includes(config.media.queue.driver)) throw new Error("MEDIA_QUEUE must be postgres or sqs.");
+if (config.media.store === "s3" && !/^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$/.test(config.media.s3.bucket)) {
+  throw new Error("MEDIA_STORE=s3 requires MEDIA_S3_BUCKET.");
+}
+if (config.media.queue.driver === "sqs" && !/^https?:\/\//.test(config.media.queue.sqsQueueUrl)) {
+  throw new Error("MEDIA_QUEUE=sqs requires MEDIA_SQS_QUEUE_URL.");
+}
+if (config.media.cdn.domain && (!config.media.cdn.keyPairId || !config.media.cdn.privateKey)) {
+  throw new Error("MEDIA_CDN_DOMAIN requires CLOUDFRONT_KEY_PAIR_ID and CLOUDFRONT_PRIVATE_KEY for signed URLs.");
+}
+if (config.media.store === "s3" && config.media.partSizeBytes < 5 * 1024 * 1024) {
+  throw new Error("MEDIA_UPLOAD_PART_BYTES must be at least 5 MiB for S3 multipart uploads.");
+}
+if (config.nodeEnv === "production") {
+  // Local disk is never the production media store, and media is only delivered through the signed CDN.
+  if (config.media.store !== "s3") throw new Error("Production requires MEDIA_STORE=s3.");
+  if (!config.media.cdn.domain) throw new Error("Production requires MEDIA_CDN_DOMAIN (CloudFront) with signed URLs.");
+  if (config.media.s3.endpoint || config.media.queue.sqsEndpoint) throw new Error("MEDIA_S3_ENDPOINT/MEDIA_SQS_ENDPOINT are for local test servers only.");
+  if (config.media.worker.inProcess) throw new Error("Run the media worker as its own service in production (MEDIA_WORKER_IN_PROCESS must be unset).");
 }
 
 if (config.features.admin && config.nodeEnv === "production") {

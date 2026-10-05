@@ -25,9 +25,10 @@ if(args.includes('--bundle')) {
  run('android-js-bundle','mobile',['node_modules/react-native/cli.js','bundle','--platform','android','--dev','false','--entry-file','index.js','--bundle-output','build/index.android.bundle','--assets-dest','build/android','--max-workers','2'],600000);
  run('ios-js-bundle','mobile',['node_modules/react-native/cli.js','bundle','--platform','ios','--dev','false','--entry-file','index.js','--bundle-output','build/main.jsbundle','--assets-dest','build/ios','--max-workers','2'],600000);
 }
-if(args.includes('--integration')&&built)run('database-integration','backend',['scripts/run-tests.cjs'],900000);
+// Includes real image/video processing and local S3/SQS servers (see backend/scripts/install-media-test-servers.sh).
+if(args.includes('--integration')&&built)run('database-integration','backend',['scripts/run-tests.cjs'],1800000);
 const report={generatedAt:new Date().toISOString(),node:process.version,results,
- notVerified:['Android APK/AAB build and signing','iOS Xcode archive and signing','physical-device behavior and performance','live Google/SMS providers','production hosting and backups','full product specification completion',...(!args.includes('--integration')?['database integration tests']:[])],
+ notVerified:['Android APK/AAB build and signing','iOS Xcode archive and signing','physical-device behavior and performance','live Google/SMS providers','live AWS S3/CloudFront/SQS/SES (tested against local S3/SQS servers and signature verification)','production hosting and backups','full product specification completion',...(!args.includes('--integration')?['database integration tests']:[])],
  releaseReady:false};
 fs.writeFileSync(path.join(output,'results.json'),JSON.stringify(report,null,2)+'\n');
 console.log('Evidence: '+path.relative(root,output));

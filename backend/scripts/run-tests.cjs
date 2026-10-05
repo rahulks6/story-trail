@@ -9,7 +9,9 @@ const dbCommand=(name,args)=>cp.execFileSync(process.platform==='win32'?name+'.e
 dbCommand('createdb',[template]);
 for(let i=0;i<2;i++)cp.execFileSync(process.execPath,['dist/scripts/migrate.js'],{cwd:root,env:{...env,PGDATABASE:template},stdio:'inherit'});
 let failed=false;
-for(const file of fs.readdirSync(path.join(root,'dist/test')).filter(n=>n.endsWith('.test.js'))){
+// TEST_FILTER=<regex> runs a subset (e.g. TEST_FILTER='media|stories'); the full suite is the default.
+const only=process.env.TEST_FILTER?new RegExp(process.env.TEST_FILTER):null;
+for(const file of fs.readdirSync(path.join(root,'dist/test')).filter(n=>n.endsWith('.test.js')&&(!only||only.test(n)))){
  const database='katkee_test_'+file.replace(/[^a-z0-9]/gi,'').toLowerCase()+'_'+run;
  dbCommand('createdb',['-T',template,database]);
  const result=cp.spawnSync(process.execPath,['--test',path.join(root,'dist/test',file)],{env:{...env,PGDATABASE_TEST:database},stdio:'inherit'});

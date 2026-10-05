@@ -31,6 +31,8 @@ export class ApiError extends Error {
     public readonly status: number,
     message: string,
     public readonly fieldErrors?: Record<string, string>,
+    /** The parsed error body, for endpoints that return more than a message (e.g. `retryable`). */
+    public readonly details?: Record<string, unknown>,
   ) {
     super(message);
     this.name = "ApiError";
@@ -90,7 +92,7 @@ export async function readApiResponse<T>(res: Response): Promise<T> {
     const message = typeof json?.message === "string" ? json.message
       : json?.error === "validation_error" ? "Please fix the highlighted fields."
       : "Something went wrong. Please try again.";
-    throw new ApiError(res.status, message, json?.fields);
+    throw new ApiError(res.status, message, json?.fields, json && typeof json === "object" ? json : undefined);
   }
   if (json === undefined || json === null) {
     throw new ApiError(res.status, "The server returned an empty response. Please try again.");

@@ -1,0 +1,20 @@
+{
+  "measuredAt": "2026-10-05T15:53:00Z",
+  "host": { "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz", "vcpus": 4, "memoryGiB": 15, "ffmpeg": "6.1.1", "sharp": "0.35.5", "libvips": "8.18.7" },
+  "method": "backend/src/modules/media/processing.ts called directly on generated inputs (ffmpeg lavfi testsrc2 + sine; sharp gaussian noise), wall-clock time",
+  "results": [
+    {
+      "input": "60 s 1920x1080 30 fps H.264 12 Mb/s + AAC (90.6 MB)",
+      "totalMs": 27230,
+      "realtimeFactor": 0.45,
+      "variants": [
+        { "name": "poster", "size": "1920x1080", "bytes": 96012 },
+        { "name": "thumbnail", "size": "360x203", "bytes": 4933 },
+        { "name": "video_720", "size": "1280x720", "bytes": 10916925, "kbps": 1455 },
+        { "name": "video_480", "size": "854x480", "bytes": 3346732, "kbps": 446 }
+      ]
+    },
+    { "input": "12 MP (4032x3024) noisy JPEG q92 (9.4 MB)", "runsMs": [419, 439, 442, 459, 478], "medianMs": 442 }
+  ],
+  "notMeasured": ["1-vCPU worker sizing", "S3 transfer time in ap-south-1", "end-to-end upload on a device"]
+}

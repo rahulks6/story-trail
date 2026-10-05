@@ -9,7 +9,7 @@ import * as usersRepo from "./users.repository";
 import * as mediaRepo from "../media/media.repository";
 import * as socialRepo from "../social/social.repository";
 import { mediaStorage } from "../media/instance";
-import { streamMedia } from "../media/stream";
+import { parseVariant, sendMediaFile } from "../media/delivery";
 import { HttpError } from "../../http/errors";
 
 export function registerUserRoutes(router: Router): void {
@@ -23,7 +23,9 @@ export function registerUserRoutes(router: Router): void {
     }
     const media = await mediaRepo.findMediaById(user.avatarMediaId, true);
     if (!media || media.ownerId !== user.id || media.kind !== "photo" || media.status !== "ready") throw new HttpError(404, "Avatar not found.");
-    await streamMedia(req, res, media, mediaStorage);
+    // Avatars are small on screen: the thumbnail unless a size is asked for.
+    const params = new URLSearchParams((req.url ?? "").split("?")[1] ?? "");
+    await sendMediaFile(req, res, media, parseVariant(params.get("variant")) ?? "thumbnail", user.id === req.userId, mediaStorage);
   });
 
   router.get("/api/v1/users/:username", async (req, res) => {

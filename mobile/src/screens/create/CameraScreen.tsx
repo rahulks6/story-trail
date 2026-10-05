@@ -209,7 +209,9 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   const openGallery = useCallback(async () => {
     if(recordingRef.current||capturingRef.current)return;
     try{
-    const result = await launchImageLibrary({ mediaType: "mixed", selectionLimit: 1 });
+    // "compatible": iOS exports HEIC photos as JPEG and HEVC video as H.264 — the upload
+    // pipeline accepts JPEG/PNG/WebP and MP4/MOV, and iPhones store HEIC by default.
+    const result = await launchImageLibrary({ mediaType: "mixed", selectionLimit: 1, assetRepresentationMode: "compatible" });
     if(result.errorCode)throw Error('Gallery unavailable');
     const asset = result.assets?.[0];
     if (!asset?.uri) return;
