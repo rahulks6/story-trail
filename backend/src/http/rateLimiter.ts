@@ -1,5 +1,5 @@
 import type { IncomingMessage } from "node:http";
-import {isIP} from 'node:net';
+import { BlockList, isIP } from 'node:net';
 import { HttpError } from "./errors";
 
 interface Bucket {
@@ -57,25 +57,46 @@ export class RateLimiter {
   }
 }
 
+const normalize = (ip: string) => (ip.startsWith("::ffff:") ? ip.slice(7) : ip);
+const proxyLists = new Map<string, BlockList>();
+
 /**
- * No reverse proxy sits in front of this server in this sandbox, so the
- * raw socket address is the real, unspoofable client address. Trusting an
- * `X-Forwarded-For` header instead would be *wrong* without also
- * configuring which upstream proxies are trusted — a client could just
- * set that header itself and evade the limiter entirely. A deployment
- * that does add a reverse proxy needs to update this to read a
- * proxy-set header, after configuring trust for it.
+ * TRUSTED_PROXY_IPS, comma-separated: proxy addresses ("172.30.50.3") or ranges ("10.0.0.0/24",
+ * "fd00::/8"). Behind an AWS load balancer, list the subnets it runs in: its addresses change.
+ */
+function trustedProxies(spec: string): BlockList {
+  let list = proxyLists.get(spec);
+  if (list) return list;
+  list = new BlockList();
+  for (const entry of spec.split(",").map((s) => s.trim()).filter(Boolean)) {
+    const [rawAddress = "", prefix] = entry.split("/");
+    const address = normalize(rawAddress);
+    const family = isIP(address);
+    if (!family) continue;
+    const type = family === 6 ? "ipv6" : "ipv4";
+    if (prefix === undefined) {
+      list.addAddress(address, type);
+    } else {
+      const bits = Number(prefix);
+      if (Number.isInteger(bits) && bits >= 0 && bits <= (family === 6 ? 128 : 32)) list.addSubnet(address, bits, type);
+    }
+  }
+  proxyLists.set(spec, list);
+  return list;
+}
+
+/**
+ * The client's address for rate limits. The socket address, unless it is a trusted proxy
+ * (TRUSTED_PROXY_IPS): then the last X-Forwarded-For hop, the one that proxy appended. Never the
+ * leftmost value, which a client can set itself to evade the limiter.
  */
 export function clientIp(req: IncomingMessage): string {
-  const normalize=(ip:string)=>ip.startsWith('::ffff:')?ip.slice(7):ip;
-  const remote=normalize(req.socket.remoteAddress??'unknown');
-  const trusted=(process.env.TRUSTED_PROXY_IPS??'').split(',').map(s=>normalize(s.trim())).filter(s=>!!isIP(s));
-  // Only the immediate, explicitly trusted proxy may supply the last hop.
-  // Never use the leftmost value, which can originate from an untrusted client.
-  if(trusted.includes(remote)){
-    const header=req.headers['x-forwarded-for'];
-    const last=typeof header==='string'?header.split(',').at(-1)?.trim():undefined;
-    if(last&&isIP(last))return normalize(last);
+  const remote = normalize(req.socket.remoteAddress ?? "unknown");
+  const family = isIP(remote);
+  if (family && trustedProxies(process.env.TRUSTED_PROXY_IPS ?? "").check(remote, family === 6 ? "ipv6" : "ipv4")) {
+    const header = req.headers["x-forwarded-for"];
+    const last = typeof header === "string" ? header.split(",").at(-1)?.trim() : undefined;
+    if (last && isIP(last)) return normalize(last);
   }
   return remote;
 }

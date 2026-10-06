@@ -67,11 +67,25 @@ export interface FcmServiceAccount {
 
 export function parseServiceAccount(raw: string): FcmServiceAccount {
   const text = raw.trim().startsWith("{") ? raw : Buffer.from(raw, "base64").toString("utf8");
-  const parsed = JSON.parse(text) as Partial<FcmServiceAccount>;
+  let parsed: Partial<FcmServiceAccount> = {};
+  try {
+    parsed = JSON.parse(text) as Partial<FcmServiceAccount>;
+  } catch {
+    // Reported below: an unfilled secret or a truncated paste is not JSON.
+  }
   if (!parsed.project_id || !parsed.client_email || !parsed.private_key) {
     throw new Error("FCM_SERVICE_ACCOUNT_JSON must be a Firebase service account key (project_id, client_email, private_key).");
   }
   return parsed as FcmServiceAccount;
+}
+
+/** The key a provider signs with; a bad value stops startup with the setting's name. */
+function signingKey(raw: string, setting: string): KeyObject {
+  try {
+    return createPrivateKey(readPem(raw));
+  } catch {
+    throw new Error(`${setting} must be a private key: PEM, or base64 of the PEM.`);
+  }
 }
 
 export class FcmProvider implements PushProvider {
@@ -80,7 +94,7 @@ export class FcmProvider implements PushProvider {
   private accessToken: { value: string; expiresAtMs: number } | null = null;
 
   constructor(private readonly account: FcmServiceAccount, private readonly endpoint = "https://fcm.googleapis.com") {
-    this.key = createPrivateKey(readPem(account.private_key));
+    this.key = signingKey(account.private_key, "FCM_SERVICE_ACCOUNT_JSON private_key");
   }
 
   private async token(force = false): Promise<string> {
@@ -170,7 +184,7 @@ export class ApnsProvider implements PushProvider {
   private session: http2.ClientHttp2Session | null = null;
 
   constructor(private readonly options: ApnsOptions) {
-    this.key = createPrivateKey(readPem(options.privateKey));
+    this.key = signingKey(options.privateKey, "APNS_PRIVATE_KEY");
   }
 
   private token(force = false): string {

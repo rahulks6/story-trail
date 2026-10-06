@@ -30,6 +30,7 @@ import { buildApp } from "../src/app";
 import { query, queryOne } from "../src/db/psql";
 import { PushWorker } from "../src/modules/push/push-worker";
 import { providersFromConfig } from "../src/modules/push/dispatcher";
+import { ApnsProvider, FcmProvider, parseServiceAccount } from "../src/modules/push/providers";
 import { authHeader, makeClient, uniqueUser } from "./helpers";
 import { buildTestPng } from "./fixtures";
 
@@ -143,6 +144,18 @@ async function publishPhotoStory(token: string): Promise<string> {
 async function conversationBetween(a: { token: string }, b: { username: string }) {
   return (await client.post(`/api/v1/users/${b.username}/conversation`, undefined, authHeader(a.token))).body.conversation.id as string;
 }
+
+describe("provider credentials", () => {
+  it("a placeholder or damaged credential stops startup, naming the setting to fix", () => {
+    for (const raw of ["dGhpcyBpcyBub3QgSlNPTg==", "{\"project_id\":\"katkee\"", "{}"]) {
+      assert.throws(() => parseServiceAccount(raw), /FCM_SERVICE_ACCOUNT_JSON must be a Firebase service account key/, raw);
+    }
+    const account = { project_id: "katkee", client_email: "push@katkee.iam.gserviceaccount.com", private_key: "-----BEGIN PRIVATE KEY-----\ntruncated" };
+    assert.throws(() => new FcmProvider(account), /FCM_SERVICE_ACCOUNT_JSON private_key must be a private key/);
+    assert.throws(() => new ApnsProvider({ keyId: "ABC123DEFG", teamId: "TEAM123456", privateKey: "K7#pQ!2zLm9x", bundleId: "com.katkee.app", host: "https://api.push.apple.com" }),
+      /APNS_PRIVATE_KEY must be a private key/);
+  });
+});
 
 describe("push devices", () => {
   it("registers, refreshes, moves between accounts and unregisters device tokens", async () => {

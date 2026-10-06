@@ -10,7 +10,7 @@
  */
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
-import { config } from "../../config/env";
+import { cloudFrontPrivateKeyPem, config } from "../../config/env";
 import { HttpError } from "../../http/errors";
 import type { MediaRecord, MediaStatus } from "./media.repository";
 import type { ObjectStore } from "./storage";
@@ -85,11 +85,6 @@ export function cdnEnabled(): boolean {
   return config.media.cdn.domain !== "";
 }
 
-function privateKeyPem(): string {
-  const raw = config.media.cdn.privateKey;
-  return raw.includes("BEGIN") ? raw.replace(/\\n/g, "\n") : Buffer.from(raw, "base64").toString("utf8");
-}
-
 /** Epoch seconds, rounded up to a multiple of the TTL: valid for between one and two TTLs. */
 export function urlExpiry(nowMs: number, ttlSeconds: number): number {
   return Math.ceil((nowMs / 1000 + ttlSeconds) / ttlSeconds) * ttlSeconds;
@@ -101,7 +96,7 @@ export function signedCdnUrl(key: string, nowMs = Date.now()): { url: string; ex
   const url = getSignedUrl({
     url: `https://${config.media.cdn.domain}/${path}`,
     keyPairId: config.media.cdn.keyPairId,
-    privateKey: privateKeyPem(),
+    privateKey: cloudFrontPrivateKeyPem(config.media.cdn.privateKey),
     dateLessThan: new Date(expires * 1000),
     algorithm: process.env.CLOUDFRONT_SIGNING_ALGORITHM === "SHA256" ? "SHA256" : "SHA1",
   });

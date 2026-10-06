@@ -23,6 +23,14 @@ it('accepts forwarded IPs only from an explicitly trusted proxy and uses its las
     assert.equal(clientIp(req('10.0.0.2','8.8.8.8')),'10.0.0.2');
     assert.equal(clientIp(req('::ffff:172.30.50.3','1.1.1.1, 8.8.8.8')),'8.8.8.8');
     assert.equal(clientIp(req('172.30.50.3','not-an-ip')),'172.30.50.3');
+    // Behind an AWS load balancer: its subnets, since its addresses change.
+    process.env.TRUSTED_PROXY_IPS='10.0.0.0/24, 10.0.1.0/24, fd00::/8, 10.9.0.0/33';
+    assert.equal(clientIp(req('10.0.0.77','1.1.1.1, 49.36.10.2')),'49.36.10.2');
+    assert.equal(clientIp(req('::ffff:10.0.1.200','49.36.10.3')),'49.36.10.3');
+    assert.equal(clientIp(req('fd12::1','2401:4900::5')),'2401:4900::5');
+    assert.equal(clientIp(req('10.0.2.5','49.36.10.4')),'10.0.2.5','outside the trusted ranges');
+    assert.equal(clientIp(req('10.9.0.1','49.36.10.5')),'10.9.0.1','an invalid range trusts nothing');
+    assert.equal(clientIp(req('203.0.113.9','49.36.10.6')),'203.0.113.9','a client cannot claim to be forwarded');
   }finally{if(previous===undefined)delete process.env.TRUSTED_PROXY_IPS;else process.env.TRUSTED_PROXY_IPS=previous;}
 });
 

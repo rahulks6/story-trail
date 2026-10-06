@@ -28,6 +28,8 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 COPY --from=builder /app/dist ./dist
 COPY migrations ./migrations
+# CA bundle for verified TLS to Amazon RDS (PGSSLMODE=verify-full, PGSSLROOTCERT=/app/certs/...).
+COPY certs ./certs
 RUN mkdir -p /app/data/media && chown -R node:node /app
 
 # Media worker: processes uploads (sharp for photos, ffmpeg for video) and runs retention.
@@ -37,6 +39,10 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 USER node
 ENV WORKER_HEARTBEAT_FILE=/tmp/katkee-worker-heartbeat
+# Scratch space for media processing. On a read-only root file system (infra/) the task mounts a
+# volume here; declaring it gives that volume this directory's permissions (1777), so the
+# unprivileged user can write. The app refuses to start in production if it cannot.
+VOLUME ["/tmp"]
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s \
     CMD node -e "const s=require('fs').statSync(process.env.WORKER_HEARTBEAT_FILE);process.exit(Date.now()-s.mtimeMs<120000?0:1)"
 CMD ["node", "dist/src/worker.js"]
@@ -45,6 +51,8 @@ CMD ["node", "dist/src/worker.js"]
 FROM base AS runtime
 USER node
 EXPOSE 4000
+# Scratch space for uploads (see the worker stage).
+VOLUME ["/tmp"]
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
     CMD node -e "fetch('http://localhost:4000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 CMD ["node", "dist/src/index.js"]

@@ -12,10 +12,12 @@
 import { execFileSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { config } from "../src/config/env";
+// Database settings only: migrations need no app secrets or provider settings.
+import { database } from "../src/config/database";
+import { grantRuntimeRole } from "./runtime-role";
 
 // Resolved from cwd (this package's root), not __dirname — matching
-// config/env.ts's and media/storage.ts's own reasoning: __dirname points
+// config/database.ts's and media/storage.ts's own reasoning: __dirname points
 // into dist/scripts/ once compiled, and migrations/*.sql is never copied
 // there (tsc only compiles .ts files), so an __dirname-relative path
 // silently broke `npm run migrate:prod` the first time anyone actually
@@ -27,13 +29,13 @@ function psqlExec(sql: string): string {
     "psql",
     [
       "-h",
-      config.db.host,
+      database.host,
       "-p",
-      String(config.db.port),
+      String(database.port),
       "-U",
-      config.db.user,
+      database.user,
       "-d",
-      config.db.database,
+      database.database,
       "-X",
       "-q",
       "-v",
@@ -41,7 +43,7 @@ function psqlExec(sql: string): string {
       "-c",
       sql,
     ],
-    { env: { ...process.env, PGPASSWORD: config.db.password }, encoding: "utf8" },
+    { env: { ...process.env, PGPASSWORD: database.password }, encoding: "utf8" },
   );
 }
 
@@ -51,13 +53,13 @@ function psqlExecFile(filePath: string, version: string): void {
     "psql",
     [
       "-h",
-      config.db.host,
+      database.host,
       "-p",
-      String(config.db.port),
+      String(database.port),
       "-U",
-      config.db.user,
+      database.user,
       "-d",
-      config.db.database,
+      database.database,
       "-X",
       "-q",
       "-v",
@@ -68,7 +70,7 @@ function psqlExecFile(filePath: string, version: string): void {
       "-c",
       `INSERT INTO schema_migrations (version) VALUES ('${version}');`,
     ],
-    { env: { ...process.env, PGPASSWORD: config.db.password }, stdio: "inherit" },
+    { env: { ...process.env, PGPASSWORD: database.password }, stdio: "inherit" },
   );
 }
 
@@ -116,6 +118,13 @@ function main(): void {
   }
 
   console.log(ranAny ? "Migrations complete." : "Nothing to do — schema is up to date.");
+
+  // Production (infra/): the API and worker connect as this role, not as the schema owner.
+  const runtimeUser = process.env.DB_RUNTIME_USER;
+  if (runtimeUser) {
+    grantRuntimeRole(runtimeUser, process.env.DB_RUNTIME_PASSWORD ?? "");
+    console.log(`Runtime role ${runtimeUser}: login and grants applied.`);
+  }
 }
 
 main();

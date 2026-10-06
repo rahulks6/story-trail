@@ -8,6 +8,7 @@ mobile/android/build/
 mobile/android/app/build/
 mobile/android/local.properties
 web/dist/
+infra/cdk.out/
 
 # Local secrets and signing material — never commit
 .env
@@ -17,6 +18,8 @@ web/dist/
 *.jks
 *.p12
 *.pem
+# Public CA certificates the API verifies servers with (not secrets).
+!backend/certs/*.pem
 *.mobileprovision
 /release-signing/
 

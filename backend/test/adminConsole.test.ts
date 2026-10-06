@@ -3,7 +3,7 @@
 import "./admin-env";
 import { after, before, describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { createHash, randomBytes } from "node:crypto";
+import { createHash, generateKeyPairSync, randomBytes } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as http from "node:http";
@@ -158,7 +158,8 @@ describe("development and production", () => {
       JWT_ACCESS_SECRET: randomBytes(32).toString("hex"), JWT_REFRESH_SECRET: randomBytes(32).toString("hex"),
       EMAIL_PROVIDER: "ses", EMAIL_FROM: "Katkee <no-reply@katkee.example>",
       MEDIA_STORE: "s3", MEDIA_S3_BUCKET: "katkee-media", MEDIA_CDN_DOMAIN: "media.katkee.example",
-      CLOUDFRONT_KEY_PAIR_ID: "K2TESTKEYPAIR", CLOUDFRONT_PRIVATE_KEY: "test-only",
+      CLOUDFRONT_KEY_PAIR_ID: "K2TESTKEYPAIR",
+      CLOUDFRONT_PRIVATE_KEY: generateKeyPairSync("rsa", { modulusLength: 2048 }).privateKey.export({ type: "pkcs1", format: "pem" }).toString(),
       ADMIN_CONSOLE_ENABLED: "true", ADMIN_ORIGIN: "https://admin.katkee.example",
       ADMIN_MFA_ENCRYPTION_KEY: randomBytes(32).toString("hex"),
     };

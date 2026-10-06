@@ -1,27 +1,9 @@
+// First: loads backend/.env (development) before anything below reads the environment.
+import { database } from "./database";
+import { createPrivateKey } from "node:crypto";
 import * as fs from "node:fs";
+import * as os from "node:os";
 import * as path from "node:path";
-
-function loadDotEnvIfPresent(): void {
-  // Resolved from the working directory (this package's root), not
-  // __dirname, so it finds .env whether running from source (ts-node) or
-  // from dist/ (compiled) — both are always invoked with backend/ as cwd.
-  const envPath = path.resolve(process.cwd(), ".env");
-  if (!fs.existsSync(envPath)) return;
-  const contents = fs.readFileSync(envPath, "utf8");
-  for (const rawLine of contents.split("\n")) {
-    const line = rawLine.trim();
-    if (!line || line.startsWith("#")) continue;
-    const eq = line.indexOf("=");
-    if (eq === -1) continue;
-    const key = line.slice(0, eq).trim();
-    const value = line.slice(eq + 1).trim();
-    if (process.env[key] === undefined) {
-      process.env[key] = value;
-    }
-  }
-}
-
-loadDotEnvIfPresent();
 
 /** dist/admin (next to the compiled server) once built; the sibling admin/ sources otherwise. */
 function defaultAdminRoot(): string {
@@ -68,6 +50,11 @@ function optionalInt(name: string, fallback: number): number {
   return parsed;
 }
 
+/** The CloudFront signing key: PEM (escaped "\n" line breaks are accepted), or base64 of the PEM. */
+export function cloudFrontPrivateKeyPem(raw: string): string {
+  return raw.includes("BEGIN") ? raw.replace(/\\n/g, "\n") : Buffer.from(raw, "base64").toString("utf8");
+}
+
 export const config = {
   features: {
     admin: process.env.ADMIN_CONSOLE_ENABLED === "true",
@@ -106,16 +93,10 @@ export const config = {
     drainMs: optionalInt("SHUTDOWN_DRAIN_MS", process.env.NODE_ENV === "production" ? 3000 : 0),
     timeoutMs: optionalInt("SHUTDOWN_TIMEOUT_MS", 20000),
   },
-  db: {
-    host: process.env.PGHOST ?? "localhost",
-    port: optionalInt("PGPORT", 5432),
-    database: process.env.PGDATABASE ?? "katkee_dev",
-    user: process.env.PGUSER ?? "katkee",
-    password: process.env.PGPASSWORD ?? "",
-  },
+  db: database,
   media: {
-    // Resolved from cwd (this package's root), matching loadDotEnvIfPresent's
-    // reasoning above — __dirname would point into dist/ once compiled.
+    // Resolved from cwd (this package's root), matching database.ts's .env loading
+    // reasoning — __dirname would point into dist/ once compiled.
     // Local disk is for development and tests only; production requires s3.
     storageRoot: process.env.MEDIA_STORAGE_ROOT || path.resolve(process.cwd(), "data", "media"),
     store: (process.env.MEDIA_STORE ?? "local") as "local" | "s3",
@@ -270,6 +251,14 @@ if (config.media.queue.driver === "sqs" && !/^https?:\/\//.test(config.media.que
 if (config.media.cdn.domain && (!config.media.cdn.keyPairId || !config.media.cdn.privateKey)) {
   throw new Error("MEDIA_CDN_DOMAIN requires CLOUDFRONT_KEY_PAIR_ID and CLOUDFRONT_PRIVATE_KEY for signed URLs.");
 }
+// Checked at startup, not at the first signed URL: a placeholder or truncated key stops a deploy.
+if (config.media.cdn.domain) {
+  try {
+    createPrivateKey(cloudFrontPrivateKeyPem(config.media.cdn.privateKey));
+  } catch {
+    throw new Error("CLOUDFRONT_PRIVATE_KEY must be the private key of the CloudFront key pair: PEM, or base64 of the PEM.");
+  }
+}
 if (config.media.store === "s3" && config.media.partSizeBytes < 5 * 1024 * 1024) {
   throw new Error("MEDIA_UPLOAD_PART_BYTES must be at least 5 MiB for S3 multipart uploads.");
 }
@@ -281,6 +270,13 @@ if (config.nodeEnv === "production") {
   if (config.media.worker.inProcess) throw new Error("Run the media worker as its own service in production (MEDIA_WORKER_IN_PROCESS must be unset).");
   if (process.env.FCM_ENDPOINT || process.env.APNS_HOST) throw new Error("FCM_ENDPOINT/APNS_HOST are for local test servers only.");
   if (process.env.SAFE_BROWSING_ENDPOINT) throw new Error("SAFE_BROWSING_ENDPOINT is for local test servers only.");
+  // Uploads and media processing stage files in the temporary directory. With a read-only root
+  // file system (infra/) it is a mounted volume, and a volume the app user cannot write stops startup.
+  try {
+    fs.accessSync(os.tmpdir(), fs.constants.W_OK);
+  } catch {
+    throw new Error(`Production needs a writable temporary directory for uploads and media processing: ${os.tmpdir()} is not writable.`);
+  }
 }
 const apns = config.push.apns;
 if ([apns.keyId, apns.teamId, apns.privateKey, apns.bundleId].some(Boolean) && ![apns.keyId, apns.teamId, apns.privateKey, apns.bundleId].every(Boolean)) {

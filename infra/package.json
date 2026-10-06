@@ -1,0 +1,20 @@
+{
+  "name": "katkee-infra",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Katkee production infrastructure on AWS ap-south-1 (Mumbai), as AWS CDK code.",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "synth": "npm run build && cdk synth",
+    "test": "npm run build && node --test \"dist/test/*.test.js\""
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.272.0",
+    "constructs": "10.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "20.19.43",
+    "aws-cdk": "2.1144.0",
+    "typescript": "5.9.3"
+  }
+}

@@ -24,6 +24,12 @@ run('mobile-test-typecheck','mobile',['node_modules/typescript/bin/tsc','-p','__
 run('mobile-component-tests','mobile',['node_modules/jest/bin/jest.js','--ci','--json','--outputFile='+path.join(output,'mobile-component-tests.json')]);
 run('source-regressions','',['--test','verification/regressions.cjs','verification/network.cjs','verification/release-config.cjs','verification/profile-metadata.cjs','verification/release-hardening.cjs','verification/secure-storage.cjs','verification/upload-queue.cjs','verification/elf-alignment.test.cjs','verification/account-links.cjs','verification/dm-outbox.cjs','verification/realtime-client.cjs','verification/dm-thread.cjs','verification/push-notifications.cjs','verification/ads-client.cjs','verification/analytics-client.cjs','verification/native-permissions.cjs','verification/server-time.cjs','verification/notification-config.cjs','verification/keyboard-avoidance.cjs','verification/accessibility-roles.cjs']);
 if(built)run('ranking-unit-tests','backend',['--test','dist/test/scoring.test.js']);
+// Infrastructure as code (infra/): typecheck, then the stack's properties and its contract with
+// the backend's startup checks (which needs backend/dist, built above).
+if(fs.existsSync(path.join(root,'infra/node_modules'))) {
+ const infraBuilt=run('infra-build','infra',['node_modules/typescript/bin/tsc','-p','tsconfig.json']);
+ if(infraBuilt&&built)run('infra-tests','infra',['--test','dist/test/*.test.js']);
+} else results.push({name:'infra-tests',status:'failed',exitCode:null,durationMs:0,log:null,error:'infra/node_modules missing: run npm ci in infra/'});
 if(args.includes('--bundle')) {
  fs.mkdirSync(path.join(root,'mobile/build'),{recursive:true});
  run('android-js-bundle','mobile',['node_modules/react-native/cli.js','bundle','--platform','android','--dev','false','--entry-file','index.js','--bundle-output','build/index.android.bundle','--assets-dest','build/android','--max-workers','2'],600000);
@@ -32,7 +38,7 @@ if(args.includes('--bundle')) {
 // Includes real image/video processing and local S3/SQS servers (see backend/scripts/install-media-test-servers.sh).
 if(args.includes('--integration')&&built)run('database-integration','backend',['scripts/run-tests.cjs'],1800000);
 const report={generatedAt:new Date().toISOString(),node:process.version,results,
- notVerified:['Android APK/AAB build and signing','iOS Xcode archive and signing','physical-device behavior and performance','live Google/SMS providers','live AWS S3/CloudFront/SQS/SES (tested against local S3/SQS servers and signature verification)','live FCM/APNs push delivery (tested against local FCM/OAuth and HTTP/2 APNs servers that verify the signed credentials)','realtime and push behavior on physical devices (background, network switches, notification taps)','production hosting and backups','full product specification completion',...(!args.includes('--integration')?['database integration tests']:[])],
+ notVerified:['Android APK/AAB build and signing','iOS Xcode archive and signing','physical-device behavior and performance','live Google/SMS providers','live AWS S3/CloudFront/SQS/SES (tested against local S3/SQS servers and signature verification)','live FCM/APNs push delivery (tested against local FCM/OAuth and HTTP/2 APNs servers that verify the signed credentials)','realtime and push behavior on physical devices (background, network switches, notification taps)','production hosting on AWS (infra/ synthesized and tested, never deployed)','backup restore on AWS (drilled locally)','full product specification completion',...(!args.includes('--integration')?['database integration tests']:[])],
  releaseReady:false};
 fs.writeFileSync(path.join(output,'results.json'),JSON.stringify(report,null,2)+'\n');
 console.log('Evidence: '+path.relative(root,output));
