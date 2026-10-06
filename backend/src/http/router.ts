@@ -5,6 +5,8 @@ export interface KatkeeRequest extends IncomingMessage {
   params: Record<string, string>;
   body: unknown;
   userId?: string;
+  /** Set by the server for every request: the caller's X-Request-Id if well-formed, else a new one. */
+  requestId?: string;
 }
 
 export type Handler = (req: KatkeeRequest, res: ServerResponse) => Promise<void> | void;

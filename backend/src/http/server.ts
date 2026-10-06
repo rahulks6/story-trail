@@ -1,4 +1,5 @@
 import * as http from "node:http";
+import { randomUUID } from "node:crypto";
 import { ValidationError } from "../modules/auth/dto";
 import { AuthError } from "../modules/auth/auth.service";
 import { DatabaseError } from "../db/psql";
@@ -11,6 +12,7 @@ import { sendJson } from "./respond";
 import { globalRateLimiter } from "./rateLimiters";
 import { clientIp } from "./rateLimiter";
 import type { KatkeeRequest, Router } from "./router";
+import type { Lifecycle } from "./lifecycle";
 
 const MAX_BODY_BYTES = 1 * 1024 * 1024; // 1 MiB
 
@@ -43,7 +45,22 @@ function readBody(req: http.IncomingMessage): Promise<unknown> {
   });
 }
 
-function handleError(res: http.ServerResponse, error: unknown): void {
+/** A caller's (or proxy's) request id is kept when it is a plain token; anything else is replaced. */
+const REQUEST_ID = /^[A-Za-z0-9._:-]{8,128}$/;
+export function requestIdFor(req: http.IncomingMessage): string {
+  const given = req.headers["x-request-id"];
+  return typeof given === "string" && REQUEST_ID.test(given) ? given : randomUUID();
+}
+
+function logError(requestId: string, event: string, detail: unknown): void {
+  console.error(JSON.stringify({
+    ts: new Date().toISOString(), event, requestId,
+    error: detail instanceof Error ? `${detail.name}: ${detail.message}` : String(detail),
+    ...(detail instanceof Error && detail.stack ? { stack: detail.stack.split("\n").slice(0, 8).join("\n") } : {}),
+  }));
+}
+
+function handleError(res: http.ServerResponse, error: unknown, requestId: string): void {
   if (error instanceof ValidationError) {
     sendJson(res, 422, { error: "validation_error", fields: error.fieldErrors });
     return;
@@ -57,16 +74,17 @@ function handleError(res: http.ServerResponse, error: unknown): void {
     sendJson(res, error.status, { error: "http_error", message: error.message, fields: error.fieldErrors });
     return;
   }
+  // The request id lets support find the server log line for a failure someone reports.
   if (error instanceof DatabaseError) {
-    console.error("Database error:", error.detail);
-    sendJson(res, 500, { error: "internal_error", message: "Something went wrong." });
+    logError(requestId, "database_error", error.detail);
+    sendJson(res, 500, { error: "internal_error", message: "Something went wrong.", requestId });
     return;
   }
-  console.error("Unhandled error:", error);
-  sendJson(res, 500, { error: "internal_error", message: "Something went wrong." });
+  logError(requestId, "unhandled_error", error);
+  sendJson(res, 500, { error: "internal_error", message: "Something went wrong.", requestId });
 }
 
-function logRequest(req: http.IncomingMessage, res: http.ServerResponse, durationMs: number): void {
+function logRequest(req: http.IncomingMessage, res: http.ServerResponse, durationMs: number, requestId: string): void {
   // One structured JSON line per request — real production observability
   // without an external logging package (this sandbox can't install one
   // anyway). The path is logged without its query string: nothing here
@@ -80,14 +98,20 @@ function logRequest(req: http.IncomingMessage, res: http.ServerResponse, duratio
       status: res.statusCode,
       durationMs,
       ip: clientIp(req),
+      requestId,
     }),
   );
 }
 
-export function createServer(router: Router): http.Server {
+export function createServer(router: Router, lifecycle?: Lifecycle): http.Server {
   const server = http.createServer((req, res) => {
     const startedAt = Date.now();
-    res.on("finish", () => logRequest(req, res, Date.now() - startedAt));
+    const requestId = requestIdFor(req);
+    res.setHeader("X-Request-Id", requestId);
+    lifecycle?.track(res);
+    // Draining: finish this request, then let the client reconnect to another instance.
+    if (lifecycle?.draining) res.setHeader("Connection", "close");
+    res.on("finish", () => logRequest(req, res, Date.now() - startedAt, requestId));
 
     void (async () => {
       try {
@@ -111,6 +135,7 @@ export function createServer(router: Router): http.Server {
         const katkeeReq = req as KatkeeRequest;
         katkeeReq.params = match.params;
         katkeeReq.body = body;
+        katkeeReq.requestId = requestId;
 
         const bearer = req.headers.authorization;
         if (bearer?.startsWith("Bearer ")) {
@@ -129,7 +154,7 @@ export function createServer(router: Router): http.Server {
         if (url.startsWith("/api/v1/admin/")) res.setHeader("Cache-Control", "no-store");
         await match.handler(katkeeReq, res);
       } catch (error) {
-        handleError(res, error);
+        handleError(res, error, requestId);
       }
     })();
   });

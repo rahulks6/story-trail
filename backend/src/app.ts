@@ -3,6 +3,7 @@ import type {ProviderGateway} from "./modules/auth/providers";
 import type { Server } from "node:http";
 import { Router } from "./http/router";
 import { createServer } from "./http/server";
+import { Lifecycle } from "./http/lifecycle";
 import { sendJson } from "./http/respond";
 import { query } from "./db/psql";
 import { registerAuthRoutes } from "./modules/auth/auth.routes";
@@ -26,8 +27,12 @@ import { registerPushRoutes } from "./modules/push/push.routes";
 import { registerAnalyticsRoutes } from "./modules/analytics/analytics.routes";
 import { RealtimeHub } from "./realtime/hub";
 
-export function buildApp(providers?:ProviderGateway): Server {
+/** The API server, with its readiness/shutdown state (see http/lifecycle.ts). */
+export type KatkeeServer = Server & { lifecycle: Lifecycle };
+
+export function buildApp(providers?:ProviderGateway): KatkeeServer {
   const router = new Router();
+  const lifecycle = new Lifecycle();
 
   // A real liveness check, not a static 200 — a psql-shim process spawn
   // failure or a database that's actually down would otherwise look
@@ -39,6 +44,22 @@ export function buildApp(providers?:ProviderGateway): Server {
       sendJson(res, 200, { status: "ok", service: "katkee-backend", db: "up" });
     } catch {
       sendJson(res, 503, { status: "degraded", service: "katkee-backend", db: "down" });
+    }
+  });
+
+  // Readiness, for load balancers: whether this instance should get new requests. Not ready
+  // while it drains for shutdown or while the database is unreachable.
+  router.get("/ready", async (_req, res) => {
+    res.setHeader("Cache-Control", "no-store");
+    if (lifecycle.draining) {
+      sendJson(res, 503, { status: "draining" });
+      return;
+    }
+    try {
+      await query("SELECT 1");
+      sendJson(res, 200, { status: "ready" });
+    } catch {
+      sendJson(res, 503, { status: "not_ready", db: "down" });
     }
   });
 
@@ -63,7 +84,7 @@ export function buildApp(providers?:ProviderGateway): Server {
   registerRealtimeRoutes(router);
   registerPushRoutes(router);
 
-  const server = createServer(router);
+  const server = createServer(router, lifecycle);
   // Realtime connections share the HTTP port; closing the server also closes them.
   const hub = new RealtimeHub().attach(server);
   const close = server.close.bind(server);
@@ -71,5 +92,5 @@ export function buildApp(providers?:ProviderGateway): Server {
     void hub.stop();
     return close(callback);
   }) as typeof server.close;
-  return server;
+  return Object.assign(server, { lifecycle });
 }

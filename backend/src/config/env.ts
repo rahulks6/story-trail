@@ -92,6 +92,13 @@ export const config = {
   },
   nodeEnv: process.env.NODE_ENV ?? "development",
   port: optionalInt("PORT", 4000),
+  // Graceful shutdown (src/http/lifecycle.ts): keep serving, not-ready, for drainMs after SIGTERM,
+  // then wait up to timeoutMs for in-flight requests. Keep drain + timeout below the platform's
+  // stop timeout (ECS: stopTimeout, 30 s in infra/).
+  shutdown: {
+    drainMs: optionalInt("SHUTDOWN_DRAIN_MS", process.env.NODE_ENV === "production" ? 3000 : 0),
+    timeoutMs: optionalInt("SHUTDOWN_TIMEOUT_MS", 20000),
+  },
   db: {
     host: process.env.PGHOST ?? "localhost",
     port: optionalInt("PGPORT", 5432),
