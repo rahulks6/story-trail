@@ -25,18 +25,62 @@ export interface ProfileView {
   };
 }
 
+/** The signed-in person's relationship to someone in a list (search, suggestions). */
+export interface ListRelationship {
+  isFollowing: boolean;
+  isFollowedBy: boolean;
+  hasPendingRequestFromViewer: boolean;
+}
+
 export interface SearchResult {
   id: string;
   username: string;
   displayName: string;
   avatarMediaId?: string | null;
   bio: string;
+  isPrivate?: boolean;
+  interests?: string[];
+  viewer?: ListRelationship;
+}
+
+/** Why someone is suggested; only facts the person can already see. */
+export type SuggestionReason =
+  | { kind: "follows_you" }
+  | { kind: "followed_by"; username: string; others: number }
+  | { kind: "shared_interest"; interest: string }
+  | { kind: "new" };
+
+export interface SuggestedPerson {
+  id: string;
+  username: string;
+  displayName: string;
+  avatarMediaId: string | null;
+  isPrivate: boolean;
+  reason: SuggestionReason;
+  viewer: ListRelationship;
+}
+
+export interface UsernameAvailability {
+  username: string;
+  available: boolean;
+  reason: "available" | "yours" | "taken" | "held" | "invalid" | "reserved" | "not_allowed";
+  message: string;
 }
 
 export type FollowStatus = { status: "following" } | { status: "requested" };
 
-export function getProfile(username: string, accessToken: string): Promise<{ profile: ProfileView }> {
-  return apiGet<{ profile: ProfileView }>(`/api/v1/users/${encodeURIComponent(username)}`, accessToken);
+/** By username, or by the account's permanent ID (which still finds someone after a rename). */
+export function getProfile(usernameOrId: string, accessToken: string): Promise<{ profile: ProfileView }> {
+  return apiGet<{ profile: ProfileView }>(`/api/v1/users/${encodeURIComponent(usernameOrId)}`, accessToken);
+}
+
+/** Live check while choosing a username; signed out at sign-up, so the token is optional. */
+export function checkUsername(username: string, accessToken: string | null, signal?: AbortSignal): Promise<UsernameAvailability> {
+  return apiGet(`/api/v1/usernames/availability?username=${encodeURIComponent(username)}`, accessToken, signal);
+}
+
+export function getSuggestions(accessToken: string, signal?: AbortSignal): Promise<{ suggestions: SuggestedPerson[] }> {
+  return apiGet("/api/v1/search/suggestions", accessToken, signal);
 }
 
 export function updateMyProfile(
@@ -54,8 +98,13 @@ export function avatarFileUrl(username: string, avatarMediaId?: string | null): 
 export function searchUsers(
   query: string,
   accessToken: string,
+  options: { offset?: number; limit?: number; following?: boolean; signal?: AbortSignal } = {},
 ): Promise<{ results: SearchResult[]; limit: number; offset: number }> {
-  return apiGet(`/api/v1/search/users?q=${encodeURIComponent(query)}`, accessToken);
+  const params = new URLSearchParams({ q: query });
+  if (options.offset) params.set("offset", String(options.offset));
+  if (options.limit) params.set("limit", String(options.limit));
+  if (options.following) params.set("scope", "following");
+  return apiGet(`/api/v1/search/users?${params.toString()}`, accessToken, options.signal);
 }
 
 export function followUser(username: string, accessToken: string): Promise<FollowStatus> {

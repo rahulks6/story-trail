@@ -1,0 +1,269 @@
+{
+ "what": "Each new check run against deliberately broken code, one defect at a time; a check passes only if a test fails on the break",
+ "server8a": [
+  {
+   "name": "hold-ignored",
+   "caught": true
+  },
+  {
+   "name": "limit-ignored",
+   "caught": true
+  },
+  {
+   "name": "no-lock-on-claim",
+   "caught": true
+  },
+  {
+   "name": "no-lock-on-rename",
+   "caught": true
+  },
+  {
+   "name": "availability-never-held",
+   "caught": true
+  },
+  {
+   "name": "history-not-recorded",
+   "caught": true
+  },
+  {
+   "name": "policy-no-anywhere",
+   "caught": true
+  },
+  {
+   "name": "policy-unbounded-stretch",
+   "caught": true
+  },
+  {
+   "name": "profile-skips-policy",
+   "caught": true
+  },
+  {
+   "name": "legacy-names-refused",
+   "caught": true
+  },
+  {
+   "name": "signup-skips-policy",
+   "caught": true
+  },
+  {
+   "name": "onboarding-skips-policy",
+   "caught": true
+  },
+  {
+   "name": "retry-after-wrong",
+   "caught": true
+  },
+  {
+   "name": "scrub-keeps-history",
+   "caught": true
+  },
+  {
+   "name": "no-id-links",
+   "caught": true
+  },
+  {
+   "name": "own-name-unavailable",
+   "caught": true
+  },
+  {
+   "name": "availability-cacheable",
+   "caught": true
+  }
+ ],
+ "server8b": [
+  {
+   "name": "search-no-interests",
+   "caught": true
+  },
+  {
+   "name": "search-json-unchecked",
+   "caught": true,
+   "note": "missed on the first run; caught after adding the , [ ] cases"
+  },
+  {
+   "name": "search-no-ranking",
+   "caught": true
+  },
+  {
+   "name": "search-followed-not-first",
+   "caught": true
+  },
+  {
+   "name": "search-scope-ignored",
+   "caught": true
+  },
+  {
+   "name": "search-no-followed-by",
+   "caught": true
+  },
+  {
+   "name": "search-shows-suspended",
+   "caught": true
+  },
+  {
+   "name": "suggest-requested-shown",
+   "caught": true
+  },
+  {
+   "name": "suggest-muted-shown",
+   "caught": true
+  },
+  {
+   "name": "suggest-dismissed-shown",
+   "caught": true
+  },
+  {
+   "name": "suggest-restricted-shown",
+   "caught": true
+  },
+  {
+   "name": "suggest-blocked-shown",
+   "caught": true
+  },
+  {
+   "name": "suggest-names-suspended-friend",
+   "caught": true
+  },
+  {
+   "name": "suggest-pending-friend-visible",
+   "caught": true
+  },
+  {
+   "name": "suggest-new-private",
+   "caught": true
+  },
+  {
+   "name": "suggest-new-any-age",
+   "caught": true
+  },
+  {
+   "name": "suggest-order",
+   "caught": true
+  },
+  {
+   "name": "suggest-reason-others",
+   "caught": true
+  },
+  {
+   "name": "suggest-limit-unchecked",
+   "caught": true
+  },
+  {
+   "name": "scope-unchecked",
+   "caught": true
+  },
+  {
+   "name": "short-no-prefix-first",
+   "caught": true
+  },
+  {
+   "name": "short-window-too-small",
+   "caught": true
+  },
+  {
+   "name": "short-path-unused",
+   "caught": true
+  },
+  {
+   "name": "suggest-viewer-interests-unmaterialized",
+   "caught": false,
+   "note": "performance only: identical results; the benchmark shows 69 ms vs 45 ms"
+  }
+ ],
+ "app8c": [
+  {
+   "name": "search-no-cancel",
+   "caught": true,
+   "note": "missed on the first run; caught after adding the leaving-Search test"
+  },
+  {
+   "name": "search-late-answer-shown",
+   "caught": true
+  },
+  {
+   "name": "search-no-more-pages",
+   "caught": true
+  },
+  {
+   "name": "search-next-page-repeats",
+   "caught": true
+  },
+  {
+   "name": "search-following-client-only",
+   "caught": true
+  },
+  {
+   "name": "follow-requested-not-shown",
+   "caught": true
+  },
+  {
+   "name": "follow-state-not-kept",
+   "caught": true
+  },
+  {
+   "name": "follow-error-silent",
+   "caught": true
+  },
+  {
+   "name": "suggestion-reason-drops-others",
+   "caught": true
+  },
+  {
+   "name": "search-no-autofocus",
+   "caught": true
+  },
+  {
+   "name": "search-tab-no-refocus",
+   "caught": true
+  },
+  {
+   "name": "availability-stale-shown",
+   "caught": true
+  },
+  {
+   "name": "availability-no-cancel",
+   "caught": true
+  },
+  {
+   "name": "availability-checks-own-name",
+   "caught": true
+  },
+  {
+   "name": "signup-ignores-refusal",
+   "caught": true
+  },
+  {
+   "name": "edit-profile-ignores-refusal",
+   "caught": true
+  },
+  {
+   "name": "onboarding-ignores-refusal",
+   "caught": true
+  },
+  {
+   "name": "onboarding-not-lowercased",
+   "caught": true
+  },
+  {
+   "name": "profile-link-id-ignored",
+   "caught": true
+  },
+  {
+   "name": "profile-acts-on-old-name",
+   "caught": true
+  },
+  {
+   "name": "link-id-not-parsed",
+   "caught": true
+  },
+  {
+   "name": "link-id-unchecked",
+   "caught": true
+  }
+ ],
+ "totals": {
+  "server8a": "17/17",
+  "server8b": "23/24",
+  "app8c": "22/22"
+ }
+}

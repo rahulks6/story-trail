@@ -128,10 +128,12 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   }, 30_000, init.signal);
 }
 
-export function apiGet<T>(path: string, accessToken?: string): Promise<T> {
+/** `signal` cancels the request, e.g. when a newer search or check replaces it. */
+export function apiGet<T>(path: string, accessToken?: string | null, signal?: AbortSignal): Promise<T> {
   return request<T>(path, {
     method: "GET",
     headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
+    signal,
   });
 }
 

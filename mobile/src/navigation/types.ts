@@ -11,7 +11,8 @@ export type AuthStackParamList = {
 
 export type SearchStackParamList = {
   SearchHome: undefined;
-  UserProfile: { username: string };
+  /** `userId` (from a shared link) finds the account even after a rename. */
+  UserProfile: { username: string; userId?: string };
 };
 
 export type DMStackParamList = {

@@ -22,7 +22,9 @@ type Props = NativeStackScreenProps<SearchStackParamList, "UserProfile">;
  * spec section 34.
  */
 export function UserProfileScreen({ route }: Props): React.JSX.Element {
-  const { username } = route.params;
+  // A shared link also carries the account ID, which finds the person after a rename. When it
+  // does, the ID decides: the old name may belong to someone else by now.
+  const { username: linkedUsername, userId } = route.params;
   const { accessToken } = useAuth();
   // StoryViewer is registered on the root stack, above the tabs (see
   // RootNavigator.tsx) — not on this screen's own SearchStack — so this
@@ -38,23 +40,24 @@ export function UserProfileScreen({ route }: Props): React.JSX.Element {
   const [reportOpen, setReportOpen] = useState(false);
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const countedProfile = useRef<string | null>(null);
+  const username = profile?.username ?? linkedUsername;
 
   const load = useCallback(async () => {
     if (!accessToken) return;
     setLoading(true);
     setError(null);
     try {
-      const { profile: fetched } = await getProfile(username, accessToken);
+      const { profile: fetched } = await getProfile(userId ?? linkedUsername, accessToken);
       setProfile(fetched);
       // Admin analytics: someone else's profile opened (once per profile, not per refresh).
-      if (!fetched.isSelf && countedProfile.current !== username) {
-        countedProfile.current = username;
+      if (!fetched.isSelf && countedProfile.current !== fetched.id) {
+        countedProfile.current = fetched.id;
         track("profile_viewed");
       }
       // A private account not yet followed 403s on the Stories list — that's
       // just "no ring to show", not a real error, so it's swallowed here.
       try {
-        const { stories } = await getUserActiveStories(username, accessToken);
+        const { stories } = await getUserActiveStories(fetched.username, accessToken);
         setHasActiveStory(stories.length > 0);
       } catch {
         setHasActiveStory(false);
@@ -65,7 +68,7 @@ export function UserProfileScreen({ route }: Props): React.JSX.Element {
     } finally {
       setLoading(false);
     }
-  }, [username, accessToken]);
+  }, [linkedUsername, userId, accessToken]);
 
   useEffect(() => {
     void load();

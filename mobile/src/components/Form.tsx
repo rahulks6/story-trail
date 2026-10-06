@@ -7,13 +7,15 @@ interface TextFieldProps extends Omit<TextInputProps, "style"> {
   error?: string | undefined;
   /** Optional helper text under the field (hidden while an error is shown). */
   hint?: string;
+  /** A hint that reports a live result (e.g. "Available."): announced, and green for success. */
+  hintTone?: "info" | "success";
 }
 
 /**
  * Labelled input with an inline error and, for passwords, a show/hide toggle.
  * Errors are announced to screen readers via the field's accessibility label.
  */
-export const TextField = forwardRef<React.ComponentRef<typeof TextInput>, TextFieldProps>(function TextField({ label, error, hint, secureTextEntry, ...input }, ref) {
+export const TextField = forwardRef<React.ComponentRef<typeof TextInput>, TextFieldProps>(function TextField({ label, error, hint, hintTone, secureTextEntry, ...input }, ref) {
   const [revealed, setRevealed] = useState(false);
   return (
     <View style={styles.field}>
@@ -44,7 +46,9 @@ export const TextField = forwardRef<React.ComponentRef<typeof TextInput>, TextFi
           {error}
         </Text>
       ) : hint ? (
-        <Text style={styles.hint}>{hint}</Text>
+        <Text style={[styles.hint, hintTone === "success" && styles.hintSuccess]} accessibilityLiveRegion={hintTone ? "polite" : undefined}>
+          {hint}
+        </Text>
       ) : null}
     </View>
   );
@@ -116,6 +120,7 @@ const styles = StyleSheet.create({
   revealText: { color: colors.accent, fontWeight: "600" },
   error: { color: colors.danger, fontSize: 13 },
   hint: { ...typography.caption },
+  hintSuccess: { color: colors.success },
   button: { minHeight: 48, borderRadius: radii.md, alignItems: "center", justifyContent: "center", paddingHorizontal: spacing.lg },
   primary: { backgroundColor: colors.accent },
   secondary: { backgroundColor: colors.surfaceElevated, borderWidth: 1, borderColor: colors.border },

@@ -10,6 +10,7 @@ import { useAuth } from "../../state/AuthContext";
 import { avatarFileUrl, updateMyProfile } from "../../api/users";
 import { uploadPhoto } from "../../api/media";
 import { ApiError } from "../../api/client";
+import { usernameCheckText, usernameRefused, useUsernameAvailability } from "../../hooks/useUsernameAvailability";
 
 type Props = NativeStackScreenProps<RootStackParamList, "EditProfile">;
 
@@ -35,7 +36,9 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const canSave = username.trim().length >= 3 && displayName.trim().length > 0 && !saving && !!accessToken;
+  const availability = useUsernameAvailability(username, accessToken, user?.username);
+  const availabilityLine = usernameCheckText(availability);
+  const canSave = username.trim().length >= 3 && displayName.trim().length > 0 && !saving && !!accessToken && !usernameRefused(availability);
 
   const onSave = async () => {
     if (!canSave || !accessToken || inFlight.current) return;
@@ -91,7 +94,16 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
         autoCorrect={false}
         accessibilityLabel="Username"
       />
-      <Text style={styles.hint}>3–30 lowercase letters, numbers, dots or underscores.</Text>
+      {availabilityLine ? (
+        <Text
+          style={[styles.hint, availabilityLine.tone === "success" && styles.available, availabilityLine.tone === "error" && styles.unavailable]}
+          accessibilityLiveRegion="polite"
+        >
+          {availabilityLine.text}
+        </Text>
+      ) : (
+        <Text style={styles.hint}>3–30 lowercase letters, numbers, dots or underscores.</Text>
+      )}
       <Text style={styles.label}>Name</Text>
       <TextInput
         style={styles.input}
@@ -168,6 +180,8 @@ const styles = StyleSheet.create({
   counter: { ...typography.caption, color: colors.textDisabled, textAlign: "right", marginTop: spacing.xs },
   hint: { ...typography.caption, color: colors.textSecondary, marginTop: spacing.xs },
   error: { color: colors.danger, marginTop: spacing.md },
+  available: { color: colors.success },
+  unavailable: { color: colors.danger },
   saveButton: {
     marginTop: spacing.xl,
     backgroundColor: colors.accent,

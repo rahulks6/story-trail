@@ -1,0 +1,308 @@
+TAP version 13
+# Subtest: the backend starts with what the stack gives it
+    # Subtest: the API, with every provider and the Admin console on
+    ok 1 - the API, with every provider and the Admin console on
+      ---
+      duration_ms: 621.402964
+      type: 'test'
+      ...
+    # Subtest: the worker
+    ok 2 - the worker
+      ---
+      duration_ms: 201.369255
+      type: 'test'
+      ...
+    # Subtest: the migration task: verified TLS to the database, a usable runtime role, no app secrets
+    ok 3 - the migration task: verified TLS to the database, a usable runtime role, no app secrets
+      ---
+      duration_ms: 55.593444
+      type: 'test'
+      ...
+    # Subtest: a minimal deploy: no providers
+    ok 4 - a minimal deploy: no providers
+      ---
+      duration_ms: 824.378375
+      type: 'test'
+      ...
+    1..4
+ok 1 - the backend starts with what the stack gives it
+  ---
+  duration_ms: 1704.504746
+  type: 'suite'
+  ...
+# Subtest: a credential left as its placeholder stops startup
+    # Subtest: CLOUDFRONT_PRIVATE_KEY (api)
+    ok 1 - CLOUDFRONT_PRIVATE_KEY (api)
+      ---
+      duration_ms: 62.09701
+      type: 'test'
+      ...
+    # Subtest: CLOUDFRONT_PRIVATE_KEY (worker)
+    ok 2 - CLOUDFRONT_PRIVATE_KEY (worker)
+      ---
+      duration_ms: 64.697025
+      type: 'test'
+      ...
+    # Subtest: TWILIO_ACCOUNT_SID (api)
+    ok 3 - TWILIO_ACCOUNT_SID (api)
+      ---
+      duration_ms: 164.234627
+      type: 'test'
+      ...
+    # Subtest: FCM_SERVICE_ACCOUNT_JSON (worker)
+    ok 4 - FCM_SERVICE_ACCOUNT_JSON (worker)
+      ---
+      duration_ms: 259.693028
+      type: 'test'
+      ...
+    # Subtest: APNS_PRIVATE_KEY (worker)
+    ok 5 - APNS_PRIVATE_KEY (worker)
+      ---
+      duration_ms: 229.085404
+      type: 'test'
+      ...
+    1..5
+ok 2 - a credential left as its placeholder stops startup
+  ---
+  duration_ms: 780.560425
+  type: 'suite'
+  ...
+# Subtest: the image provides what the stack expects
+    # Subtest: the RDS CA bundle at its configured path
+    ok 1 - the RDS CA bundle at its configured path
+      ---
+      duration_ms: 0.832692
+      type: 'test'
+      ...
+    # Subtest: the commands the task definitions run, and a /tmp the read-only containers can write
+    ok 2 - the commands the task definitions run, and a /tmp the read-only containers can write
+      ---
+      duration_ms: 240.451907
+      type: 'test'
+      ...
+    1..2
+ok 3 - the image provides what the stack expects
+  ---
+  duration_ms: 241.563845
+  type: 'suite'
+  ...
+# Subtest: placement
+    # Subtest: is in Mumbai, tagged, and protected from deletion
+    ok 1 - is in Mumbai, tagged, and protected from deletion
+      ---
+      duration_ms: 20.816322
+      type: 'test'
+      ...
+    # Subtest: keeps the database in isolated subnets, tasks in private subnets, and only the load balancer public
+    ok 2 - keeps the database in isolated subnets, tasks in private subnets, and only the load balancer public
+      ---
+      duration_ms: 3.067335
+      type: 'test'
+      ...
+    # Subtest: lets only the load balancer reach the API, and only the services reach the database
+    ok 3 - lets only the load balancer reach the API, and only the services reach the database
+      ---
+      duration_ms: 1.683822
+      type: 'test'
+      ...
+    1..3
+ok 4 - placement
+  ---
+  duration_ms: 27.075162
+  type: 'suite'
+  ...
+# Subtest: data at rest and in transit
+    # Subtest: runs PostgreSQL 16 Multi-AZ, encrypted, TLS-only, not public, with point-in-time recovery
+    ok 1 - runs PostgreSQL 16 Multi-AZ, encrypted, TLS-only, not public, with point-in-time recovery
+      ---
+      duration_ms: 1.155291
+      type: 'test'
+      ...
+    # Subtest: keeps media private: no public access, TLS only, versioned, delivered through CloudFront signed URLs
+    ok 2 - keeps media private: no public access, TLS only, versioned, delivered through CloudFront signed URLs
+      ---
+      duration_ms: 4.698691
+      type: 'test'
+      ...
+    # Subtest: encrypts queues, keeps a dead-letter queue, and refuses plain HTTP to them
+    ok 3 - encrypts queues, keeps a dead-letter queue, and refuses plain HTTP to them
+      ---
+      duration_ms: 5.259959
+      type: 'test'
+      ...
+    # Subtest: encrypts every secret with the stack's key, keeps them on deletion, and puts no secret value in the template
+    ok 4 - encrypts every secret with the stack's key, keeps them on deletion, and puts no secret value in the template
+      ---
+      duration_ms: 1.344315
+      type: 'test'
+      ...
+    # Subtest: verifies the database certificate and passes no credential as a plain environment value
+    ok 5 - verifies the database certificate and passes no credential as a plain environment value
+      ---
+      duration_ms: 0.97879
+      type: 'test'
+      ...
+    1..5
+ok 5 - data at rest and in transit
+  ---
+  duration_ms: 13.852913
+  type: 'suite'
+  ...
+# Subtest: services
+    # Subtest: serves HTTPS only, with a modern TLS policy, and redirects HTTP
+    ok 1 - serves HTTPS only, with a modern TLS policy, and redirects HTTP
+      ---
+      duration_ms: 0.583897
+      type: 'test'
+      ...
+    # Subtest: routes only to tasks that are ready, and drains them on deploys
+    ok 2 - routes only to tasks that are ready, and drains them on deploys
+      ---
+      duration_ms: 4.710459
+      type: 'test'
+      ...
+    # Subtest: rolls back failed deploys, keeps capacity during them, and lets autoscaling own the task count
+    ok 3 - rolls back failed deploys, keeps capacity during them, and lets autoscaling own the task count
+      ---
+      duration_ms: 0.332895
+      type: 'test'
+      ...
+    # Subtest: runs every container on a read-only root file system with a scratch /tmp
+    ok 4 - runs every container on a read-only root file system with a scratch /tmp
+      ---
+      duration_ms: 0.384445
+      type: 'test'
+      ...
+    # Subtest: pulls immutable, scanned images
+    ok 5 - pulls immutable, scanned images
+      ---
+      duration_ms: 0.267288
+      type: 'test'
+      ...
+    1..5
+ok 6 - services
+  ---
+  duration_ms: 6.57148
+  type: 'suite'
+  ...
+# Subtest: least privilege
+    # Subtest: the API writes and removes only upload originals, and reads media
+    ok 1 - the API writes and removes only upload originals, and reads media
+      ---
+      duration_ms: 0.879728
+      type: 'test'
+      ...
+    # Subtest: only the worker deletes processed media; the migration task has no AWS permissions
+    ok 2 - only the worker deletes processed media; the migration task has no AWS permissions
+      ---
+      duration_ms: 6.143495
+      type: 'test'
+      ...
+    # Subtest: tasks receive only the secrets they use
+    ok 3 - tasks receive only the secrets they use
+      ---
+      duration_ms: 606.929757
+      type: 'test'
+      ...
+    # Subtest: the services connect as the runtime role; only migrations use the owner
+    ok 4 - the services connect as the runtime role; only migrations use the owner
+      ---
+      duration_ms: 1.993654
+      type: 'test'
+      ...
+    1..4
+ok 7 - least privilege
+  ---
+  duration_ms: 616.264046
+  type: 'suite'
+  ...
+# Subtest: configuration the API reads
+    # Subtest: trusts forwarded client addresses only from the load balancer's subnets
+    ok 1 - trusts forwarded client addresses only from the load balancer's subnets
+      ---
+      duration_ms: 0.739917
+      type: 'test'
+      ...
+    # Subtest: sets production media, queue, email and analytics settings
+    ok 2 - sets production media, queue, email and analytics settings
+      ---
+      duration_ms: 0.397026
+      type: 'test'
+      ...
+    # Subtest: turns providers on with their settings, and off without them
+    ok 3 - turns providers on with their settings, and off without them
+      ---
+      duration_ms: 455.131741
+      type: 'test'
+      ...
+    1..3
+ok 8 - configuration the API reads
+  ---
+  duration_ms: 456.824429
+  type: 'suite'
+  ...
+# Subtest: edge protection, monitoring and backups
+    # Subtest: puts a WAF in front of the API that never blocks what people write
+    ok 1 - puts a WAF in front of the API that never blocks what people write
+      ---
+      duration_ms: 462.937595
+      type: 'test'
+      ...
+    # Subtest: alerts on errors, latency, failing tasks, database pressure and stuck media jobs
+    ok 2 - alerts on errors, latency, failing tasks, database pressure and stuck media jobs
+      ---
+      duration_ms: 7.817035
+      type: 'test'
+      ...
+    # Subtest: backs up the database and media daily (35 days) and monthly (a year)
+    ok 3 - backs up the database and media daily (35 days) and monthly (a year)
+      ---
+      duration_ms: 0.398825
+      type: 'test'
+      ...
+    1..3
+ok 9 - edge protection, monitoring and backups
+  ---
+  duration_ms: 471.35007
+  type: 'suite'
+  ...
+# Subtest: modes and settings
+    # Subtest: a release can migrate with the new image while the services still run the current one
+    ok 1 - a release can migrate with the new image while the services still run the current one
+      ---
+      duration_ms: 281.863554
+      type: 'test'
+      ...
+    # Subtest: recovery can point every container at a restored instance
+    ok 2 - recovery can point every container at a restored instance
+      ---
+      duration_ms: 386.746413
+      type: 'test'
+      ...
+    # Subtest: bootstrap mode creates everything but runs no tasks
+    ok 3 - bootstrap mode creates everything but runs no tasks
+      ---
+      duration_ms: 291.643414
+      type: 'test'
+      ...
+    # Subtest: refuses settings that would only fail after deploying
+    ok 4 - refuses settings that would only fail after deploying
+      ---
+      duration_ms: 11.278794
+      type: 'test'
+      ...
+    1..4
+ok 10 - modes and settings
+  ---
+  duration_ms: 971.809167
+  type: 'suite'
+  ...
+1..10
+# tests 38
+# suites 10
+# pass 38
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8595.115849

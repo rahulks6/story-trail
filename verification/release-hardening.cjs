@@ -9,6 +9,9 @@ function load(file,mocks={}) {
 }
 class HttpError extends Error {constructor(status,message){super(message);this.status=status;}}
 class DatabaseError extends Error {constructor(detail){super(detail);this.detail=detail;}}
+class ValidationError extends Error {constructor(fieldErrors){super('Validation failed');this.fieldErrors=fieldErrors;}}
+// The username rules (pure, no I/O), loaded for real wherever a module under test uses them.
+const usernamePolicy=()=>load('backend/src/modules/users/username-policy.ts',{'../../shared/validation':{USERNAME_RE:/^[a-z0-9_.]{3,30}$/}});
 test('draft restore, count and deletion are isolated across accounts and legacy keys',async()=>{
  const data=new Map(),storage={getItem:async k=>data.get(k)??null,setItem:async(k,v)=>data.set(k,v),removeItem:async k=>data.delete(k),getAllKeys:async()=>[...data.keys()],removeMany:async keys=>keys.forEach(k=>data.delete(k))};
  const validator=load('mobile/src/state/validateSavedDraft.ts');
@@ -31,7 +34,7 @@ test('corrupted and mismatched saved drafts cannot enter the editor',()=>{
 function service({media,taken=false,failure,linkRefusal}={}) {
  const writes=[],linkChecks=[];
  const s=load('backend/src/modules/users/profiles.service.ts',{
-  '../../http/errors':{HttpError},'../../db/psql':{DatabaseError},
+  '../../http/errors':{HttpError},'../../db/psql':{DatabaseError},'./username-policy':usernamePolicy(),'../auth/dto':{ValidationError},
   '../users/users.repository':{findUserById:async()=>({id:'owner',username:'old'}),usernameTaken:async()=>taken,setProfile:async(id,input)=>{if(failure)throw failure;writes.push({id,input});return input;}},
   '../media/media.repository':{findMediaById:async(id,excludeModerated)=>{assert.equal(excludeModerated,true);return media;}},
   '../social/social.repository':{},'../recommendations/events.repository':{},'../stories/stories.repository':{},'../stories/stories.service':{},'../auth/refresh-tokens.repository':{},'../auth/password':{},
@@ -68,6 +71,6 @@ test('profile link parser accepts only valid profile paths',()=>{
  for(const p of ['user/a','user/a%2fb','admin/reset','user/rahul?token=x','user/../admin','user/rahul/extra'])assert.equal(parse(p),null);
 });
 test('email signup reserves official-looking usernames',()=>{
- const d=load('backend/src/modules/auth/dto.ts',{'../../shared/validation':{EMAIL_RE:/^[^@]+@[^@]+\.[^@]+$/,USERNAME_RE:/^[a-z0-9_.]{3,30}$/}});
+ const d=load('backend/src/modules/auth/dto.ts',{'../../shared/validation':{EMAIL_RE:/^[^@]+@[^@]+\.[^@]+$/,USERNAME_RE:/^[a-z0-9_.]{3,30}$/},'../users/username-policy':usernamePolicy()});
  for(const username of ['ADMIN','katkee','support','moderator','superadmin'])assert.throws(()=>d.parseSignupInput({username,email:'u@site.com',password:'12345678',displayName:'User'}),e=>!!e.fieldErrors.username);
 });

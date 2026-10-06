@@ -8,6 +8,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "../../navigation/types";
 import { colors, spacing, typography } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
+import { usernameCheckText, usernameRefused, useUsernameAvailability } from "../../hooks/useUsernameAvailability";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Signup">;
 
@@ -24,7 +25,9 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
   const passwordInput = useRef<React.ComponentRef<typeof TextInput>>(null);
   // Checked as they type, so most problems show before a round trip (the server checks again).
   const passwordProblem = password ? newPasswordProblem(password, email, username) : undefined;
-  const complete = !!displayName.trim() && !!username && !!email && !!password && !passwordProblem;
+  const availability = useUsernameAvailability(username, null);
+  const availabilityLine = usernameCheckText(availability);
+  const complete = !!displayName.trim() && !!username && !!email && !!password && !passwordProblem && !usernameRefused(availability);
 
   const onSubmit = async () => {
     if (!complete || submitting) return;
@@ -67,8 +70,9 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
         <TextField
           ref={usernameInput}
           label="Username"
-          error={fieldErrors?.username}
-          hint="3–30 characters: lowercase letters, numbers, dots and underscores."
+          error={fieldErrors?.username ?? (availabilityLine?.tone === "error" ? availabilityLine.text : undefined)}
+          hint={availabilityLine && availabilityLine.tone !== "error" ? availabilityLine.text : "3–30 characters: lowercase letters, numbers, dots and underscores."}
+          hintTone={availabilityLine?.tone === "success" ? "success" : availabilityLine ? "info" : undefined}
           autoCapitalize="none"
           autoCorrect={false}
           autoComplete="username-new"

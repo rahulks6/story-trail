@@ -222,7 +222,8 @@ export function RootNavigator(): React.JSX.Element {
     getStateFromPath: path => {
       const target = deepLinkTarget(path);
       if (target?.kind === "profile") {
-        return { routes: [{name: "Main", state: {routes: [{name: "Search", state: {routes: [{name: "UserProfile", params: {username: target.username}}]}}]}}] };
+        const params = target.userId ? { username: target.username, userId: target.userId } : { username: target.username };
+        return { routes: [{name: "Main", state: {routes: [{name: "Search", state: {routes: [{name: "UserProfile", params}]}}]}}] };
       }
       if (target?.kind === "story") return { routes: [{ name: "Main" }, { name: "StoryLink", params: { storyId: target.storyId } }] };
       if (target?.kind === "conversation") {

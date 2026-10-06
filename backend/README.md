@@ -650,8 +650,9 @@ followed).
 | POST | `/api/v1/auth/refresh` | – | `{refreshToken}` → `{tokens}`; single-use, rotates on every call |
 | POST | `/api/v1/auth/logout` | – | `{refreshToken}` → 204; idempotent |
 | GET | `/api/v1/auth/me` | Bearer access token | → `{user}` |
-| GET | `/api/v1/users/:username` | Bearer | Public profile + viewer relationship flags; 404 if either side blocked the other |
-| PATCH | `/api/v1/users/me` | Bearer | `{displayName?, bio?, isPrivate?}` → `{user}`; untouched fields are preserved |
+| GET | `/api/v1/users/:username` | Bearer | Public profile + viewer relationship flags; 404 if either side blocked the other. Also accepts the account's permanent ID in place of the username, which still finds it after a rename (`katkee://user/<name>?id=<id>` links) |
+| GET | `/api/v1/usernames/availability?username=` | Optional | Live check while choosing a username: `{username, available, reason, message}`, reason one of `available`, `yours`, `taken`, `held` (renamed away from in the last 14 days), `invalid`, `reserved`, `not_allowed`. Signed in, your own name and the names you released count as yours. Never cached |
+| PATCH | `/api/v1/users/me` | Bearer | `{displayName?, bio?, isPrivate?}` → `{user}`; untouched fields are preserved. A new `username` must pass the username rules (422 with `fields.username`); a name someone renamed away from in the last 14 days is theirs to take back (409); two renames in 14 days, then 429 with `Retry-After` |
 | DELETE | `/api/v1/users/me` | Bearer | `{password}` → 204; permanently deletes the account (password-confirmed, irreversible) — see "Phase 12" above |
 | GET | `/api/v1/users/:username/followers` | Bearer | Paginated (`?limit&offset`); 403 if the account is private and you don't follow it |
 | GET | `/api/v1/users/:username/following` | Bearer | Same gating as followers |
@@ -665,7 +666,8 @@ followed).
 | GET | `/api/v1/blocks` | Bearer | Your blocked-users list, paginated |
 | POST\/DELETE | `/api/v1/users/:username/mute` | Bearer | Persisted, independent of the follow graph |
 | GET | `/api/v1/mutes` | Bearer | Your muted-users list, paginated |
-| GET | `/api/v1/search/users?q=` | Bearer | Substring match on username/display name; excludes yourself and any blocked relationship |
+| GET | `/api/v1/search/users?q=` | Bearer | Username, display name or an interest contains the term; best matches first (exact username, names starting with the term, a later word of the name, anywhere, then interests; people you follow first in each). One or two letters: usernames starting with them, then the rest, alphabetically. Each result has `isPrivate`, `interests` and `viewer {isFollowing, isFollowedBy, hasPendingRequestFromViewer}`. `scope=following` limits to people you follow. Excludes yourself, blocked either way, suspended and deleted accounts; paginated (`?limit&offset`) |
+| GET | `/api/v1/search/suggestions` | Bearer | "Suggested for you" (`?limit`, 1-50, default 20): people who follow you, people followed by people you follow, people sharing an interest, new public accounts with a public Story up; each with a `reason`. Never you, anyone you follow or asked to follow, blocked either way, muted, marked not interested, restricted, suspended or deleted |
 | POST | `/api/v1/media/photos` | Bearer | Raw binary body (`Content-Type: image/png` or `image/jpeg`) → `{media}`; validates real magic bytes + dimensions, 25 MiB max |
 | POST | `/api/v1/media/videos` | Bearer | Raw binary body (`Content-Type: video/mp4` or `video/quicktime`) → `{media}`; validates the ISO-BMFF container, 200 MiB max |
 | GET | `/api/v1/media/:id` | Bearer | Owner, or anyone permitted to view a Story built from this media (see below) |

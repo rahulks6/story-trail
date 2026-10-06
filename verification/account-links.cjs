@@ -25,6 +25,15 @@ test('profile links keep working and normalize case', () => {
   assert.deepEqual(deepLinkTarget('/user/some_one/'), { kind: 'profile', username: 'some_one' });
 });
 
+test('a shared profile link carries the account ID, so it still opens after a rename', () => {
+  assert.deepEqual(deepLinkTarget('user/old_name?id=0F3C2B1A-1111-4222-8333-444455556666'),
+    { kind: 'profile', username: 'old_name', userId: '0f3c2b1a-1111-4222-8333-444455556666' });
+  // A malformed or missing id falls back to the name; nothing else in the query is used.
+  assert.deepEqual(deepLinkTarget('user/old_name?id=not-a-uuid'), { kind: 'profile', username: 'old_name' });
+  assert.deepEqual(deepLinkTarget('user/old_name?id='), { kind: 'profile', username: 'old_name' });
+  assert.deepEqual(deepLinkTarget('user/old_name?other=1'), { kind: 'profile', username: 'old_name' });
+});
+
 test('story links from the Share sheet resolve, malformed ids are ignored', () => {
   assert.deepEqual(deepLinkTarget('story/0F3C2B1A-1111-4222-8333-444455556666'), { kind: 'story', storyId: '0f3c2b1a-1111-4222-8333-444455556666' });
   assert.equal(deepLinkTarget('story/not-a-uuid'), null);

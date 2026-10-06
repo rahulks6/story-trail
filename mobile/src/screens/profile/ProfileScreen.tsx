@@ -54,7 +54,8 @@ export function ProfileScreen(): React.JSX.Element {
   }
 
   const onShareProfile = async () => {
-    const deepLink = `katkee://user/${user.username}`;
+    // The account ID keeps the link working if the username changes later.
+    const deepLink = `katkee://user/${user.username}?id=${user.id}`;
     try {
       await Share.share({ message: `@${user.username} on Katkee: ${deepLink}` });
     } catch {

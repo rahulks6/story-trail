@@ -1,7 +1,10 @@
 # Katkee Android/iOS release checkpoint — 1 October 2026 (India)
 
-**Latest: 6 October 2026 final release gate**
-([Phase 7 report](docs/phases/PHASE_7_PRODUCTION_HARDENING.md)). **Not production-ready.**
+**Latest: 6 October 2026, Phase 8: usernames, people search and suggestions**
+([Phase 8 report](docs/phases/PHASE_8_PROFILE_AND_SEARCH.md)). Spec sections 10 and 23 are
+implemented and tested on the server and in app component tests, but not on a device. The
+release gate below, from the [Phase 7 report](docs/phases/PHASE_7_PRODUCTION_HARDENING.md), is
+unchanged. **Not production-ready.**
 
 - **Fully passing (10 of 30 gates):** 4, 12–15, 18, 19, 21, 24 and 26 (server scope).
   - Server-side:
@@ -26,6 +29,7 @@ Phase reports:
 - [Phase 4: moderation, ads, analytics](docs/phases/PHASE_4_MODERATION_ADS_ANALYTICS.md)
 - [Phase 6: mobile UX](docs/phases/PHASE_6_MOBILE_UX.md)
 - [Phase 7: production hardening](docs/phases/PHASE_7_PRODUCTION_HARDENING.md)
+- [Phase 8: usernames, people search and suggestions](docs/phases/PHASE_8_PROFILE_AND_SEARCH.md)
 
 Deployment: [infra/README.md](infra/README.md). Backups: [docs/BACKUP_AND_RESTORE.md](docs/BACKUP_AND_RESTORE.md).
 

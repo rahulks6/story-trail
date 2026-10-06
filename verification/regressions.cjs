@@ -53,6 +53,8 @@ test('concurrent refresh requests issue only one replacement token pair', async 
     },
     './account-security': {},
     '../../http/errors': { HttpError: class HttpError extends Error {} },
+    '../../db/psql': { DatabaseError: class DatabaseError extends Error {} },
+    '../users/username-policy': { USERNAME_MESSAGES: {} },
     './password': {},
     './tokens': { verifyRefreshToken: () => ({ jti: 'old' }), issueAccessToken: () => 'access', issueRefreshToken: () => 'refresh' },
   });

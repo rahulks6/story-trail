@@ -3,7 +3,8 @@ export function profileUsernameFromPath(path: string): string | null {
 }
 
 export type DeepLinkTarget =
-  | { kind: "profile"; username: string }
+  // `userId` (from ?id=) finds the person even after a rename; the name is the fallback.
+  | { kind: "profile"; username: string; userId?: string }
   | { kind: "story"; storyId: string }
   | { kind: "conversation"; conversationId: string }
   | { kind: "activity" }
@@ -19,7 +20,10 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 export function deepLinkTarget(path: string): DeepLinkTarget | null {
   const [rawPath = "", rawQuery = ""] = path.replace(/^\/+/, "").split("?");
   const username = profileUsernameFromPath(rawPath);
-  if (username) return { kind: "profile", username };
+  if (username) {
+    const userId = new URLSearchParams(rawQuery).get("id")?.toLowerCase();
+    return { kind: "profile", username, ...(userId && UUID_RE.test(userId) ? { userId } : {}) };
+  }
   const story = /^story\/([^/]+)\/?$/i.exec(rawPath)?.[1];
   if (story) return UUID_RE.test(story) ? { kind: "story", storyId: story.toLowerCase() } : null;
   // Push notifications: a DM thread, or the Activity tab.

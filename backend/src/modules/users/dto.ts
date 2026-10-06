@@ -4,6 +4,7 @@ import { USERNAME_RE } from "../../shared/validation";
 
 const MAX_BIO_LENGTH = 150;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const RESERVED_USERNAMES = new Set(["admin", "katkee", "moderator", "support", "superadmin"]);
 
 export function parseUpdateProfileInput(body: unknown): UpdateProfileInput {
   const errors: Record<string, string> = {};
@@ -12,9 +13,9 @@ export function parseUpdateProfileInput(body: unknown): UpdateProfileInput {
 
   if (b.username !== undefined) {
     const username = typeof b.username === "string" ? b.username.trim().toLowerCase() : "";
-    // The full username rules apply when the name changes (profiles.service.ts), so a name
-    // chosen before those rules can still be saved unchanged with other edits.
-    if (!USERNAME_RE.test(username)) {
+    // Format and the original reserved names, as always. The full username rules apply when
+    // the name changes (profiles.service.ts), so a name chosen before them still saves unchanged.
+    if (!USERNAME_RE.test(username) || RESERVED_USERNAMES.has(username)) {
       errors.username = "Username must be 3-30 characters using lowercase letters, numbers, dots or underscores.";
     } else {
       result.username = username;
