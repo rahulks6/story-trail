@@ -13,5 +13,10 @@ export function parseUsernameParam(value: string | undefined): string {
 
 /** A substring pattern for ILIKE that treats %, _ and \ in user input literally. */
 export function containsPattern(term: string): string {
-  return `%${term.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+  return `%${escapeLike(term)}%`;
+}
+
+/** `term` with %, _ and \ escaped, for building other ILIKE patterns (prefix, word start). */
+export function escapeLike(term: string): string {
+  return term.replace(/[\\%_]/g, (c) => `\\${c}`);
 }

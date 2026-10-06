@@ -73,6 +73,19 @@ export function parseSearchQuery(q: string | undefined): string {
   return term;
 }
 
+/** People search covers everyone by default, or only people the searcher follows. */
+export function parseSearchScope(scope: string | undefined): "all" | "following" {
+  if (scope === undefined || scope === "all" || scope === "following") return scope ?? "all";
+  throw new ValidationError({ scope: "scope must be all or following." });
+}
+
+export function parseSuggestionLimit(raw: string | undefined): number {
+  if (raw === undefined) return 20;
+  const limit = Number(raw);
+  if (!Number.isInteger(limit) || limit < 1 || limit > 50) throw new ValidationError({ limit: "limit must be 1-50." });
+  return limit;
+}
+
 export function parseDeleteAccountInput(body: unknown): { password: string } {
   const b = (typeof body === "object" && body !== null ? body : {}) as Record<string, unknown>;
   const password = typeof b.password === "string" ? b.password : "";
