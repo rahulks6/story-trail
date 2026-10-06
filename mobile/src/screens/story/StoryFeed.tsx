@@ -21,6 +21,7 @@ import { useReducedMotion } from "../../hooks/useReducedMotion";
 import { SponsoredStory } from "../ads/SponsoredStory";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
 import type { SponsoredPlacement } from "../../api/ads";
+import { Avatar } from "../../components/Avatar";
 
 const PHOTO_DURATION_MS = 5000;
 const HOLD_DELAY_MS = 250;
@@ -644,8 +645,8 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       </View>
 
       <View style={[styles.footer, { bottom: spacing.xl + insets.bottom }]}>
-        <View style={styles.avatarPlaceholder}>
-          <Text style={styles.avatarInitial}>{(currentUsername ?? "?").charAt(0).toUpperCase()}</Text>
+        <View style={styles.avatarRing}>
+          <Avatar username={currentUsername ?? ""} size={30} />
         </View>
         <View style={styles.footerText}>
           <Text style={styles.username}>@{currentUsername}</Text>
@@ -755,7 +756,8 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     alignItems: "center",
   },
-  avatarPlaceholder: {
+  // The creator's photo inside the accent Story ring.
+  avatarRing: {
     width: 36,
     height: 36,
     borderRadius: radii.pill,
@@ -765,7 +767,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: colors.surface,
   },
-  avatarInitial: { color: colors.textPrimary, fontWeight: "700" },
   footerText: { flex: 1 },
   username: { color: colors.textPrimary, fontWeight: "700" },
   caption: { color: colors.textPrimary, marginTop: 2 },

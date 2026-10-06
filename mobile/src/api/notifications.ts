@@ -12,7 +12,7 @@ export interface NotificationRecord {
   type: NotificationType;
   createdAt: string;
   readAt: string | null;
-  actor: { id: string; username: string; displayName: string } | null;
+  actor: { id: string; username: string; displayName: string; avatarMediaId?: string | null } | null;
   story: { id: string; mediaId: string } | null;
   comment: { id: string; body: string } | null;
   followRequest: { id: string; status: string } | null;

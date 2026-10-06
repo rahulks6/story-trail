@@ -102,6 +102,7 @@ interface FollowRow {
   id: string;
   username: string;
   displayName: string;
+  avatarMediaId: string | null;
   bio: string;
   isPrivate: boolean;
   followedAt: string;
@@ -112,6 +113,7 @@ function mapFollowRow(row: Row): FollowRow {
     id: row.id as string,
     username: row.username as string,
     displayName: row.display_name as string,
+    avatarMediaId: (row.avatar_media_id as string | null) ?? null,
     bio: row.bio as string,
     isPrivate: row.is_private === "t",
     followedAt: row.followed_at as string,
@@ -120,7 +122,7 @@ function mapFollowRow(row: Row): FollowRow {
 
 export async function listFollowers(userId: string, limit: number, offset: number): Promise<FollowRow[]> {
   const rows = await query(
-    `SELECT u.id, u.username, u.display_name, u.bio, u.is_private, f.created_at AS followed_at
+    `SELECT u.id, u.username, u.display_name, u.avatar_media_id, u.bio, u.is_private, f.created_at AS followed_at
      FROM follows f
      JOIN users u ON u.id = f.follower_id
      WHERE f.followee_id = :'user_id' AND u.deleted_at IS NULL
@@ -133,7 +135,7 @@ export async function listFollowers(userId: string, limit: number, offset: numbe
 
 export async function listFollowing(userId: string, limit: number, offset: number): Promise<FollowRow[]> {
   const rows = await query(
-    `SELECT u.id, u.username, u.display_name, u.bio, u.is_private, f.created_at AS followed_at
+    `SELECT u.id, u.username, u.display_name, u.avatar_media_id, u.bio, u.is_private, f.created_at AS followed_at
      FROM follows f
      JOIN users u ON u.id = f.followee_id
      WHERE f.follower_id = :'user_id' AND u.deleted_at IS NULL
@@ -210,6 +212,7 @@ interface IncomingRequestRow {
   requesterId: string;
   username: string;
   displayName: string;
+  avatarMediaId: string | null;
   createdAt: string;
 }
 
@@ -219,7 +222,7 @@ export async function listIncomingRequests(
   offset: number,
 ): Promise<IncomingRequestRow[]> {
   const rows = await query(
-    `SELECT fr.id AS request_id, fr.requester_id, u.username, u.display_name, fr.created_at
+    `SELECT fr.id AS request_id, fr.requester_id, u.username, u.display_name, u.avatar_media_id, fr.created_at
      FROM follow_requests fr
      JOIN users u ON u.id = fr.requester_id
      WHERE fr.target_id = :'target_id' AND fr.status = 'pending' AND u.deleted_at IS NULL
@@ -232,6 +235,7 @@ export async function listIncomingRequests(
     requesterId: row.requester_id as string,
     username: row.username as string,
     displayName: row.display_name as string,
+    avatarMediaId: (row.avatar_media_id as string | null) ?? null,
     createdAt: row.created_at as string,
   }));
 }
@@ -299,12 +303,13 @@ interface MutedUserRow {
   id: string;
   username: string;
   displayName: string;
+  avatarMediaId: string | null;
   mutedAt: string;
 }
 
 export async function listMuted(muterId: string, limit: number, offset: number): Promise<MutedUserRow[]> {
   const rows = await query(
-    `SELECT u.id, u.username, u.display_name, m.created_at AS muted_at
+    `SELECT u.id, u.username, u.display_name, u.avatar_media_id, m.created_at AS muted_at
      FROM mutes m
      JOIN users u ON u.id = m.muted_id
      WHERE m.muter_id = :'muter_id' AND u.deleted_at IS NULL
@@ -316,6 +321,7 @@ export async function listMuted(muterId: string, limit: number, offset: number):
     id: row.id as string,
     username: row.username as string,
     displayName: row.display_name as string,
+    avatarMediaId: (row.avatar_media_id as string | null) ?? null,
     mutedAt: row.muted_at as string,
   }));
 }

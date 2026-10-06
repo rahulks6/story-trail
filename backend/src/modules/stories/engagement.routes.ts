@@ -12,6 +12,7 @@ function toPublicComment(comment: Awaited<ReturnType<typeof engagementService.cr
     userId: comment.userId,
     username: comment.username,
     displayName: comment.displayName,
+    avatarMediaId: comment.avatarMediaId,
     body: comment.body,
     createdAt: comment.createdAt,
   };

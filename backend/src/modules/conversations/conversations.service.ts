@@ -23,7 +23,7 @@ async function assertNotBlocked(userIdA: string, userIdB: string): Promise<void>
 export interface ConversationWithOtherUser {
   id: string;
   createdAt: string;
-  otherUser: { id: string; username: string; displayName: string };
+  otherUser: { id: string; username: string; displayName: string; avatarMediaId: string | null };
 }
 
 /** Find-or-create the 1:1 conversation with `targetUsername`, denied the same way a blocked profile 404s. */
@@ -39,7 +39,7 @@ export async function openConversationWith(viewerId: string, targetUsername: str
   return {
     id: conversation.id,
     createdAt: conversation.createdAt,
-    otherUser: { id: target.id, username: target.username, displayName: target.displayName },
+    otherUser: { id: target.id, username: target.username, displayName: target.displayName, avatarMediaId: target.avatarMediaId },
   };
 }
 
@@ -74,7 +74,7 @@ export async function getConversation(viewerId: string, conversationId: string):
   return {
     id: conversation.id,
     createdAt: conversation.createdAt,
-    otherUser: { id: other.id, username: other.username, displayName: other.displayName },
+    otherUser: { id: other.id, username: other.username, displayName: other.displayName, avatarMediaId: other.avatarMediaId },
   };
 }
 

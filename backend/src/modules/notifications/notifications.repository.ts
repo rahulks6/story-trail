@@ -7,7 +7,7 @@ export interface NotificationRecord {
   type: NotificationType;
   createdAt: string;
   readAt: string | null;
-  actor: { id: string; username: string; displayName: string } | null;
+  actor: { id: string; username: string; displayName: string; avatarMediaId: string | null } | null;
   story: { id: string; mediaId: string } | null;
   comment: { id: string; body: string } | null;
   followRequest: { id: string; status: string } | null;
@@ -19,7 +19,9 @@ function mapRow(row: Row): NotificationRecord {
     type: row.type as NotificationType,
     createdAt: row.created_at as string,
     readAt: (row.read_at as string | null) ?? null,
-    actor: row.actor_id ? { id: row.actor_id as string, username: row.actor_username as string, displayName: row.actor_display_name as string } : null,
+    actor: row.actor_id
+      ? { id: row.actor_id as string, username: row.actor_username as string, displayName: row.actor_display_name as string, avatarMediaId: (row.actor_avatar_media_id as string | null) ?? null }
+      : null,
     story: row.story_id ? { id: row.story_id as string, mediaId: row.story_media_id as string } : null,
     comment: row.comment_id ? { id: row.comment_id as string, body: row.comment_body as string } : null,
     followRequest: row.follow_request_id ? { id: row.follow_request_id as string, status: row.follow_request_status as string } : null,
@@ -28,7 +30,7 @@ function mapRow(row: Row): NotificationRecord {
 
 const SELECT_COLUMNS = `
   n.id, n.type, n.created_at, n.read_at,
-  a.id AS actor_id, a.username AS actor_username, a.display_name AS actor_display_name,
+  a.id AS actor_id, a.username AS actor_username, a.display_name AS actor_display_name, a.avatar_media_id AS actor_avatar_media_id,
   s.id AS story_id, s.media_id AS story_media_id,
   c.id AS comment_id, c.body AS comment_body,
   fr.id AS follow_request_id, fr.status AS follow_request_status

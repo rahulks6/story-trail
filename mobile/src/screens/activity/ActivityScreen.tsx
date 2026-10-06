@@ -17,6 +17,7 @@ import {
   type NotificationRecord,
 } from "../../api/notifications";
 import { getStoryOwnerUsername } from "../../api/stories";
+import { Avatar } from "../../components/Avatar";
 import { EmptyState } from "../../components/EmptyState";
 import { Banner, Button } from "../../components/Form";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
@@ -81,6 +82,7 @@ interface GroupedLikeRow {
   unreadIds: string[];
   storyId: string;
   actorNames: string[]; // up to 2, most recent first
+  firstActor: NotificationRecord["actor"];
   totalCount: number;
   createdAt: string;
   anyUnread: boolean;
@@ -137,6 +139,7 @@ function groupNotifications(notifications: NotificationRecord[]): ActivityRow[] 
         unreadIds: notification.readAt === null ? [notification.id] : [],
         storyId,
         actorNames: [actorName],
+        firstActor: notification.actor,
         totalCount: 1,
         createdAt: notification.createdAt,
         anyUnread: notification.readAt === null,
@@ -398,7 +401,7 @@ export function ActivityScreen(): React.JSX.Element {
           onEndReached={() => void loadMore()}
           renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
           renderItem={({ item: row }) => {
-            const avatarLetter = (row.kind === "grouped-like" ? row.actorNames[0] : row.notification.actor?.displayName) ?? "?";
+            const actor = row.kind === "grouped-like" ? row.firstActor : row.notification.actor;
             const message = row.kind === "grouped-like" ? messageForGroup(row) : messageFor(row.notification);
             const createdAt = row.kind === "grouped-like" ? row.createdAt : row.notification.createdAt;
             const unread = row.kind === "grouped-like" ? row.anyUnread : row.notification.readAt === null;
@@ -410,9 +413,7 @@ export function ActivityScreen(): React.JSX.Element {
                 accessibilityRole="button"
                 accessibilityLabel={[message.replace(/\.$/, ""), ago, unread ? "Unread" : ""].filter(Boolean).join(". ")}
               >
-                <View style={styles.avatarPlaceholder}>
-                  <Text style={styles.avatarInitial}>{avatarLetter.charAt(0).toUpperCase()}</Text>
-                </View>
+                <Avatar username={actor?.username ?? ""} displayName={actor?.displayName ?? "?"} avatarMediaId={actor ? actor.avatarMediaId : null} />
                 <View style={styles.rowText}>
                   <Text style={typography.body} numberOfLines={2}>
                     {message}
@@ -475,15 +476,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
   },
-  avatarPlaceholder: {
-    width: 44,
-    height: 44,
-    borderRadius: radii.pill,
-    backgroundColor: colors.surfaceElevated,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarInitial: { color: colors.textPrimary, fontWeight: "700" },
   rowText: { flex: 1, gap: 2 },
   unreadDot: {
     width: 8,

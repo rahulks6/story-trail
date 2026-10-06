@@ -11,6 +11,7 @@ import { askForPushOnce } from "../../push/usePushRegistration";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { listConversations, type ConversationSummary } from "../../api/conversations";
 import { EmptyState } from "../../components/EmptyState";
+import { Avatar } from "../../components/Avatar";
 
 function previewText(conversation: ConversationSummary, myUserId: string | undefined): string {
   const lastMessage = conversation.lastMessage;
@@ -152,9 +153,7 @@ export function DMInboxScreen(): React.JSX.Element {
           accessibilityRole="button"
           accessibilityLabel={`${item.otherUser.displayName}${item.unread ? ", unread" : ""}`}
         >
-          <View style={styles.avatarPlaceholder}>
-            <Text style={styles.avatarInitial}>{item.otherUser.displayName.charAt(0).toUpperCase()}</Text>
-          </View>
+          <Avatar username={item.otherUser.username} displayName={item.otherUser.displayName} avatarMediaId={item.otherUser.avatarMediaId} size={48} />
           <View style={styles.rowText}>
             <Text style={typography.bodyStrong}>{item.otherUser.displayName}</Text>
             <Text style={[typography.caption, item.unread && styles.unreadPreview]} numberOfLines={1}>
@@ -192,15 +191,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
   },
-  avatarPlaceholder: {
-    width: 48,
-    height: 48,
-    borderRadius: radii.pill,
-    backgroundColor: colors.surfaceElevated,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarInitial: { color: colors.textPrimary, fontWeight: "700", fontSize: 18 },
   rowText: { flex: 1, gap: 2 },
   unreadPreview: { color: colors.textPrimary, fontWeight: "600" },
   unreadDot: {

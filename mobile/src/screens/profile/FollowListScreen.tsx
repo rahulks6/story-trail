@@ -3,11 +3,12 @@ import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from "
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../navigation/types";
-import { colors, radii, spacing, typography } from "../../theme";
+import { colors, spacing, typography } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { getFollowers, getFollowing, type FollowedUser } from "../../api/users";
 import { ApiError } from "../../api/client";
 import { EmptyState } from "../../components/EmptyState";
+import { Avatar } from "../../components/Avatar";
 
 type Props = NativeStackScreenProps<RootStackParamList, "FollowList">;
 
@@ -111,9 +112,7 @@ export function FollowListScreen({ route }: Props): React.JSX.Element {
           style={styles.row}
           onPress={() => navigation.navigate("Main", { screen: "Search", params: { screen: "UserProfile", params: { username: item.username } } })}
         >
-          <View style={styles.avatarPlaceholder}>
-            <Text style={styles.avatarInitial}>{item.displayName.charAt(0).toUpperCase()}</Text>
-          </View>
+          <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} />
           <View style={styles.rowText}>
             <Text style={typography.bodyStrong}>{item.displayName}</Text>
             <Text style={typography.caption}>@{item.username}</Text>
@@ -137,14 +136,5 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.border,
   },
-  avatarPlaceholder: {
-    width: 44,
-    height: 44,
-    borderRadius: radii.pill,
-    backgroundColor: colors.surfaceElevated,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarInitial: { color: colors.textPrimary, fontWeight: "700" },
   rowText: { gap: 2 },
 });

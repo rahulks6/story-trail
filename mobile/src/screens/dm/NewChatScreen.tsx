@@ -10,6 +10,7 @@ import { openConversation } from "../../api/conversations";
 import { ApiError } from "../../api/client";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { EmptyState } from "../../components/EmptyState";
+import { Avatar } from "../../components/Avatar";
 
 type Props = NativeStackScreenProps<DMStackParamList, "NewChat">;
 
@@ -94,9 +95,7 @@ export function NewChatScreen({ navigation }: Props): React.JSX.Element {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <Pressable style={styles.row} onPress={() => void onSelect(item)} disabled={opening !== null}>
-              <View style={styles.avatarPlaceholder}>
-                <Text style={styles.avatarInitial}>{item.displayName.charAt(0).toUpperCase()}</Text>
-              </View>
+              <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} />
               <View style={styles.rowText}>
                 <Text style={typography.bodyStrong}>{item.displayName}</Text>
                 <Text style={typography.caption}>@{item.username}</Text>
@@ -135,14 +134,5 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.border,
   },
-  avatarPlaceholder: {
-    width: 44,
-    height: 44,
-    borderRadius: radii.pill,
-    backgroundColor: colors.surfaceElevated,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarInitial: { color: colors.textPrimary, fontWeight: "700" },
   rowText: { flex: 1, gap: 2 },
 });

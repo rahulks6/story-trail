@@ -12,6 +12,7 @@ import {
   type IncomingFollowRequest,
 } from "../../api/users";
 import { EmptyState } from "../../components/EmptyState";
+import { Avatar } from "../../components/Avatar";
 
 const PAGE_SIZE = 30;
 
@@ -82,9 +83,7 @@ export function FollowRequestsScreen(): React.JSX.Element {
               style={styles.identity}
               onPress={() => navigation.navigate("Main", { screen: "Search", params: { screen: "UserProfile", params: { username: item.username } } })}
             >
-              <View style={styles.avatarPlaceholder}>
-                <Text style={styles.avatarInitial}>{item.displayName.charAt(0).toUpperCase()}</Text>
-              </View>
+              <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} />
               <View style={styles.rowText}>
                 <Text style={typography.bodyStrong}>{item.displayName}</Text>
                 <Text style={typography.caption}>@{item.username}</Text>
@@ -123,15 +122,6 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   identity: { flexDirection: "row", alignItems: "center", gap: spacing.sm, flex: 1 },
-  avatarPlaceholder: {
-    width: 44,
-    height: 44,
-    borderRadius: radii.pill,
-    backgroundColor: colors.surfaceElevated,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarInitial: { color: colors.textPrimary, fontWeight: "700" },
   rowText: { gap: 2, flexShrink: 1 },
   actions: { flexDirection: "row", gap: spacing.xs },
   declineButton: {

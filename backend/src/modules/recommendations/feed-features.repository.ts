@@ -1,7 +1,7 @@
 import {query} from '../../db/psql';
 import type {Audience} from '../stories/stories.repository';
 export interface FeedFeatures {
- owner:{id:string;username:string;displayName:string};isFollowing:boolean;
+ owner:{id:string;username:string;displayName:string;avatarMediaId:string|null};isFollowing:boolean;
  stories:Array<{id:string;mediaId:string;caption:string;audience:Audience;createdAt:string;expiresAt:string}>;
  likes:number;comments:number;shares:number;views:number;profileVisits:number;replies:number;days:number;qualified:number;completions:number;continues:number;impressions:number;lifetime:number;
 }
@@ -9,7 +9,7 @@ export interface FeedFeatures {
 export async function feedFeatures(viewer:string,ids:string[]):Promise<FeedFeatures[]> {
  if(!ids.length)return [];
  const rows=await query(`WITH wanted AS(SELECT value::uuid AS id FROM jsonb_array_elements_text(:'ids'::jsonb)),
- owners AS(SELECT u.id,u.username,u.display_name,EXISTS(SELECT 1 FROM follows f WHERE f.follower_id=:'viewer' AND f.followee_id=u.id) AS following
+ owners AS(SELECT u.id,u.username,u.display_name,u.avatar_media_id,EXISTS(SELECT 1 FROM follows f WHERE f.follower_id=:'viewer' AND f.followee_id=u.id) AS following
  FROM users u JOIN wanted w ON w.id=u.id WHERE u.deleted_at IS NULL AND u.is_active
  AND (u.id=:'viewer' OR ((NOT u.is_private OR EXISTS(SELECT 1 FROM follows f WHERE f.follower_id=:'viewer' AND f.followee_id=u.id))
  AND NOT EXISTS(SELECT 1 FROM blocks b WHERE (b.blocker_id=:'viewer' AND b.blocked_id=u.id) OR (b.blocker_id=u.id AND b.blocked_id=:'viewer'))
@@ -32,7 +32,7 @@ export async function feedFeatures(viewer:string,ids:string[]):Promise<FeedFeatu
  count(*) FILTER(WHERE e.event_type IN ('creator_impression','story_impression')) AS lifetime
  FROM recommendation_events e JOIN owners o ON o.id=e.creator_id GROUP BY e.creator_id),
  replies AS(SELECT s.owner_id,count(*) AS n FROM story_comments c JOIN stories s ON s.id=c.story_id JOIN owners o ON o.id=s.owner_id WHERE c.user_id=:'viewer' AND c.deleted_at IS NULL GROUP BY s.owner_id)
- SELECT jsonb_build_object('owner',jsonb_build_object('id',o.id,'username',o.username,'displayName',o.display_name),'isFollowing',o.following,'stories',s.stories,
+ SELECT jsonb_build_object('owner',jsonb_build_object('id',o.id,'username',o.username,'displayName',o.display_name,'avatarMediaId',o.avatar_media_id),'isFollowing',o.following,'stories',s.stories,
  'likes',coalesce(q.likes,0),'comments',coalesce(q.comments,0),'shares',coalesce(q.shares,0),'views',coalesce(q.views,0),
  'profileVisits',coalesce(a.visits,0),'days',coalesce(a.days,0),'qualified',coalesce(a.qualified,0),'completions',coalesce(a.completions,0),'continues',coalesce(a.continues,0),'impressions',coalesce(a.impressions,0),'lifetime',coalesce(a.lifetime,0),'replies',coalesce(r.n,0)) AS data
  FROM owners o JOIN summaries s ON s.owner_id=o.id LEFT JOIN quality q ON q.owner_id=o.id LEFT JOIN activity a ON a.creator_id=o.id LEFT JOIN replies r ON r.owner_id=o.id`,{viewer,ids:JSON.stringify(ids)});

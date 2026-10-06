@@ -29,6 +29,7 @@ export interface SearchResult {
   id: string;
   username: string;
   displayName: string;
+  avatarMediaId?: string | null;
   bio: string;
 }
 
@@ -103,6 +104,7 @@ export interface MutedUser {
   id: string;
   username: string;
   displayName: string;
+  avatarMediaId?: string | null;
   mutedAt: string;
 }
 
@@ -121,6 +123,7 @@ export interface FollowedUser {
   id: string;
   username: string;
   displayName: string;
+  avatarMediaId?: string | null;
   bio: string;
   isPrivate: boolean;
   followedAt: string;
@@ -131,6 +134,7 @@ export interface IncomingFollowRequest {
   requesterId: string;
   username: string;
   displayName: string;
+  avatarMediaId?: string | null;
   createdAt: string;
 }
 

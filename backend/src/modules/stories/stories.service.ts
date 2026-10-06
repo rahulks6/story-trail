@@ -336,7 +336,7 @@ export async function listUserActiveStories(username: string, viewerId: string):
 }
 
 export interface FeedEntry {
-  owner: { id: string; username: string; displayName: string };
+  owner: { id: string; username: string; displayName: string; avatarMediaId: string | null };
   stories: PublicStory[];
 }
 
@@ -348,7 +348,7 @@ export async function getFollowingFeed(viewerId: string): Promise<FeedEntry[]> {
     if (!owner || !owner.isActive) continue;
     const stories = await storiesRepo.listActiveStoriesForOwner(ownerId);
     entries.push({
-      owner: { id: owner.id, username: owner.username, displayName: owner.displayName },
+      owner: { id: owner.id, username: owner.username, displayName: owner.displayName, avatarMediaId: owner.avatarMediaId },
       stories: await toPublicStories(stories, viewerId),
     });
   }
@@ -412,6 +412,7 @@ export interface StoryViewer {
   id: string;
   username: string;
   displayName: string;
+  avatarMediaId: string | null;
   viewedAt: string;
 }
 

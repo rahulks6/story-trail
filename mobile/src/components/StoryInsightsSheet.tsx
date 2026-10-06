@@ -4,6 +4,7 @@ import { colors, radii, spacing, typography } from "../theme";
 import { timeAgo } from "../utils/serverTime";
 import { useAuth } from "../state/AuthContext";
 import { getStoryInsights, getStoryViewers, type StoryInsights, type StoryViewer } from "../api/stories";
+import { Avatar } from "./Avatar";
 
 interface Props {
   visible: boolean;
@@ -91,9 +92,7 @@ export function StoryInsightsSheet({ visible, storyId, onClose }: Props): React.
               style={styles.list}
               renderItem={({ item }) => (
                 <View style={styles.row}>
-                  <View style={styles.avatar}>
-                    <Text style={styles.avatarInitial}>{item.displayName.charAt(0).toUpperCase()}</Text>
-                  </View>
+                  <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} size={28} />
                   <Text style={typography.bodyStrong}>@{item.username}</Text>
                   <Text style={[typography.caption, styles.viewedAt]}>{timeAgo(item.viewedAt)}</Text>
                 </View>
@@ -132,14 +131,5 @@ const styles = StyleSheet.create({
   viewersHeader: { marginTop: spacing.sm, marginBottom: spacing.xs },
   list: { maxHeight: 280 },
   row: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.xs },
-  avatar: {
-    width: 28,
-    height: 28,
-    borderRadius: radii.pill,
-    backgroundColor: colors.surfaceElevated,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarInitial: { color: colors.textPrimary, fontSize: 12, fontWeight: "700" },
   viewedAt: { marginLeft: "auto", color: colors.textDisabled },
 });

@@ -236,7 +236,7 @@ export async function getReadState(conversationId: string, userId: string): Prom
 
 export interface ConversationSummary {
   id: string;
-  otherUser: { id: string; username: string; displayName: string };
+  otherUser: { id: string; username: string; displayName: string; avatarMediaId: string | null };
   lastMessage: {
     id: string;
     senderId: string;
@@ -255,6 +255,7 @@ function mapConversationSummaryRow(row: Row): ConversationSummary {
       id: row.other_user_id as string,
       username: row.other_username as string,
       displayName: row.other_display_name as string,
+      avatarMediaId: (row.other_avatar_media_id as string | null) ?? null,
     },
     lastMessage: row.last_message_id
       ? {
@@ -274,7 +275,7 @@ export async function listConversationsForUser(userId: string, limit: number, of
   const rows = await query(
     `SELECT
        c.id, c.created_at,
-       ou.id AS other_user_id, ou.username AS other_username, ou.display_name AS other_display_name,
+       ou.id AS other_user_id, ou.username AS other_username, ou.display_name AS other_display_name, ou.avatar_media_id AS other_avatar_media_id,
        lm.id AS last_message_id, lm.sender_id AS last_message_sender_id, lm.body AS last_message_body,
        lm.shared_story_id AS last_message_shared_story_id, lm.created_at AS last_message_created_at,
        (lm.created_at IS NOT NULL AND lm.created_at > COALESCE(cr.last_read_at, 'epoch')) AS is_unread

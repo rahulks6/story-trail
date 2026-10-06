@@ -6,6 +6,7 @@ export interface CommentRecord {
   userId: string;
   username: string;
   displayName: string;
+  avatarMediaId: string | null;
   body: string;
   createdAt: string;
 }
@@ -17,6 +18,7 @@ function mapRow(row: Row): CommentRecord {
     userId: row.user_id as string,
     username: row.username as string,
     displayName: row.display_name as string,
+    avatarMediaId: (row.avatar_media_id as string | null) ?? null,
     body: row.body as string,
     createdAt: row.created_at as string,
   };
@@ -30,7 +32,7 @@ export async function createComment(storyId: string, userId: string, body: strin
        RETURNING id, story_id, user_id, body, created_at
      )
      SELECT inserted.id, inserted.story_id, inserted.user_id, inserted.body, inserted.created_at,
-            u.username, u.display_name
+            u.username, u.display_name, u.avatar_media_id
      FROM inserted JOIN users u ON u.id = inserted.user_id`,
     { story_id: storyId, user_id: userId, body },
   );
@@ -40,7 +42,7 @@ export async function createComment(storyId: string, userId: string, body: strin
 
 export async function listComments(storyId: string, limit: number, offset: number): Promise<CommentRecord[]> {
   const rows = await query(
-    `SELECT c.id, c.story_id, c.user_id, c.body, c.created_at, u.username, u.display_name
+    `SELECT c.id, c.story_id, c.user_id, c.body, c.created_at, u.username, u.display_name, u.avatar_media_id
      FROM story_comments c
      JOIN users u ON u.id = c.user_id
      WHERE c.story_id = :'story_id' AND c.deleted_at IS NULL AND u.deleted_at IS NULL

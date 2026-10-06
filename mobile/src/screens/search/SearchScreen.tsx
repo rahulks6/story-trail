@@ -10,6 +10,7 @@ import { track } from "../../analytics/analytics";
 import { ApiError } from "../../api/client";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { EmptyState } from "../../components/EmptyState";
+import { Avatar } from "../../components/Avatar";
 
 type Props = NativeStackScreenProps<SearchStackParamList, "SearchHome">;
 
@@ -144,9 +145,7 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
               style={styles.row}
               onPress={() => navigation.navigate("UserProfile", { username: item.username })}
             >
-              <View style={styles.avatarPlaceholder}>
-                <Text style={styles.avatarInitial}>{item.displayName.charAt(0).toUpperCase()}</Text>
-              </View>
+              <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} />
               <View style={styles.rowText}>
                 <Text style={typography.bodyStrong}>{item.displayName}</Text>
                 <Text style={typography.caption}>@{item.username}</Text>
@@ -202,14 +201,5 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.border,
   },
-  avatarPlaceholder: {
-    width: 44,
-    height: 44,
-    borderRadius: radii.pill,
-    backgroundColor: colors.surfaceElevated,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarInitial: { color: colors.textPrimary, fontWeight: "700" },
   rowText: { gap: 2 },
 });

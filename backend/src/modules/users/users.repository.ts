@@ -166,6 +166,7 @@ export interface UserSearchResult {
   id: string;
   username: string;
   displayName: string;
+  avatarMediaId: string | null;
   bio: string;
 }
 
@@ -176,7 +177,7 @@ export async function searchUsers(
   offset: number,
 ): Promise<UserSearchResult[]> {
   const rows = await query(
-    `SELECT u.id, u.username, u.display_name, u.bio
+    `SELECT u.id, u.username, u.display_name, u.avatar_media_id, u.bio
      FROM users u
      WHERE u.deleted_at IS NULL AND u.is_active
        AND u.id <> :'exclude_id'
@@ -194,6 +195,7 @@ export async function searchUsers(
     id: row.id as string,
     username: row.username as string,
     displayName: row.display_name as string,
+    avatarMediaId: (row.avatar_media_id as string | null) ?? null,
     bio: row.bio as string,
   }));
 }

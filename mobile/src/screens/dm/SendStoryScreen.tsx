@@ -10,6 +10,7 @@ import { newClientMessageId, openConversation, sendMessage } from "../../api/con
 import { ApiError } from "../../api/client";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { EmptyState } from "../../components/EmptyState";
+import { Avatar } from "../../components/Avatar";
 
 type Props = NativeStackScreenProps<DMStackParamList, "SendStory">;
 
@@ -101,9 +102,7 @@ export function SendStoryScreen({ route, navigation }: Props): React.JSX.Element
             const busy = sendingTo === item.username;
             return (
               <Pressable style={styles.row} disabled={sent || busy} onPress={() => void onSendTo(item.username)}>
-                <View style={styles.avatarPlaceholder}>
-                  <Text style={styles.avatarInitial}>{item.displayName.charAt(0).toUpperCase()}</Text>
-                </View>
+                <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} />
                 <View style={styles.rowText}>
                   <Text style={typography.bodyStrong}>{item.displayName}</Text>
                   <Text style={typography.caption}>@{item.username}</Text>
@@ -149,15 +148,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.border,
   },
-  avatarPlaceholder: {
-    width: 44,
-    height: 44,
-    borderRadius: radii.pill,
-    backgroundColor: colors.surfaceElevated,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarInitial: { color: colors.textPrimary, fontWeight: "700" },
   rowText: { flex: 1, gap: 2 },
   sendLabel: { color: colors.accent, fontWeight: "700" },
   sentLabel: { color: colors.textSecondary, fontWeight: "600" },

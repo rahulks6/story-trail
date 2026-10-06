@@ -24,7 +24,7 @@ export interface PublicStory {
 }
 
 export interface FeedEntry {
-  owner: { id: string; username: string; displayName: string };
+  owner: { id: string; username: string; displayName: string; avatarMediaId?: string | null };
   stories: PublicStory[];
 }
 
@@ -119,6 +119,7 @@ export interface StoryViewer {
   id: string;
   username: string;
   displayName: string;
+  avatarMediaId?: string | null;
   viewedAt: string;
 }
 

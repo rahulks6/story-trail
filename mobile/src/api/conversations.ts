@@ -7,7 +7,7 @@ import { apiGet, apiPost } from "./client";
  */
 export interface ConversationSummary {
   id: string;
-  otherUser: { id: string; username: string; displayName: string };
+  otherUser: { id: string; username: string; displayName: string; avatarMediaId?: string | null };
   lastMessage: {
     id: string;
     senderId: string;
@@ -37,7 +37,7 @@ export interface Message {
 export interface ConversationWithOtherUser {
   id: string;
   createdAt: string;
-  otherUser: { id: string; username: string; displayName: string };
+  otherUser: { id: string; username: string; displayName: string; avatarMediaId?: string | null };
 }
 
 export function openConversation(username: string, accessToken: string): Promise<{ conversation: ConversationWithOtherUser }> {

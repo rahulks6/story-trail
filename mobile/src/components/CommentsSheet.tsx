@@ -15,6 +15,7 @@ import { deleteComment, listComments, postComment, type Comment } from "../api/e
 import { ApiError } from "../api/client";
 import { ReportSheet } from "./ReportSheet";
 import { KeyboardAvoider } from "./KeyboardAvoider";
+import { Avatar } from "./Avatar";
 
 interface Props {
   visible: boolean;
@@ -108,9 +109,7 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
               const canDelete = item.userId === user?.id || storyOwnerId === user?.id;
               return (
                 <View style={styles.row}>
-                  <View style={styles.avatar}>
-                    <Text style={styles.avatarInitial}>{item.displayName.charAt(0).toUpperCase()}</Text>
-                  </View>
+                  <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} size={28} />
                   <View style={styles.rowBody}>
                     <Text style={typography.bodyStrong}>
                       @{item.username} <Text style={typography.body}>{item.body}</Text>
@@ -178,15 +177,6 @@ const styles = StyleSheet.create({
   empty: { textAlign: "center", marginVertical: spacing.lg },
   list: { maxHeight: 320 },
   row: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.xs },
-  avatar: {
-    width: 28,
-    height: 28,
-    borderRadius: radii.pill,
-    backgroundColor: colors.surfaceElevated,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarInitial: { color: colors.textPrimary, fontSize: 12, fontWeight: "700" },
   rowBody: { flex: 1 },
   deleteLabel: { color: colors.danger, fontSize: 12 },
   reportLabel: { color: colors.textDisabled, fontSize: 12, marginLeft: spacing.sm },

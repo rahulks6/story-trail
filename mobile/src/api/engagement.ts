@@ -30,6 +30,7 @@ export interface Comment {
   userId: string;
   username: string;
   displayName: string;
+  avatarMediaId?: string | null;
   body: string;
   createdAt: string;
 }
