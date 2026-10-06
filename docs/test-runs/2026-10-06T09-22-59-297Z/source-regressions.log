@@ -1,0 +1,695 @@
+TAP version 13
+# Subtest: every tappable control has a role, and icon-only ones a label
+ok 1 - every tappable control has a role, and icon-only ones a label
+  ---
+  duration_ms: 28.044328
+  type: 'test'
+  ...
+# Subtest: the check is not vacuous
+ok 2 - the check is not vacuous
+  ---
+  duration_ms: 8.767844
+  type: 'test'
+  ...
+# Subtest: profile links keep working and normalize case
+ok 3 - profile links keep working and normalize case
+  ---
+  duration_ms: 3.107084
+  type: 'test'
+  ...
+# Subtest: story links from the Share sheet resolve, malformed ids are ignored
+ok 4 - story links from the Share sheet resolve, malformed ids are ignored
+  ---
+  duration_ms: 0.575058
+  type: 'test'
+  ...
+# Subtest: push notification links open a DM thread or Activity, and nothing malformed
+ok 5 - push notification links open a DM thread or Activity, and nothing malformed
+  ---
+  duration_ms: 0.372595
+  type: 'test'
+  ...
+# Subtest: reset links prefill only well-formed email and code
+ok 6 - reset links prefill only well-formed email and code
+  ---
+  duration_ms: 0.451433
+  type: 'test'
+  ...
+# Subtest: device labels never invent detail
+ok 7 - device labels never invent detail
+  ---
+  duration_ms: 0.421412
+  type: 'test'
+  ...
+# Subtest: client password rules mirror the server minimums
+ok 8 - client password rules mirror the server minimums
+  ---
+  duration_ms: 0.2444
+  type: 'test'
+  ...
+# Subtest: placements tell the server the platform, so platform-targeted campaigns can match
+ok 9 - placements tell the server the platform, so platform-targeted campaigns can match
+  ---
+  duration_ms: 4.652859
+  type: 'test'
+  ...
+# Subtest: the organic count is always a whole number the server accepts (0-1000)
+ok 10 - the organic count is always a whole number the server accepts (0-1000)
+  ---
+  duration_ms: 2.943339
+  type: 'test'
+  ...
+# Subtest: the call-to-action opens the advertiser profile for View Profile and only https links otherwise
+ok 11 - the call-to-action opens the advertiser profile for View Profile and only https links otherwise
+  ---
+  duration_ms: 1.473411
+  type: 'test'
+  ...
+# Subtest: ad events are batched, de-duplicated and never block: a hide is sent at once
+ok 12 - ad events are batched, de-duplicated and never block: a hide is sent at once
+  ---
+  duration_ms: 1.613971
+  type: 'test'
+  ...
+# Subtest: events leave in background batches with stable ids, and a lost response resends the same ids
+ok 13 - events leave in background batches with stable ids, and a lost response resends the same ids
+  ---
+  duration_ms: 18.389192
+  type: 'test'
+  ...
+# Subtest: nothing is collected while signed out, and each person's unsent events stay theirs
+ok 14 - nothing is collected while signed out, and each person's unsent events stay theirs
+  ---
+  duration_ms: 20.355652
+  type: 'test'
+  ...
+# Subtest: a batch the server refuses is dropped; offline, rate limits and server errors are retried with backoff
+ok 15 - a batch the server refuses is dropped; offline, rate limits and server errors are retried with backoff
+  ---
+  duration_ms: 15.565264
+  type: 'test'
+  ...
+# Subtest: a new session starts only after 30 minutes away from the app
+ok 16 - a new session starts only after 30 minutes away from the app
+  ---
+  duration_ms: 9.790355
+  type: 'test'
+  ...
+# Subtest: a fatal crash is noted before the app closes and reported once, by the same person, on the next launch
+ok 17 - a fatal crash is noted before the app closes and reported once, by the same person, on the next launch
+  ---
+  duration_ms: 8.70528
+  type: 'test'
+  ...
+# Subtest: events older than the server accepts are dropped, and the phone keeps at most 300
+ok 18 - events older than the server accepts are dropped, and the phone keeps at most 300
+  ---
+  duration_ms: 22.931616
+  type: 'test'
+  ...
+# Subtest: iOS batches say so; a refused or invalid person id never starts collection
+ok 19 - iOS batches say so; a refused or invalid person id never starts collection
+  ---
+  duration_ms: 3.251453
+  type: 'test'
+  ...
+# Subtest: a missing or malformed version is left out rather than sent
+ok 20 - a missing or malformed version is left out rather than sent
+  ---
+  duration_ms: 13.191966
+  type: 'test'
+  ...
+# Subtest: a message is saved before sending and is stored once even when the response is lost
+ok 21 - a message is saved before sending and is stored once even when the response is lost
+  ---
+  duration_ms: 8.807718
+  type: 'test'
+  ...
+# Subtest: a message survives the app being killed mid-send and goes out once after restart
+ok 22 - a message survives the app being killed mid-send and goes out once after restart
+  ---
+  duration_ms: 1.899645
+  type: 'test'
+  ...
+# Subtest: messages keep their order in a conversation; other conversations are not held up
+ok 23 - messages keep their order in a conversation; other conversations are not held up
+  ---
+  duration_ms: 2.815315
+  type: 'test'
+  ...
+# Subtest: a refused message waits for the person, and can be retried or deleted
+ok 24 - a refused message waits for the person, and can be retried or deleted
+  ---
+  duration_ms: 1.806247
+  type: 'test'
+  ...
+# Subtest: backoff grows on repeated outages and a forced flush (app back online) skips it
+ok 25 - backoff grows on repeated outages and a forced flush (app back online) skips it
+  ---
+  duration_ms: 3.627283
+  type: 'test'
+  ...
+# Subtest: nothing is sent, and nothing spins, while signed out
+ok 26 - nothing is sent, and nothing spins, while signed out
+  ---
+  duration_ms: 0.967273
+  type: 'test'
+  ...
+# Subtest: sign-out clears unsent messages from memory and disk, and in-flight work can't write them back
+ok 27 - sign-out clears unsent messages from memory and disk, and in-flight work can't write them back
+  ---
+  duration_ms: 5.346892
+  type: 'test'
+  ...
+# Subtest: accounts are kept apart and input is validated
+ok 28 - accounts are kept apart and input is validated
+  ---
+  duration_ms: 28.769154
+  type: 'test'
+  ...
+# Subtest: API timestamps parse the same in every engine format the server produces
+ok 29 - API timestamps parse the same in every engine format the server produces
+  ---
+  duration_ms: 1.14369
+  type: 'test'
+  ...
+# Subtest: pages merge newest first without duplicates, whatever order they arrive in
+ok 30 - pages merge newest first without duplicates, whatever order they arrive in
+  ---
+  duration_ms: 2.646565
+  type: 'test'
+  ...
+# Subtest: read receipts update only the viewer's own messages, and statuses never go backwards
+ok 31 - read receipts update only the viewer's own messages, and statuses never go backwards
+  ---
+  duration_ms: 0.777069
+  type: 'test'
+  ...
+# Subtest: reads PT_LOAD alignment and the ABI from e_machine
+ok 32 - reads PT_LOAD alignment and the ABI from e_machine
+  ---
+  duration_ms: 4.242008
+  type: 'test'
+  ...
+# Subtest: passes 16 KB aligned 64-bit libraries inside an AAB
+ok 33 - passes 16 KB aligned 64-bit libraries inside an AAB
+  ---
+  duration_ms: 2.968118
+  type: 'test'
+  ...
+# Subtest: fails a 4 KB aligned arm64 library even when its directory name lies about the ABI
+ok 34 - fails a 4 KB aligned arm64 library even when its directory name lies about the ABI
+  ---
+  duration_ms: 1.304719
+  type: 'test'
+  ...
+# Subtest: 32-bit libraries are informational and never fail the gate
+ok 35 - 32-bit libraries are informational and never fail the gate
+  ---
+  duration_ms: 1.011027
+  type: 'test'
+  ...
+# Subtest: an APK with an uncompressed library at an unaligned zip offset fails
+ok 36 - an APK with an uncompressed library at an unaligned zip offset fails
+  ---
+  duration_ms: 0.530446
+  type: 'test'
+  ...
+# Subtest: an APK whose stored library starts on a 16 KB boundary passes
+ok 37 - an APK whose stored library starts on a 16 KB boundary passes
+  ---
+  duration_ms: 0.975226
+  type: 'test'
+  ...
+# Subtest: an archive without any 64-bit library cannot pass
+ok 38 - an archive without any 64-bit library cannot pass
+  ---
+  duration_ms: 0.740597
+  type: 'test'
+  ...
+# Subtest: every text field stays above the keyboard on both platforms
+ok 39 - every text field stays above the keyboard on both platforms
+  ---
+  duration_ms: 16.247436
+  type: 'test'
+  ...
+# Subtest: the check is not vacuous
+ok 40 - the check is not vacuous
+  ---
+  duration_ms: 8.480215
+  type: 'test'
+  ...
+# Subtest: every native capability the app uses is declared on Android and iOS
+ok 41 - every native capability the app uses is declared on Android and iOS
+  ---
+  duration_ms: 3.694377
+  type: 'test'
+  ...
+# Subtest: the check is not vacuous: the app does use these capabilities, and a missing declaration is caught
+ok 42 - the check is not vacuous: the app does use these capabilities, and a missing declaration is caught
+  ---
+  duration_ms: 2.697329
+  type: 'test'
+  ...
+# Subtest: deadline aborts native work even when transport ignores cancellation
+ok 43 - deadline aborts native work even when transport ignores cancellation
+  ---
+  duration_ms: 140.743525
+  type: 'test'
+  ...
+# Subtest: already cancelled request never starts work
+ok 44 - already cancelled request never starts work
+  ---
+  duration_ms: 37.701195
+  type: 'test'
+  ...
+# Subtest: external cancellation interrupts an active request
+ok 45 - external cancellation interrupts an active request
+  ---
+  duration_ms: 41.911664
+  type: 'test'
+  ...
+# Subtest: HTML gateway failure preserves HTTP status and hides response contents
+ok 46 - HTML gateway failure preserves HTTP status and hides response contents
+  ---
+  duration_ms: 48.292053
+  type: 'test'
+  ...
+# Subtest: empty and malformed successes cannot be treated as valid API data
+ok 47 - empty and malformed successes cannot be treated as valid API data
+  ---
+  duration_ms: 75.046641
+  type: 'test'
+  ...
+# Subtest: valid 204 remains supported
+ok 48 - valid 204 remains supported
+  ---
+  duration_ms: 22.886552
+  type: 'test'
+  ...
+# Subtest: validation errors retain field details
+ok 49 - validation errors retain field details
+  ---
+  duration_ms: 16.960764
+  type: 'test'
+  ...
+# Subtest: server failures do not automatically replay a write
+ok 50 - server failures do not automatically replay a write
+  ---
+  duration_ms: 14.476473
+  type: 'test'
+  ...
+# Subtest: Headers and lowercase authorization are refreshed correctly
+ok 51 - Headers and lowercase authorization are refreshed correctly
+  ---
+  duration_ms: 17.643141
+  type: 'test'
+  ...
+# Subtest: configured origin with trailing slash does not create a double-slash API route
+ok 52 - configured origin with trailing slash does not create a double-slash API route
+  ---
+  duration_ms: 19.578372
+  type: 'test'
+  ...
+# Subtest: deadline includes a stalled response body
+ok 53 - deadline includes a stalled response body
+  ---
+  duration_ms: 31.122807
+  type: 'test'
+  ...
+# Subtest: server, app, firebase.json, manifest and brand agree on notifications
+ok 54 - server, app, firebase.json, manifest and brand agree on notifications
+  ---
+  duration_ms: 7.709862
+  type: 'test'
+  ...
+# Subtest: the check is not vacuous: each kind of drift is caught
+ok 55 - the check is not vacuous: each kind of drift is caught
+  ---
+  duration_ms: 8.931325
+  type: 'test'
+  ...
+# Subtest: profile metadata trims and de-duplicates username/interests
+ok 56 - profile metadata trims and de-duplicates username/interests
+  ---
+  duration_ms: 80.152362
+  type: 'test'
+  ...
+# Subtest: profile metadata rejects reserved, malformed and oversized values
+ok 57 - profile metadata rejects reserved, malformed and oversized values
+  ---
+  duration_ms: 25.813447
+  type: 'test'
+  ...
+# Subtest: profile update keeps avatar and profile fields in one repository UPDATE
+ok 58 - profile update keeps avatar and profile fields in one repository UPDATE
+  ---
+  duration_ms: 0.554953
+  type: 'test'
+  ...
+# Subtest: a build without Firebase configuration runs with push quietly off
+ok 59 - a build without Firebase configuration runs with push quietly off
+  ---
+  duration_ms: 3.935098
+  type: 'test'
+  ...
+# Subtest: Android 13+: never prompts by itself, asks once when asked to, then registers an FCM token
+ok 60 - Android 13+: never prompts by itself, asks once when asked to, then registers an FCM token
+  ---
+  duration_ms: 15.413317
+  type: 'test'
+  ...
+# Subtest: Android 13+: a refusal is reported as denied; older Android needs no prompt
+ok 61 - Android 13+: a refusal is reported as denied; older Android needs no prompt
+  ---
+  duration_ms: 1.8986
+  type: 'test'
+  ...
+# Subtest: iOS: asks through Firebase, counts provisional as allowed, registers with platform ios
+ok 62 - iOS: asks through Firebase, counts provisional as allowed, registers with platform ios
+  ---
+  duration_ms: 1.899279
+  type: 'test'
+  ...
+# Subtest: a refreshed token is re-registered for whoever is signed in, and for nobody after sign-out
+ok 63 - a refreshed token is re-registered for whoever is signed in, and for nobody after sign-out
+  ---
+  duration_ms: 9.700673
+  type: 'test'
+  ...
+# Subtest: sign-out unregisters the saved token and deletes it, even offline
+ok 64 - sign-out unregisters the saved token and deletes it, even offline
+  ---
+  duration_ms: 1.165979
+  type: 'test'
+  ...
+# Subtest: only the app's own links in a notification are followed
+ok 65 - only the app's own links in a notification are followed
+  ---
+  duration_ms: 1.303521
+  type: 'test'
+  ...
+# Subtest: connects over wss with a single-use ticket and resyncs on every (re)connect
+ok 66 - connects over wss with a single-use ticket and resyncs on every (re)connect
+  ---
+  duration_ms: 16.888416
+  type: 'test'
+  ...
+# Subtest: forwards known events and ignores unknown or malformed ones
+ok 67 - forwards known events and ignores unknown or malformed ones
+  ---
+  duration_ms: 2.162103
+  type: 'test'
+  ...
+# Subtest: reconnects with growing, capped backoff that resets after a good connection
+ok 68 - reconnects with growing, capped backoff that resets after a good connection
+  ---
+  duration_ms: 4.113066
+  type: 'test'
+  ...
+# Subtest: stops when the sign-in ends (4401) or a ticket is refused, without reconnecting
+ok 69 - stops when the sign-in ends (4401) or a ticket is refused, without reconnecting
+  ---
+  duration_ms: 5.471078
+  type: 'test'
+  ...
+# Subtest: a replaced connection (4409) waits for the next start; an expired token (4001) reconnects with a new ticket
+ok 70 - a replaced connection (4409) waits for the next start; an expired token (4001) reconnects with a new ticket
+  ---
+  duration_ms: 3.021509
+  type: 'test'
+  ...
+# Subtest: detects a dead connection with app-level pings
+ok 71 - detects a dead connection with app-level pings
+  ---
+  duration_ms: 3.158358
+  type: 'test'
+  ...
+# Subtest: gives up on a handshake that never completes
+ok 72 - gives up on a handshake that never completes
+  ---
+  duration_ms: 2.815694
+  type: 'test'
+  ...
+# Subtest: stop() closes cleanly, cancels retries and ignores a ticket that arrives late
+ok 73 - stop() closes cleanly, cancels retries and ignores a ticket that arrives late
+  ---
+  duration_ms: 5.259679
+  type: 'test'
+  ...
+# Parsed 286 TypeScript files
+# Subtest: all TypeScript and TSX sources parse
+ok 74 - all TypeScript and TSX sources parse
+  ---
+  duration_ms: 851.043674
+  type: 'test'
+  ...
+# Subtest: concurrent refresh requests issue only one replacement token pair
+ok 75 - concurrent refresh requests issue only one replacement token pair
+  ---
+  duration_ms: 101.440839
+  type: 'test'
+  ...
+# Subtest: invalid Highlight cover causes no writes
+ok 76 - invalid Highlight cover causes no writes
+  ---
+  duration_ms: 35.216635
+  type: 'test'
+  ...
+# Subtest: authenticated requests retry once with a fresh token and preserve body
+ok 77 - authenticated requests retry once with a fresh token and preserve body
+  ---
+  duration_ms: 27.29416
+  type: 'test'
+  ...
+# Subtest: persistent 401 does not cause an infinite retry
+ok 78 - persistent 401 does not cause an infinite retry
+  ---
+  duration_ms: 24.813107
+  type: 'test'
+  ...
+# Subtest: login failures never enter the refresh flow
+ok 79 - login failures never enter the refresh flow
+  ---
+  duration_ms: 18.055125
+  type: 'test'
+  ...
+# Subtest: Android checks do not require an iOS identifier or project
+ok 80 - Android checks do not require an iOS identifier or project
+  ---
+  duration_ms: 9.462806
+  type: 'test'
+  ...
+# Subtest: iOS checks do not require Android SDK target or signing
+ok 81 - iOS checks do not require Android SDK target or signing
+  ---
+  duration_ms: 3.530855
+  type: 'test'
+  ...
+# Subtest: release rejects placeholder origins, paths and embedded credentials
+ok 82 - release rejects placeholder origins, paths and embedded credentials
+  ---
+  duration_ms: 9.620354
+  type: 'test'
+  ...
+# Subtest: missing signing inputs and development identifiers block release
+ok 83 - missing signing inputs and development identifiers block release
+  ---
+  duration_ms: 3.729056
+  type: 'test'
+  ...
+# Subtest: a renamed copy of the public debug key is rejected
+ok 84 - a renamed copy of the public debug key is rejected
+  ---
+  duration_ms: 3.956681
+  type: 'test'
+  ...
+# Subtest: outdated native target and native identifier mismatch remain blocked
+ok 85 - outdated native target and native identifier mismatch remain blocked
+  ---
+  duration_ms: 2.825437
+  type: 'test'
+  ...
+# Subtest: API 36 alone cannot clear an old framework and AGP
+ok 86 - API 36 alone cannot clear an old framework and AGP
+  ---
+  duration_ms: 2.245058
+  type: 'test'
+  ...
+# Subtest: missing iOS icons and empty privacy declaration block release
+ok 87 - missing iOS icons and empty privacy declaration block release
+  ---
+  duration_ms: 2.536206
+  type: 'test'
+  ...
+# Subtest: policy links and boolean confirmation are required
+ok 88 - policy links and boolean confirmation are required
+  ---
+  duration_ms: 6.476356
+  type: 'test'
+  ...
+# Subtest: one release version: build-config appVersion drives Android and must match Xcode
+ok 89 - one release version: build-config appVersion drives Android and must match Xcode
+  ---
+  duration_ms: 4.054493
+  type: 'test'
+  ...
+# Subtest: draft restore, count and deletion are isolated across accounts and legacy keys
+ok 90 - draft restore, count and deletion are isolated across accounts and legacy keys
+  ---
+  duration_ms: 111.531666
+  type: 'test'
+  ...
+# Subtest: corrupted and mismatched saved drafts cannot enter the editor
+ok 91 - corrupted and mismatched saved drafts cannot enter the editor
+  ---
+  duration_ms: 34.500487
+  type: 'test'
+  ...
+# Subtest: avatar ownership, kind and readiness failures never write profile fields
+ok 92 - avatar ownership, kind and readiness failures never write profile fields
+  ---
+  duration_ms: 170.75788
+  type: 'test'
+  ...
+# Subtest: valid profile and avatar commit together; explicit null removes avatar
+ok 93 - valid profile and avatar commit together; explicit null removes avatar
+  ---
+  duration_ms: 31.423802
+  type: 'test'
+  ...
+# Subtest: username conflicts are controlled without hiding unrelated database failures
+ok 94 - username conflicts are controlled without hiding unrelated database failures
+  ---
+  duration_ms: 67.024651
+  type: 'test'
+  ...
+# Subtest: bios go through the link policy before anything is written
+ok 95 - bios go through the link policy before anything is written
+  ---
+  duration_ms: 50.609108
+  type: 'test'
+  ...
+# Subtest: malformed route escaping returns 400
+ok 96 - malformed route escaping returns 400
+  ---
+  duration_ms: 23.755252
+  type: 'test'
+  ...
+# Subtest: profile link parser accepts only valid profile paths
+ok 97 - profile link parser accepts only valid profile paths
+  ---
+  duration_ms: 19.684186
+  type: 'test'
+  ...
+# Subtest: email signup reserves official-looking usernames
+ok 98 - email signup reserves official-looking usernames
+  ---
+  duration_ms: 29.520203
+  type: 'test'
+  ...
+# Subtest: legacy credentials migrate only after secure write succeeds
+ok 99 - legacy credentials migrate only after secure write succeeds
+  ---
+  duration_ms: 72.028497
+  type: 'test'
+  ...
+# Subtest: secure write failure preserves recoverable legacy credentials
+ok 100 - secure write failure preserves recoverable legacy credentials
+  ---
+  duration_ms: 17.510139
+  type: 'test'
+  ...
+# Subtest: token writes and logout are serialized so stale writes cannot resurrect a session
+ok 101 - token writes and logout are serialized so stale writes cannot resurrect a session
+  ---
+  duration_ms: 17.929994
+  type: 'test'
+  ...
+# Subtest: serverDate reads every API timestamp format and never yields an Invalid Date
+ok 102 - serverDate reads every API timestamp format and never yields an Invalid Date
+  ---
+  duration_ms: 1.159236
+  type: 'test'
+  ...
+# Subtest: timeAgo gives compact ages and never a negative or broken one
+ok 103 - timeAgo gives compact ages and never a negative or broken one
+  ---
+  duration_ms: 1.773922
+  type: 'test'
+  ...
+# Subtest: no screen parses a server timestamp with Date directly
+ok 104 - no screen parses a server timestamp with Date directly
+  ---
+  duration_ms: 5.969455
+  type: 'test'
+  ...
+# Subtest: retains media and request identity across restart, retries publish without uploading twice
+ok 105 - retains media and request identity across restart, retries publish without uploading twice
+  ---
+  duration_ms: 10.645405
+  type: 'test'
+  ...
+# Subtest: double taps share one in-flight upload and publication
+ok 106 - double taps share one in-flight upload and publication
+  ---
+  duration_ms: 2.028605
+  type: 'test'
+  ...
+# Subtest: account change between upload and publish stops publication and preserves retry metadata
+ok 107 - account change between upload and publish stops publication and preserves retry metadata
+  ---
+  duration_ms: 2.227034
+  type: 'test'
+  ...
+# Subtest: removing a queued upload leaves the original file intact and rejects unsafe file identifiers
+ok 108 - removing a queued upload leaves the original file intact and rejects unsafe file identifiers
+  ---
+  duration_ms: 1.529426
+  type: 'test'
+  ...
+# Subtest: resumes an interrupted upload without re-sending finished parts
+ok 109 - resumes an interrupted upload without re-sending finished parts
+  ---
+  duration_ms: 9.183867
+  type: 'test'
+  ...
+# Subtest: fetches fresh part URLs when a signed URL has expired
+ok 110 - fetches fresh part URLs when a signed URL has expired
+  ---
+  duration_ms: 2.820938
+  type: 'test'
+  ...
+# Subtest: waits while the server processes the media, then reports the published Story
+ok 111 - waits while the server processes the media, then reports the published Story
+  ---
+  duration_ms: 4.010878
+  type: 'test'
+  ...
+# Subtest: a file the server rejects fails with its reason and asks for a new file instead of a retry
+ok 112 - a file the server rejects fails with its reason and asks for a new file instead of a retry
+  ---
+  duration_ms: 2.012612
+  type: 'test'
+  ...
+# Subtest: a temporary processing failure is retried on the server without uploading again
+ok 113 - a temporary processing failure is retried on the server without uploading again
+  ---
+  duration_ms: 5.80971
+  type: 'test'
+  ...
+# Subtest: base64 decoding matches Node for every padding case
+ok 114 - base64 decoding matches Node for every padding case
+  ---
+  duration_ms: 0.843386
+  type: 'test'
+  ...
+1..114
+# tests 114
+# suites 0
+# pass 114
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3236.847158

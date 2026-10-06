@@ -1,0 +1,14 @@
+{
+  "step": "database-integration",
+  "command": "sudo -u postgres env PGHOST=/var/run/postgresql PGUSER=postgres node backend/scripts/run-tests.cjs",
+  "auth": "local postgres OS account over the Unix socket (peer authentication)",
+  "testFiles": 32,
+  "tests": 315,
+  "pass": 315,
+  "fail": 0,
+  "skipped": 0,
+  "cancelled": 0,
+  "todo": 0,
+  "exitCode": 0,
+  "computedFrom": "database-integration.log"
+}
