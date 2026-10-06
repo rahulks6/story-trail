@@ -81,7 +81,7 @@ export function MutedAccountsScreen(): React.JSX.Element {
             {busy ? (
               <ActivityIndicator color={colors.accent} />
             ) : (
-              <Pressable style={styles.unmuteButton} onPress={() => void onUnmute(item)}>
+              <Pressable accessibilityRole="button" style={styles.unmuteButton} onPress={() => void onUnmute(item)}>
                 <Text style={styles.unmuteLabel}>Unmute</Text>
               </Pressable>
             )}

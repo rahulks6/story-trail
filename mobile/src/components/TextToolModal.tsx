@@ -50,10 +50,11 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
       */}
       <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
         <View style={styles.topBar}>
-          <Pressable onPress={onCancel}>
+          <Pressable accessibilityRole="button" onPress={onCancel}>
             <Text style={styles.topAction}>Cancel</Text>
           </Pressable>
           <Pressable
+            accessibilityRole="button"
             onPress={() => {
               if (text.trim()) {
                 onDone(text, {

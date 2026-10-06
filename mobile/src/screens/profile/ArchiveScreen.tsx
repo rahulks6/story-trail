@@ -166,6 +166,10 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
                 const isSelected = selected.includes(story.id);
                 return (
                   <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={`Archived Story, ${serverDate(story.createdAt)?.toLocaleDateString() ?? ""}`}
+                    accessibilityHint={selected.length > 0 ? undefined : "Long press to select"}
+                    accessibilityState={{ selected: isSelected }}
                     key={story.id}
                     onPress={() => (selected.length > 0 ? toggle(story.id) : navigation.navigate("ArchivedStoryViewer", { storyId: story.id }))}
                     onLongPress={() => toggle(story.id)}
@@ -189,15 +193,15 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
 
       {selected.length > 0 ? (
         <View style={styles.actionBar}>
-          <Pressable onPress={() => setSelected([])} hitSlop={8}>
+          <Pressable accessibilityRole="button" onPress={() => setSelected([])} hitSlop={8}>
             <Text style={styles.actionCancel}>Cancel</Text>
           </Pressable>
           <Text style={typography.caption}>{selected.length} selected</Text>
           <View style={styles.actionButtons}>
-            <Pressable onPress={onDelete} disabled={deleting} hitSlop={8} style={styles.actionButton}>
+            <Pressable accessibilityRole="button" onPress={onDelete} disabled={deleting} hitSlop={8} style={styles.actionButton}>
               {deleting ? <ActivityIndicator color={colors.danger} /> : <View style={{flexDirection:"row",alignItems:"center",gap:6}}><Icon name="trash" color={colors.danger}/><Text style={styles.actionDelete}>Delete</Text></View>}
             </Pressable>
-            <Pressable onPress={onCreateHighlight} hitSlop={8} style={styles.actionButton}>
+            <Pressable accessibilityRole="button" onPress={onCreateHighlight} hitSlop={8} style={styles.actionButton}>
               <View style={{flexDirection:"row",alignItems:"center",gap:6}}><Icon name="add" color={colors.onAccent}/><Text style={styles.actionCreate}>Create Highlight</Text></View>
             </Pressable>
           </View>

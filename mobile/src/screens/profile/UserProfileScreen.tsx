@@ -178,6 +178,7 @@ export function UserProfileScreen({ route }: Props): React.JSX.Element {
       {!profile.isSelf ? (
         <View style={styles.actionRow}>
           <Pressable
+            accessibilityRole="button"
             style={[
               styles.followButton,
               followLabel !== "Follow" && styles.followButtonActive,
@@ -195,6 +196,7 @@ export function UserProfileScreen({ route }: Props): React.JSX.Element {
             )}
           </Pressable>
           <Pressable
+            accessibilityRole="button"
             style={[styles.followButton, styles.followButtonActive, messagePending && styles.followButtonDisabled]}
             disabled={messagePending}
             onPress={() => void onMessagePress()}
@@ -205,7 +207,7 @@ export function UserProfileScreen({ route }: Props): React.JSX.Element {
       ) : null}
 
       {!profile.isSelf ? (
-        <Pressable style={styles.reportLink} onPress={() => setReportOpen(true)} hitSlop={8}>
+        <Pressable accessibilityRole="button" style={styles.reportLink} onPress={() => setReportOpen(true)} hitSlop={8}>
           <Text style={styles.reportLinkLabel}>Report this account</Text>
         </Pressable>
       ) : null}

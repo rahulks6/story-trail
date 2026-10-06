@@ -72,6 +72,7 @@ export function ShareSheet({ visible, storyId, ownerUsername, isPublic, onClose,
       <View style={styles.sheet}>
         <View style={styles.handle} />
         <Pressable
+          accessibilityRole="button"
           style={styles.row}
           disabled={busy}
           onPress={() => {
@@ -84,11 +85,11 @@ export function ShareSheet({ visible, storyId, ownerUsername, isPublic, onClose,
               (unlike Share via… / Copy link, which are one real action). */}
           <Text style={typography.body}>Send to a Katkee user</Text>
         </Pressable>
-        <Pressable style={styles.row} disabled={busy} onPress={onNativeShare}>
+        <Pressable accessibilityRole="button" style={styles.row} disabled={busy} onPress={onNativeShare}>
           <Text style={typography.body}>Share via…</Text>
         </Pressable>
         {isPublic ? (
-          <Pressable style={styles.row} disabled={busy} onPress={onCopyLink}>
+          <Pressable accessibilityRole="button" style={styles.row} disabled={busy} onPress={onCopyLink}>
             <Text style={typography.body}>Copy link</Text>
           </Pressable>
         ) : (

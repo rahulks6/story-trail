@@ -94,7 +94,7 @@ export function NewChatScreen({ navigation }: Props): React.JSX.Element {
           data={results}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <Pressable style={styles.row} onPress={() => void onSelect(item)} disabled={opening !== null}>
+            <Pressable accessibilityRole="button" style={styles.row} onPress={() => void onSelect(item)} disabled={opening !== null}>
               <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} />
               <View style={styles.rowText}>
                 <Text style={typography.bodyStrong}>{item.displayName}</Text>

@@ -364,6 +364,8 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
             <View style={[styles.bubbleRow, mine ? styles.bubbleRowMine : styles.bubbleRowTheirs]}>
               <View style={[styles.bubbleColumn, mine ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
                 <Pressable
+                  // A button only where a tap does something (retry, open the shared Story).
+                  accessibilityRole={row.kind === "pending" || (row.kind === "sent" && row.sharedStoryId) ? "button" : undefined}
                   style={[
                     styles.bubble,
                     mine ? styles.bubbleMine : styles.bubbleTheirs,

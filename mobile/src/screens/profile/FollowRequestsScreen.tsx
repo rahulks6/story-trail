@@ -80,6 +80,7 @@ export function FollowRequestsScreen(): React.JSX.Element {
         return (
           <View style={styles.row}>
             <Pressable
+              accessibilityRole="button"
               style={styles.identity}
               onPress={() => navigation.navigate("Main", { screen: "Search", params: { screen: "UserProfile", params: { username: item.username } } })}
             >
@@ -93,10 +94,10 @@ export function FollowRequestsScreen(): React.JSX.Element {
               <ActivityIndicator color={colors.accent} />
             ) : (
               <View style={styles.actions}>
-                <Pressable style={styles.declineButton} onPress={() => void onResolve(item, false)}>
+                <Pressable accessibilityRole="button" style={styles.declineButton} onPress={() => void onResolve(item, false)}>
                   <Text style={styles.declineLabel}>Decline</Text>
                 </Pressable>
-                <Pressable style={styles.acceptButton} onPress={() => void onResolve(item, true)}>
+                <Pressable accessibilityRole="button" style={styles.acceptButton} onPress={() => void onResolve(item, true)}>
                   <Text style={styles.acceptLabel}>Accept</Text>
                 </Pressable>
               </View>

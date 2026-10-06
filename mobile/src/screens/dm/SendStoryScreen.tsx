@@ -101,7 +101,7 @@ export function SendStoryScreen({ route, navigation }: Props): React.JSX.Element
             const sent = sentTo.has(item.username);
             const busy = sendingTo === item.username;
             return (
-              <Pressable style={styles.row} disabled={sent || busy} onPress={() => void onSendTo(item.username)}>
+              <Pressable accessibilityRole="button" style={styles.row} disabled={sent || busy} onPress={() => void onSendTo(item.username)}>
                 <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} />
                 <View style={styles.rowText}>
                   <Text style={typography.bodyStrong}>{item.displayName}</Text>
@@ -118,7 +118,7 @@ export function SendStoryScreen({ route, navigation }: Props): React.JSX.Element
         />
       )}
 
-      <Pressable style={styles.doneButton} onPress={() => navigation.goBack()}>
+      <Pressable accessibilityRole="button" style={styles.doneButton} onPress={() => navigation.goBack()}>
         <Text style={styles.doneLabel}>Done</Text>
       </Pressable>
     </View>

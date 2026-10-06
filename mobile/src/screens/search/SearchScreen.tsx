@@ -111,10 +111,10 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
 
       {debouncedQuery ? (
         <View style={styles.filterRow}>
-          <Pressable style={[styles.filterChip, filter === "all" && styles.filterChipActive]} onPress={() => onSelectFilter("all")}>
+          <Pressable accessibilityRole="button" style={[styles.filterChip, filter === "all" && styles.filterChipActive]} onPress={() => onSelectFilter("all")}>
             <Text style={[styles.filterChipLabel, filter === "all" && styles.filterChipLabelActive]}>All</Text>
           </Pressable>
-          <Pressable style={[styles.filterChip, filter === "following" && styles.filterChipActive]} onPress={() => void onSelectFilter("following")}>
+          <Pressable accessibilityRole="button" style={[styles.filterChip, filter === "following" && styles.filterChipActive]} onPress={() => void onSelectFilter("following")}>
             {loadingFollowing ? (
               <ActivityIndicator color={colors.textPrimary} size="small" />
             ) : (
@@ -142,6 +142,7 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <Pressable
+              accessibilityRole="button"
               style={styles.row}
               onPress={() => navigation.navigate("UserProfile", { username: item.username })}
             >

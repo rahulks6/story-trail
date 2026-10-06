@@ -124,25 +124,26 @@ export function StoryMoreMenu({ visible, storyId, isOwnStory, otherUsername, oth
             <ActivityIndicator color={colors.accent} style={{ marginVertical: spacing.lg }} />
           ) : isOwnStory ? (
             <>
-              <Pressable style={styles.row} onPress={onViewInsights}>
+              <Pressable accessibilityRole="button" style={styles.row} onPress={onViewInsights}>
                 <Text style={typography.body}>View Insights</Text>
               </Pressable>
-              <Pressable style={styles.row} onPress={onDelete}>
+              <Pressable accessibilityRole="button" style={styles.row} onPress={onDelete}>
                 <Text style={[typography.body, styles.destructive]}>Delete</Text>
               </Pressable>
             </>
           ) : (
             <>
-              <Pressable style={styles.row} onPress={onNotInterested}>
+              <Pressable accessibilityRole="button" style={styles.row} onPress={onNotInterested}>
                 <Text style={typography.body}>Not Interested</Text>
               </Pressable>
-              <Pressable style={styles.row} onPress={onMute}>
+              <Pressable accessibilityRole="button" style={styles.row} onPress={onMute}>
                 <Text style={typography.body}>Mute @{otherUsername}</Text>
               </Pressable>
-              <Pressable style={styles.row} onPress={onBlock}>
+              <Pressable accessibilityRole="button" style={styles.row} onPress={onBlock}>
                 <Text style={[typography.body, styles.destructive]}>Block @{otherUsername}</Text>
               </Pressable>
               <Pressable
+                accessibilityRole="button"
                 style={styles.row}
                 onPress={() => {
                   onClose();

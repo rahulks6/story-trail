@@ -112,7 +112,7 @@ export function SponsoredStory({ ad, active, onNext, onPrevious, onHide, onOpenP
         leave();
     } }}/> : <Image source={source} style={StyleSheet.absoluteFill} resizeMode="cover" onLoad={() => setReady(true)} onError={fail}/>)}
   <View style={StyleSheet.absoluteFill} {...gesture.panHandlers} accessible accessibilityRole="button" accessibilityLabel="Sponsored Story. Swipe up to skip or down to go back." accessibilityActions={[{ name: 'next', label: 'Next creator' }, { name: 'previous', label: 'Previous creator' }]} onAccessibilityAction={e => leave(e.nativeEvent.actionName === 'previous')}/>
-  <View style={[styles.header, { top: insets.top + 12 }]}><View><Text style={styles.brand}>{ad.brand}</Text><Text style={styles.disclosure}>Sponsored</Text></View><Pressable onPress={more} accessibilityLabel="Ad options" hitSlop={12}><Icon name="more"/></Pressable></View>
+  <View style={[styles.header, { top: insets.top + 12 }]}><View><Text style={styles.brand}>{ad.brand}</Text><Text style={styles.disclosure}>Sponsored</Text></View><Pressable accessibilityRole="button" onPress={more} accessibilityLabel="Ad options" hitSlop={12}><Icon name="more"/></Pressable></View>
   <View style={[styles.footer, { bottom: 30 + insets.bottom }]}><Text style={styles.caption}>{ad.caption}</Text><Pressable style={styles.cta} onPress={open} accessibilityRole="link"><Text style={styles.ctaText}>{ad.cta}</Text></Pressable><Pressable onPress={() => leave()} accessibilityRole="button"><Text style={styles.skip}>Skip ad</Text></Pressable></View>
  </View>;
 }

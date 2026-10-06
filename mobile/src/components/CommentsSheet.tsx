@@ -116,12 +116,12 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
                     </Text>
                   </View>
                   {canDelete ? (
-                    <Pressable onPress={() => onDelete(item.id)} hitSlop={8}>
+                    <Pressable accessibilityRole="button" onPress={() => onDelete(item.id)} hitSlop={8}>
                       <Text style={styles.deleteLabel}>Delete</Text>
                     </Pressable>
                   ) : null}
                   {item.userId !== user?.id ? (
-                    <Pressable onPress={() => setReportingCommentId(item.id)} hitSlop={8}>
+                    <Pressable accessibilityRole="button" onPress={() => setReportingCommentId(item.id)} hitSlop={8}>
                       <Text style={styles.reportLabel}>Report</Text>
                     </Pressable>
                   ) : null}
@@ -145,7 +145,7 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
               onChangeText={setDraft}
               maxLength={500}
             />
-            <Pressable onPress={onSend} disabled={sending || !draft.trim()} hitSlop={8}>
+            <Pressable accessibilityRole="button" onPress={onSend} disabled={sending || !draft.trim()} hitSlop={8}>
               {sending ? <ActivityIndicator color={colors.accent} /> : <Text style={styles.sendLabel}>Send</Text>}
             </Pressable>
           </View>

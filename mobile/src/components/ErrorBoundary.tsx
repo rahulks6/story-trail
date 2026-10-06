@@ -45,7 +45,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
         <Text style={[typography.body, styles.message]}>
           Katkee ran into a problem. Try again — if it keeps happening, restart the app.
         </Text>
-        <Pressable style={styles.button} onPress={this.reset}>
+        <Pressable accessibilityRole="button" style={styles.button} onPress={this.reset}>
           <Text style={styles.buttonLabel}>Try again</Text>
         </Pressable>
       </View>

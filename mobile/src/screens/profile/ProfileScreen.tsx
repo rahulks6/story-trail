@@ -116,19 +116,19 @@ export function ProfileScreen(): React.JSX.Element {
       </View>
 
       <View style={styles.actionRow}>
-        <Pressable style={styles.actionButton} onPress={() => navigation.navigate("EditProfile")}>
+        <Pressable accessibilityRole="button" style={styles.actionButton} onPress={() => navigation.navigate("EditProfile")}>
           <Text style={styles.actionButtonLabel}>Edit Profile</Text>
         </Pressable>
-        <Pressable style={styles.actionButton} onPress={() => void onShareProfile()}>
+        <Pressable accessibilityRole="button" style={styles.actionButton} onPress={() => void onShareProfile()}>
           <Text style={styles.actionButtonLabel}>Share Profile</Text>
         </Pressable>
       </View>
 
       <View style={styles.linkRow}>
-        <Pressable style={styles.archiveLink} onPress={() => navigation.navigate("Archive")}>
+        <Pressable accessibilityRole="button" style={styles.archiveLink} onPress={() => navigation.navigate("Archive")}>
           <Text style={styles.archiveLinkLabel}>Archive</Text>
         </Pressable>
-        <Pressable style={styles.archiveLink} onPress={() => navigation.navigate("SequenceInsights")}>
+        <Pressable accessibilityRole="button" style={styles.archiveLink} onPress={() => navigation.navigate("SequenceInsights")}>
           <Text style={styles.archiveLinkLabel}>Insights</Text>
         </Pressable>
       </View>

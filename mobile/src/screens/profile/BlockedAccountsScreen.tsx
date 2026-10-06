@@ -81,7 +81,7 @@ export function BlockedAccountsScreen(): React.JSX.Element {
             {busy ? (
               <ActivityIndicator color={colors.accent} />
             ) : (
-              <Pressable style={styles.unblockButton} onPress={() => void onUnblock(item)}>
+              <Pressable accessibilityRole="button" style={styles.unblockButton} onPress={() => void onUnblock(item)}>
                 <Text style={styles.unblockLabel}>Unblock</Text>
               </Pressable>
             )}

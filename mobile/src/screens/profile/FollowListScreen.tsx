@@ -109,6 +109,7 @@ export function FollowListScreen({ route }: Props): React.JSX.Element {
       ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} /> : undefined}
       renderItem={({ item }) => (
         <Pressable
+          accessibilityRole="button"
           style={styles.row}
           onPress={() => navigation.navigate("Main", { screen: "Search", params: { screen: "UserProfile", params: { username: item.username } } })}
         >

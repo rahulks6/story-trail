@@ -234,7 +234,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
           const order = selected.indexOf(item.id);
           const isSelected = order !== -1;
           return (
-            <Pressable style={styles.thumbWrapper} onPress={() => toggle(item.id)}>
+            <Pressable accessibilityRole="button" style={styles.thumbWrapper} onPress={() => toggle(item.id)}>
               <Image
                 source={{ uri: mediaFileUrl(item.mediaId, "thumbnail"), headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined }}
                 style={[styles.thumb, isSelected && styles.thumbSelected]}
@@ -252,13 +252,13 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
 
       <View style={styles.footer}>
         {isEditing ? (
-          <Pressable style={styles.deleteButton} onPress={onDelete}>
+          <Pressable accessibilityRole="button" style={styles.deleteButton} onPress={onDelete}>
             <Text style={styles.deleteLabel}>Delete Highlight</Text>
           </Pressable>
         ) : (
           <View />
         )}
-        <Pressable style={[styles.saveButton, !canSave && styles.saveButtonDisabled]} disabled={!canSave} onPress={onSave}>
+        <Pressable accessibilityRole="button" style={[styles.saveButton, !canSave && styles.saveButtonDisabled]} disabled={!canSave} onPress={onSave}>
           {saving ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.saveLabel}>{isEditing ? "Save" : "Create"}</Text>}
         </Pressable>
       </View>

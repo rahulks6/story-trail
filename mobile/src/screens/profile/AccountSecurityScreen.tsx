@@ -28,14 +28,14 @@ export function AccountSecurityScreen():React.JSX.Element {
   {error?<Text accessibilityRole="alert" style={styles.error}>{error}</Text>:null}
   {!ticket?<>
    <Text style={styles.text}>Verify your existing sign-in method before changing account access.</Text>
-   {identities?.hasPassword&&<><TextInput style={styles.input} accessibilityLabel="Current password" secureTextEntry autoComplete="current-password" value={password} onChangeText={setPassword} placeholder="Current password" placeholderTextColor={colors.textSecondary}/><Pressable disabled={busy||!password} style={styles.button} onPress={()=>void run(async()=>{const result=await apiPost<{reauthTicket:string}>('/api/v1/auth/reauthenticate',{password},accessToken??undefined);setPassword('');setTicket(result.reauthTicket);})}><Text style={styles.text}>Verify password</Text></Pressable></>}
+   {identities?.hasPassword&&<><TextInput style={styles.input} accessibilityLabel="Current password" secureTextEntry autoComplete="current-password" value={password} onChangeText={setPassword} placeholder="Current password" placeholderTextColor={colors.textSecondary}/><Pressable accessibilityRole="button" disabled={busy||!password} style={styles.button} onPress={()=>void run(async()=>{const result=await apiPost<{reauthTicket:string}>('/api/v1/auth/reauthenticate',{password},accessToken??undefined);setPassword('');setTicket(result.reauthTicket);})}><Text style={styles.text}>Verify password</Text></Pressable></>}
    <ProviderEntry onProof={verifyProvider}/>
   </>:<>
    <Text style={styles.text}>Verified for five minutes. Link a new provider below; its ownership will be verified before linking. Existing Katkee data stays on this account.</Text>
    <ProviderEntry onProof={linkProvider}/>
-   {identities?.items.map(i=><Pressable key={i.provider} disabled={busy} style={styles.button} onPress={()=>change(i.provider)}><Text style={styles.text}>Unlink {i.provider}</Text></Pressable>)}
-   <Pressable disabled={busy} style={styles.button} onPress={remove}><Text style={styles.error}>Delete account</Text></Pressable>
-   <Pressable style={styles.button} onPress={()=>setTicket(null)}><Text style={styles.text}>Verify again</Text></Pressable>
+   {identities?.items.map(i=><Pressable accessibilityRole="button" key={i.provider} disabled={busy} style={styles.button} onPress={()=>change(i.provider)}><Text style={styles.text}>Unlink {i.provider}</Text></Pressable>)}
+   <Pressable accessibilityRole="button" disabled={busy} style={styles.button} onPress={remove}><Text style={styles.error}>Delete account</Text></Pressable>
+   <Pressable accessibilityRole="button" style={styles.button} onPress={()=>setTicket(null)}><Text style={styles.text}>Verify again</Text></Pressable>
   </>}
   {busy&&<ActivityIndicator color={colors.accent}/>}
  </ScrollView></KeyboardAvoider>;

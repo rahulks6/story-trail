@@ -302,11 +302,11 @@ export function StickerSheet({ visible, onClose, onAdd, editingOverlay, onEditDo
                 value={locationLabel}
                 onChangeText={setLocationLabel}
               />
-              <Pressable style={styles.secondaryButton} onPress={useCurrentLocation} disabled={locatingDevice}>
+              <Pressable accessibilityRole="button" style={styles.secondaryButton} onPress={useCurrentLocation} disabled={locatingDevice}>
                 {locatingDevice ? <ActivityIndicator color={colors.accent} /> : <Text style={styles.secondaryButtonLabel}>Use current location</Text>}
               </Pressable>
               {locationError ? <Text style={styles.errorText}>{locationError}</Text> : null}
-              <Pressable style={[styles.primaryButton, !locationLabel.trim() && styles.primaryButtonDisabled]} disabled={!locationLabel.trim()} onPress={addLocation}>
+              <Pressable accessibilityRole="button" style={[styles.primaryButton, !locationLabel.trim() && styles.primaryButtonDisabled]} disabled={!locationLabel.trim()} onPress={addLocation}>
                 <Text style={styles.primaryButtonLabel}>{editingOverlay ? "Save" : "Add"}</Text>
               </Pressable>
             </View>
@@ -349,12 +349,12 @@ export function StickerSheet({ visible, onClose, onAdd, editingOverlay, onEditDo
               </View>
 
               {!editingOverlay || (editingOverlay.type === "datetime" && editingOverlay.properties.mode === "date") ? (
-                <Pressable style={styles.primaryButton} onPress={() => addDateTime("date")}>
+                <Pressable accessibilityRole="button" style={styles.primaryButton} onPress={() => addDateTime("date")}>
                   <Text style={styles.primaryButtonLabel}>{editingOverlay ? "Save date" : "Add as date sticker"}</Text>
                 </Pressable>
               ) : null}
               {!editingOverlay || (editingOverlay.type === "datetime" && editingOverlay.properties.mode === "time") ? (
-                <Pressable style={styles.primaryButton} onPress={() => addDateTime("time")}>
+                <Pressable accessibilityRole="button" style={styles.primaryButton} onPress={() => addDateTime("time")}>
                   <Text style={styles.primaryButtonLabel}>{editingOverlay ? "Save time" : "Add as time sticker"}</Text>
                 </Pressable>
               ) : null}
