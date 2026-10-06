@@ -8,7 +8,7 @@ const USER='11111111-1111-4111-8111-111111111111',OTHER='22222222-2222-4222-8222
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 const settle=async()=>{for(let i=0;i<30;i++)await new Promise(r=>setImmediate(r));};
 
-function fixture({storage=new Map(),os='android',start=Date.parse('2026-10-06T10:00:00Z')}={}){
+function fixture({storage=new Map(),os='android',start=Date.parse('2026-10-06T10:00:00Z'),appVersion='1.4.0'}={}){
  let now=start,seq=0;const timers=new Map(),calls=[],failures=[];let appStateHandler=null;
  class FakeDate extends Date{constructor(...a){if(a.length)super(...a);else super(now);}static now(){return now;}}
  class ApiError extends Error{constructor(status,message){super(message);this.status=status;}}
@@ -18,7 +18,7 @@ function fixture({storage=new Map(),os='android',start=Date.parse('2026-10-06T10
  const module={exports:{}};
  vm.runInNewContext(code,{module,exports:module.exports,Date:FakeDate,JSON,Math,Promise,Set,Map,
   setTimeout:(fn,ms=0)=>{const id=++seq;timers.set(id,{fn,at:now+ms});return id;},clearTimeout:id=>{timers.delete(id);},
-  require:n=>({'@react-native-async-storage/async-storage':asyncStorage,'react-native':rn,'../api/client':client}[n])},{filename:'analytics.ts'});
+  require:n=>({'@react-native-async-storage/async-storage':asyncStorage,'react-native':rn,'../api/client':client,'../config/env':{appEnv:{appVersion}}}[n])},{filename:'analytics.ts'});
  return {analytics:module.exports,calls,storage,ApiError,
   failNext(...errors){failures.push(...errors);},
   appState(state){appStateHandler?.(state);},
@@ -37,6 +37,7 @@ test('events leave in background batches with stable ids, and a lost response re
  const first=f.calls[0].body;
  assert.equal(f.calls[0].path,'/api/v1/analytics/events');
  assert.equal(first.platform,'android');
+ assert.equal(first.appVersion,'1.4.0','the release version from build-config.json');
  assert.deepEqual(first.events.map(e=>e.name),['app_session_started','profile_viewed','search_performed']);
  assert.deepEqual(first.events[0].properties,{coldStart:true});
  assert.ok(first.events.every(e=>UUID.test(e.id)&&e.sessionId===first.events[0].sessionId&&UUID.test(e.sessionId)));
@@ -164,4 +165,11 @@ test('iOS batches say so; a refused or invalid person id never starts collection
  f.analytics.startAnalytics(USER,()=>'t');
  await f.advance(2000);
  assert.equal(f.calls[0].body.platform,'ios');
+});
+
+test('a missing or malformed version is left out rather than sent',async()=>{
+ for(const appVersion of ['','not a version!']){
+  const f=fixture({appVersion});f.analytics.startAnalytics(USER,()=>'t');await f.advance(2000);
+  assert.equal('appVersion' in f.calls[0].body,false,JSON.stringify(appVersion));
+ }
 });

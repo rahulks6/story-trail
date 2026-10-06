@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppState, Platform, type AppStateStatus } from "react-native";
 import { ApiError, apiPost } from "../api/client";
+import { appEnv } from "../config/env";
 
 /**
  * Product analytics (spec section 15): the few things only the app can see. These are
@@ -47,6 +48,7 @@ export const SESSION_GAP_MS = 30 * 60_000;
 const MAX_AGE_MS = 7 * 24 * 3_600_000 - 3_600_000;
 const RETRY_DELAYS_MS = [10_000, 30_000, 120_000, 600_000];
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const VERSION_RE = /^[0-9A-Za-z.+-]{1,32}$/;
 
 let active: { userId: string; token: () => string | null } | null = null;
 let queue: QueuedEvent[] = [];
@@ -145,7 +147,7 @@ export async function flushAnalytics(): Promise<void> {
   flushing = true;
   let settled = false;
   try {
-    await apiPost("/api/v1/analytics/events", { platform: analyticsPlatform(), events: batch }, token);
+    await apiPost("/api/v1/analytics/events", { platform: analyticsPlatform(), ...(VERSION_RE.test(appEnv.appVersion) ? { appVersion: appEnv.appVersion } : {}), events: batch }, token);
     settled = true;
   } catch (error) {
     // Refused as invalid: resending would be refused again, so it is dropped. Offline, timed

@@ -119,8 +119,9 @@ for that person's next sign-in and are never sent with someone else's token), fl
 10 s, at 20 events, when the app goes to the background, and retried with backoff (10 s, 30 s,
 2 min, 10 min). A refused batch (invalid) is dropped rather than retried forever.
 `index.js` installs the crash note (`src/crashReporting.ts`) and tells the API client the
-platform. App version is not sent: the version is set at native build time and the app has no
-native module to read it.
+platform. Batches carry the release version, `appVersion` in `mobile/build-config.json`: the
+Android build reads its version name from it and the release check requires Xcode's
+`MARKETING_VERSION` to match, so the app, the stores and analytics agree.
 
 ## Verification
 

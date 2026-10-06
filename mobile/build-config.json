@@ -3,6 +3,7 @@
   "productionApiUrl": "",
   "androidApplicationId": "com.katkee.development",
   "iosBundleId": "com.katkee.development",
+  "appVersion": "1.0.0",
   "releaseIdentifiersConfirmed": false,
   "privacyPolicyUrl": "",
   "termsUrl": "",

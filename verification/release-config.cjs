@@ -3,17 +3,17 @@ const {validateRelease}=require('../mobile/scripts/check-release.cjs');
 function fixture(t) {
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'katkee-release-'));
  t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
- const config={productionApiUrl:'https://api.katkee.app',androidApplicationId:'com.katkee.app',iosBundleId:'com.katkee.app',releaseIdentifiersConfirmed:true,privacyPolicyUrl:'https://katkee.app/privacy',termsUrl:'https://katkee.app/terms',supportUrl:'https://katkee.app/support'};
+ const config={productionApiUrl:'https://api.katkee.app',androidApplicationId:'com.katkee.app',iosBundleId:'com.katkee.app',appVersion:'1.2.0',releaseIdentifiersConfirmed:true,privacyPolicyUrl:'https://katkee.app/privacy',termsUrl:'https://katkee.app/terms',supportUrl:'https://katkee.app/support'};
  function write(name,data){const p=path.join(root,name);fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileSync(p,data);}
  const save=()=>write('build-config.json',JSON.stringify(config));save();
- write('android/app/build.gradle','applicationId "com.katkee.app"');
+ write('android/app/build.gradle','applicationId "com.katkee.app"\ndef v = new groovy.json.JsonSlurper().parse(file("../../build-config.json")).appVersion\nversionName katkeeVersionName');
  write('package.json',JSON.stringify({dependencies:{'react-native':'0.87.1'}}));
  write('android/build.gradle','targetSdkVersion = 36\ncompileSdkVersion = 36\nclasspath("com.android.tools.build:gradle:8.9.1")');
  write('ios/KatkeeMobile/Images.xcassets/AppIcon.appiconset/Contents.json',JSON.stringify({images:[{filename:'icon.png'}]}));
  write('ios/KatkeeMobile/Images.xcassets/AppIcon.appiconset/icon.png','fixture');
  write('ios/KatkeeMobile/PrivacyInfo.xcprivacy','<plist><dict><key>NSPrivacyCollectedDataTypes</key><array><dict/></array></dict></plist>');
  write('android/app/debug.keystore','public-test-key');
- write('ios/KatkeeMobile.xcodeproj/project.pbxproj','PRODUCT_BUNDLE_IDENTIFIER = "com.katkee.app"');
+ write('ios/KatkeeMobile.xcodeproj/project.pbxproj','PRODUCT_BUNDLE_IDENTIFIER = "com.katkee.app"\nMARKETING_VERSION = 1.2.0;\nMARKETING_VERSION = 1.2.0;');
  const check=(platform='android',env={},checkSigning=false)=>validateRelease({root,platform,env,checkSigning});
  return {root,config,save,write,check};
 }
@@ -55,4 +55,12 @@ test('missing iOS icons and empty privacy declaration block release',t=>{
 test('policy links and boolean confirmation are required',t=>{
  const f=fixture(t);f.config.privacyPolicyUrl='https://example.com';f.config.releaseIdentifiersConfirmed='false';f.save();
  assert.ok(f.check().some(p=>p.includes('privacyPolicyUrl')));assert.ok(f.check().some(p=>p.includes('Confirm')));
+});
+
+test('one release version: build-config appVersion drives Android and must match Xcode',t=>{
+ const f=fixture(t);assert.deepEqual(f.check('all'),[]);
+ for(const bad of [undefined,'1.2','v1.2.0','1.2.0-beta']){f.config.appVersion=bad;f.save();assert.ok(f.check('all').some(x=>x.includes('Set appVersion')),String(bad));}
+ f.config.appVersion='1.3.0';f.save();assert.deepEqual(f.check('ios'),['Xcode MARKETING_VERSION differs from build-config.json appVersion.']);
+ f.config.appVersion='1.2.0';f.save();f.write('android/app/build.gradle','applicationId "com.katkee.app"\nversionName "1.0"');
+ assert.deepEqual(f.check('android'),['Android versionName must come from build-config.json appVersion.']);
 });

@@ -2,6 +2,7 @@ import { Icon } from "../components/Icon";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing, typography, ICONS } from "../theme";
 import { useNotifications } from "../state/NotificationsContext";
 import { useDM } from "../state/DMContext";
@@ -31,9 +32,11 @@ const TAB_ICONS: Record<string, import("../theme/icons").IconName> = {
 export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarProps): React.JSX.Element {
   const { unreadCount: unreadNotifications } = useNotifications();
   const { unreadCount: unreadMessages } = useDM();
+  // Clears the iPhone home indicator and Android's gesture/navigation bar (edge-to-edge).
+  const { bottom } = useSafeAreaInsets();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: Math.max(bottom, spacing.sm) }]} accessibilityRole="tablist">
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
@@ -50,7 +53,8 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
           return (
             <Pressable
               key={route.key}
-              accessibilityRole="button"
+              accessibilityRole="tab"
+              accessibilityState={{ selected: isFocused }}
               accessibilityLabel="Create a Story"
               onPress={onPress}
               style={styles.createButtonWrapper}
@@ -68,8 +72,8 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
         return (
           <Pressable
             key={route.key}
-            accessibilityRole="button"
-            accessibilityState={isFocused ? { selected: true } : {}}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: isFocused }}
             accessibilityLabel={
               showUnreadBadge
                 ? `${options.tabBarAccessibilityLabel ?? label}, ${badgeCount} unread`
@@ -101,7 +105,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: colors.border,
-    paddingBottom: spacing.sm,
     paddingTop: spacing.xs,
   },
   tabItem: {

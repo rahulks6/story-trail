@@ -20,6 +20,9 @@ function validateRelease({root,platform='all',env=process.env,checkSigning=false
    /^127\./.test(h)||/(^|\.)(example\.(com|org|net)|invalid|test|local)$/.test(h))throw Error();
  } catch {problems.push('Set productionApiUrl to your deployed HTTPS API origin (no path, credentials, query or fragment).');}
  if(c.releaseIdentifiersConfirmed!==true)problems.push('Confirm your permanent application identifiers in build-config.json.');
+ // One version everywhere: the stores show it and the app reports it with its analytics.
+ const version=typeof c.appVersion==='string'&&/^\d+\.\d+\.\d+$/.test(c.appVersion)?c.appVersion:null;
+ if(!version)problems.push('Set appVersion in build-config.json to the release version, for example 1.2.0.');
  function identifier(key) {
   if(typeof c[key]!=='string'||!/^[a-zA-Z][\w]*(\.[a-zA-Z][\w]*){2,}$/.test(c[key])||c[key].includes('development')) {
    problems.push('Set '+key+' to your permanent release identifier.');
@@ -29,6 +32,7 @@ function validateRelease({root,platform='all',env=process.env,checkSigning=false
   identifier('androidApplicationId');
   const gradle=fs.readFileSync(path.join(root,'android/app/build.gradle'),'utf8');
   if(!gradle.includes('applicationId "'+c.androidApplicationId+'"'))problems.push('Android applicationId differs from build-config.json.');
+  if(!/JsonSlurper\(\)\.parse\(file\("\.\.\/\.\.\/build-config\.json"\)\)\.appVersion/.test(gradle)||!/versionName katkeeVersionName/.test(gradle))problems.push('Android versionName must come from build-config.json appVersion.');
   const native=fs.readFileSync(path.join(root,'android/build.gradle'),'utf8');
   if(Number(/targetSdkVersion\s*=\s*(\d+)/.exec(native)?.[1]??0)<36)problems.push('Upgrade and test the Android toolchain for Play target API 36; changing this number alone is insufficient.');
   if(Number(/compileSdkVersion\s*=\s*(\d+)/.exec(native)?.[1]??0)<36)problems.push('Android compileSdkVersion must support API 36.');
@@ -53,6 +57,8 @@ function validateRelease({root,platform='all',env=process.env,checkSigning=false
   identifier('iosBundleId');
   const project=fs.readFileSync(path.join(root,'ios/KatkeeMobile.xcodeproj/project.pbxproj'),'utf8');
   if(!project.includes('PRODUCT_BUNDLE_IDENTIFIER = "'+c.iosBundleId+'"'))problems.push('Xcode bundle identifier differs from build-config.json.');
+  const marketing=[...project.matchAll(/MARKETING_VERSION = ([^;]+);/g)].map(m=>m[1].replace(/"/g,''));
+  if(version&&(!marketing.length||marketing.some(v=>v!==version)))problems.push('Xcode MARKETING_VERSION differs from build-config.json appVersion.');
   const icons=path.join(root,'ios/KatkeeMobile/Images.xcassets/AppIcon.appiconset');
   const contents=path.join(icons,'Contents.json');
   const entries=fs.existsSync(contents)?JSON.parse(fs.readFileSync(contents,'utf8')).images??[]:[];

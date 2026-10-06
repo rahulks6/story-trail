@@ -8,6 +8,7 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "typecheck": "tsc --noEmit",
+    "test": "jest",
     "check:release": "node scripts/check-release.cjs",
     "bundle:android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output build/index.android.bundle --assets-dest build/android",
     "bundle:ios": "react-native bundle --platform ios --dev false --entry-file index.js --bundle-output build/main.jsbundle --assets-dest build/ios"
@@ -43,9 +44,14 @@
     "@react-native-community/cli-platform-android": "20.2.0",
     "@react-native-community/cli-platform-ios": "20.2.0",
     "@react-native/babel-preset": "0.87.1",
+    "@react-native/jest-preset": "0.87.1",
     "@react-native/metro-config": "0.87.1",
     "@react-native/typescript-config": "0.87.1",
+    "@types/jest": "30.0.0",
     "@types/react": "19.2.15",
+    "@types/react-test-renderer": "19.1.0",
+    "jest": "30.5.2",
+    "react-test-renderer": "19.2.3",
     "typescript": "6.0.3"
   },
   "engines": {

@@ -35,12 +35,18 @@ def enableProguardInReleaseBuilds = false
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
 /**
- * Store version. CI passes -PkatkeeVersionCode=<monotonic int> and
- * -PkatkeeVersionName=<semver>; local builds fall back to 1 / "1.0".
+ * Store version. CI passes -PkatkeeVersionCode=<monotonic int>; the version name is
+ * build-config.json's appVersion (local builds use it directly).
  * Google Play rejects an upload whose versionCode is not higher than the last one.
  */
 def katkeeVersionCode = (project.findProperty("katkeeVersionCode") ?: "1").toString().toInteger()
-def katkeeVersionName = (project.findProperty("katkeeVersionName") ?: "1.0").toString()
+// The version people see comes from build-config.json, which the app also reports with its
+// analytics; CI may pass -PkatkeeVersionName only with the same value.
+def katkeeConfiguredVersion = (new groovy.json.JsonSlurper().parse(file("../../build-config.json")).appVersion ?: "").toString()
+def katkeeVersionName = (project.findProperty("katkeeVersionName") ?: katkeeConfiguredVersion).toString()
+if (!katkeeConfiguredVersion || katkeeVersionName != katkeeConfiguredVersion) {
+    throw new GradleException("katkeeVersionName (${katkeeVersionName}) must equal appVersion in build-config.json (${katkeeConfiguredVersion}).")
+}
 
 android {
     ndkVersion rootProject.ext.ndkVersion
