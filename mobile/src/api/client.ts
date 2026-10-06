@@ -100,10 +100,17 @@ export async function readApiResponse<T>(res: Response): Promise<T> {
   return json as T;
 }
 
+/** Set once at startup (index.js): lets the server count daily active people per platform. */
+let clientPlatform: "android" | "ios" | "web" | null = null;
+export function setClientPlatform(platform: "android" | "ios" | "web"): void {
+  clientPlatform = platform;
+}
+
 /** Retry only authentication failures, once. The handler coalesces refreshes. */
 export async function authenticatedFetch(url: string, init: RequestInit): Promise<Response> {
-  const res = await fetch(url, init);
   const headers = new Headers(init.headers);
+  if (clientPlatform && url.startsWith(API_BASE_URL) && !headers.has("X-Katkee-Platform")) headers.set("X-Katkee-Platform", clientPlatform);
+  const res = await fetch(url, { ...init, headers });
   const authorization = headers.get("Authorization");
   if (res.status !== 401 || !authorization?.startsWith("Bearer ") || !sessionHandler) return res;
   const token = await sessionHandler(authorization.slice(7));

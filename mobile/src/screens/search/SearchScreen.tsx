@@ -1,11 +1,12 @@
 import { Icon } from "../../components/Icon";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { SearchStackParamList } from "../../navigation/types";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { getFollowing, searchUsers, type SearchResult } from "../../api/users";
+import { track } from "../../analytics/analytics";
 import { ApiError } from "../../api/client";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { EmptyState } from "../../components/EmptyState";
@@ -25,6 +26,7 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
   const { accessToken, user } = useAuth();
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebouncedValue(query.trim(), 300);
+  const countedQuery = useRef<string | null>(null);
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -64,6 +66,11 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
     let cancelled = false;
     setLoading(true);
     setError(null);
+    // Admin analytics: one search per settled query (never the words searched for).
+    if (countedQuery.current !== debouncedQuery) {
+      countedQuery.current = debouncedQuery;
+      track("search_performed");
+    }
     searchUsers(debouncedQuery, accessToken)
       .then(({ results: found }) => {
         if (!cancelled) setResults(found);

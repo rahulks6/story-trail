@@ -34,6 +34,7 @@ import {
 import { getConversation, listMessages, markConversationRead, MAX_MESSAGE_LENGTH, type Message } from "../../api/conversations";
 import { ApiError } from "../../api/client";
 import { getStoryOwnerUsername } from "../../api/stories";
+import { ReportSheet } from "../../components/ReportSheet";
 import { applyReceipt, mergeMessages, newestId, oldestId } from "./threadState";
 
 type Props = NativeStackScreenProps<DMStackParamList, "Conversation">;
@@ -106,6 +107,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   const [composerError, setComposerError] = useState<string | null>(null);
   const [outbox, setOutbox] = useState<OutboxMessage[]>([]);
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
+  const [reportingMessageId, setReportingMessageId] = useState<string | null>(null);
   const focusedRef = useRef(true);
   const messagesRef = useRef<Message[] | null>(null);
   messagesRef.current = messages;
@@ -270,6 +272,15 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     ]);
   };
 
+  // Long-press a message the other person sent to report it (DM safety workflow).
+  const onMessageLongPress = (row: ListRow) => {
+    if (row.kind !== "sent" || row.senderId === userId) return;
+    Alert.alert("Message", undefined, [
+      { text: "Report", style: "destructive", onPress: () => setReportingMessageId(row.id) },
+      { text: "Cancel", style: "cancel" },
+    ]);
+  };
+
   const onInsertEmoji = (emoji: string) => {
     setDraft((current) => (current + emoji).slice(0, MAX_MESSAGE_LENGTH));
   };
@@ -350,11 +361,12 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
                     row.kind === "pending" && styles.bubblePending,
                     failed && styles.bubbleFailed,
                   ]}
-                  disabled={row.kind === "sent" ? !row.sharedStoryId : row.status === "sending"}
+                  disabled={row.kind === "sent" ? !row.sharedStoryId && mine : row.status === "sending"}
                   onPress={() => {
                     if (row.kind === "pending") onPendingPress(row);
                     else if (row.sharedStoryId) void onOpenSharedStory(row.sharedStoryId);
                   }}
+                  onLongPress={() => onMessageLongPress(row)}
                   accessibilityHint={row.kind === "pending" && row.status !== "sending" ? "Retry or delete this message" : undefined}
                 >
                   {row.kind === "sent" && row.sharedStoryId ? (
@@ -391,6 +403,13 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           />
         </View>
       ) : null}
+      <ReportSheet
+        visible={reportingMessageId !== null}
+        targetType="message"
+        targetId={reportingMessageId ?? ""}
+        conversationId={conversationId}
+        onClose={() => setReportingMessageId(null)}
+      />
       {composerError ? <Text style={styles.composerError}>{composerError}</Text> : null}
       <View style={styles.composerRow}>
         <Pressable

@@ -17,6 +17,11 @@ process.env.RATE_LIMIT_SIGNUP_PER_HOUR ??= "1000000";
 process.env.RATE_LIMIT_RESET_REQUESTS_PER_HOUR ??= "1000000";
 process.env.RATE_LIMIT_RESET_VERIFY_PER_HOUR ??= "1000000";
 process.env.RATE_LIMIT_ADMIN_LOGIN_PER_IP ??= "1000000";
+// Per-account action budgets (likes, comments, follows, DMs, views): generous here; the
+// abuse tests set their own tight values.
+process.env.SAFETY_LIMITS_JSON ??= JSON.stringify(Object.fromEntries(
+  ["like", "comment", "follow", "message", "conversation", "view"].map((k) => [k, { perMinute: 100000, perHour: 1000000, newAccountPerHour: 1000000 }]),
+));
 
 // Password reset and security alerts are captured in memory, never sent.
 process.env.EMAIL_PROVIDER ??= "memory";

@@ -1,5 +1,5 @@
 import { HttpError } from "../../http/errors";
-export const permissions = ["reports.read", "reports.review", "content.remove", "content.restore", "users.view", "users.restrict", "users.suspend", "moderation.history.read", "ads.create", "ads.edit", "ads.review", "ads.pause", "ads.analytics.read", "admins.read", "admins.create", "admins.update", "admins.disable", "audit.read", "analytics.read", "security.alerts.read"] as const;
+export const permissions = ["reports.read", "reports.review", "content.remove", "content.restore", "users.view", "users.restrict", "users.suspend", "moderation.history.read", "ads.create", "ads.edit", "ads.review", "ads.pause", "ads.analytics.read", "admins.read", "admins.create", "admins.update", "admins.disable", "audit.read", "analytics.read", "security.alerts.read", "reports.messages.read", "safety.settings.manage"] as const;
 export type Permission = typeof permissions[number];
 export interface Principal {
     userId: string;

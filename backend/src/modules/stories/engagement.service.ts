@@ -8,9 +8,13 @@ import * as sharesRepo from "./shares.repository";
 import * as notificationsService from "../notifications/notifications.service";
 import type { CommentRecord } from "./comments.repository";
 import { getStoryForViewer } from "./stories.service";
+import { enforceAction } from "../safety/limits";
+import { assertLinksAllowed } from "../safety/links";
+import { queryOne } from "../../db/psql";
 
 export async function likeStory(viewerId: string, storyId: string): Promise<void> {
   const story = await getStoryForViewer(storyId, viewerId); // access check — reused, not re-implemented
+  await enforceAction(viewerId, "like"); // mass-like protection
   const isNewLike = await likesRepo.likeStory(storyId, viewerId);
   if (isNewLike) {
     await notificationsService.notifyLike(viewerId, story.ownerId, storyId);
@@ -41,9 +45,23 @@ async function assertCanComment(storyId: string, viewerId: string): Promise<stor
   return story;
 }
 
+/** The same comment pasted onto several Stories within an hour is copy-paste spam. */
+const DUPLICATE_COMMENT_LIMIT = 3;
+
 export async function createComment(viewerId: string, storyId: string, body: string): Promise<CommentRecord> {
   await assertCanContribute(viewerId);
   const story = await assertCanComment(storyId, viewerId);
+  await enforceAction(viewerId, "comment"); // mass-comment protection
+  await assertLinksAllowed(body, "comment", viewerId);
+  const repeats = await queryOne(
+    `SELECT count(*) AS n FROM story_comments
+     WHERE user_id = :'user' AND created_at > now() - interval '1 hour' AND deleted_at IS NULL
+       AND lower(regexp_replace(body, '[[:space:]]+', ' ', 'g')) = lower(regexp_replace(:'body', '[[:space:]]+', ' ', 'g'))`,
+    { user: viewerId, body },
+  );
+  if (Number(repeats?.n ?? 0) >= DUPLICATE_COMMENT_LIMIT) {
+    throw new HttpError(429, "You've posted this comment several times recently. Try writing something new.");
+  }
   const comment = await commentsRepo.createComment(storyId, viewerId, body);
   await notificationsService.notifyComment(viewerId, story.ownerId, storyId, comment.id);
   await notificationsService.notifyMentions(viewerId, storyId, comment.id, body);

@@ -1,0 +1,16 @@
+{
+  "name": "database-integration",
+  "status": "passed",
+  "totals": {
+    "tests": 307,
+    "pass": 307,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "testFiles": 31,
+  "command": "sudo -u postgres env PGHOST=/var/run/postgresql PGUSER=postgres MEDIA_STORAGE_ROOT_TEST=/tmp/katkee-pg-media node scripts/run-tests.cjs (in backend/)",
+  "note": "Run separately from verify.cjs on the same code: the local PostgreSQL accepts this session only through peer authentication on its Unix socket, which requires running as the postgres OS account; that account cannot write this evidence folder, so verify.cjs ran the other steps. Summary computed from database-integration.log.",
+  "log": "database-integration.log"
+}

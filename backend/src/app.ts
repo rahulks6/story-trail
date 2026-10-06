@@ -23,6 +23,7 @@ import { registerAdsRoutes } from "./modules/ads/ads.routes";
 import { registerAppealRoutes } from "./modules/admin/appeals.routes";
 import { registerRealtimeRoutes } from "./realtime/realtime.routes";
 import { registerPushRoutes } from "./modules/push/push.routes";
+import { registerAnalyticsRoutes } from "./modules/analytics/analytics.routes";
 import { RealtimeHub } from "./realtime/hub";
 
 export function buildApp(providers?:ProviderGateway): Server {
@@ -58,6 +59,7 @@ export function buildApp(providers?:ProviderGateway): Server {
   registerAdminRoutes(router);
   registerAdsRoutes(router);
   registerAppealRoutes(router);
+  registerAnalyticsRoutes(router);
   registerRealtimeRoutes(router);
   registerPushRoutes(router);
 

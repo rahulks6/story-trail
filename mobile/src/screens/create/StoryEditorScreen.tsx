@@ -22,6 +22,7 @@ import type { CreateStackParamList, RootStackParamList } from "../../navigation/
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import {enqueueUpload} from '../../state/uploadQueue';
+import { track } from "../../analytics/analytics";
 import { ApiError } from "../../api/client";
 import { FILTER_PREVIEWS } from "../../models/filterPreviews";
 import {
@@ -57,6 +58,9 @@ const TRASH_ZONE_SIZE = 80;
  * overlays and the chosen filter on publish, the single most important
  * correctness bug this module closes; see backend migration 0015).
  */
+/** Media already counted as a started Story in this app run. */
+const startedStories = new Set<string>();
+
 export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Element {
   const { mediaUri, kind, mimeType } = route.params;
   const { accessToken,user } = useAuth();
@@ -87,6 +91,14 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
       if (filterToastTimer.current) clearTimeout(filterToastTimer.current);
     };
   }, []);
+
+  // Admin analytics: a Story started in the editor (once per photo or video, even if the
+  // editor reopens for the same draft).
+  useEffect(() => {
+    if (startedStories.has(mediaUri)) return;
+    startedStories.add(mediaUri);
+    track("story_created", { mediaKind: kind });
+  }, [mediaUri, kind]);
 
   // Crash-safe autosave (spec section 42: "persist local draft" as its own
   // step, not just React state). Restore-on-mount runs once, before the

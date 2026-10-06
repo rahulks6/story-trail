@@ -5,6 +5,7 @@ import { DatabaseError } from "../db/psql";
 import { queryOne } from "../db/psql";
 import { verifyAccessToken } from "../modules/auth/tokens";
 import { checkAccessSession } from "../modules/auth/session-check";
+import { noteActivity } from "../modules/analytics/activity";
 import { HttpError } from "./errors";
 import { sendJson } from "./respond";
 import { globalRateLimiter } from "./rateLimiters";
@@ -52,6 +53,7 @@ function handleError(res: http.ServerResponse, error: unknown): void {
     return;
   }
   if (error instanceof HttpError) {
+    for (const [name, value] of Object.entries(error.headers ?? {})) res.setHeader(name, value);
     sendJson(res, error.status, { error: "http_error", message: error.message, fields: error.fieldErrors });
     return;
   }
@@ -120,6 +122,8 @@ export function createServer(router: Router): http.Server {
             const state = await checkAccessSession(claims);
             if (state === "account_unavailable") throw new HttpError(403, "Account unavailable.");
             if (state === "session_ended") throw new HttpError(401, "Your session has ended. Sign in again.");
+            // DAU/WAU/MAU: records the person active today (in the background, at most once a day).
+            if (!url.startsWith("/api/v1/admin/")) noteActivity(claims.sub, req.headers["x-katkee-platform"]);
           }
         }
         if (url.startsWith("/api/v1/admin/")) res.setHeader("Cache-Control", "no-store");

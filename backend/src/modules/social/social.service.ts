@@ -2,6 +2,7 @@ import { HttpError } from "../../http/errors";
 import * as usersRepo from "../users/users.repository";
 import * as socialRepo from "./social.repository";
 import * as notificationsService from "../notifications/notifications.service";
+import { enforceAction } from "../safety/limits";
 
 async function requireOtherUser(username: string, viewerId: string): Promise<usersRepo.UserRecord> {
   const target = await usersRepo.findUserByUsername(username);
@@ -13,6 +14,7 @@ async function requireOtherUser(username: string, viewerId: string): Promise<use
 export type FollowResult = { status: "following" } | { status: "requested" };
 
 export async function follow(viewerId: string, targetUsername: string): Promise<FollowResult> {
+  await enforceAction(viewerId, "follow"); // mass-follow protection
   const target = await requireOtherUser(targetUsername, viewerId);
 
   const blocked = await socialRepo.anyBlockBetween(viewerId, target.id);

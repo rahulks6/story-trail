@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
@@ -6,6 +6,7 @@ import type { SearchStackParamList, RootStackParamList } from "../../navigation/
 import { colors, radii, spacing, typography } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { avatarFileUrl, followUser, getProfile, unfollowUser, type ProfileView } from "../../api/users";
+import { track } from "../../analytics/analytics";
 import { ApiError } from "../../api/client";
 import { getUserActiveStories } from "../../api/stories";
 import { openConversation } from "../../api/conversations";
@@ -36,6 +37,7 @@ export function UserProfileScreen({ route }: Props): React.JSX.Element {
   const [messagePending, setMessagePending] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [scrollEnabled, setScrollEnabled] = useState(true);
+  const countedProfile = useRef<string | null>(null);
 
   const load = useCallback(async () => {
     if (!accessToken) return;
@@ -44,6 +46,11 @@ export function UserProfileScreen({ route }: Props): React.JSX.Element {
     try {
       const { profile: fetched } = await getProfile(username, accessToken);
       setProfile(fetched);
+      // Admin analytics: someone else's profile opened (once per profile, not per refresh).
+      if (!fetched.isSelf && countedProfile.current !== username) {
+        countedProfile.current = username;
+        track("profile_viewed");
+      }
       // A private account not yet followed 403s on the Stories list — that's
       // just "no ring to show", not a real error, so it's swallowed here.
       try {

@@ -137,9 +137,17 @@ export async function createNotification(input: {
   // One statement: the notification, its push (sent by the worker) and the realtime
   // event (published on commit) exist together or not at all.
   await query(
+    // Like/follow notifications have a 7-day cooldown per actor and target, so like/unlike
+    // or follow/unfollow cycling can't flood someone's Activity and phone.
     `WITH n AS (
        INSERT INTO notifications (recipient_id, actor_id, type, story_id, comment_id, follow_request_id)
-       VALUES (:'recipient_id', ${nullable("actor_id", "uuid")}, :'type', ${nullable("story_id", "uuid")}, ${nullable("comment_id", "uuid")}, ${nullable("follow_request_id", "uuid")})
+       SELECT :'recipient_id', ${nullable("actor_id", "uuid")}, :'type', ${nullable("story_id", "uuid")}, ${nullable("comment_id", "uuid")}, ${nullable("follow_request_id", "uuid")}
+       WHERE :'type' NOT IN ('like', 'follow') OR NOT EXISTS (
+         SELECT 1 FROM notifications o
+         WHERE o.recipient_id = :'recipient_id' AND o.type = :'type'
+           AND o.actor_id IS NOT DISTINCT FROM ${nullable("actor_id", "uuid")}
+           AND o.story_id IS NOT DISTINCT FROM ${nullable("story_id", "uuid")}
+           AND o.created_at > now() - interval '7 days')
        RETURNING id, recipient_id, actor_id, type, story_id),
      p AS (
        INSERT INTO push_outbox (user_id, kind, actor_id, ref_id)

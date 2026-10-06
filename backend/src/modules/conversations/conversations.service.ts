@@ -1,3 +1,5 @@
+import { enforceAction } from "../safety/limits";
+import { assertLinksAllowed } from "../safety/links";
 import { HttpError } from "../../http/errors";
 import { assertCanContribute } from "../admin/account-policy";
 import * as usersRepo from "../users/users.repository";
@@ -29,7 +31,10 @@ export async function openConversationWith(viewerId: string, targetUsername: str
   const target = await requireOtherUser(targetUsername, viewerId);
   await assertNotBlocked(viewerId, target.id);
   const existing = await conversationsRepo.findConversationBetween(viewerId, target.id);
-  if (!existing) await assertCanContribute(viewerId);
+  if (!existing) {
+    await assertCanContribute(viewerId);
+    await enforceAction(viewerId, "conversation"); // cold-DM spam protection
+  }
   const conversation = existing ?? (await conversationsRepo.createConversation(viewerId, target.id));
   return {
     id: conversation.id,
@@ -90,6 +95,8 @@ export async function sendMessage(viewerId: string, conversationId: string, inpu
     if (existing) return replayed(existing, input);
   }
   await assertNotBlocked(viewerId, otherId); // re-checked at send time, not just at conversation creation
+  await enforceAction(viewerId, "message"); // retries above never count
+  if (input.body) await assertLinksAllowed(input.body, "message", viewerId);
 
   if (input.storyId) {
     // Reuses the exact same view-access + allowSharing rule and analytics
@@ -170,4 +177,17 @@ function withoutClientId(message: MessageRow): MessageRow {
 export async function markConversationRead(viewerId: string, conversationId: string): Promise<void> {
   await requireParticipant(conversationId, viewerId);
   await conversationsRepo.markRead(conversationId, viewerId);
+}
+
+/** Reports a message the other participant sent; see conversationsRepo.reportMessage. */
+export async function reportMessage(
+  reporterId: string,
+  conversationId: string,
+  input: { messageId: string; reason: string; details: string | null },
+): Promise<{ report: { id: string }; created: boolean }> {
+  const conversation = await requireParticipant(conversationId, reporterId);
+  const otherId = otherParticipant(conversation, reporterId);
+  const result = await conversationsRepo.reportMessage({ reporterId, otherId, conversationId, ...input });
+  if (!result.found || !result.reportId) throw new HttpError(404, "Message not found.");
+  return { report: { id: result.reportId }, created: result.created };
 }

@@ -21,12 +21,12 @@ export function registerAppealRoutes(router: Router): void {
         }
         if(!userId)throw new HttpError(401,'Unable to verify this account.');
         const ticket=await reauthTicket(userId);
-        const items=await rows(`SELECT jsonb_build_object('actionId',a.id,'action',a.action,'reason',a.reason,'createdAt',a.created_at,'appealStatus',p.status) AS data FROM moderation_notices n JOIN moderation_actions a ON a.id=n.action_id LEFT JOIN moderation_appeals p ON p.action_id=a.id AND p.user_id=n.user_id WHERE n.user_id=:'user' ORDER BY n.created_at DESC LIMIT 20`,{user:userId});
+        const items=await rows(`SELECT jsonb_build_object('actionId',a.id,'action',a.action,'reason',a.reason,'createdAt',a.created_at,'appealStatus',p.status,'appealable',moderation_action_appealable(a.action) AND p.id IS NULL) AS data FROM moderation_notices n JOIN moderation_actions a ON a.id=n.action_id LEFT JOIN moderation_appeals p ON p.action_id=a.id AND p.user_id=n.user_id WHERE n.user_id=:'user' ORDER BY n.created_at DESC LIMIT 20`,{user:userId});
         res.setHeader('Cache-Control','no-store');sendJson(res,200,{ticket:ticket.reauthTicket,items});
     });
     router.post('/api/v1/moderation/appeal/submit',async(req,res)=>{
         limiter.check(clientIp(req));const b=body(req.body);
-        const result=await one(`WITH access AS(UPDATE auth_reauth_tickets t SET consumed_at=now() WHERE token_hash=:'ticket' AND consumed_at IS NULL AND expires_at>now() AND EXISTS(SELECT 1 FROM moderation_notices n WHERE n.user_id=t.user_id AND n.action_id=:'action') RETURNING user_id),appeal AS(INSERT INTO moderation_appeals(action_id,user_id,reason) SELECT :'action',user_id,:'reason' FROM access ON CONFLICT(action_id,user_id) DO NOTHING RETURNING id) SELECT jsonb_build_object('accepted',EXISTS(SELECT 1 FROM access)) AS data`,{ticket:proofToken(b.ticket),action:uuid(b.actionId),reason:text(b.reason,1000)});
+        const result=await one(`WITH access AS(UPDATE auth_reauth_tickets t SET consumed_at=now() WHERE token_hash=:'ticket' AND consumed_at IS NULL AND expires_at>now() AND EXISTS(SELECT 1 FROM moderation_notices n JOIN moderation_actions a ON a.id=n.action_id WHERE n.user_id=t.user_id AND n.action_id=:'action' AND moderation_action_appealable(a.action)) RETURNING user_id),appeal AS(INSERT INTO moderation_appeals(action_id,user_id,reason) SELECT :'action',user_id,:'reason' FROM access ON CONFLICT(action_id,user_id) DO NOTHING RETURNING id) SELECT jsonb_build_object('accepted',EXISTS(SELECT 1 FROM access)) AS data`,{ticket:proofToken(b.ticket),action:uuid(b.actionId),reason:text(b.reason,1000)});
         if(!result?.accepted)throw new HttpError(401,'Verify your account again to submit this appeal.');
         sendJson(res,200,result);
     });
@@ -42,7 +42,7 @@ export function registerAppealRoutes(router: Router): void {
                 sendJson(res, 200, { items: await rows(`SELECT jsonb_build_object('actionId',a.id,'action',a.action,'reason',a.reason,'targetType',a.target_type,'targetId',a.target_id,'createdAt',a.created_at) AS data FROM moderation_notices n JOIN moderation_actions a ON a.id=n.action_id WHERE n.user_id=:'user' ORDER BY n.created_at DESC LIMIT 20`, { user: user.id }) });
                 return;
             }
-            const result = await one(`WITH eligible AS(SELECT action_id FROM moderation_notices WHERE user_id=:'user' AND action_id=:'action'),appeal AS(INSERT INTO moderation_appeals(action_id,user_id,reason) SELECT action_id,:'user',:'reason' FROM eligible ON CONFLICT(action_id,user_id) DO NOTHING RETURNING id) SELECT jsonb_build_object('accepted',EXISTS(SELECT 1 FROM eligible)) AS data`, { user: user.id, action: uuid(b.actionId), reason: text(b.reason, 1000) });
+            const result = await one(`WITH eligible AS(SELECT n.action_id FROM moderation_notices n JOIN moderation_actions a ON a.id=n.action_id WHERE n.user_id=:'user' AND n.action_id=:'action' AND moderation_action_appealable(a.action)),appeal AS(INSERT INTO moderation_appeals(action_id,user_id,reason) SELECT action_id,:'user',:'reason' FROM eligible ON CONFLICT(action_id,user_id) DO NOTHING RETURNING id) SELECT jsonb_build_object('accepted',EXISTS(SELECT 1 FROM eligible)) AS data`, { user: user.id, action: uuid(b.actionId), reason: text(b.reason, 1000) });
             if (!result?.accepted)
                 throw new HttpError(404, 'Action not found.');
             sendJson(res, 200, result);

@@ -28,14 +28,15 @@ test('corrupted and mismatched saved drafts cannot enter the editor',()=>{
  assert.equal(isSavedDraft(good,'file:///other.jpg'),false);
  for(const broken of [null,{}, {...good,draft:{caption:'missing fields'}}, {...good,draft:{...good.draft,overlays:[{type:'text',properties:null}]}}, {...good,draft:{...good.draft,drawing:[{points:[null]}]}}, {...good,draft:{...good.draft,crop:{zoom:NaN,offsetX:0,offsetY:0}}}])assert.equal(isSavedDraft(broken,'file:///photo.jpg'),false);
 });
-function service({media,taken=false,failure}={}) {
- const writes=[];
+function service({media,taken=false,failure,linkRefusal}={}) {
+ const writes=[],linkChecks=[];
  const s=load('backend/src/modules/users/profiles.service.ts',{
   '../../http/errors':{HttpError},'../../db/psql':{DatabaseError},
   '../users/users.repository':{findUserById:async()=>({id:'owner',username:'old'}),usernameTaken:async()=>taken,setProfile:async(id,input)=>{if(failure)throw failure;writes.push({id,input});return input;}},
   '../media/media.repository':{findMediaById:async(id,excludeModerated)=>{assert.equal(excludeModerated,true);return media;}},
-  '../social/social.repository':{},'../recommendations/events.repository':{},'../stories/stories.repository':{},'../stories/stories.service':{},'../auth/refresh-tokens.repository':{},'../auth/password':{}
- });return {s,writes};
+  '../social/social.repository':{},'../recommendations/events.repository':{},'../stories/stories.repository':{},'../stories/stories.service':{},'../auth/refresh-tokens.repository':{},'../auth/password':{},
+  '../safety/links':{assertLinksAllowed:async(text,surface,author)=>{linkChecks.push({text,surface,author});if(linkRefusal)throw linkRefusal;}}
+ });return {s,writes,linkChecks};
 }
 test('avatar ownership, kind and readiness failures never write profile fields',async()=>{
  for(const media of [null,{ownerId:'other',kind:'photo',status:'ready'},{ownerId:'owner',kind:'video',status:'ready'},{ownerId:'owner',kind:'photo',status:'processing'}]) {
@@ -51,6 +52,12 @@ test('username conflicts are controlled without hiding unrelated database failur
  let {s,writes}=service({taken:true});await assert.rejects(s.updateMyProfile('owner',{username:'new'}),e=>e.status===409);assert.equal(writes.length,0);
  s=service({failure:new DatabaseError('users_username_unique')}).s;await assert.rejects(s.updateMyProfile('owner',{username:'new'}),e=>e.status===409);
  const failure=new DatabaseError('unrelated_unique_index');s=service({failure}).s;await assert.rejects(s.updateMyProfile('owner',{bio:'new'}),e=>e===failure);
+});
+test('bios go through the link policy before anything is written',async()=>{
+ let {s,writes,linkChecks}=service();await s.updateMyProfile('owner',{bio:'Photos at example.com'});
+ assert.deepEqual(linkChecks.map(c=>[c.text,c.surface,c.author]),[['Photos at example.com','bio','owner']]);assert.equal(writes.length,1);
+ const refusal=new HttpError(422,"Links to scam.example aren't allowed on Katkee.");
+ ({s,writes}=service({linkRefusal:refusal}));await assert.rejects(s.updateMyProfile('owner',{bio:'Visit scam.example'}),e=>e===refusal);assert.equal(writes.length,0);
 });
 test('malformed route escaping returns 400',()=>{
  const {Router}=load('backend/src/http/router.ts',{'./errors':{HttpError}});const r=new Router();r.add('GET','/users/:id',()=>{});

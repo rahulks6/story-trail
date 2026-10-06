@@ -1,6 +1,9 @@
-// DMs are private: no Admin or Ads surface returns message text (there is no documented
-// safety workflow granting Admin access to DMs), and only the conversations module reads
-// message content. The push dispatcher reads message timestamps for the unread badge.
+// DMs are private: no Admin or Ads surface returns message text, and only the conversations
+// module reads message content. The one documented exception is the safety workflow where a
+// participant reports a message: the reported message and the nine before it are copied into
+// the report, and only someone with `reports.messages.read` can open that copy, audited
+// (moderation-admin.ts; tested in moderationLifecycle.test.ts). The push dispatcher reads
+// message timestamps for the unread badge.
 import "./admin-env";
 import { after, before, describe, it } from "node:test";
 import assert from "node:assert/strict";
@@ -9,7 +12,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import type { AddressInfo } from "node:net";
 import { buildApp } from "../src/app";
-import { query } from "../src/db/psql";
+import { query, queryOne } from "../src/db/psql";
 import { authHeader, makeClient, uniqueUser } from "./helpers";
 import { adminSignIn } from "./adminSession";
 
@@ -35,11 +38,12 @@ async function signup() {
 /** Every GET route the Admin console and the Ads module register (see the static check below). */
 const ADMIN_GETS = [
   "/api/v1/admin/session", "/api/v1/admin/dashboard", "/api/v1/admin/reports", "/api/v1/admin/reports/:reportId",
+  "/api/v1/admin/reports/:reportId/messages",
   "/api/v1/admin/evidence/:reportId", "/api/v1/admin/users", "/api/v1/admin/users?search=:username", "/api/v1/admin/users?search=:userId",
   "/api/v1/admin/history", "/api/v1/admin/appeals", "/api/v1/admin/audit", "/api/v1/admin/audit/verify",
   "/api/v1/admin/security-alerts", "/api/v1/admin/admins", "/api/v1/admin/advertisers", "/api/v1/admin/campaigns",
-  "/api/v1/admin/campaigns/:campaignId/analytics", "/api/v1/admin/campaigns/:campaignId/preview", "/api/v1/admin/ad-settings",
-  "/api/v1/admin/media/:mediaId", "/api/v1/moderation/reports", "/api/v1/ads/placements", "/api/v1/ads/deliveries/:deliveryId",
+  "/api/v1/admin/ad-interest-categories", "/api/v1/admin/campaigns/:campaignId/analytics", "/api/v1/admin/campaigns/:campaignId/preview", "/api/v1/admin/ad-settings",
+  "/api/v1/admin/media/:mediaId", "/api/v1/admin/safety/blocked-domains", "/api/v1/admin/analytics", "/api/v1/moderation/reports", "/api/v1/ads/placements", "/api/v1/ads/deliveries/:deliveryId",
   "/api/v1/ads/deliveries/:deliveryId/media",
 ];
 
@@ -74,6 +78,17 @@ describe("DM privacy", () => {
     assert.ok(crawled.filter((c) => c.startsWith("200 ")).length >= 15, crawled.join("\n"));
   });
 
+  it("analytics counts DMs without ever reading what they say", async () => {
+    // The daily rollup (migration 0035) counts sent, received and senders from timestamps and
+    // participant ids; it must never touch a message body or the Story a message shared.
+    const def = String((await queryOne(`SELECT pg_get_functiondef('analytics_rollup_day(date, text)'::regprocedure) AS d`))?.d);
+    assert.match(def, /FROM messages m/);
+    assert.ok(!/\bbody\b|shared_story_id|client_message_id/i.test(def), "the analytics rollup reads message content");
+    const dms = JSON.parse(String((await queryOne(`SELECT (analytics_rollup_day(current_date, 'UTC') -> 'dms')::text AS d`))?.d));
+    assert.deepEqual(Object.keys(dms).sort(), ["received", "senders", "sent"]);
+    assert.ok(Object.values(dms).every((v) => typeof v === "number"), "counts only");
+  });
+
   it("only the conversations module reads message content", () => {
     const src = path.resolve(__dirname, "../../src");
     const files: string[] = [];
@@ -96,7 +111,7 @@ describe("DM privacy", () => {
     const dispatcher = fs.readFileSync(path.join(src, "modules/push/dispatcher.ts"), "utf8");
     assert.ok(!/\bm\.body\b|messages\.body|SELECT\s+body/i.test(dispatcher), "the dispatcher never reads message bodies");
 
-    const adminAndAds = files.filter((f) => /modules\/(admin|ads|recommendations|moderation)\//.test(f));
+    const adminAndAds = files.filter((f) => /modules\/(admin|ads|recommendations|moderation|analytics)\//.test(f));
     assert.ok(adminAndAds.length >= 5);
     for (const file of adminAndAds) {
       const text = fs.readFileSync(file, "utf8");

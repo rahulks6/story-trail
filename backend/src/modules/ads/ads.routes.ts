@@ -36,16 +36,23 @@ export function registerAdsRoutes(router: Router): void {
         throw new HttpError(404, 'Not found.'); await sendMediaFile(req, res, m, null, false, mediaStorage, { redirect: false }); });
     router.get('/api/v1/admin/ad-settings', async (req, res) => { await requireAdmin(req, 'ads.analytics.read'); sendJson(res, 200, await one('SELECT to_jsonb(s) AS data FROM ad_delivery_settings s WHERE id=1')); });
     router.post('/api/v1/admin/ad-settings', async (req, res) => { const p = await requireAdmin(req, 'ads.edit', true, true); const b = body(req.body); confirmation(b.confirmed); sendJson(res, 200, await one(`WITH s AS(UPDATE ad_delivery_settings SET organic_gap=:'gap',session_cap=:'session',daily_cap=:'daily' WHERE id=1 RETURNING *),audit AS(INSERT INTO admin_audit(actor_id,action,metadata) SELECT :'actor','AD_SETTINGS_CHANGED',to_jsonb(s) FROM s) SELECT to_jsonb(s) AS data FROM s`, { gap: integer(b.organicGap, 3, 100), session: integer(b.sessionCap, 1, 10), daily: integer(b.dailyCap, 1, 50), actor: p.userId })); });
+    // Sponsored Stories never break Home: an internal failure answers with no ads (organic
+    // fallback) and is logged; invalid input is the caller's bug and gets a 422.
     router.get('/api/v1/ads/placements', async (req, res) => { requireAuth(req); if (!ads.adsEnabled()) {
         sendJson(res, 200, { items: [] });
         return;
-    } const q = parseQueryString(req.url ?? ''); eventLimit.check(req.userId!); try {
-        sendJson(res, 200, { items: await ads.placements(req.userId!, integer(Number(q.organicCount), 0, 1000)) });
+    } const q = parseQueryString(req.url ?? ''); eventLimit.check(req.userId!);
+        const organicCount = Number(q.organicCount);
+        if (!Number.isInteger(organicCount) || organicCount < 0 || organicCount > 1000) throw new HttpError(422, 'organicCount must be an integer from 0 to 1000.');
+        const platform = q.platform === 'android' || q.platform === 'ios' ? q.platform : null;
+        try {
+        sendJson(res, 200, { items: await ads.placements(req.userId!, organicCount, platform) });
     }
-    catch {
-        console.warn(JSON.stringify({ event: 'ad_insertion_failed' }));
+    catch (error) {
+        console.warn(JSON.stringify({ event: 'ad_insertion_failed', error: error instanceof Error ? error.message.slice(0, 200) : 'unknown' }));
         sendJson(res, 200, { items: [] });
     } });
+    router.get('/api/v1/admin/ad-interest-categories', async (req, res) => { await requireAdmin(req, 'ads.create'); sendJson(res, 200, { items: await ads.interestCategories() }); });
     router.post('/api/v1/ads/events', async (req, res) => { requireAuth(req); if (!ads.adsEnabled()) {
         sendJson(res, 204, undefined);
         return;
@@ -59,7 +66,7 @@ export function registerAdsRoutes(router: Router): void {
         throw new HttpError(404, 'Ad unavailable.'); await sendMediaFile(req, res, m, parseVariant(new URLSearchParams((req.url ?? '').split('?')[1] ?? '').get('variant')), false, mediaStorage); });
     router.post('/api/v1/ads/deliveries/:id/report', async (req, res) => { requireAuth(req); if (!config.features.adReporting || !ads.adsEnabled())
         throw new HttpError(404, 'Not found.'); reportLimit.check(req.userId!); const id = uuid(req.params.id), b = body(req.body); const reason = text(b.reason, 30); if (!['scam', 'inappropriate', 'offensive', 'prohibited', 'impersonation', 'other'].includes(reason))
-        throw new HttpError(422, 'Invalid reason.'); const result = await one(`WITH d AS(SELECT * FROM ad_deliveries WHERE id=:'id' AND viewer_id=:'viewer'),claim AS(INSERT INTO ad_events(delivery_id,event_type) SELECT id,'ad_report' FROM d ON CONFLICT DO NOTHING RETURNING delivery_id),r AS(INSERT INTO reports(reporter_id,target_type,target_id,reason,details) SELECT :'viewer','ad',creative_id,'other',:'reason' FROM d JOIN claim ON claim.delivery_id=d.id RETURNING id) SELECT jsonb_build_object('accepted',EXISTS(SELECT 1 FROM d)) AS data`, { id, viewer: req.userId!, reason }); if (!result?.accepted)
+        throw new HttpError(422, 'Invalid reason.'); const result = await one(`WITH d AS(SELECT * FROM ad_deliveries WHERE id=:'id' AND viewer_id=:'viewer'),claim AS(INSERT INTO ad_events(delivery_id,event_type) SELECT id,'ad_report' FROM d ON CONFLICT DO NOTHING RETURNING delivery_id),r AS(INSERT INTO reports(reporter_id,target_type,target_id,reason,details) SELECT :'viewer','ad',creative_id,CASE WHEN :'reason' IN ('scam','impersonation') THEN :'reason' ELSE 'other' END,:'reason' FROM d JOIN claim ON claim.delivery_id=d.id ON CONFLICT DO NOTHING RETURNING id) SELECT jsonb_build_object('accepted',EXISTS(SELECT 1 FROM d)) AS data`, { id, viewer: req.userId!, reason }); if (!result?.accepted)
         throw new HttpError(404, 'Delivery not found.'); sendJson(res, 200, result); });
 }
 

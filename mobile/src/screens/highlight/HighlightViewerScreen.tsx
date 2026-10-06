@@ -8,6 +8,7 @@ import type { RootStackParamList } from "../../navigation/types";
 import { colors, spacing, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { getHighlightDetail, getHighlightItemDetail, type HighlightItem } from "../../api/highlights";
+import { track } from "../../analytics/analytics";
 import { getMedia } from "../../api/media";
 import { mediaFileUrl } from "../../api/stories";
 import { ApiError } from "../../api/client";
@@ -50,6 +51,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
   const [containerSize, onContainerLayout] = useContainerLayout();
   const progress = useRef(new Animated.Value(0)).current;
   const animationRef = useRef<Animated.CompositeAnimation | null>(null);
+  const countedView = useRef(false);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -59,6 +61,11 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
         if (!cancelled) {
           setItems(highlight.items);
           setOwnerId(highlight.ownerId);
+          // Admin analytics: someone else's Highlight opened (once per visit, not per token refresh).
+          if (!countedView.current && highlight.ownerId !== user?.id && highlight.items.length) {
+            countedView.current = true;
+            track("highlight_viewed");
+          }
         }
       })
       .catch(() => {

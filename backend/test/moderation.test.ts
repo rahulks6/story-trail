@@ -75,7 +75,7 @@ describe("filing a report", () => {
 
     const storyReport = await client.post("/api/v1/reports", { targetType: "story", targetId: storyId, reason: "spam" }, authHeader(reporter.accessToken));
     assert.equal(storyReport.status, 201);
-    assert.equal(storyReport.body.report.status, "pending");
+    assert.equal(storyReport.body.report.status, "OPEN", "the report lifecycle uses the spec's names (migration 0032)");
 
     const commentReport = await client.post(
       "/api/v1/reports",
@@ -190,7 +190,7 @@ describe("resolving a report", () => {
 
     const resolve = await client.post(`/api/v1/moderation/reports/${reportId}/resolve`, { action: "dismiss", note: "not actually spam" }, mh);
     assert.equal(resolve.status, 200);
-    assert.equal(resolve.body.report.status, "dismissed");
+    assert.equal(resolve.body.report.status, "DISMISSED");
 
     const pending = await client.get("/api/v1/moderation/reports?status=pending", mh);
     assert.ok(!pending.body.reports.some((r: any) => r.id === reportId));
@@ -213,7 +213,7 @@ describe("resolving a report", () => {
 
     const resolve = await client.post(`/api/v1/moderation/reports/${report.body.report.id}/resolve`, { action: "remove_content" }, mh);
     assert.equal(resolve.status, 200);
-    assert.equal(resolve.body.report.status, "actioned");
+    assert.equal(resolve.body.report.status, "ACTIONED");
 
     const afterRemoval = await client.get(`/api/v1/stories/${storyId}`, authHeader(owner.accessToken));
     assert.equal(afterRemoval.status, 404, "removal is a real soft-delete, gone even to the owner, same as a self-delete");

@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import { ActivityIndicator, Alert, Modal, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { colors, radii, spacing, typography } from "../theme";
 import { useAuth } from "../state/AuthContext";
-import { createReport, REPORT_REASONS, type ReportReason, type ReportTargetType } from "../api/moderation";
+import { createReport, reportDirectMessage, REPORT_REASONS, type ReportReason, type ReportTargetType } from "../api/moderation";
 import { ApiError } from "../api/client";
 
 interface Props {
   visible: boolean;
-  targetType: ReportTargetType;
+  /** "message" reports a DM: `targetId` is the message, `conversationId` its thread. */
+  targetType: ReportTargetType | "message";
   targetId: string;
+  conversationId?: string;
   onClose: () => void;
 }
 
@@ -19,7 +21,7 @@ interface Props {
  * reasonably list 7 reasons, so this is a small bottom-sheet Modal in the
  * same style as ShareSheet.tsx, not a new pattern.
  */
-export function ReportSheet({ visible, targetType, targetId, onClose }: Props): React.JSX.Element {
+export function ReportSheet({ visible, targetType, targetId, conversationId, onClose }: Props): React.JSX.Element {
   const { accessToken } = useAuth();
   const [selectedReason, setSelectedReason] = useState<ReportReason | null>(null);
   const [details, setDetails] = useState("");
@@ -34,7 +36,12 @@ export function ReportSheet({ visible, targetType, targetId, onClose }: Props): 
     if (!accessToken || !selectedReason || busy) return;
     setBusy(true);
     try {
-      await createReport({ targetType, targetId, reason: selectedReason, details: details.trim() || undefined }, accessToken);
+      if (targetType === "message") {
+        if (!conversationId) return;
+        await reportDirectMessage(conversationId, { messageId: targetId, reason: selectedReason, details: details.trim() || undefined }, accessToken);
+      } else {
+        await createReport({ targetType, targetId, reason: selectedReason, details: details.trim() || undefined }, accessToken);
+      }
       reset();
       onClose();
       Alert.alert("Thanks for letting us know", "Our moderation team will review this.");
@@ -66,7 +73,12 @@ export function ReportSheet({ visible, targetType, targetId, onClose }: Props): 
       />
       <View style={styles.sheet}>
         <View style={styles.handle} />
-        <Text style={[typography.bodyStrong, styles.title]}>Report {targetType}</Text>
+        <Text style={[typography.bodyStrong, styles.title]}>Report {targetType === "user" ? "profile" : targetType}</Text>
+        {targetType === "message" ? (
+          <Text style={[typography.caption, styles.disclosure]}>
+            This message and the 9 messages before it will be shared with Katkee's safety team. Nothing else from this conversation is shared.
+          </Text>
+        ) : null}
 
         {selectedReason === null ? (
           REPORT_REASONS.map((reason) => (
@@ -111,6 +123,7 @@ const styles = StyleSheet.create({
   },
   handle: { width: 40, height: 4, borderRadius: 2, backgroundColor: colors.border, alignSelf: "center", marginVertical: spacing.sm },
   title: { textAlign: "center", marginBottom: spacing.sm },
+  disclosure: { color: colors.textSecondary, textAlign: "center", marginBottom: spacing.sm },
   row: { paddingVertical: spacing.md, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border },
   selectedReason: { marginBottom: spacing.sm },
   detailsInput: {

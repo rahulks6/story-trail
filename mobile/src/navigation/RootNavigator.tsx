@@ -7,6 +7,7 @@ import { NavigationContainer, type LinkingOptions } from "@react-navigation/nati
 import { deepLinkTarget } from "./profileLinks";
 import { initialNotificationLink, onNotificationOpened } from "../push/pushNotifications";
 import { usePushRegistration } from "../push/usePushRegistration";
+import { useAnalytics } from "../analytics/useAnalytics";
 import { StoryLinkScreen } from "../screens/story/StoryLinkScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { AuthStackParamList, RootStackParamList } from "./types";
@@ -191,6 +192,7 @@ function SignedInNavigator(): React.JSX.Element {
 export function RootNavigator(): React.JSX.Element {
   const { status, user } = useAuth();
   usePushRegistration();
+  useAnalytics();
   const pendingLink = useRef<string | null>(null);
   // A profile or Story link that arrives while signed out opens after sign-in.
   useEffect(() => {

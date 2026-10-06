@@ -42,6 +42,7 @@ These are unresolved items from the source status and specification, not feature
 - Full editor preview/export parity, render validation, and physical-device gesture testing.
 - OS-managed background uploads (the resumable outbox continues while the app is open). Background processing, renditions/posters and S3/CloudFront delivery were implemented in Phase 2 and verified against local S3/SQS servers; live AWS is not verified.
 - Live push delivery and on-device realtime behavior: WebSocket realtime and FCM/APNs push were implemented in Phase 3 and verified against local protocol servers, not with real credentials or devices. Activity grouping completion also remains.
+- On-device behavior of the Phase 4 work: the moderation lifecycle and appeals (with automatic reversal), DM reporting with evidence, per-account abuse limits and link safety, Ads audiences/View Profile/automatic completion, and product analytics (DAU/WAU/MAU, retention, crash-free sessions) were implemented in Phase 4 and verified on the server and in the Admin Console (`docs/phases/PHASE_4_MODERATION_ADS_ANALYTICS.md`). Still missing: native crash reporting (only JavaScript crashes are counted), device attestation/CAPTCHA, live Safe Browsing (needs an API key).
 - Retention/cleanup jobs, production monitoring, database/media backup and restore exercises, and load testing.
 
 ## Android and publishing gates
@@ -73,7 +74,7 @@ npm run verify:bundle
 
 This generates logs under docs/test-runs. This is a source verification command, not an installation command.
 
-For integration tests, set PGHOST to localhost, PGUSER/PGPASSWORD to a local test-only PostgreSQL role with CREATEDB rights, and PGPORT if non-default. Add PostgreSQL's bin directory to PATH. Do not use production credentials or a production PostgreSQL instance.
+For integration tests, set PGHOST to localhost, PGUSER/PGPASSWORD to a local test-only PostgreSQL role with CREATEDB rights, and PGPORT if non-default. A local server that only allows peer authentication also works: set PGHOST to its socket directory (for example /var/run/postgresql) and run as the matching OS account. Add PostgreSQL's bin directory to PATH. Do not use production credentials or a production PostgreSQL instance.
 
 ```powershell
 npm run verify:full

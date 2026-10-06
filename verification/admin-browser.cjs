@@ -31,25 +31,44 @@ async function user(){const id=randomUUID().slice(0,8);const input={username:'ui
  await page.getByRole('button',{name:'Sign out',exact:true}).click();await page.waitForURL(base+'/admin/login');await login(admin.input.email);
  assert.equal(await page.getByRole('button',{name:'Admins',exact:true}).count(),0);assert.equal(await page.getByRole('button',{name:'Ads',exact:true}).count(),0);
  await page.getByRole('button',{name:'Reports',exact:true}).click();await page.getByPlaceholder('Search ID or username / campaign name').fill(report.id);await page.getByRole('button',{name:'Search',exact:true}).click();await page.locator('article').filter({hasText:report.id}).getByRole('button',{name:'Review report',exact:true}).click();await page.getByText('UI moderation verification',{exact:true}).first().waitFor();
- await page.getByPlaceholder('Reason and moderator notes').fill('Confirmed test review');await page.screenshot({path:output+'/admin-report-review.png',fullPage:true});page.once('dialog',d=>d.accept());await page.getByRole('button',{name:'Remove content',exact:true}).click();await page.getByRole('button',{name:'Filter',exact:true}).waitFor();
+ await page.getByPlaceholder('Reason for your decision').fill('Confirmed test review');await page.screenshot({path:output+'/admin-report-review.png',fullPage:true});page.once('dialog',d=>d.accept());await page.getByRole('button',{name:'Remove content',exact:true}).click();await page.getByRole('button',{name:'Filter',exact:true}).waitFor();
  const hidden=await fetch(base+'/api/v1/stories/'+published.story.id,{headers:{Authorization:'Bearer '+reporter.tokens.accessToken}});assert.equal(hidden.status,404);
  await page.getByRole('button',{name:'Sign out',exact:true}).click();await page.waitForURL(base+'/admin/login');await login(superEmail);await page.getByRole('button',{name:'Audit Logs',exact:true}).click();await page.getByText('MODERATION_REMOVE',{exact:true}).first().waitFor();
  await page.getByRole('button',{name:'Verify integrity',exact:true}).click();await page.getByText(/^Audit chain intact: \d+ records/).waitFor();await page.screenshot({path:output+'/admin-audit-verify.png',fullPage:true});
  await page.getByRole('button',{name:'Security',exact:true}).click();await page.getByRole('heading',{name:'Your two-step verification',exact:true}).waitFor();await page.screenshot({path:output+'/admin-security.png',fullPage:true});
+ // Analytics: server-side totals; Refresh runs the worker's rollup. The Story owner and the reporter
+ // used the app today; Admin console sessions are not consumer activity.
+ await page.getByRole('button',{name:'Analytics',exact:true}).click();await page.getByRole('heading',{name:'Retention',exact:true}).waitFor();
+ await page.getByRole('button',{name:'Refresh now',exact:true}).click();await page.getByText('Analytics refreshed.',{exact:true}).waitFor();
+ const dau=Number((await page.locator('article').filter({has:page.getByRole('heading',{name:'Daily active users',exact:true})}).locator('.metric').innerText()).replace(/,/g,''));
+ assert.equal(dau,2,'today counts the two people who used the app, not Admin console sessions');
+ assert.ok(await page.locator('svg.chart rect').count()>=1,'active users chart');
+ await page.locator('table').first().getByRole('cell',{name:new Date().toISOString().slice(0,10),exact:true}).waitFor();
+ assert.equal(await page.getByRole('cell',{name:'pending',exact:true}).count()>=1,true,"today's signups show retention as pending");
+ await page.screenshot({path:output+'/admin-analytics.png',fullPage:true});
  await page.getByRole('button',{name:'Ads',exact:true}).click();await page.getByRole('button',{name:'New advertiser',exact:true}).click();await page.getByLabel('Advertiser name',{exact:true}).fill('UI test advertiser');await page.getByLabel('Public Katkee account ID',{exact:true}).fill(owner.user.id);page.once('dialog',d=>d.accept());await page.getByRole('button',{name:'Create advertiser',exact:true}).click();await page.getByText('Saved.',{exact:true}).waitFor();
  await page.getByRole('button',{name:'New campaign',exact:true}).click();await page.getByRole('heading',{name:'Create campaign',exact:true}).waitFor();await page.screenshot({path:output+'/admin-campaign-form.png',fullPage:true});
  // A real video creative: the console waits for processing (poster, renditions) before saving the draft.
  const video=output+'/creative.mp4';require('node:child_process').execFileSync('ffmpeg',['-hide_banner','-loglevel','error','-y','-f','lavfi','-i','testsrc2=size=640x360:rate=30','-t','2','-c:v','libx264','-pix_fmt','yuv420p',video]);
  const local=d=>new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);
- await page.getByLabel('Campaign name',{exact:true}).fill('UI video creative');await page.locator('select[name=advertiserId]').selectOption({label:'UI test advertiser'});await page.getByLabel('Photo / video',{exact:true}).setInputFiles(video);await page.getByLabel('Caption',{exact:true}).fill('Two-second test creative');
+ // The wizard: Details → Creative → Audience → Budget & schedule → Preview & review.
+ await page.getByLabel('Campaign name',{exact:true}).fill('UI video creative');await page.locator('select[name=advertiserId]').selectOption({label:'UI test advertiser'});
+ await page.getByRole('button',{name:'Next: Creative',exact:true}).click();
+ assert.equal(await page.getByLabel('Campaign name',{exact:true}).isVisible(),false,'only the current wizard step is shown');
+ await page.getByLabel('Photo / video',{exact:true}).setInputFiles(video);await page.getByLabel('Caption',{exact:true}).fill('Two-second test creative');
  await page.getByLabel('Public HTTPS destination',{exact:true}).fill('https://example.com/offer');
+ await page.getByRole('button',{name:'Next: Audience',exact:true}).click();
+ await page.getByLabel('Travel',{exact:true}).check();await page.getByLabel('Android',{exact:true}).check();
+ await page.getByRole('button',{name:'Next: Budget & schedule',exact:true}).click();
  await page.getByLabel('Start',{exact:true}).fill(local(new Date(Date.now()+3600e3)));await page.getByLabel('End',{exact:true}).fill(local(new Date(Date.now()+7*86400e3)));
+ await page.getByRole('button',{name:'Next: Preview & review',exact:true}).click();
+ await page.getByText('Interested in Travel',{exact:true}).waitFor();await page.screenshot({path:output+'/admin-campaign-preview.png',fullPage:true});
  page.once('dialog',d=>d.accept());await page.getByRole('button',{name:'Upload and save draft',exact:true}).click();
  try{await page.getByText(/^Processing video/).waitFor({timeout:30000});}
  catch(e){await page.screenshot({path:output+'/failure-campaign.png',fullPage:true});
   console.error('message:',await page.locator('#message').innerText(),'invalid fields:',await page.evaluate(()=>[...document.querySelectorAll('form :invalid')].map(n=>n.name+'='+n.validationMessage)));throw e;}
  try{await page.getByText('UI video creative').first().waitFor({timeout:120000});}
  catch(e){await page.screenshot({path:output+'/failure-campaign-save.png',fullPage:true});console.error('message:',await page.locator('#message').innerText());throw e;}await page.screenshot({path:output+'/admin-campaign-video-draft.png',fullPage:true});
- assert.deepEqual(errors,[]);await browser.close();const passed=['Super Admin sign-in with TOTP enrollment (QR + setup key) and backup codes','dashboard real data','create limited Admin with explicit confirmation','limited Admin enrolls MFA and sees limited navigation','report review/media preview','remove Story and verify consumer 404','Super Admin repeat sign-in with a backup code','audit history visible','audit hash chain verified from the console','Security page','advertiser creation','campaign creation form','video creative processed before the draft is saved'];
+ assert.deepEqual(errors,[]);await browser.close();const passed=['Super Admin sign-in with TOTP enrollment (QR + setup key) and backup codes','dashboard real data','create limited Admin with explicit confirmation','limited Admin enrolls MFA and sees limited navigation','report review/media preview','analytics dashboard: live DAU/WAU/MAU, daily totals, retention and refresh','remove Story and verify consumer 404','Super Admin repeat sign-in with a backup code','audit history visible','audit hash chain verified from the console','Security page','advertiser creation','campaign creation form','campaign wizard: audience (broad categories, platforms) and preview summary','video creative processed before the draft is saved'];
  fs.writeFileSync(output+'/browser-results.json',JSON.stringify({passed,pageErrors:errors},null,2));console.log(passed.length+' browser checks passed; no page errors.');
 })().catch(e=>{console.error(e);process.exit(1);});

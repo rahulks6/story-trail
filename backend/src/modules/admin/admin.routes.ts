@@ -10,10 +10,18 @@ import { config } from "../../config/env";
 import { body, password, text, uuid, integer, confirmation, permissions } from "./policy";
 import { adminLogin, confirmEnrollment, cookie, enabled, hash, regenerateBackupCodes, reauthenticate, requireAdmin, resetAdminMfa, startEnrollment, verifyLoginMfa } from "./security";
 import { rows, one, moderate, manageAdmin } from "./admin.service";
+import { addNote, listAppeals, reportDetail, reportMessages, reviewAppeal } from "./moderation-admin";
+import { parseReportStatus } from "../moderation/moderation.repository";
 import { mediaStorage } from "../media/instance";
 import { receiveUpload } from "../media/media.service";
 import { findMediaById } from "../media/media.repository";
 import { sendMediaFile } from "../media/delivery";
+/** "https://Evil.Example.com/path" → "evil.example.com"; anything that isn't a domain is refused. */
+function linkDomain(value: unknown): string {
+    const raw = text(value, 300).toLowerCase().replace(/^[a-z]+:\/\//, '').split(/[/?#:]/)[0]!.replace(/\.$/, '');
+    if (!/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/.test(raw) || raw.length > 253) throw new HttpError(422, 'Enter a domain such as example.com.');
+    return raw;
+}
 export function registerAdminRoutes(router: Router): void {
     for (const [url, file, mime] of [['/admin/login', 'login.html', 'text/html'], ['/admin', 'index.html', 'text/html'], ['/admin/app.js', 'app.js', 'text/javascript'], ['/admin/style.css', 'style.css', 'text/css']]) {
         router.get(url!, async (req, res) => { enabled(); if (url === '/admin')
@@ -61,29 +69,24 @@ export function registerAdminRoutes(router: Router): void {
     // Step-up: password plus a current authenticator (or backup) code once MFA is set up.
     router.post('/api/v1/admin/reauthenticate', async (req, res) => { const p = await requireAdmin(req); const b = body(req.body); await reauthenticate(p, password(b.password), b.code); sendJson(res, 204, undefined); });
     router.post('/api/v1/admin/logout', async (req, res) => { const p = await requireAdmin(req); await query(`DELETE FROM admin_sessions WHERE token_hash=:'hash'`, { hash: p.sessionHash! }); res.setHeader('Set-Cookie', cookie('', 0)); sendJson(res, 204, undefined); });
-    router.get('/api/v1/admin/dashboard', async (req, res) => { await requireAdmin(req, 'reports.read'); sendJson(res, 200, await one(`SELECT jsonb_build_object('queue',(SELECT count(*) FROM reports WHERE status IN ('pending','under_review')),'highPriority',(SELECT count(*) FROM reports WHERE priority>=2 AND status IN ('pending','under_review')),'reportsToday',(SELECT count(*) FROM reports WHERE created_at>=date_trunc('day',now())),'resolvedToday',(SELECT count(*) FROM reports WHERE reviewed_at>=date_trunc('day',now())),'restricted',(SELECT count(*) FROM users WHERE moderation_state='RESTRICTED'),'pendingAds',(SELECT count(*) FROM ad_campaigns WHERE status='PENDING_REVIEW')) AS data`)); });
+    router.get('/api/v1/admin/dashboard', async (req, res) => { await requireAdmin(req, 'reports.read'); sendJson(res, 200, await one(`SELECT jsonb_build_object('queue',(SELECT count(*) FROM reports WHERE status IN ('OPEN','UNDER_REVIEW')),'highPriority',(SELECT count(*) FROM reports WHERE priority>=2 AND status IN ('OPEN','UNDER_REVIEW')),'appealsOpen',(SELECT count(*) FROM moderation_appeals WHERE status='OPEN'),'reportsToday',(SELECT count(*) FROM reports WHERE created_at>=date_trunc('day',now())),'resolvedToday',(SELECT count(*) FROM reports WHERE reviewed_at>=date_trunc('day',now())),'restricted',(SELECT count(*) FROM users WHERE moderation_state='RESTRICTED'),'pendingAds',(SELECT count(*) FROM ad_campaigns WHERE status='PENDING_REVIEW')) AS data`)); });
     router.get('/api/v1/admin/reports', async (req, res) => {
         await requireAdmin(req, 'reports.read');
         const q = parseQueryString(req.url ?? '');
         const page = parsePagination(q);
-        sendJson(res, 200, { items: await rows(`SELECT to_jsonb(r) AS data FROM reports r WHERE (:'status'='' OR r.status=:'status') AND (:'type'='' OR r.target_type=:'type') AND (:'reason'='' OR r.reason=:'reason') AND (:'search'='' OR r.id::text=:'search' OR r.target_id::text=:'search') ORDER BY priority DESC,created_at ASC LIMIT :'limit' OFFSET :'offset'`, { ...page, status: q.status ?? 'pending', type: q.type ?? '', reason: q.reason ?? '', search: (q.search ?? '').slice(0, 120) }), ...page });
+        // Status uses the lifecycle names (lowercase names from before Phase 4 still work); minPriority 0-3.
+        // Empty or "all" lists every status (the console's search); no parameter means the open queue.
+        const status = q.status === '' || q.status === 'all' ? '' : parseReportStatus(q.status);
+        if (status === null) throw new HttpError(422, 'Invalid status filter.');
+        const minPriority = q.minPriority ? Number(q.minPriority) : 0;
+        if (!Number.isInteger(minPriority) || minPriority < 0 || minPriority > 3) throw new HttpError(422, 'Invalid priority filter.');
+        sendJson(res, 200, { items: await rows(`SELECT to_jsonb(r) AS data FROM reports r WHERE (:'status'='' OR r.status=:'status') AND r.priority >= :'minPriority'::integer AND (:'type'='' OR r.target_type=:'type') AND (:'reason'='' OR r.reason=:'reason') AND (:'search'='' OR r.id::text=:'search' OR r.target_id::text=:'search') ORDER BY priority DESC,created_at ASC LIMIT :'limit' OFFSET :'offset'`, { ...page, status, minPriority, type: q.type ?? '', reason: q.reason ?? '', search: (q.search ?? '').slice(0, 120) }), ...page });
     });
-    router.get('/api/v1/admin/reports/:id', async (req, res) => {
-        await requireAdmin(req, 'reports.read');
-        const id = uuid(req.params.id);
-        const report = await one(`SELECT to_jsonb(r) AS data FROM reports r WHERE id=:'id'`, { id });
-        if (!report)
-            throw new HttpError(404, 'Report not found.');
-        const target = await one(`SELECT data FROM (
- SELECT 'story' AS type,s.id,jsonb_build_object('id',s.id,'username',u.username,'caption',s.caption,'mediaId',s.media_id,'deleted',s.deleted_at IS NOT NULL) AS data FROM stories s JOIN users u ON u.id=s.owner_id
- UNION ALL SELECT 'comment',c.id,jsonb_build_object('id',c.id,'username',u.username,'body',c.body,'deleted',c.deleted_at IS NOT NULL) FROM story_comments c JOIN users u ON u.id=c.user_id
- UNION ALL SELECT 'user',u.id,jsonb_build_object('id',u.id,'username',u.username,'bio',u.bio,'state',u.moderation_state) FROM users u
- UNION ALL SELECT 'ad',c.id,jsonb_build_object('id',c.id,'caption',c.caption,'mediaId',c.media_id,'destination',c.destination,'state',c.review_status) FROM ad_creatives c
- ) targets WHERE type=:'type' AND id=:'target'`, { type: String(report.target_type), target: String(report.target_id) });
-        const counts = await one(`SELECT jsonb_build_object('count',count(*)) AS data FROM reports WHERE target_type=:'type' AND target_id=:'target'`, { type: String(report.target_type), target: String(report.target_id) });
-        sendJson(res, 200, { report, target, counts });
-    });
-    router.post('/api/v1/admin/reports/:id/claim', async (req, res) => { const p = await requireAdmin(req, 'reports.review'); const b = body(req.body); confirmation(b.confirmed); const result = await one(`WITH r AS(UPDATE reports SET status='under_review',version=version+1,updated_at=now(),reviewed_by=:'actor' WHERE id=:'id' AND status='pending' AND version=:'version' RETURNING *),audit AS(INSERT INTO admin_audit(actor_id,action,target_id) SELECT :'actor','REPORT_UNDER_REVIEW',id FROM r) SELECT to_jsonb(r) AS data FROM r`, { id: uuid(req.params.id), actor: p.userId, version: integer(b.version, 1, 2147483647) }); if (!result)
+    router.get('/api/v1/admin/reports/:id', async (req, res) => { const p = await requireAdmin(req, 'reports.read'); sendJson(res, 200, await reportDetail(p, req.params.id!)); });
+    router.post('/api/v1/admin/reports/:id/notes', async (req, res) => { const p = await requireAdmin(req, 'reports.review'); sendJson(res, 201, { note: await addNote(p, req.params.id!, body(req.body)) }); });
+    // Reporter-attached DM evidence only; permission-gated and audited (see moderation-admin.ts).
+    router.get('/api/v1/admin/reports/:id/messages', async (req, res) => { const p = await requireAdmin(req, 'reports.messages.read'); res.setHeader('Cache-Control', 'no-store'); sendJson(res, 200, { items: await reportMessages(p, req.params.id!) }); });
+    router.post('/api/v1/admin/reports/:id/claim', async (req, res) => { const p = await requireAdmin(req, 'reports.review'); const b = body(req.body); confirmation(b.confirmed); const result = await one(`WITH r AS(UPDATE reports SET status='UNDER_REVIEW',version=version+1,updated_at=now(),reviewed_by=:'actor' WHERE id=:'id' AND status='OPEN' AND version=:'version' RETURNING *),audit AS(INSERT INTO admin_audit(actor_id,action,target_id) SELECT :'actor','REPORT_UNDER_REVIEW',id FROM r) SELECT to_jsonb(r) AS data FROM r`, { id: uuid(req.params.id), actor: p.userId, version: integer(b.version, 1, 2147483647) }); if (!result)
         throw new HttpError(409, 'Report already claimed or resolved. Refresh state.'); sendJson(res, 200, result); });
     router.post('/api/v1/admin/moderate', async (req, res) => { const p = await requireAdmin(req, undefined, false, true); sendJson(res, 200, await moderate(p, body(req.body))); });
     router.get('/api/v1/admin/users', async (req, res) => { await requireAdmin(req, 'users.view'); const q = parseQueryString(req.url ?? ''); const page = parsePagination(q); sendJson(res, 200, { items: await rows(`SELECT jsonb_build_object('id',id,'username',username,'displayName',display_name,'state',moderation_state,'active',is_active) AS data FROM users WHERE deleted_at IS NULL AND (username::text ILIKE :'pattern' OR id::text=:'search') ORDER BY username LIMIT :'limit' OFFSET :'offset'`, { ...page, pattern: containsPattern((q.search ?? '').slice(0, 100)), search: (q.search ?? '').slice(0, 100) }), ...page }); });
@@ -124,10 +127,13 @@ export function registerAdminRoutes(router: Router): void {
     });
     router.get('/api/v1/admin/admins', async (req, res) => { await requireAdmin(req, 'admins.read', true); const page = parsePagination(parseQueryString(req.url ?? '')); sendJson(res, 200, { items: await rows(`SELECT jsonb_build_object('userId',g.user_id,'username',u.username,'role',g.role,'permissions',g.permissions,'enabled',g.enabled,'version',g.version) AS data FROM admin_grants g JOIN users u ON u.id=g.user_id ORDER BY g.created_at DESC LIMIT :'limit' OFFSET :'offset'`, { ...page }), ...page }); });
     router.post('/api/v1/admin/admins', async (req, res) => { const p = await requireAdmin(req, 'admins.create', true, true); sendJson(res, 200, await manageAdmin(p, body(req.body))); });
-    router.get('/api/v1/admin/appeals', async (req, res) => { await requireAdmin(req, 'reports.review'); const page = parsePagination(parseQueryString(req.url ?? '')); sendJson(res, 200, { items: await rows(`SELECT to_jsonb(a) AS data FROM moderation_appeals a ORDER BY created_at ASC LIMIT :'limit' OFFSET :'offset'`, { ...page }), ...page }); });
-    router.post('/api/v1/admin/appeals/:id', async (req, res) => { const p = await requireAdmin(req, 'reports.review', false, true); const b = body(req.body); confirmation(b.confirmed); const decision = text(b.decision, 20); if (!['UPHELD', 'DENIED'].includes(decision))
-        throw new HttpError(422, 'Invalid decision.'); const result = await one(`WITH changed AS (UPDATE moderation_appeals SET status=:'decision',resolution=:'reason',reviewer_id=:'actor',version=version+1 WHERE id=:'id' AND status='OPEN' AND version=:'version' RETURNING *), audit AS(INSERT INTO admin_audit(actor_id,action,target_id,metadata) SELECT :'actor','APPEAL_REVIEWED',id,jsonb_build_object('decision',status,'resolution',resolution) FROM changed) SELECT to_jsonb(c) AS data FROM changed c`, { id: uuid(req.params.id), actor: p.userId, decision, reason: text(b.reason, 500), version: integer(b.version, 1, 2147483647) }); if (!result)
-        throw new HttpError(409, 'Appeal already reviewed.'); sendJson(res, 200, result); });
+    // Link safety: domains nobody can link to (src/modules/safety/links.ts). Every change is audited.
+    router.get('/api/v1/admin/safety/blocked-domains', async (req, res) => { await requireAdmin(req, 'safety.settings.manage'); const page = parsePagination(parseQueryString(req.url ?? '')); sendJson(res, 200, { items: await rows(`SELECT jsonb_build_object('domain',d.domain,'reason',d.reason,'createdAt',d.created_at,'by',u.username) AS data FROM blocked_link_domains d LEFT JOIN users u ON u.id=d.created_by ORDER BY d.created_at DESC LIMIT :'limit' OFFSET :'offset'`, { ...page }), ...page }); });
+    router.post('/api/v1/admin/safety/blocked-domains', async (req, res) => { const p = await requireAdmin(req, 'safety.settings.manage', false, true); const b = body(req.body); confirmation(b.confirmed); const domain = linkDomain(b.domain); const result = await one(`WITH d AS (INSERT INTO blocked_link_domains (domain, reason, created_by) VALUES (:'domain', :'reason', :'actor') ON CONFLICT (domain) DO NOTHING RETURNING *), audit AS (INSERT INTO admin_audit (actor_id, action, metadata) SELECT :'actor', 'LINK_DOMAIN_BLOCKED', jsonb_build_object('domain', domain, 'reason', reason) FROM d) SELECT jsonb_build_object('domain', domain) AS data FROM d`, { domain, reason: text(b.reason, 300), actor: p.userId }); if (!result) throw new HttpError(409, 'That domain is already blocked.'); sendJson(res, 201, result); });
+    router.post('/api/v1/admin/safety/blocked-domains/remove', async (req, res) => { const p = await requireAdmin(req, 'safety.settings.manage', false, true); const b = body(req.body); confirmation(b.confirmed); const domain = linkDomain(b.domain); const result = await one(`WITH d AS (DELETE FROM blocked_link_domains WHERE domain = :'domain' RETURNING *), audit AS (INSERT INTO admin_audit (actor_id, action, metadata) SELECT :'actor', 'LINK_DOMAIN_UNBLOCKED', jsonb_build_object('domain', domain) FROM d) SELECT jsonb_build_object('domain', domain) AS data FROM d`, { domain, actor: p.userId }); if (!result) throw new HttpError(404, 'That domain is not blocked.'); sendJson(res, 200, result); });
+    router.get('/api/v1/admin/appeals', async (req, res) => { const p = await requireAdmin(req, 'reports.review'); const q = parseQueryString(req.url ?? ''); const page = parsePagination(q); sendJson(res, 200, { items: await listAppeals(p, q.status ?? 'OPEN', page.limit, page.offset), ...page }); });
+    // UPHELD reverses the action (needs the matching restore permission); DENIED keeps it. Both close the report.
+    router.post('/api/v1/admin/appeals/:id', async (req, res) => { const p = await requireAdmin(req, 'reports.review', false, true); sendJson(res, 200, await reviewAppeal(p, req.params.id!, body(req.body))); });
     router.post('/api/v1/admin/media/:kind', async (req, res) => { const p = await requireAdmin(req, 'ads.create'); const kind = req.params.kind; if (kind !== 'photo' && kind !== 'video')
         throw new HttpError(422, 'Invalid media kind.'); const media = await receiveUpload(req, p.userId, kind, mediaStorage); sendJson(res, 201, { media: { id: media.id, kind: media.kind, status: media.status, processingError: media.processingError } }); }, { rawBody: true });
     // Videos are processed after upload; the console polls this before creating a campaign.

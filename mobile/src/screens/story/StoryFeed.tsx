@@ -103,6 +103,8 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   const progress = useRef(new Animated.Value(0)).current;
   const animationRef = useRef<Animated.CompositeAnimation | null>(null);
   const storyShownAtRef = useRef<number>(Date.now());
+  const watchedStoriesRef = useRef(new Set<string>());
+  const lastShownStoryRef = useRef<string | null>(null);
   const creatorArrivedAtRef = useRef<number>(Date.now());
 
   const currentUsername = creators[creatorIndex];
@@ -237,6 +239,13 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       .catch(() => undefined);
     emit("story_impression", { storyId: currentStory.id, creatorId: currentStory.ownerId });
     storyShownAtRef.current = Date.now();
+    // Coming back to a Story already watched in this feed is a replay (spec section 15). Pausing
+    // and resuming the same Story re-runs this effect, so only a change of Story counts.
+    if (lastShownStoryRef.current !== currentStory.id) {
+      if (watchedStoriesRef.current.has(currentStory.id)) emit("story_replay", { storyId: currentStory.id, creatorId: currentStory.ownerId });
+      watchedStoriesRef.current.add(currentStory.id);
+      lastShownStoryRef.current = currentStory.id;
+    }
 
     // On leaving this Story (a real navigation away, or the component
     // unmounting), report how long it was actually on screen.
@@ -452,7 +461,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   if (currentAd) return <SponsoredStory key={currentAd.deliveryId} ad={currentAd} active={focused && foreground}
     onNext={() => { setCreatorIndex(currentAd.afterOrganic); setCurrentAd(null); }}
     onPrevious={() => { setCreatorIndex(Math.max(0, currentAd.afterOrganic - 1)); setCurrentAd(null); }}
-    onHide={(id) => hiddenAds.current.add(id)} />;
+    onHide={(id) => hiddenAds.current.add(id)} onOpenProfile={onOpenProfile} />;
 
   if (caughtUp) {
     return <View style={styles.centered}>

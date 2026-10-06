@@ -2,9 +2,10 @@ import { ValidationError } from "../auth/dto";
 import type { ReportReason, TargetType } from "./moderation.repository";
 
 const TARGET_TYPES: TargetType[] = ["story", "comment", "user"];
-const REASONS: ReportReason[] = ["spam", "harassment", "nudity", "violence", "hate_speech", "self_harm", "other"];
+export const REPORT_REASONS: ReportReason[] = ["spam", "harassment", "nudity", "violence", "hate_speech", "self_harm", "impersonation", "scam", "other"];
+const REASONS = REPORT_REASONS;
 const MAX_TEXT_LENGTH = 500;
-const UUID_RE = /^[0-9a-f-]{36}$/i;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function parseOptionalText(value: unknown, field: string, errors: Record<string, string>): string | null {
   if (value === undefined || value === null) return null;

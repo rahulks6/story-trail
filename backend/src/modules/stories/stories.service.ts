@@ -1,3 +1,5 @@
+import { consumeAction } from "../safety/limits";
+import { assertLinksAllowed } from "../safety/links";
 import { config } from "../../config/env";
 import {createHash} from 'node:crypto';
 import {DatabaseError} from '../../db/psql';
@@ -99,12 +101,19 @@ function isActive(story: StoryRecord): boolean {
   return story.deletedAt === null && new Date(story.expiresAt).getTime() > Date.now();
 }
 
+/** The caption plus any text overlays: everything a viewer reads on the Story. */
+function captionText(input: PublishStoryInput): string {
+  const overlays = (input as { overlays?: { type?: string; properties?: { text?: unknown } }[] }).overlays ?? [];
+  return [input.caption ?? "", ...overlays.filter((o) => o?.type === "text" && typeof o.properties?.text === "string").map((o) => String(o.properties!.text))].join("\n");
+}
+
 export async function publishStory(
   ownerId: string,
   input: PublishStoryInput,
   options: { ttlSecondsOverride?: number } = {},
 ): Promise<PublicStory> {
   await assertCanContribute(ownerId);
+  await assertLinksAllowed(captionText(input), "caption", ownerId);
   if(input.requestId){
     const result=await requestPublish(ownerId,input,options);
     if(result.state==='published')return result.story;
@@ -351,6 +360,9 @@ export async function getFollowingFeed(viewerId: string): Promise<FeedEntry[]> {
 export async function recordView(storyId: string, viewerId: string): Promise<void> {
   const story = await getStoryForViewer(storyId, viewerId); // reuses all the same access rules
   if (story.ownerId === viewerId) return; // self-views aren't a real signal — see spec section 11
+  // Fake-view protection: one view per person per Story (unique key), and an account
+  // viewing faster than a person can watch stops counting (silently; playback continues).
+  if ((await consumeAction(viewerId, "view")) > 0) return;
   await storiesRepo.recordView(storyId, viewerId);
 }
 

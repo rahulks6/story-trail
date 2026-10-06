@@ -2,7 +2,9 @@
 const cp=require('node:child_process'),fs=require('node:fs'),path=require('node:path');
 const root=path.resolve(__dirname,'..');
 if(process.env.NODE_ENV==='production')throw Error('Do not run integration tests with production configuration.');
-if(!['localhost','127.0.0.1','::1'].includes(process.env.PGHOST||'localhost'))throw Error('Use a dedicated local PostgreSQL test server.');
+// A Unix-socket directory (e.g. PGHOST=/var/run/postgresql with peer authentication) is local by definition.
+const host=process.env.PGHOST||'localhost';
+if(!['localhost','127.0.0.1','::1'].includes(host)&&!path.isAbsolute(host))throw Error('Use a dedicated local PostgreSQL test server.');
 const env={...process.env,PGHOST:process.env.PGHOST||'localhost',JWT_ACCESS_SECRET:process.env.JWT_ACCESS_SECRET||'isolated-test-access-secret-at-least-32-characters',JWT_REFRESH_SECRET:process.env.JWT_REFRESH_SECRET||'isolated-test-refresh-secret-at-least-32-characters'};
 const run=Date.now().toString(),template='katkee_test_template_'+run;
 const dbCommand=(name,args)=>cp.execFileSync(process.platform==='win32'?name+'.exe':name,args,{env,stdio:'inherit'});

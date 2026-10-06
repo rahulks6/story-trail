@@ -1,0 +1,61 @@
+{
+  "generatedAt": "2026-10-06T02:56:42.705Z",
+  "node": "v22.22.0",
+  "results": [
+    {
+      "name": "backend-build",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 4393,
+      "log": "backend-build.log"
+    },
+    {
+      "name": "mobile-typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 3679,
+      "log": "mobile-typecheck.log"
+    },
+    {
+      "name": "source-regressions",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 2734,
+      "log": "source-regressions.log"
+    },
+    {
+      "name": "ranking-unit-tests",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 133,
+      "log": "ranking-unit-tests.log"
+    },
+    {
+      "name": "android-js-bundle",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 10500,
+      "log": "android-js-bundle.log"
+    },
+    {
+      "name": "ios-js-bundle",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 4549,
+      "log": "ios-js-bundle.log"
+    }
+  ],
+  "notVerified": [
+    "Android APK/AAB build and signing",
+    "iOS Xcode archive and signing",
+    "physical-device behavior and performance",
+    "live Google/SMS providers",
+    "live AWS S3/CloudFront/SQS/SES (tested against local S3/SQS servers and signature verification)",
+    "live FCM/APNs push delivery (tested against local FCM/OAuth and HTTP/2 APNs servers that verify the signed credentials)",
+    "realtime and push behavior on physical devices (background, network switches, notification taps)",
+    "production hosting and backups",
+    "full product specification completion",
+    "database integration tests"
+  ],
+  "releaseReady": false
+}

@@ -15,6 +15,8 @@
  *  - expired security records (rate-limit windows, reset codes, challenges, tokens,
  *    finished jobs) and stale scratch files.
  */
+import { completeFinishedCampaigns } from "../ads/ads.service";
+import { purgeRawAnalytics, rollupAnalytics } from "../analytics/rollup";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -32,7 +34,7 @@ export interface RetentionReport {
 
 /** Arbitrary constant naming the retention leader lock. */
 const RETENTION_LOCK = 7315220001;
-const OPEN_REPORT = `r.status IN ('pending', 'under_review', 'appealed')`;
+const OPEN_REPORT = `r.status IN ('OPEN', 'UNDER_REVIEW', 'APPEALED')`;
 
 function objectKeys(media: MediaRecord): string[] {
   const keys = Object.values(media.variants).map((v) => v?.key).filter((k): k is string => !!k);
@@ -169,7 +171,10 @@ export async function deletedAccounts(store: ObjectStore, batch: number, days: n
        a AS (DELETE FROM auth_identities WHERE user_id IN (SELECT id FROM u)),
        t AS (DELETE FROM refresh_tokens WHERE user_id IN (SELECT id FROM u)),
        e AS (DELETE FROM auth_security_events WHERE user_id IN (SELECT id FROM u)),
-       p AS (DELETE FROM password_reset_requests WHERE user_id IN (SELECT id FROM u))
+       p AS (DELETE FROM password_reset_requests WHERE user_id IN (SELECT id FROM u)),
+       -- Per-person analytics go too; the daily totals already computed identify nobody.
+       ae AS (DELETE FROM analytics_events WHERE user_id IN (SELECT id FROM u)),
+       ad AS (DELETE FROM analytics_active_days WHERE user_id IN (SELECT id FROM u))
        SELECT count(*) AS n FROM u`,
       { id },
     );
@@ -229,6 +234,28 @@ export async function expiredRecords(): Promise<number> {
   return total;
 }
 
+/**
+ * DM messages a reporter attached as evidence: their text is cleared `days` after the
+ * report was resolved (never while it is open, under review or appealed).
+ */
+export async function reportMessageEvidence(batchSize: number, days: number): Promise<number> {
+  const rows = await query(
+    `UPDATE report_message_evidence e SET body = NULL, shared_story_id = NULL, purged_at = now()
+     FROM reports r
+     WHERE r.id = e.report_id AND e.purged_at IS NULL
+       AND r.status IN ('ACTIONED', 'DISMISSED', 'CLOSED')
+       AND coalesce(r.reviewed_at, r.updated_at) < now() - make_interval(days => :'days'::integer)
+       AND (e.report_id, e.message_id) IN (
+         SELECT x.report_id, x.message_id FROM report_message_evidence x JOIN reports y ON y.id = x.report_id
+         WHERE x.purged_at IS NULL AND y.status IN ('ACTIONED', 'DISMISSED', 'CLOSED')
+           AND coalesce(y.reviewed_at, y.updated_at) < now() - make_interval(days => :'days'::integer)
+         LIMIT :'limit')
+     RETURNING 1 AS x`,
+    { days, limit: batchSize },
+  );
+  return rows.length;
+}
+
 /** Work directories left behind by crashed processing or interrupted uploads. */
 export async function scratchFiles(store: ObjectStore, maxAgeMs = 24 * 3600 * 1000): Promise<number> {
   let removed = store instanceof LocalObjectStore ? await store.sweepScratch(maxAgeMs) : 0;
@@ -254,6 +281,10 @@ export async function runRetention(store: ObjectStore): Promise<RetentionReport[
     await recorded("removed_content_media", () => removedContentMedia(store, r.batchSize, r.moderationEvidenceDays)),
     await recorded("deleted_accounts", () => deletedAccounts(store, r.batchSize, r.deletedAccountDays, r.moderationEvidenceDays)),
     await recorded("processed_originals", () => processedOriginals(store, r.batchSize, r.originalMediaDays)),
+    await recorded("report_message_evidence", () => reportMessageEvidence(r.batchSize, r.moderationEvidenceDays)),
+    await recorded("ad_campaign_completion", () => completeFinishedCampaigns()),
+    await recorded("analytics_rollup", () => rollupAnalytics()),
+    await recorded("analytics_raw_retention", () => purgeRawAnalytics(r.batchSize)),
     await recorded("expired_records", () => expiredRecords()),
     await recorded("scratch_files", () => scratchFiles(store)),
   ];

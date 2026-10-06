@@ -3,7 +3,8 @@ import { requireAuth } from "../../http/middleware/auth.middleware";
 import { sendJson } from "../../http/respond";
 import { parsePagination, parseQueryString } from "../../http/pagination";
 import { parseUsernameParam } from "../../shared/validation";
-import { parseSendMessageInput } from "./dto";
+import { parseReportMessageInput, parseSendMessageInput } from "./dto";
+import { reportLimiter } from "../moderation/moderation.routes";
 import { HttpError } from "../../http/errors";
 import * as conversationsService from "./conversations.service";
 
@@ -54,6 +55,15 @@ export function registerConversationsRoutes(router: Router): void {
     const input = parseSendMessageInput(req.body);
     const { message, created } = await conversationsService.sendMessage(req.userId as string, req.params.id as string, input);
     sendJson(res, created ? 201 : 200, { message });
+  });
+
+  // The reporter chooses to share the reported message and the nine before it with moderators.
+  router.post("/api/v1/conversations/:id/report", async (req, res) => {
+    requireAuth(req);
+    reportLimiter.check(req.userId as string);
+    const input = parseReportMessageInput(req.body);
+    const { report, created } = await conversationsService.reportMessage(req.userId as string, req.params.id as string, input);
+    sendJson(res, created ? 201 : 200, { report });
   });
 
   router.post("/api/v1/conversations/:id/read", async (req, res) => {

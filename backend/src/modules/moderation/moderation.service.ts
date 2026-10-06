@@ -36,7 +36,7 @@ async function assertReportableAndNotSelf(reporterId: string, targetType: Target
   if (comment.userId === reporterId) throw new HttpError(400, "You can't report your own comment.");
 }
 
-export async function createReport(reporterId: string, input: CreateReportInput): Promise<ReportRow> {
+export async function createReport(reporterId: string, input: CreateReportInput): Promise<{ report: ReportRow; created: boolean }> {
   await assertReportableAndNotSelf(reporterId, input.targetType, input.targetId);
   return moderationRepo.createReport({
     reporterId,

@@ -158,6 +158,24 @@ export const config = {
     pollMs: optionalInt("PUSH_WORKER_POLL_MS", 5000),
     maxAttempts: optionalInt("PUSH_MAX_ATTEMPTS", 5),
   },
+  safety: {
+    // Per-account action budgets (src/modules/safety/limits.ts); JSON overrides per action, e.g.
+    // {"comment":{"perMinute":5}}. Tests raise them, like the other rate limits.
+    limitsJson: process.env.SAFETY_LIMITS_JSON ?? "",
+    // Google Safe Browsing (Lookup API v4) for links in user text; empty = blocklist only.
+    safeBrowsingApiKey: process.env.SAFE_BROWSING_API_KEY ?? "",
+    // Test servers only; never set in production.
+    safeBrowsingEndpoint: process.env.SAFE_BROWSING_ENDPOINT ?? "https://safebrowsing.googleapis.com",
+  },
+  analytics: {
+    // Product analytics (src/modules/analytics, docs/ANALYTICS.md). Admin sees totals only.
+    enabled: process.env.ANALYTICS_ENABLED !== "false",
+    // Where a day starts for DAU/WAU/MAU and retention (an IANA zone such as Asia/Kolkata).
+    // Choose it before launch: changing it later moves the boundary of days already counted.
+    timeZone: process.env.ANALYTICS_TIME_ZONE ?? "UTC",
+    // Raw events and per-person activity days are deleted after this; daily totals are kept.
+    rawRetentionDays: optionalInt("ANALYTICS_RAW_RETENTION_DAYS", 90),
+  },
   retention: {
     enabled: process.env.RETENTION_ENABLED !== "false",
     intervalMinutes: optionalInt("RETENTION_INTERVAL_MINUTES", 60),
@@ -219,6 +237,14 @@ if (config.features.admin && !/^([0-9a-f]{64}|[A-Za-z0-9+/]{43}=)$/i.test(config
     `Generate one with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`);
 }
 
+try {
+  new Intl.DateTimeFormat("en-CA", { timeZone: config.analytics.timeZone });
+} catch {
+  throw new Error("ANALYTICS_TIME_ZONE must be an IANA time zone such as UTC or Asia/Kolkata.");
+}
+// Monthly actives and 30-day retention read the last 31 days of activity.
+if (config.analytics.rawRetentionDays < 40) throw new Error("ANALYTICS_RAW_RETENTION_DAYS must be at least 40.");
+
 if (!["local", "s3"].includes(config.media.store)) throw new Error("MEDIA_STORE must be local or s3.");
 if (!["postgres", "sqs"].includes(config.media.queue.driver)) throw new Error("MEDIA_QUEUE must be postgres or sqs.");
 if (config.media.store === "s3" && !/^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$/.test(config.media.s3.bucket)) {
@@ -240,6 +266,7 @@ if (config.nodeEnv === "production") {
   if (config.media.s3.endpoint || config.media.queue.sqsEndpoint) throw new Error("MEDIA_S3_ENDPOINT/MEDIA_SQS_ENDPOINT are for local test servers only.");
   if (config.media.worker.inProcess) throw new Error("Run the media worker as its own service in production (MEDIA_WORKER_IN_PROCESS must be unset).");
   if (process.env.FCM_ENDPOINT || process.env.APNS_HOST) throw new Error("FCM_ENDPOINT/APNS_HOST are for local test servers only.");
+  if (process.env.SAFE_BROWSING_ENDPOINT) throw new Error("SAFE_BROWSING_ENDPOINT is for local test servers only.");
 }
 const apns = config.push.apns;
 if ([apns.keyId, apns.teamId, apns.privateKey, apns.bundleId].some(Boolean) && ![apns.keyId, apns.teamId, apns.privateKey, apns.bundleId].every(Boolean)) {

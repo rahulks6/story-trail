@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import { apiGet, apiPost } from './client';
 export interface SponsoredPlacement {
     deliveryId: string;
@@ -7,13 +8,27 @@ export interface SponsoredPlacement {
     mediaKind: 'photo' | 'video';
     caption: string;
     cta: string;
-    destination: string;
+    /** An https link, or null for the View Profile CTA (which opens the advertiser's profile). */
+    destination: string | null;
+    /** Set for the View Profile CTA. */
+    profileUsername?: string | null;
     reportingEnabled: boolean;
     explanation: string;
 }
 export function getAdPlacements(count: number, token: string): Promise<{
     items: SponsoredPlacement[];
-}> { return apiGet(`/api/v1/ads/placements?organicCount=${count}`, token); }
+}> {
+    // The platform only matters for campaigns aimed at Android or iOS; the server ignores anything else.
+    const platform = Platform.OS === 'ios' ? 'ios' : Platform.OS === 'android' ? 'android' : '';
+    return apiGet(`/api/v1/ads/placements?organicCount=${Math.max(0, Math.min(1000, Math.floor(count)))}${platform ? `&platform=${platform}` : ''}`, token);
+}
+export type AdCtaAction = { kind: 'profile'; username: string } | { kind: 'link'; url: string };
+/** What tapping the CTA does: View Profile opens the advertiser's profile; the rest open an https link. Anything else does nothing. */
+export function adCtaAction(ad: Pick<SponsoredPlacement, 'cta' | 'destination' | 'profileUsername'>): AdCtaAction | null {
+    if (ad.cta === 'View Profile')
+        return ad.profileUsername && /^[a-z0-9_.]{3,30}$/i.test(ad.profileUsername) ? { kind: 'profile', username: ad.profileUsername } : null;
+    return ad.destination && /^https:\/\/[^\s]+$/i.test(ad.destination) ? { kind: 'link', url: ad.destination } : null;
+}
 export function validateAd(id: string, token: string): Promise<SponsoredPlacement> { return apiGet(`/api/v1/ads/deliveries/${id}`, token); }
 export function reportAd(id: string, reason: string, token: string): Promise<void> { return apiPost(`/api/v1/ads/deliveries/${id}/report`, { reason }, token); }
 interface AdEvent {

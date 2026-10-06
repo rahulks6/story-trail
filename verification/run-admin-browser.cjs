@@ -5,7 +5,7 @@
  * it creates a new uniquely named database (retained afterwards for inspection).
  *
  * Requires: backend built (npm --prefix backend run build), PGHOST/PGUSER/PGPASSWORD for a
- * local test role with CREATEDB, and Playwright (PLAYWRIGHT_MODULE, default playwright-core).
+ * local test role with CREATEDB (or PGHOST=<socket directory> with peer authentication), and Playwright (PLAYWRIGHT_MODULE, default playwright-core).
  * Usage: node verification/run-admin-browser.cjs [outputDir]
  */
 const cp = require('node:child_process');
@@ -15,7 +15,9 @@ const { randomBytes } = require('node:crypto');
 
 const root = path.resolve(__dirname, '..');
 const backend = path.join(root, 'backend');
-if (!['localhost', '127.0.0.1', '::1'].includes(process.env.PGHOST || 'localhost')) throw Error('Use a dedicated local PostgreSQL test server.');
+// A Unix-socket directory (peer authentication) is local by definition.
+const pgHost = process.env.PGHOST || 'localhost';
+if (!['localhost', '127.0.0.1', '::1'].includes(pgHost) && !path.isAbsolute(pgHost)) throw Error('Use a dedicated local PostgreSQL test server.');
 const output = path.resolve(process.argv[2] || path.join(root, 'docs', 'browser-runs', new Date().toISOString().replace(/[:.]/g, '-')));
 fs.mkdirSync(output, { recursive: true });
 const database = 'katkee_browser_' + Date.now();

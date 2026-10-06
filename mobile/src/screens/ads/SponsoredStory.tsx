@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Image, Linking, Modal, ScrollView, PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
 import Video from 'react-native-video';
 import { API_BASE_URL } from '../../api/client';
-import { recordAd, reportAd, validateAd, type SponsoredPlacement } from '../../api/ads';
+import { adCtaAction, recordAd, reportAd, validateAd, type SponsoredPlacement } from '../../api/ads';
 import { useAuth } from '../../state/AuthContext';
 interface Props {
     ad: SponsoredPlacement;
@@ -11,8 +11,10 @@ interface Props {
     onNext: () => void;
     onPrevious: () => void;
     onHide: (id: string) => void;
+    /** The View Profile CTA opens the advertiser's Katkee profile. */
+    onOpenProfile?: (username: string) => void;
 }
-export function SponsoredStory({ ad, active, onNext, onPrevious, onHide }: Props): React.JSX.Element {
+export function SponsoredStory({ ad, active, onNext, onPrevious, onHide, onOpenProfile }: Props): React.JSX.Element {
     const { accessToken } = useAuth();
     const [valid, setValid] = useState(false), [ready, setReady] = useState(false), [paused, setPaused] = useState(false), [menu, setMenu] = useState<false | "options" | "report">(false);
     const visible = useRef(0), sent = useRef(new Set<string>()), left = useRef(false);
@@ -80,8 +82,16 @@ export function SponsoredStory({ ad, active, onNext, onPrevious, onHide }: Props
         void reportAd(ad.deliveryId, reason, accessToken).catch(() => Alert.alert('Report failed', 'Please try again when connected.')); leave(); };
     const more = () => setMenu('options');
     const source = { uri: `${API_BASE_URL}/api/v1/ads/deliveries/${ad.deliveryId}/media`, headers: { Authorization: `Bearer ${accessToken}` } };
-    const open = () => { if (!/^https:\/\/[^\s]+$/i.test(ad.destination))
-        return; emit('ad_click'); void Linking.openURL(ad.destination).catch(() => Alert.alert('Unable to open link')); };
+    const open = () => {
+        const action = adCtaAction(ad);
+        if (!action || (action.kind === 'profile' && !onOpenProfile))
+            return;
+        emit('ad_click');
+        if (action.kind === 'profile')
+            onOpenProfile?.(action.username);
+        else
+            void Linking.openURL(action.url).catch(() => Alert.alert('Unable to open link'));
+    };
     const choices = menu === 'report' ? [['Misleading or scam', 'scam'], ['Inappropriate', 'inappropriate'], ['Offensive', 'offensive'], ['Prohibited product or service', 'prohibited'], ['Impersonation', 'impersonation'], ['Other', 'other']] : [];
     return <View style={styles.root}>
   <Modal visible={!!menu} transparent animationType="fade" onRequestClose={() => setMenu(false)}>

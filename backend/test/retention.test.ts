@@ -130,7 +130,7 @@ describe("retention", () => {
     assert.equal(await purgedAt(m2), null, "held while the report is open");
     assert.equal((await fetch(`${baseUrl}/api/v1/media/${m1}/file`, { headers: authHeader(owner.token) })).status, 404);
 
-    await query(`UPDATE reports SET status = 'actioned' WHERE id = :'id'`, { id: report!.id as string });
+    await query(`UPDATE reports SET status = 'ACTIONED' WHERE id = :'id'`, { id: report!.id as string });
     await deletedStoryMedia(mediaStorage, 200, 30);
     assert.notEqual(await purgedAt(m2), null);
   });
@@ -156,13 +156,15 @@ describe("retention", () => {
     await query(`UPDATE users SET avatar_media_id = :'m', bio = 'hello', deleted_at = now() - interval '31 days', is_active = false WHERE id = :'id'`, { m: avatar, id: user.id });
     await query(`INSERT INTO auth_identities (user_id, provider, subject) VALUES (:'id', 'GOOGLE', :'sub')`, { id: user.id, sub: `google-${randomUUID()}` });
     assert.ok(Number((await queryOne(`SELECT count(*) AS n FROM refresh_tokens WHERE user_id = :'id'`, { id: user.id }))?.n) > 0);
+    await query(`INSERT INTO analytics_active_days (day, platform, user_id) VALUES (current_date - 40, 'ios', :'id') ON CONFLICT DO NOTHING`, { id: user.id });
+    await query(`INSERT INTO analytics_events (id, user_id, name, platform, occurred_at) VALUES (gen_random_uuid(), :'id', 'app_session_started', 'ios', now() - interval '35 days')`, { id: user.id });
 
     assert.ok((await deletedAccounts(mediaStorage, 200, 30, 180)) >= 1);
     const row = await queryOne(`SELECT username, email, password_hash, display_name, bio, avatar_media_id, data_purged_at FROM users WHERE id = :'id'`, { id: user.id });
     assert.match(String(row?.username), /^deleted_[0-9a-f]{12}$/);
     assert.deepEqual([row?.email, row?.password_hash, row?.display_name, row?.bio, row?.avatar_media_id], [null, null, "Deleted account", "", null]);
     assert.notEqual(row?.data_purged_at, null);
-    for (const table of ["auth_identities", "refresh_tokens", "auth_security_events"]) {
+    for (const table of ["auth_identities", "refresh_tokens", "auth_security_events", "analytics_events", "analytics_active_days"]) {
       assert.equal((await queryOne(`SELECT count(*) AS n FROM ${table} WHERE user_id = :'id'`, { id: user.id }))?.n, "0", table);
     }
     assert.notEqual(await purgedAt(normal), null);
@@ -254,11 +256,11 @@ describe("retention", () => {
       await query(`DELETE FROM retention_runs`);
       const reports = await runRetentionIfDue(a, mediaStorage, 60);
       assert.ok(reports);
-      assert.deepEqual(reports!.map((r) => r.task), ["abandoned_uploads", "unused_media", "deleted_story_media", "removed_content_media", "deleted_accounts", "processed_originals", "expired_records", "scratch_files"]);
+      assert.deepEqual(reports!.map((r) => r.task), ["abandoned_uploads", "unused_media", "deleted_story_media", "removed_content_media", "deleted_accounts", "processed_originals", "report_message_evidence", "ad_campaign_completion", "analytics_rollup", "analytics_raw_retention", "expired_records", "scratch_files"]);
       assert.ok(reports!.every((r) => !r.error), JSON.stringify(reports));
       assert.equal(await runRetentionIfDue(a, mediaStorage, 60), null, "not again within the interval");
       const runs = await query(`SELECT task, finished_at FROM retention_runs`);
-      assert.equal(runs.length, 8);
+      assert.equal(runs.length, 12);
       assert.ok(runs.every((r) => r.finished_at !== null));
     } finally {
       await a.end();

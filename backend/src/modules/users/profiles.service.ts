@@ -1,3 +1,4 @@
+import { assertLinksAllowed } from "../safety/links";
 import { HttpError } from "../../http/errors";
 import { DatabaseError } from "../../db/psql";
 import * as usersRepo from "../users/users.repository";
@@ -105,6 +106,7 @@ export interface UpdateProfileInput {
 export async function updateMyProfile(userId: string, input: UpdateProfileInput): Promise<usersRepo.UserRecord> {
   const current = await usersRepo.findUserById(userId);
   if (!current) throw new HttpError(404, "User not found.");
+  if (input.bio) await assertLinksAllowed(input.bio, "bio", userId);
   if (input.username !== undefined && input.username !== current.username) {
     if (await usersRepo.usernameTaken(input.username, userId)) {
       throw new HttpError(409, "That username is already taken.");

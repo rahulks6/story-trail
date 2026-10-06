@@ -5,6 +5,7 @@ import {completeUploadSession,createUploadSession,getUploadSession,PartUploadErr
 import {getPublishRequest,publishStory,type PublishStoryInput} from '../api/stories';
 import {base64ToBytes} from '../utils/base64';
 import {storyPublished} from './storyChanges';
+import {track} from '../analytics/analytics';
 
 /**
  * The Story outbox. Each Story is copied into app storage, then:
@@ -113,9 +114,21 @@ async function awaitPublish(job:UploadJob,token:()=>string,persist:(next:UploadJ
  return job; // still processing: the server publishes it by itself; the outbox checks again later
 }
 
+/** For Admin analytics: where an attempt failed and a coarse reason; never the message or the file. */
+function failureOf(job:UploadJob,e:unknown):{stage:'upload'|'processing'|'publish';reason:'network'|'server'|'rejected'|'timeout'|'unknown'}|null{
+ if(e instanceof ApiError&&e.status===0)return null; // cancelled (removed or signed out), not a failure
+ if(e instanceof Error&&e.message==='Sign in to resume this upload.')return null;
+ const mediaFailed=e instanceof ApiError&&e.details?.error==='media_failed';
+ const stage=mediaFailed||job.status==='processing'?'processing':job.status==='publishing'?'publish':'upload';
+ if(mediaFailed)return {stage,reason:(e as ApiError).details?.retryable===true?'server':'rejected'};
+ const status=e instanceof ApiError||e instanceof PartUploadError?e.status:undefined;
+ const reason=status===undefined?(e instanceof TypeError?'network':'unknown'):status===0?'network':status===408?'timeout':status>=500?'server':status>=400?'rejected':'unknown';
+ return {stage,reason};
+}
 export function runUpload(ownerId:string,id:string,session:()=>{ownerId:string;token:string}|null):Promise<void>{
  const storageKey=key(ownerId,id),running=inFlight.get(storageKey);if(running)return running;
  if(removing.has(storageKey))return Promise.reject(Error('This upload is being removed.'));
+ const attemptStarted=Date.now();
  const work=Promise.resolve().then(async()=>{
   const raw=await AsyncStorage.getItem(storageKey);if(!raw)throw Error('Upload not found.');let job=JSON.parse(raw) as UploadJob;
   if(job.ownerId!==ownerId||job.id!==id)throw Error('Upload owner mismatch.');
@@ -141,12 +154,16 @@ export function runUpload(ownerId:string,id:string,session:()=>{ownerId:string;t
     else job=await persist({...job,status:'processing'});
    }
    if(job.status==='processing')job=await awaitPublish(job,token,persist);
+   // The server reported a processing failure (no exception): counted like a thrown one.
+   if(job.status==='failed')track('upload_failed',{mediaKind:job.kind,stage:'processing',reason:job.retryable===true?'server':'rejected'});
    if(job.status==='published'){
+    track('upload_succeeded',{mediaKind:job.kind,durationMs:Math.min(3_600_000,Date.now()-attemptStarted)});
     storyPublished();
     await RNFS.unlink(file(ownerId,id)).catch(()=>undefined);
    }
   }catch(e){
    progress.delete(storageKey);
+   const failure=failureOf(job,e);if(failure)track('upload_failed',{mediaKind:job.kind,...failure});
    if(e instanceof ApiError&&e.details?.error==='media_failed'){
     await persist({...job,status:'failed',error:e.message,retryable:e.details.retryable===true});
    }else{

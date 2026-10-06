@@ -16,7 +16,7 @@ function fixture(opts={}){
  const store=new Map(),bytes=Buffer.from(Array.from({length:opts.size??2500},(_,i)=>i%251)),files=new Map([['/original',bytes]]);
  const partSize=opts.partSize??1000,partCount=Math.ceil(bytes.length/partSize);
  const server={received:new Map(),completed:false,urlVersion:1,mediaStatus:'processing'};
- let session={ownerId:owner,token:'private-token'},duringUpload,failResponse=opts.failFirstPublish??true,storyChanges=0;
+ let session={ownerId:owner,token:'private-token'},duringUpload,failResponse=opts.failFirstPublish??true,storyChanges=0;const events=[];
  const calls={puts:[],publishes:0,creates:0,refreshes:0,retries:0,polls:0};
  const failPart=new Map(Object.entries(opts.failPart??{}).map(([k,v])=>[Number(k),v]));
  const plan=()=>server.completed?null:{partSize,partCount,urlsExpireAt:'',sessionExpiresAt:'',parts:Array.from({length:partCount},(_,i)=>{
@@ -47,8 +47,8 @@ function fixture(opts={}){
    return opts.processing?{publish:{state:'processing',requestId:input.requestId,mediaId:input.mediaId}}:{story:{id:'same-story'}};},
   getPublishRequest:async()=>{calls.polls++;return {publish:pollAnswers.shift()??{state:'processing'}};}};
  const fastTimers={setTimeout:fn=>setTimeout(fn,0),clearTimeout};
- function load(){return loadModule(queueCode,{'@react-native-async-storage/async-storage':storage,'@dr.pogodin/react-native-fs':native,'../api/client':{ApiError},'../api/media':media,'../api/stories':story,'../utils/base64':base64,'./storyChanges':{storyPublished(){storyChanges++;}}},fastTimers);}
- return {load,store,files,calls,server,partCount,session:()=>session,logoutDuringUpload(){duringUpload=()=>{session=null;};},get storyChanges(){return storyChanges;},
+ function load(){return loadModule(queueCode,{'@react-native-async-storage/async-storage':storage,'@dr.pogodin/react-native-fs':native,'../api/client':{ApiError},'../api/media':media,'../api/stories':story,'../utils/base64':base64,'./storyChanges':{storyPublished(){storyChanges++;}},'../analytics/analytics':{track(name,properties){events.push({name,...properties});}}},fastTimers);}
+ return {load,store,files,calls,server,partCount,events,session:()=>session,logoutDuringUpload(){duringUpload=()=>{session=null;};},get storyChanges(){return storyChanges;},
   succeedPublish(){failResponse=false;},setPolls(list){pollAnswers.splice(0,pollAnswers.length,...list);},setPublishError(e){opts.publishError=e;},
   clearFailures(){failPart.clear();}};
 }
@@ -63,6 +63,9 @@ test('retains media and request identity across restart, retries publish without
  assert.equal((await api.listUploads(owner))[0].storyId,'same-story');assert.equal(f.storyChanges,1);
  assert.equal([...f.files.keys()].filter(k=>k.startsWith('/private/')).length,0);assert.ok(f.files.has('/original'));
  assert.ok(!JSON.stringify([...f.store.values()]).includes('private-token'));
+ // Admin analytics: one failed attempt (publish, reason unknown), then one success; no file names or captions.
+ assert.deepEqual(f.events.map(e=>[e.name,e.stage,e.reason,e.mediaKind]),[['upload_failed','publish','unknown','photo'],['upload_succeeded',undefined,undefined,'photo']]);
+ assert.ok(f.events[1].durationMs>=0&&!JSON.stringify(f.events).includes('saved')&&!JSON.stringify(f.events).includes('original'));
 });
 test('double taps share one in-flight upload and publication',async()=>{
  const f=fixture();f.succeedPublish();const api=f.load(),job=await api.enqueueUpload(owner,'/original','photo','image/png',{});
@@ -103,6 +106,7 @@ test('a file the server rejects fails with its reason and asks for a new file in
  const api=f.load(),job=await api.enqueueUpload(owner,'/original','video','video/mp4',{});
  await assert.rejects(api.runUpload(owner,job.id,f.session),/60 seconds/);
  const saved=(await api.listUploads(owner))[0];assert.deepEqual([saved.status,saved.retryable],['failed',false]);assert.equal(api.needsNewFile(saved),true);
+ assert.deepEqual(f.events,[{name:'upload_failed',mediaKind:'video',stage:'processing',reason:'rejected'}]);
 });
 test('a temporary processing failure is retried on the server without uploading again',async()=>{
  const f=fixture({processing:true,polls:[{state:'failed',error:"We couldn't process this media. Try again.",retryable:true}]});f.succeedPublish();
@@ -113,6 +117,7 @@ test('a temporary processing failure is retried on the server without uploading 
  await api.runUpload(owner,job.id,f.session);
  saved=(await api.listUploads(owner))[0];assert.deepEqual([saved.status,saved.storyId],['published','retried-story']);
  assert.equal(f.calls.retries,1);assert.equal(f.calls.puts.length,sent,'nothing re-uploaded');
+ assert.deepEqual(f.events.map(e=>[e.name,e.stage??null,e.reason??null]),[['upload_failed','processing','server'],['upload_succeeded',null,null]]);
 });
 test('base64 decoding matches Node for every padding case',()=>{
  for(const n of [0,1,2,3,4,255,1000]){const b=Buffer.from(Array.from({length:n},(_,i)=>(i*37)%256));assert.ok(Buffer.from(base64.base64ToBytes(b.toString('base64'))).equals(b),String(n));}

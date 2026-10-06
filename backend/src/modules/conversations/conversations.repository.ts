@@ -311,3 +311,60 @@ export async function countUnreadConversations(userId: string): Promise<number> 
   );
   return Number(row?.n ?? 0);
 }
+
+/**
+ * A participant reports a message the other person sent. The report (against that person,
+ * source `direct_message`) carries a snapshot of the reported message and up to nine
+ * messages before it, for context. That snapshot is all moderators can ever see of the
+ * conversation (see admin/moderation-admin.ts). A repeat report against the same person
+ * while one is open adds its evidence to that report instead of opening another.
+ */
+export async function reportMessage(input: {
+  reporterId: string;
+  otherId: string;
+  conversationId: string;
+  messageId: string;
+  reason: string;
+  details: string | null;
+}): Promise<{ found: boolean; reportId: string | null; created: boolean; attached: number }> {
+  const row = await queryOne(
+    `WITH target AS (
+       SELECT m.id, m.created_at FROM messages m
+       WHERE m.id = :'message' AND m.conversation_id = :'conversation' AND m.sender_id = :'other'),
+     evidence AS (
+       SELECT m.id, m.conversation_id, m.sender_id, m.body, m.shared_story_id, m.created_at
+       FROM messages m, target t
+       WHERE m.conversation_id = :'conversation' AND (m.created_at, m.id) <= (t.created_at, t.id)
+       ORDER BY m.created_at DESC, m.id DESC LIMIT 10),
+     created AS (
+       INSERT INTO reports (reporter_id, target_type, target_id, reason, details, source)
+       SELECT :'reporter', 'user', :'other', :'reason', NULLIF(:'details', ''), 'direct_message' FROM target
+       ON CONFLICT DO NOTHING RETURNING id),
+     report AS (
+       SELECT id, true AS created FROM created
+       UNION ALL
+       SELECT r.id, false FROM reports r, target
+       WHERE NOT EXISTS (SELECT 1 FROM created) AND r.reporter_id = :'reporter' AND r.target_type = 'user'
+         AND r.target_id = :'other' AND r.status IN ('OPEN', 'UNDER_REVIEW')),
+     marked AS (
+       UPDATE reports SET source = 'direct_message', updated_at = now()
+       WHERE id IN (SELECT id FROM report WHERE NOT created) AND source <> 'direct_message' RETURNING id),
+     attached AS (
+       INSERT INTO report_message_evidence (report_id, message_id, conversation_id, sender_id, body, shared_story_id, sent_at)
+       SELECT report.id, e.id, e.conversation_id, e.sender_id, e.body, e.shared_story_id, e.created_at FROM report, evidence e
+       ON CONFLICT DO NOTHING RETURNING 1)
+     SELECT EXISTS (SELECT 1 FROM target) AS found, (SELECT id FROM report LIMIT 1) AS report_id,
+            coalesce((SELECT created FROM report LIMIT 1), false) AS created,
+            (SELECT count(*) FROM attached) AS attached, (SELECT count(*) FROM marked) AS marked`,
+    {
+      reporter: input.reporterId, other: input.otherId, conversation: input.conversationId,
+      message: input.messageId, reason: input.reason, details: input.details ?? "",
+    },
+  );
+  return {
+    found: row?.found === "t",
+    reportId: (row?.report_id as string | null) ?? null,
+    created: row?.created === "t",
+    attached: Number(row?.attached ?? 0),
+  };
+}

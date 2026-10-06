@@ -16,9 +16,21 @@
  * Sentry.init({ dsn: appEnv.sentryDsn, tracesSampleRate: 0.2 });
  */
 
+import { recordFatalErrors, track } from "./analytics/analytics";
+
+/**
+ * Call once at startup (index.js). A fatal JavaScript error is noted on the phone before the
+ * app closes and counted on the next launch (Admin analytics: crash-free sessions).
+ */
+export function installCrashReporting(): void {
+  recordFatalErrors();
+}
+
+/** A render crash the ErrorBoundary caught: the app stays open but the session was hurt. */
 export function reportCrash(error: Error, context?: Record<string, unknown>): void {
   // Sentry.captureException(error, { extra: context });
   console.error("[crash]", error, context);
+  track("app_crash", { fatal: false });
 }
 
 /** For a caught-and-handled error worth knowing about in aggregate, not just a routine ApiError shown to the user. */
