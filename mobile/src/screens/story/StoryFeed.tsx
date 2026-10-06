@@ -658,11 +658,15 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         </View>
         {/* Visible to any authorized viewer — who's behind the number, and the rest of Insights, is owner-only (StoryInsightsSheet). */}
         {isOwnStory ? (
-          <Pressable onPress={() => setInsightsOpen(true)} hitSlop={8} style={styles.viewCountButton} accessibilityRole="button" accessibilityLabel={`${viewCount ?? 0} views. Open viewers and Insights`}>
-            <Text style={styles.viewCount}>{ICONS.viewers} {viewCount ?? "—"}</Text>
+          <Pressable onPress={() => setInsightsOpen(true)} hitSlop={8} style={[styles.viewCountButton, styles.viewCountRow]} accessibilityRole="button" accessibilityLabel={`${viewCount ?? 0} views. Open viewers and Insights`}>
+            <Icon name={ICONS.viewers} size={14} color={styles.viewCount.color} />
+            <Text style={styles.viewCount}>{viewCount ?? "—"}</Text>
           </Pressable>
         ) : (
-          <Text accessibilityLabel={`${viewCount ?? 0} views`} style={styles.viewCount}>{ICONS.viewers} {viewCount ?? "—"}</Text>
+          <View style={styles.viewCountRow} accessible accessibilityLabel={`${viewCount ?? 0} views`}>
+            <Icon name={ICONS.viewers} size={14} color={styles.viewCount.color} />
+            <Text style={styles.viewCount}>{viewCount ?? "—"}</Text>
+          </View>
         )}
       </View>
 
@@ -768,6 +772,7 @@ const styles = StyleSheet.create({
   sequence: { color: "rgba(255,255,255,0.7)", fontSize: 12, marginTop: 2 },
   viewCountButton: { alignItems: "flex-end" },
   viewCount: { color: "rgba(255,255,255,0.85)", fontSize: 12, fontWeight: "600" },
+  viewCountRow: { flexDirection: "row", alignItems: "center", gap: 4 },
   closeButton: { position: "absolute", top: spacing.xl, right: spacing.md },
   closeIcon: { color: colors.textPrimary, fontSize: 22 },
 });

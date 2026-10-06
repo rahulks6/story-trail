@@ -21,7 +21,7 @@ run('mobile-typecheck','mobile',['node_modules/typescript/bin/tsc','--noEmit']);
 // Component tests (Jest with React Native's preset) and a typecheck of the tests themselves.
 run('mobile-test-typecheck','mobile',['node_modules/typescript/bin/tsc','-p','__tests__']);
 run('mobile-component-tests','mobile',['node_modules/jest/bin/jest.js','--ci']);
-run('source-regressions','',['--test','verification/regressions.cjs','verification/network.cjs','verification/release-config.cjs','verification/profile-metadata.cjs','verification/release-hardening.cjs','verification/secure-storage.cjs','verification/upload-queue.cjs','verification/elf-alignment.test.cjs','verification/account-links.cjs','verification/dm-outbox.cjs','verification/realtime-client.cjs','verification/dm-thread.cjs','verification/push-notifications.cjs','verification/ads-client.cjs','verification/analytics-client.cjs']);
+run('source-regressions','',['--test','verification/regressions.cjs','verification/network.cjs','verification/release-config.cjs','verification/profile-metadata.cjs','verification/release-hardening.cjs','verification/secure-storage.cjs','verification/upload-queue.cjs','verification/elf-alignment.test.cjs','verification/account-links.cjs','verification/dm-outbox.cjs','verification/realtime-client.cjs','verification/dm-thread.cjs','verification/push-notifications.cjs','verification/ads-client.cjs','verification/analytics-client.cjs','verification/native-permissions.cjs']);
 if(built)run('ranking-unit-tests','backend',['--test','dist/test/scoring.test.js']);
 if(args.includes('--bundle')) {
  fs.mkdirSync(path.join(root,'mobile/build'),{recursive:true});

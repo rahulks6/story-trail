@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Like confirmation (Vibration.vibrate in StoryFeed); without it Android throws a SecurityException. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
     <!-- Android 13+: asked in context (first visit to Messages or Activity), never at launch. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
