@@ -1,6 +1,4 @@
 import { containsPattern } from "../../shared/validation";
-import * as fs from "node:fs/promises";
-import * as path from "node:path";
 import type { Router } from "../../http/router";
 import { sendJson } from "../../http/respond";
 import { HttpError } from "../../http/errors";
@@ -16,6 +14,7 @@ import { mediaStorage } from "../media/instance";
 import { receiveUpload } from "../media/media.service";
 import { findMediaById } from "../media/media.repository";
 import { sendMediaFile } from "../media/delivery";
+import { sendPage, sendUnversionedAsset, sendVersionedAsset } from "./console-assets";
 /** "https://Evil.Example.com/path" → "evil.example.com"; anything that isn't a domain is refused. */
 function linkDomain(value: unknown): string {
     const raw = text(value, 300).toLowerCase().replace(/^[a-z]+:\/\//, '').split(/[/?#:]/)[0]!.replace(/\.$/, '');
@@ -23,10 +22,12 @@ function linkDomain(value: unknown): string {
     return raw;
 }
 export function registerAdminRoutes(router: Router): void {
-    for (const [url, file, mime] of [['/admin/login', 'login.html', 'text/html'], ['/admin', 'index.html', 'text/html'], ['/admin/app.js', 'app.js', 'text/javascript'], ['/admin/style.css', 'style.css', 'text/css']]) {
-        router.get(url!, async (req, res) => { enabled(); if (url === '/admin')
-            await requireAdmin(req); res.setHeader('Cache-Control', 'no-store'); res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob:; media-src 'self' blob:; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"); res.setHeader('X-Content-Type-Options', 'nosniff'); res.setHeader('Content-Type', mime!); res.end(await fs.readFile(path.join(config.admin.staticRoot, file!))); });
-    }
+    // The console's pages and assets (console-assets.ts): a built, versioned console in production.
+    router.get('/admin/login', async (_req, res) => { enabled(); await sendPage(res, 'login.html'); });
+    router.get('/admin', async (req, res) => { enabled(); await requireAdmin(req); await sendPage(res, 'index.html'); });
+    router.get('/admin/assets/:file', async (req, res) => { enabled(); sendVersionedAsset(req, res, req.params.file!); });
+    router.get('/admin/app.js', async (req, res) => { enabled(); await sendUnversionedAsset(req, res, 'app.js'); });
+    router.get('/admin/style.css', async (req, res) => { enabled(); await sendUnversionedAsset(req, res, 'style.css'); });
     // Password first; the Admin session cookie is only issued after the second factor.
     router.post('/api/v1/admin/login', async (req, res) => {
         const b = body(req.body);

@@ -75,6 +75,17 @@ else
 const count = v => v === null || v === undefined ? '—' : Number(v).toLocaleString();
 const percent = v => v === null || v === undefined ? '—' : (Math.round(v * 1000) / 10) + '%';
 function svgNode(tag, attrs) { const n = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, String(v)); return n; }
+/** The enrollment QR code, drawn from its modules: no markup from the server is parsed (the CSP enforces Trusted Types). */
+function qrCode(rows) {
+    if (!Array.isArray(rows) || !rows.length || !rows.every(r => typeof r === 'string' && r.length === rows.length && /^[01]+$/.test(r)))
+        return null;
+    const margin = 2, side = rows.length + margin * 2;
+    let d = '';
+    rows.forEach((row, y) => { for (const run of row.matchAll(/1+/g)) d += `M${run.index + margin} ${y + margin}h${run[0].length}v1h-${run[0].length}z`; });
+    const root = svgNode('svg', { viewBox: `0 0 ${side} ${side}`, 'shape-rendering': 'crispEdges', role: 'img', 'aria-label': 'QR code for your authenticator app', class: 'qr' });
+    root.append(svgNode('rect', { width: side, height: side, fill: '#fff' }), svgNode('path', { d, fill: '#000' }));
+    return root;
+}
 /** One bar per day of the selected period, so a short history reads as such instead of filling the chart. */
 function activeUsersChart(daily, days, today) {
     const box = card('Active users by day');
@@ -451,8 +462,8 @@ if (document.body.dataset.page === 'login') {
         const setup = await api('mfa/enroll', 'POST', { challenge });
         const c = card('Set up two-step verification');
         c.append(el('p', 'Two-step verification is required for every Admin. Scan this code with an authenticator app (Google Authenticator, Microsoft Authenticator, 1Password, Authy).'));
-        const svg = new DOMParser().parseFromString(setup.qrSvg, 'image/svg+xml').documentElement;
-        if (svg.nodeName === 'svg') { svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', 'QR code for your authenticator app'); svg.classList.add('qr'); c.append(document.importNode(svg, true)); }
+        const qr = qrCode(setup.qrRows);
+        if (qr) c.append(qr);
         const manual = el('details'); manual.append(el('summary', "Can't scan? Enter this key"), el('code', setup.secret.replace(/(.{4})/g, '$1 ').trim()));
         c.append(manual, codeForm('Enter the code it shows', 'Codes refresh every 30 seconds.', 'Verify and finish setup', async (value) => showBackupCodes(await api('mfa/enroll/confirm', 'POST', { challenge, code: value })), false));
         box.replaceChildren(c, status);

@@ -215,8 +215,18 @@ async function accountLabel(userId: string): Promise<string> {
   return user?.email ?? user?.username ?? userId;
 }
 
+/**
+ * The QR code as rows of modules ("1" dark, "0" light), so the console draws it itself: it never
+ * parses markup from the server, which its CSP (Trusted Types) forbids.
+ */
+export function qrRows(text: string): string[] {
+  const { modules } = QRCode.create(text, { errorCorrectionLevel: "M" });
+  return Array.from({ length: modules.size }, (_, row) =>
+    Array.from(modules.data.subarray(row * modules.size, (row + 1) * modules.size), (dark) => (dark ? "1" : "0")).join(""));
+}
+
 /** Step 1 of enrollment: a fresh secret (replacing any unconfirmed one) and its QR code. */
-export async function startEnrollment(req: KatkeeRequest, challenge: unknown): Promise<{ secret: string; otpauthUrl: string; qrSvg: string }> {
+export async function startEnrollment(req: KatkeeRequest, challenge: unknown): Promise<{ secret: string; otpauthUrl: string; qrSvg: string; qrRows: string[] }> {
   enabled();
   sameOrigin(req);
   const userId = await useChallenge(challenge, "enroll", req);
@@ -231,7 +241,7 @@ export async function startEnrollment(req: KatkeeRequest, challenge: unknown): P
   if (!updated) throw new HttpError(409, "Two-step verification is already set up. Sign in again.");
   const url = otpauthUrl(secret, await accountLabel(userId));
   const qrSvg = await QRCode.toString(url, { type: "svg", errorCorrectionLevel: "M", margin: 2 });
-  return { secret, otpauthUrl: url, qrSvg };
+  return { secret, otpauthUrl: url, qrSvg, qrRows: qrRows(url) };
 }
 
 async function storeBackupCodes(userId: string): Promise<string[]> {

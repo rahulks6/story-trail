@@ -72,6 +72,11 @@ describe("admin sign-in with two-step verification", () => {
     const enroll = await call("POST", "/api/v1/admin/mfa/enroll", { challenge: login.body.challenge }, origin);
     assert.equal(enroll.status, 200);
     assert.match(enroll.body.qrSvg, /^<svg/);
+    // The console draws the code from rows of modules (no markup parsed): square, 0/1 only.
+    const rows = enroll.body.qrRows as string[];
+    assert.ok(rows.length >= 21 && (rows.length - 17) % 4 === 0, `a QR size: ${rows.length}`);
+    assert.ok(rows.every((r) => r.length === rows.length && /^[01]+$/.test(r)));
+    assert.equal(rows[0]!.slice(0, 7), "1111111", "finder pattern in the corner");
     const stored = await queryOne(`SELECT secret_ciphertext FROM admin_mfa WHERE user_id = :'id'`, { id: admin.id });
     assert.ok(stored && !stored.secret_ciphertext!.includes(enroll.body.secret), "the secret is encrypted at rest");
     const wrong = await call("POST", "/api/v1/admin/mfa/enroll/confirm", { challenge: login.body.challenge, code: "000000" === totp(enroll.body.secret) ? "111111" : "000000" }, origin);

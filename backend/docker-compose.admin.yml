@@ -1,14 +1,12 @@
 ﻿# Optional overlay: docker compose -f docker-compose.prod.yml -f docker-compose.admin.yml up -d
 # Apply migrations first; bootstrap an existing account separately. Never enable ads before approval/device checks.
+# The console is built into the image (Dockerfile, dist/admin); nothing is mounted.
 services:
   backend:
     environment:
       ADMIN_CONSOLE_ENABLED: ${ADMIN_CONSOLE_ENABLED:-false}
       ADMIN_ORIGIN: ${ADMIN_ORIGIN:-https://admin.example.invalid}
-      ADMIN_STATIC_ROOT: /app/admin
       ADS_ENABLED: ${ADS_ENABLED:-false}
       SPONSORED_STORIES_ENABLED: ${SPONSORED_STORIES_ENABLED:-false}
       AD_REPORTING_ENABLED: ${AD_REPORTING_ENABLED:-false}
       ADMIN_MFA_ENCRYPTION_KEY: ${ADMIN_MFA_ENCRYPTION_KEY:?set ADMIN_MFA_ENCRYPTION_KEY (64 hex chars) to enable the Admin console}
-    volumes:
-      - ../admin:/app/admin:ro

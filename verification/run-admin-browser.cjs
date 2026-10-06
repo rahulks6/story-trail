@@ -10,6 +10,7 @@
  */
 const cp = require('node:child_process');
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const { randomBytes } = require('node:crypto');
 
@@ -40,6 +41,12 @@ const env = {
   MEDIA_WORKER_IN_PROCESS: 'true',
   MEDIA_WORKER_POLL_MS: '500',
 };
+
+// The console as production serves it: the versioned, integrity-checked build (backend/scripts/build-admin.ts).
+const consoleBuild = fs.mkdtempSync(path.join(os.tmpdir(), 'katkee-admin-build-'));
+cp.execFileSync(process.execPath, ['dist/scripts/build-admin.js', path.join(root, 'admin'), consoleBuild], { cwd: backend, stdio: 'inherit' });
+env.ADMIN_STATIC_ROOT = consoleBuild;
+env.KATKEE_ADMIN_BUILD = '1';
 
 cp.execFileSync('createdb', [database], { env, stdio: 'inherit' });
 cp.execFileSync(process.execPath, ['dist/scripts/migrate.js'], { cwd: backend, env, stdio: 'inherit' });

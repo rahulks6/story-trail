@@ -15,6 +15,13 @@ async function user(){const id=randomUUID().slice(0,8);const input={username:'ui
  const report=(await api('/api/v1/reports','POST',{targetType:'story',targetId:published.story.id,reason:'spam'},reporter.tokens.accessToken)).report;
  const browser=await chromium.launch({...(process.env.CHROME_PATH?{executablePath:process.env.CHROME_PATH}:{}),headless:true});
  const context=await browser.newContext({viewport:{width:1365,height:960}});const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ // Blocked resources, Trusted Types and integrity failures are reported to the console, not thrown.
+ page.on('console',m=>{if(m.type()==='error'&&/Content Security Policy|Trusted Type|integrity|digest/i.test(m.text()))errors.push('console: '+m.text());});
+ if(process.env.KATKEE_ADMIN_BUILD==='1'){
+  await page.goto(base+'/admin/login');
+  const loaded=await page.evaluate(()=>({script:document.querySelector('script[src^="/admin/assets/app."][integrity^="sha384-"]')!==null,style:document.querySelector('link[href^="/admin/assets/style."][integrity^="sha384-"]')!==null,styled:getComputedStyle(document.body).display==='flex'}));
+  assert.deepEqual(loaded,{script:true,style:true,styled:true},'the production build loads its versioned, integrity-checked assets');
+ }
  // Second factor like a real operator: scan-equivalent (read the setup key), then backup codes on later sign-ins.
  const backupCodes=new Map();
  async function login(email){await page.goto(base+'/admin/login');await page.getByLabel('Email',{exact:true}).fill(email);await page.getByLabel('Password',{exact:true}).fill(email===superEmail?superPassword:'correcthorsebattery');await page.getByRole('button',{name:'Sign in',exact:true}).click();
@@ -70,5 +77,6 @@ async function user(){const id=randomUUID().slice(0,8);const input={username:'ui
  try{await page.getByText('UI video creative').first().waitFor({timeout:120000});}
  catch(e){await page.screenshot({path:output+'/failure-campaign-save.png',fullPage:true});console.error('message:',await page.locator('#message').innerText());throw e;}await page.screenshot({path:output+'/admin-campaign-video-draft.png',fullPage:true});
  assert.deepEqual(errors,[]);await browser.close();const passed=['Super Admin sign-in with TOTP enrollment (QR + setup key) and backup codes','dashboard real data','create limited Admin with explicit confirmation','limited Admin enrolls MFA and sees limited navigation','report review/media preview','analytics dashboard: live DAU/WAU/MAU, daily totals, retention and refresh','remove Story and verify consumer 404','Super Admin repeat sign-in with a backup code','audit history visible','audit hash chain verified from the console','Security page','advertiser creation','campaign creation form','campaign wizard: audience (broad categories, platforms) and preview summary','video creative processed before the draft is saved'];
+ if(process.env.KATKEE_ADMIN_BUILD==='1')passed.unshift('production build: versioned assets with integrity under a Trusted Types CSP, no violations');
  fs.writeFileSync(output+'/browser-results.json',JSON.stringify({passed,pageErrors:errors},null,2));console.log(passed.length+' browser checks passed; no page errors.');
 })().catch(e=>{console.error(e);process.exit(1);});

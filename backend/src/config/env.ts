@@ -23,6 +23,12 @@ function loadDotEnvIfPresent(): void {
 
 loadDotEnvIfPresent();
 
+/** dist/admin (next to the compiled server) once built; the sibling admin/ sources otherwise. */
+function defaultAdminRoot(): string {
+  const built = path.resolve(__dirname, "../../admin");
+  return fs.existsSync(path.join(built, "manifest.json")) ? built : path.resolve(process.cwd(), "../admin");
+}
+
 function required(name: string): string {
   const value = process.env[name];
   if (!value) {
@@ -71,7 +77,8 @@ export const config = {
   },
   admin: {
     origin: process.env.ADMIN_ORIGIN ?? "http://localhost:4000",
-    staticRoot: process.env.ADMIN_STATIC_ROOT ?? path.resolve(process.cwd(), "../admin"),
+    // The production build (scripts/build-admin.ts → dist/admin) when present, else the source.
+    staticRoot: process.env.ADMIN_STATIC_ROOT ?? defaultAdminRoot(),
     // TOTP is mandatory for every admin unless explicitly disabled outside production.
     mfaRequired: process.env.NODE_ENV === "production" || process.env.ADMIN_MFA_REQUIRED !== "false",
     // 32-byte key (hex or base64) that encrypts TOTP secrets at rest.
@@ -284,5 +291,9 @@ if (config.features.admin && config.nodeEnv === "production") {
   const origin = new URL(config.admin.origin);
   if (origin.protocol !== "https:" || origin.origin !== config.admin.origin) {
     throw new Error("Production Admin Console requires ADMIN_ORIGIN to be an exact HTTPS origin.");
+  }
+  // Never the unbuilt sources: the image carries the versioned build (node dist/scripts/build-admin.js).
+  if (!fs.existsSync(path.join(config.admin.staticRoot, "manifest.json"))) {
+    throw new Error(`Production Admin Console requires the built console (manifest.json) in ADMIN_STATIC_ROOT (${config.admin.staticRoot}).`);
   }
 }

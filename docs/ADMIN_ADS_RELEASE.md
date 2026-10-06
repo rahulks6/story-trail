@@ -37,7 +37,11 @@ The current adapter launches `psql` processes per query; organic ranking perform
 
 1. Back up database and media using the existing operations process. Restore to staging and rehearse recovery. Use an appropriate maintenance window for additive schema changes.
 2. In `backend`, install development dependencies and run `npm run build`. Configure existing database and JWT environment variables, then run `node dist/scripts/migrate.js` from the backend directory. Do not run the existing `pretest` reset script against shared data.
-3. Serve the sibling `admin` directory using `ADMIN_STATIC_ROOT`. The optional `docker-compose.admin.yml` mounts it without replacing the existing Compose configuration.
+3. Serve the **built** console. The Docker image builds it from the sibling `admin` directory, passed as the named build context `admin`. Compose does this through `additional_contexts`, or by hand: `docker buildx build --build-context admin=../admin backend`. The build is minified, content-hashed, integrity-checked and precompressed, in `dist/admin`.
+
+   Outside Docker, run `node dist/scripts/build-admin.js ../admin dist/admin` in `backend`. The server serves `dist/admin` when it is present (or `ADMIN_STATIC_ROOT`), and production refuses to start the console without a build.
+
+   The console's pages are never cached, and its versioned assets are cached for a year. The CSP adds Trusted Types, so a new feature must not parse HTML strings: build nodes with `el()`/`svgNode()`. The optional `docker-compose.admin.yml` only sets the console's environment.
 4. Set `ADMIN_ORIGIN` to the exact HTTPS origin from which the console is served, without a path or trailing slash. The console and its API use the same origin. Configure the existing proxy/DNS accordingly; no production proxy was changed here.
 5. Choose an existing active account and run `node dist/scripts/bootstrap-super-admin.js existing-account-email`. The command only creates the first Super Admin and has no default password. Bootstrap requires trusted database operator access.
 6. Set `ADMIN_CONSOLE_ENABLED=true` in staging. Sign in at `/admin/login`; use **Verify password** before sensitive changes after five minutes. Sessions expire after 30 minutes. Create a second, narrowly permissioned reviewer: campaign authors and last editors cannot approve their own work.
