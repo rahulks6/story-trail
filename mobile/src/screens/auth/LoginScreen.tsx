@@ -1,6 +1,7 @@
 import {ProviderEntry} from "./ProviderEntry";
 import React, { useRef, useState } from "react";
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, type TextInput } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, type TextInput } from "react-native";
+import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import { Banner, Button, TextField } from "../../components/Form";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "../../navigation/types";
@@ -33,7 +34,7 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
 
   return (
     // Scrolls, and moves above the keyboard on iOS, so the fields and Log in stay reachable.
-    <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+    <KeyboardAvoider style={styles.screen}>
       <ScrollView
         contentContainerStyle={[styles.container, { paddingTop: insets.top + spacing.lg, paddingBottom: insets.bottom + spacing.lg }]}
         keyboardShouldPersistTaps="handled"
@@ -101,7 +102,7 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
           </Text>
         </Pressable>
       </ScrollView>
-    </KeyboardAvoidingView>
+    </KeyboardAvoider>
   );
 }
 

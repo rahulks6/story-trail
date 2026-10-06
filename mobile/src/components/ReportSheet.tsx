@@ -4,6 +4,7 @@ import { colors, radii, spacing, typography } from "../theme";
 import { useAuth } from "../state/AuthContext";
 import { createReport, reportDirectMessage, REPORT_REASONS, type ReportReason, type ReportTargetType } from "../api/moderation";
 import { ApiError } from "../api/client";
+import { KeyboardAvoider } from "./KeyboardAvoider";
 
 interface Props {
   visible: boolean;
@@ -62,57 +63,61 @@ export function ReportSheet({ visible, targetType, targetId, conversationId, onC
         onClose();
       }}
     >
-      <Pressable
-        style={styles.backdrop}
-        onPress={() => {
-          reset();
-          onClose();
-        }}
-        accessibilityRole="button"
-        accessibilityLabel="Close"
-      />
-      <View style={styles.sheet}>
-        <View style={styles.handle} />
-        <Text style={[typography.bodyStrong, styles.title]}>Report {targetType === "user" ? "profile" : targetType}</Text>
-        {targetType === "message" ? (
-          <Text style={[typography.caption, styles.disclosure]}>
-            This message and the 9 messages before it will be shared with Katkee's safety team. Nothing else from this conversation is shared.
-          </Text>
-        ) : null}
-
-        {selectedReason === null ? (
-          REPORT_REASONS.map((reason) => (
-            <Pressable key={reason.value} style={styles.row} onPress={() => setSelectedReason(reason.value)}>
-              <Text style={typography.body}>{reason.label}</Text>
-            </Pressable>
-          ))
-        ) : (
-          <>
-            <Text style={[typography.caption, styles.selectedReason]}>
-              {REPORT_REASONS.find((r) => r.value === selectedReason)?.label}
+      <KeyboardAvoider style={styles.fill}>
+        <Pressable
+          style={styles.backdrop}
+          onPress={() => {
+            reset();
+            onClose();
+          }}
+          accessibilityRole="button"
+          accessibilityLabel="Close"
+        />
+        <View style={styles.sheet}>
+          <View style={styles.handle} />
+          <Text style={[typography.bodyStrong, styles.title]}>Report {targetType === "user" ? "profile" : targetType}</Text>
+          {targetType === "message" ? (
+            <Text style={[typography.caption, styles.disclosure]}>
+              This message and the 9 messages before it will be shared with Katkee's safety team. Nothing else from this conversation is shared.
             </Text>
-            <TextInput
-              style={styles.detailsInput}
-              placeholder="Anything else we should know? (optional)"
-              placeholderTextColor={colors.textDisabled}
-              value={details}
-              onChangeText={setDetails}
-              multiline
-            />
-            <Pressable style={[styles.submitButton, busy && styles.submitButtonDisabled]} disabled={busy} onPress={onSubmit}>
-              {busy ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.submitLabel}>Submit report</Text>}
-            </Pressable>
-            <Pressable style={styles.backRow} onPress={() => setSelectedReason(null)} disabled={busy}>
-              <Text style={typography.caption}>Choose a different reason</Text>
-            </Pressable>
-          </>
-        )}
-      </View>
+          ) : null}
+
+          {selectedReason === null ? (
+            REPORT_REASONS.map((reason) => (
+              <Pressable key={reason.value} style={styles.row} onPress={() => setSelectedReason(reason.value)} accessibilityRole="button">
+                <Text style={typography.body}>{reason.label}</Text>
+              </Pressable>
+            ))
+          ) : (
+            <>
+              <Text style={[typography.caption, styles.selectedReason]}>
+                {REPORT_REASONS.find((r) => r.value === selectedReason)?.label}
+              </Text>
+              <TextInput
+                style={styles.detailsInput}
+                accessibilityLabel="Details (optional)"
+                placeholder="Anything else we should know? (optional)"
+                placeholderTextColor={colors.textDisabled}
+                value={details}
+                onChangeText={setDetails}
+                multiline
+              />
+              <Pressable style={[styles.submitButton, busy && styles.submitButtonDisabled]} disabled={busy} onPress={onSubmit} accessibilityRole="button" accessibilityLabel="Submit report" accessibilityState={{ busy, disabled: busy }}>
+                {busy ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.submitLabel}>Submit report</Text>}
+              </Pressable>
+              <Pressable style={styles.backRow} onPress={() => setSelectedReason(null)} disabled={busy} accessibilityRole="button">
+                <Text style={typography.caption}>Choose a different reason</Text>
+              </Pressable>
+            </>
+          )}
+        </View>
+      </KeyboardAvoider>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
+  fill: { flex: 1 },
   backdrop: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
   sheet: {
     backgroundColor: colors.surface,

@@ -5,8 +5,7 @@ import {
   Alert,
   AppState,
   FlatList,
-  KeyboardAvoidingView,
-  Platform,
+  Keyboard,
   Pressable,
   StyleSheet,
   Text,
@@ -14,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useHeaderHeight } from "@react-navigation/elements";
 import type { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { DMStackParamList, RootStackParamList } from "../../navigation/types";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
@@ -35,6 +35,7 @@ import { getConversation, listMessages, markConversationRead, MAX_MESSAGE_LENGTH
 import { ApiError } from "../../api/client";
 import { getStoryOwnerUsername } from "../../api/stories";
 import { ReportSheet } from "../../components/ReportSheet";
+import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import { applyReceipt, mergeMessages, newestId, oldestId } from "./threadState";
 
 type Props = NativeStackScreenProps<DMStackParamList, "Conversation">;
@@ -98,6 +99,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   const { connected } = useRealtime();
   const navigation = useNavigation<NativeStackNavigationProp<DMStackParamList>>();
   const rootNavigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const headerHeight = useHeaderHeight();
 
   const [messages, setMessages] = useState<Message[] | null>(null);
   const [hasMore, setHasMore] = useState(true);
@@ -272,13 +274,21 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     ]);
   };
 
-  // Long-press a message the other person sent to report it (DM safety workflow).
+  // Long-press a message the other person sent to report it (DM safety workflow). Screen
+  // reader users get the same choice as an action on the message.
+  const canReport = (row: ListRow): row is Message & { kind: "sent" } => row.kind === "sent" && row.senderId !== userId;
   const onMessageLongPress = (row: ListRow) => {
-    if (row.kind !== "sent" || row.senderId === userId) return;
+    if (!canReport(row)) return;
     Alert.alert("Message", undefined, [
       { text: "Report", style: "destructive", onPress: () => setReportingMessageId(row.id) },
       { text: "Cancel", style: "cancel" },
     ]);
+  };
+
+  const toggleEmojiPicker = () => {
+    // The panel replaces the keyboard rather than stacking on top of it.
+    if (!emojiPickerOpen) Keyboard.dismiss();
+    setEmojiPickerOpen((open) => !open);
   };
 
   const onInsertEmoji = (emoji: string) => {
@@ -334,11 +344,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
-    >
+    <KeyboardAvoider style={styles.container} topOffset={headerHeight}>
       <FlatList
         style={styles.list}
         contentContainerStyle={styles.listContent}
@@ -351,6 +357,9 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           const mine = row.kind === "pending" || row.senderId === user?.id;
           const failed = row.kind === "pending" && row.status === "failed";
           const showStatus = rowKey(row) === statusRowKey;
+          const shared = row.kind === "sent" ? (row.sharedStoryId ? "Shared a Story" : null) : row.storyId ? "Shared a Story" : null;
+          // Bubbles show who sent what by their side of the screen; a screen reader says it.
+          const spoken = [shared, row.body].filter(Boolean).join(". ");
           return (
             <View style={[styles.bubbleRow, mine ? styles.bubbleRowMine : styles.bubbleRowTheirs]}>
               <View style={[styles.bubbleColumn, mine ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
@@ -367,7 +376,15 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
                     else if (row.sharedStoryId) void onOpenSharedStory(row.sharedStoryId);
                   }}
                   onLongPress={() => onMessageLongPress(row)}
-                  accessibilityHint={row.kind === "pending" && row.status !== "sending" ? "Retry or delete this message" : undefined}
+                  accessibilityLabel={`${mine ? "You" : otherUsername ? `@${otherUsername}` : "Them"}: ${spoken}`}
+                  accessibilityHint={
+                    row.kind === "pending" && row.status !== "sending" ? "Retry or delete this message"
+                      : row.kind === "sent" && row.sharedStoryId ? "Opens the Story" : undefined
+                  }
+                  accessibilityActions={canReport(row) ? [{ name: "report", label: "Report message" }] : undefined}
+                  onAccessibilityAction={(event) => {
+                    if (event.nativeEvent.actionName === "report" && canReport(row)) setReportingMessageId(row.id);
+                  }}
                 >
                   {row.kind === "sent" && row.sharedStoryId ? (
                     <Text style={mine ? styles.bubbleTextMine : styles.bubbleTextTheirs}>Shared a Story — tap to view</Text>
@@ -396,7 +413,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
             keyExtractor={(emoji) => emoji}
             numColumns={8}
             renderItem={({ item }) => (
-              <Pressable style={styles.emojiKey} onPress={() => onInsertEmoji(item)} hitSlop={4}>
+              <Pressable style={styles.emojiKey} onPress={() => onInsertEmoji(item)} hitSlop={4} accessibilityRole="button">
                 <Text style={styles.emojiKeyGlyph}>{item}</Text>
               </Pressable>
             )}
@@ -414,7 +431,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       <View style={styles.composerRow}>
         <Pressable
           style={styles.emojiToggle}
-          onPress={() => setEmojiPickerOpen((open) => !open)}
+          onPress={toggleEmojiPicker}
           hitSlop={8}
           accessibilityRole="button"
           accessibilityLabel={emojiPickerOpen ? "Hide emoji picker" : "Show emoji picker"}
@@ -423,6 +440,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         </Pressable>
         <TextInput
           style={styles.composerInput}
+          accessibilityLabel="Message"
           placeholder="Message…"
           placeholderTextColor={colors.textDisabled}
           value={draft}
@@ -441,7 +459,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           <Icon style={styles.sendButtonText} name={ICONS.send} />
         </Pressable>
       </View>
-    </KeyboardAvoidingView>
+    </KeyboardAvoider>
   );
 }
 

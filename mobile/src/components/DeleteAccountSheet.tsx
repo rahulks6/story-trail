@@ -3,6 +3,7 @@ import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, TextInput, View 
 import { colors, radii, spacing, typography } from "../theme";
 import { useAuth } from "../state/AuthContext";
 import { ApiError } from "../api/client";
+import { KeyboardAvoider } from "./KeyboardAvoider";
 
 interface Props {
   visible: boolean;
@@ -54,63 +55,77 @@ export function DeleteAccountSheet({ visible, onClose }: Props): React.JSX.Eleme
         onClose();
       }}
     >
-      <Pressable
-        style={styles.backdrop}
-        onPress={() => {
-          if (!busy) {
-            reset();
-            onClose();
-          }
-        }}
-        accessibilityRole="button"
-        accessibilityLabel="Close"
-      />
-      <View style={styles.sheet}>
-        <View style={styles.handle} />
-        <Text style={[typography.bodyStrong, styles.title]}>Delete your account?</Text>
-        <Text style={[typography.body, styles.warning]}>
-          This is permanent. Your profile, Stories, and Highlights are removed immediately and can't be recovered.
-        </Text>
-
-        {!confirming ? (
-          <Pressable style={styles.destructiveButton} onPress={() => setConfirming(true)}>
-            <Text style={styles.destructiveLabel}>Continue</Text>
-          </Pressable>
-        ) : (
-          <>
-            <TextInput
-              style={styles.input}
-              placeholder="Confirm your password"
-              placeholderTextColor={colors.textDisabled}
-              secureTextEntry
-              autoCapitalize="none"
-              autoCorrect={false}
-              value={password}
-              onChangeText={setPassword}
-            />
-            {error ? <Text style={styles.error}>{error}</Text> : null}
-            <Pressable style={[styles.destructiveButton, (!password || busy) && styles.disabled]} disabled={!password || busy} onPress={onSubmit}>
-              {busy ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.destructiveLabel}>Permanently delete my account</Text>}
-            </Pressable>
-          </>
-        )}
-
+      <KeyboardAvoider style={styles.fill}>
         <Pressable
-          style={styles.cancelRow}
-          disabled={busy}
+          style={styles.backdrop}
           onPress={() => {
-            reset();
-            onClose();
+            if (!busy) {
+              reset();
+              onClose();
+            }
           }}
-        >
-          <Text style={typography.caption}>Cancel</Text>
-        </Pressable>
-      </View>
+          accessibilityRole="button"
+          accessibilityLabel="Close"
+        />
+        <View style={styles.sheet}>
+          <View style={styles.handle} />
+          <Text style={[typography.bodyStrong, styles.title]}>Delete your account?</Text>
+          <Text style={[typography.body, styles.warning]}>
+            This is permanent. Your profile, Stories, and Highlights are removed immediately and can't be recovered.
+          </Text>
+
+          {!confirming ? (
+            <Pressable style={styles.destructiveButton} onPress={() => setConfirming(true)} accessibilityRole="button">
+              <Text style={styles.destructiveLabel}>Continue</Text>
+            </Pressable>
+          ) : (
+            <>
+              <TextInput
+                style={styles.input}
+                accessibilityLabel="Password"
+                placeholder="Confirm your password"
+                placeholderTextColor={colors.textDisabled}
+                autoComplete="current-password"
+                textContentType="password"
+                secureTextEntry
+                autoCapitalize="none"
+                autoCorrect={false}
+                value={password}
+                onChangeText={setPassword}
+              />
+              {error ? <Text style={styles.error}>{error}</Text> : null}
+              <Pressable
+                style={[styles.destructiveButton, (!password || busy) && styles.disabled]}
+                disabled={!password || busy}
+                onPress={onSubmit}
+                accessibilityRole="button"
+                accessibilityLabel="Permanently delete my account"
+                accessibilityState={{ busy, disabled: !password || busy }}
+              >
+                {busy ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.destructiveLabel}>Permanently delete my account</Text>}
+              </Pressable>
+            </>
+          )}
+
+          <Pressable
+            style={styles.cancelRow}
+            accessibilityRole="button"
+            disabled={busy}
+            onPress={() => {
+              reset();
+              onClose();
+            }}
+          >
+            <Text style={typography.caption}>Cancel</Text>
+          </Pressable>
+        </View>
+      </KeyboardAvoider>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
+  fill: { flex: 1 },
   backdrop: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
   sheet: {
     backgroundColor: colors.surface,

@@ -2,9 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  KeyboardAvoidingView,
   Modal,
-  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -16,6 +14,7 @@ import { useAuth } from "../state/AuthContext";
 import { deleteComment, listComments, postComment, type Comment } from "../api/engagement";
 import { ApiError } from "../api/client";
 import { ReportSheet } from "./ReportSheet";
+import { KeyboardAvoider } from "./KeyboardAvoider";
 
 interface Props {
   visible: boolean;
@@ -92,7 +91,7 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
     <>
       <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
         <Pressable style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.sheet}>
+        <KeyboardAvoider style={styles.sheet}>
         <View style={styles.handle} />
         <Text style={[typography.bodyStrong, styles.title]}>Comments</Text>
 
@@ -152,7 +151,7 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
             </Pressable>
           </View>
         )}
-        </KeyboardAvoidingView>
+        </KeyboardAvoider>
       </Modal>
       <ReportSheet
         visible={reportingCommentId !== null}

@@ -1,4 +1,5 @@
 import { Icon } from "../../components/Icon";
+import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -504,7 +505,12 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
       ) : null}
 
       {!drawMode && !cropMode ? (
-        <View style={[styles.bottomArea, { bottom: spacing.xl + insets.bottom }]}>
+        // Lifted above the keyboard while the caption is typed (the canvas behind stays put).
+        <KeyboardAvoider
+          behavior="position"
+          style={[styles.bottomArea, { bottom: spacing.xl + insets.bottom }]}
+          contentContainerStyle={styles.bottomAreaContent}
+        >
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterStrip}>
             {FILTER_PREVIEWS.map((f) => (
               <Pressable
@@ -521,11 +527,13 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
 
           <TextInput
             style={styles.captionInput}
+            accessibilityLabel="Caption"
             placeholder="Add a caption…"
             placeholderTextColor="rgba(255,255,255,0.5)"
             value={draft.caption}
             onChangeText={(text) => setDraft((d) => ({ ...d, caption: text }))}
             maxLength={280}
+            returnKeyType="done"
           />
 
           <View style={styles.audienceRow}>
@@ -547,7 +555,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           {uploadError ? (
             <View>
               <Text style={styles.uploadError}>{uploadError}</Text>
-              <Pressable style={styles.retryButton} onPress={onShare}>
+              <Pressable style={styles.retryButton} onPress={onShare} accessibilityRole="button">
                 <Text style={styles.retryButtonLabel}>Retry</Text>
               </Pressable>
             </View>
@@ -557,6 +565,9 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             style={[styles.uploadButton, uploadState === "uploading" && styles.uploadButtonDisabled]}
             disabled={uploadState === "uploading" || uploadState === "done"}
             onPress={onShare}
+            accessibilityRole="button"
+            accessibilityLabel={uploadState === "done" ? "Story published" : "Share Story"}
+            accessibilityState={{ busy: uploadState === "uploading", disabled: uploadState === "uploading" || uploadState === "done" }}
           >
             {uploadState === "uploading" ? (
               <ActivityIndicator color={colors.onAccent} />
@@ -564,7 +575,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               <Text style={styles.uploadButtonLabel}>{uploadState === "done" ? "Story published ✓" : "Share Story"}</Text>
             )}
           </Pressable>
-        </View>
+        </KeyboardAvoider>
       ) : null}
 
       <TextToolModal
@@ -646,7 +657,8 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,
   },
   filterToastLabel: { color: colors.textPrimary, fontSize: 18, fontWeight: "700" },
-  bottomArea: { position: "absolute", bottom: spacing.xl, left: 0, right: 0, gap: spacing.sm, paddingHorizontal: spacing.md },
+  bottomArea: { position: "absolute", bottom: spacing.xl, left: 0, right: 0 },
+  bottomAreaContent: { gap: spacing.sm, paddingHorizontal: spacing.md },
   filterStrip: { gap: spacing.xs, paddingBottom: spacing.sm },
   filterChip: {
     borderWidth: 1,

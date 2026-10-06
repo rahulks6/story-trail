@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, type TextInput } from "react-native";
+import { ScrollView, StyleSheet, Text, type TextInput } from "react-native";
+import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "../../navigation/types";
 import { colors, spacing, typography } from "../../theme";
@@ -74,7 +75,7 @@ export function ResetPasswordScreen({ navigation, route }: Props): React.JSX.Ele
   };
 
   return (
-    <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+    <KeyboardAvoider style={styles.root}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text style={typography.displayLarge} accessibilityRole="header">
           Enter your code
@@ -118,7 +119,7 @@ export function ResetPasswordScreen({ navigation, route }: Props): React.JSX.Ele
           disabled={resendIn > 0}
         />
       </ScrollView>
-    </KeyboardAvoidingView>
+    </KeyboardAvoider>
   );
 }
 

@@ -2,11 +2,14 @@ import React,{useCallback,useEffect,useState} from 'react';
 import {ActivityIndicator,Alert,Pressable,ScrollView,StyleSheet,Text,TextInput,View} from 'react-native';
 import {apiGet,apiPost} from '../../api/client';
 import {ProviderEntry} from '../auth/ProviderEntry';
+import {useHeaderHeight} from '@react-navigation/elements';
+import {KeyboardAvoider} from '../../components/KeyboardAvoider';
 import {useAuth} from '../../state/AuthContext';
 import {colors} from '../../theme';
 import {SignInSecuritySection} from './SignInSecuritySection';
 interface Identities {items:Array<{provider:'GOOGLE'|'PHONE';verified_at:string}>;hasPassword:boolean}
 export function AccountSecurityScreen():React.JSX.Element {
+ const headerHeight=useHeaderHeight();
  const {accessToken,logout}=useAuth();const [identities,setIdentities]=useState<Identities|null>(null),[password,setPassword]=useState(''),[ticket,setTicket]=useState<string|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false);
  useEffect(()=>{if(accessToken)void apiGet<Identities>('/api/v1/auth/identities',accessToken).then(setIdentities).catch(e=>setError(e.message));},[accessToken]);
  const verifyProvider=useCallback(async(proof:string)=>{if(!accessToken)return;const result=await apiPost<{reauthTicket:string}>('/api/v1/auth/provider/reauthenticate',{proof},accessToken);setTicket(result.reauthTicket);setError('');},[accessToken]);
@@ -17,7 +20,8 @@ export function AccountSecurityScreen():React.JSX.Element {
  async function run(work:()=>Promise<void>){setBusy(true);setError('');try{await work();}catch(e){setError(e instanceof Error?e.message:'Account change failed.');}finally{setBusy(false);}}
  const change=(provider:string)=>Alert.alert('Unlink '+provider+'?','You must keep another usable sign-in method. You will be signed out.',[{text:'Cancel',style:'cancel'},{text:'Unlink',style:'destructive',onPress:()=>void run(async()=>{await apiPost('/api/v1/auth/provider/unlink',{provider,reauthTicket:ticket,confirmed:true},accessToken??undefined);await logout();})}]);
  const remove=()=>Alert.alert('Delete your Katkee account?','Your account and public content will become unavailable. This cannot be undone from the app.',[{text:'Cancel',style:'cancel'},{text:'Delete account',style:'destructive',onPress:()=>void run(async()=>{await apiPost('/api/v1/auth/account/delete',{reauthTicket:ticket,confirmed:true},accessToken??undefined);await logout();})}]);
- return <ScrollView style={styles.root} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+ // Opaque header: the form starts below it.
+ return <KeyboardAvoider style={styles.root} topOffset={headerHeight}><ScrollView style={styles.fill} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
   {identities?<SignInSecuritySection hasPassword={identities.hasPassword}/>:null}
   <Text style={styles.title}>Sign-in methods</Text>
   {identities?<Text style={styles.text}>{[...(identities.hasPassword?['Email and password']:[]),...identities.items.map(i=>i.provider)].join(', ')||'No linked provider'}</Text>:<ActivityIndicator color={colors.accent}/>}
@@ -34,6 +38,6 @@ export function AccountSecurityScreen():React.JSX.Element {
    <Pressable style={styles.button} onPress={()=>setTicket(null)}><Text style={styles.text}>Verify again</Text></Pressable>
   </>}
   {busy&&<ActivityIndicator color={colors.accent}/>}
- </ScrollView>;
+ </ScrollView></KeyboardAvoider>;
 }
-const styles=StyleSheet.create({root:{flex:1,backgroundColor:colors.background},content:{padding:24,gap:16},title:{fontSize:24,fontWeight:'700',color:colors.textPrimary},text:{color:colors.textPrimary},error:{color:colors.danger},input:{borderWidth:1,borderColor:colors.border,padding:14,minHeight:48,color:colors.textPrimary},button:{minHeight:48,padding:14,backgroundColor:colors.surfaceElevated,borderRadius:8}});
+const styles=StyleSheet.create({root:{flex:1,backgroundColor:colors.background},fill:{flex:1},content:{padding:24,gap:16},title:{fontSize:24,fontWeight:'700',color:colors.textPrimary},text:{color:colors.textPrimary},error:{color:colors.danger},input:{borderWidth:1,borderColor:colors.border,padding:14,minHeight:48,color:colors.textPrimary},button:{minHeight:48,padding:14,backgroundColor:colors.surfaceElevated,borderRadius:8}});

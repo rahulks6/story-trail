@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text } from "react-native";
+import { ScrollView, StyleSheet, Text } from "react-native";
+import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "../../navigation/types";
 import { colors, spacing, typography } from "../../theme";
@@ -36,7 +37,7 @@ export function ForgotPasswordScreen({ navigation, route }: Props): React.JSX.El
   };
 
   return (
-    <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+    <KeyboardAvoider style={styles.root}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text style={typography.displayLarge} accessibilityRole="header">
           Reset your password
@@ -63,7 +64,7 @@ export function ForgotPasswordScreen({ navigation, route }: Props): React.JSX.El
         <Button label="I already have a code" variant="secondary" onPress={() => navigation.navigate("ResetPassword", { email: email.trim().toLowerCase() })} />
         <Text style={styles.note}>Signed up with Google or your phone number? Go back and use that option instead — no password is needed.</Text>
       </ScrollView>
-    </KeyboardAvoidingView>
+    </KeyboardAvoider>
   );
 }
 

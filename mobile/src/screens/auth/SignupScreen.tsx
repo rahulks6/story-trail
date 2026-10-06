@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, type TextInput } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, type TextInput } from "react-native";
+import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import { Banner, Button, TextField } from "../../components/Form";
 import { newPasswordProblem } from "../../utils/passwordRules";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
@@ -43,7 +44,7 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
   };
 
   return (
-    <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+    <KeyboardAvoider style={styles.screen}>
       <ScrollView
         contentContainerStyle={[styles.container, { paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.xl }]}
         keyboardShouldPersistTaps="handled"
@@ -115,7 +116,7 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
           </Text>
         </Pressable>
       </ScrollView>
-    </KeyboardAvoidingView>
+    </KeyboardAvoider>
   );
 }
 

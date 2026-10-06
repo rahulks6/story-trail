@@ -1,5 +1,7 @@
 import React, { useRef, useState } from "react";
-import { ActivityIndicator, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { useHeaderHeight } from "@react-navigation/elements";
+import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import { launchImageLibrary } from "react-native-image-picker";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../navigation/types";
@@ -21,6 +23,7 @@ const MAX_BIO_LENGTH = 150;
  */
 export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
   const { user, accessToken, applyProfile } = useAuth();
+  const headerHeight = useHeaderHeight();
   const inFlight = useRef(false);
   const uploadedAvatar = useRef<{uri: string; id: string} | null>(null);
   const [username, setUsername] = useState(user?.username ?? "");
@@ -63,7 +66,7 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
   };
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+    <KeyboardAvoider style={styles.container} topOffset={headerHeight}>
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
       <Pressable style={styles.avatarButton} disabled={saving} onPress={async () => {
         try {
@@ -139,7 +142,7 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
         {saving ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.saveLabel}>Save</Text>}
       </Pressable>
       </ScrollView>
-    </KeyboardAvoidingView>
+    </KeyboardAvoider>
   );
 }
 
