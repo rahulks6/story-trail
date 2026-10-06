@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { colors, radii, spacing, typography } from "../theme";
-import { serverTimeMs } from "../utils/serverTime";
+import { timeAgo } from "../utils/serverTime";
 import { useAuth } from "../state/AuthContext";
 import { getStoryInsights, getStoryViewers, type StoryInsights, type StoryViewer } from "../api/stories";
 
@@ -9,18 +9,6 @@ interface Props {
   visible: boolean;
   storyId: string;
   onClose: () => void;
-}
-
-function timeAgo(iso: string): string {
-  const then = serverTimeMs(iso);
-  if (!Number.isFinite(then)) return "";
-  const ms = Date.now() - then;
-  const mins = Math.floor(ms / 60000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins}m ago`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
-  return `${Math.floor(hours / 24)}d ago`;
 }
 
 function StatRow({ label, value }: { label: string; value: string }): React.JSX.Element {

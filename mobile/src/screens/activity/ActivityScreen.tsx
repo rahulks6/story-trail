@@ -18,8 +18,9 @@ import {
 } from "../../api/notifications";
 import { getStoryOwnerUsername } from "../../api/stories";
 import { EmptyState } from "../../components/EmptyState";
+import { Banner, Button } from "../../components/Form";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
-import { serverDate } from "../../utils/serverTime";
+import { serverDate, timeAgo } from "../../utils/serverTime";
 
 const PAGE_SIZE = 20;
 
@@ -171,14 +172,23 @@ export function ActivityScreen(): React.JSX.Element {
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState<ActivityTab>("all");
+  // A failed load shows an error with a retry instead of a spinner that never ends.
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [moreFailed, setMoreFailed] = useState(false);
 
   const loadFirstPage = useCallback(async () => {
     if (!accessToken) return;
-    const { notifications: page } = await listNotifications(accessToken, { limit: PAGE_SIZE, offset: 0 });
-    setNotifications(page);
-    setOffset(page.length);
-    setHasMore(page.length === PAGE_SIZE);
-    void refreshUnreadCount();
+    try {
+      const { notifications: page } = await listNotifications(accessToken, { limit: PAGE_SIZE, offset: 0 });
+      setNotifications(page);
+      setOffset(page.length);
+      setHasMore(page.length === PAGE_SIZE);
+      setMoreFailed(false);
+      setLoadError(null);
+      void refreshUnreadCount();
+    } catch {
+      setLoadError("Couldn't load your activity. Check your connection and try again.");
+    }
   }, [accessToken, refreshUnreadCount]);
 
   // First visit: the moment notification permission makes sense to ask for (once).
@@ -194,7 +204,7 @@ export function ActivityScreen(): React.JSX.Element {
   useFocusEffect(
     useCallback(() => {
       focused.current = true;
-      void loadFirstPage().catch(() => undefined);
+      void loadFirstPage();
       return () => {
         focused.current = false;
       };
@@ -208,7 +218,7 @@ export function ActivityScreen(): React.JSX.Element {
     if ((event.type !== "notification" && event.type !== "resync") || !focused.current || reloadTimer.current) return;
     reloadTimer.current = setTimeout(() => {
       reloadTimer.current = null;
-      void loadFirstPage().catch(() => undefined);
+      void loadFirstPage();
     }, 300);
   });
 
@@ -221,18 +231,22 @@ export function ActivityScreen(): React.JSX.Element {
     }
   }, [loadFirstPage]);
 
-  const loadMore = useCallback(async () => {
-    if (!accessToken || loadingMore || !hasMore || notifications === null) return;
+  const loadMore = useCallback(async (retry = false) => {
+    // After a failure, wait for a tap on "Try again" rather than retrying on every scroll.
+    if (!accessToken || loadingMore || !hasMore || notifications === null || (moreFailed && !retry)) return;
     setLoadingMore(true);
+    setMoreFailed(false);
     try {
       const { notifications: page } = await listNotifications(accessToken, { limit: PAGE_SIZE, offset });
       setNotifications((current) => [...(current ?? []), ...page]);
       setOffset((current) => current + page.length);
       setHasMore(page.length === PAGE_SIZE);
+    } catch {
+      setMoreFailed(true);
     } finally {
       setLoadingMore(false);
     }
-  }, [accessToken, loadingMore, hasMore, notifications, offset]);
+  }, [accessToken, loadingMore, hasMore, notifications, offset, moreFailed]);
 
   const tabFiltered = useMemo(
     () => (notifications ?? []).filter((n) => matchesTab(n, activeTab)),
@@ -320,6 +334,8 @@ export function ActivityScreen(): React.JSX.Element {
     setNotifications((current) => (current ? current.map((n) => ({ ...n, readAt: n.readAt ?? new Date().toISOString() })) : current));
     try {
       await markAllNotificationsRead(accessToken);
+    } catch {
+      void loadFirstPage(); // show what is really unread again
     } finally {
       void refreshUnreadCount();
     }
@@ -328,7 +344,14 @@ export function ActivityScreen(): React.JSX.Element {
   if (notifications === null) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={colors.accent} />
+        {loadError ? (
+          <>
+            <Text style={[typography.body, styles.loadError]}>{loadError}</Text>
+            <Button label="Try again" onPress={() => void loadFirstPage()} />
+          </>
+        ) : (
+          <ActivityIndicator color={colors.accent} accessibilityLabel="Loading activity" />
+        )}
       </View>
     );
   }
@@ -342,19 +365,21 @@ export function ActivityScreen(): React.JSX.Element {
       <View style={[styles.header, { paddingTop: insets.top + spacing.md }]}>
         <Text style={typography.title}>Activity</Text>
         {unreadInList ? (
-          <Pressable onPress={onMarkAllRead} hitSlop={8}>
+          <Pressable onPress={onMarkAllRead} hitSlop={8} accessibilityRole="button">
             <Text style={styles.markAllRead}>Mark all read</Text>
           </Pressable>
         ) : null}
       </View>
-      <View style={styles.tabBar}>
+      {loadError ? <Banner text={loadError} /> : null}
+      <View style={styles.tabBar} accessibilityRole="tablist">
         {TABS.map((tab) => (
           <Pressable
             key={tab.key}
             style={[styles.tab, activeTab === tab.key && styles.tabActive]}
             onPress={() => setActiveTab(tab.key)}
-            accessibilityRole="button"
+            accessibilityRole="tab"
             accessibilityLabel={tab.label}
+            accessibilityState={{ selected: activeTab === tab.key }}
           >
             <Text style={[styles.tabLabel, activeTab === tab.key && styles.tabLabelActive]}>{tab.label}</Text>
           </Pressable>
@@ -377,8 +402,14 @@ export function ActivityScreen(): React.JSX.Element {
             const message = row.kind === "grouped-like" ? messageForGroup(row) : messageFor(row.notification);
             const createdAt = row.kind === "grouped-like" ? row.createdAt : row.notification.createdAt;
             const unread = row.kind === "grouped-like" ? row.anyUnread : row.notification.readAt === null;
+            const ago = timeAgo(createdAt);
             return (
-              <Pressable style={styles.row} onPress={() => void onPressRow(row)}>
+              <Pressable
+                style={styles.row}
+                onPress={() => void onPressRow(row)}
+                accessibilityRole="button"
+                accessibilityLabel={[message.replace(/\.$/, ""), ago, unread ? "Unread" : ""].filter(Boolean).join(". ")}
+              >
                 <View style={styles.avatarPlaceholder}>
                   <Text style={styles.avatarInitial}>{avatarLetter.charAt(0).toUpperCase()}</Text>
                 </View>
@@ -386,13 +417,17 @@ export function ActivityScreen(): React.JSX.Element {
                   <Text style={typography.body} numberOfLines={2}>
                     {message}
                   </Text>
-                  <Text style={typography.caption}>{serverDate(createdAt)?.toLocaleString() ?? ""}</Text>
+                  <Text style={typography.caption}>{ago}</Text>
                 </View>
                 {unread ? <View style={styles.unreadDot} /> : null}
               </Pressable>
             );
           }}
-          ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} /> : undefined}
+          ListFooterComponent={
+            loadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} />
+              : moreFailed ? <View style={styles.footerRetry}><Button label="Couldn't load more. Try again" variant="secondary" onPress={() => void loadMore(true)} /></View>
+              : undefined
+          }
         />
       )}
     </View>
@@ -401,7 +436,9 @@ export function ActivityScreen(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  centered: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background },
+  centered: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background, padding: spacing.lg, gap: spacing.md },
+  loadError: { textAlign: "center" },
+  footerRetry: { padding: spacing.md },
   header: {
     flexDirection: "row",
     alignItems: "center",

@@ -21,3 +21,17 @@ export function serverDate(value: string | null | undefined): Date | null {
   const ms = serverTimeMs(value);
   return Number.isFinite(ms) ? new Date(ms) : null;
 }
+
+/** How long ago an API timestamp was: "just now", "5m ago", "3h ago", "2d ago", "3w ago" ("" if unreadable). */
+export function timeAgo(value: string | null | undefined, now: number = Date.now()): string {
+  const then = serverTimeMs(value);
+  if (!Number.isFinite(then)) return "";
+  // A phone clock running behind the server must not show negative ages.
+  const mins = Math.floor(Math.max(0, now - then) / 60_000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return days < 7 ? `${days}d ago` : `${Math.floor(days / 7)}w ago`;
+}
