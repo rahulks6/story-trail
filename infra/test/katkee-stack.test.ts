@@ -333,6 +333,17 @@ describe("modes and settings", () => {
     assert.match(JSON.stringify(container(template, "migrate").Image), /:3f9c2a1b"/, "defaults to imageTag");
   });
 
+  it("recovery can point every container at a restored instance", () => {
+    const host = "katkee-restore-20261006.c9akciq32xyz.ap-south-1.rds.amazonaws.com";
+    const recovery = synth(settings({ databaseHost: host })).template;
+    for (const name of ["api", "worker", "migrate"]) {
+      const env = envOf(container(recovery, name));
+      assert.equal(env.PGHOST, host, name);
+      assert.equal(env.PGSSLMODE, "verify-full", `${name}: the restore is verified like the original`);
+    }
+    assert.notEqual(typeof envOf(container(template, "api")).PGHOST, "string", "normally the stack's own instance");
+  });
+
   it("bootstrap mode creates everything but runs no tasks", () => {
     const boot = synth(settings({ bootstrap: true })).template;
     for (const [, service] of resources(boot, "AWS::ECS::Service")) assert.equal(service.Properties.DesiredCount, 0);
@@ -351,6 +362,7 @@ describe("modes and settings", () => {
       [{ providers: { fcm: false, safeBrowsing: false, googleClientIds: [], phone: { verifyServiceSid: "service", countries: ["IN"] } } }, /Twilio Verify service SID/],
       [{ providers: { fcm: false, safeBrowsing: false, googleClientIds: [], phone: { verifyServiceSid: "VA0123456789abcdef0123456789abcdef", countries: ["India"] } } }, /ISO country codes/],
       [{ monthlyBudgetUsd: Number.NaN }, /monthlyBudgetUsd/],
+      [{ databaseHost: "db.example.com" }, /databaseHost must be an RDS endpoint in ap-south-1/],
     ];
     for (const [overrides, error] of refusals) assert.throws(() => synth(settings(overrides)), error, JSON.stringify(overrides));
   });

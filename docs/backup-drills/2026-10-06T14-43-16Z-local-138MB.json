@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "startedAt": "2026-10-06T14:43:16.438Z",
+  "server": "16.14 (Ubuntu 16.14-0ubuntu0.24.04.1)",
+  "tools": "pg_dump (PostgreSQL) 16.14 (Ubuntu 16.14-0ubuntu0.24.04.1)",
+  "source": "katkee_drill_scale_src",
+  "target": "katkee_drill_scale_restore",
+  "differences": [],
+  "kept": false,
+  "dump": {
+    "bytes": 22012446,
+    "sha256": "be3e504c060af0d4c7ece20e8522906f7d552567314fb9f6ca5edd9db0f5946c",
+    "ms": 1782
+  },
+  "restore": {
+    "ms": 2860
+  },
+  "migrations": "Nothing to do — schema is up to date.",
+  "verify": {
+    "ms": 3134,
+    "tables": 66,
+    "rows": 330462
+  }
+}

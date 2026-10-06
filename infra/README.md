@@ -60,6 +60,7 @@ production if it cannot write there.
    | `features` | `ads,sponsoredStories,adReporting` | Off unless listed. |
    | `analyticsTimeZone` | `Asia/Kolkata` | The default. Fix it before launch (docs/ANALYTICS.md). |
    | `databaseInstanceType` | `t4g.medium` | The default. |
+   | `databaseHost` | `katkee-restore-….ap-south-1.rds.amazonaws.com` | Recovery only: run against a restored instance (docs/BACKUP_AND_RESTORE.md). |
    | `monthlyBudgetUsd` | `500` | The default. |
 
    The stack refuses settings that would only fail after deploying: a certificate in another
@@ -156,11 +157,13 @@ To roll back, deploy the previous `imageTag`. ECR keeps the last 50 images.
 ## 7. Backups and recovery
 
 - Database: point-in-time restore to any second in the last 14 days (RDS), plus AWS Backup
-  snapshots (daily for 35 days, monthly for a year). A restore creates a new instance. Point
-  `PGHOST` at it by redeploying with the restored instance in place of the old one, or rename
-  instances.
+  snapshots (daily for 35 days, monthly for a year).
 - Media: S3 versioning keeps overwritten and deleted objects for 30 days, plus AWS Backup.
-- The restore procedure and its drill are in docs/BACKUP_AND_RESTORE.md.
+- A restore always creates a new instance (outputs `DatabaseInstanceId`, `DatabaseSubnetGroup`,
+  `DatabaseSecurityGroup`, `DatabaseParameterGroup`). The services switch to it with
+  `-c databaseHost=<restored endpoint>`.
+- The full procedure, the restore drill and its recorded results are in
+  docs/BACKUP_AND_RESTORE.md.
 
 ## 8. Develop and test
 

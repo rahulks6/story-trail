@@ -38,6 +38,7 @@ const settings: KatkeeSettings = {
   alarmEmail: need("alarmEmail"),
   monthlyBudgetUsd: Number(get("monthlyBudgetUsd") ?? 500),
   databaseInstanceType: get("databaseInstanceType") ?? "t4g.medium",
+  databaseHost: get("databaseHost"),
   analyticsTimeZone: get("analyticsTimeZone") ?? "Asia/Kolkata",
   providers: {
     fcm: providers.has("fcm"),

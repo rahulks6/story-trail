@@ -52,6 +52,11 @@ export interface KatkeeSettings {
   monthlyBudgetUsd: number;
   /** RDS instance type without the "db." prefix, e.g. t4g.medium or m7g.large. */
   databaseInstanceType: string;
+  /**
+   * Recovery only: the endpoint of a restored instance (docs/BACKUP_AND_RESTORE.md) for the
+   * services and migrations to use instead of the stack's own database.
+   */
+  databaseHost?: string | undefined;
   /** Where an analytics day starts (an IANA zone). Choose before launch: see docs/ANALYTICS.md. */
   analyticsTimeZone: string;
   /** Providers turn on only after their credentials are in Secrets Manager (infra/README.md). */
@@ -110,6 +115,7 @@ export function validateSettings(s: KatkeeSettings): void {
   }
   for (const cidr of s.adminAllowedCidrs ?? []) if (!/^(\d{1,3}\.){3}\d{1,3}\/\d{1,2}$/.test(cidr)) problems.push(`adminAllowedCidrs: ${cidr} is not an IPv4 range`);
   if (!/^[a-z0-9]+\.[a-z0-9]+$/.test(s.databaseInstanceType)) problems.push("databaseInstanceType must look like t4g.medium");
+  if (s.databaseHost !== undefined && !/^[a-z0-9-]+\.[a-z0-9]+\.ap-south-1\.rds\.amazonaws\.com$/.test(s.databaseHost)) problems.push("databaseHost must be an RDS endpoint in ap-south-1");
   if (s.providers.apns && !/^[A-Za-z0-9.-]+$/.test(s.providers.apns.bundleId)) problems.push("apnsBundleId must be the iOS bundle ID");
   if (s.providers.phone) {
     if (!/^VA[0-9a-f]{32}$/i.test(s.providers.phone.verifyServiceSid)) problems.push("twilioVerifyServiceSid must be a Twilio Verify service SID (VA...)");
@@ -203,6 +209,7 @@ export class KatkeeStack extends Stack {
 
     // ---------------------------------------------------------------- database
     const engine = rds.DatabaseInstanceEngine.postgres({ version: rds.PostgresEngineVersion.VER_16_13 });
+    let dbParameters: rds.ParameterGroup;
     const db = new rds.DatabaseInstance(this, "Database", {
       engine,
       instanceType: new ec2.InstanceType(s.databaseInstanceType),
@@ -221,7 +228,7 @@ export class KatkeeStack extends Stack {
       storageEncryptionKey: dataKey,
       // The API verifies this CA (backend/certs/rds-ap-south-1-bundle.pem, PGSSLMODE=verify-full).
       caCertificate: rds.CaCertificate.RDS_CA_RSA2048_G1,
-      parameterGroup: new rds.ParameterGroup(this, "DatabaseParameters", {
+      parameterGroup: (dbParameters = new rds.ParameterGroup(this, "DatabaseParameters", {
         engine,
         parameters: {
           "rds.force_ssl": "1",
@@ -229,7 +236,7 @@ export class KatkeeStack extends Stack {
           log_min_error_statement: "panic",
           idle_in_transaction_session_timeout: "60000",
         },
-      }),
+      })),
       backupRetention: Duration.days(14), // point-in-time recovery to any second in the last 14 days
       preferredBackupWindow: "19:30-20:30", // 01:00–02:00 IST
       preferredMaintenanceWindow: "sun:21:00-sun:22:00", // Monday 02:30–03:30 IST
@@ -316,7 +323,7 @@ export class KatkeeStack extends Stack {
     const databaseEnvironment: Record<string, string> = {
       NODE_ENV: "production",
       AWS_REGION: this.region,
-      PGHOST: db.dbInstanceEndpointAddress,
+      PGHOST: s.databaseHost ?? db.dbInstanceEndpointAddress,
       PGPORT: db.dbInstanceEndpointPort,
       PGDATABASE: "katkee",
       PGSSLMODE: "verify-full",
@@ -626,5 +633,12 @@ export class KatkeeStack extends Stack {
     output("MigrateSecurityGroup", workerSg.securityGroupId, "Security group for the migration task");
     output("ApiSecurityGroup", apiSg.securityGroupId, "Security group for one-off API tasks");
     output("DatabaseEndpoint", db.dbInstanceEndpointAddress, "PostgreSQL (TLS only, private)");
+    // For restores (docs/BACKUP_AND_RESTORE.md): a restored instance gets the same network, settings and CA.
+    output("DatabaseInstanceId", db.instanceIdentifier, "aws rds restore-db-instance-to-point-in-time --source-db-instance-identifier");
+    output("DatabaseSubnetGroup", (db.node.findChild("SubnetGroup") as rds.SubnetGroup).subnetGroupName, "--db-subnet-group-name for a restore");
+    output("DatabaseSecurityGroup", dbSg.securityGroupId, "--vpc-security-group-ids for a restore");
+    output("DatabaseParameterGroup", dbParameters!.bindToInstance({}).parameterGroupName, "--db-parameter-group-name for a restore");
+    output("MediaBucketName", mediaBucket.bucketName, "Media objects (versioned)");
+    output("BackupVaultName", vault.backupVaultName, "AWS Backup recovery points");
   }
 }
