@@ -14,6 +14,7 @@ import { ApiError } from "../../api/client";
 import { StoryOverlayLayer, useContainerLayout } from "../../components/StoryOverlayLayer";
 import { filterNameFromKey } from "../../models/filterPreviews";
 import { mediaTransformStyle } from "../../models/storyDraft";
+import { useScreenInsets } from "../../hooks/useScreenInsets";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ArchivedStoryViewer">;
 
@@ -35,6 +36,7 @@ const PHOTO_DURATION_MS = 5000;
 export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.JSX.Element {
   const { storyId } = route.params;
   const { accessToken } = useAuth();
+  const insets = useScreenInsets();
   const rootNavigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const [detail, setDetail] = useState<StoryDetail | null>(null);
@@ -83,7 +85,7 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
     return (
       <View style={styles.centered}>
         <Text style={styles.errorText}>{error}</Text>
-        <Pressable style={styles.closeButton} onPress={close} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close">
+        <Pressable style={[styles.closeButton, { top: insets.top + spacing.sm + 10 }]} onPress={close} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close">
           <Icon style={styles.closeIcon} name={ICONS.close} />
         </Pressable>
       </View>
@@ -137,15 +139,15 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
         />
       ) : null}
 
-      <View style={styles.progressTrack}>
+      <View style={[styles.progressTrack, { top: insets.top + spacing.sm }]}>
         <Animated.View
           style={[styles.progressFill, { width: progress.interpolate({ inputRange: [0, 1], outputRange: ["0%", "100%"] }) }]}
         />
       </View>
 
-      {detail.caption ? <Text style={styles.caption}>{detail.caption}</Text> : null}
+      {detail.caption ? <Text style={[styles.caption, { bottom: spacing.xl + insets.bottom }]}>{detail.caption}</Text> : null}
 
-      <Pressable style={styles.closeButton} onPress={close} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close">
+      <Pressable style={[styles.closeButton, { top: insets.top + spacing.sm + 10 }]} onPress={close} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close">
         <Icon style={styles.closeIcon} name={ICONS.close} />
       </Pressable>
     </View>

@@ -5,6 +5,7 @@ import Video from 'react-native-video';
 import { API_BASE_URL } from '../../api/client';
 import { adCtaAction, recordAd, reportAd, validateAd, type SponsoredPlacement } from '../../api/ads';
 import { useAuth } from '../../state/AuthContext';
+import { useScreenInsets } from '../../hooks/useScreenInsets';
 interface Props {
     ad: SponsoredPlacement;
     active: boolean;
@@ -16,6 +17,7 @@ interface Props {
 }
 export function SponsoredStory({ ad, active, onNext, onPrevious, onHide, onOpenProfile }: Props): React.JSX.Element {
     const { accessToken } = useAuth();
+    const insets = useScreenInsets();
     const [valid, setValid] = useState(false), [ready, setReady] = useState(false), [paused, setPaused] = useState(false), [menu, setMenu] = useState<false | "options" | "report">(false);
     const visible = useRef(0), sent = useRef(new Set<string>()), left = useRef(false);
     const callbacks = useRef({ onNext, onPrevious, onHide });
@@ -110,8 +112,8 @@ export function SponsoredStory({ ad, active, onNext, onPrevious, onHide, onOpenP
         leave();
     } }}/> : <Image source={source} style={StyleSheet.absoluteFill} resizeMode="cover" onLoad={() => setReady(true)} onError={fail}/>)}
   <View style={StyleSheet.absoluteFill} {...gesture.panHandlers} accessible accessibilityRole="button" accessibilityLabel="Sponsored Story. Swipe up to skip or down to go back." accessibilityActions={[{ name: 'next', label: 'Next creator' }, { name: 'previous', label: 'Previous creator' }]} onAccessibilityAction={e => leave(e.nativeEvent.actionName === 'previous')}/>
-  <View style={styles.header}><View><Text style={styles.brand}>{ad.brand}</Text><Text style={styles.disclosure}>Sponsored</Text></View><Pressable onPress={more} accessibilityLabel="Ad options" hitSlop={12}><Icon name="more"/></Pressable></View>
-  <View style={styles.footer}><Text style={styles.caption}>{ad.caption}</Text><Pressable style={styles.cta} onPress={open} accessibilityRole="link"><Text style={styles.ctaText}>{ad.cta}</Text></Pressable><Pressable onPress={() => leave()} accessibilityRole="button"><Text style={styles.skip}>Skip ad</Text></Pressable></View>
+  <View style={[styles.header, { top: insets.top + 12 }]}><View><Text style={styles.brand}>{ad.brand}</Text><Text style={styles.disclosure}>Sponsored</Text></View><Pressable onPress={more} accessibilityLabel="Ad options" hitSlop={12}><Icon name="more"/></Pressable></View>
+  <View style={[styles.footer, { bottom: 30 + insets.bottom }]}><Text style={styles.caption}>{ad.caption}</Text><Pressable style={styles.cta} onPress={open} accessibilityRole="link"><Text style={styles.ctaText}>{ad.cta}</Text></Pressable><Pressable onPress={() => leave()} accessibilityRole="button"><Text style={styles.skip}>Skip ad</Text></Pressable></View>
  </View>;
 }
 const styles = StyleSheet.create({ modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'center', padding: 24 }, modalPanel: { flexGrow: 0, maxHeight: '80%', backgroundColor: '#222', borderRadius: 16 }, modalContent: { padding: 20 }, menuOption: { color: '#fff', fontSize: 16, paddingVertical: 16 }, root: { flex: 1, backgroundColor: '#111' }, header: { position: 'absolute', top: 30, left: 20, right: 20, flexDirection: 'row', justifyContent: 'space-between', padding: 12, backgroundColor: 'rgba(0,0,0,0.6)', borderRadius: 8 }, brand: { color: '#fff', fontSize: 18, fontWeight: '700' }, disclosure: { color: '#f4c24f', fontSize: 14, fontWeight: '700', marginTop: 4 }, footer: { position: 'absolute', bottom: 30, left: 20, right: 20 }, caption: { color: '#fff', backgroundColor: 'rgba(0,0,0,0.6)', padding: 8, marginBottom: 12 }, cta: { backgroundColor: '#f4c24f', borderRadius: 10, padding: 16, alignItems: 'center' }, ctaText: { color: '#111', fontWeight: '700' }, skip: { textAlign: 'center', color: '#fff', padding: 12 } });

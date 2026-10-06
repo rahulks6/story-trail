@@ -9,6 +9,7 @@ import { avatarFileUrl, getProfile } from "../../api/users";
 import { getMyActiveStories } from "../../api/stories";
 import { HighlightsRow } from "../../components/HighlightsRow";
 import type { RootStackParamList } from "../../navigation/types";
+import { useScreenInsets } from "../../hooks/useScreenInsets";
 
 /**
  * The authenticated user's own profile: real data from `/api/v1/auth/me`,
@@ -18,6 +19,7 @@ import type { RootStackParamList } from "../../navigation/types";
  */
 export function ProfileScreen(): React.JSX.Element {
   const { user, accessToken } = useAuth();
+  const insets = useScreenInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [counts, setCounts] = useState<{ followerCount: number; followingCount: number } | null>(null);
   const [hasActiveStory, setHasActiveStory] = useState(false);
@@ -45,7 +47,7 @@ export function ProfileScreen(): React.JSX.Element {
 
   if (!user) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { paddingTop: insets.top + spacing.lg }]}>
         <Text style={typography.body}>Loading profile…</Text>
       </View>
     );
@@ -61,9 +63,9 @@ export function ProfileScreen(): React.JSX.Element {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container} scrollEnabled={scrollEnabled}>
+    <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top + spacing.lg }]} scrollEnabled={scrollEnabled}>
       <Pressable
-        style={styles.settingsButton}
+        style={[styles.settingsButton, { top: insets.top + spacing.md }]}
         onPress={() => navigation.navigate("Settings")}
         hitSlop={8}
         accessibilityRole="button"

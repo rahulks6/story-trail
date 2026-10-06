@@ -18,6 +18,7 @@ import {
 } from "../../api/notifications";
 import { getStoryOwnerUsername } from "../../api/stories";
 import { EmptyState } from "../../components/EmptyState";
+import { useScreenInsets } from "../../hooks/useScreenInsets";
 
 const PAGE_SIZE = 20;
 
@@ -158,6 +159,7 @@ function groupNotifications(notifications: NotificationRecord[]): ActivityRow[] 
  */
 export function ActivityScreen(): React.JSX.Element {
   const { accessToken, user } = useAuth();
+  const insets = useScreenInsets();
   const { refreshUnreadCount } = useNotifications();
   const navigation = useNavigation<ActivityNavigationProp>();
 
@@ -335,7 +337,7 @@ export function ActivityScreen(): React.JSX.Element {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + spacing.md }]}>
         <Text style={typography.title}>Activity</Text>
         {unreadInList ? (
           <Pressable onPress={onMarkAllRead} hitSlop={8}>

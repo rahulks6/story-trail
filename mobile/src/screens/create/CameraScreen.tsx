@@ -19,6 +19,7 @@ import { colors, radii, spacing, ICONS } from "../../theme";
 import { useTapGesture } from "../../hooks/useTapGesture";
 import { EmptyState } from "../../components/EmptyState";
 import { guessMimeTypeFromUri } from "../../utils/mime";
+import { useScreenInsets } from "../../hooks/useScreenInsets";
 
 type Props = NativeStackScreenProps<CreateStackParamList, "Camera">;
 
@@ -57,6 +58,7 @@ function clamp(n: number, min: number, max: number): number {
  * needs physical-device acceptance (see docs/MANUAL_TEST_PLAN_CAMERA.md).
  */
 export function CameraScreen({ navigation }: Props): React.JSX.Element {
+  const insets = useScreenInsets();
   const { hasPermission: hasCameraPermission, requestPermission: requestCameraPermission } = useCameraPermission();
   const { hasPermission: hasMicPermission, requestPermission: requestMicPermission } = useMicrophonePermission();
   const [position, setPosition] = useState<CameraPosition>("back");
@@ -397,7 +399,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
         </View>
       ) : null}
 
-      <View style={styles.topBar}>
+      <View style={[styles.topBar, { top: insets.top + spacing.md }]}>
         <Pressable onPress={() => navigation.goBack()} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close camera">
           <Icon style={styles.topIcon} name={ICONS.close} />
         </Pressable>
@@ -431,7 +433,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
       ) : null}
 
       {isRecording ? (
-        <View style={styles.recordingBadge}>
+        <View style={[styles.recordingBadge, { top: insets.top + spacing.md }]}>
           <View style={styles.recordingDot} />
           <Text style={styles.recordingText}>
             {String(Math.floor(recordingSeconds / 60)).padStart(2, "0")}:
@@ -440,7 +442,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
         </View>
       ) : null}
 
-      <View style={styles.bottomBar}>
+      <View style={[styles.bottomBar, { bottom: spacing.xl + insets.bottom }]}>
         {!hasMicPermission&&<Text style={{color:colors.textPrimary}}>Microphone off</Text>}
         <Pressable onPress={openGallery} hitSlop={12} style={styles.sideButton} accessibilityRole="button" accessibilityLabel="Choose from gallery">
           <Icon style={styles.sideButtonIcon} name={ICONS.gallery} />

@@ -17,6 +17,7 @@ import { StoryOverlayLayer, useContainerLayout } from "../../components/StoryOve
 import { filterNameFromKey } from "../../models/filterPreviews";
 import { mediaTransformStyle, DEFAULT_CROP } from "../../models/storyDraft";
 import type { StoryDetail } from "../../api/engagement";
+import { useScreenInsets } from "../../hooks/useScreenInsets";
 
 type Props = NativeStackScreenProps<RootStackParamList, "HighlightViewer">;
 
@@ -39,6 +40,7 @@ const PHOTO_DURATION_MS = 5000;
 export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.Element {
   const { highlightId, title } = route.params;
   const { accessToken, user } = useAuth();
+  const insets = useScreenInsets();
   const rootNavigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const [items, setItems] = useState<HighlightItem[] | null>(null);
@@ -172,7 +174,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
         </View>
       )}
 
-      <View style={styles.progressRow}>
+      <View style={[styles.progressRow, { top: insets.top + spacing.sm }]}>
         {items.map((item, i) => (
           <View key={item.storyId} style={styles.progressTrack}>
             <Animated.View
@@ -191,13 +193,13 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
           </View>
         ))}
       </View>
-      <Text style={styles.title} numberOfLines={1}>
+      <Text style={[styles.title, { top: insets.top + spacing.sm + 14 }]} numberOfLines={1}>
         {title}
       </Text>
 
       {ownerId === user?.id ? (
         <Pressable
-          style={styles.editButton}
+          style={[styles.editButton, { top: insets.top + spacing.sm + 10 }]}
           onPress={() => navigation.navigate("HighlightEditor", { highlightId })}
           hitSlop={12}
           accessibilityRole="button"
@@ -207,7 +209,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
         </Pressable>
       ) : null}
       <Pressable
-        style={styles.closeButton}
+        style={[styles.closeButton, { top: insets.top + spacing.sm + 10 }]}
         onPress={() => navigation.goBack()}
         hitSlop={12}
         accessibilityRole="button"

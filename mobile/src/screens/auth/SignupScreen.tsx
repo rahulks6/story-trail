@@ -1,8 +1,11 @@
-import React, { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import React, { useRef, useState } from "react";
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, type TextInput } from "react-native";
+import { Banner, Button, TextField } from "../../components/Form";
+import { newPasswordProblem } from "../../utils/passwordRules";
+import { useScreenInsets } from "../../hooks/useScreenInsets";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "../../navigation/types";
-import { colors, radii, spacing, typography } from "../../theme";
+import { colors, spacing, typography } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Signup">;
@@ -14,8 +17,16 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const insets = useScreenInsets();
+  const usernameInput = useRef<React.ComponentRef<typeof TextInput>>(null);
+  const emailInput = useRef<React.ComponentRef<typeof TextInput>>(null);
+  const passwordInput = useRef<React.ComponentRef<typeof TextInput>>(null);
+  // Checked as they type, so most problems show before a round trip (the server checks again).
+  const passwordProblem = password ? newPasswordProblem(password, email, username) : undefined;
+  const complete = !!displayName.trim() && !!username && !!email && !!password && !passwordProblem;
 
   const onSubmit = async () => {
+    if (!complete || submitting) return;
     setSubmitting(true);
     try {
       await signup({ displayName, username, email, password });
@@ -26,102 +37,98 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
     }
   };
 
-  const field = (
-    key: string,
-    props: {
-      placeholder: string;
-      value: string;
-      onChangeText: (t: string) => void;
-      secureTextEntry?: boolean;
-      autoCapitalize?: "none" | "words";
-    },
-  ) => (
-    <View style={styles.field} key={key}>
-      <TextInput
-        style={styles.input}
-        placeholderTextColor={colors.textDisabled}
-        autoCapitalize={props.autoCapitalize ?? "none"}
-        secureTextEntry={props.secureTextEntry}
-        value={props.value}
-        onChangeText={(t) => {
-          props.onChangeText(t);
-          clearError();
-        }}
-        placeholder={props.placeholder}
-      />
-      {fieldErrors?.[key] ? <Text style={styles.fieldError}>{fieldErrors[key]}</Text> : null}
-    </View>
-  );
+  const change = (set: (v: string) => void) => (t: string) => {
+    set(t);
+    clearError();
+  };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={[typography.title, styles.title]}>Create your account</Text>
-      {error ? <Text style={styles.errorBanner}>{error}</Text> : null}
-
-      {field("displayName", { placeholder: "Display name", value: displayName, onChangeText: setDisplayName, autoCapitalize: "words" })}
-      {field("username", { placeholder: "Username", value: username, onChangeText: (t) => setUsername(t.toLowerCase()) })}
-      {field("email", { placeholder: "Email", value: email, onChangeText: setEmail })}
-      {field("password", { placeholder: "Password", value: password, onChangeText: setPassword, secureTextEntry: true })}
-
-      <Pressable
-        style={[styles.primaryButton, submitting && styles.primaryButtonDisabled]}
-        disabled={submitting || !displayName || !username || !email || !password}
-        onPress={onSubmit}
+    <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+      <ScrollView
+        contentContainerStyle={[styles.container, { paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.xl }]}
+        keyboardShouldPersistTaps="handled"
       >
-        {submitting ? (
-          <ActivityIndicator color={colors.onAccent} />
-        ) : (
-          <Text style={styles.primaryLabel}>Sign up</Text>
-        )}
-      </Pressable>
+        <Text style={[typography.title, styles.title]} accessibilityRole="header">Create your account</Text>
+        {error ? <Banner text={error} /> : null}
 
-      <Pressable style={styles.linkButton} onPress={() => navigation.navigate("Login")}>
-        <Text style={typography.body}>
-          Already have an account? <Text style={styles.linkAccent}>Log in</Text>
-        </Text>
-      </Pressable>
-    </ScrollView>
+        <TextField
+          label="Display name"
+          error={fieldErrors?.displayName}
+          autoCapitalize="words"
+          autoComplete="name"
+          textContentType="name"
+          returnKeyType="next"
+          submitBehavior="submit"
+          onSubmitEditing={() => usernameInput.current?.focus()}
+          value={displayName}
+          onChangeText={change(setDisplayName)}
+        />
+        <TextField
+          ref={usernameInput}
+          label="Username"
+          error={fieldErrors?.username}
+          hint="3–30 characters: lowercase letters, numbers, dots and underscores."
+          autoCapitalize="none"
+          autoCorrect={false}
+          autoComplete="username-new"
+          textContentType="username"
+          returnKeyType="next"
+          submitBehavior="submit"
+          onSubmitEditing={() => emailInput.current?.focus()}
+          value={username}
+          onChangeText={change((t) => setUsername(t.toLowerCase()))}
+        />
+        <TextField
+          ref={emailInput}
+          label="Email"
+          error={fieldErrors?.email}
+          autoCapitalize="none"
+          autoCorrect={false}
+          keyboardType="email-address"
+          autoComplete="email"
+          textContentType="emailAddress"
+          returnKeyType="next"
+          submitBehavior="submit"
+          onSubmitEditing={() => passwordInput.current?.focus()}
+          value={email}
+          onChangeText={change(setEmail)}
+        />
+        <TextField
+          ref={passwordInput}
+          label="Password"
+          error={fieldErrors?.password ?? passwordProblem}
+          hint="At least 8 characters."
+          secureTextEntry
+          autoComplete="new-password"
+          textContentType="newPassword"
+          returnKeyType="go"
+          onSubmitEditing={() => void onSubmit()}
+          value={password}
+          onChangeText={change(setPassword)}
+        />
+
+        <Button label="Sign up" onPress={() => void onSubmit()} disabled={!complete} busy={submitting} />
+
+        <Pressable style={styles.linkButton} onPress={() => navigation.navigate("Login")} accessibilityRole="button">
+          <Text style={typography.body}>
+            Already have an account? <Text style={styles.linkAccent}>Log in</Text>
+          </Text>
+        </Pressable>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: { flex: 1, backgroundColor: colors.background },
   container: {
     flexGrow: 1,
     justifyContent: "center",
     paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.xxl,
     backgroundColor: colors.background,
     gap: spacing.sm,
   },
   title: { textAlign: "center", marginBottom: spacing.md },
-  field: { gap: spacing.xs },
-  input: {
-    backgroundColor: colors.surface,
-    borderRadius: radii.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    color: colors.textPrimary,
-    fontSize: 15,
-  },
-  fieldError: { color: colors.danger, fontSize: 12 },
-  errorBanner: {
-    backgroundColor: "rgba(228,72,60,0.12)",
-    color: colors.danger,
-    borderRadius: radii.sm,
-    padding: spacing.sm,
-    marginBottom: spacing.sm,
-  },
-  primaryButton: {
-    backgroundColor: colors.accent,
-    borderRadius: radii.md,
-    paddingVertical: spacing.sm + 2,
-    alignItems: "center",
-    marginTop: spacing.md,
-  },
-  primaryButtonDisabled: { opacity: 0.5 },
-  primaryLabel: { color: colors.onAccent, fontWeight: "700", fontSize: 16 },
-  linkButton: { marginTop: spacing.lg, alignItems: "center" },
+  linkButton: { marginTop: spacing.lg, alignItems: "center", minHeight: 44, justifyContent: "center" },
   linkAccent: { color: colors.accent, fontWeight: "600" },
 });

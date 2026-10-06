@@ -19,6 +19,7 @@ import { filterNameFromKey } from "../../models/filterPreviews";
 import { mediaTransformStyle } from "../../models/storyDraft";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
 import { SponsoredStory } from "../ads/SponsoredStory";
+import { useScreenInsets } from "../../hooks/useScreenInsets";
 import type { SponsoredPlacement } from "../../api/ads";
 
 const PHOTO_DURATION_MS = 5000;
@@ -63,6 +64,8 @@ export interface StoryFeedProps {
  * provided so there's something to return to).
  */
 export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpenDM, onOpenProfile, onRefresh, onNeedMore, sponsored = [] }: StoryFeedProps): React.JSX.Element {
+  // Overlays clear the status bar / notch; the bottom ones also the home indicator when no tab bar is below.
+  const insets = useScreenInsets();
   const { user: authUser, accessToken } = useAuth();
   const reducedMotion = useReducedMotion();
   const focused = useIsFocused();
@@ -594,7 +597,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         <Icon style={styles.heartBurstIcon} name={ICONS.liked} />
       </Animated.View>
 
-      <View style={styles.progressRow}>
+      <View style={[styles.progressRow, { top: insets.top + spacing.sm }]}>
         {currentStories?.map((s, i) => (
           <View key={s.id} style={styles.progressTrack}>
             <Animated.View
@@ -614,7 +617,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         ))}
       </View>
 
-      <View style={styles.actionRail}>
+      <View style={[styles.actionRail, { bottom: spacing.xl * 3 + insets.bottom }]}>
         <Pressable onPress={toggleLike} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel={detail?.viewerHasLiked ? "Unlike" : "Like"}>
           <Icon style={[styles.actionIcon, detail?.viewerHasLiked && styles.actionIconLiked]} name={detail?.viewerHasLiked ? ICONS.liked : ICONS.like} />
           <Text style={styles.actionCount}>{detail?.likeCount ?? "—"}</Text>
@@ -640,7 +643,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         </Pressable>
       </View>
 
-      <View style={styles.footer}>
+      <View style={[styles.footer, { bottom: spacing.xl + insets.bottom }]}>
         <View style={styles.avatarPlaceholder}>
           <Text style={styles.avatarInitial}>{(currentUsername ?? "?").charAt(0).toUpperCase()}</Text>
         </View>
@@ -664,7 +667,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       </View>
 
       {onClose ? (
-        <Pressable style={styles.closeButton} onPress={onClose} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close">
+        <Pressable style={[styles.closeButton, { top: insets.top + spacing.lg }]} onPress={onClose} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close">
           <Icon style={styles.closeIcon} name={ICONS.close} />
         </Pressable>
       ) : null}

@@ -44,6 +44,7 @@ import { OverlayAdjustSheet } from "../../components/OverlayAdjustSheet";
 import { CropGestureLayer } from "../../components/CropGestureLayer";
 import { CropAdjustControls } from "../../components/CropAdjustControls";
 import { savePendingDraft, loadPendingDraft, clearPendingDraft } from "../../state/draftStorage";
+import { useScreenInsets } from "../../hooks/useScreenInsets";
 
 type Props = NativeStackScreenProps<CreateStackParamList, "StoryEditor">;
 type Audience = "public" | "followers";
@@ -64,6 +65,7 @@ const startedStories = new Set<string>();
 export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Element {
   const { mediaUri, kind, mimeType } = route.params;
   const { accessToken,user } = useAuth();
+  const insets = useScreenInsets();
   const submittingUpload=useRef(false);
   const rootNavigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [audience, setAudience] = useState<Audience>("public");
@@ -427,7 +429,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         ) : null}
 
         {isDraggingOverlay ? (
-          <View style={[styles.trashZone, { width: TRASH_ZONE_SIZE, height: TRASH_ZONE_SIZE }]}>
+          <View style={[styles.trashZone, { width: TRASH_ZONE_SIZE, height: TRASH_ZONE_SIZE, bottom: spacing.xl + insets.bottom }]}>
             <Icon style={styles.trashIcon} name={ICONS.trash} />
           </View>
         ) : null}
@@ -435,7 +437,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
 
       {cropMode ? (
         <>
-          <View style={styles.topBar}>
+          <View style={[styles.topBar, { top: insets.top + spacing.md }]}>
             <Text style={styles.cropHint}>Pinch to zoom · Drag to reposition</Text>
             <Pressable
               onPress={() => setCropMode(false)}
@@ -447,14 +449,14 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               <Text style={styles.cropDoneLabel}>Done</Text>
             </Pressable>
           </View>
-          <View style={styles.cropControlsBar}>
+          <View style={[styles.cropControlsBar, { bottom: spacing.xxl + insets.bottom }]}>
             <CropAdjustControls crop={draft.crop} onChange={(crop) => setDraft((d) => ({ ...d, crop }))} />
           </View>
         </>
       ) : null}
 
       {!drawMode && !cropMode ? (
-        <View style={styles.topBar}>
+        <View style={[styles.topBar, { top: insets.top + spacing.md }]}>
           <Pressable onPress={onClose} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close editor">
             <Icon style={styles.topIcon} name={ICONS.close} />
           </Pressable>
@@ -502,7 +504,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
       ) : null}
 
       {!drawMode && !cropMode ? (
-        <View style={styles.bottomArea}>
+        <View style={[styles.bottomArea, { bottom: spacing.xl + insets.bottom }]}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterStrip}>
             {FILTER_PREVIEWS.map((f) => (
               <Pressable
