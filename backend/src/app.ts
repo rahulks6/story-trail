@@ -27,8 +27,8 @@ import { registerPushRoutes } from "./modules/push/push.routes";
 import { registerAnalyticsRoutes } from "./modules/analytics/analytics.routes";
 import { RealtimeHub } from "./realtime/hub";
 
-/** The API server, with its readiness/shutdown state (see http/lifecycle.ts). */
-export type KatkeeServer = Server & { lifecycle: Lifecycle };
+/** The API server, with its readiness/shutdown state (see http/lifecycle.ts) and its route table. */
+export type KatkeeServer = Server & { lifecycle: Lifecycle; routes: () => Array<{ method: string; path: string }> };
 
 export function buildApp(providers?:ProviderGateway): KatkeeServer {
   const router = new Router();
@@ -92,5 +92,5 @@ export function buildApp(providers?:ProviderGateway): KatkeeServer {
     void hub.stop();
     return close(callback);
   }) as typeof server.close;
-  return Object.assign(server, { lifecycle });
+  return Object.assign(server, { lifecycle, routes: () => router.list() });
 }

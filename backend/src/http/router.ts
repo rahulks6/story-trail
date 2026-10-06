@@ -54,6 +54,11 @@ export class Router {
     this.add("PUT", path, handler, options);
   }
 
+  /** Every route as registered (method and path pattern), for tests that check coverage. */
+  list(): Array<{ method: string; path: string }> {
+    return this.routes.map((route) => ({ method: route.method, path: `/${route.segments.join("/")}` }));
+  }
+
   match(method: string, path: string): { handler: Handler; params: Record<string, string>; options: RouteOptions } | null {
     const requestSegments = splitPath(path.split("?")[0] ?? "");
     for (const route of this.routes) {

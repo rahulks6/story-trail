@@ -571,8 +571,13 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           >
             {uploadState === "uploading" ? (
               <ActivityIndicator color={colors.onAccent} />
+            ) : uploadState === "done" ? (
+              <View style={styles.uploadButtonDone}>
+                <Icon name="check" size={18} color={colors.onAccent} />
+                <Text style={styles.uploadButtonLabel}>Story published</Text>
+              </View>
             ) : (
-              <Text style={styles.uploadButtonLabel}>{uploadState === "done" ? "Story published ✓" : "Share Story"}</Text>
+              <Text style={styles.uploadButtonLabel}>Share Story</Text>
             )}
           </Pressable>
         </KeyboardAvoider>
@@ -699,4 +704,5 @@ const styles = StyleSheet.create({
   },
   uploadButtonDisabled: { opacity: 0.7 },
   uploadButtonLabel: { color: colors.onAccent, fontWeight: "700", fontSize: 16 },
+  uploadButtonDone: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
 });
