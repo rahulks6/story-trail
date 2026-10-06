@@ -19,6 +19,13 @@ export interface PushMessage {
   badge?: number | undefined;
   /** Groups notifications on iOS. */
   threadId?: string | undefined;
+  /** Android notification channel; the app creates "messages" and "activity" (MainApplication.kt). */
+  channel?: "messages" | "activity" | undefined;
+  /**
+   * Only sets the iPhone app-icon badge to `badge`: no alert, sound or banner, and
+   * title/body are ignored. Low priority (APNs priority 5), collapsed to the latest.
+   */
+  badgeOnly?: boolean | undefined;
 }
 
 export interface PushResult {
@@ -96,18 +103,34 @@ export class FcmProvider implements PushProvider {
   }
 
   async send(deviceToken: string, message: PushMessage): Promise<PushResult> {
-    const payload = {
-      message: {
-        token: deviceToken,
-        notification: { title: message.title, body: message.body },
-        data: message.data,
-        android: { priority: "HIGH", ...(message.collapseKey ? { collapse_key: message.collapseKey, notification: { tag: message.collapseKey } } : {}) },
-        apns: {
-          headers: { "apns-priority": "10", ...(message.collapseKey ? { "apns-collapse-id": message.collapseKey } : {}) },
-          payload: { aps: { sound: "default", ...(message.badge !== undefined ? { badge: message.badge } : {}), ...(message.threadId ? { "thread-id": message.threadId } : {}) } },
+    const collapse = message.collapseKey ? { "apns-collapse-id": message.collapseKey } : {};
+    const payload = message.badgeOnly
+      ? {
+        message: {
+          token: deviceToken,
+          data: message.data,
+          apns: {
+            headers: { "apns-push-type": "alert", "apns-priority": "5", ...collapse },
+            payload: { aps: { badge: message.badge ?? 0 } },
+          },
         },
-      },
-    };
+      }
+      : {
+        message: {
+          token: deviceToken,
+          notification: { title: message.title, body: message.body },
+          data: message.data,
+          android: {
+            priority: "HIGH",
+            ...(message.collapseKey ? { collapse_key: message.collapseKey } : {}),
+            notification: { ...(message.channel ? { channel_id: message.channel } : {}), ...(message.collapseKey ? { tag: message.collapseKey } : {}) },
+          },
+          apns: {
+            headers: { "apns-priority": "10", ...collapse },
+            payload: { aps: { sound: "default", ...(message.badge !== undefined ? { badge: message.badge } : {}), ...(message.threadId ? { "thread-id": message.threadId } : {}) } },
+          },
+        },
+      };
     for (let attempt = 0; attempt < 2; attempt++) {
       let res: Response;
       try {
@@ -187,12 +210,14 @@ export class ApnsProvider implements PushProvider {
 
   async send(deviceToken: string, message: PushMessage): Promise<PushResult> {
     const body = JSON.stringify({
-      aps: {
-        alert: { title: message.title, body: message.body },
-        sound: "default",
-        ...(message.badge !== undefined ? { badge: message.badge } : {}),
-        ...(message.threadId ? { "thread-id": message.threadId } : {}),
-      },
+      aps: message.badgeOnly
+        ? { badge: message.badge ?? 0 }
+        : {
+          alert: { title: message.title, body: message.body },
+          sound: "default",
+          ...(message.badge !== undefined ? { badge: message.badge } : {}),
+          ...(message.threadId ? { "thread-id": message.threadId } : {}),
+        },
       ...message.data,
     });
     for (let attempt = 0; attempt < 2; attempt++) {
@@ -201,8 +226,9 @@ export class ApnsProvider implements PushProvider {
         result = await this.request(deviceToken, body, {
           authorization: `bearer ${this.token(attempt > 0)}`,
           "apns-topic": this.options.bundleId,
+          // A badge change is an "alert" push type too (Apple: alert, sound or badge).
           "apns-push-type": "alert",
-          "apns-priority": "10",
+          "apns-priority": message.badgeOnly ? "5" : "10",
           ...(message.collapseKey ? { "apns-collapse-id": message.collapseKey.slice(0, 64) } : {}),
         });
       } catch (error) {

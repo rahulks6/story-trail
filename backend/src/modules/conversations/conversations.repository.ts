@@ -171,7 +171,8 @@ export async function listMessagesByCursor(
 /**
  * Moves a participant's read/delivered watermarks forward and, when that changed what
  * the other participant sees (one of their messages became delivered/read), tells both
- * participants' devices in realtime.
+ * participants' devices in realtime. A read that cleared an unread conversation also
+ * sends the reader's iPhones their new badge (migration 0036).
  */
 async function advanceWatermarks(conversationId: string, userId: string, read: boolean): Promise<void> {
   await query(
@@ -194,6 +195,7 @@ async function advanceWatermarks(conversationId: string, userId: string, read: b
      SELECT pg_notify('realtime', json_build_object('u', json_build_array(other.id, :'user_id'::uuid),
               'e', json_build_object('type', 'receipt', 'conversationId', :'conversation_id'::uuid, 'userId', :'user_id'::uuid,
                                      'lastReadAt', up.last_read_at, 'lastDeliveredAt', up.last_delivered_at))::text)
+            ${read ? ", queue_badge_update(:'user_id')" : ""}
      FROM up, other WHERE EXISTS (SELECT 1 FROM changed)`,
     { conversation_id: conversationId, user_id: userId },
   );

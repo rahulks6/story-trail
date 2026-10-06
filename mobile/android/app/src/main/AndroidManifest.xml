@@ -45,5 +45,11 @@
             <data android:scheme="katkee" android:host="activity" />
         </intent-filter>
       </activity>
+      <!-- Notifications drawn by Firebase while the app is in the background use this
+           status-bar icon (shape only, tinted). The default channel and colour come from
+           firebase.json, which @react-native-firebase/messaging merges into the manifest. -->
+      <meta-data
+        android:name="com.google.firebase.messaging.default_notification_icon"
+        android:resource="@drawable/ic_notification" />
     </application>
 </manifest>

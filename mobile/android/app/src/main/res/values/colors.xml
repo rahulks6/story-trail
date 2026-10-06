@@ -1,0 +1,4 @@
+<resources>
+    <!-- Tints the notification icon and app name: colors.accent in mobile/src/theme/colors.ts. -->
+    <color name="notification_accent">#FFC800</color>
+</resources>

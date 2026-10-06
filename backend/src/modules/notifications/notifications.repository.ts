@@ -186,16 +186,24 @@ export async function countUnread(recipientId: string): Promise<number> {
   return Number(row?.n ?? 0);
 }
 
-/** Ownership-scoped by design — a recipient can only ever mark their own notifications read. */
+/**
+ * Ownership-scoped by design — a recipient can only ever mark their own notifications read.
+ * When that lowers the unread total, their iPhones get the new badge (migration 0036).
+ */
 export async function markRead(id: string, recipientId: string): Promise<void> {
   await query(
-    `UPDATE notifications SET read_at = now() WHERE id = :'id' AND recipient_id = :'recipient_id' AND read_at IS NULL`,
+    `WITH up AS (
+       UPDATE notifications SET read_at = now() WHERE id = :'id' AND recipient_id = :'recipient_id' AND read_at IS NULL RETURNING 1)
+     SELECT queue_badge_update(:'recipient_id') WHERE EXISTS (SELECT 1 FROM up)`,
     { id, recipient_id: recipientId },
   );
 }
 
 export async function markAllRead(recipientId: string): Promise<void> {
-  await query(`UPDATE notifications SET read_at = now() WHERE recipient_id = :'recipient_id' AND read_at IS NULL`, {
-    recipient_id: recipientId,
-  });
+  await query(
+    `WITH up AS (
+       UPDATE notifications SET read_at = now() WHERE recipient_id = :'recipient_id' AND read_at IS NULL RETURNING 1)
+     SELECT queue_badge_update(:'recipient_id') WHERE EXISTS (SELECT 1 FROM up)`,
+    { recipient_id: recipientId },
+  );
 }

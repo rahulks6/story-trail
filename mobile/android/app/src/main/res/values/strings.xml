@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Katkee</string>
+    <!-- Notification channels (MainApplication.kt), shown in the system's notification settings. -->
+    <string name="notification_channel_messages">Messages</string>
+    <string name="notification_channel_messages_description">New direct messages</string>
+    <string name="notification_channel_activity">Activity</string>
+    <string name="notification_channel_activity_description">Likes, comments, mentions, new followers and follow requests</string>
 </resources>

@@ -261,3 +261,137 @@ describe("push delivery", () => {
     assert.equal((await queryOne(`SELECT count(*) AS n FROM push_outbox WHERE user_id = :'u' AND kind = 'message'`, { u: a.id }))?.n, "1");
   });
 });
+
+describe("notification channels and the app-icon badge", () => {
+  const queuedBadge = (userId: string) =>
+    queryOne(`SELECT count(*) AS n, bool_and(run_after > now()) AS later FROM push_outbox WHERE user_id = :'u' AND kind = 'badge' AND status = 'queued'`, { u: userId });
+  const makeDue = (userId: string) => query(`UPDATE push_outbox SET run_after = now() WHERE user_id = :'u' AND status = 'queued'`, { u: userId });
+  const read = (token: string, conversation: string) => client.post(`/api/v1/conversations/${conversation}/read`, undefined, authHeader(token));
+
+  it("routes Android notifications to the Messages and Activity channels the app creates", async () => {
+    const [a, b] = [await signup(), await signup()];
+    const token = unique("fcm-");
+    await register(a.token, { provider: "fcm", platform: "android", token });
+    await client.post(`/api/v1/users/${a.username}/follow`, undefined, authHeader(b.token));
+    const conversation = await conversationBetween(b, a);
+    await client.post(`/api/v1/conversations/${conversation}/messages`, { body: "hi" }, authHeader(b.token));
+    await worker.drain();
+    const channels = fcm.sends.filter((s) => s.token === token).map((s) => [s.body.message.data.kind, s.body.message.android.notification.channel_id]);
+    assert.deepEqual(channels.sort(), [["follow", "activity"], ["message", "messages"]]);
+  });
+
+  it("reading a conversation or Activity sends the person's iPhones the new total, silently", async () => {
+    const [a, b] = [await signup(), await signup()];
+    const [apnsIos, fcmIos, android] = [unique("apns-"), unique("fcm-"), unique("fcm-")];
+    await register(a.token, { provider: "apns", platform: "ios", token: apnsIos });
+    await register(a.token, { provider: "fcm", platform: "ios", token: fcmIos });
+    await register(a.token, { provider: "fcm", platform: "android", token: android });
+    await client.post(`/api/v1/users/${a.username}/follow`, undefined, authHeader(b.token));
+    const conversation = await conversationBetween(b, a);
+    await client.post(`/api/v1/conversations/${conversation}/messages`, { body: "hi" }, authHeader(b.token));
+    await worker.drain();
+    assert.equal(apns.sends.filter((s) => s.token === apnsIos).at(-1)?.body.aps.badge, 2, "a new follower and an unread conversation");
+    const sentTo = (token: string) => [...apns.sends, ...fcm.sends].filter((s) => s.token === token);
+    apns.sends.length = 0;
+    fcm.sends.length = 0;
+
+    assert.equal((await read(a.token, conversation)).status, 204);
+    assert.deepEqual(await queuedBadge(a.id), { n: "1", later: "t" }, "held a few seconds so several reads send one update");
+    await makeDue(a.id);
+    await worker.drain();
+    const [direct] = sentTo(apnsIos) as typeof apns.sends;
+    assert.deepEqual(direct!.body.aps, { badge: 1 }, "no alert, sound or text");
+    assert.deepEqual([direct!.headers["apns-push-type"], direct!.headers["apns-priority"], direct!.headers["apns-collapse-id"]], ["alert", "5", "badge"]);
+    const [viaFcm] = sentTo(fcmIos) as typeof fcm.sends;
+    assert.equal(viaFcm!.body.message.notification, undefined);
+    assert.equal(viaFcm!.body.message.android, undefined);
+    assert.deepEqual(viaFcm!.body.message.apns, { headers: { "apns-push-type": "alert", "apns-priority": "5", "apns-collapse-id": "badge" }, payload: { aps: { badge: 1 } } });
+    assert.equal(sentTo(android).length, 0, "Android launchers count the notifications in the tray instead");
+
+    assert.equal((await client.post("/api/v1/notifications/read-all", undefined, authHeader(a.token))).status, 204);
+    await makeDue(a.id);
+    await worker.drain();
+    assert.deepEqual(sentTo(apnsIos).map((s) => s.body.aps), [{ badge: 1 }, { badge: 0 }]);
+
+    // Nothing unread any more: reading again changes nothing, so nothing is queued.
+    await read(a.token, conversation);
+    await client.post("/api/v1/notifications/read-all", undefined, authHeader(a.token));
+    assert.equal((await queuedBadge(a.id))?.n, "0");
+  });
+
+  it("reading one Activity item updates the badge; reading it again does not", async () => {
+    const [a, b, c] = [await signup(), await signup(), await signup()];
+    const ios = unique("apns-");
+    await register(a.token, { provider: "apns", platform: "ios", token: ios });
+    for (const follower of [b, c]) await client.post(`/api/v1/users/${a.username}/follow`, undefined, authHeader(follower.token));
+    await worker.drain();
+    const { notifications } = (await client.get("/api/v1/notifications", authHeader(a.token))).body as { notifications: { id: string }[] };
+    assert.equal(notifications.length, 2);
+    assert.equal((await client.post(`/api/v1/notifications/${notifications[0]!.id}/read`, undefined, authHeader(a.token))).status, 204);
+    await makeDue(a.id);
+    await worker.drain();
+    assert.deepEqual(apns.sends.filter((s) => s.token === ios).map((s) => s.body.aps).slice(-1), [{ badge: 1 }]);
+    await client.post(`/api/v1/notifications/${notifications[0]!.id}/read`, undefined, authHeader(a.token));
+    assert.equal((await queuedBadge(a.id))?.n, "0");
+  });
+
+  it("several reads in a row send one update, with the total at send time", async () => {
+    const [a, b, c] = [await signup(), await signup(), await signup()];
+    const ios = unique("apns-");
+    await register(a.token, { provider: "apns", platform: "ios", token: ios });
+    const conversations = [await conversationBetween(b, a), await conversationBetween(c, a)];
+    await client.post(`/api/v1/conversations/${conversations[0]}/messages`, { body: "one" }, authHeader(b.token));
+    await client.post(`/api/v1/conversations/${conversations[1]}/messages`, { body: "two" }, authHeader(c.token));
+    await worker.drain();
+    assert.equal(apns.sends.filter((s) => s.token === ios).at(-1)?.body.aps.badge, 2);
+    for (const id of conversations) await read(a.token, id!);
+    assert.equal((await queuedBadge(a.id))?.n, "1");
+    await makeDue(a.id);
+    await worker.drain();
+    assert.deepEqual(apns.sends.filter((s) => s.token === ios).map((s) => s.body.aps).slice(-1), [{ badge: 0 }]);
+    assert.equal(apns.sends.filter((s) => s.token === ios && s.headers["apns-collapse-id"] === "badge").length, 1);
+  });
+
+  it("queues nothing for people without an iPhone, and honours the push switch", async () => {
+    const [a, b] = [await signup(), await signup()];
+    await register(a.token, { provider: "fcm", platform: "android", token: unique("fcm-") });
+    const conversation = await conversationBetween(b, a);
+    await client.post(`/api/v1/conversations/${conversation}/messages`, { body: "hi" }, authHeader(b.token));
+    await read(a.token, conversation);
+    assert.equal((await queryOne(`SELECT count(*) AS n FROM push_outbox WHERE user_id = :'u' AND kind = 'badge'`, { u: a.id }))?.n, "0");
+
+    await register(a.token, { provider: "apns", platform: "ios", token: unique("apns-") });
+    await client.patch("/api/v1/notifications/preferences", { pushEnabled: false }, authHeader(a.token));
+    await client.post(`/api/v1/conversations/${conversation}/messages`, { body: "again" }, authHeader(b.token));
+    await read(a.token, conversation);
+    await makeDue(a.id);
+    await worker.drain();
+    const row = await queryOne(`SELECT status, last_error FROM push_outbox WHERE user_id = :'u' AND kind = 'badge'`, { u: a.id });
+    assert.deepEqual([row?.status, row?.last_error], ["skipped", "push turned off"]);
+  });
+
+  it("a badge update waiting to retry never blocks a newer one", async () => {
+    const [a, b] = [await signup(), await signup()];
+    const token = unique("fcm-");
+    await register(a.token, { provider: "fcm", platform: "ios", token });
+    const conversation = await conversationBetween(b, a);
+    const messageThenRead = async () => {
+      await client.post(`/api/v1/conversations/${conversation}/messages`, { body: "hi" }, authHeader(b.token));
+      await worker.drain();
+      assert.equal((await read(a.token, conversation)).status, 204);
+    };
+    await messageThenRead();
+    await makeDue(a.id);
+    fcm.failNext = 1;
+    await worker.drain();
+    const retrying = await queryOne(`SELECT status, attempts FROM push_outbox WHERE user_id = :'u' AND kind = 'badge'`, { u: a.id });
+    assert.deepEqual([retrying?.status, retrying?.attempts], ["queued", "1"]);
+    await messageThenRead();
+    assert.equal((await queuedBadge(a.id))?.n, "2", "the retry and the newer update both wait");
+    await makeDue(a.id);
+    await worker.drain();
+    const rows = await query(`SELECT status FROM push_outbox WHERE user_id = :'u' AND kind = 'badge' ORDER BY id`, { u: a.id });
+    assert.deepEqual(rows.map((r) => r.status), ["sent", "sent"]);
+    assert.ok(fcm.sends.filter((s) => s.token === token && s.body.message.apns.payload.aps.badge === 0).length >= 1);
+  });
+});

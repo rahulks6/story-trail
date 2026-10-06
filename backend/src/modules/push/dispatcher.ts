@@ -2,7 +2,9 @@
  * Sends queued pushes (push_outbox). Text is rendered at send time from current data,
  * so renames apply and blocked, deleted or suspended actors are skipped; preferences
  * are re-checked; DM text never leaves the server in a push. Invalid device tokens are
- * disabled; transient provider failures retry with backoff.
+ * disabled; transient provider failures retry with backoff. A 'badge' item (queued
+ * when a read lowers the unread total, migration 0036) silently sets the iPhone
+ * app-icon badge to the total at send time.
  */
 import { config } from "../../config/env";
 import { query, queryOne } from "../../db/psql";
@@ -64,6 +66,10 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
   );
   if (!row || row.recipient_ok !== "t") return { skip: "recipient unavailable" };
   if (row.push_enabled !== "t") return { skip: "push turned off" };
+  const badge = Number(row.unread_activity ?? 0) + Number(row.unread_conversations ?? 0);
+  if (item.kind === "badge") {
+    return { message: { title: "", body: "", data: { kind: "badge" }, collapseKey: "badge", badge, badgeOnly: true } };
+  }
   if (item.kind === "message" && row.messages_enabled !== "t") return { skip: "message pushes turned off" };
   if (item.actorId && (row.actor_ok !== "t" || row.blocked === "t")) return { skip: "actor unavailable" };
   const actor = (row.actor_username as string | null) ?? "someone";
@@ -83,7 +89,8 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
       data,
       collapseKey: isMessage && item.refId ? `dm-${item.refId}` : item.refId ? `${item.kind}-${item.refId}` : undefined,
       threadId: isMessage && item.refId ? `dm-${item.refId}` : "activity",
-      badge: Number(row.unread_activity ?? 0) + Number(row.unread_conversations ?? 0),
+      badge,
+      channel: isMessage ? "messages" : "activity",
     },
   };
 }
@@ -105,9 +112,12 @@ export async function dispatchPushBatch(providers: ProviderMap, options: { maxAt
       await finish(item, "skipped", rendered.skip);
       continue;
     }
+    // Android launchers count the notifications in the tray, so badge updates are for iPhones only.
     const devices = await query(
-      `SELECT id, provider, token FROM push_devices WHERE user_id = :'user' AND disabled_at IS NULL ORDER BY last_seen_at DESC LIMIT 10`,
-      { user: item.userId },
+      `SELECT id, provider, token FROM push_devices
+        WHERE user_id = :'user' AND disabled_at IS NULL AND (:'ios_only' = '' OR platform = 'ios')
+        ORDER BY last_seen_at DESC LIMIT 10`,
+      { user: item.userId, ios_only: rendered.message.badgeOnly ? "1" : "" },
     );
     if (!devices.length) {
       await finish(item, "skipped", "no devices");
