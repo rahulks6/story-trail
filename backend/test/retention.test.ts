@@ -153,6 +153,8 @@ describe("retention", () => {
     await publish(user.token, normal);
     const heldStory = await publish(user.token, held);
     await query(`UPDATE stories SET moderation_removed_at = now() - interval '10 days' WHERE id = :'id'`, { id: heldStory });
+    // An earlier rename: the old name is personal data too.
+    await query(`UPDATE users SET username = :'name' WHERE id = :'id'`, { name: `renamed_${randomUUID().slice(0, 8)}`, id: user.id });
     await query(`UPDATE users SET avatar_media_id = :'m', bio = 'hello', deleted_at = now() - interval '31 days', is_active = false WHERE id = :'id'`, { m: avatar, id: user.id });
     await query(`INSERT INTO auth_identities (user_id, provider, subject) VALUES (:'id', 'GOOGLE', :'sub')`, { id: user.id, sub: `google-${randomUUID()}` });
     assert.ok(Number((await queryOne(`SELECT count(*) AS n FROM refresh_tokens WHERE user_id = :'id'`, { id: user.id }))?.n) > 0);
@@ -164,7 +166,7 @@ describe("retention", () => {
     assert.match(String(row?.username), /^deleted_[0-9a-f]{12}$/);
     assert.deepEqual([row?.email, row?.password_hash, row?.display_name, row?.bio, row?.avatar_media_id], [null, null, "Deleted account", "", null]);
     assert.notEqual(row?.data_purged_at, null);
-    for (const table of ["auth_identities", "refresh_tokens", "auth_security_events", "analytics_events", "analytics_active_days"]) {
+    for (const table of ["auth_identities", "refresh_tokens", "auth_security_events", "analytics_events", "analytics_active_days", "username_changes"]) {
       assert.equal((await queryOne(`SELECT count(*) AS n FROM ${table} WHERE user_id = :'id'`, { id: user.id }))?.n, "0", table);
     }
     assert.notEqual(await purgedAt(normal), null);

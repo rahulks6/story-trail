@@ -169,6 +169,7 @@ export async function deletedAccounts(store: ObjectStore, batch: number, days: n
                 display_name = 'Deleted account', bio = '', avatar_media_id = NULL, interests_json = '[]', data_purged_at = now()
          WHERE id = :'id' AND deleted_at IS NOT NULL AND data_purged_at IS NULL RETURNING id),
        a AS (DELETE FROM auth_identities WHERE user_id IN (SELECT id FROM u)),
+       h AS (DELETE FROM username_changes WHERE user_id IN (SELECT id FROM u)),
        t AS (DELETE FROM refresh_tokens WHERE user_id IN (SELECT id FROM u)),
        e AS (DELETE FROM auth_security_events WHERE user_id IN (SELECT id FROM u)),
        p AS (DELETE FROM password_reset_requests WHERE user_id IN (SELECT id FROM u)),

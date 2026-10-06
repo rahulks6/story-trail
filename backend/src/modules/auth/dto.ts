@@ -3,7 +3,8 @@
  * networkSandboxLimitation). Each validator returns a typed, narrowed value
  * or throws ValidationError with a field-level message.
  */
-import { EMAIL_RE, USERNAME_RE } from "../../shared/validation";
+import { EMAIL_RE } from "../../shared/validation";
+import { usernameProblem } from "../users/username-policy";
 
 export class ValidationError extends Error {
   constructor(public readonly fieldErrors: Record<string, string>) {
@@ -28,11 +29,9 @@ export function parseSignupInput(body: unknown): SignupInput {
   const password = typeof b.password === "string" ? b.password : "";
   const displayName = typeof b.displayName === "string" ? b.displayName.trim() : "";
 
-  if (!USERNAME_RE.test(username)) {
-    errors.username = "Username must be 3-30 characters: lowercase letters, numbers, '.', or '_'.";
-  }
-  if (["admin", "katkee", "support", "moderator", "superadmin"].includes(username)) {
-    errors.username = "That username is reserved.";
+  const usernameIssue = usernameProblem(username);
+  if (usernameIssue) {
+    errors.username = usernameIssue.message;
   }
   if (!EMAIL_RE.test(email)) {
     errors.email = "Must be a valid email address.";

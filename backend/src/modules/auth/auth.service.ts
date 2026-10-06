@@ -15,6 +15,8 @@ import {
   type ClientContext,
 } from "./account-security";
 import { HttpError } from "../../http/errors";
+import { DatabaseError } from "../../db/psql";
+import { USERNAME_MESSAGES } from "../users/username-policy";
 
 export class AuthError extends Error {
   constructor(
@@ -78,12 +80,21 @@ export async function signup(
     throw new AuthError("Username or email is already registered.", 409);
   }
   const passwordHash = await hashPassword(input.password);
-  const user = await usersRepo.createUser({
-    username: input.username,
-    email: input.email,
-    passwordHash,
-    displayName: input.displayName,
-  });
+  let user: usersRepo.UserRecord;
+  try {
+    user = await usersRepo.createUser({
+      username: input.username,
+      email: input.email,
+      passwordHash,
+      displayName: input.displayName,
+    });
+  } catch (error) {
+    if (error instanceof DatabaseError && error.detail.includes("USERNAME_HELD")) throw new AuthError(USERNAME_MESSAGES.held, 409);
+    if (error instanceof DatabaseError && /users_(username|email)_unique/.test(error.detail)) {
+      throw new AuthError("Username or email is already registered.", 409);
+    }
+    throw error;
+  }
   const tokens = await issueTokenPair(user.id, client.userAgent);
   // The sign-up device becomes the account's first known device.
   await recordSecurityEvent(user.id, "login_succeeded", client);

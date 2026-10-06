@@ -1,3 +1,5 @@
+import { USERNAME_MESSAGES, usernameProblem } from "./username-policy";
+import { ValidationError } from "../auth/dto";
 import { assertLinksAllowed } from "../safety/links";
 import { HttpError } from "../../http/errors";
 import { DatabaseError } from "../../db/psql";
@@ -30,7 +32,15 @@ export interface ProfileView {
 }
 
 export async function getProfileByUsername(username: string, viewerId: string): Promise<ProfileView> {
-  const target = await usersRepo.findUserByUsername(username);
+  return profileView(await usersRepo.findUserByUsername(username), viewerId);
+}
+
+/** The same profile found by the account's permanent ID, so a link still works after a rename. */
+export async function getProfileById(id: string, viewerId: string): Promise<ProfileView> {
+  return profileView(await usersRepo.findUserById(id), viewerId);
+}
+
+async function profileView(target: usersRepo.UserRecord | null, viewerId: string): Promise<ProfileView> {
   if (!target || !target.isActive) throw new HttpError(404, "User not found.");
 
   if (target.id !== viewerId) {
@@ -108,6 +118,8 @@ export async function updateMyProfile(userId: string, input: UpdateProfileInput)
   if (!current) throw new HttpError(404, "User not found.");
   if (input.bio) await assertLinksAllowed(input.bio, "bio", userId);
   if (input.username !== undefined && input.username !== current.username) {
+    const problem = usernameProblem(input.username);
+    if (problem) throw new ValidationError({ username: problem.message });
     if (await usersRepo.usernameTaken(input.username, userId)) {
       throw new HttpError(409, "That username is already taken.");
     }
@@ -129,6 +141,16 @@ export async function updateMyProfile(userId: string, input: UpdateProfileInput)
     // index is still the final authority when two edits race.
     if (error instanceof DatabaseError && error.detail.includes("users_username_unique")) {
       throw new HttpError(409, "That username is already taken.");
+    }
+    if (error instanceof DatabaseError && error.detail.includes("USERNAME_HELD")) {
+      throw new HttpError(409, USERNAME_MESSAGES.held);
+    }
+    const limit = error instanceof DatabaseError ? /USERNAME_CHANGE_LIMIT (\S+)/.exec(error.detail) : null;
+    if (limit) {
+      const retryAt = new Date(limit[1]!);
+      const seconds = Math.max(1, Math.ceil((retryAt.getTime() - Date.now()) / 1000));
+      const message = `You can change your username twice in 14 days. Try again after ${retryAt.toISOString().slice(0, 10)}.`;
+      throw new HttpError(429, message, { username: message }, { "Retry-After": String(seconds) });
     }
     throw error;
   }

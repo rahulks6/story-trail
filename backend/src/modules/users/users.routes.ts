@@ -11,6 +11,10 @@ import * as socialRepo from "../social/social.repository";
 import { mediaStorage } from "../media/instance";
 import { parseVariant, sendMediaFile } from "../media/delivery";
 import { HttpError } from "../../http/errors";
+import { queryOne } from "../../db/psql";
+import { cleanUsername, USERNAME_MESSAGES, usernameProblem } from "./username-policy";
+
+const USER_ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
 export function registerUserRoutes(router: Router): void {
   router.get("/api/v1/users/:username/avatar/file", async (req, res) => {
@@ -28,10 +32,39 @@ export function registerUserRoutes(router: Router): void {
     await sendMediaFile(req, res, media, parseVariant(params.get("variant")) ?? "thumbnail", user.id === req.userId, mediaStorage);
   });
 
+  // Live availability while someone types a username, at sign-up (signed out) or in Edit
+  // Profile and onboarding. Signed in, a person's current name and the names they released in
+  // the last 14 days count as theirs. Saving still re-checks everything: this only informs.
+  router.get("/api/v1/usernames/availability", async (req, res) => {
+    if (req.headers.authorization) requireAuth(req);
+    const username = cleanUsername(parseQueryString(req.url ?? "").username);
+    res.setHeader("Cache-Control", "no-store");
+    const problem = usernameProblem(username);
+    if (problem) {
+      sendJson(res, 200, { username, available: false, reason: problem.reason, message: problem.message });
+      return;
+    }
+    const row = await queryOne("SELECT username_availability(:'username', NULLIF(:'user', '')::uuid) AS state", {
+      username,
+      user: req.userId ?? "",
+    });
+    const state = (row?.state ?? "taken") as "available" | "yours" | "taken" | "held";
+    sendJson(res, 200, {
+      username,
+      available: state === "available" || state === "yours",
+      reason: state,
+      message: USERNAME_MESSAGES[state],
+    });
+  });
+
   router.get("/api/v1/users/:username", async (req, res) => {
     requireAuth(req);
-    const username = parseUsernameParam(req.params.username);
-    const profile = await profilesService.getProfileByUsername(username, req.userId as string);
+    // Links can name the account by its permanent ID instead (katkee://user/<name>?id=<id>),
+    // which still finds the person after a rename. A username never looks like an ID.
+    const param = (req.params.username ?? "").trim().toLowerCase();
+    const profile = USER_ID_RE.test(param)
+      ? await profilesService.getProfileById(param, req.userId as string)
+      : await profilesService.getProfileByUsername(parseUsernameParam(param), req.userId as string);
     sendJson(res, 200, { profile });
   });
 
