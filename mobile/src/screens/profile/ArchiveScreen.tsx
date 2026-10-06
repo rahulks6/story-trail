@@ -7,6 +7,7 @@ import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { deleteStory, getMyArchivedStories, mediaFileUrl, type PublicStory } from "../../api/stories";
 import { EmptyState } from "../../components/EmptyState";
+import { serverDate } from "../../utils/serverTime";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Archive">;
 
@@ -22,12 +23,12 @@ interface MonthSection {
 }
 
 function monthKey(iso: string): string {
-  const d = new Date(iso);
-  return `${d.getFullYear()}-${d.getMonth()}`;
+  const d = serverDate(iso);
+  return d ? `${d.getFullYear()}-${d.getMonth()}` : "unknown";
 }
 
 function monthTitle(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, { month: "long", year: "numeric" });
+  return serverDate(iso)?.toLocaleDateString(undefined, { month: "long", year: "numeric" }) ?? "Earlier";
 }
 
 function groupByMonth(stories: PublicStory[]): MonthSection[] {

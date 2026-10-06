@@ -3,6 +3,7 @@ import {ActivityIndicator,Alert,Pressable,ScrollView,StyleSheet,Text,View} from 
 import {useAuth} from '../../state/AuthContext';
 import {listUploads,needsNewFile,removeUpload,runUpload,subscribeUploads,uploadProgress,uploadRunning,type UploadJob} from '../../state/uploadQueue';
 import {colors} from '../../theme';
+import {serverDate} from '../../utils/serverTime';
 
 /** What a person sees for each step: Preparing -> Uploading -> Processing -> Posted, or why it stopped. */
 function describe(job:UploadJob,active:boolean,percent:number|undefined):string{
@@ -42,7 +43,7 @@ export function UploadQueueScreen():React.JSX.Element {
    const label=describe(job,active,percent);
    const canRetry=!active&&job.status!=='published'&&job.status!=='queued'&&job.status!=='processing'&&!needsNewFile(job);
    return <View key={job.id} style={styles.card}>
-    <Text style={styles.text} numberOfLines={2}>{job.payload.caption||(job.kind==='video'?'Video Story':'Photo Story')} · {new Date(job.createdAt).toLocaleString()}</Text>
+    <Text style={styles.text} numberOfLines={2}>{job.payload.caption||(job.kind==='video'?'Video Story':'Photo Story')} · {serverDate(job.createdAt)?.toLocaleString() ?? ''}</Text>
     <Text style={[styles.status,job.status==='failed'&&styles.error,job.status==='published'&&styles.done]} accessibilityLiveRegion="polite">{label}</Text>
     {job.status==='uploading'&&active?<View style={styles.track} accessibilityRole="progressbar" accessibilityValue={{min:0,max:100,now:Math.round((percent??0)*100)}}><View style={[styles.fill,{width:`${Math.round((percent??0)*100)}%`}]}/></View>:null}
     {!!job.error&&job.status==='failed'&&<Text style={styles.error}>{job.error}</Text>}

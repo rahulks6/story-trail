@@ -19,6 +19,7 @@ import {
 import { getStoryOwnerUsername } from "../../api/stories";
 import { EmptyState } from "../../components/EmptyState";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
+import { serverDate } from "../../utils/serverTime";
 
 const PAGE_SIZE = 20;
 
@@ -45,7 +46,8 @@ type ActivityNavigationProp = CompositeNavigationProp<
 >;
 
 function isToday(isoDate: string): boolean {
-  const date = new Date(isoDate);
+  const date = serverDate(isoDate);
+  if (!date) return false;
   const now = new Date();
   return (
     date.getFullYear() === now.getFullYear() &&
@@ -384,7 +386,7 @@ export function ActivityScreen(): React.JSX.Element {
                   <Text style={typography.body} numberOfLines={2}>
                     {message}
                   </Text>
-                  <Text style={typography.caption}>{new Date(createdAt).toLocaleString()}</Text>
+                  <Text style={typography.caption}>{serverDate(createdAt)?.toLocaleString() ?? ""}</Text>
                 </View>
                 {unread ? <View style={styles.unreadDot} /> : null}
               </Pressable>

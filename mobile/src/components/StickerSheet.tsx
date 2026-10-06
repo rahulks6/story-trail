@@ -89,7 +89,9 @@ export function StickerSheet({ visible, onClose, onAdd, editingOverlay, onEditDo
       setLocationLabel(editingOverlay.properties.label);
     } else if (editingOverlay?.type === "datetime") {
       setTab("datetime");
-      setPickerDate(new Date(editingOverlay.properties.value));
+      // The sticker's own ISO value; an unreadable one (older or edited data) starts from now.
+      const saved = new Date(editingOverlay.properties.value);
+      setPickerDate(Number.isNaN(saved.getTime()) ? new Date() : saved);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, editingOverlay]);

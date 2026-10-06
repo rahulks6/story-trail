@@ -101,7 +101,13 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange }: Props)
   return (
     <View style={styles.wrapper}>
       {isOwner && highlights.length > 0 ? (
-        <Pressable style={styles.reorderToggle} onPress={toggleReordering} hitSlop={8}>
+        <Pressable
+          style={styles.reorderToggle}
+          onPress={toggleReordering}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel={reordering ? "Done reordering Highlights" : "Reorder Highlights"}
+        >
           <Text style={styles.reorderToggleLabel}>{reordering ? "Done" : "Reorder"}</Text>
         </Pressable>
       ) : null}
@@ -115,6 +121,7 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange }: Props)
         startIndex={isOwner ? 1 : 0}
         draggable={isOwner && reordering}
         onReorder={onReorder}
+        itemAccessibilityLabel={(highlight) => `${highlight.title}, Highlight`}
         // Tapping a card opens it, except mid-reorder — nothing should
         // navigate away while you're in the middle of dragging cards around.
         onPress={reordering ? undefined : (highlight) => navigation.navigate("HighlightViewer", { highlightId: highlight.id, title: highlight.title })}
@@ -123,6 +130,8 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange }: Props)
             <Pressable
               style={[styles.card, styles.newCard, { width: cardWidth, height: cardHeight, left: 0, top: 0 }]}
               onPress={() => navigation.navigate("HighlightEditor", {})}
+              accessibilityRole="button"
+              accessibilityLabel="New Highlight"
             >
               <Icon style={styles.newGlyph} name={ICONS.add} />
               <Text style={styles.newLabel}>New</Text>

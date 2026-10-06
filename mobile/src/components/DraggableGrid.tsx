@@ -22,6 +22,8 @@ interface DraggableGridItemProps {
   onPress: () => void;
   /** The non-gesture equivalent of a long-press-and-drag reorder — see this file's own doc comment. */
   onMoveStep: (key: string, direction: -1 | 1) => void;
+  /** What a screen reader announces for this item (e.g. "Travel, Highlight"). */
+  accessibilityLabel?: string;
   children: React.ReactNode;
 }
 
@@ -37,6 +39,7 @@ function DraggableGridItem({
   onDragEnd,
   onPress,
   onMoveStep,
+  accessibilityLabel,
   children,
 }: DraggableGridItemProps): React.JSX.Element {
   const [isDragging, setIsDragging] = useState(false);
@@ -156,7 +159,7 @@ function DraggableGridItem({
           {...responder.panHandlers}
           style={styles.fill}
           accessible
-          accessibilityLabel="Reorder item"
+          accessibilityLabel={accessibilityLabel ? `Reorder ${accessibilityLabel}` : "Reorder item"}
           accessibilityHint="Use the actions menu to move it earlier or later"
           accessibilityActions={[
             { name: "moveUp", label: "Move earlier in order" },
@@ -174,7 +177,7 @@ function DraggableGridItem({
         // PanResponder anywhere in this subtree — the enclosing
         // ScrollView (if any) gets touch priority exactly as if this
         // component didn't exist.
-        <Pressable style={styles.fill} onPress={onPress}>
+        <Pressable style={styles.fill} onPress={onPress} accessibilityRole="button" accessibilityLabel={accessibilityLabel}>
           {children}
         </Pressable>
       )}
@@ -214,6 +217,8 @@ export interface DraggableGridProps<T> {
    */
   startIndex?: number;
   leadingChildren?: React.ReactNode;
+  /** What a screen reader announces for each item; also used while reordering. */
+  itemAccessibilityLabel?: (item: T) => string;
 }
 
 /**
@@ -263,6 +268,7 @@ export function DraggableGrid<T>({
   draggable = true,
   startIndex = 0,
   leadingChildren,
+  itemAccessibilityLabel,
 }: DraggableGridProps<T>): React.JSX.Element {
   const [order, setOrder] = useState<T[]>(data);
   const orderRef = useRef(order);
@@ -377,6 +383,7 @@ export function DraggableGrid<T>({
             onDragEnd={onDragEnd}
             onMoveStep={onMoveStep}
             onPress={() => onPress?.(item)}
+            accessibilityLabel={itemAccessibilityLabel?.(item)}
           >
             {renderItem(item)}
           </DraggableGridItem>

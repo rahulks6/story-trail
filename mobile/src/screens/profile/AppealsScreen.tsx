@@ -3,6 +3,7 @@ import {ActivityIndicator,Alert,Pressable,ScrollView,StyleSheet,Text,TextInput} 
 import {apiPost} from '../../api/client';
 import {ProviderEntry} from '../auth/ProviderEntry';
 import {colors} from '../../theme';
+import {serverDate} from '../../utils/serverTime';
 type Notice={actionId:string;action:string;reason:string;createdAt:string;appealStatus:string|null;
  /** Removals, restrictions and suspensions without an appeal yet (older servers omit this). */
  appealable?:boolean};
@@ -18,7 +19,7 @@ export function AppealsScreen():React.JSX.Element {
   <Text style={styles.text}>You can request a review even if your account is suspended. Verify an existing sign-in method to view your notices.</Text>
   {!access?<><TextInput style={styles.input} value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" placeholder="Email" placeholderTextColor={colors.textSecondary} accessibilityLabel="Email"/><TextInput style={styles.input} value={password} onChangeText={setPassword} secureTextEntry placeholder="Password" placeholderTextColor={colors.textSecondary} accessibilityLabel="Password"/><Pressable style={styles.button} disabled={busy||!email||!password} onPress={()=>void run(()=>verify({email,password}))}><Text style={styles.text}>View notices</Text></Pressable><ProviderEntry onProof={provider}/></>:<>
    {!access.items.length&&<Text style={styles.text}>No moderation notices for this account.</Text>}
-   {access.items.map(n=><Pressable key={n.actionId} disabled={!!n.appealStatus||n.appealable===false} style={[styles.button,selected===n.actionId&&styles.selected]} onPress={()=>setSelected(n.actionId)}><Text style={styles.text}>{n.action.replace(/_/g,' ')} · {new Date(n.createdAt).toLocaleDateString()}</Text><Text style={styles.text}>{n.reason}</Text><Text style={styles.text}>{n.appealStatus?'Appeal: '+(n.appealStatus==='UPHELD'?'accepted — the decision was reversed':n.appealStatus==='DENIED'?'reviewed — the decision stands':'waiting for review'):n.appealable===false?'This notice is for your information':'Tap to request a review'}</Text></Pressable>)}
+   {access.items.map(n=><Pressable key={n.actionId} disabled={!!n.appealStatus||n.appealable===false} style={[styles.button,selected===n.actionId&&styles.selected]} onPress={()=>setSelected(n.actionId)}><Text style={styles.text}>{n.action.replace(/_/g,' ')} · {(serverDate(n.createdAt)?.toLocaleDateString() ?? "")}</Text><Text style={styles.text}>{n.reason}</Text><Text style={styles.text}>{n.appealStatus?'Appeal: '+(n.appealStatus==='UPHELD'?'accepted — the decision was reversed':n.appealStatus==='DENIED'?'reviewed — the decision stands':'waiting for review'):n.appealable===false?'This notice is for your information':'Tap to request a review'}</Text></Pressable>)}
    {selected&&<><TextInput style={styles.input} multiline maxLength={1000} value={reason} onChangeText={setReason} placeholder="Explain why this decision should be reviewed" placeholderTextColor={colors.textSecondary} accessibilityLabel="Appeal reason"/><Pressable style={styles.button} disabled={busy||!reason.trim()} onPress={submit}><Text style={styles.text}>Submit appeal</Text></Pressable></>}
    <Pressable style={styles.button} onPress={()=>{setAccess(null);setSelected(null);}}><Text style={styles.text}>Verify again</Text></Pressable>
   </>}

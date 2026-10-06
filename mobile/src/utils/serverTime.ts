@@ -15,3 +15,9 @@ export function serverTimeMs(value: string | null | undefined): number {
   const offset = zone === "Z" ? "Z" : zone.length === 3 ? `${zone}:00` : zone.includes(":") ? zone : `${zone.slice(0, 3)}:${zone.slice(3)}`;
   return Date.parse(`${date}T${time!.length === 5 ? `${time}:00` : time}.${millis}${offset}`);
 }
+
+/** A Date for an API timestamp, or null when it can't be read (never an "Invalid Date" on screen). */
+export function serverDate(value: string | null | undefined): Date | null {
+  const ms = serverTimeMs(value);
+  return Number.isFinite(ms) ? new Date(ms) : null;
+}

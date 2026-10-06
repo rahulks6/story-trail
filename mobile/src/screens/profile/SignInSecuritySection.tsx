@@ -14,6 +14,7 @@ import {
 } from "../../api/auth";
 import { Banner, Button, TextField } from "../../components/Form";
 import { deviceLabel } from "../../utils/devices";
+import { serverDate } from "../../utils/serverTime";
 
 const EVENT_LABELS: Record<SecurityEvent["kind"], string> = {
   login_succeeded: "Signed in",
@@ -28,7 +29,8 @@ const EVENT_LABELS: Record<SecurityEvent["kind"], string> = {
 };
 
 function when(iso: string): string {
-  const date = new Date(iso);
+  const date = serverDate(iso);
+  if (!date) return "";
   const minutes = Math.round((Date.now() - date.getTime()) / 60000);
   if (minutes < 1) return "Just now";
   if (minutes < 60) return `${minutes} min ago`;
