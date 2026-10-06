@@ -1,5 +1,34 @@
 # Katkee Android/iOS release checkpoint — 1 October 2026 (India)
 
+**Latest: 6 October 2026 final release gate**
+([Phase 7 report](docs/phases/PHASE_7_PRODUCTION_HARDENING.md)). **Not production-ready.**
+
+- **Fully passing (10 of 30 gates):** 4, 12–15, 18, 19, 21, 24 and 26 (server scope).
+  - Server-side:
+    - cross-user access sweep;
+    - immutable audit;
+    - Admin MFA;
+    - analytics;
+    - restore drill;
+    - least-privilege database role;
+    - verified database TLS.
+  - AWS infrastructure: written as code and tested, never deployed.
+- **Blocked:**
+  - Android: `dl.google.com` and `repo.reactnative.dev` are denied by this environment's
+    network policy.
+  - iOS: no Mac.
+  - Devices, an AWS account and provider credentials: none available.
+
+Phase reports:
+- [Phase 1: account security](docs/phases/PHASE_1_ACCOUNT_SECURITY.md)
+- [Phase 2: media pipeline](docs/phases/PHASE_2_MEDIA_PIPELINE.md)
+- [Phase 3: realtime and push](docs/phases/PHASE_3_REALTIME_PUSH.md)
+- [Phase 4: moderation, ads, analytics](docs/phases/PHASE_4_MODERATION_ADS_ANALYTICS.md)
+- [Phase 6: mobile UX](docs/phases/PHASE_6_MOBILE_UX.md)
+- [Phase 7: production hardening](docs/phases/PHASE_7_PRODUCTION_HARDENING.md)
+
+Deployment: [infra/README.md](infra/README.md). Backups: [docs/BACKUP_AND_RESTORE.md](docs/BACKUP_AND_RESTORE.md).
+
 **Latest: [3 October verification update](docs/CONTINUATION_2026-10-03.md). Android debug APK built and signature verified. PostgreSQL integration passes: 191 backend tests, plus 44 focused regressions and both JavaScript bundles. Inspection found 105 native library entries below 16 KB ELF alignment; native migration, iOS acceptance and product/release blockers remain.**
 
 **Current v3 status: [Android/iOS audit](docs/ANDROID_IOS_RELEASE_AUDIT_2026-10-01.md). Read it first.** It contains the restored account/profile/link fixes, updated dependency counts, both-platform checks and remaining blockers. The v2 evidence and limitations below are retained as historical context; newer audit results supersede them.
@@ -56,14 +85,22 @@ These are unresolved items from the source status and specification, not feature
   - an approved notification symbol (the current one is provisional);
   - clearing the iPhone badge at sign-out and Android tray notifications after reading (native calls);
   - a device check of the keyboard inside Android Modal sheets.
-- Retention/cleanup jobs, production monitoring, database/media backup and restore exercises, and load testing.
+- Done since this checkpoint:
+  - Retention jobs (Phase 2).
+  - Production monitoring as code (alarms, budget and WAF in `infra/`; not deployed).
+  - A local backup and restore drill (Phase 7, `docs/BACKUP_AND_RESTORE.md`).
+
+  Still to do:
+  - an AWS restore drill in staging;
+  - load testing against the deployed stack;
+  - a native crash reporter.
 
 ## Android and publishing gates
 
 1. Upgrade React Native and native dependencies together to a supported combination. Build and test for Play's current target requirement (API 36 at this checkpoint), including native-library 16 KB page compatibility. The source now declares API 36, but changing the numbers alone is not a validated native upgrade.
 2. Build a development APK and exercise signup/login, story capture/edit/upload/playback, follow/privacy, comments/likes/share, Highlights, DM, account deletion, moderation and advertisements on physical Android devices.
 3. Test slow/lost networks, app background/resume, process termination during uploads, session expiry, camera/microphone denial, low storage and accessibility. Confirm no cross-account data leakage and correct public view-count privacy.
-4. Deploy the real HTTPS API, PostgreSQL and media storage, run additive migrations against staging, configure backups, and verify restore before real users.
+4. Deploy the real HTTPS API, PostgreSQL and media storage, run additive migrations against staging, configure backups, and verify restore before real users. The deployment is now code (`infra/`, AWS ap-south-1) with a runbook. The restore procedure and drill are in `docs/BACKUP_AND_RESTORE.md`. Both await an AWS account.
 5. Configure Google client IDs/signing fingerprints and the SMS provider. Keep features disabled until real provider acceptance passes.
 6. Confirm permanent Android application ID and use a private signing key. Keep secrets outside this ZIP; do not send signing passwords through chat.
 7. Replace template launcher assets with the approved logo, prepare store screenshots/privacy/data-safety disclosures, and complete internal testing before submission.

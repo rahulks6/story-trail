@@ -13,7 +13,9 @@ export const colors = {
   accentPressed: "#E0AF00",
   onAccent: "#0B0B0B",
 
-  danger: "#E4483C",
+  // Lightened from #E4483C (same hue) so red text reaches 4.5:1 on sheets and dark text on red
+  // fills does too (verification/contrast.cjs). Story text/drawing colours are content and keep their red.
+  danger: "#ED5246",
   success: "#3FBF7F",
 
   overlayScrimStart: "rgba(0,0,0,0)",

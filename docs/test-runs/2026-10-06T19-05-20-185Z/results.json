@@ -1,0 +1,90 @@
+{
+  "generatedAt": "2026-10-06T19:06:33.801Z",
+  "node": "v22.22.0",
+  "results": [
+    {
+      "name": "backend-build",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 5448,
+      "log": "backend-build.log"
+    },
+    {
+      "name": "mobile-typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 4029,
+      "log": "mobile-typecheck.log"
+    },
+    {
+      "name": "mobile-test-typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 6476,
+      "log": "mobile-test-typecheck.log"
+    },
+    {
+      "name": "mobile-component-tests",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 20083,
+      "log": "mobile-component-tests.log"
+    },
+    {
+      "name": "source-regressions",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 4102,
+      "log": "source-regressions.log"
+    },
+    {
+      "name": "ranking-unit-tests",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 155,
+      "log": "ranking-unit-tests.log"
+    },
+    {
+      "name": "infra-build",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 8754,
+      "log": "infra-build.log"
+    },
+    {
+      "name": "infra-tests",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 13239,
+      "log": "infra-tests.log"
+    },
+    {
+      "name": "android-js-bundle",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 6471,
+      "log": "android-js-bundle.log"
+    },
+    {
+      "name": "ios-js-bundle",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 4855,
+      "log": "ios-js-bundle.log"
+    }
+  ],
+  "notVerified": [
+    "Android APK/AAB build and signing",
+    "iOS Xcode archive and signing",
+    "physical-device behavior and performance",
+    "live Google/SMS providers",
+    "live AWS S3/CloudFront/SQS/SES (tested against local S3/SQS servers and signature verification)",
+    "live FCM/APNs push delivery (tested against local FCM/OAuth and HTTP/2 APNs servers that verify the signed credentials)",
+    "realtime and push behavior on physical devices (background, network switches, notification taps)",
+    "production hosting on AWS (infra/ synthesized and tested, never deployed)",
+    "backup restore on AWS (drilled locally)",
+    "full product specification completion",
+    "database integration tests"
+  ],
+  "releaseReady": false
+}

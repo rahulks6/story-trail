@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   secondaryLabel: { color: colors.textPrimary },
   destructiveLabel: { color: colors.danger },
   banner: { borderRadius: radii.sm, padding: spacing.sm + 2, fontSize: 14, overflow: "hidden" },
-  bannerError: { backgroundColor: "rgba(228,72,60,0.14)", color: colors.danger },
+  bannerError: { backgroundColor: "rgba(237,82,70,0.14)", color: colors.danger },
   bannerSuccess: { backgroundColor: "rgba(63,191,127,0.14)", color: colors.success },
   bannerInfo: { backgroundColor: colors.surfaceElevated, color: colors.textPrimary },
 });

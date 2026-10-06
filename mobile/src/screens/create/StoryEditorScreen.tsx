@@ -647,7 +647,7 @@ const styles = StyleSheet.create({
     bottom: spacing.xl,
     alignSelf: "center",
     borderRadius: radii.pill,
-    backgroundColor: "rgba(228,72,60,0.85)",
+    backgroundColor: "rgba(237,82,70,0.85)",
     alignItems: "center",
     justifyContent: "center",
   },
