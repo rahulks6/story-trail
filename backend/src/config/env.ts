@@ -171,6 +171,14 @@ export const config = {
     // Raw events and per-person activity days are deleted after this; daily totals are kept.
     rawRetentionDays: optionalInt("ANALYTICS_RAW_RETENTION_DAYS", 90),
   },
+  reach: {
+    // How far public Stories reach beyond followers (src/modules/recommendations/reach.ts).
+    // JSON overrides of the tuning constants, e.g. {"caps":[50,300,2000],"patienceMinutes":120}.
+    json: process.env.REACH_CONFIG_JSON ?? "",
+    enabled: process.env.REACH_ENABLED !== "false",
+    evaluateSeconds: optionalInt("REACH_EVALUATE_SECONDS", 60),
+    batchSize: optionalInt("REACH_BATCH_SIZE", 500),
+  },
   retention: {
     enabled: process.env.RETENTION_ENABLED !== "false",
     intervalMinutes: optionalInt("RETENTION_INTERVAL_MINUTES", 60),

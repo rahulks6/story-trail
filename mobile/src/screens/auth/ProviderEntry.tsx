@@ -1,5 +1,5 @@
 ﻿import React,{useEffect,useState} from 'react';
-import {ActivityIndicator,Alert,Modal,Pressable,ScrollView,StyleSheet,Text,TextInput,View} from 'react-native';
+import {ActivityIndicator,Alert,Modal,Platform,Pressable,ScrollView,StyleSheet,Text,TextInput,View} from 'react-native';
 import {GoogleSignin,GoogleSigninButton,isSuccessResponse,isErrorWithCode,statusCodes} from '@react-native-google-signin/google-signin';
 import * as Keychain from 'react-native-keychain';
 import * as api from '../../api/providers';
@@ -8,6 +8,8 @@ import {useAuth} from '../../state/AuthContext';
 import {colors} from '../../theme';
 import {KeyboardAvoider} from '../../components/KeyboardAvoider';
 import {usernameCheckText,usernameRefused,useUsernameAvailability} from '../../hooks/useUsernameAvailability';
+/** Google shows only where this build can finish it: iOS needs its own client ID (and, for App Review 4.8, Sign in with Apple beside it). */
+const googleReady=!!providerBuild.googleWebClientId&&(Platform.OS!=='ios'||!!providerBuild.googleIosClientId);
 const PENDING_SERVICE='com.katkee.provider-onboarding.v1';
 export function ProviderEntry({onProof}:{onProof?:(proof:string)=>Promise<void>}):React.JSX.Element {
  const {acceptSession}=useAuth();const [methods,setMethods]=useState<api.AuthMethods|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false);
@@ -36,7 +38,7 @@ export function ProviderEntry({onProof}:{onProof?:(proof:string)=>Promise<void>}
  const confirmSend=()=>Alert.alert('Send verification code',`Send an SMS to ${country} •••• ${phone.replace(/\D/g,'').slice(-4)}?`,[{text:'Cancel',style:'cancel'},{text:'Send code',onPress:()=>void send()}]);
  const close=()=>{if(busy)return;setStage('closed');setError('');setCode('');};
  return <View>
-  {methods?.google&&<GoogleSigninButton style={styles.google} size={GoogleSigninButton.Size.Wide} color={GoogleSigninButton.Color.Dark} disabled={busy} onPress={()=>void google()}/>}
+  {methods?.google&&googleReady&&<GoogleSigninButton style={styles.google} size={GoogleSigninButton.Size.Wide} color={GoogleSigninButton.Color.Dark} disabled={busy} onPress={()=>void google()}/>}
   {methods?.phone&&<Pressable style={styles.button} disabled={busy} accessibilityRole="button" onPress={()=>{setError('');setStage('phone');}}><Text style={styles.buttonText}>Continue with Phone</Text></Pressable>}
   {stage==='closed'&&error?<Text accessibilityRole="alert" style={styles.error}>{error}</Text>:null}
   <Modal visible={stage!=='closed'} animationType="slide" onRequestClose={close}>

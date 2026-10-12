@@ -170,4 +170,13 @@ describe("Google or phone onboarding", () => {
     await flush();
     expect(providers.complete).toHaveBeenCalledWith("proof-1", "new_person", "");
   });
+
+  test("Google isn't offered by a build that can't finish it, even when the server allows it", async () => {
+    // This build has no Google client IDs (src/config/providers.ts); on iOS App Review also
+    // expects Sign in with Apple beside Google, so the button must not appear here.
+    providers.methods.mockResolvedValue({ google: true, phone: true, countries: ["IN"], codeLength: 6 });
+    await render(<ProviderEntry />);
+    expect(tree.root.findAll((n: ReactTestInstance) => String(n.type) === "GoogleSigninButton")).toHaveLength(0);
+    expect(texts().some((t) => /phone/i.test(t))).toBe(true);
+  });
 });

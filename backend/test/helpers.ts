@@ -18,6 +18,7 @@ export function makeClient(baseUrl: string) {
     get: (path: string, headers?: Record<string, string>) => request("GET", path, undefined, headers),
     post: (path: string, body?: unknown, headers?: Record<string, string>) => request("POST", path, body, headers),
     patch: (path: string, body?: unknown, headers?: Record<string, string>) => request("PATCH", path, body, headers),
+    put: (path: string, body?: unknown, headers?: Record<string, string>) => request("PUT", path, body, headers),
     delete: (path: string, headers?: Record<string, string>) => request("DELETE", path, undefined, headers),
     // Separate from `delete` (not an overload of it) specifically to avoid
     // ambiguity with `delete`'s existing (path, headers) shape used at 16

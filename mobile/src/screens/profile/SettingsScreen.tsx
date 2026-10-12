@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Linking, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import type { RootStackParamList } from "../../navigation/types";
@@ -9,6 +9,7 @@ import { updateMyProfile, listFollowRequests } from "../../api/users";
 import { countPendingDrafts, clearAllPendingDrafts } from "../../state/draftStorage";
 import { ListRow } from "../../components/ListRow";
 import { DeleteAccountSheet } from "../../components/DeleteAccountSheet";
+import { nearbyChoice, turnNearbyOff, turnNearbyOn } from "../../state/nearby";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Settings">;
 
@@ -28,6 +29,8 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
   const [draftCount, setDraftCount] = useState<number | null>(null);
   const [pendingRequestCount, setPendingRequestCount] = useState<number | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [nearbyOn, setNearbyOn] = useState<boolean | null>(null);
+  const [togglingNearby, setTogglingNearby] = useState(false);
 
   useEffect(() => {
     setIsPrivate(user?.isPrivate ?? false);
@@ -36,6 +39,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
   useFocusEffect(
     useCallback(() => {
       if (user) void countPendingDrafts(user.id).then(setDraftCount);
+      if (user) void nearbyChoice(user.id).then((choice) => setNearbyOn(choice === "on"));
       if (accessToken) {
         // A count-only fetch, capped at one page — this only needs to show
         // a badge, not the full list (FollowRequestsScreen does that).
@@ -58,6 +62,36 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
       Alert.alert("Couldn't update", "Try again.");
     } finally {
       setTogglingPrivacy(false);
+    }
+  };
+
+  // Nearby Stories (Phase 9): on asks for approximate location and sends only a city-sized
+  // area; off clears it on the server. The switch shows what the server ends up with.
+  const onToggleNearby = async (next: boolean) => {
+    if (!user || !accessToken || togglingNearby) return;
+    setTogglingNearby(true);
+    setNearbyOn(next);
+    try {
+      if (!next) {
+        await turnNearbyOff(user.id, accessToken);
+        return;
+      }
+      const result = await turnNearbyOn(user.id, accessToken);
+      if (result === "on") return;
+      setNearbyOn(false);
+      if (result === "denied") {
+        Alert.alert("Allow location for Nearby Stories", "Katkee needs your approximate location for this. You can allow it in your phone's Settings.", [
+          { text: "Not now", style: "cancel" },
+          { text: "Open Settings", onPress: () => void Linking.openSettings().catch(() => undefined) },
+        ]);
+      } else {
+        Alert.alert("Couldn't find your area", "Check that location services are on, then try again.");
+      }
+    } catch {
+      setNearbyOn(!next);
+      Alert.alert("Couldn't update", "Try again.");
+    } finally {
+      setTogglingNearby(false);
     }
   };
 
@@ -100,6 +134,19 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
             <Text style={styles.switchHint}>Only followers you approve can see your Stories.</Text>
           </View>
           {togglingPrivacy ? <ActivityIndicator color={colors.accent} /> : <Switch value={isPrivate} onValueChange={onTogglePrivacy} />}
+        </View>
+        <View style={styles.switchRow}>
+          <View style={styles.switchLabelGroup}>
+            <Text style={typography.body}>Nearby Stories</Text>
+            <Text style={styles.switchHint}>
+              See Stories from people near you and let them discover your public Stories. Uses an approximate, city-sized area, never your exact location.
+            </Text>
+          </View>
+          {togglingNearby || nearbyOn === null ? (
+            <ActivityIndicator color={colors.accent} />
+          ) : (
+            <Switch value={nearbyOn} onValueChange={(next) => void onToggleNearby(next)} accessibilityLabel="Nearby Stories" />
+          )}
         </View>
         <ListRow
           label="Follow requests"

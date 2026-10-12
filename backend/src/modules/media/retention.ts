@@ -170,6 +170,7 @@ export async function deletedAccounts(store: ObjectStore, batch: number, days: n
          WHERE id = :'id' AND deleted_at IS NOT NULL AND data_purged_at IS NULL RETURNING id),
        a AS (DELETE FROM auth_identities WHERE user_id IN (SELECT id FROM u)),
        h AS (DELETE FROM username_changes WHERE user_id IN (SELECT id FROM u)),
+       ar AS (DELETE FROM user_areas WHERE user_id IN (SELECT id FROM u)),
        t AS (DELETE FROM refresh_tokens WHERE user_id IN (SELECT id FROM u)),
        e AS (DELETE FROM auth_security_events WHERE user_id IN (SELECT id FROM u)),
        p AS (DELETE FROM password_reset_requests WHERE user_id IN (SELECT id FROM u)),
@@ -223,6 +224,9 @@ export async function expiredRecords(): Promise<number> {
   total += await deleteWhere("auth_reauth_tickets", "expires_at < now() - interval '1 day'");
   total += await deleteWhere("auth_phone_challenges", "created_at < now() - interval '2 days'");
   total += await deleteWhere("home_feed_snapshots", "expires_at < now() - interval '1 hour'");
+  // Approximate areas count for 30 days after the app last sent them (reach.repository.ts).
+  total += await deleteWhere("user_areas", "updated_at < now() - interval '30 days'");
+  total += await deleteWhere("story_reach", "story_id IN (SELECT id FROM stories WHERE expires_at < now() - interval '1 day')");
   total += await deleteWhere("refresh_tokens", "expires_at < now() - interval '7 days'");
   total += await deleteWhere("admin_sessions", "absolute_expires_at < now() - interval '1 day'");
   total += await deleteWhere("media_jobs", "status IN ('done', 'failed') AND finished_at < now() - interval '30 days'");

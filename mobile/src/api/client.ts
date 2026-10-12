@@ -153,6 +153,14 @@ export function apiPatch<T>(path: string, body?: unknown, accessToken?: string):
   });
 }
 
+export function apiPut<T>(path: string, body?: unknown, accessToken?: string): Promise<T> {
+  return request<T>(path, {
+    method: "PUT",
+    headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+}
+
 export function apiDelete<T>(path: string, accessToken?: string): Promise<T> {
   return request<T>(path, {
     method: "DELETE",

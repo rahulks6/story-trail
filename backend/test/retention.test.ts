@@ -160,13 +160,14 @@ describe("retention", () => {
     assert.ok(Number((await queryOne(`SELECT count(*) AS n FROM refresh_tokens WHERE user_id = :'id'`, { id: user.id }))?.n) > 0);
     await query(`INSERT INTO analytics_active_days (day, platform, user_id) VALUES (current_date - 40, 'ios', :'id') ON CONFLICT DO NOTHING`, { id: user.id });
     await query(`INSERT INTO analytics_events (id, user_id, name, platform, occurred_at) VALUES (gen_random_uuid(), :'id', 'app_session_started', 'ios', now() - interval '35 days')`, { id: user.id });
+    await query(`INSERT INTO user_areas (user_id, cell, time_zone) VALUES (:'id', 'tdr1', 'Asia/Calcutta')`, { id: user.id });
 
     assert.ok((await deletedAccounts(mediaStorage, 200, 30, 180)) >= 1);
     const row = await queryOne(`SELECT username, email, password_hash, display_name, bio, avatar_media_id, data_purged_at FROM users WHERE id = :'id'`, { id: user.id });
     assert.match(String(row?.username), /^deleted_[0-9a-f]{12}$/);
     assert.deepEqual([row?.email, row?.password_hash, row?.display_name, row?.bio, row?.avatar_media_id], [null, null, "Deleted account", "", null]);
     assert.notEqual(row?.data_purged_at, null);
-    for (const table of ["auth_identities", "refresh_tokens", "auth_security_events", "analytics_events", "analytics_active_days", "username_changes"]) {
+    for (const table of ["auth_identities", "refresh_tokens", "auth_security_events", "analytics_events", "analytics_active_days", "username_changes", "user_areas"]) {
       assert.equal((await queryOne(`SELECT count(*) AS n FROM ${table} WHERE user_id = :'id'`, { id: user.id }))?.n, "0", table);
     }
     assert.notEqual(await purgedAt(normal), null);
@@ -211,6 +212,28 @@ describe("retention", () => {
     assert.ok((await scratchFiles(mediaStorage)) >= 1);
     assert.deepEqual([fs.existsSync(oldDir), fs.existsSync(freshDir)], [false, true]);
     fs.rmSync(freshDir, { recursive: true, force: true });
+  });
+
+  it("forgets approximate areas the app stopped refreshing, and the reach records of long-gone Stories", async () => {
+    const [stale, recent, owner] = [await signup(), await signup(), await signup()];
+    await query(
+      `INSERT INTO user_areas (user_id, cell, time_zone, updated_at)
+       VALUES (:'stale', 'tdr1', 'Asia/Calcutta', now() - interval '31 days'), (:'recent', 'tdr1', 'Asia/Calcutta', now() - interval '29 days')`,
+      { stale: stale.id, recent: recent.id },
+    );
+    const gone = await publish(owner.token, await photo(owner.token));
+    const live = await publish(owner.token, await photo(owner.token));
+    await query(`UPDATE stories SET expires_at = now() - interval '2 days' WHERE id = :'id'`, { id: gone });
+    await query(`INSERT INTO story_reach (story_id, stage, stage_started_at) VALUES (:'gone', 2, now()), (:'live', 2, now())`, { gone, live });
+    assert.ok((await expiredRecords()) >= 2);
+    assert.deepEqual(
+      (await query(`SELECT user_id FROM user_areas WHERE user_id = :'stale' OR user_id = :'recent'`, { stale: stale.id, recent: recent.id })).map((r) => r.user_id),
+      [recent.id],
+    );
+    assert.deepEqual(
+      (await query(`SELECT story_id FROM story_reach WHERE story_id = :'gone' OR story_id = :'live'`, { gone, live })).map((r) => r.story_id),
+      [live],
+    );
   });
 
   it("clears expired realtime tickets, old finished pushes and long-disabled devices, keeping current ones", async () => {

@@ -35,7 +35,11 @@
 		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Add your current location to a Story when you choose a location sticker.</string>
+	<string>If you turn on Nearby Stories, Katkee uses your approximate area to show you Stories from people near you. It is also used when you add a location sticker to a Story. Your exact location is never shown or stored.</string>
+	<key>NSLocationDefaultAccuracyReduced</key>
+	<true/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>NSCameraUsageDescription</key><string>Take photos and videos for your Katkee Stories.</string>
 <key>NSMicrophoneUsageDescription</key><string>Record original audio with your Story videos.</string>
 <key>NSPhotoLibraryUsageDescription</key><string>Choose a photo or video to share as a Story.</string>
@@ -48,8 +52,6 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>

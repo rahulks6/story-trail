@@ -168,7 +168,12 @@ export async function setActive(id: string, isActive: boolean): Promise<void> {
  * soft-deleted row here already does.
  */
 export async function softDeleteUser(id: string): Promise<void> {
-  await query(`UPDATE users SET deleted_at = now() WHERE id = :'id'`, { id });
+  // The approximate area (Phase 9) isn't evidence of anything, so it goes at once.
+  await query(
+    `WITH u AS (UPDATE users SET deleted_at = now() WHERE id = :'id' RETURNING id)
+     DELETE FROM user_areas WHERE user_id IN (SELECT id FROM u)`,
+    { id },
+  );
 }
 
 /** The signed-in person's relationship to someone in a list of people. */

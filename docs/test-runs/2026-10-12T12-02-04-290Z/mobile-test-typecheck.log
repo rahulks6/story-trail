@@ -1,0 +1,7 @@
+__tests__/nearby.test.tsx(58,4): error TS2304: Cannot find name 'global'.
+__tests__/nearby.test.tsx(81,38): error TS2698: Spread types may only be created from object types.
+__tests__/nearby.test.tsx(97,38): error TS2698: Spread types may only be created from object types.
+__tests__/nearby.test.tsx(110,38): error TS2698: Spread types may only be created from object types.
+__tests__/nearby.test.tsx(124,38): error TS2698: Spread types may only be created from object types.
+__tests__/nearby.test.tsx(138,38): error TS2698: Spread types may only be created from object types.
+__tests__/nearby.test.tsx(232,6): error TS2304: Cannot find name 'global'.

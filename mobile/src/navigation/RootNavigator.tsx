@@ -7,6 +7,8 @@ import { NavigationContainer, type LinkingOptions } from "@react-navigation/nati
 import { deepLinkTarget } from "./profileLinks";
 import { initialNotificationLink, onNotificationOpened } from "../push/pushNotifications";
 import { usePushRegistration } from "../push/usePushRegistration";
+import { useAreaSync } from "../state/nearby";
+import { NearbyPrompt } from "../components/NearbyPrompt";
 import { useAnalytics } from "../analytics/useAnalytics";
 import { StoryLinkScreen } from "../screens/story/StoryLinkScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -192,6 +194,7 @@ function SignedInNavigator(): React.JSX.Element {
 export function RootNavigator(): React.JSX.Element {
   const { status, user } = useAuth();
   usePushRegistration();
+  useAreaSync();
   useAnalytics();
   const pendingLink = useRef<string | null>(null);
   // A profile or Story link that arrives while signed out opens after sign-in.
@@ -253,7 +256,7 @@ export function RootNavigator(): React.JSX.Element {
   }
 
   if (status === "signedIn") {
-    return <NavigationContainer key={user?.id ?? "signedIn"} linking={linking}><SignedInNavigator /></NavigationContainer>;
+    return <NavigationContainer key={user?.id ?? "signedIn"} linking={linking}><SignedInNavigator /><NearbyPrompt /></NavigationContainer>;
   }
   return <NavigationContainer key="signedOut" linking={signedOutLinking}><AuthNavigator /></NavigationContainer>;
 }
