@@ -640,6 +640,34 @@ immediately after the view and again after the follow — proving this is
 actually a snapshot and not a join that would silently flip once they
 followed).
 
+## Phase 9: nearby reach for public Stories, and the Home mix
+
+A public account's public Stories reach people beyond its followers in stages: people nearby
+(the owner's 4-character geohash cell and the 8 around it), the wider area (the 3-character
+cell and around it), the same time zone, then everyone. Stages 1-3 each have a test audience
+(50 / 300 / 2,000 people who didn't follow the owner when they saw it). The reach worker
+(`reach-worker.ts`, advisory lock 7315220002) judges each Story when the audience is used up,
+or after two hours with enough viewers:
+- it moves up if those viewers engaged;
+- it is held if they didn't (it keeps reaching followers);
+- it widens if too few people nearby saw it to tell.
+
+Private accounts, followers-only Stories, removed Stories, restricted owners, blocks, mutes and
+"not interested" never get reach.
+
+Areas (`user_areas`, migration 0039) are opt-in in the app and owner-only. They are never
+returned by any other endpoint. They stop counting after 30 days without a refresh and are then
+deleted by the retention job. They are deleted at once with the account.
+
+Configuration:
+- `REACH_ENABLED` (default on);
+- `REACH_EVALUATE_SECONDS` (60);
+- `REACH_BATCH_SIZE` (500);
+- `REACH_CONFIG_JSON`: overrides `caps`, `thresholds`, `minSample` and `patienceMinutes`;
+  checked at startup.
+
+Details, measurements and tests: `docs/phases/PHASE_9_REACH_AND_HOME.md`.
+
 ## API (v1)
 
 | Method | Path | Auth | Notes |
@@ -688,7 +716,10 @@ followed).
 | GET | `/api/v1/stories/:id/comments` | Bearer | Paginated, oldest first; only needs Story view access, not comment-post permission |
 | DELETE | `/api/v1/comments/:id` | Bearer | The comment's author, or the Story's owner (moderation), can delete it |
 | POST | `/api/v1/stories/:id/share` | Bearer | Records a share event; 403 if the Story's `allowSharing` is false |
-| GET | `/api/v1/stories/feed/home` | Bearer | Phase 6: followed + discovered public creators with an active Story, ranked by `scoring.ts`'s heuristic; your own Stories always lead, unscored |
+| GET | `/api/v1/stories/feed/home` | Bearer | Your own Stories first, then (Phase 9) people you follow mixed with new people whose public Stories have earned reach to you: 3 of every 5 places are people you follow, the first always one; a weighted shuffle on every refresh, nearer new people weighted up. `?limit&cursor` pages keep the refresh's order |
+| GET | `/api/v1/users/me/area` | Bearer | Your approximate area for Nearby Stories: `{area: {cell, timeZone, updatedAt} | null}`. Owner-only, never cached |
+| PUT | `/api/v1/users/me/area` | Bearer | `{cell?, timeZone?}`: a 4-character geohash (or `null` to clear it) and an IANA time zone (stored under its canonical name). A field left out keeps what is stored. Never coordinates |
+| DELETE | `/api/v1/users/me/area` | Bearer | → 204 |
 | POST | `/api/v1/events` | Bearer | `{eventType, creatorId?, storyId?, valueMs?}` → 204; validates required fields per type and that any `storyId`/`creatorId` is real and visible to you — see `events.dto.ts` for the full type list |
 | GET | `/api/v1/notifications` | Bearer | Paginated (`?limit&offset`), newest first; each row denormalizes its actor/Story/comment/follow-request |
 | GET | `/api/v1/notifications/unread-count` | Bearer | → `{count}` |

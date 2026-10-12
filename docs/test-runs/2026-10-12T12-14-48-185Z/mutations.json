@@ -1,0 +1,658 @@
+{
+ "note": "Each break applied alone to compiled server code (backend/dist) or app source, the tests named in filter/target run, then the file restored. First-run misses are kept, with the rerun after the test that now catches them.",
+ "server": {
+  "firstRun": [
+   {
+    "name": "stage1-reaches-everyone",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 1 - a new public Story reaches people nearby first, then the wider area, the time zone and everyone",
+     "not ok 2 - staged reach"
+    ]
+   },
+   {
+    "name": "wider-at-stage1",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 1 - a new public Story reaches people nearby first, then the wider area, the time zone and everyone",
+     "not ok 2 - staged reach"
+    ]
+   },
+   {
+    "name": "time-zone-ignored",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 1 - a new public Story reaches people nearby first, then the wider area, the time zone and everyone",
+     "not ok 2 - staged reach"
+    ]
+   },
+   {
+    "name": "held-still-reaches",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 2 - a held Story or a used-up test audience reaches no new people, while followers still see it",
+     "not ok 2 - staged reach"
+    ]
+   },
+   {
+    "name": "cap-ignored",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 2 - a held Story or a used-up test audience reaches no new people, while followers still see it",
+     "not ok 2 - staged reach"
+    ]
+   },
+   {
+    "name": "private-gets-reach",
+    "testExit": 0,
+    "caught": false,
+    "failing": []
+   },
+   {
+    "name": "restricted-gets-reach",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 3 - never gives reach to private accounts, followers-only Stories, restricted accounts or blocked people",
+     "not ok 2 - staged reach"
+    ]
+   },
+   {
+    "name": "follower-views-counted",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 1 - moves a Story up when people who don't follow its owner engage, counting each person once",
+     "not ok 3 - the reach evaluator"
+    ]
+   },
+   {
+    "name": "impressions-not-reset",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 1 - moves a Story up when people who don't follow its owner engage, counting each person once",
+     "not ok 3 - the reach evaluator"
+    ]
+   },
+   {
+    "name": "reason-forgotten",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 1 - moves a Story up when people who don't follow its owner engage, counting each person once",
+     "not ok 3 - the reach evaluator"
+    ]
+   },
+   {
+    "name": "locality-boost-ignored",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 1 - tends to put new people nearby before new people further away",
+     "not ok 4 - Home's mix"
+    ]
+   },
+   {
+    "name": "area-deleted-late",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 2 - goes with the account the moment the account is deleted",
+     "not ok 1 - approximate area"
+    ]
+   },
+   {
+    "name": "cell-not-checked",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 1 - keeps only a coarse cell and a time zone, readable only by its owner",
+     "not ok 1 - approximate area"
+    ]
+   },
+   {
+    "name": "time-zone-not-canonical",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 1 - keeps only a coarse cell and a time zone, readable only by its owner",
+     "not ok 1 - approximate area"
+    ]
+   },
+   {
+    "name": "area-cacheable",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 1 - keeps only a coarse cell and a time zone, readable only by its owner",
+     "not ok 1 - approximate area"
+    ]
+   },
+   {
+    "name": "engagement-ignored",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 2 - holds a Story nobody engaged with, and widens one too few people nearby could see",
+     "not ok 3 - the reach evaluator",
+     "not ok 3 - hold when they didn't, and stop there",
+     "not ok 4 - judge on what it has once patience runs out with enough viewers"
+    ]
+   },
+   {
+    "name": "patience-ignored",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 2 - holds a Story nobody engaged with, and widens one too few people nearby could see",
+     "not ok 3 - the reach evaluator",
+     "not ok 5 - widen when too few people nearby saw it to tell, so quiet areas still find an audience",
+     "not ok 2 - reach stages"
+    ]
+   },
+   {
+    "name": "first-place-new",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 2 - starts with someone you follow, then 3 people you follow to 2 new people in every five, differently each time",
+     "not ok 4 - Home's mix",
+     "not ok 1 - starts with someone you follow, keeps everyone exactly once, and is 60% people you follow in every five",
+     "not ok 3 - Home's mix"
+    ]
+   },
+   {
+    "name": "three-new-in-a-row",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 2 - never shows more than two new people in a row while people you follow are left",
+     "not ok 3 - Home's mix"
+    ]
+   },
+   {
+    "name": "mix-never-shuffled",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 1 - starts with someone you follow, keeps everyone exactly once, and is 60% people you follow in every five",
+     "not ok 3 - Home's mix"
+    ]
+   },
+   {
+    "name": "stale-area-kept",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 9 - forgets approximate areas the app stopped refreshing, and the reach records of long-gone Stories",
+     "not ok 1 - retention"
+    ]
+   },
+   {
+    "name": "scrub-keeps-area",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 6 - purges and scrubs accounts deleted 30 days ago, keeping media still held as evidence",
+     "not ok 1 - retention"
+    ]
+   }
+  ],
+  "afterReachQueryTest": [
+   {
+    "name": "private-gets-reach",
+    "caught": true,
+    "test": "reach.test: the reach query never offers them"
+   }
+  ],
+  "evaluatorRewrite": [
+   {
+    "name": "follower-views-counted",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 1 - moves a Story up when people who don't follow its owner engage, counting each person once",
+     "not ok 3 - the reach evaluator"
+    ]
+   },
+   {
+    "name": "completions-any-story",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 1 - moves a Story up when people who don't follow its owner engage, counting each person once",
+     "not ok 3 - the reach evaluator"
+    ]
+   },
+   {
+    "name": "likes-any-story",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 1 - moves a Story up when people who don't follow its owner engage, counting each person once",
+     "not ok 3 - the reach evaluator"
+    ]
+   },
+   {
+    "name": "follows-any-creator",
+    "testExit": 0,
+    "caught": false,
+    "failing": []
+   },
+   {
+    "name": "counts-not-per-story",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 1 - moves a Story up when people who don't follow its owner engage, counting each person once",
+     "not ok 2 - holds a Story nobody engaged with, and widens one too few people nearby could see",
+     "not ok 3 - the reach evaluator"
+    ]
+   }
+  ],
+  "afterFollowElsewhereTest": [
+   {
+    "name": "follows-any-creator",
+    "caught": true,
+    "test": "reach.test: following someone else does not count"
+   }
+  ]
+ },
+ "app": {
+  "firstRunMissed": [
+   {
+    "name": "withdrawn-permission-ignored",
+    "caught": false
+   }
+  ],
+  "final": [
+   {
+    "name": "sends-coordinates",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "asks-precise-location",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "no-refresh-limit",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "stale-cell-kept-on-refusal",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "withdrawn-permission-ignored",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "off-keeps-cell",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "location-read-without-opt-in",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "overlap-sends-twice",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "prompt-at-once",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "prompt-asks-again",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "prompt-refusal-not-recorded",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "switch-lies-when-offline",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "refusal-leaves-switch-on",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "google-on-unready-build",
+    "caught": true,
+    "failing": []
+   }
+  ]
+ },
+ "mutationLists": {
+  "server": [
+   [
+    [
+     "stage1-reaches-everyone",
+     "dist/src/modules/recommendations/reach.repository.js",
+     "          OR CASE WHEN cells_known THEN is_nearby ELSE tz_ok END",
+     "          OR true",
+     "reach"
+    ],
+    [
+     "wider-at-stage1",
+     "dist/src/modules/recommendations/reach.repository.js",
+     "(stage >= 2 AND CASE WHEN cells_known THEN is_wider ELSE tz_ok END)",
+     "(stage >= 1 AND CASE WHEN cells_known THEN is_wider ELSE tz_ok END)",
+     "reach"
+    ],
+    [
+     "time-zone-ignored",
+     "dist/src/modules/recommendations/reach.repository.js",
+     "OR (stage >= 3 AND tz_ok)",
+     "OR (stage >= 3)",
+     "reach"
+    ],
+    [
+     "held-still-reaches",
+     "dist/src/modules/recommendations/reach.repository.js",
+     "         AND NOT COALESCE(r.held, false)\n         AND (COALESCE",
+     "         AND (COALESCE",
+     "reach"
+    ],
+    [
+     "cap-ignored",
+     "dist/src/modules/recommendations/reach.repository.js",
+     "OR COALESCE(r.stage_impressions, 0) < (:'caps'::jsonb ->> (COALESCE(r.stage, 1) - 1))::integer)",
+     "OR true)",
+     "reach"
+    ],
+    [
+     "private-gets-reach",
+     "dist/src/modules/recommendations/reach.repository.js",
+     "AND NOT u.is_private AND u.moderation_state = 'ACTIVE'",
+     "AND u.moderation_state = 'ACTIVE'",
+     "reach"
+    ],
+    [
+     "restricted-gets-reach",
+     "dist/src/modules/recommendations/reach.repository.js",
+     "AND NOT u.is_private AND u.moderation_state = 'ACTIVE'",
+     "AND NOT u.is_private",
+     "reach"
+    ],
+    [
+     "follower-views-counted",
+     "dist/src/modules/recommendations/reach.repository.js",
+     "AND NOT v.was_following AND v.viewed_at >= t.since",
+     "AND v.viewed_at >= t.since",
+     "reach"
+    ],
+    [
+     "impressions-not-reset",
+     "dist/src/modules/recommendations/reach.repository.js",
+     "stage_impressions: decision.stage === stage ? stats.impressions : 0,",
+     "stage_impressions: stats.impressions,",
+     "reach"
+    ],
+    [
+     "reason-forgotten",
+     "dist/src/modules/recommendations/reach.repository.js",
+     "reason = COALESCE(EXCLUDED.reason, story_reach.reason)",
+     "reason = EXCLUDED.reason",
+     "reach"
+    ],
+    [
+     "locality-boost-ignored",
+     "dist/src/modules/recommendations/recommendation.service.js",
+     "score: e.score * LOCALITY_BOOST[locality.get(e.owner.id) ?? 3]",
+     "score: e.score",
+     "reach"
+    ],
+    [
+     "area-deleted-late",
+     "dist/src/modules/users/users.repository.js",
+     "     DELETE FROM user_areas WHERE user_id IN (SELECT id FROM u)`, { id });",
+     "     SELECT 1`, { id });",
+     "reach"
+    ],
+    [
+     "cell-not-checked",
+     "dist/src/modules/recommendations/area.routes.js",
+     "geohash_1.AREA_CELL_RE.test(b.cell)",
+     "true",
+     "reach"
+    ],
+    [
+     "time-zone-not-canonical",
+     "dist/src/modules/recommendations/area.routes.js",
+     "            result.timeZone = zone;",
+     "            result.timeZone = b.timeZone;",
+     "reach"
+    ],
+    [
+     "area-cacheable",
+     "dist/src/modules/recommendations/area.routes.js",
+     "        res.setHeader(\"Cache-Control\", \"no-store\");\n        (0, respond_1.sendJson)(res, 200, { area });",
+     "        (0, respond_1.sendJson)(res, 200, { area });",
+     "reach"
+    ],
+    [
+     "engagement-ignored",
+     "dist/src/modules/recommendations/reach.js",
+     "        return score >= threshold",
+     "        return true",
+     "reach|reachMath"
+    ],
+    [
+     "patience-ignored",
+     "dist/src/modules/recommendations/reach.js",
+     "    if (patient)\n        return { stage: next, held: false, stageStartedAt: now, reason: \"small_audience\", score };",
+     "",
+     "reach|reachMath"
+    ],
+    [
+     "first-place-new",
+     "dist/src/modules/recommendations/feed-mix.js",
+     "        if (isFirst && leadingNew !== 0)\n            continue;",
+     "",
+     "reach|reachMath"
+    ],
+    [
+     "three-new-in-a-row",
+     "dist/src/modules/recommendations/feed-mix.js",
+     "        if (newAtEnd + leadingNew > MAX_NEW_IN_A_ROW)\n            continue;",
+     "",
+     "reachMath"
+    ],
+    [
+     "mix-never-shuffled",
+     "dist/src/modules/recommendations/feed-mix.js",
+     "            const j = Math.floor(random() * (i + 1));",
+     "            const j = i;",
+     "reach|reachMath"
+    ],
+    [
+     "stale-area-kept",
+     "dist/src/modules/media/retention.js",
+     "    total += await deleteWhere(\"user_areas\", \"updated_at < now() - interval '30 days'\");",
+     "",
+     "retention"
+    ],
+    [
+     "scrub-keeps-area",
+     "dist/src/modules/media/retention.js",
+     "       ar AS (DELETE FROM user_areas WHERE user_id IN (SELECT id FROM u)),",
+     "",
+     "retention"
+    ]
+   ],
+   [
+    [
+     "follower-views-counted",
+     "dist/src/modules/recommendations/reach.repository.js",
+     "AND NOT v.was_following AND v.viewed_at >= t.since",
+     "AND v.viewed_at >= t.since",
+     "reach"
+    ],
+    [
+     "completions-any-story",
+     "dist/src/modules/recommendations/reach.repository.js",
+     "WHERE e.viewer_id = x.viewer_id AND e.story_id = x.story_id AND e.event_type = 'story_complete'",
+     "WHERE e.viewer_id = x.viewer_id AND e.event_type = 'story_complete'",
+     "reach"
+    ],
+    [
+     "likes-any-story",
+     "dist/src/modules/recommendations/reach.repository.js",
+     "FROM story_likes l WHERE l.story_id = x.story_id AND l.user_id = x.viewer_id",
+     "FROM story_likes l WHERE l.user_id = x.viewer_id",
+     "reach"
+    ],
+    [
+     "follows-any-creator",
+     "dist/src/modules/recommendations/reach.repository.js",
+     "WHERE f.follower_id = x.viewer_id AND f.followee_id = x.owner_id AND f.created_at >= x.viewed_at",
+     "WHERE f.follower_id = x.viewer_id AND f.created_at >= x.viewed_at",
+     "reach"
+    ],
+    [
+     "counts-not-per-story",
+     "dist/src/modules/recommendations/reach.repository.js",
+     "     FROM testing t LEFT JOIN counts c ON c.story_id = t.id`",
+     "     FROM testing t LEFT JOIN counts c ON true`",
+     "reach"
+    ]
+   ]
+  ],
+  "app": [
+   [
+    "sends-coordinates",
+    "mobile/src/state/nearby.ts",
+    "resolve({ cell: encodeGeohash(position.coords.latitude, position.coords.longitude, AREA_CELL_LENGTH) });",
+    "resolve({ cell: `${position.coords.latitude},${position.coords.longitude}` });",
+    "jest",
+    "__tests__/nearby.test.tsx"
+   ],
+   [
+    "asks-precise-location",
+    "mobile/src/state/nearby.ts",
+    "const permission = PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION;",
+    "const permission = PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION;",
+    "jest",
+    "__tests__/nearby.test.tsx"
+   ],
+   [
+    "no-refresh-limit",
+    "mobile/src/state/nearby.ts",
+    "if (last > 0 && now - last < AREA_REFRESH_MS) return;",
+    "",
+    "jest",
+    "__tests__/nearby.test.tsx"
+   ],
+   [
+    "stale-cell-kept-on-refusal",
+    "mobile/src/state/nearby.ts",
+    "else if (reading.error === \"denied\") body.cell = null;",
+    "",
+    "jest",
+    "__tests__/nearby.test.tsx"
+   ],
+   [
+    "withdrawn-permission-ignored",
+    "mobile/src/state/nearby.ts",
+    "if (!(await locationAllowed(false))) body.cell = null;\n      else {",
+    "{",
+    "jest",
+    "__tests__/nearby.test.tsx"
+   ],
+   [
+    "off-keeps-cell",
+    "mobile/src/state/nearby.ts",
+    "await putMyArea({ cell: null }, accessToken);",
+    "await putMyArea({}, accessToken);",
+    "jest",
+    "__tests__/nearby.test.tsx"
+   ],
+   [
+    "location-read-without-opt-in",
+    "mobile/src/state/nearby.ts",
+    "if (choice === \"on\") {",
+    "if (choice !== \"off\") {",
+    "jest",
+    "__tests__/nearby.test.tsx"
+   ],
+   [
+    "overlap-sends-twice",
+    "mobile/src/state/nearby.ts",
+    "  if (running) return running;",
+    "",
+    "jest",
+    "__tests__/nearby.test.tsx"
+   ],
+   [
+    "prompt-at-once",
+    "mobile/src/components/NearbyPrompt.tsx",
+    "    }, delayMs);",
+    "    }, 0);",
+    "jest",
+    "__tests__/nearby.test.tsx"
+   ],
+   [
+    "prompt-asks-again",
+    "mobile/src/components/NearbyPrompt.tsx",
+    "if (!cancelled && choice === null && AppState.currentState === \"active\") setVisible(true);",
+    "if (!cancelled && choice !== \"on\" && AppState.currentState === \"active\") setVisible(true);",
+    "jest",
+    "__tests__/nearby.test.tsx"
+   ],
+   [
+    "prompt-refusal-not-recorded",
+    "mobile/src/components/NearbyPrompt.tsx",
+    "      if (result !== \"on\") await declineNearby(userId);",
+    "",
+    "jest",
+    "__tests__/nearby.test.tsx"
+   ],
+   [
+    "switch-lies-when-offline",
+    "mobile/src/screens/profile/SettingsScreen.tsx",
+    "      setNearbyOn(!next);\n      Alert.alert(\"Couldn't update\", \"Try again.\");",
+    "      Alert.alert(\"Couldn't update\", \"Try again.\");",
+    "jest",
+    "__tests__/nearby.test.tsx"
+   ],
+   [
+    "refusal-leaves-switch-on",
+    "mobile/src/screens/profile/SettingsScreen.tsx",
+    "      if (result === \"on\") return;\n      setNearbyOn(false);",
+    "      if (result === \"on\") return;",
+    "jest",
+    "__tests__/nearby.test.tsx"
+   ],
+   [
+    "google-on-unready-build",
+    "mobile/src/screens/auth/ProviderEntry.tsx",
+    "{methods?.google&&googleReady&&<GoogleSigninButton",
+    "{methods?.google&&<GoogleSigninButton",
+    "jest",
+    "__tests__/username.test.tsx"
+   ]
+  ]
+ }
+}
