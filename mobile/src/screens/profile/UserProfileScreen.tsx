@@ -1,50 +1,58 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Alert, Pressable, RefreshControl, ScrollView, Share, StyleSheet, Text, View } from "react-native";
+import Clipboard from "@react-native-clipboard/clipboard";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import type { SearchStackParamList, RootStackParamList } from "../../navigation/types";
-import { colors, radii, spacing, typography } from "../../theme";
+import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
-import { avatarFileUrl, followUser, getProfile, unfollowUser, type ProfileView } from "../../api/users";
+import { blockUser, followUser, getProfile, muteUser, unfollowUser, unmuteUser, type ProfileView } from "../../api/users";
 import { track } from "../../analytics/analytics";
 import { ApiError } from "../../api/client";
 import { getUserActiveStories } from "../../api/stories";
 import { openConversation } from "../../api/conversations";
 import { HighlightsRow } from "../../components/HighlightsRow";
 import { ReportSheet } from "../../components/ReportSheet";
+import { Icon } from "../../components/Icon";
+import { ProfileHeader, ProfileSkeleton } from "../../components/profile/ProfileHeader";
+import { ProfileMoreSheet } from "../../components/profile/ProfileMoreSheet";
+import { profileButton } from "../../components/profile/profileButton";
+import { profileShareLink } from "../../navigation/profileLinks";
 
 type Props = NativeStackScreenProps<SearchStackParamList, "UserProfile">;
 
 /**
- * Another user's profile, reached from Search results (spec section 30:
- * "Tap result: Open Profile"). Distinct from the Profile tab's own-profile
- * screen because the actions differ (Follow/Message vs. Edit/Logout) — see
- * spec section 34.
+ * Someone's creator page (Phase 10), from Search, Activity or a shared link. Follow (with a
+ * confirmation before unfollowing), Message, and More (share, copy link, mute, block, report).
+ * A private account you don't follow shows only who it is. Stories open only from the photo
+ * (spec sections 34 and 58).
  */
-export function UserProfileScreen({ route }: Props): React.JSX.Element {
+export function UserProfileScreen({ route, navigation }: Props): React.JSX.Element {
   // A shared link also carries the account ID, which finds the person after a rename. When it
   // does, the ID decides: the old name may belong to someone else by now.
   const { username: linkedUsername, userId } = route.params;
   const { accessToken } = useAuth();
-  // StoryViewer is registered on the root stack, above the tabs (see
-  // RootNavigator.tsx) — not on this screen's own SearchStack — so this
-  // screen reaches it via the shared root navigation type instead of its
-  // own typed `navigation` prop.
+  // StoryViewer, DM and the follow lists live on the root stack, above this Search stack.
   const rootNavigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [profile, setProfile] = useState<ProfileView | null>(null);
   const [hasActiveStory, setHasActiveStory] = useState(false);
+  const [highlightCount, setHighlightCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [actionPending, setActionPending] = useState(false);
   const [messagePending, setMessagePending] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const [scrollEnabled, setScrollEnabled] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshToken, setRefreshToken] = useState(0);
   const countedProfile = useRef<string | null>(null);
   const username = profile?.username ?? linkedUsername;
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (quiet = false) => {
     if (!accessToken) return;
-    setLoading(true);
+    if (!quiet) setLoading(true);
     setError(null);
     try {
       const { profile: fetched } = await getProfile(userId ?? linkedUsername, accessToken);
@@ -54,8 +62,7 @@ export function UserProfileScreen({ route }: Props): React.JSX.Element {
         countedProfile.current = fetched.id;
         track("profile_viewed");
       }
-      // A private account not yet followed 403s on the Stories list — that's
-      // just "no ring to show", not a real error, so it's swallowed here.
+      // A private account not yet followed refuses its Stories list: that just means no ring.
       try {
         const { stories } = await getUserActiveStories(fetched.username, accessToken);
         setHasActiveStory(stories.length > 0);
@@ -74,14 +81,44 @@ export function UserProfileScreen({ route }: Props): React.JSX.Element {
     void load();
   }, [load]);
 
-  const openStoryViewer = () => {
-    if (!hasActiveStory) return;
-    rootNavigation.navigate("StoryViewer", { creators: [username], startIndex: 0 });
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: profile?.username ?? linkedUsername,
+      headerRight:
+        profile && !profile.isSelf
+          ? () => (
+              <Pressable onPress={() => setMoreOpen(true)} hitSlop={10} accessibilityRole="button" accessibilityLabel={`More options for @${profile.username}`}>
+                <Icon name={ICONS.more} size={24} color={colors.textPrimary} />
+              </Pressable>
+            )
+          : undefined,
+    });
+  }, [navigation, profile, linkedUsername]);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setRefreshToken((n) => n + 1);
+    await load(true);
+    setRefreshing(false);
+  };
+
+  const runFollowChange = async (change: () => Promise<unknown>) => {
+    setActionPending(true);
+    setNotice(null);
+    try {
+      await change();
+      await load(true);
+    } catch {
+      setNotice("That didn't go through. Try again.");
+    } finally {
+      setActionPending(false);
+    }
   };
 
   const onMessagePress = async () => {
     if (!accessToken || messagePending) return;
     setMessagePending(true);
+    setNotice(null);
     try {
       const { conversation } = await openConversation(username, accessToken);
       rootNavigation.navigate("Main", {
@@ -92,183 +129,228 @@ export function UserProfileScreen({ route }: Props): React.JSX.Element {
         },
       });
     } catch {
-      setError("Couldn't open that conversation — try again.");
+      setNotice("Couldn't open that conversation. Try again.");
     } finally {
       setMessagePending(false);
     }
   };
 
-  const onFollowPress = async () => {
-    if (!accessToken || !profile) return;
-    setActionPending(true);
-    try {
-      if (profile.viewer.isFollowing || profile.viewer.hasPendingRequestFromViewer) {
-        await unfollowUser(username, accessToken);
-      } else {
-        await followUser(username, accessToken);
-      }
-      await load();
-    } catch {
-      setError("That didn't go through — try again.");
-    } finally {
-      setActionPending(false);
-    }
-  };
-
-  if (loading) {
+  if (loading && !profile) {
     return (
-      <View style={styles.centered}>
-        <ActivityIndicator color={colors.accent} />
+      <View style={[styles.screen, styles.padded]}>
+        <ProfileSkeleton />
       </View>
     );
   }
 
   if (error || !profile) {
     return (
-      <View style={styles.centered}>
-        <Text style={typography.body}>{error ?? "Couldn't load this profile."}</Text>
+      <View style={[styles.screen, styles.centered]}>
+        <Text style={[typography.body, styles.errorText]}>{error ?? "Couldn't load this profile."}</Text>
+        {error !== "This account isn't available." ? (
+          <Pressable style={styles.retry} onPress={() => void load()} accessibilityRole="button" accessibilityLabel="Try again">
+            <Text style={typography.bodyStrong}>Try again</Text>
+          </Pressable>
+        ) : null}
       </View>
     );
   }
 
-  const followLabel = profile.viewer.isFollowing
-    ? "Following"
-    : profile.viewer.hasPendingRequestFromViewer
-      ? "Requested"
-      : "Follow";
+  const following = profile.viewer.isFollowing;
+  const requested = profile.viewer.hasPendingRequestFromViewer;
+  const followLabel = following ? "Following" : requested ? "Requested" : profile.viewer.isFollowedBy ? "Follow back" : "Follow";
+  // A private account you don't follow shows who it is, not what it shares.
+  const locked = profile.isPrivate && !profile.isSelf && !following;
+  const link = profileShareLink(profile.username, profile.id);
+
+  const onFollowPress = () => {
+    if (!accessToken) return;
+    if (!following && !requested) {
+      void runFollowChange(() => followUser(username, accessToken));
+      return;
+    }
+    Alert.alert(
+      following ? `Unfollow @${username}?` : "Cancel your follow request?",
+      following && profile.isPrivate ? "You'll need to ask again to see their Stories." : undefined,
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: following ? "Unfollow" : "Cancel request", style: "destructive", onPress: () => void runFollowChange(() => unfollowUser(username, accessToken)) },
+      ],
+    );
+  };
+
+  const onShare = async () => {
+    try {
+      await Share.share({ message: `@${profile.username} on Katkee: ${link}` });
+    } catch {
+      // Closing the share sheet isn't an error.
+    }
+  };
+
+  const onToggleMute = async () => {
+    if (!accessToken) return;
+    const muting = !profile.viewer.isMutedByViewer;
+    try {
+      if (muting) await muteUser(username, accessToken);
+      else await unmuteUser(username, accessToken);
+      await load(true);
+      Alert.alert(
+        muting ? `@${username} muted` : `@${username} unmuted`,
+        muting ? "You won't see their Stories on Home. They won't know." : "Their Stories can show on Home again.",
+      );
+    } catch {
+      Alert.alert("Couldn't update", "Try again.");
+    }
+  };
+
+  const onBlock = () => {
+    if (!accessToken) return;
+    Alert.alert(
+      `Block @${username}?`,
+      "They won't be able to find your profile, see your Stories or message you. Katkee won't tell them.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Block",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await blockUser(username, accessToken);
+              navigation.goBack();
+            } catch {
+              Alert.alert("Couldn't block", "Try again.");
+            }
+          },
+        },
+      ],
+    );
+  };
 
   return (
-    <ScrollView contentContainerStyle={styles.container} scrollEnabled={scrollEnabled}>
-      <Pressable
-        onPress={openStoryViewer}
-        disabled={!hasActiveStory}
-        style={[styles.avatarPlaceholder, hasActiveStory && styles.avatarRingActive]}
-        accessibilityRole={hasActiveStory ? "button" : undefined}
-        accessibilityLabel={hasActiveStory ? `Open ${profile.displayName}'s Story` : profile.displayName}
+    <ScrollView
+      style={styles.screen}
+      contentContainerStyle={styles.content}
+      scrollEnabled={scrollEnabled}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} tintColor={colors.accent} />}
+    >
+      <ProfileHeader
+        username={profile.username}
+        displayName={profile.displayName}
+        bio={profile.bio}
+        interests={profile.interests ?? []}
+        avatarMediaId={profile.avatarMediaId}
+        isPrivate={profile.isPrivate}
+        hasActiveStory={hasActiveStory}
+        storyLabel={`Open ${profile.displayName}'s Story`}
+        onOpenStory={() => rootNavigation.navigate("StoryViewer", { creators: [profile.username], startIndex: 0 })}
+        followsYou={!profile.isSelf && profile.viewer.isFollowedBy}
+        stats={[
+          { key: "highlights", value: locked ? null : highlightCount, singular: "Highlight", plural: "Highlights" },
+          {
+            key: "followers", value: profile.followerCount, singular: "Follower", plural: "Followers",
+            onPress: locked ? undefined : () => rootNavigation.navigate("FollowList", { username: profile.username, mode: "followers" }),
+          },
+          {
+            key: "following", value: profile.followingCount, singular: "Following", plural: "Following",
+            onPress: locked ? undefined : () => rootNavigation.navigate("FollowList", { username: profile.username, mode: "following" }),
+          },
+        ]}
       >
-        {profile.avatarMediaId && accessToken ? <Image source={{ uri: avatarFileUrl(profile.username, profile.avatarMediaId), headers: { Authorization: `Bearer ${accessToken}` } }} style={styles.avatarImage} /> : <Text style={styles.avatarInitial}>{profile.displayName.charAt(0).toUpperCase()}</Text>}
-      </Pressable>
-      <Text style={[typography.title, styles.displayName]}>{profile.displayName}</Text>
-      <Text style={typography.caption}>@{profile.username}</Text>
-      {profile.bio ? <Text style={[typography.body, styles.bio]}>{profile.bio}</Text> : null}
-      {profile.interests.length > 0 ? (
-        <View style={styles.interestsRow}>
-          {(profile.interests ?? []).map((interest) => <Text key={interest} style={styles.interestChip}>{interest}</Text>)}
+        <View style={styles.actions}>
+          {profile.isSelf ? (
+            <>
+              {profileButton({ label: "Edit profile", onPress: () => rootNavigation.navigate("EditProfile") })}
+              {profileButton({ label: "Share profile", onPress: () => void onShare() })}
+            </>
+          ) : (
+            <>
+              {profileButton({
+                label: followLabel,
+                variant: following || requested ? "secondary" : "primary",
+                busy: actionPending,
+                onPress: onFollowPress,
+              })}
+              {profileButton({ label: "Message", busy: messagePending, onPress: () => void onMessagePress() })}
+            </>
+          )}
         </View>
-      ) : null}
+        {notice ? <Text style={styles.notice} accessibilityLiveRegion="polite">{notice}</Text> : null}
+      </ProfileHeader>
 
-      <View style={styles.statsRow}>
-        <Pressable
-          style={styles.stat}
-          onPress={() => rootNavigation.navigate("FollowList", { username: profile.username, mode: "followers" })}
-          accessibilityRole="button"
-          accessibilityLabel="Followers"
-        >
-          <Text style={typography.bodyStrong}>{profile.followerCount}</Text>
-          <Text style={typography.caption}>Followers</Text>
-        </Pressable>
-        <Pressable
-          style={styles.stat}
-          onPress={() => rootNavigation.navigate("FollowList", { username: profile.username, mode: "following" })}
-          accessibilityRole="button"
-          accessibilityLabel="Following"
-        >
-          <Text style={typography.bodyStrong}>{profile.followingCount}</Text>
-          <Text style={typography.caption}>Following</Text>
-        </Pressable>
-      </View>
-
-      {!profile.isSelf ? (
-        <View style={styles.actionRow}>
-          <Pressable
-            accessibilityRole="button"
-            style={[
-              styles.followButton,
-              followLabel !== "Follow" && styles.followButtonActive,
-              actionPending && styles.followButtonDisabled,
-            ]}
-            disabled={actionPending}
-            onPress={onFollowPress}
-          >
-            {actionPending ? (
-              <ActivityIndicator color={colors.onAccent} />
-            ) : (
-              <Text style={followLabel === "Follow" ? styles.followLabel : styles.followLabelActive}>
-                {followLabel}
-              </Text>
-            )}
-          </Pressable>
-          <Pressable
-            accessibilityRole="button"
-            style={[styles.followButton, styles.followButtonActive, messagePending && styles.followButtonDisabled]}
-            disabled={messagePending}
-            onPress={() => void onMessagePress()}
-          >
-            {messagePending ? <ActivityIndicator color={colors.textPrimary} /> : <Text style={styles.followLabelActive}>Message</Text>}
-          </Pressable>
+      {locked ? (
+        <View style={styles.card} accessible accessibilityLabel={`This account is private. Follow @${profile.username} to see their Stories and Highlights.`}>
+          <View style={styles.cardIcon}>
+            <Icon name={ICONS.privacy} size={22} color={colors.textPrimary} />
+          </View>
+          <Text style={styles.cardTitle}>This account is private</Text>
+          <Text style={styles.cardBody}>Follow @{profile.username} to see their Stories and Highlights.</Text>
         </View>
-      ) : null}
+      ) : (
+        <>
+          <HighlightsRow
+            username={username}
+            isOwner={profile.isSelf}
+            onReorderModeChange={(active) => setScrollEnabled(!active)}
+            onCountChange={setHighlightCount}
+            refreshToken={refreshToken}
+          />
+          {!profile.isSelf && highlightCount === 0 ? (
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>No Highlights yet</Text>
+              <Text style={styles.cardBody}>When @{profile.username} keeps Stories in Highlights, they'll show here.</Text>
+            </View>
+          ) : null}
+        </>
+      )}
 
-      {!profile.isSelf ? (
-        <Pressable accessibilityRole="button" style={styles.reportLink} onPress={() => setReportOpen(true)} hitSlop={8}>
-          <Text style={styles.reportLinkLabel}>Report this account</Text>
-        </Pressable>
-      ) : null}
-
-      <HighlightsRow username={username} isOwner={profile.isSelf} onReorderModeChange={(active) => setScrollEnabled(!active)} />
+      <ProfileMoreSheet
+        visible={moreOpen}
+        username={profile.username}
+        isMuted={profile.viewer.isMutedByViewer}
+        onClose={() => setMoreOpen(false)}
+        onShare={() => void onShare()}
+        onCopyLink={() => {
+          Clipboard.setString(link);
+          Alert.alert("Link copied");
+        }}
+        onToggleMute={() => void onToggleMute()}
+        onBlock={onBlock}
+        onReport={() => setReportOpen(true)}
+      />
       <ReportSheet visible={reportOpen} targetType="user" targetId={profile.id} onClose={() => setReportOpen(false)} />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
+  screen: { flex: 1, backgroundColor: colors.background },
+  padded: { paddingHorizontal: spacing.lg, paddingTop: spacing.md },
+  centered: { alignItems: "center", justifyContent: "center", paddingHorizontal: spacing.xl, gap: spacing.md },
+  errorText: { textAlign: "center", color: colors.textSecondary },
+  retry: { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radii.sm, backgroundColor: colors.surfaceElevated },
+  content: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.xxl, gap: spacing.md },
+  actions: { flexDirection: "row", gap: spacing.sm },
+  notice: { ...typography.caption, color: colors.danger },
+  card: {
     alignItems: "center",
-    paddingTop: spacing.xxl,
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xxl,
-    backgroundColor: colors.background,
     gap: spacing.xs,
+    paddingVertical: spacing.xl,
+    paddingHorizontal: spacing.lg,
+    borderRadius: radii.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
   },
-  centered: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background },
-  avatarPlaceholder: {
-    width: 88,
-    height: 88,
-    borderRadius: radii.pill,
-    borderWidth: 3,
-    borderColor: "transparent",
+  cardIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 2,
+    borderColor: colors.textPrimary,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.surface,
-    marginBottom: spacing.md,
+    marginBottom: spacing.xs,
   },
-  avatarRingActive: { borderColor: colors.accent },
-  avatarInitial: { fontSize: 32, fontWeight: "700", color: colors.textPrimary },
-  avatarImage: { width: "100%", height: "100%", borderRadius: radii.pill },
-  displayName: { marginTop: spacing.sm },
-  bio: { marginTop: spacing.sm, textAlign: "center" },
-  interestsRow: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: spacing.xs, marginTop: spacing.sm },
-  interestChip: { color: colors.textSecondary, borderWidth: 1, borderColor: colors.border, borderRadius: radii.pill, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs },
-  statsRow: { flexDirection: "row", gap: spacing.xl, marginTop: spacing.lg },
-  stat: { alignItems: "center", gap: spacing.xs },
-  actionRow: { flexDirection: "row", gap: spacing.sm, marginTop: spacing.lg, alignSelf: "stretch" },
-  followButton: {
-    flex: 1,
-    backgroundColor: colors.accent,
-    borderRadius: radii.md,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    alignItems: "center",
-  },
-  followButtonActive: {
-    backgroundColor: "transparent",
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  followButtonDisabled: { opacity: 0.6 },
-  followLabel: { color: colors.onAccent, fontWeight: "700" },
-  followLabelActive: { color: colors.textPrimary, fontWeight: "600" },
-  reportLink: { marginTop: spacing.md },
-  reportLinkLabel: { ...typography.caption, color: colors.textDisabled },
+  cardTitle: { ...typography.bodyStrong, textAlign: "center" },
+  cardBody: { ...typography.caption, textAlign: "center" },
 });

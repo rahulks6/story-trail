@@ -1,29 +1,35 @@
 import { Icon } from "../../components/Icon";
-import React, { useCallback, useEffect, useState } from "react";
-import { Image, Pressable, ScrollView, Share, StyleSheet, Text, View } from "react-native";
+import React, { useCallback, useState } from "react";
+import { Pressable, RefreshControl, ScrollView, Share, StyleSheet, Text, View } from "react-native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
-import { avatarFileUrl, getProfile } from "../../api/users";
+import { getProfile } from "../../api/users";
 import { getMyActiveStories } from "../../api/stories";
 import { HighlightsRow } from "../../components/HighlightsRow";
+import { ProfileHeader, ProfileSkeleton } from "../../components/profile/ProfileHeader";
+import { profileButton } from "../../components/profile/profileButton";
+import { profileShareLink } from "../../navigation/profileLinks";
 import type { RootStackParamList } from "../../navigation/types";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
 
 /**
- * The authenticated user's own profile: real data from `/api/v1/auth/me`,
- * real follower/following counts, and a tappable Story ring when there's
- * an active Story (per spec section 34/58: Stories are reachable ONLY
- * through the profile photo — no post grid, no recent-Stories row here).
+ * Your own creator page (Phase 10). Your name and bio come from your account (so an edit shows
+ * at once); counts and the Story ring are fetched each time the tab is opened, and pulling down
+ * refreshes everything. Stories open only from the photo (spec sections 34 and 58: no post
+ * grid). Archive and Insights are yours alone.
  */
 export function ProfileScreen(): React.JSX.Element {
   const { user, accessToken } = useAuth();
   const insets = useScreenInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [counts, setCounts] = useState<{ followerCount: number; followingCount: number } | null>(null);
+  const [highlightCount, setHighlightCount] = useState<number | null>(null);
   const [hasActiveStory, setHasActiveStory] = useState(false);
   const [scrollEnabled, setScrollEnabled] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshToken, setRefreshToken] = useState(0);
 
   const load = useCallback(async () => {
     if (!user || !accessToken) return;
@@ -31,7 +37,7 @@ export function ProfileScreen(): React.JSX.Element {
       const { profile } = await getProfile(user.username, accessToken);
       setCounts({ followerCount: profile.followerCount, followingCount: profile.followingCount });
     } catch {
-      // Non-fatal — the rest of the profile still renders with dashes below.
+      // Non-fatal: the counts show dashes and the rest of the page still works.
     }
     try {
       const { stories } = await getMyActiveStories(accessToken);
@@ -41,162 +47,156 @@ export function ProfileScreen(): React.JSX.Element {
     }
   }, [user, accessToken]);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  // Each visit: back from posting a Story or following someone, the ring and counts are current.
+  useFocusEffect(
+    useCallback(() => {
+      void load();
+    }, [load]),
+  );
 
   if (!user) {
     return (
-      <View style={[styles.container, { paddingTop: insets.top + spacing.lg }]}>
-        <Text style={typography.body}>Loading profile…</Text>
+      <View style={[styles.screen, { paddingTop: insets.top + spacing.lg, paddingHorizontal: spacing.lg }]}>
+        <ProfileSkeleton />
       </View>
     );
   }
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setRefreshToken((n) => n + 1);
+    await load();
+    setRefreshing(false);
+  };
+
   const onShareProfile = async () => {
-    // The account ID keeps the link working if the username changes later.
-    const deepLink = `katkee://user/${user.username}?id=${user.id}`;
     try {
-      await Share.share({ message: `@${user.username} on Katkee: ${deepLink}` });
+      await Share.share({ message: `@${user.username} on Katkee: ${profileShareLink(user.username, user.id)}` });
     } catch {
-      // User cancelled the native sheet — not an error.
+      // Closing the share sheet isn't an error.
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top + spacing.lg }]} scrollEnabled={scrollEnabled}>
-      <Pressable
-        style={[styles.settingsButton, { top: insets.top + spacing.md }]}
-        onPress={() => navigation.navigate("Settings")}
-        hitSlop={8}
-        accessibilityRole="button"
-        accessibilityLabel="Settings"
-      >
-        <Icon style={styles.settingsGlyph} name={ICONS.settings} />
-      </Pressable>
-
-      <Pressable
-        onPress={() => {
-          if (hasActiveStory) navigation.navigate("StoryViewer", { creators: [user.username], startIndex: 0 });
-        }}
-        disabled={!hasActiveStory}
-        style={[styles.avatarPlaceholder, hasActiveStory && styles.avatarRingActive]}
-        accessibilityRole={hasActiveStory ? "button" : undefined}
-        accessibilityLabel={hasActiveStory ? "Open your Story" : user.displayName}
-      >
-        {user.avatarMediaId && accessToken ? <Image source={{ uri: avatarFileUrl(user.username, user.avatarMediaId), headers: { Authorization: `Bearer ${accessToken}` } }} style={styles.avatarImage} /> : <Text style={styles.avatarInitial}>{user.displayName.charAt(0).toUpperCase()}</Text>}
-      </Pressable>
-      <Text style={[typography.title, styles.displayName]}>{user.displayName}</Text>
-      <Text style={[typography.caption, styles.username]}>@{user.username}</Text>
-      {user.bio ? <Text style={[typography.body, styles.bio]}>{user.bio}</Text> : null}
-      {user.interests.length > 0 ? (
-        <View style={styles.interestsRow}>
-          {(user.interests ?? []).map((interest) => <Text key={interest} style={styles.interestChip}>{interest}</Text>)}
+    <View style={styles.screen}>
+      <View style={[styles.topBar, { paddingTop: insets.top + spacing.xs }]}>
+        <View style={styles.topBarTitle}>
+          {user.isPrivate ? (
+            <View accessible accessibilityLabel="Private account">
+              <Icon name={ICONS.privacy} size={16} color={colors.textPrimary} />
+            </View>
+          ) : null}
+          <Text style={styles.topBarUsername} numberOfLines={1} accessibilityRole="header">{user.username}</Text>
         </View>
-      ) : null}
+        <View style={styles.topBarActions}>
+          <Pressable style={styles.topBarButton} onPress={() => navigation.navigate("Archive")} hitSlop={8} accessibilityRole="button" accessibilityLabel="Archive">
+            <Icon name={ICONS.archive} size={24} color={colors.textPrimary} />
+          </Pressable>
+          <Pressable style={styles.topBarButton} onPress={() => navigation.navigate("Settings")} hitSlop={8} accessibilityRole="button" accessibilityLabel="Settings">
+            <Icon name={ICONS.settings} size={24} color={colors.textPrimary} />
+          </Pressable>
+        </View>
+      </View>
 
-      <View style={styles.statsRow}>
-        <Pressable
-          style={styles.stat}
-          onPress={() => navigation.navigate("FollowList", { username: user.username, mode: "followers" })}
-          accessibilityRole="button"
-          accessibilityLabel="Followers"
+      <ScrollView
+        contentContainerStyle={styles.content}
+        scrollEnabled={scrollEnabled}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} tintColor={colors.accent} />}
+      >
+        <ProfileHeader
+          username={user.username}
+          displayName={user.displayName}
+          bio={user.bio}
+          interests={user.interests ?? []}
+          avatarMediaId={user.avatarMediaId}
+          isPrivate={user.isPrivate}
+          hasActiveStory={hasActiveStory}
+          storyLabel="Open your Story"
+          onOpenStory={() => navigation.navigate("StoryViewer", { creators: [user.username], startIndex: 0 })}
+          onAddStory={() => navigation.navigate("Main", { screen: "Create" })}
+          stats={[
+            { key: "highlights", value: highlightCount, singular: "Highlight", plural: "Highlights" },
+            {
+              key: "followers", value: counts?.followerCount ?? null, singular: "Follower", plural: "Followers",
+              onPress: () => navigation.navigate("FollowList", { username: user.username, mode: "followers" }),
+            },
+            {
+              key: "following", value: counts?.followingCount ?? null, singular: "Following", plural: "Following",
+              onPress: () => navigation.navigate("FollowList", { username: user.username, mode: "following" }),
+            },
+          ]}
         >
-          <Text style={typography.bodyStrong}>{counts ? counts.followerCount : "—"}</Text>
-          <Text style={typography.caption}>Followers</Text>
-        </Pressable>
+          <View style={styles.actions}>
+            {profileButton({ label: "Edit profile", onPress: () => navigation.navigate("EditProfile") })}
+            {profileButton({ label: "Share profile", onPress: () => void onShareProfile() })}
+          </View>
+        </ProfileHeader>
+
         <Pressable
-          style={styles.stat}
-          onPress={() => navigation.navigate("FollowList", { username: user.username, mode: "following" })}
+          style={({ pressed }) => [styles.dashboard, pressed && styles.dashboardPressed]}
+          onPress={() => navigation.navigate("SequenceInsights")}
           accessibilityRole="button"
-          accessibilityLabel="Following"
+          accessibilityLabel="Insights. See how your Stories are doing. Only you can see this."
         >
-          <Text style={typography.bodyStrong}>{counts ? counts.followingCount : "—"}</Text>
-          <Text style={typography.caption}>Following</Text>
+          <View style={styles.dashboardIcon}>
+            <Icon name={ICONS.insights} size={20} color={colors.accent} />
+          </View>
+          <View style={styles.dashboardText}>
+            <Text style={styles.dashboardTitle}>Insights</Text>
+            <Text style={styles.dashboardBody}>See how your Stories are doing. Only you can see this.</Text>
+          </View>
+          <Icon name={ICONS.chevron} size={18} color={colors.textSecondary} />
         </Pressable>
-      </View>
 
-      <View style={styles.actionRow}>
-        <Pressable accessibilityRole="button" style={styles.actionButton} onPress={() => navigation.navigate("EditProfile")}>
-          <Text style={styles.actionButtonLabel}>Edit Profile</Text>
-        </Pressable>
-        <Pressable accessibilityRole="button" style={styles.actionButton} onPress={() => void onShareProfile()}>
-          <Text style={styles.actionButtonLabel}>Share Profile</Text>
-        </Pressable>
-      </View>
-
-      <View style={styles.linkRow}>
-        <Pressable accessibilityRole="button" style={styles.archiveLink} onPress={() => navigation.navigate("Archive")}>
-          <Text style={styles.archiveLinkLabel}>Archive</Text>
-        </Pressable>
-        <Pressable accessibilityRole="button" style={styles.archiveLink} onPress={() => navigation.navigate("SequenceInsights")}>
-          <Text style={styles.archiveLinkLabel}>Insights</Text>
-        </Pressable>
-      </View>
-
-      <HighlightsRow username={user.username} isOwner onReorderModeChange={(active) => setScrollEnabled(!active)} />
-    </ScrollView>
+        <HighlightsRow
+          username={user.username}
+          isOwner
+          onReorderModeChange={(active) => setScrollEnabled(!active)}
+          onCountChange={setHighlightCount}
+          refreshToken={refreshToken}
+        />
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
+  screen: { flex: 1, backgroundColor: colors.background },
+  topBar: {
+    flexDirection: "row",
     alignItems: "center",
-    paddingTop: spacing.xxl,
+    justifyContent: "space-between",
     paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xxl,
+    paddingBottom: spacing.sm,
     backgroundColor: colors.background,
-    gap: spacing.xs,
   },
-  avatarPlaceholder: {
-    width: 88,
-    height: 88,
-    borderRadius: radii.pill,
-    borderWidth: 3,
-    borderColor: "transparent",
+  topBarTitle: { flexDirection: "row", alignItems: "center", gap: spacing.xs, flexShrink: 1 },
+  topBarUsername: { ...typography.title, flexShrink: 1 },
+  topBarActions: { flexDirection: "row", alignItems: "center", gap: spacing.md },
+  topBarButton: { padding: spacing.xs },
+  content: { paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.xxl, gap: spacing.md },
+  actions: { flexDirection: "row", gap: spacing.sm },
+  dashboard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+    backgroundColor: colors.surface,
+    borderRadius: radii.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm + 4,
+  },
+  dashboardPressed: { backgroundColor: colors.surfaceElevated },
+  dashboardIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.surfaceElevated,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.surface,
-    marginBottom: spacing.md,
   },
-  avatarRingActive: { borderColor: colors.accent },
-  avatarInitial: {
-    fontSize: 32,
-    fontWeight: "700",
-    color: colors.textPrimary,
-  },
-  avatarImage: { width: "100%", height: "100%", borderRadius: radii.pill },
-  displayName: { marginTop: spacing.sm },
-  username: {},
-  bio: { marginTop: spacing.sm, textAlign: "center" },
-  interestsRow: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: spacing.xs, marginTop: spacing.sm },
-  interestChip: { color: colors.textSecondary, borderWidth: 1, borderColor: colors.border, borderRadius: radii.pill, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs },
-  statsRow: {
-    flexDirection: "row",
-    gap: spacing.xl,
-    marginTop: spacing.lg,
-  },
-  stat: { alignItems: "center", gap: spacing.xs },
-  settingsButton: { position: "absolute", top: spacing.md, right: spacing.md, padding: spacing.xs },
-  settingsGlyph: { fontSize: 22, color: colors.textPrimary },
-  actionRow: { flexDirection: "row", gap: spacing.sm, marginTop: spacing.lg, width: "100%" },
-  actionButton: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radii.md,
-    paddingVertical: spacing.sm,
-    alignItems: "center",
-  },
-  actionButtonLabel: { ...typography.caption, fontWeight: "700", color: colors.textPrimary },
-  linkRow: { flexDirection: "row", gap: spacing.sm, marginTop: spacing.lg },
-  archiveLink: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radii.md,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.md,
-  },
-  archiveLinkLabel: { ...typography.caption, color: colors.textSecondary, fontWeight: "600" },
+  dashboardText: { flex: 1, gap: 2 },
+  dashboardTitle: { ...typography.bodyStrong },
+  dashboardBody: { ...typography.caption },
 });

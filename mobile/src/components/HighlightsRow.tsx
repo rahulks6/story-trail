@@ -1,5 +1,5 @@
 import { Icon } from "./Icon";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -21,6 +21,10 @@ interface Props {
    * an ancestor's scroll can't both be live on the same grid at once.
    */
   onReorderModeChange?: (active: boolean) => void;
+  /** How many Highlights there are once loaded, or null when they can't be shown (Phase 10's count). */
+  onCountChange?: (count: number | null) => void;
+  /** Changing this reloads the grid (the page was pulled to refresh). */
+  refreshToken?: number;
 }
 
 const COLUMNS = 3;
@@ -49,20 +53,25 @@ const CARD_ASPECT_RATIO = 1.35; // portrait, not circular — spec section 62
  * touch that starts on a Highlight card the rest of the time (see
  * DraggableGrid.tsx's `draggable` prop doc for the mechanics).
  */
-export function HighlightsRow({ username, isOwner, onReorderModeChange }: Props): React.JSX.Element | null {
+export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountChange, refreshToken }: Props): React.JSX.Element | null {
   const { accessToken } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { width: screenWidth } = useWindowDimensions();
   const [highlights, setHighlights] = useState<HighlightSummary[] | null>(null);
   const [reordering, setReordering] = useState(false);
 
+  const countRef = useRef(onCountChange);
+  countRef.current = onCountChange;
+
   const load = useCallback(async () => {
     if (!accessToken) return;
     try {
       const { highlights: fetched } = await listHighlightsForUser(username, accessToken);
       setHighlights(fetched);
+      countRef.current?.(fetched.length);
     } catch {
       setHighlights([]);
+      countRef.current?.(null);
     }
   }, [accessToken, username]);
 
@@ -71,6 +80,10 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange }: Props)
       void load();
     }, [load]),
   );
+
+  useEffect(() => {
+    if (refreshToken) void load();
+  }, [refreshToken, load]);
 
   const onReorder = useCallback(
     (newOrder: HighlightSummary[]) => {
@@ -100,17 +113,20 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange }: Props)
 
   return (
     <View style={styles.wrapper}>
-      {isOwner && highlights.length > 0 ? (
-        <Pressable
-          style={styles.reorderToggle}
-          onPress={toggleReordering}
-          hitSlop={8}
-          accessibilityRole="button"
-          accessibilityLabel={reordering ? "Done reordering Highlights" : "Reorder Highlights"}
-        >
-          <Text style={styles.reorderToggleLabel}>{reordering ? "Done" : "Reorder"}</Text>
-        </Pressable>
-      ) : null}
+      <View style={styles.headerRow}>
+        <Text style={styles.sectionTitle} accessibilityRole="header">Highlights</Text>
+        {isOwner && highlights.length > 0 ? (
+          <Pressable
+            style={styles.reorderToggle}
+            onPress={toggleReordering}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel={reordering ? "Done reordering Highlights" : "Reorder Highlights"}
+          >
+            <Text style={styles.reorderToggleLabel}>{reordering ? "Done" : "Reorder"}</Text>
+          </Pressable>
+        ) : null}
+      </View>
       <DraggableGrid
         data={highlights}
         keyExtractor={(h) => h.id}
@@ -165,7 +181,9 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange }: Props)
 
 const styles = StyleSheet.create({
   wrapper: { width: "100%", marginTop: spacing.md },
-  reorderToggle: { alignSelf: "flex-end", marginBottom: spacing.xs },
+  headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.sm },
+  sectionTitle: { ...typography.bodyStrong, fontSize: 16 },
+  reorderToggle: { paddingVertical: spacing.xs },
   reorderToggleLabel: { ...typography.caption, color: colors.accent, fontWeight: "700" },
   card: {
     flex: 1,

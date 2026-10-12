@@ -27,3 +27,6 @@ infra/cdk.out/
 backend/data/
 *.log
 !docs/**/*.log
+
+# Screen preview output (tools/screen-preview)
+tools/screen-preview/shots/

@@ -42,3 +42,8 @@ export function deepLinkTarget(path: string): DeepLinkTarget | null {
   }
   return null;
 }
+
+/** The link Share profile sends: the account ID keeps it working after a rename. */
+export function profileShareLink(username: string, userId: string): string {
+  return `katkee://user/${username}?id=${userId}`;
+}

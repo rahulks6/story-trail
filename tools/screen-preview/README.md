@@ -1,0 +1,21 @@
+# Screen preview
+
+Renders the app's own screen code in Chromium with React Native for Web and sample data, then
+takes screenshots. It is a quick design check: it found the malformed Like-heart icon path in
+Phase 10. It is **not** a device test. Fonts (Inter here), native headers, gestures and
+platform details differ on iPhone and Android.
+
+```
+cd tools/screen-preview
+npm install                 # React Native for Web, esbuild, Inter
+npx playwright install chromium   # skip if Playwright's Chromium is already installed
+npm run shots               # shots/own.png, other.png, private.png, more.png, creator-page-preview.png
+```
+
+- `src/app.tsx` renders the real `ProfileScreen`, `UserProfileScreen` and `BottomTabBar`
+  inside a 390 x 844 phone frame. `?screen=own|other|private` picks the page, and
+  `&story=none` shows your page without an active Story.
+- `src/mocks/` replaces the network, sign-in and navigation with sample data. The sample
+  people and pictures are made up, and the pictures are drawn gradients.
+- `build.cjs` maps `react-native` to `react-native-web` and the app's API, auth and navigation
+  modules to those mocks.

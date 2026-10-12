@@ -16,7 +16,7 @@ export function Icon({name,size,color,selected=false,style}: {name:IconName;size
   home:'M4 10.5 12 3l8 7.5V21h-5v-7H9v7H4Z',
   search:'M16 16 21 21',
   create:'M12 5v14M5 12h14',add:'M12 5v14M5 12h14',
-  like:'M12 21S2 15 2 8.7C2 3.4 8.5 2 12 6.5 15.5 2 22 3.4 22 8.7 22 15 12 21Z',
+  like:'M12 21S2 15 2 8.7C2 3.4 8.5 2 12 6.5 15.5 2 22 3.4 22 8.7C22 15 12 21 12 21Z',
   dm:'M5 4h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H8l-5 3V6a2 2 0 0 1 2-2Z',
   comment:'M21 11.5a9 9 0 0 1-9 9 10 10 0 0 1-4-.9L3 22l1.4-5.5A9 9 0 1 1 21 11.5Z',
   share:'M2 10 22 2l-7 20-4-9-9-3Zm9 3L22 2',

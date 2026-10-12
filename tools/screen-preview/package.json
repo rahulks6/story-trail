@@ -1,0 +1,17 @@
+{
+  "name": "@katkee/screen-preview",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Renders the app's real screens in a browser (React Native for Web) for screenshots. A design check, not a device test.",
+  "scripts": {
+    "build": "node build.cjs",
+    "shots": "node build.cjs && node shoot.cjs && node shoot-composite.cjs"
+  },
+  "devDependencies": {
+    "@fontsource/inter": "5.2.6",
+    "esbuild": "0.25.10",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native-web": "0.21.2"
+  }
+}

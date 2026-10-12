@@ -33,6 +33,8 @@ const api = usersApi as jest.Mocked<typeof usersApi>;
 const tabListeners: Array<() => void> = [];
 const navigation = {
   navigate: jest.fn(),
+  // The profile page sets its header (title and More button) through this.
+  setOptions: jest.fn(),
   getParent: () => ({ addListener: jest.fn((_event: string, listener: () => void) => { tabListeners.push(listener); return () => undefined; }) }),
 };
 const relation = (over: Partial<usersApi.ListRelationship> = {}) => ({ isFollowing: false, isFollowedBy: false, hasPendingRequestFromViewer: false, ...over });

@@ -72,3 +72,18 @@ test("only the owner sees New and Reorder; tapping a card opens the Highlight", 
   await act(async () => tree.root.find((n) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === "Food, Highlight").props.onPress());
   expect(mockNavigate).toHaveBeenCalledWith("HighlightViewer", { highlightId: "h1", title: "Food" });
 });
+
+test("reports how many Highlights there are, or that they can't be shown, and reloads on refresh", async () => {
+  const api = jest.requireMock("../src/api/highlights") as { listHighlightsForUser: jest.Mock };
+  const counts: Array<number | null> = [];
+  await act(async () => {
+    tree = create(<HighlightsRow username="alice" isOwner={false} onCountChange={(n) => counts.push(n)} refreshToken={0} />);
+  });
+  await act(async () => { await Promise.resolve(); });
+  expect(counts).toEqual([4]);
+  // A private account you don't follow refuses the list: the count is unknown, not zero.
+  api.listHighlightsForUser.mockRejectedValueOnce(new Error("forbidden"));
+  await act(async () => tree.update(<HighlightsRow username="alice" isOwner={false} onCountChange={(n) => counts.push(n)} refreshToken={1} />));
+  await act(async () => { await Promise.resolve(); });
+  expect(counts).toEqual([4, null]);
+});
