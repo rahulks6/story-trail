@@ -1,0 +1,8 @@
+Configuration checks passed only. Native builds, provider checks and device acceptance are still required.
+exit 0
+Release is blocked:
+- Configure KATKEE_UPLOAD_STORE_FILE in your private build environment.
+- Configure KATKEE_UPLOAD_STORE_PASSWORD in your private build environment.
+- Configure KATKEE_UPLOAD_KEY_ALIAS in your private build environment.
+- Configure KATKEE_UPLOAD_KEY_PASSWORD in your private build environment.
+exit 1

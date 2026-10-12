@@ -11,6 +11,12 @@ function defaultAdminRoot(): string {
   return fs.existsSync(path.join(built, "manifest.json")) ? built : path.resolve(process.cwd(), "../admin");
 }
 
+/** dist/website (the image copies website/public there); the repository's website/public otherwise. */
+function defaultWebsiteRoot(): string {
+  const built = path.resolve(__dirname, "../../website");
+  return fs.existsSync(path.join(built, "manifest.json")) ? built : path.resolve(process.cwd(), "../website/public");
+}
+
 function required(name: string): string {
   const value = process.env[name];
   if (!value) {
@@ -61,6 +67,13 @@ export const config = {
     ads: process.env.ADS_ENABLED === "true",
     sponsored: process.env.SPONSORED_STORIES_ENABLED === "true",
     adReporting: process.env.AD_REPORTING_ENABLED === "true",
+  },
+  website: {
+    // The built katkee.com website (website/build.cjs), served by modules/website.
+    root: process.env.WEBSITE_ROOT ?? defaultWebsiteRoot(),
+    // Production: the site's own host name (katkee.com). There it is the only thing served;
+    // empty serves the website's pages on every host (development, tests).
+    host: (process.env.WEBSITE_HOST ?? "").trim().toLowerCase(),
   },
   admin: {
     origin: process.env.ADMIN_ORIGIN ?? "http://localhost:4000",
@@ -289,6 +302,15 @@ if (config.nodeEnv === "production") {
 const apns = config.push.apns;
 if ([apns.keyId, apns.teamId, apns.privateKey, apns.bundleId].some(Boolean) && ![apns.keyId, apns.teamId, apns.privateKey, apns.bundleId].every(Boolean)) {
   throw new Error("APNs needs all of APNS_KEY_ID, APNS_TEAM_ID, APNS_PRIVATE_KEY and APNS_BUNDLE_ID.");
+}
+
+if (config.website.host) {
+  if (!/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/.test(config.website.host)) {
+    throw new Error(`WEBSITE_HOST must be a host name such as katkee.com, not ${JSON.stringify(config.website.host)}.`);
+  }
+  if (!fs.existsSync(path.join(config.website.root, "manifest.json"))) {
+    throw new Error(`WEBSITE_HOST needs the built website (manifest.json) in WEBSITE_ROOT (${config.website.root}).`);
+  }
 }
 
 if (config.features.admin && config.nodeEnv === "production") {

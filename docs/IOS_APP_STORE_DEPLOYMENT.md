@@ -11,13 +11,15 @@ What is already done in the code, and what only you can do:
 
 | Already in the code | Only you can do |
 |---|---|
-| iPhone-only, portrait, iOS 15.1+, React Native 0.87 | Join the Apple Developer Program and choose the bundle ID |
-| Camera, microphone, photos and location explanations (`Info.plist`) | Deploy the backend over HTTPS (AWS, `infra/README.md`) |
-| Approximate location by default; standard encryption declared (no export questions per upload) | Publish your Privacy Policy, Terms and Support pages |
-| Privacy manifest (`PrivacyInfo.xcprivacy`) listing what the app collects; no tracking | Provide the approved 1024 x 1024 app icon |
-| In-app account deletion, report, block, moderation, terms notice at sign-up (App Review 1.2 and 5.1.1(v)) | Firebase project and APNs key for push |
-| Google sign-in hidden on iOS unless configured (avoids the Sign in with Apple rule, 4.8) | Screenshots, description, demo account and the review submission |
-| A release check that refuses to build until everything above is set (`check-release.cjs`) | |
+| Bundle ID `com.katkee.app`, version 1.0.0, production API `https://api.katkee.com/` (`mobile/build-config.json`, Xcode) | Join the Apple Developer Program and register the bundle ID |
+| Your app icon (`AppIcon-1024.png`, opaque, 1024 x 1024) and a launch screen with your mark on the app's background | Deploy the backend and website at katkee.com (`LAUNCH.md`) |
+| Privacy Policy, Terms and Help Center pages, served at katkee.com/privacy, /terms and /support | Firebase project and APNs key for push |
+| iPhone-only, portrait, iOS 15.1+, React Native 0.87 | Screenshots, a demo account and the review submission |
+| Camera, microphone, photos and location explanations (`Info.plist`); approximate location only; standard encryption declared | |
+| Privacy manifest (`PrivacyInfo.xcprivacy`) listing what the app collects; no tracking | |
+| In-app account deletion, report, block, moderation, terms notice at sign-up (App Review 1.2 and 5.1.1(v)) | |
+| Google sign-in hidden on iOS unless configured (avoids the Sign in with Apple rule, 4.8) | |
+| A release check that refuses to build until all of this is set (`check-release.cjs`). It passes today | |
 
 ---
 
@@ -29,21 +31,20 @@ What is already done in the code, and what only you can do:
   <https://developer.apple.com/programs/>. Enrol as an **organization** if Katkee is a company:
   you need a D-U-N-S number, and the seller name on the App Store will be the company's.
 - **An iPhone** on iOS 15.1 or later, for testing.
-- **The backend running on HTTPS** (step 2). The app does nothing without it.
-- **Three public web pages**: Privacy Policy, Terms of Use and Support (an email or contact
-  form is enough for Support). Drafts that match the app are in `legal/PRIVACY_POLICY.md` and
-  `legal/TERMS_OF_SERVICE.md`. Fill in your company details and contact email, have a lawyer
-  review them, and publish them.
-- **The approved app icon**: a 1024 x 1024 PNG with no transparency and square corners (iOS
-  rounds them).
+- **The backend and website live at katkee.com** (step 2). The app does nothing without the
+  API, and App Review opens the Privacy Policy and Support pages.
+- **Have a lawyer review the Privacy Policy and Terms** before launch (`legal/README.md` lists
+  what to check), and create the mailboxes the pages give: support@, privacy@ and
+  grievance@katkee.com.
 
 ## 2. Deploy the backend first
 
-1. Follow `infra/README.md`. It creates the API, the worker, PostgreSQL, S3 and CloudFront for
-   media, SES email and alarms in AWS ap-south-1. The result is an origin such as
-   `https://api.katkee.app`.
-2. Check it: `curl https://api.<your-domain>/health` returns `{"db":"up"}`. Then run the checks
-   after a deploy in `infra/README.md`, section 4.
+1. Follow `LAUNCH.md` and `infra/README.md`. They create the API, the worker, PostgreSQL, S3
+   and CloudFront for media, SES email and alarms in AWS ap-south-1, and serve
+   `https://api.katkee.com` and the website at `https://katkee.com`.
+2. Check it from the repository root: `npm run check:live` must pass every line (the API's
+   health, the Privacy Policy, Terms, Help Center and account deletion pages, and the www
+   redirect). Then run the other checks after a deploy in `infra/README.md`, section 4.
 3. **Push notifications** (`docs/REALTIME_AND_PUSH.md`, "Setup"):
    1. Create a Firebase project and add an iOS app with your bundle ID (step 3).
    2. In the Apple Developer site, create an **APNs auth key** (.p8) under Keys and upload it
@@ -55,57 +56,52 @@ What is already done in the code, and what only you can do:
 4. Create a **demo account** for Apple's reviewers, with a profile photo, a few public Stories
    and a Highlight, so the reviewer sees a working app.
 
-## 3. Choose the permanent identifiers
+## 3. Register the bundle ID
 
-The bundle ID can never change after release. Use reverse-DNS of a domain you own, for example
-`app.katkee` (the example in `infra/README.md`).
+The identifiers are set and confirmed: the bundle ID is **`com.katkee.app`** (reverse-DNS of
+katkee.com), in `mobile/build-config.json` and in Xcode (the test target is
+`com.katkee.app.tests`). It can never change after the first upload.
 
-1. On <https://developer.apple.com/account/resources/identifiers>, add an **App ID** with that
-   bundle ID and turn on **Push Notifications**.
-2. Edit `mobile/build-config.json`:
+1. On <https://developer.apple.com/account/resources/identifiers>, add an **App ID** with the
+   bundle ID `com.katkee.app`, and turn on **Push Notifications**.
+2. `mobile/build-config.json` already holds the release values:
 
    ```json
    {
      "developmentApiUrl": "",
-     "productionApiUrl": "https://api.katkee.app/",
-     "androidApplicationId": "app.katkee",
-     "iosBundleId": "app.katkee",
+     "productionApiUrl": "https://api.katkee.com/",
+     "androidApplicationId": "com.katkee.app",
+     "iosBundleId": "com.katkee.app",
      "appVersion": "1.0.0",
      "releaseIdentifiersConfirmed": true,
-     "privacyPolicyUrl": "https://katkee.app/privacy",
-     "termsUrl": "https://katkee.app/terms",
-     "supportUrl": "https://katkee.app/support"
+     "privacyPolicyUrl": "https://katkee.com/privacy",
+     "termsUrl": "https://katkee.com/terms",
+     "supportUrl": "https://katkee.com/support"
    }
    ```
 
-   Use your real addresses; the check refuses `example.com`, `localhost`, `http://` and empty
-   values. The Privacy Policy and Terms links also appear on the sign-up screen and in
-   Settings, then About.
-3. Set the same bundle ID in Xcode (step 5) and the same `appVersion` as Xcode's **Version**
-   (`MARKETING_VERSION`).
-4. Run the check from the project root until it prints only "Configuration checks passed":
+   The Privacy Policy and Terms links also appear on the sign-up screen, and in Settings, then
+   About; Help links to the Help Center.
+3. The check passes:
 
    ```sh
    npm run check:ios-release
    ```
 
    It runs again automatically in every Release build and stops the build if anything is
-   missing. Today it lists 7 items, all yours to supply:
-   - the 3 page URLs;
-   - the production API;
-   - the bundle ID, and confirming it;
-   - the icon.
+   missing or wrong: the addresses, the bundle IDs, the version, the icon (1024 x 1024 and
+   opaque) and the privacy manifest.
 
-## 4. Add the app icon
+## 4. The app icon and launch screen
 
-Copy your approved icon to:
+Both are in the project, made from your artwork (`brand/katkee-app-icon-1024.png`):
+- `Images.xcassets/AppIcon.appiconset/AppIcon-1024.png`: one 1024 x 1024 opaque image, from
+  which Xcode makes every other size;
+- `LaunchScreen.storyboard`: your mark (`LaunchLogo`) centred on the app's background, so
+  launching flows straight into the app.
 
-```
-mobile/ios/KatkeeMobile/Images.xcassets/AppIcon.appiconset/AppIcon-1024.png
-```
-
-The icon set uses Xcode's single-size format: one 1024 x 1024 image, from which Xcode makes
-every other size.
+If the artwork changes, replace the master and run `node scripts/brand-assets.cjs`
+(`BRAND.md`).
 
 ## 5. Build and run on your iPhone
 
@@ -122,7 +118,7 @@ In Xcode, select the **KatkeeMobile** target:
 1. **Signing & Capabilities**:
    - Team: your developer team.
    - Automatically manage signing: on.
-   - Bundle Identifier: your ID from step 3, for both Debug and Release.
+   - Bundle Identifier: `com.katkee.app` (already set, for Debug and Release).
    - Add the **Push Notifications** capability if it isn't listed. The entitlements file says
      `development`; App Store signing switches it to production by itself.
 2. **General**: Version = `appVersion` (for example 1.0.0). Build = 1, then raise the Build
@@ -159,7 +155,7 @@ In Xcode, select the **KatkeeMobile** target:
 
 1. In Xcode, set the run destination to **Any iOS Device (arm64)**.
 2. Product, then **Archive**. The Release build runs the release check first and stops with a
-   list if anything from step 3 is missing.
+   list if anything is missing.
 3. In the Organizer, choose the archive, then **Distribute App**, then **App Store Connect**,
    then Upload. Keep "Upload your app's symbols" on.
 4. The build appears in App Store Connect, under the app's TestFlight tab, after processing
@@ -171,7 +167,7 @@ At <https://appstoreconnect.apple.com>, open Apps, then +, then **New App**:
 - Platform: iOS.
 - Name: "Katkee" (must be unique on the App Store; have an alternative ready).
 - Primary language.
-- Bundle ID: yours.
+- Bundle ID: `com.katkee.app`.
 - SKU: any internal code, such as `katkee-ios`.
 
 **App Information**
@@ -182,7 +178,8 @@ At <https://appstoreconnect.apple.com>, open Apps, then +, then **New App**:
 
 **Pricing and Availability**: Free; choose the countries.
 
-**App Privacy** (the "nutrition label"). Add your Privacy Policy URL, then declare these. They
+**App Privacy** (the "nutrition label"). Add the Privacy Policy URL,
+`https://katkee.com/privacy`, then declare these. They
 match `mobile/ios/KatkeeMobile/PrivacyInfo.xcprivacy`, and none is used for tracking.
 
 | Data type | Linked to the person | Tracking | Used for |
@@ -211,7 +208,7 @@ Advertising" here and in the privacy manifest.
 - **Promotional text, description, keywords**: for example "Stories-only social app.
   Share moments that disappear after 24 hours, keep the best in Highlights, find people near
   you."
-- **Support URL**, plus a Marketing URL if you have one.
+- **Support URL**: `https://katkee.com/support`. **Marketing URL**: `https://katkee.com`.
 - **Build**: pick the build you uploaded.
 - **App Review Information**: sign-in required, so give the demo account's email and password.
   Contact details. In the notes, tell the reviewer:
@@ -233,7 +230,9 @@ Advertising" here and in the privacy manifest.
    build goes through a short Beta App Review.
 2. When it's ready, on the version page choose **Add for Review**, then **Submit**. Reviews
    usually take one to two days.
-3. If it's rejected, the message names the guideline. Fix it, raise the Build number, upload,
+3. When the app is live, add its App Store link to `website/site.json` (`website/README.md`):
+   the website's "Coming soon" button becomes "Download on the App Store".
+4. If it's rejected, the message names the guideline. Fix it, raise the Build number, upload,
    then reply in App Store Connect or submit again.
 
 ### What App Review checks, and where Katkee stands

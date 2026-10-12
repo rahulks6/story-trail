@@ -1,6 +1,7 @@
 import {ProviderEntry} from "./ProviderEntry";
 import React, { useRef, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, type TextInput } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View, type TextInput } from "react-native";
+import { BrandMark } from "../../components/BrandMark";
 import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import { Banner, Button, TextField } from "../../components/Form";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -39,6 +40,10 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
         contentContainerStyle={[styles.container, { paddingTop: insets.top + spacing.lg, paddingBottom: insets.bottom + spacing.lg }]}
         keyboardShouldPersistTaps="handled"
       >
+        {/* The mark from the app icon, so launch flows into sign-in (BRAND.md). */}
+        <View style={styles.mark}>
+          <BrandMark height={64} />
+        </View>
         {/* Mixed-case wordmark, "Kat" off-white + "kee" amber — matches the brand logo (see ../../../BRAND.md). */}
         <Text style={[typography.displayLarge, styles.brand]} accessibilityRole="header">
           <Text style={styles.brandKat}>Kat</Text>
@@ -115,6 +120,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     gap: spacing.sm,
   },
+  mark: { alignItems: "center", marginBottom: spacing.sm },
   brand: { textAlign: "center", letterSpacing: 1 },
   brandKat: { color: colors.textPrimary },
   brandKee: { color: colors.accent },

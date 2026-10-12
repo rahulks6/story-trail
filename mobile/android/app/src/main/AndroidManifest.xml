@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Like confirmation (Vibration.vibrate in StoryFeed); without it Android throws a SecurityException. -->
@@ -8,8 +9,12 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Approximate location only (Nearby Stories and the location sticker), never precise:
+         the Privacy Policy says so, and iOS asks with reduced accuracy too. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- react-native-fs declares this; Katkee keeps its files in its own storage only, and the
+         photo picker needs no storage permission. -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="remove" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <!-- Cleartext is allowed only in debuggable builds (the React Native Gradle
          plugin sets the placeholder); release builds are HTTPS-only. -->

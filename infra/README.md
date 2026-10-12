@@ -28,8 +28,10 @@ production if it cannot write there.
 
 1. **AWS account and tools.** Install AWS CLI v2, Node 22, and Docker with buildx. Then run
    `npm ci` in `infra/` and `npx cdk bootstrap aws://<account>/ap-south-1`.
-2. **Certificate.** Request an ACM certificate in **ap-south-1** for the API name (for example
-   `api.katkee.app`) with DNS validation. Keep its ARN.
+2. **Certificate.** Request one ACM certificate in **ap-south-1** for `api.katkee.com`, with
+   `katkee.com` and `www.katkee.com` as additional names (the same load balancer serves the
+   website), and DNS validation. Keep its ARN. A separate certificate for the website names also
+   works: pass it as `websiteCertificateArn`.
 3. **Email.** Verify the sending domain in SES (ap-south-1) with DKIM, and request production
    access. The sandbox only delivers to verified addresses.
 4. **CloudFront signing key.** Generate the pair locally and never commit it; `*.pem` is
@@ -45,16 +47,18 @@ production if it cannot write there.
    | --- | --- | --- |
    | `imageTag` | `3f9c2a1b` | Git commit of the images in ECR. |
    | `migrationImageTag` | `4d7e0b2c` | Optional; for releases (section 5). |
-   | `apiDomainName` | `api.katkee.app` | |
+   | `apiDomainName` | `api.katkee.com` | |
    | `apiCertificateArn` | `arn:aws:acm:ap-south-1:…` | Must be in ap-south-1. |
-   | `emailFrom`, `sesIdentity` | `Katkee <no-reply@katkee.app>`, `katkee.app` | |
+   | `websiteDomainName` | `katkee.com` | The website (`website/README.md`), served by the API service on its own host; `www.katkee.com` redirects to it. |
+   | `websiteCertificateArn` | `arn:aws:acm:ap-south-1:…` | Optional: only when `apiCertificateArn` doesn't also name `katkee.com` and `www.katkee.com`. |
+   | `emailFrom`, `sesIdentity` | `Katkee <no-reply@katkee.com>`, `katkee.com` | |
    | `cloudFrontPublicKeyFile` | `cloudfront-public.pem` | Or `cloudFrontPublicKeyPem` in cdk.context.json. The CLI keeps only the first line of a multi-line `-c` value. |
-   | `alarmEmail` | `ops@katkee.app` | Confirm the subscription email after the first deploy. |
+   | `alarmEmail` | `ops@katkee.com` | Confirm the subscription email after the first deploy. |
    | `adminConsoleEnabled` | `true` | |
-   | `adminOrigin` | `https://api.katkee.app` | Defaults to the API origin. |
+   | `adminOrigin` | `https://api.katkee.com` | Defaults to the API origin. |
    | `adminAllowedCidrs` | `203.0.113.0/24` | Optional WAF allowlist for `/admin` and `/api/v1/admin`. |
    | `providers` | `fcm,apns,phone,safeBrowsing` | Only after their secrets are filled in (section 3). |
-   | `apnsBundleId` | `app.katkee` | Needed with `apns`. |
+   | `apnsBundleId` | `com.katkee.app` | Needed with `apns`. The iOS bundle ID (`mobile/build-config.json`). |
    | `twilioVerifyServiceSid`, `phoneAuthCountries` | `VA…`, `IN` | Needed with `phone`. |
    | `googleClientIds` | `…apps.googleusercontent.com` | Turns Google sign-in on. |
    | `features` | `ads,sponsoredStories,adReporting` | Off unless listed. |
@@ -71,8 +75,9 @@ production if it cannot write there.
 1. **Bootstrap mode** creates everything, including the ECR repositories, and runs no tasks:
    ```sh
    cd infra && npm ci && npm run build
-   npx cdk deploy -c bootstrap=true -c imageTag=<commit> -c apiDomainName=… -c apiCertificateArn=… \
-     -c emailFrom=… -c sesIdentity=… -c cloudFrontPublicKeyFile=cloudfront-public.pem -c alarmEmail=…
+   npx cdk deploy -c bootstrap=true -c imageTag=<commit> -c apiDomainName=api.katkee.com -c apiCertificateArn=… \
+     -c websiteDomainName=katkee.com -c emailFrom="Katkee <no-reply@katkee.com>" -c sesIdentity=katkee.com \
+     -c cloudFrontPublicKeyFile=cloudfront-public.pem -c alarmEmail=ops@katkee.com
    ```
 2. **Fill in provider secrets.** Each one starts as a random placeholder, and a placeholder
    stops the app at startup with the setting's name; it never runs. The CloudFront key is
@@ -89,8 +94,8 @@ production if it cannot write there.
    named build context:
    ```sh
    aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin <account>.dkr.ecr.ap-south-1.amazonaws.com
-   docker buildx build --platform linux/amd64 --build-context admin=../admin -t <ApiRepositoryUri>:<commit> --push .
-   docker buildx build --platform linux/amd64 --build-context admin=../admin --target worker -t <WorkerRepositoryUri>:<commit> --push .
+   docker buildx build --platform linux/amd64 --build-context admin=../admin --build-context website=../website -t <ApiRepositoryUri>:<commit> --push .
+   docker buildx build --platform linux/amd64 --build-context admin=../admin --build-context website=../website --target worker -t <WorkerRepositoryUri>:<commit> --push .
    ```
    Tags are immutable, so push a new commit for every change.
 4. **Migrate.** This creates the schema and the `katkee_app` runtime role. The `<…>` values are
@@ -106,7 +111,10 @@ production if it cannot write there.
    tasks and the worker to 1. If `describe-services` still shows a desired count of 0, run
    `aws ecs update-service --cluster <ClusterName> --service <ApiServiceName> --desired-count 2`,
    and the same for the worker with 1.
-6. **DNS.** Point the API name at the `LoadBalancerDns` output (CNAME, or a Route 53 alias).
+6. **DNS.** Point `api.katkee.com`, `katkee.com` and `www.katkee.com` at the `LoadBalancerDns`
+   output. In Route 53, use alias A (and AAAA) records for all three. Elsewhere, `api` and `www`
+   can be CNAMEs; the bare `katkee.com` needs your DNS provider's ALIAS, ANAME or CNAME
+   flattening, because a plain CNAME isn't allowed at the top of a domain.
 7. **First Super Admin.** Use an existing, active account. This is a one-off task with the API's
    settings:
    ```sh
@@ -119,6 +127,9 @@ production if it cannot write there.
 
 ## 4. Checks after a deploy
 
+- From the repository root, `npm run check:live`: the API's health and readiness, the Privacy
+  Policy, Terms, Help Center and account deletion pages, and the www redirect (all must PASS before
+  a store submission).
 - `curl -sS https://<apiDomainName>/ready` returns `{"status":"ready"}`.
 - `curl -sSI https://<apiDomainName>/admin/login` shows the strict CSP and HSTS headers.
 - Upload a photo and a video from the app. Both should reach `ready`; the worker logs show
@@ -185,7 +196,8 @@ npm run synth       # CloudFormation template in cdk.out/ (needs the context key
 | | Status |
 | --- | --- |
 | CDK stack synthesizes, with CDK's recommended feature flags | IMPLEMENTED AND VERIFIED (local) |
-| Template security and reliability properties | IMPLEMENTED AND VERIFIED (37 tests) |
+| Template security and reliability properties | IMPLEMENTED AND VERIFIED (39 tests with the backend contract) |
+| The website on katkee.com from the API service (`WEBSITE_HOST`, extra certificate, output) | IMPLEMENTED AND VERIFIED (template and backend tests) / BLOCKED (live: not deployed) |
 | Backend starts with the stack's configuration; placeholder secrets refused | IMPLEMENTED AND VERIFIED (contract test against backend/dist) |
 | Runtime database role, verified TLS to the database (local PostgreSQL TLS) | IMPLEMENTED AND VERIFIED (backend tests) |
 | Deploy to AWS, ECS on Fargate (including the `/tmp` volume permissions), RDS, CloudFront, WAF, SES, alarms | **BLOCKED**: no AWS account. Never deployed. |

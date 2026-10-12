@@ -1,0 +1,35 @@
+{
+  "generatedBy": "website/build.cjs",
+  "host": "katkee.com",
+  "pages": {
+    "/": "index.html",
+    "/support": "support.html",
+    "/delete-account": "delete-account.html",
+    "/privacy": "privacy.html",
+    "/terms": "terms.html"
+  },
+  "notFound": "404.html",
+  "assets": {
+    "site.82c3ecf5c9.css": "text/css; charset=utf-8",
+    "katkee-icon.483d838bba.svg": "image/svg+xml",
+    "social-card.5e7e0ce26c.png": "image/png"
+  },
+  "files": {
+    "/favicon.ico": {
+      "file": "favicon.ico",
+      "type": "image/x-icon"
+    },
+    "/apple-touch-icon.png": {
+      "file": "apple-touch-icon.png",
+      "type": "image/png"
+    },
+    "/robots.txt": {
+      "file": "robots.txt",
+      "type": "text/plain; charset=utf-8"
+    },
+    "/sitemap.xml": {
+      "file": "sitemap.xml",
+      "type": "application/xml; charset=utf-8"
+    }
+  }
+}

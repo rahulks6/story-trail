@@ -26,6 +26,7 @@ import { registerAppealRoutes } from "./modules/admin/appeals.routes";
 import { registerRealtimeRoutes } from "./realtime/realtime.routes";
 import { registerPushRoutes } from "./modules/push/push.routes";
 import { registerAnalyticsRoutes } from "./modules/analytics/analytics.routes";
+import { registerWebsiteRoutes, websiteGate } from "./modules/website/website.routes";
 import { RealtimeHub } from "./realtime/hub";
 
 /** The API server, with its readiness/shutdown state (see http/lifecycle.ts) and its route table. */
@@ -85,8 +86,9 @@ export function buildApp(providers?:ProviderGateway): KatkeeServer {
   registerAnalyticsRoutes(router);
   registerRealtimeRoutes(router);
   registerPushRoutes(router);
+  registerWebsiteRoutes(router);
 
-  const server = createServer(router, lifecycle);
+  const server = createServer(router, lifecycle, websiteGate);
   // Realtime connections share the HTTP port; closing the server also closes them.
   const hub = new RealtimeHub().attach(server);
   const close = server.close.bind(server);

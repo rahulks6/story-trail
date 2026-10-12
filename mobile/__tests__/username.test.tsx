@@ -1,6 +1,6 @@
 import React from "react";
 import { act, create, type ReactTestInstance, type ReactTestRenderer } from "react-test-renderer";
-import { Text, TextInput } from "react-native";
+import { Linking, Text, TextInput } from "react-native";
 import * as Keychain from "react-native-keychain";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { SignupScreen } from "../src/screens/auth/SignupScreen";
@@ -58,7 +58,9 @@ async function render(element: React.ReactElement): Promise<void> {
 const input = (label: string) => tree.root.find((n: ReactTestInstance) => typeof n.type === "string" && n.props.onChangeText && String(n.props.accessibilityLabel).startsWith(label));
 const type = async (label: string, text: string) => { await act(async () => input(label).props.onChangeText(text)); };
 const settle = async () => { await act(async () => { jest.advanceTimersByTime(400); }); await flush(); };
-const texts = () => tree.root.findAllByType(Text).map((t) => [t.props.children].flat().join(""));
+/** All of a Text's words, including nested Text (the terms notice's links). */
+const textOf = (node: ReactTestInstance | string): string => (typeof node === "string" ? node : node.children.map(textOf).join(""));
+const texts = () => tree.root.findAllByType(Text).map((t) => textOf(t));
 const buttonWithText = (text: string) =>
   tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.findAllByType(Text).some((t) => t.props.children === text));
 const signUpButton = () => tree.root.find((n: ReactTestInstance) => n.props.accessibilityRole === "button" && n.props.accessibilityLabel === "Sign up" && typeof n.type === "string");
@@ -192,6 +194,13 @@ describe("terms", () => {
     expect(notice).toContain("Terms");
     expect(notice).toContain("Privacy Policy");
     expect(notice).toContain("no tolerance for objectionable content or abuse");
+    // With the published pages configured, both are links to them.
+    const open = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined as never);
+    const links = tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && n.props.accessibilityRole === "link");
+    expect(links.map((l) => textOf(l))).toEqual(["Terms", "Privacy Policy"]);
+    for (const l of links) await act(async () => { l.props.onPress(); });
+    expect(open.mock.calls).toEqual([["https://katkee.com/terms"], ["https://katkee.com/privacy"]]);
+    open.mockRestore();
     await act(async () => tree.unmount());
 
     providers.methods.mockResolvedValue({ google: false, phone: false, countries: [], codeLength: 6 });

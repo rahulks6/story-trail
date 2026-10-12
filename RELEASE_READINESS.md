@@ -1,6 +1,17 @@
 # Katkee Android/iOS release checkpoint — 1 October 2026 (India)
 
-**Latest: 12 October 2026, final report** ([Phase 12](docs/phases/PHASE_12_FINAL_RELEASE.md)).
+**Latest: 12 October 2026, release identity on katkee.com**
+([Phase 13](docs/phases/PHASE_13_RELEASE_IDENTITY.md)). The app is configured for its permanent
+identity: bundle ID and package name `com.katkee.app`, API `https://api.katkee.com/`, and the
+Privacy Policy, Terms and Help Center at katkee.com, which the API now serves with the landing page
+and account deletion page. Your icon is in every size on both platforms, with launch screens and
+an in-app logo. The iOS release check passes; Android waits only on your private upload key. The
+launch order is in [LAUNCH.md](LAUNCH.md), with guides for the
+[App Store](docs/IOS_APP_STORE_DEPLOYMENT.md) and [Google Play](docs/GOOGLE_PLAY_DEPLOYMENT.md).
+Still **not production-ready**: nothing is deployed, the native apps haven't been built (no Mac;
+Android blocked by the network policy), and no device has run them.
+
+**Earlier: 12 October 2026, final report** ([Phase 12](docs/phases/PHASE_12_FINAL_RELEASE.md)).
 Phases 9 to 11 added nearby reach and the 60/40 Home mix, a new creator page and a finished Edit
 Profile. Phase 12 prepared the App Store submission: privacy manifest, icon set, terms at sign-up,
 and the step-by-step [iPhone and App Store guide](docs/IOS_APP_STORE_DEPLOYMENT.md). Everything is
@@ -36,8 +47,11 @@ Phase reports:
 - [Phase 10: the creator page](docs/phases/PHASE_10_CREATOR_PAGE.md)
 - [Phase 11: Edit Profile, finished](docs/phases/PHASE_11_EDIT_PROFILE.md)
 - [Phase 12: final verification, iOS guide, release package](docs/phases/PHASE_12_FINAL_RELEASE.md)
+- [Phase 13: release identity, icons and the katkee.com website](docs/phases/PHASE_13_RELEASE_IDENTITY.md)
 
-iPhone and App Store: [docs/IOS_APP_STORE_DEPLOYMENT.md](docs/IOS_APP_STORE_DEPLOYMENT.md).
+Launch order: [LAUNCH.md](LAUNCH.md). iPhone and App Store:
+[docs/IOS_APP_STORE_DEPLOYMENT.md](docs/IOS_APP_STORE_DEPLOYMENT.md). Android and Google Play:
+[docs/GOOGLE_PLAY_DEPLOYMENT.md](docs/GOOGLE_PLAY_DEPLOYMENT.md).
 
 Deployment: [infra/README.md](infra/README.md). Backups: [docs/BACKUP_AND_RESTORE.md](docs/BACKUP_AND_RESTORE.md).
 

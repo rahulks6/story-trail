@@ -11,6 +11,9 @@
     "build:android-debug": "node scripts/build-native.cjs android",
     "build:ios-simulator": "node scripts/build-native.cjs ios",
     "build:android-release": "node scripts/build-native.cjs android-release",
-    "check:16kb": "node verification/elf-alignment.cjs"
+    "check:16kb": "node verification/elf-alignment.cjs",
+    "check:live": "node scripts/check-live.cjs",
+    "build:website": "node website/build.cjs",
+    "build:brand-assets": "node scripts/brand-assets.cjs"
   }
 }

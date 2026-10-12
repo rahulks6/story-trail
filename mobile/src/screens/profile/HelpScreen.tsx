@@ -1,6 +1,9 @@
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { colors, spacing, typography } from "../../theme";
+import buildConfig from "../../../build-config.json";
+import { ListRow } from "../../components/ListRow";
+import { colors, radii, spacing, typography } from "../../theme";
+import { openPublicPage } from "./AboutScreen";
 
 const FAQS: Array<{ question: string; answer: string }> = [
   {
@@ -14,7 +17,7 @@ const FAQS: Array<{ question: string; answer: string }> = [
   },
   {
     question: "How do I stop getting a certain kind of notification?",
-    answer: "Settings > Notifications lets you turn off likes, comments, follows, or mentions independently.",
+    answer: "Settings > Notifications lets you turn off messages, likes, comments, follows, or mentions independently.",
   },
   {
     question: "Can I get my account back after deleting it?",
@@ -22,7 +25,10 @@ const FAQS: Array<{ question: string; answer: string }> = [
   },
 ];
 
-/** Real, static Help content — no support ticket system exists in this app, so this is FAQ-only rather than a fake "Contact us" that goes nowhere. */
+/**
+ * The common questions, then the Help Center on the website (build-config.json supportUrl), which
+ * answers more and gives the real support, privacy and grievance addresses.
+ */
 export function HelpScreen(): React.JSX.Element {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -32,6 +38,15 @@ export function HelpScreen(): React.JSX.Element {
           <Text style={[typography.body, styles.answer]}>{faq.answer}</Text>
         </View>
       ))}
+      {buildConfig.supportUrl ? (
+        <View style={styles.more}>
+          <Text style={[typography.bodyStrong, styles.question]}>Need more help?</Text>
+          <Text style={[typography.body, styles.answer]}>The Help Center has more answers, and how to contact us.</Text>
+          <View style={styles.card}>
+            <ListRow label="Help Center" onPress={() => openPublicPage(buildConfig.supportUrl)} />
+          </View>
+        </View>
+      ) : null}
     </ScrollView>
   );
 }
@@ -42,4 +57,13 @@ const styles = StyleSheet.create({
   item: { gap: spacing.xs },
   question: {},
   answer: { color: colors.textSecondary },
+  more: { gap: spacing.xs, marginTop: spacing.md },
+  card: {
+    marginTop: spacing.sm,
+    backgroundColor: colors.surface,
+    borderRadius: radii.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+    overflow: "hidden",
+  },
 });

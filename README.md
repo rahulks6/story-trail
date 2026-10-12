@@ -1,17 +1,21 @@
 > **Start here (12 October 2026).** Katkee is a Stories-only social app: a React Native app
-> (`mobile/`), a Node/TypeScript API and worker (`backend/`), the Admin console (`admin/`), and
-> AWS infrastructure as code (`infra/`).
+> (`mobile/`), a Node/TypeScript API and worker (`backend/`), the Admin console (`admin/`), the
+> katkee.com website (`website/`), and AWS infrastructure as code (`infra/`).
 >
+> - **Launch, in order** (katkee.com, the App Store, Google Play): [LAUNCH.md](LAUNCH.md).
+>   - iPhone and App Store: [docs/IOS_APP_STORE_DEPLOYMENT.md](docs/IOS_APP_STORE_DEPLOYMENT.md).
+>   - Android and Google Play: [docs/GOOGLE_PLAY_DEPLOYMENT.md](docs/GOOGLE_PLAY_DEPLOYMENT.md).
+>   - Backend and website on AWS: [infra/README.md](infra/README.md).
 > - **Status and release gate**: [RELEASE_READINESS.md](RELEASE_READINESS.md) and the
->   [final report](docs/phases/PHASE_12_FINAL_RELEASE.md). Not production-ready: Android and iOS
->   still need native builds and devices.
-> - **iPhone and App Store, step by step**:
->   [docs/IOS_APP_STORE_DEPLOYMENT.md](docs/IOS_APP_STORE_DEPLOYMENT.md).
-> - **Production backend on AWS**: [infra/README.md](infra/README.md).
->   [DEPLOYMENT.md](DEPLOYMENT.md) is the older single-server route.
-> - **Legal drafts** to review and publish: [legal/](legal/).
+>   [latest report](docs/phases/PHASE_13_RELEASE_IDENTITY.md). Not production-ready: nothing is
+>   deployed, and the native apps still need building and testing on phones.
+> - **Brand** (the icon, every size, both palettes): [BRAND.md](BRAND.md).
+> - **Website** (landing page, Help Center, policy, terms, account deletion):
+>   [website/README.md](website/README.md). **Legal pages** and what to review:
+>   [legal/README.md](legal/README.md).
 > - **Check everything**: `npm run verify:bundle` from this folder. For the database suite as
->   well, see `docs/NATIVE_BUILD_HANDOFF.md`, "Database acceptance".
+>   well, see `docs/NATIVE_BUILD_HANDOFF.md`, "Database acceptance". After deploying:
+>   `npm run check:live`.
 >
 > Everything below this box is historical.
 

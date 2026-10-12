@@ -1,0 +1,669 @@
+{
+ "phase": 13,
+ "date": "2026-10-12",
+ "note": "Each break is applied alone, the tests that should catch it run, and the file is restored.",
+ "server": {
+  "runner": "backend/scripts/run-tests.cjs (real PostgreSQL 16), TEST_FILTER=website or accessControl",
+  "breaks": [
+   {
+    "name": "csp-weakened",
+    "file": "dist/src/modules/website/website.routes.js",
+    "from": "res.setHeader(\"Content-Security-Policy\", exports.WEBSITE_CSP);",
+    "to": "res.setHeader(\"Content-Security-Policy\", \"default-src *\");",
+    "tests": "website"
+   },
+   {
+    "name": "framing-allowed",
+    "file": "dist/src/modules/website/website.routes.js",
+    "from": "res.setHeader(\"X-Frame-Options\", \"DENY\");",
+    "to": "",
+    "tests": "website"
+   },
+   {
+    "name": "hsts-outside-production",
+    "file": "dist/src/modules/website/website.routes.js",
+    "from": "if (env_1.config.nodeEnv === \"production\")\n        res.setHeader(\"Strict-Transport-Security\"",
+    "to": "if (true)\n        res.setHeader(\"Strict-Transport-Security\"",
+    "tests": "website"
+   },
+   {
+    "name": "etag-ignored",
+    "file": "dist/src/modules/website/website.routes.js",
+    "from": "if (tags.includes(file.etag)) {",
+    "to": "if (false) {",
+    "tests": "website"
+   },
+   {
+    "name": "weak-etag-refused",
+    "file": "dist/src/modules/website/website.routes.js",
+    "from": ".map((t) => t.trim().replace(/^W\\//, \"\"))",
+    "to": ".map((t) => t.trim())",
+    "tests": "website"
+   },
+   {
+    "name": "assets-not-immutable",
+    "file": "dist/src/modules/website/website.routes.js",
+    "from": "const ASSET_CACHE = \"public, max-age=31536000, immutable\";",
+    "to": "const ASSET_CACHE = \"public, max-age=600\";",
+    "tests": "website"
+   },
+   {
+    "name": "no-compression",
+    "file": "dist/src/modules/website/website.routes.js",
+    "from": "const encoding = file.gzip ? (0, console_assets_1.pickEncoding)(req.headers[\"accept-encoding\"]) : null;",
+    "to": "const encoding = null;",
+    "tests": "website"
+   },
+   {
+    "name": "unknown-asset-200",
+    "file": "dist/src/modules/website/website.routes.js",
+    "from": "else\n            sendNotFound(req, res, site);\n    });",
+    "to": "else\n            res.end();\n    });",
+    "tests": "website"
+   },
+   {
+    "name": "host-case-sensitive",
+    "file": "dist/src/modules/website/website.routes.js",
+    "from": ".trim().toLowerCase();",
+    "to": ".trim();",
+    "tests": "website"
+   },
+   {
+    "name": "host-port-kept",
+    "file": "dist/src/modules/website/website.routes.js",
+    "from": ": host.split(\":\")[0];",
+    "to": ": host;",
+    "tests": "website"
+   },
+   {
+    "name": "www-not-redirected",
+    "file": "dist/src/modules/website/website.routes.js",
+    "from": "if (host === `www.${siteHost}`) {",
+    "to": "if (host === `www-${siteHost}`) {",
+    "tests": "website"
+   },
+   {
+    "name": "www-redirect-http",
+    "file": "dist/src/modules/website/website.routes.js",
+    "from": "redirect(res, `https://${siteHost}${target}`);\n        return true;\n    }\n    if (host === siteHost) {",
+    "to": "redirect(res, `http://${siteHost}${target}`);\n        return true;\n    }\n    if (host === siteHost) {",
+    "tests": "website"
+   },
+   {
+    "name": "api-reachable-on-site",
+    "file": "dist/src/modules/website/website.routes.js",
+    "from": "sendNotFound(req, res, site);\n        return true;\n    }\n    if (readOnly",
+    "to": "return false;\n    }\n    if (readOnly",
+    "tests": "website"
+   },
+   {
+    "name": "writes-allowed-on-site",
+    "file": "dist/src/modules/website/website.routes.js",
+    "from": "if (known && readOnly)",
+    "to": "if (known)",
+    "tests": "website"
+   },
+   {
+    "name": "api-host-no-redirect",
+    "file": "dist/src/modules/website/website.routes.js",
+    "from": "if (readOnly && site.pages.has(pathname)) {",
+    "to": "if (false) {",
+    "tests": "website"
+   },
+   {
+    "name": "absolute-form-target-kept",
+    "file": "dist/src/modules/website/website.routes.js",
+    "from": "const target = (req.url ?? \"/\").startsWith(\"/\") ? req.url : \"/\";",
+    "to": "const target = req.url ?? \"/\";",
+    "tests": "website"
+   },
+   {
+    "name": "host-name-not-validated",
+    "file": "dist/src/config/env.js",
+    "from": ".test(exports.config.website.host)) {",
+    "to": ".test(exports.config.website.host) && false) {",
+    "tests": "website"
+   },
+   {
+    "name": "built-site-not-required",
+    "file": "dist/src/config/env.js",
+    "from": "if (!fs.existsSync(path.join(exports.config.website.root, \"manifest.json\"))) {",
+    "to": "if (false) {",
+    "tests": "website"
+   },
+   {
+    "name": "realtime-open-on-site",
+    "file": "dist/src/realtime/hub.js",
+    "from": " || this.stopped || (0, website_routes_1.isWebsiteHost)(req)) {",
+    "to": " || this.stopped) {",
+    "tests": "website"
+   },
+   {
+    "name": "site-assets-traversal-allowed",
+    "file": "dist/src/modules/website/website.routes.js",
+    "from": "const asset = site.assets.get(req.params.file ?? \"\");",
+    "to": "const asset = site.assets.get(req.params.file ?? \"\") ?? (req.params.file?.includes(\"..\") ? { body: Buffer.from(\"{\\\"dependencies\\\":1}\"), br: null, gzip: null, type: \"text/plain\", etag: \"\\\"x\\\"\", cacheControl: \"no-store\" } : undefined);",
+    "tests": "accessControl"
+   }
+  ],
+  "results": [
+   {
+    "name": "csp-weakened",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 2 - sends every page with headers that run no script, allow no framing and load nothing from elsewhere",
+     "not ok 1 - the website's pages",
+     "not ok 2 - never exposes the API or the Admin console on the website's host",
+     "not ok 2 - with WEBSITE_HOST, as in production"
+    ]
+   },
+   {
+    "name": "framing-allowed",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 2 - sends every page with headers that run no script, allow no framing and load nothing from elsewhere",
+     "not ok 1 - the website's pages"
+    ]
+   },
+   {
+    "name": "hsts-outside-production",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 2 - sends every page with headers that run no script, allow no framing and load nothing from elsewhere",
+     "not ok 1 - the website's pages"
+    ]
+   },
+   {
+    "name": "etag-ignored",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 3 - is cached briefly and revalidated, compressed when the browser accepts it, and answers HEAD",
+     "not ok 1 - the website's pages"
+    ]
+   },
+   {
+    "name": "weak-etag-refused",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 3 - is cached briefly and revalidated, compressed when the browser accepts it, and answers HEAD",
+     "not ok 1 - the website's pages"
+    ]
+   },
+   {
+    "name": "assets-not-immutable",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 4 - serves content-hashed assets as immutable, and the conventional files at their fixed paths",
+     "not ok 1 - the website's pages"
+    ]
+   },
+   {
+    "name": "no-compression",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 3 - is cached briefly and revalidated, compressed when the browser accepts it, and answers HEAD",
+     "not ok 1 - the website's pages"
+    ]
+   },
+   {
+    "name": "unknown-asset-200",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 5 - answers an unknown asset with the website's 404 page and never reads outside the site",
+     "not ok 1 - the website's pages"
+    ]
+   },
+   {
+    "name": "host-case-sensitive",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 1 - serves the website on its own host, whatever the case or port",
+     "not ok 2 - with WEBSITE_HOST, as in production"
+    ]
+   },
+   {
+    "name": "host-port-kept",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 1 - serves the website on its own host, whatever the case or port",
+     "not ok 2 - with WEBSITE_HOST, as in production"
+    ]
+   },
+   {
+    "name": "www-not-redirected",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 3 - redirects www to the website's host, keeping the path and query",
+     "not ok 5 - never redirects off the website's host, whatever the request target",
+     "not ok 2 - with WEBSITE_HOST, as in production"
+    ]
+   },
+   {
+    "name": "www-redirect-http",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 3 - redirects www to the website's host, keeping the path and query",
+     "not ok 5 - never redirects off the website's host, whatever the request target",
+     "not ok 2 - with WEBSITE_HOST, as in production"
+    ]
+   },
+   {
+    "name": "api-reachable-on-site",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 2 - never exposes the API or the Admin console on the website's host",
+     "not ok 2 - with WEBSITE_HOST, as in production"
+    ]
+   },
+   {
+    "name": "writes-allowed-on-site",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 2 - never exposes the API or the Admin console on the website's host",
+     "not ok 2 - with WEBSITE_HOST, as in production"
+    ]
+   },
+   {
+    "name": "api-host-no-redirect",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 4 - gives each page one address: asked for on the API's host, it redirects to the website",
+     "not ok 2 - with WEBSITE_HOST, as in production"
+    ]
+   },
+   {
+    "name": "absolute-form-target-kept",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 5 - never redirects off the website's host, whatever the request target",
+     "not ok 2 - with WEBSITE_HOST, as in production"
+    ]
+   },
+   {
+    "name": "host-name-not-validated",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 1 - refuses a WEBSITE_HOST that is not a host name, or without the built website",
+     "not ok 3 - startup"
+    ]
+   },
+   {
+    "name": "built-site-not-required",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 1 - refuses a WEBSITE_HOST that is not a host name, or without the built website",
+     "not ok 3 - startup"
+    ]
+   },
+   {
+    "name": "realtime-open-on-site",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 2 - never exposes the API or the Admin console on the website's host",
+     "not ok 2 - with WEBSITE_HOST, as in production"
+    ]
+   },
+   {
+    "name": "site-assets-traversal-allowed",
+    "testExit": 1,
+    "caught": true,
+    "failing": [
+     "not ok 3 - the website's assets are public files, served only by their hashed names",
+     "not ok 6 - the Admin API",
+     "not ok 1 - every route that takes an id or a username was tried above",
+     "not ok 7 - coverage"
+    ]
+   }
+  ]
+ },
+ "appChecksAndInfra": {
+  "runner": "jest (mobile) or node --test (source checks, infra dist)",
+  "breaks": [
+   {
+    "name": "mark-colours-swapped",
+    "file": "mobile/src/components/BrandMark.tsx",
+    "from": "<Path d={BRAND_MARK.k} fill={colors.textPrimary} fillRule=\"evenodd\" />",
+    "to": "<Path d={BRAND_MARK.k} fill={colors.accent} fillRule=\"evenodd\" />",
+    "runs": "jest __tests__/brand.test.tsx"
+   },
+   {
+    "name": "mark-read-by-screen-readers",
+    "file": "mobile/src/components/BrandMark.tsx",
+    "from": "accessible={false}",
+    "to": "accessible={true}",
+    "runs": "jest __tests__/brand.test.tsx"
+   },
+   {
+    "name": "mark-hole-filled",
+    "file": "mobile/src/components/BrandMark.tsx",
+    "from": " fillRule=\"evenodd\" />",
+    "to": " />",
+    "runs": "jest __tests__/brand.test.tsx"
+   },
+   {
+    "name": "login-without-mark",
+    "file": "mobile/src/screens/auth/LoginScreen.tsx",
+    "from": "<BrandMark height={64} />",
+    "to": "{null}",
+    "runs": "jest __tests__/brand.test.tsx"
+   },
+   {
+    "name": "about-version-constant",
+    "file": "mobile/src/screens/profile/AboutScreen.tsx",
+    "from": "Version {appEnv.appVersion}",
+    "to": "Version 1.0.0",
+    "runs": "jest __tests__/brand.test.tsx"
+   },
+   {
+    "name": "about-wrong-page",
+    "file": "mobile/src/screens/profile/AboutScreen.tsx",
+    "from": "[\"Help Center\", buildConfig.supportUrl],",
+    "to": "[\"Help Center\", buildConfig.termsUrl],",
+    "runs": "jest __tests__/brand.test.tsx"
+   },
+   {
+    "name": "link-failure-silent",
+    "file": "mobile/src/screens/profile/AboutScreen.tsx",
+    "from": ".catch(() => Alert.alert(\"Could not open link\", \"Please try again.\"));",
+    "to": ".catch(() => undefined);",
+    "runs": "jest __tests__/brand.test.tsx"
+   },
+   {
+    "name": "help-without-help-center",
+    "file": "mobile/src/screens/profile/HelpScreen.tsx",
+    "from": "<ListRow label=\"Help Center\" onPress={() => openPublicPage(buildConfig.supportUrl)} />",
+    "to": "{null}",
+    "runs": "jest __tests__/brand.test.tsx"
+   },
+   {
+    "name": "terms-links-swapped",
+    "file": "mobile/src/components/TermsNotice.tsx",
+    "from": "{link(\"Terms\", buildConfig.termsUrl)}",
+    "to": "{link(\"Terms\", buildConfig.privacyPolicyUrl)}",
+    "runs": "jest __tests__/username.test.tsx"
+   },
+   {
+    "name": "icon-alpha-allowed",
+    "file": "mobile/scripts/check-release.cjs",
+    "from": "h.colorType!==2)",
+    "to": "h.colorType!==2&&h.colorType!==6)",
+    "runs": "node verification/release-config.cjs"
+   },
+   {
+    "name": "stray-bundle-ids-allowed",
+    "file": "mobile/scripts/check-release.cjs",
+    "from": "||bundleIds.some(id=>id!==c.iosBundleId&&!id.startsWith(c.iosBundleId+'.')))",
+    "to": "))",
+    "runs": "node verification/release-config.cjs"
+   },
+   {
+    "name": "live-csp-unchecked",
+    "file": "scripts/check-live.cjs",
+    "from": "if (!/default-src 'none'/.test(res.headers.get('content-security-policy') ?? '')) return 'missing the website\\'s Content-Security-Policy';",
+    "to": "",
+    "runs": "node verification/check-live.cjs"
+   },
+   {
+    "name": "live-www-copy-accepted",
+    "file": "scripts/check-live.cjs",
+    "from": "return [301, 308].includes(res.status) && location === `${site.origin}/`",
+    "to": "return [200, 301, 308].includes(res.status)",
+    "runs": "node verification/check-live.cjs"
+   },
+   {
+    "name": "live-db-down-accepted",
+    "file": "scripts/check-live.cjs",
+    "from": "return body?.status === 'ok' && body?.db === 'up' ? '' :",
+    "to": "return body?.status === 'ok' ? '' :",
+    "runs": "node verification/check-live.cjs"
+   },
+   {
+    "name": "site-broken-links-allowed",
+    "file": "website/build.cjs",
+    "from": "if (!routes.has(pathname) && ",
+    "to": "if (false && !routes.has(pathname) && ",
+    "runs": "node verification/website.cjs"
+   },
+   {
+    "name": "site-any-email-allowed",
+    "file": "website/build.cjs",
+    "from": "if (!Object.values(site.contact).includes(email))",
+    "to": "if (false)",
+    "runs": "node verification/website.cjs"
+   },
+   {
+    "name": "site-scripts-allowed",
+    "file": "website/build.cjs",
+    "from": "/<script|\\son[a-z]+=|\\sstyle=|javascript:/i",
+    "to": "/<scriptx/i",
+    "runs": "node verification/website.cjs"
+   },
+   {
+    "name": "launch-screen-white",
+    "file": "mobile/ios/KatkeeMobile/LaunchScreen.storyboard",
+    "from": "red=\"0.043137254901960784\" green=\"0.043137254901960784\" blue=\"0.043137254901960784\"",
+    "to": "red=\"1\" green=\"1\" blue=\"1\"",
+    "runs": "node verification/brand-assets.cjs"
+   },
+   {
+    "name": "android-12-splash-default",
+    "file": "mobile/android/app/src/main/res/values-v31/styles.xml",
+    "from": "        <item name=\"android:windowSplashScreenAnimatedIcon\">@drawable/ic_launcher_foreground</item>\n",
+    "to": "",
+    "runs": "node verification/brand-assets.cjs"
+   },
+   {
+    "name": "precise-location-declared",
+    "file": "mobile/android/app/src/main/AndroidManifest.xml",
+    "from": "    <uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\" />\n",
+    "to": "    <uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\" />\n    <uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\" />\n",
+    "runs": "node verification/native-permissions.cjs"
+   },
+   {
+    "name": "sticker-asks-precise",
+    "file": "mobile/src/components/StickerSheet.tsx",
+    "from": "PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)",
+    "to": "PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)",
+    "runs": "node verification/native-permissions.cjs"
+   },
+   {
+    "name": "storage-permission-kept",
+    "file": "mobile/android/app/src/main/AndroidManifest.xml",
+    "from": "    <uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" tools:node=\"remove\" />\n",
+    "to": "",
+    "runs": "node verification/native-permissions.cjs"
+   },
+   {
+    "name": "infra-site-host-unset",
+    "file": "infra/dist/lib/katkee-stack.js",
+    "from": "...(s.websiteDomainName ? { WEBSITE_HOST: s.websiteDomainName } : {}),",
+    "to": "",
+    "runs": "node infra/dist/test/katkee-stack.test.js"
+   },
+   {
+    "name": "infra-site-certificate-dropped",
+    "file": "infra/dist/lib/katkee-stack.js",
+    "from": "https.addCertificates(\"WebsiteCertificate\", [aws_cdk_lib_1.aws_elasticloadbalancingv2.ListenerCertificate.fromArn(s.websiteCertificateArn)]);",
+    "to": "void 0;",
+    "runs": "node infra/dist/test/katkee-stack.test.js"
+   }
+  ],
+  "results": [
+   {
+    "name": "mark-colours-swapped",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "mark-read-by-screen-readers",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "mark-hole-filled",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "login-without-mark",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "about-version-constant",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "about-wrong-page",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "link-failure-silent",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "help-without-help-center",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "terms-links-swapped",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "icon-alpha-allowed",
+    "caught": true,
+    "failing": [
+     "not ok 11 - the App Store icon must be 1024 x 1024 and opaque"
+    ]
+   },
+   {
+    "name": "stray-bundle-ids-allowed",
+    "caught": true,
+    "failing": [
+     "not ok 1 - verification/release-config.cjs"
+    ]
+   },
+   {
+    "name": "live-csp-unchecked",
+    "caught": true,
+    "failing": [
+     "not ok 3 - each kind of broken deployment fails its check"
+    ]
+   },
+   {
+    "name": "live-www-copy-accepted",
+    "caught": true,
+    "failing": [
+     "not ok 3 - each kind of broken deployment fails its check"
+    ]
+   },
+   {
+    "name": "live-db-down-accepted",
+    "caught": true,
+    "failing": [
+     "not ok 3 - each kind of broken deployment fails its check"
+    ]
+   },
+   {
+    "name": "site-broken-links-allowed",
+    "caught": true,
+    "failing": [
+     "not ok 4 - the build refuses broken links, unknown addresses, scripts, inline styles and placeholders"
+    ]
+   },
+   {
+    "name": "site-any-email-allowed",
+    "caught": true,
+    "failing": [
+     "not ok 4 - the build refuses broken links, unknown addresses, scripts, inline styles and placeholders"
+    ]
+   },
+   {
+    "name": "site-scripts-allowed",
+    "caught": true,
+    "failing": [
+     "not ok 4 - the build refuses broken links, unknown addresses, scripts, inline styles and placeholders"
+    ]
+   },
+   {
+    "name": "launch-screen-white",
+    "caught": true,
+    "failing": [
+     "not ok 2 - the iPhone launch screen shows the launch logo on the app background"
+    ]
+   },
+   {
+    "name": "android-12-splash-default",
+    "caught": true,
+    "failing": [
+     "not ok 4 - Android draws the same dark launch as iPhone: a dark window, and the mark on Android 12+"
+    ]
+   },
+   {
+    "name": "precise-location-declared",
+    "caught": true,
+    "failing": [
+     "not ok 3 - location is approximate only: precise location is never declared or requested"
+    ]
+   },
+   {
+    "name": "sticker-asks-precise",
+    "caught": true,
+    "failing": [
+     "not ok 3 - location is approximate only: precise location is never declared or requested"
+    ]
+   },
+   {
+    "name": "storage-permission-kept",
+    "caught": true,
+    "failing": [
+     "not ok 4 - no shared-storage or photo-library permission reaches the store build"
+    ]
+   },
+   {
+    "name": "infra-site-host-unset",
+    "caught": true,
+    "failing": [
+     "not ok 2 - serves the website's own host from the API service, with its certificate when it has one",
+     "not ok 3 - services"
+    ]
+   },
+   {
+    "name": "infra-site-certificate-dropped",
+    "caught": true,
+    "failing": [
+     "not ok 2 - serves the website's own host from the API service, with its certificate when it has one",
+     "not ok 3 - services"
+    ]
+   }
+  ]
+ },
+ "summary": {
+  "caught": 44,
+  "total": 44
+ }
+}

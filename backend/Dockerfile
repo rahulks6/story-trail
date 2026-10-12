@@ -1,7 +1,9 @@
 # Reproducible build. Two images from one Dockerfile, built from backend/ with the sibling admin/
-# console sources passed as the named build context "admin":
-#   docker buildx build --build-context admin=../admin -t katkee-api .                   (the API)
-#   docker buildx build --build-context admin=../admin -t katkee-worker --target worker . (media worker: adds ffmpeg)
+# console sources and website/ passed as the named build contexts "admin" and "website":
+#   docker buildx build --build-context admin=../admin --build-context website=../website -t katkee-api .
+#       (the API, which also serves the katkee.com website)
+#   docker buildx build --build-context admin=../admin --build-context website=../website -t katkee-worker --target worker .
+#       (media worker: adds ffmpeg)
 # Media lives in S3 in production (MEDIA_STORE=s3); nothing is written to the container.
 FROM node:22-slim AS builder
 WORKDIR /app
@@ -16,6 +18,8 @@ RUN npm run build:prod
 # (scripts/build-admin.ts). Served from dist/admin, which production requires.
 COPY --from=admin . /src/admin
 RUN node dist/scripts/build-admin.js /src/admin dist/admin
+# The katkee.com website, already built and committed (website/build.cjs), served from dist/website.
+COPY --from=website public dist/website
 
 FROM node:22-slim AS base
 RUN apt-get update \

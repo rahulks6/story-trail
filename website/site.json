@@ -1,0 +1,16 @@
+{
+  "name": "Katkee",
+  "origin": "https://katkee.com",
+  "tagline": "Story that connects.",
+  "description": "Share your day as Stories that disappear after 24 hours, and keep the best as Highlights on your profile.",
+  "contact": {
+    "support": "support@katkee.com",
+    "privacy": "privacy@katkee.com",
+    "grievance": "grievance@katkee.com"
+  },
+  "stores": {
+    "appStore": "",
+    "googlePlay": ""
+  },
+  "copyrightYear": 2026
+}

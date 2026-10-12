@@ -37,7 +37,7 @@ The current adapter launches `psql` processes per query; organic ranking perform
 
 1. Back up database and media using the existing operations process. Restore to staging and rehearse recovery. Use an appropriate maintenance window for additive schema changes.
 2. In `backend`, install development dependencies and run `npm run build`. Configure existing database and JWT environment variables, then run `node dist/scripts/migrate.js` from the backend directory. Do not run the existing `pretest` reset script against shared data.
-3. Serve the **built** console. The Docker image builds it from the sibling `admin` directory, passed as the named build context `admin`. Compose does this through `additional_contexts`, or by hand: `docker buildx build --build-context admin=../admin backend`. The build is minified, content-hashed, integrity-checked and precompressed, in `dist/admin`.
+3. Serve the **built** console. The Docker image builds it from the sibling `admin` directory, passed as the named build context `admin`. Compose does this through `additional_contexts`, or by hand: `docker buildx build --build-context admin=../admin --build-context website=../website backend` (the image also carries the katkee.com website, `website/README.md`). The build is minified, content-hashed, integrity-checked and precompressed, in `dist/admin`.
 
    Outside Docker, run `node dist/scripts/build-admin.js ../admin dist/admin` in `backend`. The server serves `dist/admin` when it is present (or `ADMIN_STATIC_ROOT`), and production refuses to start the console without a build.
 

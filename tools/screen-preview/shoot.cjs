@@ -31,5 +31,7 @@ require("fs").mkdirSync(out, { recursive: true });
     await page.click('[aria-label="Zoom in"]');
     await page.waitForTimeout(300);
   });
+  await shot("screen=login", "login");
+  await shot("screen=about", "about");
   await browser.close();
 })().catch((e) => { console.error(e); process.exit(1); });

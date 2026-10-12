@@ -64,7 +64,7 @@ How Activity and direct messages reach people quickly: a WebSocket while the app
 
 ## Setup
 
-1. **Firebase project.** Add an Android app (`com.katkee.development`, or the release id) and an iOS app (same bundle id). Upload the **APNs auth key** (.p8) under *Project settings → Cloud Messaging*.
+1. **Firebase project.** Add an Android app (`com.katkee.app`) and an iOS app (the same bundle ID, `com.katkee.app`). Upload the **APNs auth key** (.p8) under *Project settings → Cloud Messaging*.
 2. **Android:** put `google-services.json` in `mobile/android/app/`. The Gradle plugin is applied only when the file exists. The file is git-ignored.
 3. **iOS:** add `GoogleService-Info.plist` to the `KatkeeMobile` target in Xcode (*Copy Bundle Resources*); it is git-ignored. Enable the *Push Notifications* capability on the App ID; the entitlements file already sets `aps-environment`, which distribution signing switches to production. Run `pod install`: Firebase needs static frameworks, which the Podfile now defaults to.
 4. **Server:** set `FCM_SERVICE_ACCOUNT_JSON` (a service account with the *Firebase Cloud Messaging API Admin* role, as JSON or base64) on the **worker**, which sends the pushes. The production compose file passes it, and the `APNS_*` variables for direct APNs. `FCM_ENDPOINT`/`APNS_HOST` exist for local test servers and are refused in production.

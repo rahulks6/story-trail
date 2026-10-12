@@ -11,3 +11,11 @@
 	# doesn't strip them.
 	encode gzip
 }
+
+# The website (katkee.com, and www, which the backend redirects to it), served by the same
+# backend: WEBSITE_HOST tells it which host is the website (src/modules/website). Point both
+# names' DNS at this server too.
+{$WEBSITE_DOMAIN}, www.{$WEBSITE_DOMAIN} {
+	reverse_proxy backend:4000
+	encode gzip
+}

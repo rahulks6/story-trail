@@ -34,9 +34,11 @@ export function settings(overrides: Partial<KatkeeSettings> = {}): KatkeeSetting
 /** Every provider and the Admin console on: the widest configuration. */
 export const everything = (): KatkeeSettings => settings({
   adminAllowedCidrs: ["203.0.113.0/24"],
+  websiteDomainName: "katkee.example",
+  websiteCertificateArn: "arn:aws:acm:ap-south-1:123456789012:certificate/9a8b7c6d-1111-2222-3333-444455556666",
   providers: {
     fcm: true,
-    apns: { bundleId: "app.katkee" },
+    apns: { bundleId: "com.katkee.app" },
     phone: { verifyServiceSid: "VA0123456789abcdef0123456789abcdef", countries: ["IN"] },
     safeBrowsing: true,
     googleClientIds: ["1234-abc.apps.googleusercontent.com"],

@@ -149,7 +149,9 @@ export function StickerSheet({ visible, onClose, onAdd, editingOverlay, onEditDo
 
   // Device location is only ever requested here, in direct response to
   // this explicit tap (spec section 31) — never on the editor simply
-  // opening, and never silently. There's no reverse-geocoding service
+  // opening, and never silently. Approximate location only, as everywhere
+  // in Katkee (the Privacy Policy says it never accesses precise location;
+  // iOS asks with reduced accuracy). There's no reverse-geocoding service
   // configured in this sandbox (no Maps/Places API key), so the result is
   // a coarse, rounded coordinate label the user can edit or discard before
   // it's ever added to the Story — never the raw, full-precision reading.
@@ -158,7 +160,7 @@ export function StickerSheet({ visible, onClose, onAdd, editingOverlay, onEditDo
     setLocatingDevice(true);
     try {
       if (Platform.OS === "android") {
-        const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+        const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION);
         if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
           setLocationError("Location permission denied.");
           setLocatingDevice(false);

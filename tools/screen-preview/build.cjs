@@ -23,6 +23,7 @@ const redirects = [
   [/^react-native-image-picker$/, mock("picker.ts")],
   [/^react-native-nitro-image$/, mock("nitro.ts")],
   [/(^|\/)api\/media$/, mock("media.ts")],
+  [/(^|\/)ProviderEntry$/, mock("providerEntry.tsx")],
 ];
 esbuild.build({
   entryPoints: [path.join(__dirname, "src/app.tsx")],

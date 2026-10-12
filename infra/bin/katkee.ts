@@ -28,6 +28,8 @@ const settings: KatkeeSettings = {
   migrationImageTag: get("migrationImageTag"),
   apiDomainName: need("apiDomainName"),
   apiCertificateArn: need("apiCertificateArn"),
+  websiteDomainName: get("websiteDomainName"),
+  websiteCertificateArn: get("websiteCertificateArn"),
   adminOrigin: get("adminOrigin"),
   adminConsoleEnabled: get("adminConsoleEnabled") === "true",
   adminAllowedCidrs: list("adminAllowedCidrs"),

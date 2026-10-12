@@ -1,0 +1,13 @@
+<resources>
+
+    <!-- Android 12+: the system launch screen shows the Katkee mark on the app's background,
+         as the iPhone launch screen does (LaunchScreen.storyboard). Keep the items above in
+         step with values/styles.xml, which this replaces on Android 12+. -->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
+        <item name="android:windowBackground">@color/katkee_background</item>
+        <item name="android:windowSplashScreenBackground">@color/katkee_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+    </style>
+
+</resources>

@@ -1,5 +1,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),os=require('node:os');
 const {validateRelease}=require('../mobile/scripts/check-release.cjs');
+/** The start of a PNG: signature and IHDR (all the release check reads). */
+function png(width,height,colorType=2){const b=Buffer.alloc(33);Buffer.from([0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a]).copy(b);b.writeUInt32BE(13,8);b.write('IHDR',12,'latin1');b.writeUInt32BE(width,16);b.writeUInt32BE(height,20);b[24]=8;b[25]=colorType;return b;}
 function fixture(t) {
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'katkee-release-'));
  t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
@@ -9,8 +11,8 @@ function fixture(t) {
  write('android/app/build.gradle','applicationId "com.katkee.app"\ndef v = new groovy.json.JsonSlurper().parse(file("../../build-config.json")).appVersion\nversionName katkeeVersionName');
  write('package.json',JSON.stringify({dependencies:{'react-native':'0.87.1'}}));
  write('android/build.gradle','targetSdkVersion = 36\ncompileSdkVersion = 36\nclasspath("com.android.tools.build:gradle:8.9.1")');
- write('ios/KatkeeMobile/Images.xcassets/AppIcon.appiconset/Contents.json',JSON.stringify({images:[{filename:'icon.png'}]}));
- write('ios/KatkeeMobile/Images.xcassets/AppIcon.appiconset/icon.png','fixture');
+ write('ios/KatkeeMobile/Images.xcassets/AppIcon.appiconset/Contents.json',JSON.stringify({images:[{filename:'icon.png',idiom:'universal',platform:'ios',size:'1024x1024'}]}));
+ write('ios/KatkeeMobile/Images.xcassets/AppIcon.appiconset/icon.png',png(1024,1024));
  write('ios/KatkeeMobile/PrivacyInfo.xcprivacy','<plist><dict><key>NSPrivacyCollectedDataTypes</key><array><dict/></array></dict></plist>');
  write('android/app/debug.keystore','public-test-key');
  write('ios/KatkeeMobile.xcodeproj/project.pbxproj','PRODUCT_BUNDLE_IDENTIFIER = "com.katkee.app"\nMARKETING_VERSION = 1.2.0;\nMARKETING_VERSION = 1.2.0;');
@@ -63,4 +65,28 @@ test('one release version: build-config appVersion drives Android and must match
  f.config.appVersion='1.3.0';f.save();assert.deepEqual(f.check('ios'),['Xcode MARKETING_VERSION differs from build-config.json appVersion.']);
  f.config.appVersion='1.2.0';f.save();f.write('android/app/build.gradle','applicationId "com.katkee.app"\nversionName "1.0"');
  assert.deepEqual(f.check('android'),['Android versionName must come from build-config.json appVersion.']);
+});
+
+test('the App Store icon must be 1024 x 1024 and opaque',t=>{
+ const f=fixture(t);assert.deepEqual(f.check('ios'),[]);
+ for(const bad of [png(1024,1024,6),png(1024,1024,4),png(512,512),Buffer.from('not a png at all, just some text')]) {
+  f.write('ios/KatkeeMobile/Images.xcassets/AppIcon.appiconset/icon.png',bad);
+  assert.deepEqual(f.check('ios'),['The iOS app icon must be a 1024 x 1024 PNG without transparency (8-bit RGB).']);
+ }
+ f.write('ios/KatkeeMobile/Images.xcassets/AppIcon.appiconset/Contents.json',JSON.stringify({images:[{filename:'icon.png',size:'60x60'}]}));
+ assert.ok(f.check('ios').some(p=>p.includes('AppIcon')),'a catalog without the 1024 icon');
+});
+
+test('every bundle identifier in the Xcode project belongs to the app',t=>{
+ const f=fixture(t);
+ f.write('ios/KatkeeMobile.xcodeproj/project.pbxproj','PRODUCT_BUNDLE_IDENTIFIER = "com.katkee.app.tests";\nPRODUCT_BUNDLE_IDENTIFIER = "com.katkee.app";\nMARKETING_VERSION = 1.2.0;');
+ assert.deepEqual(f.check('ios'),[]);
+ f.write('ios/KatkeeMobile.xcodeproj/project.pbxproj','PRODUCT_BUNDLE_IDENTIFIER = "com.katkee.development";\nPRODUCT_BUNDLE_IDENTIFIER = "com.katkee.app";\nMARKETING_VERSION = 1.2.0;');
+ assert.deepEqual(f.check('ios'),['Xcode bundle identifier differs from build-config.json.'],'a leftover development identifier');
+ f.write('ios/KatkeeMobile.xcodeproj/project.pbxproj','PRODUCT_BUNDLE_IDENTIFIER = "com.katkee.app.tests";\nMARKETING_VERSION = 1.2.0;');
+ assert.deepEqual(f.check('ios'),['Xcode bundle identifier differs from build-config.json.'],'no target with the bundle ID itself');
+});
+
+test('the repository itself passes the iOS release check',()=>{
+ assert.deepEqual(validateRelease({root:path.join(__dirname,'../mobile'),platform:'ios',env:{}}),[]);
 });

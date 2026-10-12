@@ -1,6 +1,13 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path');
 
+/** Width, height and PNG colour type from a PNG's header, or null when it is not a PNG. */
+function pngHeader(file) {
+ const b=fs.readFileSync(file);
+ if(b.length<26||b.toString('latin1',1,4)!=='PNG'||b.toString('latin1',12,16)!=='IHDR')return null;
+ return {width:b.readUInt32BE(16),height:b.readUInt32BE(20),bitDepth:b[24],colorType:b[25]};
+}
+
 function validateRelease({root,platform='all',env=process.env,checkSigning=false}) {
  const c=JSON.parse(fs.readFileSync(path.join(root,'build-config.json'),'utf8'));
  const problems=[];
@@ -56,13 +63,23 @@ function validateRelease({root,platform='all',env=process.env,checkSigning=false
  if(platform==='ios'||platform==='all') {
   identifier('iosBundleId');
   const project=fs.readFileSync(path.join(root,'ios/KatkeeMobile.xcodeproj/project.pbxproj'),'utf8');
-  if(!project.includes('PRODUCT_BUNDLE_IDENTIFIER = "'+c.iosBundleId+'"'))problems.push('Xcode bundle identifier differs from build-config.json.');
+  const bundleIds=[...project.matchAll(/PRODUCT_BUNDLE_IDENTIFIER = "?([^";]+)"?;?/g)].map(m=>m[1]);
+  // The app is the bundle ID itself; anything else in the project (tests, extensions) sits under it.
+  if(!bundleIds.includes(c.iosBundleId)||bundleIds.some(id=>id!==c.iosBundleId&&!id.startsWith(c.iosBundleId+'.')))problems.push('Xcode bundle identifier differs from build-config.json.');
   const marketing=[...project.matchAll(/MARKETING_VERSION = ([^;]+);/g)].map(m=>m[1].replace(/"/g,''));
   if(version&&(!marketing.length||marketing.some(v=>v!==version)))problems.push('Xcode MARKETING_VERSION differs from build-config.json appVersion.');
   const icons=path.join(root,'ios/KatkeeMobile/Images.xcassets/AppIcon.appiconset');
   const contents=path.join(icons,'Contents.json');
   const entries=fs.existsSync(contents)?JSON.parse(fs.readFileSync(contents,'utf8')).images??[]:[];
   if(!entries.length||entries.some(entry=>!entry.filename||!fs.existsSync(path.join(icons,entry.filename))))problems.push('Populate the iOS AppIcon catalog with approved artwork.');
+  else {
+   // App Store Connect rejects a marketing icon that is not 1024 x 1024 or has an alpha channel.
+   for(const entry of entries.filter(e=>e.size==='1024x1024')) {
+    const h=pngHeader(path.join(icons,entry.filename));
+    if(!h||h.width!==1024||h.height!==1024||h.bitDepth!==8||h.colorType!==2)problems.push('The iOS app icon must be a 1024 x 1024 PNG without transparency (8-bit RGB).');
+   }
+   if(!entries.some(e=>e.size==='1024x1024'))problems.push('Populate the iOS AppIcon catalog with approved artwork.');
+  }
   const privacy=path.join(root,'ios/KatkeeMobile/PrivacyInfo.xcprivacy');
   if(!fs.existsSync(privacy)||/NSPrivacyCollectedDataTypes<\/key>\s*(<array\s*\/>|<array>\s*<\/array>)/.test(fs.readFileSync(privacy,'utf8')))problems.push('Complete the iOS privacy manifest and store disclosures for actual data collection.');
  }
@@ -82,4 +99,4 @@ if(require.main===module) {
   }catch(e){console.error('Release configuration could not be checked: '+e.message);process.exitCode=1;}
  }
 }
-module.exports={validateRelease};
+module.exports={validateRelease,pngHeader};

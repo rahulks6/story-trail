@@ -125,6 +125,8 @@ function start(env: Record<string, string>, script: string) {
     // The same CA bundle the image carries at RDS_CA_BUNDLE (see "the image provides").
     PGSSLROOTCERT: path.join(backend, "certs", path.basename(RDS_CA_BUNDLE)),
     ADMIN_STATIC_ROOT: consoleBuild,
+    // The image carries the built website at dist/website (backend/Dockerfile); here, the repository's.
+    WEBSITE_ROOT: path.resolve(backend, "../website/public"),
   };
   return spawnSync(process.execPath, ["-e", script, dist], { cwd: os.tmpdir(), env: local, encoding: "utf8", timeout: 60_000 });
 }

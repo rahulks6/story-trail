@@ -1,29 +1,16 @@
 # Katkee Privacy Policy
 
-**Draft — not legal advice.** This accurately describes what the current
-codebase actually collects and does with data (verified against
-`backend/`'s real schema and endpoints, not generic boilerplate), so it's
-a genuinely useful starting point. Have an actual lawyer review it before
-you publish it — data protection law (GDPR if you have any EU users,
-CCPA/CPRA if California, children's privacy law if anyone under 13 could
-plausibly sign up) has real requirements a non-lawyer draft can't
-guarantee it meets, and both Apple and Google will reject a submission
-whose privacy policy doesn't match what the app's declared "nutrition
-label" (App Privacy / Data Safety form — see `../STORE_LISTING.md`) says.
+**Last updated:** 12 October 2026
 
-**Last updated:** _fill in when you publish this_
-**Effective date:** _fill in when you publish this_
-
-This must be published at a real, publicly reachable URL before you can
-submit to either store (e.g. `https://yourapp.com/privacy`) — a Markdown
-file in this repo isn't enough by itself.
+This policy explains what Katkee collects, how we use it, who can see it, how long we keep it
+and the choices you have. It covers the Katkee apps for iPhone and Android, the website at
+katkee.com and the service behind them.
 
 ## 1. Who we are
 
-Katkee ("we", "us") operates the Katkee mobile app and the backend
-service it talks to. Contact: _fill in a real support email before
-publishing. Both stores require one, and it's where data-access requests
-should go (see Section 8)._
+Katkee ("we", "us") operates the Katkee apps, the website at katkee.com and the service they
+use. Questions about this policy or your data go to privacy@katkee.com. Section 11 has our
+other contacts.
 
 ## 2. What we collect
 
@@ -100,6 +87,9 @@ message is kept as evidence for the moderator.
   device.
 - The push token Apple or Google gives your phone, so we can send
   notifications.
+- When you visit katkee.com, our servers log your IP address and the page
+  you asked for, as any website does. The website sets no cookies and has
+  no analytics or advertising trackers.
 
 ### What we do **not** collect or do
 - We don't access your contacts or your precise location.
@@ -183,7 +173,9 @@ In the app you can:
 - block, mute, report, or delete your own Stories and comments;
 - **delete your account** (Settings, then Delete account).
 
-Contact us (Section 11) for a copy of your data or anything else.
+If you can't use the app, you can ask us to delete your account at
+[katkee.com/delete-account](https://katkee.com/delete-account). Write to
+privacy@katkee.com for a copy of your data or anything else.
 
 If you're in the EU or UK you have rights under GDPR: access, correction,
 deletion, portability and objection. Residents of California have similar
@@ -195,10 +187,8 @@ nominate someone. Contact us to use any of them.
 
 Katkee is not directed at children under 13 (or the minimum age required
 by your local law, which may be higher), and we don't knowingly collect
-data from them. _If you want under-13 users, that's a materially
-different (and much stricter) compliance path — COPPA in the US, similar
-regimes elsewhere — and needs its own dedicated review; this policy
-assumes you're not doing that._
+data from them. If you believe a child under that age has an account, tell
+us at privacy@katkee.com and we will delete it.
 
 ## 10. Changes to this policy
 
@@ -207,5 +197,8 @@ notify you in the app before they take effect.
 
 ## 11. Contact
 
-_[Your support email / company name / mailing address, if you have a
-legal entity — required by some jurisdictions.]_
+- **Privacy questions and requests about your data**: privacy@katkee.com
+- **Help with the app**: support@katkee.com, or
+  [katkee.com/support](https://katkee.com/support)
+- **Grievance Officer (India)**: grievance@katkee.com. We acknowledge a
+  complaint within 24 hours and resolve it within 15 days.

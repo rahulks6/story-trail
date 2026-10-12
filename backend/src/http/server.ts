@@ -103,7 +103,10 @@ function logRequest(req: http.IncomingMessage, res: http.ServerResponse, duratio
   );
 }
 
-export function createServer(router: Router, lifecycle?: Lifecycle): http.Server {
+/** Answers a request before routing (the website's host rules); true when it did. */
+export type Gate = (req: http.IncomingMessage, res: http.ServerResponse) => boolean;
+
+export function createServer(router: Router, lifecycle?: Lifecycle, gate?: Gate): http.Server {
   const server = http.createServer((req, res) => {
     const startedAt = Date.now();
     const requestId = requestIdFor(req);
@@ -116,6 +119,7 @@ export function createServer(router: Router, lifecycle?: Lifecycle): http.Server
     void (async () => {
       try {
         globalRateLimiter.check(clientIp(req));
+        if (gate?.(req, res)) return;
 
         const url = req.url ?? "/";
         const match = router.match(req.method ?? "GET", url);

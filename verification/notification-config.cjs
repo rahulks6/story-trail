@@ -64,7 +64,7 @@ test('the check is not vacuous: each kind of drift is caught',()=>{
  assert.deepEqual(drift(c=>({androidColors:c.androidColors.replace(/#[0-9A-Fa-f]{6}/,'#FCB020')})),['notification colour #FCB020 is not the app accent #FFC800']);
  assert.deepEqual(drift(c=>({firebase:{...c.firebase,messaging_ios_foreground_presentation_options:['badge','banner']}})),['iOS foreground presentation must be ["badge"]']);
  assert.deepEqual(drift(c=>({manifest:c.manifest.replace('@drawable/ic_notification','@mipmap/ic_launcher')})),['the manifest does not point the notification icon at @drawable/ic_notification']);
- assert.deepEqual(drift(c=>({icon:c.icon.replace('#FFFFFFFF','#FFFCB020')})),['ic_notification strokeColor #FFFCB020 is not white or transparent (status-bar icons are shape-only)']);
+ assert.deepEqual(drift(c=>({icon:c.icon.replace('#FFFFFFFF','#FFFCB020')})),['ic_notification fillColor #FFFCB020 is not white or transparent (status-bar icons are shape-only)']);
  assert.deepEqual(drift(c=>({strings:c.strings.replace(/<string name="notification_channel_activity">[^<]*<\/string>/,'')})),['strings.xml lacks notification_channel_activity']);
  assert.deepEqual(drift(c=>({strings:c.strings.replace('</resources>','')})).length,1);
 });

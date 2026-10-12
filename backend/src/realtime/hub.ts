@@ -24,6 +24,7 @@ import { checkAccessSession } from "../modules/auth/session-check";
 import { clientIp } from "../http/rateLimiter";
 import { globalRateLimiter } from "../http/rateLimiters";
 import { sha256 } from "../shared/crypto";
+import { isWebsiteHost } from "../modules/website/website.routes";
 
 export const REALTIME_PATH = "/api/v1/realtime";
 export const REALTIME_CHANNEL = "realtime";
@@ -109,7 +110,8 @@ export class RealtimeHub {
   }
 
   private async handleUpgrade(req: IncomingMessage, socket: Duplex, head: Buffer): Promise<void> {
-    if ((req.url ?? "").split("?")[0] !== REALTIME_PATH || this.stopped) {
+    // Never on the website's own host (katkee.com): the API answers only on its own.
+    if ((req.url ?? "").split("?")[0] !== REALTIME_PATH || this.stopped || isWebsiteHost(req)) {
       this.reject(socket, 404, "Not Found");
       return;
     }

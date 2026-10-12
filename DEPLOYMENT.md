@@ -1,3 +1,7 @@
+> **Superseded (12 October 2026): follow [LAUNCH.md](LAUNCH.md).** This older guide predates the
+> AWS infrastructure, the native projects in `mobile/`, S3 media and the katkee.com website; its
+> steps are kept for history only.
+
 > Current checkpoint: read [RELEASE_READINESS.md](RELEASE_READINESS.md). This source is not publish-ready. Earlier completion claims and setup directions below are historical.
 
 # Deploying Katkee to the App Store and Play Store

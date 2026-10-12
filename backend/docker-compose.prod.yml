@@ -13,7 +13,8 @@
 #
 # Requires a `.env` file next to this one (never committed — see
 # .dockerignore) with real values for POSTGRES_PASSWORD, JWT_ACCESS_SECRET,
-# JWT_REFRESH_SECRET, DOMAIN, EMAIL_FROM and the media settings (S3 bucket,
+# JWT_REFRESH_SECRET, DOMAIN (api.katkee.com), WEBSITE_DOMAIN (katkee.com),
+# EMAIL_FROM and the media settings (S3 bucket,
 # CloudFront domain and signing key). Generate the two JWT secrets with:
 #   node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
 #
@@ -51,6 +52,9 @@ x-app-environment: &app-environment
   APNS_PRIVATE_KEY: ${APNS_PRIVATE_KEY:-}
   APNS_BUNDLE_ID: ${APNS_BUNDLE_ID:-}
   APNS_ENVIRONMENT: ${APNS_ENVIRONMENT:-production}
+  # The website's own host (katkee.com): there the backend serves only the website, and
+  # www.<host> redirects to it (src/modules/website).
+  WEBSITE_HOST: ${WEBSITE_DOMAIN:?set WEBSITE_DOMAIN in .env, e.g. katkee.com}
 
 services:
   postgres:
@@ -71,9 +75,10 @@ services:
   backend:
     build:
       context: .
-      # The Admin console sources, built into the image (see Dockerfile).
+      # The Admin console sources and the website, built into the image (see Dockerfile).
       additional_contexts:
         admin: ../admin
+        website: ../website
     restart: unless-stopped
     depends_on:
       postgres:
@@ -89,6 +94,7 @@ services:
       target: worker
       additional_contexts:
         admin: ../admin
+        website: ../website
     restart: unless-stopped
     depends_on:
       postgres:
@@ -103,7 +109,8 @@ services:
       - "80:80"
       - "443:443"
     environment:
-      DOMAIN: ${DOMAIN:?set DOMAIN in .env, e.g. api.yourapp.com}
+      DOMAIN: ${DOMAIN:?set DOMAIN in .env, e.g. api.katkee.com}
+      WEBSITE_DOMAIN: ${WEBSITE_DOMAIN:?set WEBSITE_DOMAIN in .env, e.g. katkee.com}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data

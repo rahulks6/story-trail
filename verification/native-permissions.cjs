@@ -48,3 +48,18 @@ test('the check is not vacuous: the app does use these capabilities, and a missi
  assert.deepEqual(missingDeclarations(code,manifest.replace(/<uses-permission android:name="android.permission.VIBRATE" \/>/,''),plist),['vibration: AndroidManifest.xml lacks android.permission.VIBRATE']);
  assert.deepEqual(missingDeclarations(code,manifest,plist.replace(/<key>NSCameraUsageDescription<\/key>\s*<string>[^<]*<\/string>/,'')),['camera: Info.plist lacks a NSCameraUsageDescription explanation']);
 });
+
+test('location is approximate only: precise location is never declared or requested',()=>{
+ assert.doesNotMatch(manifest,/ACCESS_FINE_LOCATION|ACCESS_BACKGROUND_LOCATION/,'AndroidManifest.xml');
+ for(const text of code)assert.doesNotMatch(text,/ACCESS_FINE_LOCATION|enableHighAccuracy:\s*true|requestAlwaysAuthorization/);
+ assert.match(plist,/<key>NSLocationDefaultAccuracyReduced<\/key>\s*<true\/>/,'iOS asks for approximate location');
+ assert.doesNotMatch(plist,/NSLocationAlwaysAndWhenInUseUsageDescription|NSLocationAlwaysUsageDescription/);
+});
+
+test('no shared-storage or photo-library permission reaches the store build',()=>{
+ // Libraries can add permissions in the merged manifest: this one is removed at merge time.
+ assert.match(manifest,/xmlns:tools="http:\/\/schemas\.android\.com\/tools"/);
+ assert.match(manifest,/<uses-permission android:name="android\.permission\.WRITE_EXTERNAL_STORAGE" tools:node="remove" \/>/);
+ assert.doesNotMatch(manifest,/<uses-permission android:name="android\.permission\.(READ_EXTERNAL_STORAGE|READ_MEDIA_[A-Z_]+|MANAGE_EXTERNAL_STORAGE)"/);
+ for(const text of code)assert.doesNotMatch(text,/ExternalStorageDirectoryPath|DownloadDirectoryPath|PicturesDirectoryPath/,'files stay in the app\'s own storage');
+});

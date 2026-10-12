@@ -4,6 +4,8 @@
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
+        <!-- Dark from the first frame: no white flash at launch or while the keyboard resizes the window. -->
+        <item name="android:windowBackground">@color/katkee_background</item>
     </style>
 
 </resources>

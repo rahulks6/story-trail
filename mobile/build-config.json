@@ -1,11 +1,11 @@
 {
   "developmentApiUrl": "",
-  "productionApiUrl": "",
-  "androidApplicationId": "com.katkee.development",
-  "iosBundleId": "com.katkee.development",
+  "productionApiUrl": "https://api.katkee.com/",
+  "androidApplicationId": "com.katkee.app",
+  "iosBundleId": "com.katkee.app",
   "appVersion": "1.0.0",
-  "releaseIdentifiersConfirmed": false,
-  "privacyPolicyUrl": "",
-  "termsUrl": "",
-  "supportUrl": ""
+  "releaseIdentifiersConfirmed": true,
+  "privacyPolicyUrl": "https://katkee.com/privacy",
+  "termsUrl": "https://katkee.com/terms",
+  "supportUrl": "https://katkee.com/support"
 }

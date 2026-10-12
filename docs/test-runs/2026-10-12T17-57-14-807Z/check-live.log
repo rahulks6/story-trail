@@ -1,0 +1,11 @@
+FAIL  API health        https://api.katkee.com/health  (ENOTFOUND)
+FAIL  API ready         https://api.katkee.com/ready  (ENOTFOUND)
+FAIL  Privacy Policy    https://katkee.com/privacy  (ENOTFOUND)
+FAIL  Terms of Service  https://katkee.com/terms  (ENOTFOUND)
+FAIL  Support           https://katkee.com/support  (ENOTFOUND)
+FAIL  Account deletion  https://katkee.com/delete-account  (ENOTFOUND)
+FAIL  Website           https://katkee.com/  (ENOTFOUND)
+FAIL  www redirect      https://www.katkee.com/  (ENOTFOUND)
+
+8 of 8 checks failed.
+exit 1

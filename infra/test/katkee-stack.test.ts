@@ -146,6 +146,20 @@ describe("services", () => {
     assert.equal(attrs["access_logs.s3.enabled"], "true");
   });
 
+  it("serves the website's own host from the API service, with its certificate when it has one", () => {
+    assert.equal(envOf(container(template, "api")).WEBSITE_HOST, "katkee.example");
+    const [, extra] = only(template, "AWS::ElasticLoadBalancingV2::ListenerCertificate");
+    assert.deepEqual(extra.Properties.Certificates, [{ CertificateArn: "arn:aws:acm:ap-south-1:123456789012:certificate/9a8b7c6d-1111-2222-3333-444455556666" }]);
+    const outputs = template.toJSON().Outputs as Record<string, { Value: unknown; Description: string }>;
+    assert.equal(outputs.WebsiteUrl?.Value, "https://katkee.example");
+    assert.match(outputs.WebsiteUrl!.Description, /katkee\.example and www\.katkee\.example/);
+    // Without a website domain: no host rules, no extra certificate, no output.
+    const plain = synth(settings()).template;
+    assert.equal(envOf(container(plain, "api")).WEBSITE_HOST, undefined);
+    plain.resourceCountIs("AWS::ElasticLoadBalancingV2::ListenerCertificate", 0);
+    assert.equal((plain.toJSON().Outputs as Record<string, unknown>).WebsiteUrl, undefined);
+  });
+
   it("routes only to tasks that are ready, and drains them on deploys", () => {
     const [, tg] = only(template, "AWS::ElasticLoadBalancingV2::TargetGroup");
     assert.equal(tg.Properties.HealthCheckPath, "/ready");
@@ -269,7 +283,7 @@ describe("configuration the API reads", () => {
 
   it("turns providers on with their settings, and off without them", () => {
     const on = envOf(container(template, "api"));
-    assert.equal(on.APNS_BUNDLE_ID, "app.katkee");
+    assert.equal(on.APNS_BUNDLE_ID, "com.katkee.app");
     assert.deepEqual([on.PHONE_AUTH_ENABLED, on.PHONE_AUTH_COUNTRIES, on.TWILIO_VERIFY_SERVICE_SID], ["true", "IN", "VA0123456789abcdef0123456789abcdef"]);
     assert.deepEqual([on.GOOGLE_AUTH_ENABLED, on.GOOGLE_CLIENT_IDS], ["true", "1234-abc.apps.googleusercontent.com"]);
     const off = envOf(container(synth(settings()).template, "api"));
@@ -363,6 +377,10 @@ describe("modes and settings", () => {
       [{ providers: { fcm: false, safeBrowsing: false, googleClientIds: [], phone: { verifyServiceSid: "VA0123456789abcdef0123456789abcdef", countries: ["India"] } } }, /ISO country codes/],
       [{ monthlyBudgetUsd: Number.NaN }, /monthlyBudgetUsd/],
       [{ databaseHost: "db.example.com" }, /databaseHost must be an RDS endpoint in ap-south-1/],
+      [{ websiteDomainName: "https://katkee.example" }, /websiteDomainName must be a host name/],
+      [{ websiteDomainName: "api.katkee.example" }, /websiteDomainName must differ from apiDomainName/],
+      [{ websiteCertificateArn: "arn:aws:acm:ap-south-1:123456789012:certificate/9a8b7c6d-1111" }, /websiteCertificateArn needs websiteDomainName/],
+      [{ websiteDomainName: "katkee.example", websiteCertificateArn: "arn:aws:acm:us-east-1:123456789012:certificate/9a8b7c6d-1111" }, /websiteCertificateArn must be an ACM certificate in ap-south-1/],
     ];
     for (const [overrides, error] of refusals) assert.throws(() => synth(settings(overrides)), error, JSON.stringify(overrides));
   });

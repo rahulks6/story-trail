@@ -1,0 +1,16 @@
+desktop / 200 ok
+desktop /support 200 ok
+desktop /privacy 200 ok
+desktop /terms 200 ok
+desktop /delete-account 200 ok
+desktop /nope 404 ok
+mobile / 200 ok
+mobile /support 200 ok
+mobile /privacy 200 ok
+mobile /terms 200 ok
+mobile /delete-account 200 ok
+mobile /nope 404 ok
+errors: [
+  'desktop Failed to load resource: the server responded with a status of 404 (Not Found)',
+  'mobile Failed to load resource: the server responded with a status of 404 (Not Found)'
+]

@@ -1,4 +1,6 @@
 <resources>
     <!-- Tints the notification icon and app name: colors.accent in mobile/src/theme/colors.ts. -->
     <color name="notification_accent">#FFC800</color>
+    <!-- The app's background (colors.background): the window behind the app and the launch screen. -->
+    <color name="katkee_background">#0B0B0B</color>
 </resources>

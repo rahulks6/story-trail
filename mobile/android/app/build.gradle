@@ -55,7 +55,7 @@ android {
 
     namespace "com.katkee"
     defaultConfig {
-        applicationId "com.katkee.development"
+        applicationId "com.katkee.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode katkeeVersionCode

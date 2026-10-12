@@ -8,6 +8,8 @@ import { UserProfileScreen } from "../../../mobile/src/screens/profile/UserProfi
 import { BottomTabBar } from "../../../mobile/src/navigation/BottomTabBar";
 import { EditProfileScreen } from "../../../mobile/src/screens/profile/EditProfileScreen";
 import { AvatarCropper } from "../../../mobile/src/components/AvatarCropper";
+import { LoginScreen } from "../../../mobile/src/screens/auth/LoginScreen";
+import { AboutScreen } from "../../../mobile/src/screens/profile/AboutScreen";
 import { samplePhoto } from "./mocks/images";
 import { Icon } from "../../../mobile/src/components/Icon";
 import { colors } from "../../../mobile/src/theme";
@@ -66,7 +68,24 @@ function EditPage() {
   );
 }
 
+/** About under the root stack's header. */
+function AboutPage() {
+  return (
+    <View style={{ flex: 1 }}>
+      <StatusBar />
+      <View style={styles.header}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Back" style={styles.headerSide}><Icon name="back" size={22} color={colors.textPrimary} /></Pressable>
+        <Text style={styles.headerTitle}>About</Text>
+        <View style={styles.headerSide} />
+      </View>
+      <AboutScreen />
+    </View>
+  );
+}
+
 function Phone() {
+  if (screen === "login") return <View style={styles.phone}><LoginScreen navigation={{ navigate() {} } as never} route={{ key: "l", name: "Login" } as never} /></View>;
+  if (screen === "about") return <View style={styles.phone}><AboutPage /></View>;
   if (screen === "edit") return <View style={styles.phone}><EditPage /></View>;
   if (screen === "crop") return <View style={styles.phone}><AvatarCropper photo={{ uri: samplePhoto, width: 1200, height: 900 }} onCancel={() => {}} onDone={() => {}} /></View>;
   return (

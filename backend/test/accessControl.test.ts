@@ -320,6 +320,14 @@ describe("the Admin API", () => {
   it("the console's assets are public files, served only by their versioned names", async () => {
     refused(await attempt("GET /admin/assets/:file", "/admin/assets/..%2F..%2Fpackage.json", null), "asset traversal", [404]);
   });
+
+  it("the website's assets are public files, served only by their hashed names", async () => {
+    for (const method of ["GET", "HEAD"]) {
+      const reply = await attempt(`${method} /assets/:file`, "/assets/..%2F..%2Fpackage.json", null);
+      refused(reply, `website asset traversal (${method})`, [404]);
+      assert.ok(!reply.text.includes("\"dependencies\""), "no file from outside the website");
+    }
+  });
 });
 
 describe("coverage", () => {

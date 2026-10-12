@@ -425,7 +425,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.katkee.development";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.katkee.app.tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KatkeeMobile.app/KatkeeMobile";
 			};
@@ -449,7 +449,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.katkee.development";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.katkee.app.tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KatkeeMobile.app/KatkeeMobile";
 			};
@@ -475,7 +475,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.katkee.development";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.katkee.app";
 				PRODUCT_NAME = KatkeeMobile;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -504,7 +504,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.katkee.development";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.katkee.app";
 				PRODUCT_NAME = KatkeeMobile;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				TARGETED_DEVICE_FAMILY = 1;

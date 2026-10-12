@@ -35,15 +35,22 @@ export interface KatkeeSettings {
    * imageTag (infra/README.md). Migrations are additive, so the running version keeps working.
    */
   migrationImageTag?: string | undefined;
-  /** Public API host name, e.g. api.katkee.app, and its ACM certificate in ap-south-1. */
+  /** Public API host name, e.g. api.katkee.com, and its ACM certificate in ap-south-1. */
   apiDomainName: string;
   apiCertificateArn: string;
+  /**
+   * The website's host name, e.g. katkee.com, served by the API service (backend
+   * modules/website): its www name redirects there. Its certificate is apiCertificateArn when
+   * that one also names katkee.com and www.katkee.com, or websiteCertificateArn (ap-south-1).
+   */
+  websiteDomainName?: string | undefined;
+  websiteCertificateArn?: string | undefined;
   /** Exact HTTPS origin the Admin console is opened from; defaults to https://<apiDomainName>. */
   adminOrigin?: string | undefined;
   adminConsoleEnabled: boolean;
   /** When set, /admin and /api/v1/admin answer only these IPv4 ranges (WAF). */
   adminAllowedCidrs?: string[] | undefined;
-  /** Verified SES sender ("Katkee <no-reply@katkee.app>") and its SES identity (domain or address). */
+  /** Verified SES sender ("Katkee <no-reply@katkee.com>") and its SES identity (domain or address). */
   emailFrom: string;
   sesIdentity: string;
   /** PEM public key of the CloudFront signing key pair; the private key goes in its secret. */
@@ -102,6 +109,10 @@ export function validateSettings(s: KatkeeSettings): void {
   const problems: string[] = [];
   for (const tag of [s.imageTag, s.migrationImageTag ?? s.imageTag]) if (!/^[A-Za-z0-9._-]{1,128}$/.test(tag)) problems.push(`${tag} is not a Docker image tag`);
   if (!/^arn:aws:acm:ap-south-1:\d{12}:certificate\/[0-9a-f-]+$/.test(s.apiCertificateArn)) problems.push("apiCertificateArn must be an ACM certificate in ap-south-1");
+  if (s.websiteDomainName !== undefined && !/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/.test(s.websiteDomainName)) problems.push("websiteDomainName must be a host name such as katkee.com");
+  if (s.websiteDomainName !== undefined && s.websiteDomainName === s.apiDomainName) problems.push("websiteDomainName must differ from apiDomainName");
+  if (s.websiteCertificateArn !== undefined && !s.websiteDomainName) problems.push("websiteCertificateArn needs websiteDomainName");
+  if (s.websiteCertificateArn !== undefined && !/^arn:aws:acm:ap-south-1:\d{12}:certificate\/[0-9a-f-]+$/.test(s.websiteCertificateArn)) problems.push("websiteCertificateArn must be an ACM certificate in ap-south-1");
   const adminOrigin = s.adminOrigin ?? `https://${s.apiDomainName}`;
   try {
     if (new URL(adminOrigin).origin !== adminOrigin || !adminOrigin.startsWith("https://")) problems.push("adminOrigin must be an exact https:// origin");
@@ -343,6 +354,7 @@ export class KatkeeStack extends Stack {
       MEDIA_CDN_DOMAIN: media.distributionDomainName,
       CLOUDFRONT_KEY_PAIR_ID: signingKey.publicKeyId,
       ADMIN_ORIGIN: adminOrigin,
+      ...(s.websiteDomainName ? { WEBSITE_HOST: s.websiteDomainName } : {}),
       ANALYTICS_TIME_ZONE: s.analyticsTimeZone,
       ADS_ENABLED: String(s.features.ads),
       SPONSORED_STORIES_ENABLED: String(s.features.sponsoredStories),
@@ -475,13 +487,15 @@ export class KatkeeStack extends Stack {
         unhealthyThresholdCount: 10,
       },
     });
-    alb.addListener("Https", {
+    const https = alb.addListener("Https", {
       port: 443,
       protocol: elbv2.ApplicationProtocol.HTTPS,
       certificates: [elbv2.ListenerCertificate.fromArn(s.apiCertificateArn)],
       sslPolicy: elbv2.SslPolicy.RECOMMENDED_TLS,
       defaultTargetGroups: [apiTargets],
     });
+    // The website's names, when they have their own certificate (chosen by SNI).
+    if (s.websiteCertificateArn) https.addCertificates("WebsiteCertificate", [elbv2.ListenerCertificate.fromArn(s.websiteCertificateArn)]);
     alb.addRedirect({ sourcePort: 80, sourceProtocol: elbv2.ApplicationProtocol.HTTP, targetPort: 443, targetProtocol: elbv2.ApplicationProtocol.HTTPS });
 
     // Autoscaling owns the running count: deploys leave it alone (no desiredCount) except in
@@ -620,6 +634,7 @@ export class KatkeeStack extends Stack {
     // ---------------------------------------------------------------- outputs
     const output = (id: string, value: string, description: string) => new CfnOutput(this, id, { value, description });
     output("ApiUrl", `https://${s.apiDomainName}`, "Point this name (DNS) at LoadBalancerDns");
+    if (s.websiteDomainName) output("WebsiteUrl", `https://${s.websiteDomainName}`, `Point ${s.websiteDomainName} and www.${s.websiteDomainName} (DNS alias) at LoadBalancerDns`);
     output("LoadBalancerDns", alb.loadBalancerDnsName, "CNAME/alias target for the API name");
     output("MediaCdnDomain", media.distributionDomainName, "MEDIA_CDN_DOMAIN");
     output("ApiRepositoryUri", apiRepo.repositoryUri, "Push the API image here");
