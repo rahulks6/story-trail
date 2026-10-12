@@ -1,0 +1,534 @@
+{
+ "note": "Deliberate breaks for Phases 10 and 11 (app). Each break applied alone to app source, the named Jest suite run, then the file restored. First-run misses are kept with the rerun after the test that now catches them. Phase 9 breaks are in docs/test-runs/2026-10-12T12-14-48-185Z/mutations.json.",
+ "phase10": {
+  "firstRun": [
+   {
+    "name": "unfollow-without-asking",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "private-shows-everything",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "private-lists-open",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "follows-you-hidden",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "follow-back-missing",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "block-stays-on-page",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "no-retry",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "no-empty-highlights-note",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "link-without-id",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "action-during-dismiss",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "mute-label-stale",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "rounded-count-for-readers",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "add-badge-with-story",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "ring-not-tappable",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "counts-rounded-up",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "highlight-count-never-reported",
+    "caught": false,
+    "failing": []
+   }
+  ],
+  "afterHighlightsCountTest": [
+   {
+    "name": "highlight-count-never-reported",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "unknown-count-reported-as-zero",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "refresh-ignored",
+    "caught": true,
+    "failing": []
+   }
+  ],
+  "lists": [
+   [
+    [
+     "unfollow-without-asking",
+     "mobile/src/screens/profile/UserProfileScreen.tsx",
+     "    if (!following && !requested) {",
+     "    if (true) {",
+     "jest",
+     "__tests__/profile.test.tsx"
+    ],
+    [
+     "private-shows-everything",
+     "mobile/src/screens/profile/UserProfileScreen.tsx",
+     "  const locked = profile.isPrivate && !profile.isSelf && !following;",
+     "  const locked = false;",
+     "jest",
+     "__tests__/profile.test.tsx"
+    ],
+    [
+     "private-lists-open",
+     "mobile/src/screens/profile/UserProfileScreen.tsx",
+     "            onPress: locked ? undefined : () => rootNavigation.navigate(\"FollowList\", { username: profile.username, mode: \"followers\" }),",
+     "            onPress: () => rootNavigation.navigate(\"FollowList\", { username: profile.username, mode: \"followers\" }),",
+     "jest",
+     "__tests__/profile.test.tsx"
+    ],
+    [
+     "follows-you-hidden",
+     "mobile/src/screens/profile/UserProfileScreen.tsx",
+     "        followsYou={!profile.isSelf && profile.viewer.isFollowedBy}",
+     "        followsYou={false}",
+     "jest",
+     "__tests__/profile.test.tsx"
+    ],
+    [
+     "follow-back-missing",
+     "mobile/src/screens/profile/UserProfileScreen.tsx",
+     "profile.viewer.isFollowedBy ? \"Follow back\" : \"Follow\"",
+     "\"Follow\"",
+     "jest",
+     "__tests__/profile.test.tsx"
+    ],
+    [
+     "block-stays-on-page",
+     "mobile/src/screens/profile/UserProfileScreen.tsx",
+     "              navigation.goBack();",
+     "",
+     "jest",
+     "__tests__/profile.test.tsx"
+    ],
+    [
+     "no-retry",
+     "mobile/src/screens/profile/UserProfileScreen.tsx",
+     "        {error !== \"This account isn't available.\" ? (",
+     "        {false ? (",
+     "jest",
+     "__tests__/profile.test.tsx"
+    ],
+    [
+     "no-empty-highlights-note",
+     "mobile/src/screens/profile/UserProfileScreen.tsx",
+     "          {!profile.isSelf && highlightCount === 0 ? (",
+     "          {false ? (",
+     "jest",
+     "__tests__/profile.test.tsx"
+    ],
+    [
+     "link-without-id",
+     "mobile/src/navigation/profileLinks.ts",
+     "  return `katkee://user/${username}?id=${userId}`;",
+     "  return `katkee://user/${username}`;",
+     "jest",
+     "__tests__/profile.test.tsx"
+    ],
+    [
+     "action-during-dismiss",
+     "mobile/src/components/profile/ProfileMoreSheet.tsx",
+     "    if (Platform.OS !== \"ios\") runPending();",
+     "    runPending();",
+     "jest",
+     "__tests__/profile.test.tsx"
+    ],
+    [
+     "mute-label-stale",
+     "mobile/src/components/profile/ProfileMoreSheet.tsx",
+     "{row(isMuted ? \"Unmute\" : \"Mute\", onToggleMute)}",
+     "{row(\"Mute\", onToggleMute)}",
+     "jest",
+     "__tests__/profile.test.tsx"
+    ],
+    [
+     "rounded-count-for-readers",
+     "mobile/src/components/profile/ProfileHeader.tsx",
+     "const spoken = stat.value === null ? stat.plural : countLabel(stat.value, stat.singular.toLowerCase(), stat.plural.toLowerCase());",
+     "const spoken = stat.value === null ? stat.plural : formatCount(stat.value);",
+     "jest",
+     "__tests__/profile.test.tsx"
+    ],
+    [
+     "add-badge-with-story",
+     "mobile/src/components/profile/ProfileHeader.tsx",
+     "          {!hasActiveStory && onAddStory ? (",
+     "          {onAddStory ? (",
+     "jest",
+     "__tests__/profile.test.tsx"
+    ],
+    [
+     "ring-not-tappable",
+     "mobile/src/components/profile/ProfileHeader.tsx",
+     "          {hasActiveStory && onOpenStory ? (",
+     "          {false ? (",
+     "jest",
+     "__tests__/profile.test.tsx"
+    ],
+    [
+     "counts-rounded-up",
+     "mobile/src/utils/formatCount.ts",
+     "  const shown = value >= 100 ? Math.floor(value) : Math.floor(value * 10) / 10;",
+     "  const shown = value >= 100 ? Math.round(value) : Math.round(value * 10) / 10;",
+     "jest",
+     "__tests__/profile.test.tsx"
+    ],
+    [
+     "highlight-count-never-reported",
+     "mobile/src/components/HighlightsRow.tsx",
+     "      countRef.current?.(fetched.length);",
+     "",
+     "jest",
+     "__tests__/highlights.test.tsx"
+    ]
+   ],
+   [
+    [
+     "highlight-count-never-reported",
+     "mobile/src/components/HighlightsRow.tsx",
+     "      countRef.current?.(fetched.length);",
+     "",
+     "jest",
+     "__tests__/highlights.test.tsx"
+    ],
+    [
+     "unknown-count-reported-as-zero",
+     "mobile/src/components/HighlightsRow.tsx",
+     "      countRef.current?.(null);",
+     "      countRef.current?.(0);",
+     "jest",
+     "__tests__/highlights.test.tsx"
+    ],
+    [
+     "refresh-ignored",
+     "mobile/src/components/HighlightsRow.tsx",
+     "    if (refreshToken) void load();",
+     "",
+     "jest",
+     "__tests__/highlights.test.tsx"
+    ]
+   ]
+  ]
+ },
+ "phase11": {
+  "firstRun": [
+   {
+    "name": "uploads-the-original",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "crop-not-resized",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "crop-not-square",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "pan-backwards",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "zoom-unbounded",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "crop-leaves-photo",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "no-discard-guard",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "guard-left-on-after-save",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "discard-does-nothing",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "remove-not-sent",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "photo-sent-when-unchanged",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "camera-without-permission",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "remove-offered-without-photo",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "empty-name-allowed",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "unchanged-save-sends",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "others-not-told",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "home-ignores-profile-changes",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "listener-left-behind",
+    "caught": false,
+    "failing": []
+   },
+   {
+    "name": "failed-save-leaves",
+    "caught": true,
+    "failing": []
+   }
+  ],
+  "afterUnsubscribeTest": [
+   {
+    "name": "listener-left-behind",
+    "caught": true,
+    "failing": []
+   }
+  ],
+  "lists": [
+   [
+    [
+     "uploads-the-original",
+     "mobile/src/components/AvatarCropper.tsx",
+     "      onDone(uri);",
+     "      onDone(photo.uri);",
+     "jest",
+     "__tests__/editProfile.test.tsx"
+    ],
+    [
+     "crop-not-resized",
+     "mobile/src/utils/cropPhoto.ts",
+     "  const sized = side > outputSize ? await cropped.resizeAsync(outputSize, outputSize) : cropped;",
+     "  const sized = cropped;",
+     "jest",
+     "__tests__/editProfile.test.tsx"
+    ],
+    [
+     "crop-not-square",
+     "mobile/src/models/avatarCrop.ts",
+     "  return { startX, startY, endX: startX + side, endY: startY + side };",
+     "  return { startX, startY, endX: startX + side, endY: startY + side + 1 };",
+     "jest",
+     "__tests__/editProfile.test.tsx"
+    ],
+    [
+     "pan-backwards",
+     "mobile/src/models/avatarCrop.ts",
+     "centerX: start.centerX - dx * pixelsPerPoint",
+     "centerX: start.centerX + dx * pixelsPerPoint",
+     "jest",
+     "__tests__/editProfile.test.tsx"
+    ],
+    [
+     "zoom-unbounded",
+     "mobile/src/models/avatarCrop.ts",
+     "  const zoom = Math.min(MAX_AVATAR_ZOOM, Math.max(1, Number.isFinite(crop.zoom) ? crop.zoom : 1));",
+     "  const zoom = Number.isFinite(crop.zoom) ? crop.zoom : 1;",
+     "jest",
+     "__tests__/editProfile.test.tsx"
+    ],
+    [
+     "crop-leaves-photo",
+     "mobile/src/models/avatarCrop.ts",
+     "  return { zoom, centerX: clamp(crop.centerX, half, width - half), centerY: clamp(crop.centerY, half, height - half) };",
+     "  return { zoom, centerX: crop.centerX, centerY: crop.centerY };",
+     "jest",
+     "__tests__/editProfile.test.tsx"
+    ],
+    [
+     "no-discard-guard",
+     "mobile/src/screens/profile/EditProfileScreen.tsx",
+     "  usePreventRemove(dirty && !saved, ({ data }) => {",
+     "  usePreventRemove(false, ({ data }) => {",
+     "jest",
+     "__tests__/editProfile.test.tsx"
+    ],
+    [
+     "guard-left-on-after-save",
+     "mobile/src/screens/profile/EditProfileScreen.tsx",
+     "  usePreventRemove(dirty && !saved, ({ data }) => {",
+     "  usePreventRemove(dirty, ({ data }) => {",
+     "jest",
+     "__tests__/editProfile.test.tsx"
+    ],
+    [
+     "discard-does-nothing",
+     "mobile/src/screens/profile/EditProfileScreen.tsx",
+     "onPress: () => navigation.dispatch(data.action) },",
+     "onPress: () => undefined },",
+     "jest",
+     "__tests__/editProfile.test.tsx"
+    ],
+    [
+     "remove-not-sent",
+     "mobile/src/screens/profile/EditProfileScreen.tsx",
+     "        avatarMediaId = null;",
+     "",
+     "jest",
+     "__tests__/editProfile.test.tsx"
+    ],
+    [
+     "photo-sent-when-unchanged",
+     "mobile/src/screens/profile/EditProfileScreen.tsx",
+     "          ...(avatarMediaId !== undefined ? { avatarMediaId } : {}),",
+     "          avatarMediaId,",
+     "jest",
+     "__tests__/editProfile.test.tsx"
+    ],
+    [
+     "camera-without-permission",
+     "mobile/src/screens/profile/EditProfileScreen.tsx",
+     "        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {",
+     "        if (false) {",
+     "jest",
+     "__tests__/editProfile.test.tsx"
+    ],
+    [
+     "remove-offered-without-photo",
+     "mobile/src/screens/profile/EditProfileScreen.tsx",
+     "    ...(hasPhoto ? [[{ label: \"Remove current photo\"",
+     "    ...(true ? [[{ label: \"Remove current photo\"",
+     "jest",
+     "__tests__/editProfile.test.tsx"
+    ],
+    [
+     "empty-name-allowed",
+     "mobile/src/screens/profile/EditProfileScreen.tsx",
+     "  const nameMissing = displayName.trim().length === 0;",
+     "  const nameMissing = false;",
+     "jest",
+     "__tests__/editProfile.test.tsx"
+    ],
+    [
+     "unchanged-save-sends",
+     "mobile/src/screens/profile/EditProfileScreen.tsx",
+     "    if (!dirty) {\n      navigation.goBack();\n      return;\n    }",
+     "",
+     "jest",
+     "__tests__/editProfile.test.tsx"
+    ],
+    [
+     "others-not-told",
+     "mobile/src/screens/profile/EditProfileScreen.tsx",
+     "      profileChanged();",
+     "",
+     "jest",
+     "__tests__/editProfile.test.tsx"
+    ],
+    [
+     "home-ignores-profile-changes",
+     "mobile/src/screens/home/HomeScreen.tsx",
+     " useEffect(()=>onProfileChanged(()=>setRetry(n=>n+1)),[]);",
+     "",
+     "jest",
+     "__tests__/home.test.tsx"
+    ],
+    [
+     "listener-left-behind",
+     "mobile/src/state/storyChanges.ts",
+     "export function onProfileChanged(listener:()=>void){profileListeners.add(listener);return ()=>{profileListeners.delete(listener);};}",
+     "export function onProfileChanged(listener:()=>void){profileListeners.add(listener);return ()=>{};}",
+     "jest",
+     "__tests__/home.test.tsx"
+    ],
+    [
+     "failed-save-leaves",
+     "mobile/src/screens/profile/EditProfileScreen.tsx",
+     "      setSaved(true);\n    } catch (err) {",
+     "      setSaved(true);\n    } catch (err) {\n      setSaved(true);",
+     "jest",
+     "__tests__/editProfile.test.tsx"
+    ]
+   ],
+   [
+    [
+     "listener-left-behind",
+     "mobile/src/state/storyChanges.ts",
+     "export function onProfileChanged(listener:()=>void){profileListeners.add(listener);return ()=>{profileListeners.delete(listener);};}",
+     "export function onProfileChanged(listener:()=>void){profileListeners.add(listener);return ()=>{};}",
+     "jest",
+     "__tests__/home.test.tsx"
+    ]
+   ]
+  ]
+ }
+}

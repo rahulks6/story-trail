@@ -9,10 +9,10 @@ themselves — this file is the content checklist.
 ## Already true of this codebase (verify, don't rebuild)
 
 - **Account deletion, in-app** (Apple guideline 5.1.1(v), required for any
-  app with account creation): `DELETE /api/v1/users/me` + a real
-  "Delete account" flow in `ProfileScreen.tsx` → `DeleteAccountSheet.tsx`.
-  Password-confirmed, deletes the account's Stories, blocks login,
-  revokes sessions. See `backend/README.md`'s Phase 12 section.
+  app with account creation): Settings, then Delete account
+  (`AccountSecurityScreen.tsx`). It confirms your identity, deletes the
+  account's Stories, blocks login and revokes sessions. See
+  `backend/README.md`'s Phase 12 section.
 - **User-generated-content safety** (Apple guideline 1.2): a working
   Report flow (Story, comment, or account — `ReportSheet.tsx` → a real
   moderator queue) and Block/Mute, all real and tested since Phases 5/10.
@@ -23,13 +23,17 @@ themselves — this file is the content checklist.
   real automated content-moderation API (AWS Rekognition / Google Cloud
   Vision SafeSearch both have real, well-documented APIs) gating media
   upload — a genuine follow-up, not something to fake now.
-- **No third-party social login** — so Apple's "must offer Sign in with
-  Apple if you offer any other third-party login" rule doesn't apply;
-  email/password is the only auth method here. Don't add Sign in with
-  Apple unless you also add Google/Facebook login later, at which point
-  it becomes mandatory again.
-- **No ad SDK, no data broker, no data sale** — makes both stores' privacy
-  declarations (below) shorter and less scary than most apps'.
+- **Third-party login** (updated 12 October 2026). Email and phone sign-in
+  don't trigger Apple's guideline 4.8. Google sign-in exists, but the
+  iPhone app shows it only when `googleIosClientId` is set in
+  `mobile/src/config/providers.ts`. Leave it empty for the App Store,
+  unless you also add Sign in with Apple, which 4.8 then requires.
+- **Terms at sign-up** (guideline 1.2): the sign-up and onboarding screens
+  say that joining agrees to the Terms and Privacy Policy, with zero
+  tolerance for objectionable content and abuse.
+- **No ad SDK, no data broker, no data sale.** Katkee's own Sponsored
+  Stories choose ads by interests and platform, and advertisers see only
+  totals.
 - **HTTPS-only once deployed per `DEPLOYMENT.md`** — satisfies iOS App
   Transport Security and both stores' "uses encryption in transit"
   questions with the standard/exempt answer (see Export Compliance below).
@@ -85,25 +89,29 @@ was used to fake them; produce real ones)
 
 ### Apple "App Privacy" (Data Safety's iOS equivalent — a structured
 form in App Store Connect, not free text)
-Declare these data types as **collected** and **linked to the user**
-(matches what `legal/PRIVACY_POLICY.md` Section 2 actually describes):
-- Contact Info → Email Address
-- User Content → Photos or Videos, Other User Content (captions,
-  comments, messages)
-- Identifiers → User ID
-- Usage Data → Product Interaction (the real engagement signals Phase 6's
-  recommendation scoring reads — likes, views, watch duration, etc.)
-None of it is used for **third-party advertising or tracking** — answer
-those specific sub-questions "No." No location, contacts, or
-financial-info collection to declare.
+**Updated 12 October 2026.** Use the table in
+[`docs/IOS_APP_STORE_DEPLOYMENT.md`](docs/IOS_APP_STORE_DEPLOYMENT.md),
+section 7. It matches `mobile/ios/KatkeeMobile/PrivacyInfo.xcprivacy` and
+`legal/PRIVACY_POLICY.md`. Since this checklist was first written, Katkee
+also collects:
+- **coarse location**: Nearby Stories, opt-in;
+- **phone number**: phone sign-in;
+- **audio**: video Stories;
+- **direct messages**;
+- **diagnostics**: crash counts.
+
+Interests can also choose which Sponsored Stories appear (first-party
+advertising). Nothing is used for tracking, so answer "No" to every
+tracking question.
 
 ### Google Play "Data Safety" form
 Same underlying facts as above, in Google's own categories: Personal info
 (email), Photos/videos, App activity (in-app actions, other user-generated
 content), App info and performance. Declare data is encrypted in transit
 (true once `DEPLOYMENT.md`'s HTTPS setup is live) and that users can
-request deletion (true — both in-app via `DeleteAccountSheet.tsx` and via
-the support email in the privacy policy).
+request deletion (true: in-app under Settings, then Delete account, and via
+the support email in the privacy policy). Add coarse location (Nearby
+Stories, optional), phone number, audio and messages, as in the Apple table.
 
 ### Content rating questionnaires
 Both stores run you through a structured questionnaire (IARC for Google,

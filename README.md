@@ -1,3 +1,20 @@
+> **Start here (12 October 2026).** Katkee is a Stories-only social app: a React Native app
+> (`mobile/`), a Node/TypeScript API and worker (`backend/`), the Admin console (`admin/`), and
+> AWS infrastructure as code (`infra/`).
+>
+> - **Status and release gate**: [RELEASE_READINESS.md](RELEASE_READINESS.md) and the
+>   [final report](docs/phases/PHASE_12_FINAL_RELEASE.md). Not production-ready: Android and iOS
+>   still need native builds and devices.
+> - **iPhone and App Store, step by step**:
+>   [docs/IOS_APP_STORE_DEPLOYMENT.md](docs/IOS_APP_STORE_DEPLOYMENT.md).
+> - **Production backend on AWS**: [infra/README.md](infra/README.md).
+>   [DEPLOYMENT.md](DEPLOYMENT.md) is the older single-server route.
+> - **Legal drafts** to review and publish: [legal/](legal/).
+> - **Check everything**: `npm run verify:bundle` from this folder. For the database suite as
+>   well, see `docs/NATIVE_BUILD_HANDOFF.md`, "Database acceptance".
+>
+> Everything below this box is historical.
+
 > Current checkpoint: read [RELEASE_READINESS.md](RELEASE_READINESS.md). This source is not publish-ready. Earlier completion claims and setup directions below are historical.
 
 > Start with [FINAL_SOURCE_STATUS.md](FINAL_SOURCE_STATUS.md). This archive contains verified source changes and native development hosts, **not a completed store-ready release**. That status supersedes historical completion claims below.

@@ -46,8 +46,14 @@ or license it to third parties for their own use.
 You're responsible for Your Content. Don't post anything that:
 - violates someone else's rights (copyright, trademark, privacy, publicity)
 - is illegal, harassing, hateful, or threatens violence or self-harm
+- is sexually explicit, or sexualizes anyone under 18
 - impersonates another person or entity
 - is spam or deceptive
+
+**Katkee has zero tolerance for objectionable content and abusive users.**
+Content that breaks these rules is removed, and accounts that post it can
+be restricted, suspended or permanently disabled. You agree to these rules
+when you create an account (the sign-up screen says so).
 
 ## 5. Content moderation and enforcement
 

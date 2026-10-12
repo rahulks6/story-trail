@@ -183,3 +183,20 @@ describe("Google or phone onboarding", () => {
     expect(texts().some((t) => /phone/i.test(t))).toBe(true);
   });
 });
+
+describe("terms", () => {
+  test("sign-up and onboarding say what joining agrees to, with no tolerance for abuse", async () => {
+    const props = { navigation: { navigate: jest.fn() }, route: { key: "Signup", name: "Signup" } } as unknown as React.ComponentProps<typeof SignupScreen>;
+    await render(<SignupScreen {...props} />);
+    const notice = texts().find((t) => t.startsWith("By signing up, you agree to Katkee's"));
+    expect(notice).toContain("Terms");
+    expect(notice).toContain("Privacy Policy");
+    expect(notice).toContain("no tolerance for objectionable content or abuse");
+    await act(async () => tree.unmount());
+
+    providers.methods.mockResolvedValue({ google: false, phone: false, countries: [], codeLength: 6 });
+    await Keychain.setGenericPassword("pending", JSON.stringify({ proof: "proof-2", expiresAt: Date.now() + 60_000 }), { service: "com.katkee.provider-onboarding.v1" });
+    await render(<ProviderEntry />);
+    expect(texts().some((t) => t.startsWith("By continuing, you agree to Katkee's"))).toBe(true);
+  });
+});

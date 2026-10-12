@@ -1,12 +1,12 @@
 # Katkee Android/iOS release checkpoint — 1 October 2026 (India)
 
-**Latest: 12 October 2026, Phase 9: nearby reach for public Stories, and the Home mix**
-([Phase 9 report](docs/phases/PHASE_9_REACH_AND_HOME.md)). Public Stories reach people nearby
-first and more people as they engage; Home mixes people you follow with new people, 60/40,
-shuffled on every refresh. Tested on the server (418 tests) and in app component tests, but not
-on a device. The release gate below, from the
-[Phase 7 report](docs/phases/PHASE_7_PRODUCTION_HARDENING.md), is unchanged. **Not
-production-ready.**
+**Latest: 12 October 2026, final report** ([Phase 12](docs/phases/PHASE_12_FINAL_RELEASE.md)).
+Phases 9 to 11 added nearby reach and the 60/40 Home mix, a new creator page and a finished Edit
+Profile. Phase 12 prepared the App Store submission: privacy manifest, icon set, terms at sign-up,
+and the step-by-step [iPhone and App Store guide](docs/IOS_APP_STORE_DEPLOYMENT.md). Everything is
+tested on the server and in app component tests, not on devices. The release gate (30 gates) is in
+the Phase 12 report. **Not production-ready**: Android is blocked by the network policy, iOS needs
+a Mac, and the AWS account, provider credentials, icon and legal pages must come from you.
 
 - **Fully passing (10 of 30 gates):** 4, 12–15, 18, 19, 21, 24 and 26 (server scope).
   - Server-side:
@@ -35,6 +35,9 @@ Phase reports:
 - [Phase 9: nearby reach and the Home mix](docs/phases/PHASE_9_REACH_AND_HOME.md)
 - [Phase 10: the creator page](docs/phases/PHASE_10_CREATOR_PAGE.md)
 - [Phase 11: Edit Profile, finished](docs/phases/PHASE_11_EDIT_PROFILE.md)
+- [Phase 12: final verification, iOS guide, release package](docs/phases/PHASE_12_FINAL_RELEASE.md)
+
+iPhone and App Store: [docs/IOS_APP_STORE_DEPLOYMENT.md](docs/IOS_APP_STORE_DEPLOYMENT.md).
 
 Deployment: [infra/README.md](infra/README.md). Backups: [docs/BACKUP_AND_RESTORE.md](docs/BACKUP_AND_RESTORE.md).
 

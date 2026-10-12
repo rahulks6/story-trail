@@ -9,6 +9,7 @@ import type { AuthStackParamList } from "../../navigation/types";
 import { colors, spacing, typography } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { usernameCheckText, usernameRefused, useUsernameAvailability } from "../../hooks/useUsernameAvailability";
+import { TermsNotice } from "../../components/TermsNotice";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Signup">;
 
@@ -113,6 +114,7 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
         />
 
         <Button label="Sign up" onPress={() => void onSubmit()} disabled={!complete} busy={submitting} />
+        <TermsNotice action="signing up" />
 
         <Pressable style={styles.linkButton} onPress={() => navigation.navigate("Login")} accessibilityRole="button">
           <Text style={typography.body}>

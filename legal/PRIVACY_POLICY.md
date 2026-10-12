@@ -22,106 +22,176 @@ file in this repo isn't enough by itself.
 
 Katkee ("we", "us") operates the Katkee mobile app and the backend
 service it talks to. Contact: _fill in a real support email before
-publishing — both stores require one, and it's where account-deletion
-and data-access requests should go (see Section 7)._
+publishing. Both stores require one, and it's where data-access requests
+should go (see Section 8)._
 
 ## 2. What we collect
 
 ### Account information
 Username, email address, a securely hashed password (we never store your
-actual password — see Section 5), display name, and an optional bio.
+actual password; see Section 6), display name, and an optional bio,
+interests (up to five) and profile photo. If you sign in with your phone
+number, we keep the number. If you sign in with Google, we keep your Google
+account ID and email address.
 
 ### Content you create
-Photos and videos you publish as Stories, captions, comments you post,
-messages you send (including when you share a Story into a
-conversation), and Highlights you create from your own past Stories.
+Photos and videos you publish as Stories (with any sound they contain),
+captions, stickers and drawings, Highlights you keep, comments, likes,
+shares, and the direct messages you send (including Stories you share into
+a conversation).
+
+When you change your profile photo, the app cuts out the square you choose
+on your phone and uploads only that square.
 
 ### Your connections
-Who you follow, who follows you, and who you've blocked or muted.
+Who you follow, who follows you, follow requests, and who you've blocked or
+muted.
 
-### Activity signals used to rank what you see
-We record real engagement signals — which Stories you view and for how
-long, likes, comments, shares, profile visits, and an explicit "Not
-Interested" signal when you use it — to rank the Home feed and
-recommend creators. This is a deterministic scoring formula over your
-own real activity, not a third-party ad-targeting profile, and none of
-it is sold or shared with advertisers (we don't have any).
+### Your approximate area (Nearby Stories, optional)
+Only if you turn on **Nearby Stories**. The app reads an approximate
+location once in a while, turns it into a city-sized area (about
+39 x 20 km) on your phone, and sends only that area, never your
+coordinates. Your phone's **time zone** is also sent, so new Stories can
+come from your region even if Nearby Stories is off.
+
+We use the area and time zone only to show you Stories from people near
+you and to show your public Stories to people near you. They are never
+shown to anyone, never used for ads, and deleted:
+- after 30 days without a refresh;
+- at once when you turn Nearby Stories off (the area) or delete your
+  account (both).
+
+If you add a location sticker to a Story, the approximate place you choose
+is shown on that Story.
+
+### Activity used to rank Home and Story reach
+We record views, how much of a Story was watched, likes, comments, shares,
+profile visits, follows, quick skips, and "Not interested". We use them for
+three things:
+- to order your Home;
+- to decide how far a public Story reaches beyond its owner's followers;
+- to give creators aggregate Insights.
+
+A Story's view count is public. Only the Story's owner can see who viewed it.
+
+### Sponsored Stories
+Katkee shows Sponsored Stories, labelled "Sponsored", from advertisers. Which
+ones you see depends on your interests and your phone's platform (iPhone or
+Android). Advertisers receive only totals, such as how many times an ad was
+shown or tapped, never who you are. Your messages, area and time zone are
+never used for ads. We don't use advertising identifiers or track you
+across other companies' apps and websites.
+
+### App usage and crashes
+Katkee's own analytics record when the app is opened, which platform and
+app version you use, and crash counts. We use them to measure how many
+people use Katkee each day and month, and how stable it is. We don't use
+third-party analytics or advertising SDKs.
 
 ### Reports
-If you report a Story, comment, or account, we keep a record of who
-filed the report, what it was about, and how a moderator resolved it.
+If you report a Story, comment, message or account, we keep a record of the
+report, what it was about, and how a moderator resolved it. A reported
+message is kept as evidence for the moderator.
 
 ### Technical information
-Your IP address (used only to enforce rate limits against abuse — see
-`backend/README.md`'s Phase 11 section — and briefly in server request
-logs) and basic device/app metadata (like your device's user-agent
-string) associated with your login sessions, so we can let you revoke a
-specific device's access.
+- Your IP address: to limit abuse and secure accounts. It also appears in
+  server logs.
+- Device and app details for each signed-in session, so you can sign out a
+  device.
+- The push token Apple or Google gives your phone, so we can send
+  notifications.
 
-### What we do **not** collect
-We do not access your contacts, precise or coarse location, or any
-device sensors beyond the camera/microphone you explicitly use to
-capture a photo or video. We do not run third-party advertising or
-analytics SDKs. We do not sell your data to anyone, for any reason.
+### What we do **not** collect or do
+- We don't access your contacts or your precise location.
+- We remove location details (EXIF/GPS and similar metadata) from the copies
+  of your photos and videos that we show, and delete uploaded originals 30
+  days after processing.
+- We don't sell your data, use your content to train third-party AI models,
+  or share it with data brokers.
 
 ## 3. How we use it
 
-To operate the core product: create your account, publish and show you
-Stories, deliver notifications, run direct messages, rank your Home
-feed, and act on reports through our moderation process (see
-`backend/README.md`'s Phase 10 section for exactly what that process
-does — a human moderator can remove reported content or suspend an
-account, and suspension actually revokes that account's active login
-sessions).
-
-We do not use your content or activity to train any third-party AI
-model, and we do not share it with data brokers.
+- **To operate Katkee**: your account, Stories and Highlights,
+  notifications, direct messages, search and suggestions.
+- **To rank and reach**: Home and how far public Stories reach, as
+  described above.
+- **To keep Katkee safe**: rate limits, link checks, and acting on reports.
+  A moderator can remove content or restrict, suspend or disable an
+  account, and a suspended account is signed out everywhere.
+- **For Sponsored Stories and analytics**, as described above.
 
 ## 4. Who can see what
 
-- A **public** account's Stories are visible to anyone; a **private**
-  account's are visible only to approved followers — this is your
-  choice, changeable anytime in your profile.
-- Direct messages are visible only to the two participants in that
-  conversation.
-- Blocking someone hides your content from them and theirs from you, in
-  both directions, immediately.
+- **Stories**: a public account's Stories can be seen by anyone, and reach
+  people beyond its followers as described above. A private account's
+  Stories are seen only by followers it approved. Followers-only Stories
+  are seen only by followers.
+- **Direct messages**: only the people in the conversation see them. Staff
+  can't browse messages. A moderator sees a message only when someone
+  reports it.
+- **Blocking**: hides your content from someone and theirs from you, both
+  ways, at once.
+- **Your area and time zone**: never shown to anyone.
 
-## 5. How we protect it
+## 5. Service providers
 
-Passwords are hashed with scrypt (a real, deliberately slow,
-industry-standard algorithm) — we never store or can recover your actual
-password. Sessions use short-lived signed access tokens plus a
-longer-lived, individually revocable refresh token per device.
-Connections to our backend are encrypted (HTTPS/TLS). Suspending an
-account for a policy violation immediately revokes all of that account's
-active sessions, not just future logins.
+- **Amazon Web Services**: our servers, database, file storage and email.
+- **Google Firebase Cloud Messaging** and **Apple Push Notification
+  service**: deliver notifications.
+- **Twilio**: sends phone sign-in codes, if you use phone sign-in.
+- **Google**: Google sign-in, if you use it, and Safe Browsing checks of
+  links posted in Katkee.
 
-## 6. How long we keep it
+They process data only to provide these services to us.
 
-Your content and account data are kept until you delete them or close
-your account. A deleted Story is immediately and permanently
-inaccessible, including to you. _Fill in your actual backup-retention
-window here once you've set one up — e.g. "deleted data may persist in
-encrypted backups for up to 30 days before being permanently purged."_
+## 6. How we protect it
 
-## 7. Your choices and rights
+Passwords are hashed with scrypt; we can't recover your actual password.
+Sessions use short-lived signed access tokens and an individually revocable
+refresh token per device. Connections are encrypted (HTTPS/TLS), and our
+database and file storage are encrypted at rest. Staff access to the admin
+console needs two-factor authentication, and every admin action is
+recorded in an audit log that can't be edited.
 
-You can edit your profile, change your account from public to private
-(or back), unfollow/block/mute anyone, and delete your own Stories and
-comments at any time directly in the app. _You'll need to add an
-in-app or emailed account-deletion path before launch — both stores now
-require one (Apple explicitly requires an in-app path since 2022; Google
-requires a clear path and a web form if the app can't provide one
-itself). Contact **[support email]** to request a copy of your data or
-full account deletion in the meantime._
+## 7. How long we keep it
 
-If you're in the EU/UK, you have rights under GDPR (access, correction,
-deletion, portability, objection) — contact us to exercise them. If
-you're a California resident, you have similar rights under the
-CCPA/CPRA.
+- **Stories**: disappear from view after 24 hours. Highlights you keep
+  stay until you remove them.
+- **Deleted Stories**: their media is purged after 30 days, unless an open
+  report still needs it.
+- **Deleted accounts**:
+  - unavailable at once;
+  - personal data purged and the account scrubbed after 30 days;
+  - content removed by moderation kept up to 180 days as evidence.
+- **Uploads never used**: deleted after 48 hours.
+- **Photo originals**: deleted 30 days after processing.
+- **Your area**: see above.
+- **Raw analytics events**: deleted after 90 days; only daily totals that
+  identify nobody remain.
+- **Security records**: up to 400 days.
+- **Server logs**: about 30 days.
+- **Database backups**: 14 days.
+- **Earlier versions of stored files**: 30 days after a file is deleted.
 
-## 8. Children
+## 8. Your choices and rights
+
+In the app you can:
+- edit your profile;
+- make your account private;
+- turn Nearby Stories on or off (Settings, then Privacy);
+- turn notification types on or off;
+- block, mute, report, or delete your own Stories and comments;
+- **delete your account** (Settings, then Delete account).
+
+Contact us (Section 11) for a copy of your data or anything else.
+
+If you're in the EU or UK you have rights under GDPR: access, correction,
+deletion, portability and objection. Residents of California have similar
+rights under the CCPA/CPRA. In India, the Digital Personal Data Protection
+Act 2023 gives you rights to access, correct and erase your data and to
+nominate someone. Contact us to use any of them.
+
+## 9. Children
 
 Katkee is not directed at children under 13 (or the minimum age required
 by your local law, which may be higher), and we don't knowingly collect
@@ -130,12 +200,12 @@ different (and much stricter) compliance path — COPPA in the US, similar
 regimes elsewhere — and needs its own dedicated review; this policy
 assumes you're not doing that._
 
-## 9. Changes to this policy
+## 10. Changes to this policy
 
 We'll update the "Last updated" date above and, for material changes,
 notify you in the app before they take effect.
 
-## 10. Contact
+## 11. Contact
 
 _[Your support email / company name / mailing address, if you have a
 legal entity — required by some jurisdictions.]_
