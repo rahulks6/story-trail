@@ -1,159 +1,293 @@
-import React, { useRef, useState } from "react";
-import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { ActivityIndicator, Alert, Image, Linking, PermissionsAndroid, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { usePreventRemove } from "@react-navigation/native";
 import { KeyboardAvoider } from "../../components/KeyboardAvoider";
-import { launchImageLibrary } from "react-native-image-picker";
+import { launchCamera, launchImageLibrary, type ImagePickerResponse } from "react-native-image-picker";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../navigation/types";
 import { colors, radii, spacing, typography } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
-import { avatarFileUrl, updateMyProfile } from "../../api/users";
+import { profileChanged } from "../../state/storyChanges";
+import { updateMyProfile } from "../../api/users";
 import { uploadPhoto } from "../../api/media";
 import { ApiError } from "../../api/client";
 import { usernameCheckText, usernameRefused, useUsernameAvailability } from "../../hooks/useUsernameAvailability";
+import { Avatar } from "../../components/Avatar";
+import { ActionSheet } from "../../components/ActionSheet";
+import { AvatarCropper, type PickedPhoto } from "../../components/AvatarCropper";
 
 type Props = NativeStackScreenProps<RootStackParamList, "EditProfile">;
 
 const MAX_DISPLAY_NAME_LENGTH = 60;
 const MAX_BIO_LENGTH = 150;
+const PHOTO_SIZE = 96;
+
+/** What Save will do with the profile photo. Nothing is uploaded or removed before Save. */
+type PhotoChange = { kind: "unchanged" } | { kind: "new"; uri: string } | { kind: "removed" };
 
 /**
- * Edit account identity and profile metadata through `PATCH
- * /api/v1/users/me`. The account's privacy toggle lives in Settings instead
- * (spec's Settings > Privacy row), not duplicated here.
+ * Edit Profile (spec section 23; Phase 11 completes it): photo (take, choose or remove, then
+ * move and scale it in a circle), username with a live check, name, bio and interests. The old
+ * photo stays until Save succeeds. Leaving with unsaved changes asks first, including the back
+ * gesture. A save updates your page at once and tells Home to refresh. The account's privacy
+ * switch lives in Settings, under Privacy.
  */
 export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
   const { user, accessToken, applyProfile } = useAuth();
   const headerHeight = useHeaderHeight();
   const inFlight = useRef(false);
-  const uploadedAvatar = useRef<{uri: string; id: string} | null>(null);
-  const [username, setUsername] = useState(user?.username ?? "");
-  const [displayName, setDisplayName] = useState(user?.displayName ?? "");
-  const [bio, setBio] = useState(user?.bio ?? "");
-  const [interests, setInterests] = useState((user?.interests ?? []).join(", "));
-  const [avatarUri, setAvatarUri] = useState<string | null>(null);
-  const [avatarMimeType, setAvatarMimeType] = useState("image/jpeg");
+  const uploadedPhoto = useRef<{ uri: string; id: string } | null>(null);
+  const original = useRef({
+    username: user?.username ?? "",
+    displayName: user?.displayName ?? "",
+    bio: user?.bio ?? "",
+    interests: (user?.interests ?? []).join(", "),
+  }).current;
+  const [username, setUsername] = useState(original.username);
+  const [displayName, setDisplayName] = useState(original.displayName);
+  const [bio, setBio] = useState(original.bio);
+  const [interests, setInterests] = useState(original.interests);
+  const [photo, setPhoto] = useState<PhotoChange>({ kind: "unchanged" });
+  const [photoSheetOpen, setPhotoSheetOpen] = useState(false);
+  const [picked, setPicked] = useState<PickedPhoto | null>(null);
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const availability = useUsernameAvailability(username, accessToken, user?.username);
   const availabilityLine = usernameCheckText(availability);
-  const canSave = username.trim().length >= 3 && displayName.trim().length > 0 && !saving && !!accessToken && !usernameRefused(availability);
+  const nameMissing = displayName.trim().length === 0;
+  const canSave = username.trim().length >= 3 && !nameMissing && !saving && !!accessToken && !usernameRefused(availability);
+  const dirty =
+    username !== original.username || displayName !== original.displayName || bio !== original.bio ||
+    interests !== original.interests || photo.kind !== "unchanged";
+  const hasPhoto = photo.kind === "new" || (photo.kind === "unchanged" && !!user?.avatarMediaId);
+
+  // Back button, Android back and the iOS swipe all come through here while changes are unsaved.
+  usePreventRemove(dirty && !saved, ({ data }) => {
+    Alert.alert("Discard changes?", "Your changes to your profile won't be saved.", [
+      { text: "Keep editing", style: "cancel" },
+      { text: "Discard", style: "destructive", onPress: () => navigation.dispatch(data.action) },
+    ]);
+  });
+
+  // Leave only once the guard above has seen the save.
+  useEffect(() => {
+    if (saved) navigation.goBack();
+  }, [saved, navigation]);
+
+  const takeFrom = async (source: "camera" | "library") => {
+    setError(null);
+    try {
+      if (source === "camera" && Platform.OS === "android") {
+        const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          cameraRefused();
+          return;
+        }
+      }
+      const result: ImagePickerResponse =
+        source === "camera"
+          ? await launchCamera({ mediaType: "photo", cameraType: "front", saveToPhotos: false, maxWidth: 2048, maxHeight: 2048, quality: 0.9 })
+          : await launchImageLibrary({ mediaType: "photo", selectionLimit: 1, assetRepresentationMode: "compatible", maxWidth: 2048, maxHeight: 2048, quality: 0.9 });
+      if (result.didCancel) return;
+      if (result.errorCode === "permission") {
+        if (source === "camera") cameraRefused();
+        else setError("Allow access to your photos in Settings to choose a photo.");
+        return;
+      }
+      if (result.errorCode === "camera_unavailable") {
+        setError("There's no camera available. Choose a photo instead.");
+        return;
+      }
+      if (result.errorCode) {
+        setError(result.errorMessage ?? "Couldn't open that. Try again.");
+        return;
+      }
+      const asset = result.assets?.[0];
+      if (asset?.uri && asset.width && asset.height) setPicked({ uri: asset.uri, width: asset.width, height: asset.height });
+      else setError("Couldn't read that photo. Try another.");
+    } catch {
+      setError("Couldn't open that. Try again.");
+    }
+  };
+
+  const cameraRefused = () => {
+    Alert.alert("Allow camera access", "To take a profile photo, allow Katkee to use the camera in your phone's Settings.", [
+      { text: "Not now", style: "cancel" },
+      { text: "Open Settings", onPress: () => void Linking.openSettings().catch(() => undefined) },
+    ]);
+  };
 
   const onSave = async () => {
     if (!canSave || !accessToken || inFlight.current) return;
-    const parsedInterests = [...new Set(interests.split(",").map(item => item.trim()).filter(Boolean))];
-    if (!/^[a-z0-9_.]{3,30}$/.test(username.trim().toLowerCase())) { setError("Enter a valid username."); return; }
-    if (parsedInterests.length > 5 || parsedInterests.some(item => item.length > 30)) { setError("Use up to 5 interests, each at most 30 characters."); return; }
+    if (!dirty) {
+      navigation.goBack();
+      return;
+    }
+    const parsedInterests = [...new Set(interests.split(",").map((item) => item.trim()).filter(Boolean))];
+    if (!/^[a-z0-9_.]{3,30}$/.test(username.trim().toLowerCase())) {
+      setError("Enter a valid username.");
+      return;
+    }
+    if (parsedInterests.length > 5 || parsedInterests.some((item) => item.length > 30)) {
+      setError("Use up to 5 interests, each at most 30 characters.");
+      return;
+    }
     inFlight.current = true;
     setSaving(true);
     setError(null);
     try {
-      let avatarMediaId: string | undefined;
-      if (avatarUri) {
-        if (uploadedAvatar.current?.uri !== avatarUri) {
-          const uploaded = await uploadPhoto(avatarUri, avatarMimeType, accessToken);
-          uploadedAvatar.current = { uri: avatarUri, id: uploaded.id };
+      let avatarMediaId: string | null | undefined;
+      if (photo.kind === "new") {
+        if (uploadedPhoto.current?.uri !== photo.uri) {
+          const uploaded = await uploadPhoto(photo.uri, "image/jpeg", accessToken);
+          uploadedPhoto.current = { uri: photo.uri, id: uploaded.id };
         }
-        avatarMediaId = uploadedAvatar.current.id;
+        avatarMediaId = uploadedPhoto.current.id;
+      } else if (photo.kind === "removed") {
+        avatarMediaId = null;
       }
-      const { user: saved } = await updateMyProfile({ username: username.trim().toLowerCase(), displayName: displayName.trim(), bio, interests: parsedInterests, avatarMediaId }, accessToken);
-      applyProfile(saved);
-      navigation.goBack();
+      const { user: savedUser } = await updateMyProfile(
+        {
+          username: username.trim().toLowerCase(),
+          displayName: displayName.trim(),
+          bio: bio.trim(),
+          interests: parsedInterests,
+          ...(avatarMediaId !== undefined ? { avatarMediaId } : {}),
+        },
+        accessToken,
+      );
+      applyProfile(savedUser);
+      profileChanged();
+      setSaved(true);
     } catch (err) {
-      setError(err instanceof ApiError ? Object.values(err.fieldErrors ?? {}).join("\n") || err.message : "That didn't save — try again.");
+      setError(err instanceof ApiError ? Object.values(err.fieldErrors ?? {}).join("\n") || err.message : "That didn't save. Try again.");
     } finally {
       inFlight.current = false;
       setSaving(false);
     }
   };
 
+  const photoActions = [
+    [
+      { label: "Take photo", onPress: () => void takeFrom("camera") },
+      { label: "Choose from library", onPress: () => void takeFrom("library") },
+    ],
+    ...(hasPhoto ? [[{ label: "Remove current photo", onPress: () => setPhoto({ kind: "removed" }), destructive: true }]] : []),
+  ];
+
   return (
     <KeyboardAvoider style={styles.container} topOffset={headerHeight}>
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
-      <Pressable style={styles.avatarButton} disabled={saving} onPress={async () => {
-        try {
-          const result = await launchImageLibrary({ mediaType: "photo", selectionLimit: 1, assetRepresentationMode: "compatible", maxWidth: 1024, maxHeight: 1024 });
-          if (result.errorCode) { setError(result.errorMessage ?? "Could not open your photos."); return; }
-          const asset = result.assets?.[0];
-          if (asset?.uri) { setAvatarUri(asset.uri); setAvatarMimeType(asset.type ?? "image/jpeg"); }
-        } catch { setError("Could not open your photos. Try again."); }
-      }} accessibilityRole="button" accessibilityLabel="Choose profile photo">
-        {avatarUri || user?.avatarMediaId ? <Image source={avatarUri ? {uri: avatarUri} : {uri: avatarFileUrl(user!.username, user!.avatarMediaId), headers: {Authorization: `Bearer ${accessToken}`}}} style={styles.avatarImage} /> : <Text style={styles.avatarInitial}>{user?.displayName.charAt(0).toUpperCase() ?? "?"}</Text>}
-        <Text style={styles.avatarAction}>Change photo</Text>
-      </Pressable>
-      <Text style={styles.label}>Username</Text>
-      <TextInput
-        style={styles.input}
-        value={username}
-        onChangeText={(value) => setUsername(value.toLowerCase().replace(/\s/g, ""))}
-        placeholder="username"
-        placeholderTextColor={colors.textDisabled}
-        maxLength={30}
-        autoCapitalize="none"
-        autoCorrect={false}
-        accessibilityLabel="Username"
-      />
-      {availabilityLine ? (
-        <Text
-          style={[styles.hint, availabilityLine.tone === "success" && styles.available, availabilityLine.tone === "error" && styles.unavailable]}
-          accessibilityLiveRegion="polite"
+        <Pressable
+          style={styles.photoButton}
+          disabled={saving}
+          onPress={() => setPhotoSheetOpen(true)}
+          accessibilityRole="button"
+          accessibilityLabel="Change profile photo"
         >
-          {availabilityLine.text}
-        </Text>
-      ) : (
-        <Text style={styles.hint}>3–30 lowercase letters, numbers, dots or underscores.</Text>
-      )}
-      <Text style={styles.label}>Name</Text>
-      <TextInput
-        style={styles.input}
-        value={displayName}
-        onChangeText={setDisplayName}
-        placeholder="Your name"
-        placeholderTextColor={colors.textDisabled}
-        maxLength={MAX_DISPLAY_NAME_LENGTH}
-        accessibilityLabel="Display name"
-      />
+          {photo.kind === "new" ? (
+            <Image source={{ uri: photo.uri }} style={styles.photo} accessibilityLabel="New profile photo" />
+          ) : user ? (
+            <Avatar username={user.username} displayName={user.displayName} avatarMediaId={photo.kind === "removed" ? null : user.avatarMediaId} size={PHOTO_SIZE} />
+          ) : null}
+          <Text style={styles.photoAction}>{hasPhoto ? "Change photo" : "Add photo"}</Text>
+        </Pressable>
+        {photo.kind !== "unchanged" ? (
+          <Text style={styles.photoNote} accessibilityLiveRegion="polite">
+            {photo.kind === "new" ? "Your new photo is used when you save." : "Your photo is removed when you save."}
+          </Text>
+        ) : null}
 
-      <Text style={styles.label}>Bio</Text>
-      <TextInput
-        style={[styles.input, styles.bioInput]}
-        value={bio}
-        onChangeText={setBio}
-        placeholder="Tell people about yourself"
-        placeholderTextColor={colors.textDisabled}
-        maxLength={MAX_BIO_LENGTH}
-        multiline
-        accessibilityLabel="Bio"
-      />
-      <Text style={styles.counter}>
-        {bio.length}/{MAX_BIO_LENGTH}
-      </Text>
+        <Text style={styles.label}>Username</Text>
+        <TextInput
+          style={styles.input}
+          value={username}
+          onChangeText={(value) => setUsername(value.toLowerCase().replace(/\s/g, ""))}
+          placeholder="username"
+          placeholderTextColor={colors.textDisabled}
+          maxLength={30}
+          autoCapitalize="none"
+          autoCorrect={false}
+          accessibilityLabel="Username"
+        />
+        {availabilityLine ? (
+          <Text
+            style={[styles.hint, availabilityLine.tone === "success" && styles.available, availabilityLine.tone === "error" && styles.unavailable]}
+            accessibilityLiveRegion="polite"
+          >
+            {availabilityLine.text}
+          </Text>
+        ) : (
+          <Text style={styles.hint}>3–30 lowercase letters, numbers, dots or underscores.</Text>
+        )}
 
-      <Text style={styles.label}>Interests</Text>
-      <TextInput
-        style={styles.input}
-        value={interests}
-        onChangeText={setInterests}
-        placeholder="Travel, food, music"
-        placeholderTextColor={colors.textDisabled}
-        maxLength={180}
-        accessibilityLabel="Interests, separated by commas"
-      />
-      <Text style={styles.hint}>Add up to 5 interests separated by commas.</Text>
+        <View style={styles.labelRow}>
+          <Text style={styles.label}>Name</Text>
+          <Text style={styles.counter}>{displayName.length}/{MAX_DISPLAY_NAME_LENGTH}</Text>
+        </View>
+        <TextInput
+          style={[styles.input, nameMissing && styles.inputError]}
+          value={displayName}
+          onChangeText={setDisplayName}
+          placeholder="Your name"
+          placeholderTextColor={colors.textDisabled}
+          maxLength={MAX_DISPLAY_NAME_LENGTH}
+          accessibilityLabel="Display name"
+        />
+        {nameMissing ? <Text style={[styles.hint, styles.unavailable]}>Enter your name.</Text> : null}
 
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+        <View style={styles.labelRow}>
+          <Text style={styles.label}>Bio</Text>
+          <Text style={styles.counter}>{bio.length}/{MAX_BIO_LENGTH}</Text>
+        </View>
+        <TextInput
+          style={[styles.input, styles.bioInput]}
+          value={bio}
+          onChangeText={setBio}
+          placeholder="Tell people about yourself"
+          placeholderTextColor={colors.textDisabled}
+          maxLength={MAX_BIO_LENGTH}
+          multiline
+          accessibilityLabel="Bio"
+        />
 
-      <Pressable
-        style={[styles.saveButton, !canSave && styles.saveButtonDisabled]}
-        disabled={!canSave}
-        onPress={onSave}
-        accessibilityRole="button"
-        accessibilityLabel="Save profile changes"
-      >
-        {saving ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.saveLabel}>Save</Text>}
-      </Pressable>
+        <Text style={styles.label}>Interests</Text>
+        <TextInput
+          style={styles.input}
+          value={interests}
+          onChangeText={setInterests}
+          placeholder="Travel, food, music"
+          placeholderTextColor={colors.textDisabled}
+          maxLength={180}
+          accessibilityLabel="Interests, separated by commas"
+        />
+        <Text style={styles.hint}>Add up to 5 interests separated by commas.</Text>
+
+        {error ? <Text style={styles.error} accessibilityLiveRegion="polite">{error}</Text> : null}
+
+        <Pressable
+          style={[styles.saveButton, !canSave && styles.saveButtonDisabled]}
+          disabled={!canSave}
+          onPress={onSave}
+          accessibilityRole="button"
+          accessibilityLabel="Save profile changes"
+        >
+          {saving ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.saveLabel}>Save</Text>}
+        </Pressable>
       </ScrollView>
+
+      <ActionSheet visible={photoSheetOpen} title="Profile photo" groups={photoActions} onClose={() => setPhotoSheetOpen(false)} />
+      <AvatarCropper
+        photo={picked}
+        onCancel={() => setPicked(null)}
+        onDone={(uri) => {
+          setPicked(null);
+          setPhoto({ kind: "new", uri });
+        }}
+      />
     </KeyboardAvoider>
   );
 }
@@ -161,10 +295,11 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   scrollContent: { padding: spacing.md, paddingBottom: spacing.xxl },
-  avatarButton: { alignItems: "center", marginBottom: spacing.sm },
-  avatarImage: { width: 88, height: 88, borderRadius: 44, borderWidth: 2, borderColor: colors.accent },
-  avatarInitial: { width: 88, height: 88, borderRadius: 44, backgroundColor: colors.surface, color: colors.textPrimary, fontSize: 32, fontWeight: "700", textAlign: "center", textAlignVertical: "center", borderWidth: 2, borderColor: colors.border },
-  avatarAction: { color: colors.accent, marginTop: spacing.xs, fontWeight: "600" },
+  photoButton: { alignItems: "center", gap: spacing.sm, marginTop: spacing.sm },
+  photo: { width: PHOTO_SIZE, height: PHOTO_SIZE, borderRadius: PHOTO_SIZE / 2 },
+  photoAction: { color: colors.accent, fontWeight: "700", fontSize: 15 },
+  photoNote: { ...typography.caption, textAlign: "center", marginTop: spacing.xs },
+  labelRow: { flexDirection: "row", alignItems: "flex-end", justifyContent: "space-between" },
   label: { ...typography.label, marginTop: spacing.md, marginBottom: spacing.xs },
   input: {
     backgroundColor: colors.surface,
@@ -176,8 +311,9 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     fontSize: 16,
   },
+  inputError: { borderColor: colors.danger },
   bioInput: { minHeight: 88, textAlignVertical: "top" },
-  counter: { ...typography.caption, color: colors.textDisabled, textAlign: "right", marginTop: spacing.xs },
+  counter: { ...typography.caption, color: colors.textDisabled, marginBottom: spacing.xs },
   hint: { ...typography.caption, color: colors.textSecondary, marginTop: spacing.xs },
   error: { color: colors.danger, marginTop: spacing.md },
   available: { color: colors.success },

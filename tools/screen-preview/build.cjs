@@ -19,6 +19,10 @@ const redirects = [
   [/(^|\/)analytics\/analytics$/, mock("misc.ts")],
   [/(^|\/)components\/ReportSheet$/, mock("misc.ts")],
   [/^@react-native\/assets-registry\/registry$/, mock("misc.ts")],
+  [/^@react-navigation\/elements$/, mock("elements.ts")],
+  [/^react-native-image-picker$/, mock("picker.ts")],
+  [/^react-native-nitro-image$/, mock("nitro.ts")],
+  [/(^|\/)api\/media$/, mock("media.ts")],
 ];
 esbuild.build({
   entryPoints: [path.join(__dirname, "src/app.tsx")],

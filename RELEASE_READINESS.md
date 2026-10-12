@@ -34,6 +34,7 @@ Phase reports:
 - [Phase 8: usernames, people search and suggestions](docs/phases/PHASE_8_PROFILE_AND_SEARCH.md)
 - [Phase 9: nearby reach and the Home mix](docs/phases/PHASE_9_REACH_AND_HOME.md)
 - [Phase 10: the creator page](docs/phases/PHASE_10_CREATOR_PAGE.md)
+- [Phase 11: Edit Profile, finished](docs/phases/PHASE_11_EDIT_PROFILE.md)
 
 Deployment: [infra/README.md](infra/README.md). Backups: [docs/BACKUP_AND_RESTORE.md](docs/BACKUP_AND_RESTORE.md).
 

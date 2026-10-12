@@ -9,12 +9,14 @@ platform details differ on iPhone and Android.
 cd tools/screen-preview
 npm install                 # React Native for Web, esbuild, Inter
 npx playwright install chromium   # skip if Playwright's Chromium is already installed
-npm run shots               # shots/own.png, other.png, private.png, more.png, creator-page-preview.png
+npm run shots               # shots/*.png, creator-page-preview.png, edit-profile-preview.png
 ```
 
-- `src/app.tsx` renders the real `ProfileScreen`, `UserProfileScreen` and `BottomTabBar`
-  inside a 390 x 844 phone frame. `?screen=own|other|private` picks the page, and
-  `&story=none` shows your page without an active Story.
+- `src/app.tsx` renders the real `ProfileScreen`, `UserProfileScreen`, `EditProfileScreen`,
+  `AvatarCropper` and `BottomTabBar` inside a 390 x 844 phone frame.
+  `?screen=own|other|private|edit|crop` picks the screen, and `&story=none` shows your page
+  without an active Story.
+- `npm run shots` also writes `shots/edit-profile-preview.png`.
 - `src/mocks/` replaces the network, sign-in and navigation with sample data. The sample
   people and pictures are made up, and the pictures are drawn gradients.
 - `build.cjs` maps `react-native` to `react-native-web` and the app's API, auth and navigation

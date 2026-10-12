@@ -5,7 +5,7 @@ import type {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {colors,typography} from '../../theme';
 import {useAuth} from '../../state/AuthContext';
-import {onStoryPublished} from '../../state/storyChanges';
+import {onProfileChanged,onStoryPublished} from '../../state/storyChanges';
 import {getRankedHomeFeed,type RankedFeedEntry} from '../../api/stories';
 import {EmptyState} from '../../components/EmptyState';
 import {StoryFeed} from '../story/StoryFeed';
@@ -17,6 +17,8 @@ export function HomeScreen():React.JSX.Element {
  const [feed,setFeed]=useState<RankedFeedEntry[]|null>(null),[retry,setRetry]=useState(0),[error,setError]=useState(''),[cursor,setCursor]=useState<string|null>(null),[sponsored,setSponsored]=useState<SponsoredPlacement[]>([]);
  const token=useRef(accessToken);token.current=accessToken;const request=useRef(0),loadingMore=useRef(false);
  useEffect(()=>onStoryPublished(()=>setRetry(n=>n+1)),[]);
+ // Your own Story's name and photo come from the feed: reload after an Edit Profile save.
+ useEffect(()=>onProfileChanged(()=>setRetry(n=>n+1)),[]);
  // Returning from Profile/DM/overlays does not remount the viewer or restart its playback.
  useEffect(()=>{const generation=++request.current;const currentToken=token.current;if(!currentToken)return;setFeed(null);setCursor(null);setSponsored([]);setError('');loadingMore.current=false;
   void getRankedHomeFeed(currentToken).then(result=>{if(generation!==request.current)return;setFeed(result.feed);setCursor(result.nextCursor);if(result.sponsoredEnabled)void getAdPlacements(result.feed.length,currentToken).then(r=>{if(generation===request.current)setSponsored(r.items);}).catch(()=>undefined);}).catch(()=>{if(generation===request.current)setError("Couldn't load Stories. Check your connection.");});

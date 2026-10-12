@@ -19,3 +19,6 @@ export const avatars: Record<string, string> = {
   a_asha: svg("#36d1dc", "#5b86e5", "<circle cx='150' cy='150' r='70' fill='rgba(255,255,255,0.85)'/><rect x='60' y='240' width='180' height='160' rx='90' fill='rgba(255,255,255,0.85)'/>"),
   a_kabir: svg("#834d9b", "#d04ed6", "<circle cx='150' cy='150' r='70' fill='rgba(255,255,255,0.85)'/><rect x='60' y='240' width='180' height='160' rx='90' fill='rgba(255,255,255,0.85)'/>"),
 };
+/** A landscape sample photo for the cropper (1200 x 900). */
+export const samplePhoto = "data:image/svg+xml;utf8," +
+  "<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='900' viewBox='0 0 1200 900'><defs><linearGradient id='s' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#ffb75e'/><stop offset='1' stop-color='#ed8f03'/></linearGradient></defs><rect width='1200' height='900' fill='url(#s)'/><circle cx='840' cy='260' r='110' fill='rgba(255,255,255,0.6)'/><path d='M0 640 Q300 470 600 620 T1200 560 V900 H0Z' fill='rgba(90,40,0,0.45)'/><circle cx='600' cy='470' r='150' fill='rgba(255,255,255,0.9)'/><rect x='420' y='600' width='360' height='300' rx='170' fill='rgba(255,255,255,0.9)'/></svg>";

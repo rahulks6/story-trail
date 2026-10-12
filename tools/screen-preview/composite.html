@@ -8,10 +8,14 @@ img{width:300px;border-radius:34px;border:8px solid #000;box-shadow:0 12px 30px 
 figcaption{margin-top:14px;font-size:17px;font-weight:600}
 small{display:block;margin-top:4px;font-size:13px;color:#a3a3a3;font-weight:400}
 p{margin:0 36px 30px;color:#a3a3a3;font-size:14px}
-</style></head><body><div class="wrap">
-<figure><img src="shots/own.png"><figcaption>Your page<small>Story ring, Insights only you see</small></figcaption></figure>
-<figure><img src="shots/own-no-story.png"><figcaption>Your page, no Story yet<small>"+" on the photo starts one</small></figcaption></figure>
-<figure><img src="shots/other.png"><figcaption>Someone else's page<small>Follows you, Follow back, Message</small></figcaption></figure>
-<figure><img src="shots/private.png"><figcaption>Private account<small>Who they are, nothing they share</small></figcaption></figure>
-<figure><img src="shots/more.png"><figcaption>More<small>Share, copy link, mute, block, report</small></figcaption></figure>
-</div><p>Katkee creator page, Phase 10. The app's own screen code rendered with React Native for Web in Chromium, sample data and pictures. Not a device screenshot: fonts and native details differ slightly on iPhone and Android.</p></body></html>
+</style></head><body><div class="wrap" id="wrap"></div><p id="note"></p>
+<script>
+const sets = {
+  creator: [["own", "Your page", "Story ring, Insights only you see"], ["own-no-story", "Your page, no Story yet", "\"+\" on the photo starts one"], ["other", "Someone else's page", "Follows you, Follow back, Message"], ["private", "Private account", "Who they are, nothing they share"], ["more", "More", "Share, copy link, mute, block, report"]],
+  edit: [["edit", "Edit Profile", "Counters, live username check"], ["crop", "Move and scale", "The new photo, before cutting"], ["crop-zoomed", "Zoomed in", "Drag, pinch or the buttons"]],
+};
+const set = new URLSearchParams(location.search).get("set") || "creator";
+document.getElementById("wrap").innerHTML = sets[set].map(([f, t, s]) => `<figure><img src="shots/${f}.png"><figcaption>${t}<small>${s}</small></figcaption></figure>`).join("");
+document.getElementById("note").textContent = (set === "edit" ? "Katkee Edit Profile, Phase 11." : "Katkee creator page, Phase 10.") + " The app's own screen code rendered with React Native for Web in Chromium, sample data and pictures. Not a device screenshot: fonts and native details differ slightly on iPhone and Android.";
+</script>
+</body></html>

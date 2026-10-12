@@ -60,10 +60,31 @@ jest.mock("react-native-vision-camera", () => {
   };
 });
 
+// Nitro Image (the on-phone crop for profile photos): records each step and the saved result.
+global.__nitroImage = { size: { width: 2048, height: 1536 }, saved: [], fail: false };
+jest.mock("react-native-nitro-image", () => {
+  const make = (width, height, steps) => ({
+    width,
+    height,
+    cropAsync: jest.fn(async (sx, sy, ex, ey) => make(ex - sx, ey - sy, [...steps, ["crop", sx, sy, ex, ey]])),
+    resizeAsync: jest.fn(async (w, h) => make(w, h, [...steps, ["resize", w, h]])),
+    saveToTemporaryFileAsync: jest.fn(async (format, quality) => {
+      global.__nitroImage.saved.push({ steps, width, height, format, quality });
+      return `/tmp/katkee-crop-${global.__nitroImage.saved.length}.jpg`;
+    }),
+  });
+  return {
+    loadImage: jest.fn(async ({ filePath }) => {
+      if (global.__nitroImage.fail) throw new Error("unreadable");
+      return make(global.__nitroImage.size.width, global.__nitroImage.size.height, [["load", filePath]]);
+    }),
+  };
+});
+
 global.__picker = { result: { didCancel: true } };
 jest.mock("react-native-image-picker", () => ({
   launchImageLibrary: jest.fn(async () => global.__picker.result),
-  launchCamera: jest.fn(async () => ({ didCancel: true })),
+  launchCamera: jest.fn(async () => global.__picker.camera ?? { didCancel: true }),
 }));
 
 jest.mock("@dr.pogodin/react-native-fs", () => ({

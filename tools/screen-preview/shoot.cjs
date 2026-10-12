@@ -24,5 +24,12 @@ require("fs").mkdirSync(out, { recursive: true });
     await page.click('[aria-label="More options for @asha_k"]');
     await page.waitForTimeout(700);
   });
+  await shot("screen=edit", "edit");
+  await shot("screen=crop", "crop");
+  await shot("screen=crop", "crop-zoomed", async () => {
+    await page.click('[aria-label="Zoom in"]');
+    await page.click('[aria-label="Zoom in"]');
+    await page.waitForTimeout(300);
+  });
   await browser.close();
 })().catch((e) => { console.error(e); process.exit(1); });

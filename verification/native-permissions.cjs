@@ -6,7 +6,7 @@ const mobile=path.join(__dirname,'../mobile');
 
 const RULES=[
  {name:'vibration',uses:/Vibration\.vibrate\(/,android:['android.permission.VIBRATE']},
- {name:'camera',uses:/useCameraPermission\(|<Camera\b/,android:['android.permission.CAMERA'],ios:['NSCameraUsageDescription']},
+ {name:'camera',uses:/useCameraPermission\(|<Camera\b|launchCamera\(/,android:['android.permission.CAMERA'],ios:['NSCameraUsageDescription']},
  {name:'microphone',uses:/useMicrophonePermission\(/,android:['android.permission.RECORD_AUDIO'],ios:['NSMicrophoneUsageDescription']},
  {name:'location',uses:/Geolocation\.getCurrentPosition\(/,android:['android.permission.ACCESS_COARSE_LOCATION'],ios:['NSLocationWhenInUseUsageDescription']},
  {name:'photo library',uses:/launchImageLibrary\(/,ios:['NSPhotoLibraryUsageDescription']},

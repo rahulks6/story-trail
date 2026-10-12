@@ -17,3 +17,4 @@ export async function blockUser() {}
 export async function updateMyProfile() { return { user: previewUser }; }
 export async function listFollowRequests() { return { requests: [] }; }
 void scenario;
+export async function checkUsername(username: string) { return { username, available: true, reason: "yours", message: "This is your username." }; }

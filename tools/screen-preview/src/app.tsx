@@ -6,6 +6,9 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { ProfileScreen } from "../../../mobile/src/screens/profile/ProfileScreen";
 import { UserProfileScreen } from "../../../mobile/src/screens/profile/UserProfileScreen";
 import { BottomTabBar } from "../../../mobile/src/navigation/BottomTabBar";
+import { EditProfileScreen } from "../../../mobile/src/screens/profile/EditProfileScreen";
+import { AvatarCropper } from "../../../mobile/src/components/AvatarCropper";
+import { samplePhoto } from "./mocks/images";
 import { Icon } from "../../../mobile/src/components/Icon";
 import { colors } from "../../../mobile/src/theme";
 
@@ -47,7 +50,25 @@ function OtherPage({ username }: { username: string }) {
   );
 }
 
+/** Edit Profile under the root stack's header. */
+function EditPage() {
+  const navigation = { goBack() {}, dispatch() {}, navigate() {}, setOptions() {} };
+  return (
+    <View style={{ flex: 1 }}>
+      <StatusBar />
+      <View style={styles.header}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Back" style={styles.headerSide}><Icon name="back" size={22} color={colors.textPrimary} /></Pressable>
+        <Text style={styles.headerTitle}>Edit Profile</Text>
+        <View style={styles.headerSide} />
+      </View>
+      <EditProfileScreen navigation={navigation as never} route={{ key: "e", name: "EditProfile" } as never} />
+    </View>
+  );
+}
+
 function Phone() {
+  if (screen === "edit") return <View style={styles.phone}><EditPage /></View>;
+  if (screen === "crop") return <View style={styles.phone}><AvatarCropper photo={{ uri: samplePhoto, width: 1200, height: 900 }} onCancel={() => {}} onDone={() => {}} /></View>;
   return (
     <View style={styles.phone}>
       {screen !== "own" ? <StatusBar /> : null}

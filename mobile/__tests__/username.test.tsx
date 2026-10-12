@@ -24,6 +24,9 @@ const mockAuth = {
 };
 jest.mock("../src/state/AuthContext", () => ({ useAuth: () => mockAuth }));
 jest.mock("@react-navigation/elements", () => ({ useHeaderHeight: () => 0 }));
+// Edit Profile guards unsaved changes with usePreventRemove, which needs a navigator; these
+// tests render the screen alone (editProfile.test.tsx covers the guard).
+jest.mock("@react-navigation/native", () => ({ ...jest.requireActual("@react-navigation/native"), usePreventRemove: jest.fn() }));
 jest.mock("../src/api/users", () => ({ ...jest.requireActual("../src/api/users"), checkUsername: jest.fn(), updateMyProfile: jest.fn() }));
 jest.mock("../src/api/providers", () => ({ ...jest.requireActual("../src/api/providers"), methods: jest.fn(), complete: jest.fn() }));
 
