@@ -42,7 +42,7 @@ What is already done in the code, and what only you can do:
 
 ## 2. Deploy the backend first
 
-1. Follow `LAUNCH.md` and `infra/README.md`. They create the API, the worker, PostgreSQL, S3
+1. Follow `LAUNCH.md`, parts 1 to 16 (`infra/README.md` is the reference). They create the API, the worker, PostgreSQL, S3
    and CloudFront for media, SES email and alarms in AWS ap-south-1, and serve
    `https://api.katkee.com` and the website at `https://katkee.com`.
 2. Check it from the repository root: `npm run check:live` must pass every line (the API's

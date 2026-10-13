@@ -36,7 +36,7 @@ What is already done, and what only you can do:
 - **A computer** with Node 22, **JDK 17** and the Android SDK (Android Studio installs it). The
   exact versions are in `docs/NATIVE_BUILD_HANDOFF.md`.
 - **An Android phone** (Android 7 or later) for testing.
-- **The backend and website live at katkee.com** (`LAUNCH.md`, steps 1 to 3). Check with
+- **The backend and website live at katkee.com** (`LAUNCH.md`, parts 1 to 14). Check with
   `npm run check:live`.
 
 ## 2. Push notifications (Firebase)

@@ -3,7 +3,8 @@
 > katkee.com website (`website/`), and AWS infrastructure as code (`infra/`). It launches first in
 > India, for people 18 and older, operated by Rahul Katakdhond (sole proprietorship).
 >
-> - **Launch, in order** (katkee.com, the App Store, Google Play): [LAUNCH.md](LAUNCH.md).
+> - **Launch, every step in order** (accounts, AWS, katkee.com, the App Store, Google Play):
+>   [LAUNCH.md](LAUNCH.md).
 >   - iPhone and App Store: [docs/IOS_APP_STORE_DEPLOYMENT.md](docs/IOS_APP_STORE_DEPLOYMENT.md).
 >   - Android and Google Play: [docs/GOOGLE_PLAY_DEPLOYMENT.md](docs/GOOGLE_PLAY_DEPLOYMENT.md).
 >   - Backend and website on AWS: [infra/README.md](infra/README.md).

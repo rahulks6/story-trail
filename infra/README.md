@@ -2,7 +2,8 @@
 
 AWS CDK code for the production environment in Mumbai. Live deployment status: **BLOCKED**. It
 has never been deployed, because no AWS account is connected to this project yet. Section 9
-lists what the tests cover and what only a real deploy can show.
+lists what the tests cover and what only a real deploy can show. For the whole launch, step by
+step (accounts, DNS, email, this stack, the apps and the stores), follow `LAUNCH.md`.
 
 ## 1. What it creates
 
@@ -112,7 +113,7 @@ production if it cannot write there.
    `aws ecs update-service --cluster <ClusterName> --service <ApiServiceName> --desired-count 2`,
    and the same for the worker with 1.
 6. **DNS.** Point `api.katkee.com`, `katkee.com` and `www.katkee.com` at the `LoadBalancerDns`
-   output. In Route 53, use alias A (and AAAA) records for all three. Elsewhere, `api` and `www`
+   output. In Route 53, use alias A records for all three (the load balancer is IPv4 only). Elsewhere, `api` and `www`
    can be CNAMEs; the bare `katkee.com` needs your DNS provider's ALIAS, ANAME or CNAME
    flattening, because a plain CNAME isn't allowed at the top of a domain.
 7. **First Super Admin.** Use an existing, active account. This is a one-off task with the API's
@@ -196,7 +197,7 @@ npm run synth       # CloudFormation template in cdk.out/ (needs the context key
 | | Status |
 | --- | --- |
 | CDK stack synthesizes, with CDK's recommended feature flags | IMPLEMENTED AND VERIFIED (local) |
-| Template security and reliability properties | IMPLEMENTED AND VERIFIED (39 tests with the backend contract) |
+| Template security and reliability properties | IMPLEMENTED AND VERIFIED (40 tests with the backend contract) |
 | The website on katkee.com from the API service (`WEBSITE_HOST`, extra certificate, output) | IMPLEMENTED AND VERIFIED (template and backend tests) / BLOCKED (live: not deployed) |
 | Backend starts with the stack's configuration; placeholder secrets refused | IMPLEMENTED AND VERIFIED (contract test against backend/dist) |
 | Runtime database role, verified TLS to the database (local PostgreSQL TLS) | IMPLEMENTED AND VERIFIED (backend tests) |
