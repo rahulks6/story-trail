@@ -200,6 +200,8 @@ export const config = {
     deletedStoryDays: optionalInt("RETENTION_DELETED_STORY_DAYS", 30),
     moderationEvidenceDays: optionalInt("RETENTION_MODERATION_EVIDENCE_DAYS", 180),
     deletedAccountDays: optionalInt("RETENTION_DELETED_ACCOUNT_DAYS", 30),
+    /** India's IT Rules 2021, rule 3(1)(h): registration details are kept 180 days after deletion. */
+    deletedAccountRecordDays: optionalInt("RETENTION_DELETED_ACCOUNT_RECORD_DAYS", 180),
     originalMediaDays: optionalInt("RETENTION_ORIGINAL_MEDIA_DAYS", 30),
     securityEventDays: optionalInt("RETENTION_SECURITY_EVENT_DAYS", 400),
   },

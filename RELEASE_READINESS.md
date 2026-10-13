@@ -1,6 +1,15 @@
 # Katkee Android/iOS release checkpoint — 1 October 2026 (India)
 
-**Latest: 12 October 2026, release identity on katkee.com**
+**Latest: 13 October 2026, India launch** ([Phase 14](docs/phases/PHASE_14_INDIA_LAUNCH.md)).
+Katkee launches first in India, across the whole country, for adults: sign-up asks for a date of
+birth and the server refuses anyone under 18. The operator (Rahul Katakdhond, a sole
+proprietorship in India) and the Grievance Officer (Rahul Katakdhond) are published in the Terms,
+the Privacy Policy and the Help Center, with India's 180-day retention rules applied in the
+database and the AWS logs. The store answers are set for 18+ and India only, and
+[LAUNCH.md](LAUNCH.md) lists the rules you must keep running. Still **not production-ready**:
+nothing is deployed, the native apps haven't been built, and no device has run them.
+
+**Earlier: 12 October 2026, release identity on katkee.com**
 ([Phase 13](docs/phases/PHASE_13_RELEASE_IDENTITY.md)). The app is configured for its permanent
 identity: bundle ID and package name `com.katkee.app`, API `https://api.katkee.com/`, and the
 Privacy Policy, Terms and Help Center at katkee.com, which the API now serves with the landing page
@@ -48,6 +57,7 @@ Phase reports:
 - [Phase 11: Edit Profile, finished](docs/phases/PHASE_11_EDIT_PROFILE.md)
 - [Phase 12: final verification, iOS guide, release package](docs/phases/PHASE_12_FINAL_RELEASE.md)
 - [Phase 13: release identity, icons and the katkee.com website](docs/phases/PHASE_13_RELEASE_IDENTITY.md)
+- [Phase 14: India launch: 18+, the Grievance Officer and India's rules](docs/phases/PHASE_14_INDIA_LAUNCH.md)
 
 Launch order: [LAUNCH.md](LAUNCH.md). iPhone and App Store:
 [docs/IOS_APP_STORE_DEPLOYMENT.md](docs/IOS_APP_STORE_DEPLOYMENT.md). Android and Google Play:

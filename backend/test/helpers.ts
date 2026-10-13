@@ -30,6 +30,9 @@ export function makeClient(baseUrl: string) {
   };
 }
 
+/** A date of birth comfortably over the minimum age (src/modules/auth/age.ts). */
+export const ADULT_BIRTH_DATE = "1995-05-15";
+
 export function uniqueUser() {
   const suffix = randomUUID().slice(0, 8);
   return {
@@ -37,6 +40,7 @@ export function uniqueUser() {
     email: `test_${suffix}@example.com`,
     password: "correcthorsebattery",
     displayName: `Test ${suffix}`,
+    birthDate: ADULT_BIRTH_DATE,
   };
 }
 

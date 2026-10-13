@@ -2,7 +2,7 @@ import { apiPost } from "./client";
 
 /** Mirrors backend/src/modules/moderation/moderation.repository.ts — kept in lockstep by hand, same as the rest of src/api/. */
 export type ReportTargetType = "story" | "comment" | "user";
-export type ReportReason = "spam" | "harassment" | "nudity" | "violence" | "hate_speech" | "self_harm" | "impersonation" | "scam" | "other";
+export type ReportReason = "spam" | "harassment" | "nudity" | "violence" | "hate_speech" | "self_harm" | "impersonation" | "scam" | "under_18" | "other";
 
 export const REPORT_REASONS: { value: ReportReason; label: string }[] = [
   { value: "spam", label: "Spam" },
@@ -13,6 +13,7 @@ export const REPORT_REASONS: { value: ReportReason; label: string }[] = [
   { value: "self_harm", label: "Self-harm" },
   { value: "impersonation", label: "Pretending to be someone else" },
   { value: "scam", label: "Scam or fraud" },
+  { value: "under_18", label: "May be under 18" },
   { value: "other", label: "Something else" },
 ];
 

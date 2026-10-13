@@ -71,6 +71,6 @@ test('profile link parser accepts only valid profile paths',()=>{
  for(const p of ['user/a','user/a%2fb','admin/reset','user/rahul?token=x','user/../admin','user/rahul/extra'])assert.equal(parse(p),null);
 });
 test('email signup reserves official-looking usernames',()=>{
- const d=load('backend/src/modules/auth/dto.ts',{'../../shared/validation':{EMAIL_RE:/^[^@]+@[^@]+\.[^@]+$/,USERNAME_RE:/^[a-z0-9_.]{3,30}$/},'../users/username-policy':usernamePolicy()});
+ const d=load('backend/src/modules/auth/dto.ts',{'../../shared/validation':{EMAIL_RE:/^[^@]+@[^@]+\.[^@]+$/,USERNAME_RE:/^[a-z0-9_.]{3,30}$/},'../users/username-policy':usernamePolicy(),'./age':load('backend/src/modules/auth/age.ts')});
  for(const username of ['ADMIN','katkee','support','moderator','superadmin'])assert.throws(()=>d.parseSignupInput({username,email:'u@site.com',password:'12345678',displayName:'User'}),e=>!!e.fieldErrors.username);
 });

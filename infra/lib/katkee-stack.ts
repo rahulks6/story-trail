@@ -101,6 +101,13 @@ export const PROVIDER_CREDENTIALS = {
 } as const;
 
 const API_PORT = 4000;
+/**
+ * CERT-In directions of 28 April 2022 (section 70B(6) of India's IT Act): logs of every ICT system
+ * are kept for a rolling 180 days within India. Every log here stays in ap-south-1 (Mumbai):
+ * the services' and database's CloudWatch logs, the WAF's, and the load balancer's and media
+ * bucket's access logs.
+ */
+export const LOG_RETENTION_DAYS = 180;
 /** The CA bundle the image carries for verified TLS to RDS (backend/Dockerfile, backend/certs). */
 export const RDS_CA_BUNDLE = "/app/certs/rds-ap-south-1-bundle.pem";
 
@@ -258,7 +265,7 @@ export class KatkeeStack extends Stack {
       performanceInsightEncryptionKey: dataKey,
       monitoringInterval: Duration.seconds(60),
       cloudwatchLogsExports: ["postgresql", "upgrade"],
-      cloudwatchLogsRetention: logs.RetentionDays.ONE_MONTH,
+      cloudwatchLogsRetention: logs.RetentionDays.SIX_MONTHS, // LOG_RETENTION_DAYS
     });
     // Like the final snapshot, the owner's credentials outlive the stack.
     (db.node.findChild("Secret") as secretsmanager.Secret).applyRemovalPolicy(RemovalPolicy.RETAIN);
@@ -269,7 +276,7 @@ export class KatkeeStack extends Stack {
       encryption: s3.BucketEncryption.S3_MANAGED, // what load balancer log delivery supports
       enforceSSL: true,
       objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
-      lifecycleRules: [{ expiration: Duration.days(90) }],
+      lifecycleRules: [{ expiration: Duration.days(LOG_RETENTION_DAYS) }],
       removalPolicy: RemovalPolicy.RETAIN,
     });
     const mediaBucket = new s3.Bucket(this, "MediaBucket", {
@@ -381,7 +388,7 @@ export class KatkeeStack extends Stack {
       ...(phone ? { PHONE_IDENTITY_SECRET: ecs.Secret.fromSecretsManager(phoneIdentity) } : {}),
       ...Object.fromEntries(enabledCredentials.map((name) => [name, fromSecret(name)])),
     };
-    const logGroup = (id: string) => new logs.LogGroup(this, id, { retention: logs.RetentionDays.ONE_MONTH, removalPolicy: RemovalPolicy.RETAIN });
+    const logGroup = (id: string) => new logs.LogGroup(this, id, { retention: logs.RetentionDays.SIX_MONTHS, removalPolicy: RemovalPolicy.RETAIN });
     const runtimePlatform = { cpuArchitecture: ecs.CpuArchitecture.X86_64, operatingSystemFamily: ecs.OperatingSystemFamily.LINUX };
     /**
      * A writable /tmp on an otherwise read-only root file system. The image declares /tmp as a
@@ -569,7 +576,7 @@ export class KatkeeStack extends Stack {
     });
     new wafv2.CfnWebACLAssociation(this, "WebAclAssociation", { resourceArn: alb.loadBalancerArn, webAclArn: webAcl.attrArn });
     const wafLogs = new logs.LogGroup(this, "WafLogs", {
-      logGroupName: "aws-waf-logs-katkee", retention: logs.RetentionDays.ONE_MONTH, removalPolicy: RemovalPolicy.RETAIN,
+      logGroupName: "aws-waf-logs-katkee", retention: logs.RetentionDays.SIX_MONTHS, removalPolicy: RemovalPolicy.RETAIN,
     });
     new wafv2.CfnLoggingConfiguration(this, "WafLogging", {
       resourceArn: webAcl.attrArn,

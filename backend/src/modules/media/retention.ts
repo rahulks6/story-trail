@@ -9,7 +9,9 @@
  *  - Stories the owner deleted: media purged after 30 days (already unreachable on delete),
  *    unless an open report still needs it as evidence;
  *  - content removed by moderation: kept as evidence for 180 days, then purged;
- *  - deleted accounts: media purged and profile/sign-in data scrubbed after 30 days;
+ *  - deleted accounts: media purged and profile/sign-in data scrubbed after 30 days; the details
+ *    the person registered with are kept apart in deleted_account_records until the account has
+ *    been deleted for 180 days (India's IT Rules 2021, rule 3(1)(h)), then deleted;
  *  - originals (which may carry location metadata) deleted 30 days after processing;
  *    the stripped variants remain for Archive and Highlights;
  *  - expired security records (rate-limit windows, reset codes, challenges, tokens,
@@ -163,11 +165,26 @@ export async function deletedAccounts(store: ObjectStore, batch: number, days: n
        LIMIT :'batch'`, { id, evidence: evidenceDays, batch });
     for (const row of media) await purgeReferenced(store, mapMediaRow(row));
     if (media.length === batch) continue; // more next run; scrub once everything is gone
+    // Every part of one statement sees the account as it was before the scrub, so `kept` copies
+    // the registration details (and sign-in identities) that `u` and `a` remove.
     await query(
       `WITH u AS (
          UPDATE users SET username = 'deleted_' || substr(replace(id::text, '-', ''), 1, 12), email = NULL, password_hash = NULL,
-                display_name = 'Deleted account', bio = '', avatar_media_id = NULL, interests_json = '[]', data_purged_at = now()
+                display_name = 'Deleted account', bio = '', avatar_media_id = NULL, interests_json = '[]', birth_date = NULL,
+                data_purged_at = now()
          WHERE id = :'id' AND deleted_at IS NOT NULL AND data_purged_at IS NULL RETURNING id),
+       kept AS (
+         INSERT INTO deleted_account_records (user_id, username, previous_usernames, email, display_name, birth_date, identities,
+                                              registered_at, deleted_at)
+         SELECT x.id, x.username,
+                coalesce((SELECT jsonb_agg(c.old_username ORDER BY c.changed_at) FROM username_changes c WHERE c.user_id = x.id), '[]'::jsonb),
+                x.email, x.display_name, x.birth_date,
+                coalesce((SELECT jsonb_agg(jsonb_build_object('provider', i.provider, 'subject', i.subject, 'linkedAt', i.created_at)
+                                           ORDER BY i.created_at)
+                          FROM auth_identities i WHERE i.user_id = x.id), '[]'::jsonb),
+                x.created_at, x.deleted_at
+         FROM users x WHERE x.id IN (SELECT id FROM u)
+         ON CONFLICT (user_id) DO NOTHING),
        a AS (DELETE FROM auth_identities WHERE user_id IN (SELECT id FROM u)),
        h AS (DELETE FROM username_changes WHERE user_id IN (SELECT id FROM u)),
        ar AS (DELETE FROM user_areas WHERE user_id IN (SELECT id FROM u)),
@@ -232,6 +249,8 @@ export async function expiredRecords(): Promise<number> {
   total += await deleteWhere("media_jobs", "status IN ('done', 'failed') AND finished_at < now() - interval '30 days'");
   total += await deleteWhere("story_publish_requests", "state <> 'waiting' AND resolved_at < now() - interval '30 days'");
   total += await deleteWhere("auth_security_events", "created_at < now() - make_interval(days => :'days'::integer)", { days: config.retention.securityEventDays });
+  // IT Rules 2021, rule 3(1)(h): registration details stay 180 days after the account was deleted.
+  total += await deleteWhere("deleted_account_records", "deleted_at < now() - make_interval(days => :'days'::integer)", { days: config.retention.deletedAccountRecordDays });
   total += await deleteWhere("retention_runs", "started_at < now() - interval '400 days'");
   total += await deleteWhere("realtime_tickets", "expires_at < now() - interval '1 hour'");
   total += await deleteWhere("push_outbox", "status IN ('sent', 'failed', 'skipped') AND finished_at < now() - interval '30 days'");

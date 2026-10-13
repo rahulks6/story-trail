@@ -112,7 +112,8 @@ and `CLOUDFRONT_PRIVATE_KEY` (see `backend/.env.prod.example`).
 | Media nobody uses (no Story, avatar, ad, waiting publish) | 48 h | objects and row deleted; race-safe with publishing |
 | Media of Stories the owner deleted | 30 days | unreachable immediately on delete; held while a report is open |
 | Content removed by moderation | 180 days | kept as evidence, then purged |
-| Accounts deleted | 30 days | media purged; username/email/name/bio/password/sign-in links scrubbed; evidence held |
+| Accounts deleted | 30 days | media purged; username/email/name/bio/date of birth/password/sign-in links scrubbed; evidence held |
+| Registration details of deleted accounts (`deleted_account_records`) | 180 days after deletion | copied aside by the scrub, then deleted; India's IT Rules 2021, rule 3(1)(h) (`RETENTION_DELETED_ACCOUNT_RECORD_DAYS`) |
 | Originals (may carry location metadata) | 30 days after processing | variants remain for Archive/Highlights |
 | Expired security records, finished jobs, old security events (400 days), scratch files | continuous | |
 

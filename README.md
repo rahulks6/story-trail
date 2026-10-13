@@ -1,13 +1,14 @@
-> **Start here (12 October 2026).** Katkee is a Stories-only social app: a React Native app
+> **Start here (13 October 2026).** Katkee is a Stories-only social app: a React Native app
 > (`mobile/`), a Node/TypeScript API and worker (`backend/`), the Admin console (`admin/`), the
-> katkee.com website (`website/`), and AWS infrastructure as code (`infra/`).
+> katkee.com website (`website/`), and AWS infrastructure as code (`infra/`). It launches first in
+> India, for people 18 and older, operated by Rahul Katakdhond (sole proprietorship).
 >
 > - **Launch, in order** (katkee.com, the App Store, Google Play): [LAUNCH.md](LAUNCH.md).
 >   - iPhone and App Store: [docs/IOS_APP_STORE_DEPLOYMENT.md](docs/IOS_APP_STORE_DEPLOYMENT.md).
 >   - Android and Google Play: [docs/GOOGLE_PLAY_DEPLOYMENT.md](docs/GOOGLE_PLAY_DEPLOYMENT.md).
 >   - Backend and website on AWS: [infra/README.md](infra/README.md).
 > - **Status and release gate**: [RELEASE_READINESS.md](RELEASE_READINESS.md) and the
->   [latest report](docs/phases/PHASE_13_RELEASE_IDENTITY.md). Not production-ready: nothing is
+>   [latest report](docs/phases/PHASE_14_INDIA_LAUNCH.md). Not production-ready: nothing is
 >   deployed, and the native apps still need building and testing on phones.
 > - **Brand** (the icon, every size, both palettes): [BRAND.md](BRAND.md).
 > - **Website** (landing page, Help Center, policy, terms, account deletion):

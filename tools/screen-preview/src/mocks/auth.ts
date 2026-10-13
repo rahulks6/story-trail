@@ -4,5 +4,9 @@ export const previewUser = {
   interests: ["Travel", "Street food", "Photography"], isPrivate: false,
 };
 export function useAuth() {
-  return { status: "signedIn", user: previewUser, accessToken: "preview-token", applyProfile() {}, logout() {}, deleteAccount() {} };
+  return {
+    status: "signedIn", user: previewUser, accessToken: "preview-token", applyProfile() {}, logout() {}, deleteAccount() {},
+    // Sign-up and log-in forms: nothing is sent anywhere.
+    async signup() {}, async login() {}, clearError() {}, error: null, fieldErrors: null,
+  };
 }

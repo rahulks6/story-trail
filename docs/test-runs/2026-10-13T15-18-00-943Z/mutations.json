@@ -1,0 +1,427 @@
+{
+ "phase": 14,
+ "date": "2026-10-13",
+ "note": "Each break is applied alone, the checks that should catch it run, and the file is restored.",
+ "server": {
+  "runner": "backend/scripts/run-tests.cjs as the postgres user (real PostgreSQL 16), with TEST_FILTER",
+  "breaks": [
+   {
+    "name": "minimum-age-13",
+    "file": "backend/dist/src/modules/auth/age.js",
+    "from": "exports.MINIMUM_AGE = 18;",
+    "to": "exports.MINIMUM_AGE = 13;",
+    "runs": "backend: scripts/run-tests.cjs (TEST_FILTER=^minimumAge\\.test)",
+    "caught": true,
+    "failing": [
+     "not ok 1 - the age rule",
+     "not ok 2 - sign-up with an email address",
+     "not ok 3 - sign-up with Google (the same path as a phone number)"
+    ]
+   },
+   {
+    "name": "utc-not-india",
+    "file": "backend/dist/src/modules/auth/age.js",
+    "from": "const INDIA_UTC_OFFSET_MS = 330 * 60_000;",
+    "to": "const INDIA_UTC_OFFSET_MS = 0;",
+    "runs": "backend: scripts/run-tests.cjs (TEST_FILTER=^minimumAge\\.test)",
+    "caught": true,
+    "failing": [
+     "not ok 1 - the age rule"
+    ]
+   },
+   {
+    "name": "birthday-not-checked",
+    "file": "backend/dist/src/modules/auth/age.js",
+    "from": "return ty - by - (tm < bm || (tm === bm && td < bd) ? 1 : 0);",
+    "to": "return ty - by;",
+    "runs": "backend: scripts/run-tests.cjs (TEST_FILTER=^minimumAge\\.test)",
+    "caught": true,
+    "failing": [
+     "not ok 1 - the age rule",
+     "not ok 2 - sign-up with an email address",
+     "not ok 3 - sign-up with Google (the same path as a phone number)"
+    ]
+   },
+   {
+    "name": "impossible-dates-accepted",
+    "file": "backend/dist/src/modules/auth/age.js",
+    "from": "const real = y >= 1900 && date.getUTCFullYear() === y && date.getUTCMonth() === m - 1 && date.getUTCDate() === d;",
+    "to": "const real = y >= 1900;",
+    "runs": "backend: scripts/run-tests.cjs (TEST_FILTER=^minimumAge\\.test)",
+    "caught": true,
+    "failing": [
+     "not ok 1 - the age rule",
+     "not ok 2 - sign-up with an email address",
+     "not ok 3 - sign-up with Google (the same path as a phone number)"
+    ]
+   },
+   {
+    "name": "future-dates-accepted",
+    "file": "backend/dist/src/modules/auth/age.js",
+    "from": "if (!real || value > today)",
+    "to": "if (!real)",
+    "runs": "backend: scripts/run-tests.cjs (TEST_FILTER=^minimumAge\\.test)",
+    "caught": true,
+    "failing": [
+     "not ok 1 - the age rule",
+     "not ok 2 - sign-up with an email address"
+    ]
+   },
+   {
+    "name": "signup-skips-age",
+    "file": "backend/dist/src/modules/auth/dto.js",
+    "from": "errors.birthDate = birthDateIssue;",
+    "to": "void birthDateIssue;",
+    "runs": "backend: scripts/run-tests.cjs (TEST_FILTER=^minimumAge\\.test)",
+    "caught": true,
+    "failing": [
+     "not ok 2 - sign-up with an email address"
+    ]
+   },
+   {
+    "name": "birth-date-not-stored",
+    "file": "backend/dist/src/modules/users/users.repository.js",
+    "from": "birth_date: input.birthDate,",
+    "to": "birth_date: null,",
+    "runs": "backend: scripts/run-tests.cjs (TEST_FILTER=^minimumAge\\.test)",
+    "caught": true,
+    "failing": [
+     "not ok 2 - sign-up with an email address",
+     "not ok 4 - reports"
+    ]
+   },
+   {
+    "name": "refused-sign-in-kept",
+    "file": "backend/dist/src/modules/auth/provider.service.js",
+    "from": "await (0, psql_1.query)(`DELETE FROM auth_provider_proofs WHERE token_hash=:'hash' AND consumed_at IS NULL`, { hash: proofToken(proof) });",
+    "to": "void 0;",
+    "runs": "backend: scripts/run-tests.cjs (TEST_FILTER=^minimumAge\\.test)",
+    "caught": true,
+    "failing": [
+     "not ok 3 - sign-up with Google (the same path as a phone number)"
+    ]
+   },
+   {
+    "name": "provider-birth-date-dropped",
+    "file": "backend/dist/src/modules/auth/provider.service.js",
+    "from": "birth: typeof birthDate === 'string' ? birthDate : null",
+    "to": "birth: null",
+    "runs": "backend: scripts/run-tests.cjs (TEST_FILTER=^minimumAge\\.test)",
+    "caught": true,
+    "failing": [
+     "not ok 3 - sign-up with Google (the same path as a phone number)"
+    ]
+   },
+   {
+    "name": "provider-skips-age",
+    "file": "backend/dist/src/modules/auth/provider.service.js",
+    "from": "if (problem)\n            throw new errors_1.HttpError(422, problem);",
+    "to": "if (false)\n            throw new errors_1.HttpError(422, problem);",
+    "runs": "backend: scripts/run-tests.cjs (TEST_FILTER=^minimumAge\\.test)",
+    "caught": true,
+    "failing": [
+     "not ok 3 - sign-up with Google (the same path as a phone number)"
+    ]
+   },
+   {
+    "name": "database-allows-no-birth-date",
+    "file": "backend/migrations/0040_minimum_age.sql",
+    "from": "  IF p_birth_date IS NULL THEN RAISE EXCEPTION 'BIRTH_DATE_REQUIRED'; END IF;\n",
+    "to": "",
+    "runs": "backend: scripts/run-tests.cjs (TEST_FILTER=^minimumAge\\.test)",
+    "caught": true,
+    "failing": [
+     "not ok 3 - sign-up with Google (the same path as a phone number)"
+    ]
+   },
+   {
+    "name": "under-18-reports-low-priority",
+    "file": "backend/migrations/0040_minimum_age.sql",
+    "from": "    WHEN 'under_18' THEN 2 WHEN 'harassment'",
+    "to": "    WHEN 'harassment'",
+    "runs": "backend: scripts/run-tests.cjs (TEST_FILTER=^minimumAge\\.test)",
+    "caught": true,
+    "failing": [
+     "not ok 4 - reports"
+    ]
+   },
+   {
+    "name": "scrub-keeps-birth-date",
+    "file": "backend/dist/src/modules/media/retention.js",
+    "from": "interests_json = '[]', birth_date = NULL,",
+    "to": "interests_json = '[]',",
+    "runs": "backend: scripts/run-tests.cjs (TEST_FILTER=^retention\\.test)",
+    "caught": true,
+    "failing": [
+     "not ok 1 - retention"
+    ]
+   },
+   {
+    "name": "registration-record-skipped",
+    "file": "backend/dist/src/modules/media/retention.js",
+    "from": "INSERT INTO deleted_account_records (user_id",
+    "to": "SELECT 1 FROM (SELECT NULL::uuid AS user_id",
+    "runs": "backend: scripts/run-tests.cjs (TEST_FILTER=^retention\\.test)",
+    "caught": true,
+    "failing": [
+     "not ok 1 - retention"
+    ]
+   },
+   {
+    "name": "earlier-usernames-dropped",
+    "file": "backend/dist/src/modules/media/retention.js",
+    "from": "coalesce((SELECT jsonb_agg(c.old_username ORDER BY c.changed_at) FROM username_changes c WHERE c.user_id = x.id), '[]'::jsonb),",
+    "to": "'[]'::jsonb,",
+    "runs": "backend: scripts/run-tests.cjs (TEST_FILTER=^retention\\.test)",
+    "caught": true,
+    "failing": [
+     "not ok 1 - retention"
+    ]
+   },
+   {
+    "name": "registration-record-kept-forever",
+    "file": "backend/dist/src/modules/media/retention.js",
+    "from": "total += await deleteWhere(\"deleted_account_records\",",
+    "to": "total += 0 && await deleteWhere(\"deleted_account_records\",",
+    "runs": "backend: scripts/run-tests.cjs (TEST_FILTER=^retention\\.test)",
+    "caught": true,
+    "failing": [
+     "not ok 1 - retention"
+    ]
+   },
+   {
+    "name": "registration-record-one-day",
+    "file": "backend/dist/src/config/env.js",
+    "from": "optionalInt(\"RETENTION_DELETED_ACCOUNT_RECORD_DAYS\", 180)",
+    "to": "optionalInt(\"RETENTION_DELETED_ACCOUNT_RECORD_DAYS\", 1)",
+    "runs": "backend: scripts/run-tests.cjs (TEST_FILTER=^retention\\.test)",
+    "caught": true,
+    "failing": [
+     "not ok 1 - retention"
+    ]
+   }
+  ]
+ },
+ "appChecksAndInfra": {
+  "runner": "jest (mobile), node --test (source checks; infra/dist)",
+  "breaks": [
+   {
+    "name": "app-minimum-age-16",
+    "file": "mobile/src/utils/birthDate.ts",
+    "from": "export const MINIMUM_AGE = 18;",
+    "to": "export const MINIMUM_AGE = 16;",
+    "runs": "mobile: node_modules/jest/bin/jest.js --ci __tests__/birthDate.test.ts",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "app-age-differs-from-server",
+    "file": "mobile/src/utils/birthDate.ts",
+    "from": "export const MINIMUM_AGE = 18;",
+    "to": "export const MINIMUM_AGE = 16;",
+    "runs": ".: --test verification/minimum-age.cjs",
+    "caught": true,
+    "failing": [
+     "not ok 1 - the server and the app apply the same rule: 18, with the same messages"
+    ]
+   },
+   {
+    "name": "app-utc-not-india",
+    "file": "mobile/src/utils/birthDate.ts",
+    "from": "const INDIA_UTC_OFFSET_MS = 330 * 60_000;",
+    "to": "const INDIA_UTC_OFFSET_MS = 0;",
+    "runs": "mobile: node_modules/jest/bin/jest.js --ci __tests__/birthDate.test.ts",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "app-no-slashes",
+    "file": "mobile/src/utils/birthDate.ts",
+    "from": "return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;",
+    "to": "return digits;",
+    "runs": "mobile: node_modules/jest/bin/jest.js --ci __tests__/birthDate.test.ts __tests__/auth.test.tsx",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "signup-ignores-age",
+    "file": "mobile/src/screens/auth/SignupScreen.tsx",
+    "from": "!!birthDate && !birthDateProblem(birthDate) && ",
+    "to": "!!birthDate && ",
+    "runs": "mobile: node_modules/jest/bin/jest.js --ci __tests__/auth.test.tsx",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "signup-drops-birth-date",
+    "file": "mobile/src/screens/auth/SignupScreen.tsx",
+    "from": "await signup({ displayName, username, email, password, birthDate: birthDate! });",
+    "to": "await signup({ displayName, username, email, password } as never);",
+    "runs": "mobile: node_modules/jest/bin/jest.js --ci __tests__/auth.test.tsx",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "signup-hides-server-error",
+    "file": "mobile/src/screens/auth/SignupScreen.tsx",
+    "from": "error={fieldErrors?.birthDate ?? birthProblem}",
+    "to": "error={birthProblem}",
+    "runs": "mobile: node_modules/jest/bin/jest.js --ci __tests__/auth.test.tsx",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "onboarding-ignores-age",
+    "file": "mobile/src/screens/auth/ProviderEntry.tsx",
+    "from": "||!birthDate||!!birthDateProblem(birthDate)}",
+    "to": "}",
+    "runs": "mobile: node_modules/jest/bin/jest.js --ci __tests__/username.test.tsx",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "onboarding-drops-birth-date",
+    "file": "mobile/src/screens/auth/ProviderEntry.tsx",
+    "from": "api.complete(proof,username,name,birthDate!)",
+    "to": "api.complete(proof,username,name,undefined as never)",
+    "runs": "mobile: node_modules/jest/bin/jest.js --ci __tests__/username.test.tsx",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "onboarding-keeps-refused-sign-in",
+    "file": "mobile/src/screens/auth/ProviderEntry.tsx",
+    "from": "{await Keychain.resetGenericPassword({service:PENDING_SERVICE});setProof('');setStage('closed');}",
+    "to": "{}",
+    "runs": "mobile: node_modules/jest/bin/jest.js --ci __tests__/username.test.tsx",
+    "caught": true,
+    "failing": []
+   },
+   {
+    "name": "report-reason-missing-in-app",
+    "file": "mobile/src/api/moderation.ts",
+    "from": "  { value: \"under_18\", label: \"May be under 18\" },\n",
+    "to": "",
+    "runs": ".: --test verification/minimum-age.cjs",
+    "caught": true,
+    "failing": [
+     "not ok 5 - anyone can report an account as \"May be under 18\", in the app, on the server and in the database"
+    ]
+   },
+   {
+    "name": "terms-say-13",
+    "file": "legal/TERMS_OF_SERVICE.md",
+    "from": "You must be at least 18 years old",
+    "to": "You must be at least 13 years old",
+    "runs": ".: --test verification/minimum-age.cjs",
+    "caught": true,
+    "failing": [
+     "not ok 2 - the Terms, the Privacy Policy and the website say 18 and older, and nothing younger"
+    ]
+   },
+   {
+    "name": "stale-13-on-support-page",
+    "file": "website/src/pages/support.html",
+    "from": "<p>{{site.minimumAge}} or older. Katkee",
+    "to": "<p>13 or older. Katkee",
+    "runs": ".: --test verification/minimum-age.cjs",
+    "caught": true,
+    "failing": [
+     "not ok 2 - the Terms, the Privacy Policy and the website say 18 and older, and nothing younger"
+    ]
+   },
+   {
+    "name": "grievance-officer-renamed",
+    "file": "website/site.json",
+    "from": "\"grievanceOfficer\": \"Rahul Katakdhond\"",
+    "to": "\"grievanceOfficer\": \"Katkee Support\"",
+    "runs": ".: --test verification/minimum-age.cjs",
+    "caught": true,
+    "failing": [
+     "not ok 3 - the operator and Grievance Officer are named the same everywhere"
+    ]
+   },
+   {
+    "name": "gac-appeal-dropped",
+    "file": "legal/TERMS_OF_SERVICE.md",
+    "from": "- If you're not satisfied with the Grievance Officer's decision, you can\n  appeal to the Grievance Appellate Committee set up by the Government of\n  India, within 30 days of the decision, at\n  [gac.gov.in](https://gac.gov.in).\n",
+    "to": "",
+    "runs": ".: --test verification/minimum-age.cjs",
+    "caught": true,
+    "failing": [
+     "not ok 3 - the operator and Grievance Officer are named the same everywhere"
+    ]
+   },
+   {
+    "name": "privacy-manifest-without-birth-date",
+    "file": "mobile/ios/KatkeeMobile/PrivacyInfo.xcprivacy",
+    "from": "<string>NSPrivacyCollectedDataTypeOtherDataTypes</string>",
+    "to": "<string>NSPrivacyCollectedDataTypeName</string>",
+    "runs": ".: --test verification/minimum-age.cjs",
+    "caught": true,
+    "failing": [
+     "not ok 4 - the store answers declare the date of birth"
+    ]
+   },
+   {
+    "name": "website-section-links-unchecked",
+    "file": "website/build.cjs",
+    "from": "if (target && fragment && !idsIn(target).has(fragment)) throw",
+    "to": "if (false) throw",
+    "runs": ".: --test verification/website.cjs",
+    "caught": true,
+    "failing": [
+     "not ok 4 - the build refuses broken links, unknown addresses, scripts, inline styles and placeholders"
+    ]
+   },
+   {
+    "name": "public-site-stale",
+    "file": "website/public/support.html",
+    "from": "<p>Rahul Katakdhond<br>",
+    "to": "<p>Grievance Officer<br>",
+    "runs": ".: --test verification/website.cjs",
+    "caught": true,
+    "failing": [
+     "not ok 1 - website/public is exactly what the sources build"
+    ]
+   },
+   {
+    "name": "logs-one-month",
+    "file": "infra/dist/lib/katkee-stack.js",
+    "from": "const logGroup = (id) => new aws_cdk_lib_1.aws_logs.LogGroup(this, id, { retention: aws_cdk_lib_1.aws_logs.RetentionDays.SIX_MONTHS,",
+    "to": "const logGroup = (id) => new aws_cdk_lib_1.aws_logs.LogGroup(this, id, { retention: aws_cdk_lib_1.aws_logs.RetentionDays.ONE_MONTH,",
+    "runs": "infra: --test dist/test/katkee-stack.test.js",
+    "caught": true,
+    "failing": [
+     "not ok 6 - edge protection, monitoring and backups"
+    ]
+   },
+   {
+    "name": "database-logs-one-month",
+    "file": "infra/dist/lib/katkee-stack.js",
+    "from": "cloudwatchLogsRetention: aws_cdk_lib_1.aws_logs.RetentionDays.SIX_MONTHS,",
+    "to": "cloudwatchLogsRetention: aws_cdk_lib_1.aws_logs.RetentionDays.ONE_MONTH,",
+    "runs": "infra: --test dist/test/katkee-stack.test.js",
+    "caught": true,
+    "failing": [
+     "not ok 6 - edge protection, monitoring and backups"
+    ]
+   },
+   {
+    "name": "access-logs-90-days",
+    "file": "infra/dist/lib/katkee-stack.js",
+    "from": "lifecycleRules: [{ expiration: aws_cdk_lib_1.Duration.days(exports.LOG_RETENTION_DAYS) }],",
+    "to": "lifecycleRules: [{ expiration: aws_cdk_lib_1.Duration.days(90) }],",
+    "runs": "infra: --test dist/test/katkee-stack.test.js",
+    "caught": true,
+    "failing": [
+     "not ok 6 - edge protection, monitoring and backups"
+    ]
+   }
+  ]
+ },
+ "summary": {
+  "caught": 38,
+  "total": 38
+ }
+}

@@ -27,9 +27,12 @@ What is already done in the code, and what only you can do:
 
 - **A Mac** with the Xcode version App Store Connect currently requires (Xcode 26 or later in
   2026), plus Node 22, Ruby with Bundler, and Git.
-- **An Apple Developer Program membership** (US$99 a year) at
-  <https://developer.apple.com/programs/>. Enrol as an **organization** if Katkee is a company:
-  you need a D-U-N-S number, and the seller name on the App Store will be the company's.
+- **An Apple Developer Program membership** (US$99 a year; Apple shows the price in rupees when
+  you enrol from India) at <https://developer.apple.com/programs/>. Katkee is a sole
+  proprietorship, which Apple enrols as an **individual**: sign up with your own Apple Account,
+  and the App Store shows your legal name, Rahul Katakdhond, as the seller. (Organization
+  enrolment needs a legal entity with a D-U-N-S number; if you later form a company, Apple can
+  move the membership to it.)
 - **An iPhone** on iOS 15.1 or later, for testing.
 - **The backend and website live at katkee.com** (step 2). The app does nothing without the
   API, and App Review opens the Privacy Policy and Support pages.
@@ -174,9 +177,14 @@ At <https://appstoreconnect.apple.com>, open Apps, then +, then **New App**:
 - Category: **Social Networking**.
 - Content Rights: say whether the app shows third-party content. Users post their own.
 - Age Rating: answer the questionnaire honestly. Katkee has **user-generated content** and
-  **messaging**, and anyone can post. The questionnaire decides the rating.
+  **messaging**, and anyone can post. The questionnaire decides the rating; if App Store
+  Connect lets you set a higher rating than the calculated one, choose 18+, to match the Terms.
+  Whatever the store rating, the app refuses anyone under 18 at sign-up (date of birth, checked
+  on the server).
 
-**Pricing and Availability**: Free; choose the countries.
+**Pricing and Availability**: Free. For the India launch, under Availability, choose **India**
+only. You can add countries later without a new build (update the legal pages first:
+`legal/README.md`).
 
 **App Privacy** (the "nutrition label"). Add the Privacy Policy URL,
 `https://katkee.com/privacy`, then declare these. They
@@ -186,6 +194,7 @@ match `mobile/ios/KatkeeMobile/PrivacyInfo.xcprivacy`, and none is used for trac
 |---|---|---|---|
 | Name | Yes | No | App Functionality |
 | Email Address | Yes | No | App Functionality |
+| Other Data Types (date of birth, to confirm the person is 18 or older) | Yes | No | App Functionality |
 | Phone Number (only if phone sign-in is on) | Yes | No | App Functionality |
 | Coarse Location (only with Nearby Stories on) | Yes | No | App Functionality, Product Personalization |
 | Photos or Videos | Yes | No | App Functionality |
@@ -213,6 +222,8 @@ Advertising" here and in the privacy manifest.
 - **App Review Information**: sign-in required, so give the demo account's email and password.
   Contact details. In the notes, tell the reviewer:
   - Katkee is Stories-only: no posts or Reels, and Stories expire after 24 hours.
+  - Katkee is for people 18 and older: sign-up asks for a date of birth (the demo account is
+    an adult's).
   - **Report**: a Story's More menu, a profile's More menu, and pressing and holding a
     message. **Block**: a profile's More menu. A moderation team reviews reports in the Admin console; say how fast
     you respond.

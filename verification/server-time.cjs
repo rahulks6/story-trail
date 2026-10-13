@@ -23,13 +23,15 @@ test('timeAgo gives compact ages and never a negative or broken one',()=>{
  for(const value of ['',null,'yesterday'])assert.equal(timeAgo(value,now),'');
 });
 
-// Values the app itself wrote as ISO strings (drafts, the DM outbox, analytics, sticker dates).
+// Values the app itself wrote as ISO strings (drafts, the DM outbox, analytics, sticker dates),
+// and calendar arithmetic on a typed date of birth (no server timestamp involved).
 const ALLOWED={
  'components/StickerSheet.tsx':2,
  'state/dmOutbox.ts':1,
  'state/validateSavedDraft.ts':1,
  'analytics/analytics.ts':4,
  'utils/serverTime.ts':3,
+ 'utils/birthDate.ts':2,
 };
 test('no screen parses a server timestamp with Date directly',()=>{
  const found={};

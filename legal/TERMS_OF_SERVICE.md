@@ -1,9 +1,11 @@
 # Katkee Terms of Service
 
-**Last updated:** 12 October 2026
+**Last updated:** 13 October 2026
 
 These Terms are an agreement between you and Katkee about your use of the
 Katkee apps, the website at katkee.com and the service behind them.
+Katkee is operated by Rahul Katakdhond, a sole proprietorship registered
+in India ("Katkee", "we", "us").
 
 ## 1. Acceptance
 
@@ -11,11 +13,19 @@ By creating a Katkee account, you agree to these Terms and to our
 [Privacy Policy](./PRIVACY_POLICY.md). If you don't agree, don't use
 Katkee.
 
-## 2. Eligibility
+## 2. Eligibility: 18 and older
 
-You must be at least 13 (or the minimum age required by your local law,
-if higher) to use Katkee. By creating an account you confirm you meet
-this requirement.
+Katkee is only for adults. You must be at least 18 years old to create an
+account or use Katkee.
+
+- When you sign up, we ask for your date of birth. We don't create an
+  account for anyone under 18.
+- By creating an account, you confirm that the date of birth you give is
+  your own and is true.
+- If we learn that an account belongs to someone under 18, we delete it.
+- If you think an account belongs to someone under 18, report it in the
+  app (reason: May be under 18) or write to our Grievance Officer
+  (section 12).
 
 ## 3. Your account
 
@@ -38,6 +48,7 @@ You're responsible for Your Content. Don't post anything that:
 - violates someone else's rights (copyright, trademark, privacy, publicity)
 - is illegal, harassing, hateful, or threatens violence or self-harm
 - is sexually explicit, or sexualizes anyone under 18
+- is harmful to children
 - impersonates another person or entity
 - is spam or deceptive, or is false information presented as fact to
   mislead people
@@ -54,7 +65,7 @@ when you create an account (the sign-up screen says so).
 
 - **Reporting**: any Story, comment, message or account can be reported by
   any user, for a reason (spam, harassment, nudity, violence, hate speech,
-  self-harm, or other).
+  self-harm, impersonation, scam, may be under 18, or other).
 - **Review**: reports go to our moderators, who can remove the reported
   content or restrict, suspend or disable the account.
 - **Suspension**: a suspended account is immediately signed out
@@ -115,12 +126,36 @@ protection you have under the law of the country where you live.
 
 ## 12. Grievances
 
-If you have a complaint about content on Katkee or about how we handled
-a report, contact our Grievance Officer at grievance@katkee.com. We
-acknowledge a complaint within 24 hours and resolve it within 15 days.
+Katkee's Grievance Officer, under India's Information Technology
+(Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021, is:
+
+- **Name**: Rahul Katakdhond
+- **Email**: grievance@katkee.com
+
+You can complain to the Grievance Officer about any content on Katkee,
+about how we handled a report or an appeal, about your account, or about
+a breach of these Terms or our Privacy Policy. Include a link to the
+content or account, or describe it, say what the problem is, and tell us
+how to reach you.
+
+- We acknowledge your complaint within 24 hours and resolve it within
+  15 days of receiving it.
+- We act on a request to remove content that breaks section 4 as quickly
+  as possible, and within 72 hours.
+- If content shows you, or someone you complain for, nude or partly nude
+  or in a sexual act, or is a morphed or impersonating image of you, we
+  remove it or disable access to it within 24 hours of your complaint.
+- If you're not satisfied with the Grievance Officer's decision, you can
+  appeal to the Grievance Appellate Committee set up by the Government of
+  India, within 30 days of the decision, at
+  [gac.gov.in](https://gac.gov.in).
 
 ## 13. Contact
+
+Katkee is operated by Rahul Katakdhond, a sole proprietorship registered
+in India.
 
 - **Help with the app**: support@katkee.com, or
   [katkee.com/support](https://katkee.com/support)
 - **Privacy**: privacy@katkee.com
+- **Grievance Officer**: Rahul Katakdhond, grievance@katkee.com

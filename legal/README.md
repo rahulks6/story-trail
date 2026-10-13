@@ -11,15 +11,26 @@ reviewed them. Have them reviewed before launch, in particular:
 - **Terms section 9 (liability) and section 11 (governing law).** Governing law is set to India,
   where the service is hosted (AWS Mumbai) and where phone sign-in is offered first. Change it if
   your company is elsewhere.
-- **Who operates Katkee.** The pages name "Katkee". If you trade through a company, use its legal
-  name and add its postal address to section 1 of the policy and section 13 of the terms; some
-  laws (GDPR article 13, for example) require the controller's identity and address.
-- **India's IT Rules 2021, rule 3(2).** An intermediary must publish its Grievance Officer's name
-  and contact details. The pages give grievance@katkee.com and the 24-hour acknowledgement and
-  15-day resolution times; add the officer's name to policy section 11 and terms section 12.
-- **Children.** Katkee is for people 13 and older. Accepting younger users is a different (much
-  stricter) compliance path, COPPA in the US and similar rules elsewhere, that needs its own
-  review.
+- **Who operates Katkee.** Rahul Katakdhond, a sole proprietorship registered in India (policy
+  section 1, terms introduction and section 13; the website's footer reads `website/site.json`).
+  If the registration uses a trade name, add it ("Rahul Katakdhond, trading as ..."), and
+  consider adding the registered business address. If you later form a company (needed before
+  you can take investment), replace the operator everywhere with the company's legal name.
+- **India's IT Rules 2021, rule 3(2): Grievance Officer.** Published as Rahul Katakdhond,
+  grievance@katkee.com, with the 24-hour acknowledgement and 15-day resolution, the 72-hour
+  removal and 24-hour intimate-image timelines, and the appeal to the Grievance Appellate
+  Committee (gac.gov.in) within 30 days (terms section 12, policy section 11, the Help Center).
+- **IT Rules rule 3(1)(h): 180 days.** Registration details of a deleted account are kept 180
+  days after deletion (`deleted_account_records`, policy section 7). The CERT-In directions of
+  2022 need logs kept 180 days in India; the AWS stack does that (`infra/`).
+- **Adults only (18+).** India's DPDP Act 2023 treats everyone under 18 as a child and needs
+  verifiable parental consent to process a child's data. Katkee avoids that by refusing anyone
+  under 18 at sign-up (date of birth, checked on the server: `backend/src/modules/auth/age.ts`)
+  and deleting accounts found to belong to children (terms section 2, policy section 9).
+  Accepting younger users would be a different, much stricter compliance path.
+- **DPDP Act 2023 and Rules 2025.** Most duties apply from 2027. The policy already gives the
+  rights (section 8), names the Data Fiduciary and contact, and offers the policy in Eighth
+  Schedule languages on request. Keep watching for the Data Protection Board's procedures.
 - **GDPR, UK GDPR and CCPA/CPRA**, if you have users there: the rights are listed in policy
   section 8; check the legal bases and transfer mechanisms with your lawyer.
 - **The store answers must match.** Apple's App Privacy answers and Google Play's Data safety
@@ -34,7 +45,7 @@ Create them, or forwarding addresses, before the pages go live:
 | --- | --- |
 | support@katkee.com | Help with the app; the store listings' support contact |
 | privacy@katkee.com | Data requests and account deletion without the app |
-| grievance@katkee.com | Complaints under India's IT Rules (24-hour acknowledgement) |
+| grievance@katkee.com | Complaints to the Grievance Officer, Rahul Katakdhond, under India's IT Rules (24-hour acknowledgement) |
 
 ## After editing
 

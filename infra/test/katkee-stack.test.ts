@@ -3,7 +3,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { Match } from "aws-cdk-lib/assertions";
-import { PROVIDER_CREDENTIALS, RDS_CA_BUNDLE, SECRET_PREFIX } from "../lib/katkee-stack";
+import { LOG_RETENTION_DAYS, PROVIDER_CREDENTIALS, RDS_CA_BUNDLE, SECRET_PREFIX } from "../lib/katkee-stack";
 import { actions, container, envOf, everything, only, refTo, resources, secretNames, settings, statementsFor, synth } from "./helpers";
 
 const { stack, template } = synth(everything());
@@ -323,6 +323,18 @@ describe("edge protection, monitoring and backups", () => {
     assert.equal(dlq.Threshold, 1);
     template.hasResourceProperties("AWS::SNS::Subscription", { Protocol: "email", Endpoint: "ops@katkee.example" });
     template.hasResourceProperties("AWS::Budgets::Budget", { Budget: Match.objectLike({ BudgetLimit: { Amount: 500, Unit: "USD" } }) });
+  });
+
+  it("keeps every log for 180 days, in Mumbai (CERT-In directions, 2022)", () => {
+    assert.equal(LOG_RETENTION_DAYS, 180);
+    const groups = resources(template, "AWS::Logs::LogGroup");
+    assert.ok(groups.length >= 4, "API, worker, migrations and WAF");
+    for (const [id, group] of groups) assert.equal(group.Properties.RetentionInDays, 180, id);
+    const databaseLogs = resources(template, "Custom::LogRetention");
+    assert.equal(databaseLogs.length, 2, "the database's exported postgresql and upgrade logs");
+    for (const [id, retention] of databaseLogs) assert.equal(retention.Properties.RetentionInDays, 180, id);
+    const [, logsBucket] = resources(template, "AWS::S3::Bucket").find(([id]) => id.startsWith("LogsBucket"))!;
+    assert.deepEqual(logsBucket.Properties.LifecycleConfiguration.Rules.map((r: any) => r.ExpirationInDays), [180], "access logs");
   });
 
   it("backs up the database and media daily (35 days) and monthly (a year)", () => {

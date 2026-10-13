@@ -80,7 +80,7 @@ async function main() {
   const users = [];
   for (let i = 0; i < USERS; i++) {
     const tag = `${run.slice(-6)}${i}`;
-    const res = await api(A, "POST", "/api/v1/auth/signup", { username: `bench_${tag}`, email: `bench_${tag}@example.com`, password: "correcthorsebattery", displayName: `Bench ${i}` });
+    const res = await api(A, "POST", "/api/v1/auth/signup", { username: `bench_${tag}`, email: `bench_${tag}@example.com`, password: "correcthorsebattery", displayName: `Bench ${i}`, birthDate: "1990-01-01" });
     users.push({ id: res.user.id, username: `bench_${tag}`, token: res.tokens.accessToken });
   }
   const pairs = [];

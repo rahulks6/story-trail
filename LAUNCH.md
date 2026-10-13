@@ -1,7 +1,12 @@
 # Launching Katkee: katkee.com, the App Store and Google Play
 
-Last updated 12 October 2026. This is the order that works: the stores review a working app, and
+Last updated 13 October 2026. This is the order that works: the stores review a working app, and
 the app needs the API and the website live first.
+
+**The first launch is India only, across the whole country, for adults (18 and older).** Katkee
+is operated by Rahul Katakdhond, a sole proprietorship registered in India, who is also its
+Grievance Officer. The section "India: the rules that apply" below says what that means in
+practice.
 
 | Address | What it is |
 | --- | --- |
@@ -27,7 +32,60 @@ the app needs the API and the website live first.
 - provider accounts: Firebase (push notifications); optionally Twilio (phone sign-in) and
   Google sign-in;
 - a lawyer's review of the Privacy Policy and Terms (`legal/README.md`);
-- store screenshots from the real app, a demo account, and the submissions.
+- store screenshots from the real app, a demo account, and the submissions;
+- running the grievance mailbox (below).
+
+## India: the rules that apply
+
+**Done in the app and the infrastructure**
+- **18 and older only.** Sign-up (email, Google or phone) asks for a date of birth; the server
+  refuses anyone under 18 before storing anything (`backend/src/modules/auth/age.ts`). People
+  can report an account as "May be under 18"; delete any account that is. This keeps Katkee out
+  of the DPDP Act's rules for children's data, which need verifiable parental consent.
+- **Grievance Officer** published on katkee.com/support, the Terms (section 12) and the Privacy
+  Policy (section 11): Rahul Katakdhond, grievance@katkee.com, with the response times and the
+  appeal to the Grievance Appellate Committee (IT Rules 2021, rule 3(2)).
+- **180 days.** A deleted account's registration details are kept apart for 180 days, then
+  deleted (IT Rules rule 3(1)(h)); content removed by moderation is kept 180 days as evidence
+  (rule 3(1)(g)); every log is kept 180 days in Mumbai (CERT-In directions, 2022).
+- **Data in India.** The servers, database, files and logs are in AWS Mumbai (ap-south-1).
+- **Phone sign-in** is set up for Indian numbers (`phoneAuthCountries` defaults to `IN`).
+- **Store answers** for 18+ and India only: `docs/IOS_APP_STORE_DEPLOYMENT.md` (section 7) and
+  `docs/GOOGLE_PLAY_DEPLOYMENT.md` (sections 6 and 7).
+
+**Your accounts as a sole proprietor**
+- **Apple** enrols a sole proprietorship as an **individual**: the App Store shows "Rahul
+  Katakdhond" as the seller. No D-U-N-S number needed.
+- **Google Play**: a **personal** account (your name; a closed test with 12 testers for 14 days
+  before production) or an **organization** account (the business name; needs a D-U-N-S number
+  for the proprietorship; no 12-tester rule).
+- In both stores, choose **India** as the only country. Add others later, after updating the
+  legal pages.
+- Keep the proprietorship's papers ready (PAN, the registration certificate, a bank account in
+  the business name). Ask a chartered accountant about GST before you sell Sponsored Stories.
+- **Investment**: a sole proprietorship can't issue shares. Before raising money, form a
+  private limited company and move the apps, the domain and the store accounts to it.
+
+**SMS codes (phone sign-in)**: every business SMS in India goes through TRAI's DLT registration.
+Katkee sends codes with Twilio Verify; check in the Twilio console that its India messages are
+DLT-registered for your account (Twilio's own registration covers its default message; a custom
+sender name or text needs your own), then send a test code to a number on each network (Jio,
+Airtel, Vi, BSNL).
+
+**Running Katkee in India** (yours, every day):
+- **grievance@katkee.com**: acknowledge each complaint within 24 hours, resolve it within 15
+  days; act on a request to remove content that breaks the Terms within 72 hours; remove intimate
+  or morphed images of the person complaining within 24 hours. Keep a log of complaints and what
+  you did.
+- **Orders from a court or the government**: remove or disable the content within 36 hours, and
+  answer a lawful request for information within 72 hours.
+- **Security incidents** (a breach, a hacked account system, a defaced site): report them to
+  CERT-In (incident@cert-in.org.in) within 6 hours of noticing.
+- **Once a year**: remind users of the Terms and Privacy Policy (an in-app notice or an email).
+- **At 50 lakh (5 million) users in India** Katkee becomes a significant social media
+  intermediary: it then needs a Chief Compliance Officer, a nodal contact person and a resident
+  Grievance Officer (employees living in India), a physical address in India, and monthly
+  compliance reports. Plan for it as you grow.
 
 ## 1. katkee.com: email and DNS
 
@@ -38,7 +96,7 @@ the app needs the API and the website live first.
    | --- | --- |
    | support@katkee.com | Help; the stores' support contact |
    | privacy@katkee.com | Data requests; account deletion without the app |
-   | grievance@katkee.com | Complaints under India's IT Rules (acknowledge within 24 hours) |
+   | grievance@katkee.com | Complaints to the Grievance Officer, Rahul Katakdhond (acknowledge within 24 hours) |
    | ops@katkee.com | Server alarms (`infra/README.md`) |
 
 2. **Sending email** (password reset codes, security alerts). In Amazon SES (ap-south-1), verify
@@ -117,8 +175,8 @@ buttons.
   build is blocked by this environment's network policy. Test every flow in the two store guides
   on real phones.
 - **Legal review**: the policy and terms describe the code accurately but are not legal advice.
-  The governing law is set to India; the Grievance Officer's name still needs adding
-  (`legal/README.md`).
+  The governing law is India; the operator and Grievance Officer are Rahul Katakdhond. Add the
+  proprietorship's trade name and address if it has them (`legal/README.md`).
 - **A crash reporter** (Sentry is stubbed in `mobile/src/crashReporting.ts`).
 - **Sign in with Apple**, only if you turn Google sign-in on for iPhone (App Review 4.8).
 - `RELEASE_READINESS.md` has the full gate list and what each item needs.

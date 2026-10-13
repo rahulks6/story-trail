@@ -17,7 +17,7 @@ export function registerProviderAuthRoutes(router:Router,providers:ProviderGatew
   available('GOOGLE');authLimit.check(clientIp(req));const b=body(req.body);const verified=await providers.google(text(b.idToken,12000));const proof=await identity.googleProof(verified);
   sendJson(res,200,b.proofOnly===true?{proof,expiresIn:300}:await identity.resultFor(proof,{ip:clientIp(req),userAgent:req.headers['user-agent']??null}));
  });
- router.post('/api/v1/auth/provider/complete',async(req,res)=>{authLimit.check(clientIp(req));const b=body(req.body);sendJson(res,200,await identity.complete(text(b.proof,64),b.username,b.displayName,{ip:clientIp(req),userAgent:req.headers['user-agent']??null}));});
+ router.post('/api/v1/auth/provider/complete',async(req,res)=>{authLimit.check(clientIp(req));const b=body(req.body);sendJson(res,200,await identity.complete(text(b.proof,64),b.username,b.displayName,b.birthDate,{ip:clientIp(req),userAgent:req.headers['user-agent']??null}));});
  router.post('/api/v1/auth/phone/request',async(req,res)=>{
   available('PHONE');authLimit.check(clientIp(req));const b=body(req.body);const phone=normalizePhone(b.phone,b.country),challenge=identity.opaque();const phoneKey=identity.phoneHash(phone),mask='•••• '+phone.slice(-4);
   let row;

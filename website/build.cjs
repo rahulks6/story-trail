@@ -240,6 +240,18 @@ ${doc.html}
     }
     files.set(page.file, Buffer.from(html));
   }
+  // A link to a section ("/terms#grievances", "#contact") must name a section that exists.
+  const fileOf = new Map(pages.filter((p) => p.route).map((p) => [p.route, p.file]));
+  const idsIn = (file) => new Set([...files.get(file).toString().matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]));
+  for (const page of pages) {
+    for (const [, href] of files.get(page.file).toString().matchAll(/\shref="([^"]*#[^"]*)"/g)) {
+      const local = href.startsWith(site.origin) ? href.slice(site.origin.length) : href;
+      if (!local.startsWith('/') && !local.startsWith('#')) continue;
+      const [pathname, fragment] = local.split('#');
+      const target = pathname ? fileOf.get(pathname.split('?')[0]) : page.file;
+      if (target && fragment && !idsIn(target).has(fragment)) throw new Error(`${page.file}: link ${href} names no section on ${target}`);
+    }
+  }
 
   const robots = `User-agent: *\nAllow: /\n\nSitemap: ${site.origin}/sitemap.xml\n`;
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[...routes].map((r) => `  <url><loc>${site.origin}${r}</loc></url>`).join('\n')}\n</urlset>\n`;

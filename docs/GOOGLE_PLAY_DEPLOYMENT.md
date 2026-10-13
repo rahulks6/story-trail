@@ -26,11 +26,13 @@ What is already done, and what only you can do:
 ## 1. What you need
 
 - **A Google Play developer account** (US$25 once) at <https://play.google.com/console/signup>.
-  - Choose **Organization** if Katkee is a company. It needs a D-U-N-S number, and the store
-    shows the company as the developer.
-  - A **personal** account created after November 2023 must run a **closed test with at least
-    12 testers for 14 days in a row** before it can publish to everyone (step 7). Organization
-    accounts don't have this rule.
+  - Katkee is a sole proprietorship, so either account type works:
+    - **Personal**: the quickest. The store shows your name as the developer. A personal
+      account created after November 2023 must run a **closed test with at least 12 testers
+      for 14 days in a row** before it can publish to everyone (step 8).
+    - **Organization**: needs a D-U-N-S number for the business (free from Dun & Bradstreet
+      India; it can take a few weeks) and documents that match the registration. The store
+      shows the business as the developer, and there is no 12-tester rule.
 - **A computer** with Node 22, **JDK 17** and the Android SDK (Android Studio installs it). The
   exact versions are in `docs/NATIVE_BUILD_HANDOFF.md`.
 - **An Android phone** (Android 7 or later) for testing.
@@ -146,9 +148,10 @@ Answer honestly; Katkee has:
 - users who can share an approximate place (the location sticker);
 - no gambling, no purchases, no unmoderated web browsing.
 
-**Target audience and content**: age groups **13 to 15, 16 to 17 and 18 and over**. Not under
-13: Katkee is for 13 and older (`legal/TERMS_OF_SERVICE.md`, section 2). Answer that the app
-isn't designed for children.
+**Target audience and content**: age group **18 and over** only. Katkee is for people 18 and
+older (`legal/TERMS_OF_SERVICE.md`, section 2): sign-up asks for a date of birth and the server
+refuses anyone under 18. Answer that the app isn't designed for children. With no age group
+under 18, the Families policy doesn't apply.
 
 **News app**: No. **Government app**: No. **Financial features**: None. **Health**: None.
 
@@ -165,7 +168,7 @@ isn't designed for children.
 | Personal info: Email address | Yes | Required | App functionality, Account management |
 | Personal info: User IDs | Yes | Required | App functionality, Analytics |
 | Personal info: Phone number | Yes | Optional (phone sign-in) | Account management |
-| Personal info: Other info (bio, interests) | Yes | Optional | App functionality, Personalization, Advertising or marketing (interests choose Sponsored Stories, when on) |
+| Personal info: Other info (date of birth; bio, interests) | Yes | Required (the date of birth; bio and interests are optional) | App functionality, Account management, Fraud prevention, security and compliance (the date of birth confirms the person is 18 or older; it is never used for ads), Personalization, Advertising or marketing (interests choose Sponsored Stories, when on) |
 | Messages: Other in-app messages | Yes | Optional | App functionality |
 | Photos and videos: Photos; Videos | Yes | Optional | App functionality |
 | Audio: Voice or sound recordings (sound in video Stories) | Yes | Optional | App functionality |
@@ -231,8 +234,12 @@ Safety and privacy
 • Nearby Stories is optional, and uses a city-sized area, never your exact location
 • We don't sell your data
 
-Katkee is for people 13 and older.
+Katkee is for people 18 and older.
 ```
+
+**Countries and regions** (Test and release, Production, Countries / regions): add **India**
+only for the first launch. Add more countries later without a new build (update the legal
+pages first: `legal/README.md`).
 
 ## 8. Test, then release
 

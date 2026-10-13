@@ -29,7 +29,7 @@ async function call(method: string, path: string, body?: unknown, headers: Recor
 
 async function account(role?: "ADMIN" | "SUPER_ADMIN", permissions: string[] = ["reports.read", "audit.read"]) {
   const tag = randomUUID().slice(0, 8);
-  const input = { email: `mfa_${tag}@example.com`, username: `mfa_${tag}`, password: "correcthorsebattery", displayName: "Operator" };
+  const input = { email: `mfa_${tag}@example.com`, username: `mfa_${tag}`, password: "correcthorsebattery", displayName: "Operator", birthDate: "1995-05-15" };
   const r = await call("POST", "/api/v1/auth/signup", input);
   assert.equal(r.status, 201);
   if (role) await query(`INSERT INTO admin_grants(user_id, role, permissions) VALUES (:'id', :'role', :'p'::jsonb)`, { id: r.body.user.id, role, p: JSON.stringify(permissions) });

@@ -17,7 +17,7 @@ import {
   abandonedUploads, deletedAccounts, deletedStoryMedia, expiredRecords, processedOriginals, removedContentMedia,
   runRetentionIfDue, scratchFiles, unusedMedia,
 } from "../src/modules/media/retention";
-import { authHeader, makeClient, uniqueUser } from "./helpers";
+import { ADULT_BIRTH_DATE, authHeader, makeClient, uniqueUser } from "./helpers";
 import { clientUploadId, createUploadSession, jpegWithGps, makeVideo, putPart, uploadDirect, type UploadPlanPart } from "./mediaHelpers";
 
 let baseUrl: string;
@@ -38,7 +38,7 @@ after(async () => {
 async function signup() {
   const input = uniqueUser();
   const res = await client.post("/api/v1/auth/signup", input);
-  return { username: input.username, token: res.body.tokens.accessToken as string, id: res.body.user.id as string };
+  return { ...input, token: res.body.tokens.accessToken as string, id: res.body.user.id as string };
 }
 
 /** A processed photo owned by `token`. */
@@ -154,9 +154,11 @@ describe("retention", () => {
     const heldStory = await publish(user.token, held);
     await query(`UPDATE stories SET moderation_removed_at = now() - interval '10 days' WHERE id = :'id'`, { id: heldStory });
     // An earlier rename: the old name is personal data too.
-    await query(`UPDATE users SET username = :'name' WHERE id = :'id'`, { name: `renamed_${randomUUID().slice(0, 8)}`, id: user.id });
+    const renamed = `renamed_${randomUUID().slice(0, 8)}`;
+    await query(`UPDATE users SET username = :'name' WHERE id = :'id'`, { name: renamed, id: user.id });
     await query(`UPDATE users SET avatar_media_id = :'m', bio = 'hello', deleted_at = now() - interval '31 days', is_active = false WHERE id = :'id'`, { m: avatar, id: user.id });
-    await query(`INSERT INTO auth_identities (user_id, provider, subject) VALUES (:'id', 'GOOGLE', :'sub')`, { id: user.id, sub: `google-${randomUUID()}` });
+    const googleSubject = `google-${randomUUID()}`;
+    await query(`INSERT INTO auth_identities (user_id, provider, subject) VALUES (:'id', 'GOOGLE', :'sub')`, { id: user.id, sub: googleSubject });
     assert.ok(Number((await queryOne(`SELECT count(*) AS n FROM refresh_tokens WHERE user_id = :'id'`, { id: user.id }))?.n) > 0);
     await query(`INSERT INTO analytics_active_days (day, platform, user_id) VALUES (current_date - 40, 'ios', :'id') ON CONFLICT DO NOTHING`, { id: user.id });
     await query(`INSERT INTO analytics_events (id, user_id, name, platform, occurred_at) VALUES (gen_random_uuid(), :'id', 'app_session_started', 'ios', now() - interval '35 days')`, { id: user.id });
@@ -170,10 +172,27 @@ describe("retention", () => {
     for (const table of ["auth_identities", "refresh_tokens", "auth_security_events", "analytics_events", "analytics_active_days", "username_changes", "user_areas"]) {
       assert.equal((await queryOne(`SELECT count(*) AS n FROM ${table} WHERE user_id = :'id'`, { id: user.id }))?.n, "0", table);
     }
+    assert.equal((await queryOne(`SELECT birth_date FROM users WHERE id = :'id'`, { id: user.id }))?.birth_date, null);
     assert.notEqual(await purgedAt(normal), null);
     assert.notEqual(await purgedAt(avatar), null);
     assert.equal(await purgedAt(held), null, "moderation evidence outlives the account");
     assert.equal(await deletedAccounts(mediaStorage, 200, 30, 180), 0, "done once");
+
+    // India's IT Rules 2021, rule 3(1)(h): what the account registered with is kept apart until it
+    // has been deleted for 180 days, then removed by the expired-records task.
+    const kept = await queryOne(
+      `SELECT username, previous_usernames, email, display_name, birth_date::text AS birth_date, identities, registered_at, deleted_at
+       FROM deleted_account_records WHERE user_id = :'id'`, { id: user.id });
+    assert.equal(kept?.username, renamed);
+    assert.deepEqual(JSON.parse(kept!.previous_usernames!), [user.username], "the name it registered with");
+    assert.deepEqual([kept?.email, kept?.display_name, kept?.birth_date], [user.email, user.displayName, ADULT_BIRTH_DATE]);
+    assert.deepEqual(JSON.parse(kept!.identities!).map((i: { provider: string; subject: string }) => [i.provider, i.subject]), [["GOOGLE", googleSubject]]);
+    assert.ok(kept?.registered_at && kept.deleted_at);
+    await expiredRecords();
+    assert.equal((await queryOne(`SELECT count(*) AS n FROM deleted_account_records WHERE user_id = :'id'`, { id: user.id }))?.n, "1", "kept within 180 days");
+    await query(`UPDATE deleted_account_records SET deleted_at = now() - interval '181 days' WHERE user_id = :'id'`, { id: user.id });
+    await expiredRecords();
+    assert.equal((await queryOne(`SELECT count(*) AS n FROM deleted_account_records WHERE user_id = :'id'`, { id: user.id }))?.n, "0", "gone after 180 days");
   });
 
   it("deletes originals 30 days after processing; the stripped variants keep serving", async () => {

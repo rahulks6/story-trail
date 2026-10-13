@@ -25,6 +25,7 @@ function uniqueUser() {
     email: `test_${suffix}@example.com`,
     password: "correcthorsebattery",
     displayName: `Test ${suffix}`,
+    birthDate: "1995-05-15",
   };
 }
 

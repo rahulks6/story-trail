@@ -27,7 +27,7 @@ async function request(path: string, method = "GET", data?: unknown, headers: Re
 }
 async function account(grant?: string[]) {
   const tag = randomUUID().slice(0, 8);
-  const input = { email: `an_${tag}@example.com`, username: `an_${tag}`, password: "correcthorsebattery", displayName: `Analytics ${tag}` };
+  const input = { email: `an_${tag}@example.com`, username: `an_${tag}`, password: "correcthorsebattery", displayName: `Analytics ${tag}`, birthDate: "1995-05-15" };
   const r = await request("/api/v1/auth/signup", "POST", input);
   assert.equal(r.status, 201, JSON.stringify(r.body));
   if (grant) await query(`INSERT INTO admin_grants(user_id, role, permissions) VALUES (:'id', 'ADMIN', :'p'::jsonb)`, { id: r.body.user.id, p: JSON.stringify(grant) });

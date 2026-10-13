@@ -5,6 +5,8 @@ export interface SignupPayload {
   email: string;
   password: string;
   displayName: string;
+  /** YYYY-MM-DD (utils/birthDate.ts). */
+  birthDate: string;
 }
 
 export interface LoginPayload {

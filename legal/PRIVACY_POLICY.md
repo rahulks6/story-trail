@@ -1,6 +1,6 @@
 # Katkee Privacy Policy
 
-**Last updated:** 12 October 2026
+**Last updated:** 13 October 2026
 
 This policy explains what Katkee collects, how we use it, who can see it, how long we keep it
 and the choices you have. It covers the Katkee apps for iPhone and Android, the website at
@@ -8,18 +8,33 @@ katkee.com and the service behind them.
 
 ## 1. Who we are
 
-Katkee ("we", "us") operates the Katkee apps, the website at katkee.com and the service they
-use. Questions about this policy or your data go to privacy@katkee.com. Section 11 has our
-other contacts.
+Katkee is operated by Rahul Katakdhond, a sole proprietorship registered in India ("Katkee",
+"we", "us"). We decide how and why your personal data is used for the Katkee apps, the website
+at katkee.com and the service they use, which makes us the Data Fiduciary under India's Digital
+Personal Data Protection Act 2023.
+
+Katkee is only for people 18 and older (section 9).
+
+Questions about this policy or your data go to privacy@katkee.com. Section 11 has our other
+contacts.
 
 ## 2. What we collect
 
 ### Account information
 Username, email address, a securely hashed password (we never store your
-actual password; see Section 6), display name, and an optional bio,
-interests (up to five) and profile photo. If you sign in with your phone
-number, we keep the number. If you sign in with Google, we keep your Google
-account ID and email address.
+actual password; see Section 6), display name, **date of birth**, and an
+optional bio, interests (up to five) and profile photo.
+
+If you sign in with your phone number, Twilio receives it to send you a
+code. We keep only a keyed fingerprint of the number, not the number
+itself, so we can recognise it when you sign in again. If you sign in with
+Google, we keep your Google account ID and email address.
+
+### Date of birth
+We ask for your date of birth when you create an account, only to confirm
+you're 18 or older (section 9). It's never shown on your profile or to
+anyone else, never used for ads, and can't be changed in the app. If you
+entered it wrongly, write to privacy@katkee.com to correct it.
 
 ### Content you create
 Photos and videos you publish as Stories (with any sound they contain),
@@ -65,8 +80,8 @@ A Story's view count is public. Only the Story's owner can see who viewed it.
 Katkee shows Sponsored Stories, labelled "Sponsored", from advertisers. Which
 ones you see depends on your interests and your phone's platform (iPhone or
 Android). Advertisers receive only totals, such as how many times an ad was
-shown or tapped, never who you are. Your messages, area and time zone are
-never used for ads. We don't use advertising identifiers or track you
+shown or tapped, never who you are. Your messages, area, time zone and date
+of birth are never used for ads. We don't use advertising identifiers or track you
 across other companies' apps and websites.
 
 ### App usage and crashes
@@ -82,7 +97,7 @@ message is kept as evidence for the moderator.
 
 ### Technical information
 - Your IP address: to limit abuse and secure accounts. It also appears in
-  server logs.
+  server logs, which Indian law requires us to keep for 180 days.
 - Device and app details for each signed-in session, so you can sign out a
   device.
 - The push token Apple or Google gives your phone, so we can send
@@ -132,7 +147,9 @@ message is kept as evidence for the moderator.
 - **Google**: Google sign-in, if you use it, and Safe Browsing checks of
   links posted in Katkee.
 
-They process data only to provide these services to us.
+They process data only to provide these services to us. Our servers,
+database and files are in India (Amazon Web Services, Mumbai); Twilio,
+Google and Apple may process the data they handle for us outside India.
 
 ## 6. How we protect it
 
@@ -152,15 +169,24 @@ recorded in an audit log that can't be edited.
 - **Deleted accounts**:
   - unavailable at once;
   - personal data purged and the account scrubbed after 30 days;
-  - content removed by moderation kept up to 180 days as evidence.
+  - content removed by moderation kept up to 180 days as evidence;
+  - the details you registered with (username and any earlier usernames,
+    email address, display name, date of birth and sign-in identifiers)
+    kept separately for 180 days after deletion, because India's IT Rules
+    2021 (rule 3(1)(h)) require it, then deleted. We use them only to
+    answer lawful requests.
 - **Uploads never used**: deleted after 48 hours.
 - **Photo originals**: deleted 30 days after processing.
 - **Your area**: see above.
 - **Raw analytics events**: deleted after 90 days; only daily totals that
   identify nobody remain.
 - **Security records**: up to 400 days.
-- **Server logs**: about 30 days.
-- **Database backups**: 14 days.
+- **Server logs**: 180 days, kept in India, as the CERT-In directions of
+  2022 require.
+- **Backups**: the database can be restored to any moment in the last
+  14 days. Daily backups of the database and stored files are kept for
+  35 days and monthly backups for a year; anything you deleted is gone
+  from backups when they expire.
 - **Earlier versions of stored files**: 30 days after a file is deleted.
 
 ## 8. Your choices and rights
@@ -177,18 +203,36 @@ If you can't use the app, you can ask us to delete your account at
 [katkee.com/delete-account](https://katkee.com/delete-account). Write to
 privacy@katkee.com for a copy of your data or anything else.
 
+In India, the Digital Personal Data Protection Act 2023 gives you the right
+to:
+- get a summary of your personal data and how we use it;
+- have it corrected, completed, updated or erased;
+- have your grievances about it answered;
+- nominate someone to use these rights for you if you die or can't use
+  them yourself.
+
+Write to privacy@katkee.com to use any of them. If you're not satisfied
+with our answer, you can complain to the Data Protection Board of India.
+If you'd like this policy in Hindi or another language listed in the
+Eighth Schedule to the Constitution of India, ask us at the same address.
+
 If you're in the EU or UK you have rights under GDPR: access, correction,
 deletion, portability and objection. Residents of California have similar
-rights under the CCPA/CPRA. In India, the Digital Personal Data Protection
-Act 2023 gives you rights to access, correct and erase your data and to
-nominate someone. Contact us to use any of them.
+rights under the CCPA/CPRA. Contact us to use any of them.
 
-## 9. Children
+## 9. Katkee is for adults (18 and older)
 
-Katkee is not directed at children under 13 (or the minimum age required
-by your local law, which may be higher), and we don't knowingly collect
-data from them. If you believe a child under that age has an account, tell
-us at privacy@katkee.com and we will delete it.
+Katkee is only for people 18 and older. Under India's Digital Personal Data
+Protection Act 2023, anyone under 18 is a child, and we don't knowingly
+collect personal data from children.
+
+- When you create an account, we ask for your date of birth. If it shows
+  you're under 18, we don't create the account and keep nothing you
+  entered. If you started with Google or a phone number, that verified
+  sign-in is deleted at once.
+- If we learn that an account belongs to someone under 18, we delete it.
+- To tell us about an account that may belong to someone under 18, report
+  it in the app (reason: May be under 18) or write to grievance@katkee.com.
 
 ## 10. Changes to this policy
 
@@ -197,8 +241,16 @@ notify you in the app before they take effect.
 
 ## 11. Contact
 
-- **Privacy questions and requests about your data**: privacy@katkee.com
+Katkee is operated by Rahul Katakdhond, a sole proprietorship registered in
+India.
+
+- **Privacy questions and requests about your data**: Rahul Katakdhond,
+  privacy@katkee.com
 - **Help with the app**: support@katkee.com, or
   [katkee.com/support](https://katkee.com/support)
-- **Grievance Officer (India)**: grievance@katkee.com. We acknowledge a
-  complaint within 24 hours and resolve it within 15 days.
+- **Grievance Officer (India)**: Rahul Katakdhond, grievance@katkee.com.
+  We acknowledge a complaint within 24 hours and resolve it within 15 days.
+  If you're not satisfied with the decision, you can appeal to the
+  Grievance Appellate Committee at [gac.gov.in](https://gac.gov.in) within
+  30 days. Section 12 of the [Terms of Service](./TERMS_OF_SERVICE.md) has
+  the details.

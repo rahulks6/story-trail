@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, type TextInput } from "react-n
 import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import { Banner, Button, TextField } from "../../components/Form";
 import { newPasswordProblem } from "../../utils/passwordRules";
+import { birthDateFieldProblem, birthDateProblem, birthDateToIso, formatBirthDateInput } from "../../utils/birthDate";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "../../navigation/types";
@@ -18,23 +19,29 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
   const [displayName, setDisplayName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [birth, setBirth] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const insets = useScreenInsets();
   const usernameInput = useRef<React.ComponentRef<typeof TextInput>>(null);
   const emailInput = useRef<React.ComponentRef<typeof TextInput>>(null);
+  const birthInput = useRef<React.ComponentRef<typeof TextInput>>(null);
   const passwordInput = useRef<React.ComponentRef<typeof TextInput>>(null);
   // Checked as they type, so most problems show before a round trip (the server checks again).
   const passwordProblem = password ? newPasswordProblem(password, email, username) : undefined;
   const availability = useUsernameAvailability(username, null);
   const availabilityLine = usernameCheckText(availability);
-  const complete = !!displayName.trim() && !!username && !!email && !!password && !passwordProblem && !usernameRefused(availability);
+  // Katkee is for people 18 and older; the server checks again (backend/src/modules/auth/age.ts).
+  const birthDate = birthDateToIso(birth);
+  const birthProblem = birthDateFieldProblem(birth);
+  const complete = !!displayName.trim() && !!username && !!email && !!birthDate && !birthDateProblem(birthDate) && !!password &&
+    !passwordProblem && !usernameRefused(availability);
 
   const onSubmit = async () => {
     if (!complete || submitting) return;
     setSubmitting(true);
     try {
-      await signup({ displayName, username, email, password });
+      await signup({ displayName, username, email, password, birthDate: birthDate! });
     } catch {
       // error/fieldErrors surfaced via useAuth() state below
     } finally {
@@ -95,9 +102,25 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
           textContentType="emailAddress"
           returnKeyType="next"
           submitBehavior="submit"
-          onSubmitEditing={() => passwordInput.current?.focus()}
+          onSubmitEditing={() => birthInput.current?.focus()}
           value={email}
           onChangeText={change(setEmail)}
+        />
+        <TextField
+          ref={birthInput}
+          label="Date of birth"
+          error={fieldErrors?.birthDate ?? birthProblem}
+          hint="DD/MM/YYYY. It confirms your age and is never shown on your profile."
+          placeholder="DD/MM/YYYY"
+          keyboardType="number-pad"
+          autoComplete="off"
+          textContentType="none"
+          maxLength={10}
+          returnKeyType="next"
+          submitBehavior="submit"
+          onSubmitEditing={() => passwordInput.current?.focus()}
+          value={birth}
+          onChangeText={change((t) => setBirth(formatBirthDateInput(t)))}
         />
         <TextField
           ref={passwordInput}

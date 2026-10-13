@@ -14,7 +14,7 @@ npm run shots               # shots/*.png, creator-page-preview.png, edit-profil
 
 - `src/app.tsx` renders the real `ProfileScreen`, `UserProfileScreen`, `EditProfileScreen`,
   `AvatarCropper` and `BottomTabBar` inside a 390 x 844 phone frame.
-  `?screen=own|other|private|edit|crop|login|about` picks the screen, and `&story=none` shows
+  `?screen=own|other|private|edit|crop|login|signup|about` picks the screen, and `&story=none` shows
   your page without an active Story. `login` leaves out Google and phone sign-in, which need
   native SDKs.
 - `npm run shots` also writes `shots/edit-profile-preview.png`.

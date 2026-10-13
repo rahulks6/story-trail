@@ -59,7 +59,7 @@ async function main() {
     if (i > 100) throw Error('API did not start');
     await new Promise((r) => setTimeout(r, 100));
   }
-  const superInput = { username: 'ui_super_' + Date.now().toString(36), email: `super_${Date.now()}@example.com`, password: 'correcthorsebattery', displayName: 'UI Super Admin' };
+  const superInput = { username: 'ui_super_' + Date.now().toString(36), email: `super_${Date.now()}@example.com`, password: 'correcthorsebattery', displayName: 'UI Super Admin', birthDate: '1990-01-01' };
   const signup = await fetch(base + '/api/v1/auth/signup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(superInput) });
   if (signup.status !== 201) throw Error('Super Admin signup failed: ' + (await signup.text()));
   cp.execFileSync(process.execPath, ['dist/scripts/bootstrap-super-admin.js', superInput.email], { cwd: backend, env, stdio: 'inherit' });

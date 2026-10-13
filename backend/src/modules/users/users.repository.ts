@@ -49,16 +49,19 @@ export async function createUser(input: {
   email: string;
   passwordHash: string;
   displayName: string;
+  /** YYYY-MM-DD, already checked (auth/age.ts). Stored only: never selected back. */
+  birthDate: string;
 }): Promise<UserRecord> {
   const row = await queryOne(
-    `INSERT INTO users (username, email, password_hash, display_name)
-     VALUES (:'username', :'email', :'password_hash', :'display_name')
+    `INSERT INTO users (username, email, password_hash, display_name, birth_date)
+     VALUES (:'username', :'email', :'password_hash', :'display_name', :'birth_date'::date)
      RETURNING ${SELECT_COLUMNS}`,
     {
       username: input.username,
       email: input.email,
       password_hash: input.passwordHash,
       display_name: input.displayName,
+      birth_date: input.birthDate,
     },
   );
   if (!row) throw new Error("Insert did not return a row");

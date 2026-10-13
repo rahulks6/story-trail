@@ -7,7 +7,7 @@ const superEmail=process.env.KATKEE_TEST_SUPER_EMAIL,superPassword=process.env.K
 if(!superEmail||!superPassword)throw Error('Provide credentials for an existing isolated-test Super Admin.');
 const output=process.env.KATKEE_TEST_OUTPUT||'browser-results';fs.mkdirSync(output,{recursive:true});
 async function api(path,method='GET',body,token){const r=await fetch(base+path,{method,headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})});const data=r.status===204?null:await r.json();assert.ok(r.ok,JSON.stringify(data));return data;}
-async function user(){const id=randomUUID().slice(0,8);const input={username:'ui_'+id,email:'ui_'+id+'@example.com',password:'correcthorsebattery',displayName:'UI test operator'};const data=await api('/api/v1/auth/signup','POST',input);return {...data,input};}
+async function user(){const id=randomUUID().slice(0,8);const input={username:'ui_'+id,email:'ui_'+id+'@example.com',password:'correcthorsebattery',displayName:'UI test operator',birthDate:'1990-01-01'};const data=await api('/api/v1/auth/signup','POST',input);return {...data,input};}
 (async()=>{
  const admin=await user(),owner=await user(),reporter=await user();const png=require('../backend/dist/test/fixtures').buildTestPng(4,4);
  const uploaded=await fetch(base+'/api/v1/media/photos',{method:'POST',headers:{'Content-Type':'image/png',Authorization:'Bearer '+owner.tokens.accessToken},body:png});const media=(await uploaded.json()).media;

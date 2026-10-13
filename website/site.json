@@ -12,5 +12,12 @@
     "appStore": "",
     "googlePlay": ""
   },
-  "copyrightYear": 2026
+  "copyrightYear": 2026,
+  "minimumAge": 18,
+  "operator": {
+    "name": "Rahul Katakdhond",
+    "form": "sole proprietorship",
+    "country": "India"
+  },
+  "grievanceOfficer": "Rahul Katakdhond"
 }

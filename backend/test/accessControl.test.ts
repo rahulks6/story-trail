@@ -28,7 +28,7 @@ async function request(method: string, path: string, body?: unknown, headers: Re
 interface Person { id: string; username: string; email: string; password: string; token: string; auth: Record<string, string> }
 async function person(label: string): Promise<Person> {
   const tag = randomUUID().slice(0, 8);
-  const input = { username: `${label}_${tag}`, email: `${label}_${tag}@example.com`, password: "correcthorsebattery", displayName: `${label} ${tag}` };
+  const input = { username: `${label}_${tag}`, email: `${label}_${tag}@example.com`, password: "correcthorsebattery", displayName: `${label} ${tag}`, birthDate: "1995-05-15" };
   const r = await request("POST", "/api/v1/auth/signup", input);
   assert.equal(r.status, 201, r.text);
   return { id: r.body.user.id, username: input.username, email: input.email, password: input.password, token: r.body.tokens.accessToken, auth: { Authorization: `Bearer ${r.body.tokens.accessToken}` } };

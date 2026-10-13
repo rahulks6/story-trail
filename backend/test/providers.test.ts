@@ -18,14 +18,14 @@ it('Google creates one canonical user, safely rejects collisions/replay, and enf
  await assert.rejects(liveProviders.google('not-a-token'));
  const pending=await req('google',{idToken:'verified-new'});assert.equal(pending.body.onboardingRequired,true);
  assert.equal((await req('provider/complete',{proof:pending.body.proof,username:'admin'})).status,422);
- const created=await req('provider/complete',{proof:pending.body.proof,username:'provider_'+tag});assert.equal(created.status,200,JSON.stringify(created.body));
+ const created=await req('provider/complete',{proof:pending.body.proof,username:'provider_'+tag,birthDate:'1995-05-15'});assert.equal(created.status,200,JSON.stringify(created.body));
  assert.equal(created.body.user.email,null);const id=created.body.user.id;
  assert.equal((await req('provider/complete',{proof:pending.body.proof,username:'another_'+tag})).status,401);
  const returning=await req('google',{idToken:'verified-new'});assert.equal(returning.body.user.id,id);
  await query(`UPDATE users SET is_active=false,moderation_state='SUSPENDED' WHERE id=:'id'`,{id});
  assert.equal((await req('google',{idToken:'verified-new'})).status,403);
- const existing=await req('signup',{email:`collision-${tag}@example.com`,username:'collision_'+tag,password:'correcthorsebattery',displayName:'Existing'});assert.equal(existing.status,201);
- const collision=await req('google',{idToken:'verified-collision'});const complete=await req('provider/complete',{proof:collision.body.proof,username:'collision2_'+tag});assert.equal(complete.status,409);
+ const existing=await req('signup',{email:`collision-${tag}@example.com`,username:'collision_'+tag,password:'correcthorsebattery',displayName:'Existing',birthDate:'1995-05-15'});assert.equal(existing.status,201);
+ const collision=await req('google',{idToken:'verified-collision'});const complete=await req('provider/complete',{proof:collision.body.proof,username:'collision2_'+tag,birthDate:'1995-05-15'});assert.equal(complete.status,409);
  const row=await queryOne(`SELECT count(*) AS n FROM users WHERE email=:'email'`,{email:`collision-${tag}@example.com`});assert.equal(row?.n,'1');
 });
 it('Phone verification enforces cooldown, attempts, single-use challenges, and private identities',async()=>{
@@ -34,11 +34,11 @@ it('Phone verification enforces cooldown, attempts, single-use challenges, and p
  assert.equal((await req('phone/verify',{challenge:sent.body.challenge,code:'000000'})).status,401);
  const approved=await req('phone/verify',{challenge:sent.body.challenge,code:'246810'});assert.equal(approved.status,200);
  assert.equal((await req('phone/verify',{challenge:sent.body.challenge,code:'246810'})).status,401);
- const created=await req('provider/complete',{proof:approved.body.proof,username:'phone_'+tag});assert.equal(created.status,200,JSON.stringify(created.body));assert.ok(!JSON.stringify(created.body.user).includes('2025550123'));
+ const created=await req('provider/complete',{proof:approved.body.proof,username:'phone_'+tag,birthDate:'1995-05-15'});assert.equal(created.status,200,JSON.stringify(created.body));assert.ok(!JSON.stringify(created.body.user).includes('2025550123'));
  const proof=await queryOne(`SELECT subject FROM auth_identities WHERE user_id=:'id'`,{id:created.body.user.id});assert.match(proof!.subject!,/^[a-f0-9]{64}$/);
 });
 it('Linking requires recent ownership proof, preserves the user, and cannot remove the last method',async()=>{
- const owner=await req('signup',{email:`link-${tag}@example.com`,username:'link_'+tag,password:'correcthorsebattery',displayName:'Existing'});const token=owner.body.tokens.accessToken;
+ const owner=await req('signup',{email:`link-${tag}@example.com`,username:'link_'+tag,password:'correcthorsebattery',displayName:'Existing',birthDate:'1995-05-15'});const token=owner.body.tokens.accessToken;
  const proof=await req('google',{idToken:'verified-link',proofOnly:true});
  assert.equal((await req('provider/link',{proof:proof.body.proof,reauthTicket:'0'.repeat(64),confirmed:true},token)).status,401);
  const reauth=await req('reauthenticate',{password:'correcthorsebattery'},token);

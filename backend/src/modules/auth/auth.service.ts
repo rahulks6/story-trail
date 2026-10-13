@@ -87,6 +87,7 @@ export async function signup(
       email: input.email,
       passwordHash,
       displayName: input.displayName,
+      birthDate: input.birthDate,
     });
   } catch (error) {
     if (error instanceof DatabaseError && error.detail.includes("USERNAME_HELD")) throw new AuthError(USERNAME_MESSAGES.held, 409);

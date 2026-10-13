@@ -18,7 +18,7 @@ lists what the tests cover and what only a real deploy can show.
 | Jobs | SQS wake-up queue with a dead-letter queue. Jobs, leases and retries live in PostgreSQL. |
 | Secrets | Secrets Manager, encrypted with the stack's KMS key. The stack generates the JWT secrets, the Admin MFA key, the phone identity key and both database passwords. Provider credentials are placeholders that operators fill in (section 3). |
 | Edge | WAF with AWS managed rules, a per-IP rate limit and an optional Admin IP allowlist. Rules that inspect request bodies only count, so nobody is blocked for what they type. |
-| Operations | CloudWatch alarms (5xx, p99 latency, unhealthy tasks, CPU and memory, database CPU, storage and connections, dead letters, job backlog) sent to email. A monthly budget, and AWS Backup daily (35 days) and monthly (1 year) for the database and media. |
+| Operations | CloudWatch alarms (5xx, p99 latency, unhealthy tasks, CPU and memory, database CPU, storage and connections, dead letters, job backlog) sent to email. A monthly budget, and AWS Backup daily (35 days) and monthly (1 year) for the database and media. Every log (the services', the database's, the WAF's, and the load balancer's and media bucket's access logs) is kept 180 days in Mumbai, as India's CERT-In directions (2022) require. |
 
 Every container has a read-only root file system and a writable `/tmp` volume. The image
 declares `/tmp` as a volume, so the mount starts world-writable. The app refuses to start in

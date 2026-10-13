@@ -32,6 +32,16 @@ require("fs").mkdirSync(out, { recursive: true });
     await page.waitForTimeout(300);
   });
   await shot("screen=login", "login");
+  // Sign-up with a date of birth (Phase 14: 18 and older), filled in as someone would type it.
+  const fill = (birth) => async () => {
+    for (const [label, text] of [["Display name", "Rahul K"], ["Username", "rahul.k"], ["Email", "rahul@example.com"], ["Date of birth", birth], ["Password", "a long passphrase"]]) {
+      await page.locator(`input[aria-label^="${label}"]`).pressSequentially(text);
+    }
+    await page.locator('input[aria-label^="Display name"]').focus();
+    await page.waitForTimeout(700);
+  };
+  await shot("screen=signup", "signup", fill("15051995"));
+  await shot("screen=signup", "signup-under-18", fill(`1505${new Date().getFullYear() - 16}`));
   await shot("screen=about", "about");
   await browser.close();
 })().catch((e) => { console.error(e); process.exit(1); });

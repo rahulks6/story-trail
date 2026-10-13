@@ -1,7 +1,7 @@
 import { nullable, query, queryOne, type Row } from "../../db/psql";
 
 export type TargetType = "story" | "comment" | "user";
-export type ReportReason = "spam" | "harassment" | "nudity" | "violence" | "hate_speech" | "self_harm" | "impersonation" | "scam" | "other";
+export type ReportReason = "spam" | "harassment" | "nudity" | "violence" | "hate_speech" | "self_harm" | "impersonation" | "scam" | "under_18" | "other";
 /** The report lifecycle (migration 0032). */
 export type ReportStatus = "OPEN" | "UNDER_REVIEW" | "ACTIONED" | "DISMISSED" | "APPEALED" | "CLOSED";
 export const REPORT_STATUSES: ReportStatus[] = ["OPEN", "UNDER_REVIEW", "ACTIONED", "DISMISSED", "APPEALED", "CLOSED"];

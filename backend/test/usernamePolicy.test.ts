@@ -12,7 +12,7 @@ import { buildApp } from "../src/app";
 import { openDedicatedConnection, query, queryOne } from "../src/db/psql";
 import { HttpError } from "../src/http/errors";
 import { normaliseUsername, usernameProblem, USERNAME_MESSAGES, USERNAME_WORDS } from "../src/modules/users/username-policy";
-import { authHeader, makeClient, uniqueUser } from "./helpers";
+import { ADULT_BIRTH_DATE, authHeader, makeClient, uniqueUser } from "./helpers";
 
 const tag = randomUUID().slice(0, 8);
 const server = buildApp({
@@ -66,7 +66,7 @@ async function currentUsername(who: Person): Promise<string> {
 async function onboardWithGoogle(username: string) {
   const pending = await client.post("/api/v1/auth/google", { idToken: `verified-${randomUUID()}` });
   assert.equal(pending.body.onboardingRequired, true, JSON.stringify(pending.body));
-  return client.post("/api/v1/auth/provider/complete", { proof: pending.body.proof, username });
+  return client.post("/api/v1/auth/provider/complete", { proof: pending.body.proof, username, birthDate: ADULT_BIRTH_DATE });
 }
 
 describe("the username rules", () => {
@@ -243,7 +243,7 @@ describe("renaming", () => {
     try {
       await db.query("BEGIN");
       await db.query("UPDATE users SET username = $1 WHERE id = $2", [fresh(), a.id]);
-      const claim = client.post("/api/v1/auth/provider/complete", { proof: pending.body.proof, username: old });
+      const claim = client.post("/api/v1/auth/provider/complete", { proof: pending.body.proof, username: old, birthDate: ADULT_BIRTH_DATE });
       // The claim must be waiting on the open rename, not deciding before it ends.
       const deadline = Date.now() + 5000;
       while (Number((await queryOne("SELECT count(*) AS n FROM pg_locks WHERE NOT granted"))?.n) === 0) {

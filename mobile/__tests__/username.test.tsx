@@ -70,6 +70,7 @@ describe("Sign up", () => {
   const fillTheRest = async () => {
     await type("Display name", "Rahul K");
     await type("Email", "rahul@example.com");
+    await type("Date of birth", "15051995");
     await type("Password", "a long passphrase");
   };
 
@@ -156,7 +157,7 @@ describe("Google or phone onboarding", () => {
     providers.methods.mockResolvedValue({ google: false, phone: false, countries: [], codeLength: 6 });
     await Keychain.setGenericPassword("pending", JSON.stringify({ proof: "proof-1", expiresAt: Date.now() + 60_000 }), { service: "com.katkee.provider-onboarding.v1" });
     await render(<ProviderEntry />);
-    expect(texts()).toContain("Choose your username");
+    expect(texts()).toContain("Create your account");
 
     api.checkUsername.mockResolvedValueOnce(answer("k4tkee", "reserved", "That username is reserved."));
     await type("Username", "K4tkee");
@@ -169,11 +170,39 @@ describe("Google or phone onboarding", () => {
     api.checkUsername.mockResolvedValueOnce(answer("new_person", "available", "Available."));
     await type("Username", "new_person");
     await settle();
+    expect(buttonWithText("Continue to Katkee").props.disabled).toBe(true);
+    await type("Date of birth", "15/05/1995");
     expect(buttonWithText("Continue to Katkee").props.disabled).toBe(false);
     providers.complete.mockResolvedValueOnce({ user: mockAuth.user, tokens: { accessToken: "a", refreshToken: "r" } } as never);
     await act(async () => buttonWithText("Continue to Katkee").props.onPress());
     await flush();
-    expect(providers.complete).toHaveBeenCalledWith("proof-1", "new_person", "");
+    expect(providers.complete).toHaveBeenCalledWith("proof-1", "new_person", "", "1995-05-15");
+  });
+
+  test("someone under 18 can't continue, and a refusal from the server ends the sign-in", async () => {
+    providers.methods.mockResolvedValue({ google: false, phone: false, countries: [], codeLength: 6 });
+    await Keychain.setGenericPassword("pending", JSON.stringify({ proof: "proof-3", expiresAt: Date.now() + 60_000 }), { service: "com.katkee.provider-onboarding.v1" });
+    await render(<ProviderEntry />);
+    api.checkUsername.mockResolvedValue(answer("young_one", "available", "Available."));
+    await type("Username", "young_one");
+    await settle();
+    const year = new Date().getUTCFullYear();
+    await type("Date of birth", `0101${year - 10}`);
+    expect(input("Date of birth").props.accessibilityLabel).toBe("Date of birth. Katkee is only for people 18 and older.");
+    expect(texts()).toContain("Katkee is only for people 18 and older.");
+    expect(buttonWithText("Continue to Katkee").props.disabled).toBe(true);
+    await type("Date of birth", "31022001");
+    expect(texts()).toContain("Enter a valid date of birth.");
+    expect(buttonWithText("Continue to Katkee").props.disabled).toBe(true);
+
+    // The phone's clock or time zone can disagree with the server's; the server has the last word.
+    await type("Date of birth", "01011990");
+    providers.complete.mockRejectedValueOnce(new ApiError(422, "Katkee is only for people 18 and older."));
+    await act(async () => buttonWithText("Continue to Katkee").props.onPress());
+    await flush();
+    expect(texts()).not.toContain("Create your account");
+    expect(texts()).toContain("Katkee is only for people 18 and older.");
+    expect(await Keychain.getGenericPassword({ service: "com.katkee.provider-onboarding.v1" })).toBe(false);
   });
 
   test("Google isn't offered by a build that can't finish it, even when the server allows it", async () => {

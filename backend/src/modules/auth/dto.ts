@@ -5,6 +5,7 @@
  */
 import { EMAIL_RE } from "../../shared/validation";
 import { usernameProblem } from "../users/username-policy";
+import { birthDateProblem } from "./age";
 
 export class ValidationError extends Error {
   constructor(public readonly fieldErrors: Record<string, string>) {
@@ -18,6 +19,8 @@ export interface SignupInput {
   email: string;
   password: string;
   displayName: string;
+  /** YYYY-MM-DD; the person is at least MINIMUM_AGE (age.ts). */
+  birthDate: string;
 }
 
 export function parseSignupInput(body: unknown): SignupInput {
@@ -28,6 +31,7 @@ export function parseSignupInput(body: unknown): SignupInput {
   const email = typeof b.email === "string" ? b.email.trim().toLowerCase() : "";
   const password = typeof b.password === "string" ? b.password : "";
   const displayName = typeof b.displayName === "string" ? b.displayName.trim() : "";
+  const birthDate = typeof b.birthDate === "string" ? b.birthDate.trim() : b.birthDate;
 
   const usernameIssue = usernameProblem(username);
   if (usernameIssue) {
@@ -43,9 +47,13 @@ export function parseSignupInput(body: unknown): SignupInput {
   if (displayName.length < 1 || displayName.length > 60) {
     errors.displayName = "Display name must be 1-60 characters.";
   }
+  const birthDateIssue = birthDateProblem(birthDate);
+  if (birthDateIssue) {
+    errors.birthDate = birthDateIssue;
+  }
 
   if (Object.keys(errors).length > 0) throw new ValidationError(errors);
-  return { username, email, password, displayName };
+  return { username, email, password, displayName, birthDate: birthDate as string };
 }
 
 export interface LoginInput {

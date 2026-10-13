@@ -673,7 +673,8 @@ Details, measurements and tests: `docs/phases/PHASE_9_REACH_AND_HOME.md`.
 | Method | Path | Auth | Notes |
 | --- | --- | --- | --- |
 | GET | `/health` | – | Real liveness check — pings the database; 200 `{db: "up"}` or 503 `{db: "down"}` |
-| POST | `/api/v1/auth/signup` | – | `{username, email, password, displayName}` → `{user, tokens}` |
+| POST | `/api/v1/auth/signup` | – | `{username, email, password, displayName, birthDate}` → `{user, tokens}`. `birthDate` is `YYYY-MM-DD`; anyone under 18 on today's date in India gets 422 with `fields.birthDate` and nothing is stored (`src/modules/auth/age.ts`). The date of birth is stored, never returned |
+| POST | `/api/v1/auth/provider/complete` | – | `{proof, username, displayName?, birthDate}` → `{user, tokens}`: finishes a new Google or phone account, with the same 18+ rule (422 with a message). Someone under 18 is refused and their verified sign-in deleted at once. Not needed for an account that already exists |
 | POST | `/api/v1/auth/login` | – | `{email, password}` → `{user, tokens}` |
 | POST | `/api/v1/auth/refresh` | – | `{refreshToken}` → `{tokens}`; single-use, rotates on every call |
 | POST | `/api/v1/auth/logout` | – | `{refreshToken}` → 204; idempotent |

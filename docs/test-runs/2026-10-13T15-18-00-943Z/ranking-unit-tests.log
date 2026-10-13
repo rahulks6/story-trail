@@ -1,0 +1,234 @@
+TAP version 13
+# Subtest: area cells
+    # Subtest: encode and decode the standard way
+    ok 1 - encode and decode the standard way
+      ---
+      duration_ms: 1.561135
+      type: 'test'
+      ...
+    # Subtest: list a cell and the eight around it, across the date line, and fewer at the poles
+    ok 2 - list a cell and the eight around it, across the date line, and fewer at the poles
+      ---
+      duration_ms: 4.97975
+      type: 'test'
+      ...
+    1..2
+ok 1 - area cells
+  ---
+  duration_ms: 8.3703
+  type: 'suite'
+  ...
+# Subtest: reach stages
+    # Subtest: keep testing until the stage's audience is used up or patience runs out
+    ok 1 - keep testing until the stage's audience is used up or patience runs out
+      ---
+      duration_ms: 2.31006
+      type: 'test'
+      ...
+    # Subtest: move up when the people who saw it engaged, and start counting the new stage from zero time
+    ok 2 - move up when the people who saw it engaged, and start counting the new stage from zero time
+      ---
+      duration_ms: 0.219236
+      type: 'test'
+      ...
+    # Subtest: hold when they didn't, and stop there
+    ok 3 - hold when they didn't, and stop there
+      ---
+      duration_ms: 0.295125
+      type: 'test'
+      ...
+    # Subtest: judge on what it has once patience runs out with enough viewers
+    ok 4 - judge on what it has once patience runs out with enough viewers
+      ---
+      duration_ms: 0.20189
+      type: 'test'
+      ...
+    # Subtest: widen when too few people nearby saw it to tell, so quiet areas still find an audience
+    ok 5 - widen when too few people nearby saw it to tell, so quiet areas still find an audience
+      ---
+      duration_ms: 0.284531
+      type: 'test'
+      ...
+    # Subtest: asks more of each wider stage
+    ok 6 - asks more of each wider stage
+      ---
+      duration_ms: 0.482022
+      type: 'test'
+      ...
+    # Subtest: smooth engagement so a handful of viewers can't decide it
+    ok 7 - smooth engagement so a handful of viewers can't decide it
+      ---
+      duration_ms: 0.92745
+      type: 'test'
+      ...
+    # Subtest: read tuning overrides and refuse ones that can't be right
+    ok 8 - read tuning overrides and refuse ones that can't be right
+      ---
+      duration_ms: 1.348487
+      type: 'test'
+      ...
+    1..8
+ok 2 - reach stages
+  ---
+  duration_ms: 6.775748
+  type: 'suite'
+  ...
+# Subtest: Home's mix
+    # Subtest: starts with someone you follow, keeps everyone exactly once, and is 60% people you follow in every five
+    ok 1 - starts with someone you follow, keeps everyone exactly once, and is 60% people you follow in every five
+      ---
+      duration_ms: 12.330237
+      type: 'test'
+      ...
+    # Subtest: never shows more than two new people in a row while people you follow are left
+    ok 2 - never shows more than two new people in a row while people you follow are left
+      ---
+      duration_ms: 4.596412
+      type: 'test'
+      ...
+    # Subtest: falls back to whichever list remains
+    ok 3 - falls back to whichever list remains
+      ---
+      duration_ms: 0.152337
+      type: 'test'
+      ...
+    # Subtest: shuffles differently each time while favouring better scores
+    ok 4 - shuffles differently each time while favouring better scores
+      ---
+      duration_ms: 4.138338
+      type: 'test'
+      ...
+    1..4
+ok 3 - Home's mix
+  ---
+  duration_ms: 21.771772
+  type: 'suite'
+  ...
+# Subtest: bayesianSmooth
+    # Subtest: pulls a small sample toward the prior
+    ok 1 - pulls a small sample toward the prior
+      ---
+      duration_ms: 0.823736
+      type: 'test'
+      ...
+    # Subtest: converges to the true rate as observations grow
+    ok 2 - converges to the true rate as observations grow
+      ---
+      duration_ms: 0.229575
+      type: 'test'
+      ...
+    # Subtest: returns exactly the prior with zero observations
+    ok 3 - returns exactly the prior with zero observations
+      ---
+      duration_ms: 1.499974
+      type: 'test'
+      ...
+    1..3
+ok 4 - bayesianSmooth
+  ---
+  duration_ms: 3.538037
+  type: 'suite'
+  ...
+# Subtest: freshness
+    # Subtest: is 1.0 for a Story published this instant
+    ok 1 - is 1.0 for a Story published this instant
+      ---
+      duration_ms: 0.251622
+      type: 'test'
+      ...
+    # Subtest: decays toward the floor as expiry approaches, never reaching zero
+    ok 2 - decays toward the floor as expiry approaches, never reaching zero
+      ---
+      duration_ms: 0.162267
+      type: 'test'
+      ...
+    # Subtest: is monotonically decreasing over time
+    ok 3 - is monotonically decreasing over time
+      ---
+      duration_ms: 0.119327
+      type: 'test'
+      ...
+    1..3
+ok 5 - freshness
+  ---
+  duration_ms: 0.848924
+  type: 'suite'
+  ...
+# Subtest: explorationMultiplier
+    # Subtest: gives brand-new creators the strongest boost, fading to 1.0 as they accumulate impressions
+    ok 1 - gives brand-new creators the strongest boost, fading to 1.0 as they accumulate impressions
+      ---
+      duration_ms: 0.220633
+      type: 'test'
+      ...
+    1..1
+ok 6 - explorationMultiplier
+  ---
+  duration_ms: 0.434527
+  type: 'suite'
+  ...
+# Subtest: creatorAffinity
+    # Subtest: a follower scores meaningfully higher than a stranger with identical other signals
+    ok 1 - a follower scores meaningfully higher than a stranger with identical other signals
+      ---
+      duration_ms: 0.215279
+      type: 'test'
+      ...
+    # Subtest: returning on multiple distinct days scores higher than a single burst of engagement
+    ok 2 - returning on multiple distinct days scores higher than a single burst of engagement
+      ---
+      duration_ms: 0.172231
+      type: 'test'
+      ...
+    # Subtest: never returns exactly zero, even with no positive signal at all
+    ok 3 - never returns exactly zero, even with no positive signal at all
+      ---
+      duration_ms: 0.275514
+      type: 'test'
+      ...
+    # Subtest: meaningful replies increase the score
+    ok 4 - meaningful replies increase the score
+      ---
+      duration_ms: 0.113388
+      type: 'test'
+      ...
+    1..4
+ok 7 - creatorAffinity
+  ---
+  duration_ms: 1.060429
+  type: 'suite'
+  ...
+# Subtest: storyQuality
+    # Subtest: a highly-engaged Story scores higher than a barely-engaged one at the same view count
+    ok 1 - a highly-engaged Story scores higher than a barely-engaged one at the same view count
+      ---
+      duration_ms: 0.17216
+      type: 'test'
+      ...
+    # Subtest: smooths a tiny sample instead of trusting a lucky early ratio
+    ok 2 - smooths a tiny sample instead of trusting a lucky early ratio
+      ---
+      duration_ms: 0.072142
+      type: 'test'
+      ...
+    # Subtest: stays within [0.05, 1] regardless of extreme input
+    ok 3 - stays within [0.05, 1] regardless of extreme input
+      ---
+      duration_ms: 0.071403
+      type: 'test'
+      ...
+    1..3
+ok 8 - storyQuality
+  ---
+  duration_ms: 0.460951
+  type: 'suite'
+  ...
+1..8
+# tests 28
+# suites 8
+# pass 28
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 149.909116

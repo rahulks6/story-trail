@@ -1,0 +1,13 @@
+1366x900 / status=200 overflow=false cspViolations=0
+1366x900 /support status=200 overflow=false cspViolations=0
+1366x900 /delete-account status=200 overflow=false cspViolations=0
+1366x900 /privacy status=200 overflow=false cspViolations=0
+1366x900 /terms status=200 overflow=false cspViolations=0
+1366x900 /no-such-page status=404 overflow=false cspViolations=0 console=["Failed to load resource: the server responded with a status of 404 (Not Found)"]
+390x844 / status=200 overflow=false cspViolations=0
+390x844 /support status=200 overflow=false cspViolations=0
+390x844 /delete-account status=200 overflow=false cspViolations=0
+390x844 /privacy status=200 overflow=false cspViolations=0
+390x844 /terms status=200 overflow=false cspViolations=0
+390x844 /no-such-page status=404 overflow=false cspViolations=0 console=["Failed to load resource: the server responded with a status of 404 (Not Found)"]
+All pages rendered: expected status, no horizontal overflow, no CSP violation.

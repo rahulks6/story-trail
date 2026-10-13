@@ -60,7 +60,7 @@ async function request(path: string, method = "GET", data?: unknown, headers: Re
 }
 async function account(options: { ageDays?: number; grant?: string[] } = {}) {
   const tag = randomUUID().slice(0, 8);
-  const input = { email: `ab_${tag}@example.com`, username: `ab_${tag}`, password: "correcthorsebattery", displayName: `Abuse ${tag}` };
+  const input = { email: `ab_${tag}@example.com`, username: `ab_${tag}`, password: "correcthorsebattery", displayName: `Abuse ${tag}`, birthDate: "1995-05-15" };
   const r = await request("/api/v1/auth/signup", "POST", input);
   assert.equal(r.status, 201);
   const id = r.body.user.id as string;

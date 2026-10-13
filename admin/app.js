@@ -259,7 +259,7 @@ async function list(c, version) { const routes = { Reports: 'reports', Moderatio
     const filters = el('form', undefined, 'form-grid');
     field(filters, 'type', 'Content type', 'text', '', ['', 'story', 'comment', 'user', 'ad']);
     field(filters, 'status', 'Status', 'text', 'OPEN', ['', 'OPEN', 'UNDER_REVIEW', 'ACTIONED', 'DISMISSED', 'APPEALED', 'CLOSED']);
-    field(filters, 'reason', 'Reason', 'text', '', ['', 'spam', 'harassment', 'nudity', 'violence', 'hate_speech', 'self_harm', 'impersonation', 'scam', 'other']);
+    field(filters, 'reason', 'Reason', 'text', '', ['', 'spam', 'harassment', 'nudity', 'violence', 'hate_speech', 'self_harm', 'impersonation', 'scam', 'under_18', 'other']);
     field(filters, 'minPriority', 'Minimum priority', 'text', '', ['', '1', '2', '3']);
     filters.append(button('Filter', async () => { const q = new URLSearchParams(values(filters)); const d = await api('reports?limit=20&' + q); const results = $('results'); results.replaceChildren(); await renderItems(results, d.items); }));
     c.append(filters);

@@ -81,6 +81,7 @@ describe("Sign up", () => {
     await type(field(tree, "Display name"), "Rahul K");
     await type(field(tree, "Username"), "Rahul.K");
     await type(field(tree, "Email"), "rahul@example.com");
+    await type(field(tree, "Date of birth"), "15051995");
     await type(field(tree, "Password"), "short");
     expect(field(tree, "Password").props.accessibilityLabel).toBe("Password. Use at least 8 characters.");
     expect(button(tree, "Sign up").props.accessibilityState).toMatchObject({ disabled: true });
@@ -90,8 +91,43 @@ describe("Sign up", () => {
     await type(field(tree, "Password"), "RAHUL.K1");
     expect(button(tree, "Sign up").props.accessibilityState).toMatchObject({ disabled: false });
     await press(tree, "Sign up");
-    expect(mockAuth.signup).toHaveBeenCalledWith({ displayName: "Rahul K", username: "rahul.k", email: "rahul@example.com", password: "RAHUL.K1" });
+    expect(mockAuth.signup).toHaveBeenCalledWith({ displayName: "Rahul K", username: "rahul.k", email: "rahul@example.com", password: "RAHUL.K1", birthDate: "1995-05-15" });
     expect(field(tree, "Password").props.autoComplete).toBe("new-password");
+  });
+
+  test("asks for a date of birth as DD/MM/YYYY and allows only people 18 and older", async () => {
+    const tree = await render(<SignupScreen {...props} />);
+    await type(field(tree, "Display name"), "Rahul K");
+    await type(field(tree, "Username"), "rahul.k");
+    await type(field(tree, "Email"), "rahul@example.com");
+    await type(field(tree, "Password"), "a long passphrase");
+    const birth = () => field(tree, "Date of birth");
+    expect([birth().props.keyboardType, birth().props.maxLength, birth().props.placeholder]).toEqual(["number-pad", 10, "DD/MM/YYYY"]);
+    expect(button(tree, "Sign up").props.accessibilityState).toMatchObject({ disabled: true });
+
+    await type(birth(), "1505");
+    expect(birth().props.value).toBe("15/05");
+    expect(birth().props.accessibilityLabel).toBe("Date of birth"); // no complaint while they're still typing
+    const year = new Date().getUTCFullYear();
+    await type(birth(), `1505${year - 17}`);
+    expect(birth().props.value).toBe(`15/05/${year - 17}`);
+    expect(birth().props.accessibilityLabel).toBe("Date of birth. Katkee is only for people 18 and older.");
+    expect(button(tree, "Sign up").props.accessibilityState).toMatchObject({ disabled: true });
+    await type(birth(), "30/02/1995");
+    expect(birth().props.accessibilityLabel).toBe("Date of birth. Enter a valid date of birth.");
+    expect(button(tree, "Sign up").props.accessibilityState).toMatchObject({ disabled: true });
+
+    await type(birth(), "15/05/1995");
+    expect(birth().props.accessibilityLabel).toBe("Date of birth");
+    expect(button(tree, "Sign up").props.accessibilityState).toMatchObject({ disabled: false });
+    await press(tree, "Sign up");
+    expect(mockAuth.signup).toHaveBeenCalledWith(expect.objectContaining({ birthDate: "1995-05-15" }));
+  });
+
+  test("the server's answer about the date of birth shows on the field", async () => {
+    mockAuth.fieldErrors = { birthDate: "Katkee is only for people 18 and older." };
+    const tree = await render(<SignupScreen {...props} />);
+    expect(field(tree, "Date of birth").props.accessibilityLabel).toBe("Date of birth. Katkee is only for people 18 and older.");
   });
 
   test("a password equal to the username is refused before it reaches the server", async () => {
