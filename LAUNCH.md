@@ -1,6 +1,6 @@
 # Launching Katkee: every step, in order
 
-Last updated 13 October 2026. Follow the parts in order: the stores review a working app, and the
+Last updated 14 October 2026. Follow the parts in order: the stores review a working app, and the
 app needs the servers and the website live first.
 
 **The first launch is India only, across the whole country, for adults (18 and older).** Katkee
@@ -583,7 +583,10 @@ The commands are the same, with these differences:
    settings: `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` (the katkee-admin access key from
    Part 2) and `AWS_DEFAULT_REGION` set to `ap-south-1`. Never paste the key into a chat.
 2. **Network**: the server image build installs packages from `deb.debian.org`, so the machine
-   must be allowed to reach it, besides AWS, Docker Hub and the npm registry.
+   must be allowed to reach it, besides AWS, Docker Hub and the npm registry. If the machine's
+   proxy inspects HTTPS traffic, the build's `apt-get` and `npm ci` steps also need the proxy's
+   certificate: pass it as a build secret (`--secret`) to those steps only, so it stays out of the
+   images.
 3. **Tools**: `pip install awscli`, and start Docker if it isn't running (`dockerd &`, as root).
    On an Intel (x86_64) machine the image builds run natively, without emulation.
 4. **Keys from other services** (the Firebase key in Part 9, Twilio's in Part 17) can go straight
@@ -603,11 +606,15 @@ password (Part 15), and the apps and stores (Parts 18 and 19).
 | --- | --- |
 | `cdk deploy` says `Missing context "…"` | That setting is missing from `cdk.context.json` (Part 6, step 3) |
 | `cdk deploy` fails on the certificate | It isn't Issued yet, or it isn't in Mumbai (Part 5) |
-| The first deploy fails on CloudFront saying your account must be verified | New AWS accounts sometimes need this: open a free support case (Account and billing) asking AWS to enable CloudFront, then deploy again |
+| Commands fail with `AccessDenied … with an explicit deny in a service control policy` | The account is in an AWS Organization whose policy allows only some Regions. In the management account: AWS Organizations, Policies, Service control policies, the Region restriction policy, Edit policy, and add `"ap-south-1"` to its `aws:RequestedRegion` list |
+| The console shows "Region Asia Pacific (Mumbai) restricted" | A console display setting, separate from the policy above: Unified Settings (the gear icon), Account settings, Visible Regions, Edit, "All available regions" |
+| The first deploy fails on CloudFront saying your account must be verified | New AWS accounts sometimes need this: open a free support case (Account and billing) asking AWS to enable CloudFront. Before deploying again, clear what the failed deploy kept: in CloudFormation, turn off the `KatkeeProduction` stack's termination protection and delete it; then delete the `katkee/production/…` secrets (without a recovery window), the empty `katkeeproduction-…` buckets, the `katkee-api` and `katkee-worker` repositories, the `KatkeeProduction-…` and `aws-waf-logs-katkee` log groups and the backup vault, and schedule its KMS key for deletion. Their names would clash with the new deploy |
 | The servers keep restarting | CloudWatch, Log groups, the one with `ApiLogs` (or `WorkerLogs`) in its name, newest stream. A message naming a setting such as `CLOUDFRONT_PRIVATE_KEY` means that secret still holds its placeholder (Part 9) |
 | Part 11 doesn't print `0` | Read the log group with `MigrateLogs` in its name |
 | https://api.katkee.com answers 503 | The servers aren't healthy yet: check Part 12's counts and the logs |
 | `check:live` fails only "www redirect" | The `www` record is missing (Part 13) |
+| `Could not resolve host: api.katkee.com` just after Part 13 | A resolver that looked the name up before the record existed remembers "not found" for up to 15 minutes. Wait, or add `--connect-to api.katkee.com:443:LOAD-BALANCER-DNS:443` to the `curl` command (`LoadBalancerDns` output) |
+| `check:live` fails every line with `ENOTFOUND` on a cloud machine | The machine reaches the internet through a proxy: run `NODE_USE_ENV_PROXY=1 npm run check:live` |
 | No password reset email | SES is still in its sandbox (Part 16), or look in the spam folder |
 | No notifications on iPhone | The APNs key isn't in Firebase (Part 8, step 5), or `GoogleService-Info.plist` isn't in Xcode |
 | The Android build stops before starting | `npm run check:android-release` says what's missing |
