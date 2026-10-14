@@ -1,0 +1,17 @@
+{
+  "imageTag": "r1",
+  "apiDomainName": "api.katkee.com",
+  "apiCertificateArn": "arn:aws:acm:ap-south-1:249101171547:certificate/34b3ab43-8595-40f0-9ff4-7c6c3bebcebb",
+  "websiteDomainName": "katkee.com",
+  "emailFrom": "Katkee <no-reply@katkee.com>",
+  "sesIdentity": "katkee.com",
+  "cloudFrontPublicKeyFile": "cloudfront-public.pem",
+  "alarmEmail": "ops@katkee.com",
+  "adminConsoleEnabled": "true",
+  "monthlyBudgetUsd": "400",
+  "availability-zones:account=249101171547:region=ap-south-1": [
+    "ap-south-1a",
+    "ap-south-1b",
+    "ap-south-1c"
+  ]
+}
