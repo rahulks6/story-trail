@@ -60,6 +60,9 @@ in practice.
 **Never share or upload** your access keys, `.pem`, `.p8`, `.p12` or Firebase `.json` files.
 Nobody, including Apple, Google, AWS or a developer you hire, needs them sent by email or chat.
 
+**Rather not install the server tools?** Parts 3 to 16 can run on a cloud machine instead of your
+Mac: see "Running the server parts on a cloud machine", near the end.
+
 ## Part 1. Set up your Mac
 
 1. Install **Xcode** from the Mac App Store. Open it once and let it install its extra
@@ -569,6 +572,30 @@ The details, with every App Store Connect answer, are in `docs/IOS_APP_STORE_DEP
 
 **Apps**: for a new version, raise `appVersion` in `mobile/build-config.json`, and Xcode's Version
 to match. For every upload, raise `KATKEE_VERSION_CODE` (Android) and Xcode's Build (iPhone).
+
+## Running the server parts on a cloud machine
+
+Parts 3 to 16 need only a terminal with internet access, Docker, Node 22 and the AWS CLI, so they
+can run on a Linux cloud machine (a Claude Code cloud session, for example) instead of your Mac.
+The commands are the same, with these differences:
+
+1. **Access**: instead of `aws configure`, the machine gets three environment variables in its
+   settings: `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` (the katkee-admin access key from
+   Part 2) and `AWS_DEFAULT_REGION` set to `ap-south-1`. Never paste the key into a chat.
+2. **Network**: the server image build installs packages from `deb.debian.org`, so the machine
+   must be allowed to reach it, besides AWS, Docker Hub and the npm registry.
+3. **Tools**: `pip install awscli`, and start Docker if it isn't running (`dockerd &`, as root).
+   On an Intel (x86_64) machine the image builds run natively, without emulation.
+4. **Keys from other services** (the Firebase key in Part 9, Twilio's in Part 17) can go straight
+   into Secrets Manager from the AWS console instead of onto the machine: Secrets Manager, the
+   secret (for example `katkee/production/FCM_SERVICE_ACCOUNT_JSON`), Retrieve secret value, Edit,
+   then paste the value as plaintext.
+5. **Afterwards**, make the access key inactive (IAM, Users, katkee-admin, Security credentials)
+   until the next update needs it.
+
+The steps in your browser stay yours: the name servers at your domain company (Part 3), the
+mailboxes (Part 4), confirming the alarm email (Part 7), Firebase (Part 8), your own account's
+password (Part 15), and the apps and stores (Parts 18 and 19).
 
 ## If something goes wrong
 
