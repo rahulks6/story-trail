@@ -30,3 +30,6 @@ backend/data/
 
 # Screen preview output (tools/screen-preview)
 tools/screen-preview/shots/
+
+# Local Claude Code settings
+.claude/settings.local.json
