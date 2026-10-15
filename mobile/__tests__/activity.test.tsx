@@ -8,7 +8,7 @@ import * as notificationsApi from "../src/api/notifications";
 // app's providers do.
 const mockAuth = { accessToken: "token", user: { id: "u-me", username: "me" } };
 const mockNotifications = { refreshUnreadCount: jest.fn(async () => undefined) };
-const mockNavigation = { navigate: jest.fn() };
+const mockNavigation = { navigate: jest.fn(), goBack: jest.fn(), canGoBack: () => true };
 jest.mock("../src/state/AuthContext", () => ({ useAuth: () => mockAuth }));
 jest.mock("../src/state/NotificationsContext", () => ({ useNotifications: () => mockNotifications }));
 jest.mock("../src/state/RealtimeContext", () => ({ useRealtimeEvents: () => undefined }));

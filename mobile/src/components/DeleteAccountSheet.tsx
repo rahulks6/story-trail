@@ -1,3 +1,4 @@
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useState } from "react";
 import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { colors, radii, spacing, typography } from "../theme";
@@ -18,6 +19,8 @@ interface Props {
  * a new pattern.
  */
 export function DeleteAccountSheet({ visible, onClose }: Props): React.JSX.Element {
+  // Clears Android's navigation bar and the iPhone home indicator.
+  const bottomInset = useSafeAreaInsets().bottom;
   const { deleteAccount } = useAuth();
   const [password, setPassword] = useState("");
   const [confirming, setConfirming] = useState(false);
@@ -67,7 +70,7 @@ export function DeleteAccountSheet({ visible, onClose }: Props): React.JSX.Eleme
           accessibilityRole="button"
           accessibilityLabel="Close"
         />
-        <View style={styles.sheet}>
+        <View style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]}>
           <View style={styles.handle} />
           <Text style={[typography.bodyStrong, styles.title]}>Delete your account?</Text>
           <Text style={[typography.body, styles.warning]}>

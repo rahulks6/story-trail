@@ -1,3 +1,4 @@
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {Icon} from "./Icon";
 import React, { useState } from "react";
 import { ActivityIndicator, FlatList, KeyboardAvoidingView, Modal, PermissionsAndroid, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
@@ -72,6 +73,8 @@ interface Props {
  * ever hands back type-specific `properties`, never geometry.
  */
 export function StickerSheet({ visible, onClose, onAdd, editingOverlay, onEditDone }: Props): React.JSX.Element {
+  // Clears Android's navigation bar and the iPhone home indicator.
+  const bottomInset = useSafeAreaInsets().bottom;
   const { accessToken } = useAuth();
   const [tab, setTab] = useState<Tab>("emoji");
   const [mentionQuery, setMentionQuery] = useState("");
@@ -227,7 +230,7 @@ export function StickerSheet({ visible, onClose, onAdd, editingOverlay, onEditDo
       {/* Mention search's TextInput/FlatList sit inside this sheet — without
           keyboard avoidance, an opening keyboard would cover the results
           list the same way it used to cover TextToolModal's controls. */}
-      <KeyboardAvoidingView style={styles.sheet} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+      <KeyboardAvoidingView style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]} behavior={Platform.OS === "ios" ? "padding" : "height"}>
         <View style={styles.handle} />
         {editingOverlay ? (
           <Text style={styles.editingHeader}>Editing {editingOverlay.type === "location" ? "location" : "date/time"}</Text>

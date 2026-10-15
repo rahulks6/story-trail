@@ -24,7 +24,7 @@ export function StoryViewerScreen({ route, navigation }: Props): React.JSX.Eleme
       onOpenDM={({ storyId, ownerUsername }) => {
         navigation.navigate("Main", {
           screen: "DM",
-          params: { screen: "SendStory", params: { storyId, ownerUsername } },
+          params: { screen: "SendStory", initial: false, params: { storyId, ownerUsername } },
         });
       }}
       onOpenProfile={(username) => {

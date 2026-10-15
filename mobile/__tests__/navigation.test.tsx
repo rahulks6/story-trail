@@ -3,12 +3,12 @@ import { act, create, type ReactTestRenderer } from "react-test-renderer";
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { MainTabs } from "../src/navigation/MainTabs";
+import { tabBarHidden } from "../src/navigation/BottomTabBar";
 
 // Each tab's content is irrelevant here: the rule under test is the tab bar itself.
 jest.mock("../src/screens/home/HomeScreen", () => ({ HomeScreen: () => null }));
 jest.mock("../src/navigation/SearchStack", () => ({ SearchStack: () => null }));
 jest.mock("../src/navigation/CreateStack", () => ({ CreateStack: () => null }));
-jest.mock("../src/screens/activity/ActivityScreen", () => ({ ActivityScreen: () => null }));
 jest.mock("../src/navigation/DMStack", () => ({ DMStack: () => null }));
 jest.mock("../src/screens/profile/ProfileScreen", () => ({ ProfileScreen: () => null }));
 jest.mock("../src/state/NotificationsContext", () => ({ useNotifications: () => ({ unreadCount: 3 }) }));
@@ -37,9 +37,10 @@ afterEach(async () => {
   mounted = null;
 });
 
-test("the tab bar is exactly Home | Search | Create | Activity | DM | Profile, with unread counts", async () => {
+test("the tab bar is exactly Home | Search | Create | DM | Profile, with unread counts", async () => {
   const tree = (mounted = await renderTabs());
-  expect(tabs(tree)).toEqual(["Home", "Search", "Create a Story", "Activity, 3 unread", "DM, 120 unread", "Profile"]);
+  // Activity opens from the heart at the top of Home.
+  expect(tabs(tree)).toEqual(["Home", "Search", "Create a Story", "DM, 120 unread", "Profile"]);
   expect(JSON.stringify(tree.toJSON())).not.toMatch(/Discover|Reels|Admin|Ads Manager/);
 });
 
@@ -50,4 +51,14 @@ test("screen readers get a tab list with the current tab selected, above the hom
   expect(selected.map((n) => n.props.accessibilityLabel)).toEqual(["Home"]);
   const style = Object.assign({}, ...[list.props.style].flat(Infinity).filter(Boolean));
   expect(style.paddingBottom).toBe(34);
+});
+
+test("the tab bar hides in the camera and editor and inside a chat, and shows on the conversation list", () => {
+  const state = (index: number, routes: object[]) => ({ index, routes, key: "tabs", routeNames: [], type: "tab", stale: false, history: [], preloadedRouteKeys: [] }) as never;
+  const dm = (screen: string) => ({ key: "dm", name: "DM", state: { index: 0, routes: [{ key: "s", name: screen }] } });
+  expect(tabBarHidden(state(0, [{ key: "c", name: "Create" }]))).toBe(true);
+  expect(tabBarHidden(state(0, [dm("Conversation")]))).toBe(true);
+  expect(tabBarHidden(state(0, [dm("DMInbox")]))).toBe(false);
+  expect(tabBarHidden(state(0, [{ key: "dm", name: "DM" }]))).toBe(false);
+  expect(tabBarHidden(state(0, [{ key: "h", name: "Home" }]))).toBe(false);
 });

@@ -2,16 +2,15 @@ import { Icon } from "../components/Icon";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing, typography, ICONS } from "../theme";
-import { useNotifications } from "../state/NotificationsContext";
 import { useDM } from "../state/DMContext";
 
 const TAB_LABELS: Record<string, string> = {
   Home: "Home",
   Search: "Search",
   Create: "",
-  Activity: "Activity",
   DM: "DM",
   Profile: "Profile",
 };
@@ -19,21 +18,28 @@ const TAB_LABELS: Record<string, string> = {
 const TAB_ICONS: Record<string, import("../theme/icons").IconName> = {
   Home: ICONS.home,
   Search: ICONS.search,
-  Activity: ICONS.activity,
   DM: ICONS.dm,
   Profile: ICONS.profile,
 };
 
 /**
- * Custom bottom tab bar: HOME | SEARCH | + | ACTIVITY | DM | PROFILE, with
- * the center Create button raised and rendered in Katkee amber so it reads
- * immediately as the primary action, not a 7th equal tab.
+ * Custom bottom tab bar: HOME | SEARCH | + | DM | PROFILE, with the centre Create button raised
+ * in Katkee amber so it reads as the primary action. Hidden where the screen needs all of it,
+ * like Instagram: the camera and Story editor, and an open chat.
  */
+export function tabBarHidden(state: BottomTabBarProps["state"]): boolean {
+  const route = state.routes[state.index];
+  if (!route) return false;
+  if (route.name === "Create") return true;
+  if (route.name === "DM") return (getFocusedRouteNameFromRoute(route) ?? "DMInbox") !== "DMInbox";
+  return false;
+}
+
 export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarProps): React.JSX.Element {
-  const { unreadCount: unreadNotifications } = useNotifications();
   const { unreadCount: unreadMessages } = useDM();
   // Clears the iPhone home indicator and Android's gesture/navigation bar (edge-to-edge).
   const { bottom } = useSafeAreaInsets();
+  if (tabBarHidden(state)) return <View />;
 
   return (
     <View style={[styles.container, { paddingBottom: Math.max(bottom, spacing.sm) }]} accessibilityRole="tablist">
@@ -44,9 +50,10 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
 
         const onPress = () => {
           const event = navigation.emit({ type: "tabPress", target: route.key, canPreventDefault: true });
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name);
-          }
+          if (event.defaultPrevented) return;
+          // Messages always opens on the list of conversations; pick one to open the chat.
+          if (route.name === "DM") navigation.navigate("DM", { screen: "DMInbox" });
+          else if (!isFocused) navigation.navigate(route.name);
         };
 
         if (route.name === "Create") {
@@ -66,7 +73,7 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
           );
         }
 
-        const badgeCount = route.name === "Activity" ? unreadNotifications : route.name === "DM" ? unreadMessages : 0;
+        const badgeCount = route.name === "DM" ? unreadMessages : 0;
         const showUnreadBadge = badgeCount > 0;
 
         return (
@@ -85,8 +92,8 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
             <View style={styles.tabContent}>
               <Icon style={[styles.tabIcon, isFocused && styles.labelFocused]} name={TAB_ICONS[route.name] ?? "home"} selected={isFocused} />
               {showUnreadBadge ? (
-                <View style={route.name === "Activity" ? styles.unreadDot : styles.unreadBadge}>
-                  {route.name !== "Activity" && <Text style={styles.unreadBadgeText}>{badgeCount > 99 ? "99+" : badgeCount}</Text>}
+                <View style={styles.unreadBadge}>
+                  <Text style={styles.unreadBadgeText}>{badgeCount > 99 ? "99+" : badgeCount}</Text>
                 </View>
               ) : null}
             </View>
@@ -122,7 +129,6 @@ const styles = StyleSheet.create({
     color: colors.accent,
     fontWeight: "700",
   },
-  unreadDot: {position:"absolute",top:-2,right:-7,width:7,height:7,borderRadius:4,backgroundColor:colors.accent},
   unreadBadge: {
     position: "absolute",
     top: -6,

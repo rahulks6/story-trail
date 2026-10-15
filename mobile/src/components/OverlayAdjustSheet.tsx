@@ -1,3 +1,4 @@
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {Icon} from "./Icon";
 import React from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
@@ -36,6 +37,8 @@ function clamp(n: number, min: number, max: number): number {
  * button standing in for "drag onto the trash zone."
  */
 export function OverlayAdjustSheet({ overlay, onChange, onEditText, onEditLocationOrDateTime, onDelete, onClose }: Props): React.JSX.Element {
+  // Clears Android's navigation bar and the iPhone home indicator.
+  const bottomInset = useSafeAreaInsets().bottom;
   // Keeps rendering the last-selected overlay's controls while the Modal
   // itself plays its closing animation (overlay only ever goes non-null →
   // null when a caller closes it) — returning null the instant `overlay`
@@ -55,7 +58,7 @@ export function OverlayAdjustSheet({ overlay, onChange, onEditText, onEditLocati
   return (
     <Modal visible={overlay !== null} animationType="slide" transparent onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
-      <View style={styles.sheet}>
+      <View style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]}>
         <View style={styles.handle} />
         <Text style={typography.caption}>Adjust</Text>
 

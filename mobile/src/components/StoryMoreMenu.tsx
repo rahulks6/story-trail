@@ -1,3 +1,4 @@
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { colors, radii, spacing, typography } from "../theme";
@@ -24,6 +25,8 @@ interface Props {
  * and now Report (Phase 10's real moderation queue — see ReportSheet.tsx).
  */
 export function StoryMoreMenu({ visible, storyId, isOwnStory, otherUsername, otherUserId, onClose, onDeleted }: Props): React.JSX.Element {
+  // Clears Android's navigation bar and the iPhone home indicator.
+  const bottomInset = useSafeAreaInsets().bottom;
   const { accessToken } = useAuth();
   const [busy, setBusy] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
@@ -118,7 +121,7 @@ export function StoryMoreMenu({ visible, storyId, isOwnStory, otherUsername, oth
     <>
       <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
         <Pressable style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
-        <View style={styles.sheet}>
+        <View style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]}>
           <View style={styles.handle} />
           {busy ? (
             <ActivityIndicator color={colors.accent} style={{ marginVertical: spacing.lg }} />

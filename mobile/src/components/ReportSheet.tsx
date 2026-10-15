@@ -1,3 +1,4 @@
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, Modal, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { colors, radii, spacing, typography } from "../theme";
@@ -23,6 +24,8 @@ interface Props {
  * same style as ShareSheet.tsx, not a new pattern.
  */
 export function ReportSheet({ visible, targetType, targetId, conversationId, onClose }: Props): React.JSX.Element {
+  // Clears Android's navigation bar and the iPhone home indicator.
+  const bottomInset = useSafeAreaInsets().bottom;
   const { accessToken } = useAuth();
   const [selectedReason, setSelectedReason] = useState<ReportReason | null>(null);
   const [details, setDetails] = useState("");
@@ -73,7 +76,7 @@ export function ReportSheet({ visible, targetType, targetId, conversationId, onC
           accessibilityRole="button"
           accessibilityLabel="Close"
         />
-        <View style={styles.sheet}>
+        <View style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]}>
           <View style={styles.handle} />
           <Text style={[typography.bodyStrong, styles.title]}>Report {targetType === "user" ? "profile" : targetType}</Text>
           {targetType === "message" ? (

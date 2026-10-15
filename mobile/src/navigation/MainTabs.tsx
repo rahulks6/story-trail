@@ -5,13 +5,12 @@ import { BottomTabBar } from "./BottomTabBar";
 import { HomeScreen } from "../screens/home/HomeScreen";
 import { SearchStack } from "./SearchStack";
 import { CreateStack } from "./CreateStack";
-import { ActivityScreen } from "../screens/activity/ActivityScreen";
 import { DMStack } from "./DMStack";
 import { ProfileScreen } from "../screens/profile/ProfileScreen";
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
-/** HOME | SEARCH | + | ACTIVITY | DM | PROFILE — exactly 6 items, no Discover tab. */
+/** HOME | SEARCH | + | DM | PROFILE: five tabs. Activity opens from the heart at the top of Home. */
 export function MainTabs(): React.JSX.Element {
   return (
     <Tab.Navigator
@@ -21,7 +20,6 @@ export function MainTabs(): React.JSX.Element {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Search" component={SearchStack} />
       <Tab.Screen name="Create" component={CreateStack} />
-      <Tab.Screen name="Activity" component={ActivityScreen} />
       <Tab.Screen name="DM" component={DMStack} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>

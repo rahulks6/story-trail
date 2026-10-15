@@ -1,3 +1,4 @@
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { colors, radii, spacing, typography } from "../theme";
@@ -34,6 +35,8 @@ function StatRow({ label, value }: { label: string; value: string }): React.JSX.
  * not relationship-at-view-time).
  */
 export function StoryInsightsSheet({ visible, storyId, onClose }: Props): React.JSX.Element {
+  // Clears Android's navigation bar and the iPhone home indicator.
+  const bottomInset = useSafeAreaInsets().bottom;
   const { accessToken } = useAuth();
   const [insights, setInsights] = useState<StoryInsights | null>(null);
   const [viewers, setViewers] = useState<StoryViewer[]>([]);
@@ -65,7 +68,7 @@ export function StoryInsightsSheet({ visible, storyId, onClose }: Props): React.
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
-      <View style={styles.sheet}>
+      <View style={[styles.sheet, { paddingBottom: spacing.lg + bottomInset }]}>
         <View style={styles.handle} />
         <Text style={[typography.bodyStrong, styles.title]}>Insights</Text>
 

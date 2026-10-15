@@ -33,6 +33,7 @@ import { BlockedAccountsScreen } from "../screens/profile/BlockedAccountsScreen"
 import { MutedAccountsScreen } from "../screens/profile/MutedAccountsScreen";
 import { CloseFriendsScreen } from "../screens/profile/CloseFriendsScreen";
 import { FollowListScreen } from "../screens/profile/FollowListScreen";
+import { ActivityScreen } from "../screens/activity/ActivityScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -46,6 +47,7 @@ function SignedInNavigator(): React.JSX.Element {
     <Stack.Navigator initialRouteName="Main" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="AccountSecurity" component={AccountSecurityScreen} options={{headerShown:true,title:"Account security",headerStyle:{backgroundColor:colors.background},headerTintColor:colors.textPrimary}}/>
       <Stack.Screen name="Main" component={MainTabs} />
+      <Stack.Screen name="Activity" component={ActivityScreen} />
       <Stack.Screen name="UploadQueue" component={UploadQueueScreen} options={{headerShown:true,title:'Story uploads',headerStyle:{backgroundColor:colors.background},headerTintColor:colors.textPrimary}}/>
       <Stack.Screen name="Appeals" component={AppealsScreen} options={{headerShown:true,title:'Account review',headerStyle:{backgroundColor:colors.background},headerTintColor:colors.textPrimary}}/>
       <Stack.Screen name="StoryViewer" component={StoryViewerScreen} options={{ presentation: "fullScreenModal" }} />
@@ -244,7 +246,7 @@ export function RootNavigator(): React.JSX.Element {
       if (target?.kind === "conversation") {
         return { routes: [{ name: "Main", state: { routes: [{ name: "DM", state: { routes: [{ name: "DMInbox" }, { name: "Conversation", params: { conversationId: target.conversationId } }] } }] } }] };
       }
-      if (target?.kind === "activity") return { routes: [{ name: "Main", state: { routes: [{ name: "Activity" }] } }] };
+      if (target?.kind === "activity") return { routes: [{ name: "Main" }, { name: "Activity" }] };
       return undefined;
     },
   }), []);

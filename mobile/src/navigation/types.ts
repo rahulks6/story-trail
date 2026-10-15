@@ -31,7 +31,6 @@ export type MainTabParamList = {
   // Search's UserProfile via navigation.navigate("Search", { screen: ..., params: ... }).
   Search: NavigatorScreenParams<SearchStackParamList>;
   Create: undefined;
-  Activity: undefined;
   DM: NavigatorScreenParams<DMStackParamList>;
   Profile: undefined;
 };
@@ -53,6 +52,8 @@ export type RootStackParamList = {
   // Nested so the root level (StoryViewer's ShareSheet) can deep-link two
   // levels down into a tab's own stack — e.g. Main -> DM -> SendStory.
   Main: NavigatorScreenParams<MainTabParamList>;
+  /** Likes, comments, follows and mentions: opened from the heart at the top of Home. */
+  Activity: undefined;
   /**
    * `creators` is the ordered list of usernames swipe up/down moves
    * through (spec section 4) — a single-element list when opened from a

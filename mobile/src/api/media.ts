@@ -94,6 +94,9 @@ export function uploadPart(url: string, body: ArrayBuffer, onProgress?: (sentByt
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open("PUT", url.startsWith("/") ? `${API_BASE_URL}${url}` : url);
+    // Android refuses to send a body without a Content-Type ("Payload is set but no content-type
+    // header specified"), which failed every Story upload there. Storage doesn't sign it.
+    xhr.setRequestHeader("Content-Type", "application/octet-stream");
     xhr.timeout = timeoutMs;
     if (onProgress && xhr.upload) xhr.upload.onprogress = (event) => onProgress(event.loaded);
     xhr.onload = () => {

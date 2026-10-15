@@ -1,3 +1,4 @@
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "../../components/Icon";
 import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Image, Pressable, StyleSheet, Text, TextInput, View, useWindowDimensions } from "react-native";
@@ -24,6 +25,8 @@ const ARCHIVE_PAGE_SIZE = 50;
  * is exactly the point of an Archive existing at all.
  */
 export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.Element {
+  // The Save button stays above Android's navigation bar and the iPhone home indicator.
+  const bottomInset = useSafeAreaInsets().bottom;
   const { highlightId, initialStoryIds } = route.params;
   const isEditing = highlightId !== undefined;
   const { accessToken } = useAuth();
@@ -250,7 +253,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
         }}
       />
 
-      <View style={styles.footer}>
+      <View style={[styles.footer, { paddingBottom: spacing.md + bottomInset }]}>
         {isEditing ? (
           <Pressable accessibilityRole="button" style={styles.deleteButton} onPress={onDelete}>
             <Text style={styles.deleteLabel}>Delete Highlight</Text>

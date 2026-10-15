@@ -1,3 +1,4 @@
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { colors, radii, spacing, typography, ICONS } from "../theme";
@@ -24,6 +25,8 @@ const newClientId = () => `reply_${Date.now().toString(36)}_${Math.random().toSt
  * lands in the owner's DMs with the Story attached (POST /api/v1/stories/:id/replies).
  */
 export function ReplySheet({ visible, storyId, ownerUsername, onClose, onSent }: Props): React.JSX.Element {
+  // Clears Android's navigation bar and the iPhone home indicator.
+  const bottomInset = useSafeAreaInsets().bottom;
   const { accessToken } = useAuth();
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
@@ -63,7 +66,7 @@ export function ReplySheet({ visible, storyId, ownerUsername, onClose, onSent }:
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
-      <KeyboardAvoider style={styles.sheet}>
+      <KeyboardAvoider style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]}>
         <View style={styles.handle} />
         <Text style={[typography.body, styles.title]}>Reply to @{ownerUsername}</Text>
         <View style={styles.reactions}>

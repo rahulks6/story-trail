@@ -5,6 +5,7 @@ import { profileChanged, storyPublished } from "../src/state/storyChanges";
 import * as storiesApi from "../src/api/stories";
 
 // Home reloads when something it shows has changed elsewhere in the app.
+jest.mock("../src/state/NotificationsContext", () => ({ useNotifications: () => ({ unreadCount: 0 }) }));
 jest.mock("../src/state/AuthContext", () => ({ useAuth: () => ({ accessToken: "token", user: { id: "u-me", username: "me" } }) }));
 jest.mock("@react-navigation/native", () => ({ ...jest.requireActual("@react-navigation/native"), useNavigation: () => ({ navigate: jest.fn() }) }));
 jest.mock("../src/screens/story/StoryFeed", () => ({ StoryFeed: (props: object) => require("react").createElement("StoryFeed", props) }));

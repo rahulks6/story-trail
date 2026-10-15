@@ -3,10 +3,9 @@ import { ListSkeleton } from "../../components/Skeleton";
 import { ActivityIndicator, Pressable, RefreshControl, SectionList, StyleSheet, Text, View } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import type { CompositeNavigationProp } from "@react-navigation/native";
-import type { MainTabParamList, RootStackParamList } from "../../navigation/types";
-import { colors, radii, spacing, typography } from "../../theme";
+import type { RootStackParamList } from "../../navigation/types";
+import { Icon } from "../../components/Icon";
+import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { useNotifications } from "../../state/NotificationsContext";
 import { useRealtimeEvents } from "../../state/RealtimeContext";
@@ -43,10 +42,7 @@ function matchesTab(notification: NotificationRecord, tab: ActivityTab): boolean
   return notification.type === tab;
 }
 
-type ActivityNavigationProp = CompositeNavigationProp<
-  BottomTabNavigationProp<MainTabParamList, "Activity">,
-  NativeStackNavigationProp<RootStackParamList>
->;
+type ActivityNavigationProp = NativeStackNavigationProp<RootStackParamList, "Activity">;
 
 function isToday(isoDate: string): boolean {
   const date = serverDate(isoDate);
@@ -329,7 +325,7 @@ export function ActivityScreen(): React.JSX.Element {
     }
 
     if (notification.actor) {
-      navigation.navigate("Search", { screen: "UserProfile", params: { username: notification.actor.username } });
+      navigation.navigate("Main", { screen: "Search", params: { screen: "UserProfile", params: { username: notification.actor.username } } });
     }
   };
 
@@ -345,8 +341,29 @@ export function ActivityScreen(): React.JSX.Element {
     }
   };
 
+  // Opened from Home's heart: a way back, and the title, whatever the list is doing.
+  const header = (
+    <View style={[styles.header, { paddingTop: insets.top + spacing.md }]}>
+      <View style={styles.headerStart}>
+        {navigation.canGoBack() ? (
+          <Pressable onPress={() => navigation.goBack()} hitSlop={12} accessibilityRole="button" accessibilityLabel="Back">
+            <Icon name={ICONS.back} size={24} color={colors.textPrimary} />
+          </Pressable>
+        ) : null}
+        <Text style={typography.title}>Activity</Text>
+      </View>
+      {unreadInList ? (
+        <Pressable onPress={onMarkAllRead} hitSlop={8} accessibilityRole="button">
+          <Text style={styles.markAllRead}>Mark all read</Text>
+        </Pressable>
+      ) : null}
+    </View>
+  );
+
   if (notifications === null) {
     return (
+      <View style={styles.container}>
+      {header}
       <View style={styles.centered}>
         {loadError ? (
           <>
@@ -359,23 +376,22 @@ export function ActivityScreen(): React.JSX.Element {
           </View>
         )}
       </View>
+      </View>
     );
   }
 
   if (notifications.length === 0) {
-    return <EmptyState title="No activity yet" message="Likes, comments, and follows will show up here." />;
+    return (
+      <View style={styles.container}>
+        {header}
+        <EmptyState title="No activity yet" message="Likes, comments, and follows will show up here." />
+      </View>
+    );
   }
 
   return (
     <View style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top + spacing.md }]}>
-        <Text style={typography.title}>Activity</Text>
-        {unreadInList ? (
-          <Pressable onPress={onMarkAllRead} hitSlop={8} accessibilityRole="button">
-            <Text style={styles.markAllRead}>Mark all read</Text>
-          </Pressable>
-        ) : null}
-      </View>
+      {header}
       {loadError ? <Banner text={loadError} /> : null}
       <View style={styles.tabBar} accessibilityRole="tablist">
         {TABS.map((tab) => (
@@ -451,6 +467,7 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
     paddingBottom: spacing.sm,
   },
+  headerStart: { flexDirection: "row", alignItems: "center", gap: spacing.md },
   markAllRead: { color: colors.accent, fontSize: 13, fontWeight: "600" },
   tabBar: {
     flexDirection: "row",

@@ -125,6 +125,8 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
         screen: "DM",
         params: {
           screen: "Conversation",
+          // The conversation list stays underneath, so Back leads to it.
+          initial: false,
           params: { conversationId: conversation.id, otherUsername: conversation.otherUser.username, otherDisplayName: conversation.otherUser.displayName },
         },
       });

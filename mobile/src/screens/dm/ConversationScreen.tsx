@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { DMStackParamList, RootStackParamList } from "../../navigation/types";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
@@ -96,6 +97,18 @@ function statusLabel(row: ListRow): string {
  */
 export function ConversationScreen({ route }: Props): React.JSX.Element {
   const { conversationId, otherUsername } = route.params;
+  // The tab bar hides in a chat, so the message box keeps clear of Android's navigation bar and
+  // the iPhone home indicator itself — except while the keyboard covers them.
+  const bottomInset = useSafeAreaInsets().bottom;
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+  useEffect(() => {
+    const shown = Keyboard.addListener("keyboardDidShow", () => setKeyboardOpen(true));
+    const hidden = Keyboard.addListener("keyboardDidHide", () => setKeyboardOpen(false));
+    return () => {
+      shown.remove();
+      hidden.remove();
+    };
+  }, []);
   const { accessToken, user } = useAuth();
   const { refreshUnreadCount } = useDM();
   const { connected } = useRealtime();
@@ -412,12 +425,13 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           );
         }}
         ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} /> : undefined}
-        ListEmptyComponent={
-          <View style={styles.emptyState}>
-            <Text style={typography.body}>{otherUsername ? `Say hi to @${otherUsername} 👋` : "Say hi 👋"}</Text>
-          </View>
-        }
       />
+      {/* Outside the inverted list: Android flips an inverted list on both axes, which mirrored this text. */}
+      {rows.length === 0 ? (
+        <View style={styles.emptyState} pointerEvents="none">
+          <Text style={typography.body}>{otherUsername ? `Say hi to @${otherUsername} 👋` : "Say hi 👋"}</Text>
+        </View>
+      ) : null}
       {emojiPickerOpen ? (
         <View style={styles.emojiPanel}>
           <FlatList
@@ -440,7 +454,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         onClose={() => setReportingMessageId(null)}
       />
       {composerError ? <Text style={styles.composerError}>{composerError}</Text> : null}
-      <View style={styles.composerRow}>
+      <View style={[styles.composerRow, { paddingBottom: spacing.sm + (keyboardOpen ? 0 : bottomInset) }]}>
         <Pressable
           style={styles.emojiToggle}
           onPress={toggleEmojiPicker}
@@ -501,7 +515,7 @@ const styles = StyleSheet.create({
   bubbleTextTheirs: { color: colors.textPrimary, fontSize: 15 },
   statusCaption: { color: colors.textDisabled, fontSize: 11, marginTop: 2 },
   footerSpinner: { marginVertical: spacing.md },
-  emptyState: { flex: 1, alignItems: "center", justifyContent: "center", paddingTop: spacing.xxl, transform: [{ scaleY: -1 }] },
+  emptyState: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, alignItems: "center", justifyContent: "center" },
   composerRow: {
     flexDirection: "row",
     alignItems: "flex-end",

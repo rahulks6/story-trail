@@ -1,3 +1,4 @@
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useState } from "react";
 import { Alert, Modal, Pressable, Share, StyleSheet, Text, View } from "react-native";
 import Clipboard from "@react-native-clipboard/clipboard";
@@ -31,6 +32,8 @@ interface Props {
  * yet, so the link is correct but inert until it does.
  */
 export function ShareSheet({ visible, storyId, ownerUsername, isPublic, onClose, onSendToUser }: Props): React.JSX.Element {
+  // Clears Android's navigation bar and the iPhone home indicator.
+  const bottomInset = useSafeAreaInsets().bottom;
   const { accessToken } = useAuth();
   const [busy, setBusy] = useState(false);
 
@@ -69,7 +72,7 @@ export function ShareSheet({ visible, storyId, ownerUsername, isPublic, onClose,
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
-      <View style={styles.sheet}>
+      <View style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]}>
         <View style={styles.handle} />
         <Pressable
           accessibilityRole="button"

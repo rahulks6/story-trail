@@ -1,3 +1,4 @@
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -35,6 +36,8 @@ interface Props {
  * that — see StoryViewerScreen passing `paused` alongside `visible`).
  */
 export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled, onClose, onCommentCountChange }: Props): React.JSX.Element {
+  // Clears Android's navigation bar and the iPhone home indicator.
+  const bottomInset = useSafeAreaInsets().bottom;
   const { user, accessToken } = useAuth();
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(false);
@@ -92,7 +95,7 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
     <>
       <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
         <Pressable style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
-        <KeyboardAvoider style={styles.sheet}>
+        <KeyboardAvoider style={[styles.sheet, { paddingBottom: spacing.lg + bottomInset }]}>
         <View style={styles.handle} />
         <Text style={[typography.bodyStrong, styles.title]}>Comments</Text>
 
