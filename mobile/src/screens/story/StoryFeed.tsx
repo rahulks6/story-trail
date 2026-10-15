@@ -25,6 +25,8 @@ import type { SponsoredPlacement } from "../../api/ads";
 import { Avatar } from "../../components/Avatar";
 import { ReplySheet } from "../../components/ReplySheet";
 import { tapFeedback } from "../../utils/haptics";
+import { timeAgo } from "../../utils/serverTime";
+import { followUser } from "../../api/users";
 
 const PHOTO_DURATION_MS = 5000;
 const HOLD_DELAY_MS = 250;
@@ -51,7 +53,12 @@ export interface StoryFeedProps {
   onOpenDM: (params: { storyId: string; ownerUsername: string }) => void;
   /** A mention overlay was tapped — navigate to that user's live profile (spec section 30). */
   onOpenProfile: (username: string) => void;
+  /** Home's feed knows whom you follow: creators you don't get a Follow button beside their name. */
+  following?: Record<string, boolean>;
 }
+
+/** Sound on or off for Stories with sound, kept while you watch (like Instagram). */
+let viewerMuted = false;
 
 /**
  * Full-screen Story feed with the complete gesture set (spec section 4):
@@ -70,7 +77,7 @@ export interface StoryFeedProps {
 /** The comment box (or your Story's Activity button) along the bottom. */
 const BOTTOM_BAR_HEIGHT = 46;
 
-export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpenDM, onOpenProfile, onRefresh, onNeedMore, sponsored = [] }: StoryFeedProps): React.JSX.Element {
+export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpenDM, onOpenProfile, onRefresh, onNeedMore, sponsored = [], following }: StoryFeedProps): React.JSX.Element {
   // Overlays clear the status bar / notch; the bottom ones also the home indicator when no tab bar is below.
   const insets = useScreenInsets();
   const { user: authUser, accessToken } = useAuth();
@@ -107,6 +114,10 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
 
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [commentFocus, setCommentFocus] = useState(false);
+  const [muted, setMuted] = useState(viewerMuted);
+  const [followedNow, setFollowedNow] = useState<Record<string, boolean>>({});
+  // The Story follows a finger swiping up or down to the next creator.
+  const dragY = useRef(new Animated.Value(0)).current;
   const [shareOpen, setShareOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [insightsOpen, setInsightsOpen] = useState(false);
@@ -382,6 +393,11 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   // Single-tap navigation is deliberately delayed behind the double-tap
   // window so a double-tap is never misread as two single taps first
   // (same rule as spec section 4's Home gestures).
+  // The handlers are created once and call the latest functions through this ref: rebuilding them
+  // on a re-render (pausing re-renders) lost the gesture in progress, so letting go of a hold
+  // could count as a tap and skip a Story.
+  const g = useRef({ goNextStory, goPreviousStory, goNextCreator, goPreviousCreator, ensureLiked, currentStory, emit, reducedMotion });
+  g.current = { goNextStory, goPreviousStory, goNextCreator, goPreviousCreator, ensureLiked, currentStory, emit, reducedMotion };
   const gesture = useMemo(() => {
     const screenWidth = Dimensions.get("window").width;
     let startX = 0;
@@ -409,27 +425,51 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           setPaused(true);
         }, HOLD_DELAY_MS);
       },
+      onPanResponderMove: (evt) => {
+        const dx = evt.nativeEvent.pageX - startX;
+        const dy = evt.nativeEvent.pageY - startY;
+        // A vertical swipe: the Story follows the finger (a hold that turns into a swipe stops pausing).
+        if (!g.current.reducedMotion && Math.abs(dy) > TAP_MOVE_THRESHOLD && Math.abs(dy) > Math.abs(dx)) {
+          if (holdTimer) clearTimeout(holdTimer);
+          dragY.setValue(dy * 0.6);
+        }
+      },
       onPanResponderRelease: (evt) => {
         if (holdTimer) clearTimeout(holdTimer);
 
         if (didHold) {
           setPaused(false);
+          dragY.setValue(0);
           return;
         }
 
         const dx = evt.nativeEvent.pageX - startX;
         const dy = evt.nativeEvent.pageY - startY;
+        const height = Dimensions.get("window").height;
+        // Slide out the way the finger went, then show the next creator in place.
+        const slideOut = (to: number, then: () => void) => {
+          if (g.current.reducedMotion) {
+            then();
+            return;
+          }
+          Animated.timing(dragY, { toValue: to, duration: 160, useNativeDriver: true }).start(() => {
+            then();
+            dragY.setValue(0);
+          });
+        };
 
         if (dy > SWIPE_CLOSE_THRESHOLD && Math.abs(dx) < SWIPE_CLOSE_THRESHOLD) {
-          if (currentStory) emit("creator_swipe_previous", { creatorId: currentStory.ownerId });
-          goPreviousCreator();
+          if (g.current.currentStory) g.current.emit("creator_swipe_previous", { creatorId: g.current.currentStory.ownerId });
+          slideOut(height, g.current.goPreviousCreator);
           return;
         }
         if (dy < -SWIPE_CLOSE_THRESHOLD && Math.abs(dx) < SWIPE_CLOSE_THRESHOLD) {
-          if (currentStory) emit("creator_swipe_next", { creatorId: currentStory.ownerId });
-          goNextCreator();
+          if (g.current.currentStory) g.current.emit("creator_swipe_next", { creatorId: g.current.currentStory.ownerId });
+          slideOut(-height, g.current.goNextCreator);
           return;
         }
+        // Not far enough: settle back.
+        Animated.spring(dragY, { toValue: 0, useNativeDriver: true, bounciness: 4 }).start();
         if (Math.abs(dx) > TAP_MOVE_THRESHOLD || Math.abs(dy) > TAP_MOVE_THRESHOLD) return;
 
         const now = Date.now();
@@ -439,31 +479,33 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
             pendingTapTimer = null;
           }
           lastTapAt = 0;
-          void ensureLiked();
+          void g.current.ensureLiked();
           return;
         }
         lastTapAt = now;
         const tapX = evt.nativeEvent.pageX;
         pendingTapTimer = setTimeout(() => {
           pendingTapTimer = null;
-          if (!currentStory) return;
-          if (tapX < screenWidth / 2) {
-            emit("story_previous", { storyId: currentStory.id, creatorId: currentStory.ownerId });
-            goPreviousStory();
+          if (!g.current.currentStory) return;
+          // Like Instagram: the left third goes back, the rest goes forward.
+          if (tapX < screenWidth / 3) {
+            g.current.emit("story_previous", { storyId: g.current.currentStory.id, creatorId: g.current.currentStory.ownerId });
+            g.current.goPreviousStory();
           } else {
-            emit("story_next", { storyId: currentStory.id, creatorId: currentStory.ownerId });
-            goNextStory();
+            g.current.emit("story_next", { storyId: g.current.currentStory.id, creatorId: g.current.currentStory.ownerId });
+            g.current.goNextStory();
           }
         }, DOUBLE_TAP_WINDOW_MS);
       },
       onPanResponderTerminate: () => {
         dispose();
         setPaused(false);
+        dragY.setValue(0);
       },
     });
     return { ...responder, dispose };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [goNextStory, goPreviousStory, goNextCreator, goPreviousCreator, ensureLiked, currentStory, emit]);
+  }, [dragY]);
 
   useEffect(() => () => gesture.dispose(), [gesture]);
   useEffect(() => {
@@ -506,8 +548,24 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   const videoSource = delivery?.videos[0] ? mediaSource(delivery.videos[0].url, accessToken) : apiSource("video_720");
   const isOwnStory = authUser?.username === currentUsername;
 
+  const creatorMuted = detail?.audioMuted ?? currentStory.audioMuted;
+  const showFollow = !isOwnStory && !!currentUsername && following?.[currentUsername] === false;
+  const followed = !!currentUsername && followedNow[currentUsername] === true;
+  const follow = async () => {
+    if (!accessToken || !currentUsername) return;
+    setFollowedNow((f) => ({ ...f, [currentUsername]: true }));
+    tapFeedback("select");
+    try {
+      await followUser(currentUsername, accessToken);
+    } catch {
+      setFollowedNow((f) => ({ ...f, [currentUsername]: false }));
+    }
+  };
+  // Holding to pause shows just the Story, like Instagram.
+  const chrome = paused ? styles.chromeHidden : null;
+
   return (
-    <View style={styles.container} onLayout={onContainerLayout}>
+    <Animated.View style={[styles.container, { transform: [{ translateY: dragY }] }]} onLayout={onContainerLayout}>
       {mediaKind === "video" ? (
         <Video
           ref={videoRef}
@@ -515,7 +573,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           poster={{ source: imageSource, resizeMode: "cover" }}
           style={[StyleSheet.absoluteFill, mediaTransformStyle(detail?.crop ?? currentStory.crop, containerSize.width, containerSize.height)]}
           resizeMode="cover"
-          muted={detail?.audioMuted ?? currentStory.audioMuted}
+          muted={creatorMuted || muted}
           paused={!playbackActive}
           onLoad={(meta) => { setVideoDurationMs(Math.max(meta.duration * 1000, 1000)); if(videoResume.current?.id===currentStory.id&&videoResume.current.seconds>0)videoRef.current?.seek(Math.min(videoResume.current.seconds,Math.max(0,meta.duration-0.1))); setMediaReady(true); }}
           onProgress={({ currentTime }) => { videoResume.current={id:currentStory.id,seconds:currentTime}; if (videoDurationMs) progress.setValue(Math.min(1, currentTime * 1000 / videoDurationMs)); }}
@@ -608,7 +666,12 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         <Icon style={styles.heartBurstIcon} name={ICONS.liked} />
       </Animated.View>
 
-      <View style={[styles.progressRow, { top: insets.top + spacing.sm }]}>
+      <View
+        style={[styles.progressRow, chrome, { top: insets.top + spacing.sm }]}
+        accessible
+        accessibilityRole="progressbar"
+        accessibilityLabel={`Story ${currentStoryIndex + 1} of ${currentStories?.length ?? 1}`}
+      >
         {currentStories?.map((s, i) => (
           <View key={s.id} style={styles.progressTrack}>
             <Animated.View
@@ -628,7 +691,21 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         ))}
       </View>
 
-      <View style={[styles.actionRail, { bottom: BOTTOM_BAR_HEIGHT + spacing.xl * 2 + insets.bottom }]}>
+      <View style={[styles.actionRail, chrome, { bottom: BOTTOM_BAR_HEIGHT + spacing.xl * 2 + insets.bottom }]} pointerEvents={paused ? "none" : "auto"}>
+        {mediaKind === "video" && !creatorMuted ? (
+          <Pressable
+            onPress={() => {
+              viewerMuted = !muted;
+              setMuted(viewerMuted);
+            }}
+            hitSlop={10}
+            style={styles.actionButton}
+            accessibilityRole="button"
+            accessibilityLabel={muted ? "Sound off, tap to turn on" : "Sound on, tap to mute"}
+          >
+            <Icon style={styles.actionIcon} name={muted ? ICONS.audioMuted : ICONS.audioOn} />
+          </Pressable>
+        ) : null}
         <Pressable onPress={toggleLike} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel={detail?.viewerHasLiked ? "Unlike" : "Like"}>
           <Icon style={[styles.actionIcon, detail?.viewerHasLiked && styles.actionIconLiked]} name={detail?.viewerHasLiked ? ICONS.liked : ICONS.like} />
           <Text style={styles.actionCount}>{detail?.likeCount ?? "—"}</Text>
@@ -661,15 +738,24 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         </Pressable>
       </View>
 
-      <View style={[styles.footer, { bottom: BOTTOM_BAR_HEIGHT + spacing.md + insets.bottom }]}>
-        {/* The creator's photo and name open their profile. */}
-        <Pressable onPress={() => currentUsername && onOpenProfile(currentUsername)} hitSlop={8} style={styles.avatarRing} accessibilityRole="button" accessibilityLabel={`@${currentUsername ?? ""}'s profile`}>
-          <Avatar username={currentUsername ?? ""} size={30} />
+      {/* Who posted it and when, at the top like Instagram; tap to open their profile. */}
+      <View style={[styles.header, chrome, { top: insets.top + spacing.lg }]} pointerEvents={paused ? "none" : "box-none"}>
+        <Pressable onPress={() => currentUsername && onOpenProfile(currentUsername)} hitSlop={8} style={styles.headerWho} accessibilityRole="button" accessibilityLabel={`Open @${currentUsername ?? ""}'s profile`}>
+          <View style={styles.avatarRing}>
+            <Avatar username={currentUsername ?? ""} size={30} />
+          </View>
+          <Text style={styles.username} numberOfLines={1}>{currentUsername}</Text>
+          <Text style={styles.postedAgo}>{timeAgo(currentStory.createdAt).replace(" ago", "")}</Text>
         </Pressable>
-        <View style={styles.footerText}>
-          <Pressable onPress={() => currentUsername && onOpenProfile(currentUsername)} hitSlop={8} accessibilityRole="button" accessibilityLabel={`Open @${currentUsername ?? ""}'s profile`}>
-            <Text style={styles.username}>@{currentUsername}</Text>
+        {showFollow ? (
+          <Pressable onPress={followed ? undefined : () => void follow()} disabled={followed} hitSlop={8} style={[styles.followButton, followed && styles.followingButton]} accessibilityRole="button" accessibilityLabel={followed ? `Following @${currentUsername}` : `Follow @${currentUsername}`}>
+            <Text style={styles.followLabel}>{followed ? "Following" : "Follow"}</Text>
           </Pressable>
+        ) : null}
+      </View>
+
+      {currentStory.caption || currentStory.audience === "close_friends" ? (
+        <View style={[styles.footer, chrome, { bottom: BOTTOM_BAR_HEIGHT + spacing.md + insets.bottom }]} pointerEvents="none">
           {currentStory.audience === "close_friends" ? (
             <View style={styles.closeFriendsBadge} accessible accessibilityLabel="Shared with Close Friends">
               <Icon name={ICONS.starFilled} size={11} color={colors.onAccent} />
@@ -677,16 +763,11 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
             </View>
           ) : null}
           {currentStory.caption ? <Text style={styles.caption}>{currentStory.caption}</Text> : null}
-          {currentStories && currentStories.length > 1 ? (
-            <Text style={styles.sequence}>
-              {currentStoryIndex + 1} of {currentStories.length} today
-            </Text>
-          ) : null}
         </View>
-      </View>
+      ) : null}
 
       {/* Like Instagram: write a comment under someone's Story; your own shows who has seen it. */}
-      <View style={[styles.bottomBar, { bottom: spacing.md + insets.bottom }]}>
+      <View style={[styles.bottomBar, chrome, { bottom: spacing.md + insets.bottom }]} pointerEvents={paused ? "none" : "auto"}>
         {isOwnStory ? (
           <Pressable onPress={() => setInsightsOpen(true)} style={styles.activityButton} accessibilityRole="button" accessibilityLabel={`Activity, ${viewCount ?? 0} views. Open viewers and Insights`}>
             <Icon name={ICONS.viewers} size={22} color={colors.textPrimary} />
@@ -781,7 +862,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       {isOwnStory ? (
         <StoryInsightsSheet visible={insightsOpen} storyId={currentStory.id} onClose={() => setInsightsOpen(false)} />
       ) : null}
-    </View>
+    </Animated.View>
   );
 }
 
@@ -838,10 +919,16 @@ const styles = StyleSheet.create({
     bottom: spacing.xl,
     left: spacing.md,
     right: spacing.xxl * 2,
-    flexDirection: "row",
-    gap: spacing.sm,
-    alignItems: "center",
+    gap: spacing.xs,
+    alignItems: "flex-start",
   },
+  header: { position: "absolute", left: spacing.md, right: 72, flexDirection: "row", alignItems: "center", gap: spacing.sm },
+  headerWho: { flexDirection: "row", alignItems: "center", gap: spacing.sm, flexShrink: 1 },
+  postedAgo: { color: "rgba(255,255,255,0.8)", fontSize: 13, textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 3 },
+  followButton: { borderWidth: 1, borderColor: colors.textPrimary, borderRadius: radii.pill, paddingHorizontal: spacing.md, paddingVertical: 4 },
+  followingButton: { borderColor: "rgba(255,255,255,0.5)" },
+  followLabel: { color: colors.textPrimary, fontWeight: "700", fontSize: 13 },
+  chromeHidden: { opacity: 0 },
   // The creator's photo inside the accent Story ring.
   avatarRing: {
     width: 36,
@@ -853,10 +940,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: colors.surface,
   },
-  footerText: { flex: 1 },
-  username: { color: colors.textPrimary, fontWeight: "700" },
+  username: { color: colors.textPrimary, fontWeight: "700", fontSize: 15, flexShrink: 1, textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 3 },
   caption: { color: colors.textPrimary, marginTop: 2 },
-  sequence: { color: "rgba(255,255,255,0.7)", fontSize: 12, marginTop: 2 },
   closeButton: { position: "absolute", top: spacing.xl, right: spacing.md },
   closeFriendsBadge: { flexDirection: "row", alignItems: "center", gap: 3, alignSelf: "flex-start", backgroundColor: colors.success, borderRadius: radii.pill, paddingHorizontal: spacing.sm, paddingVertical: 2, marginTop: 4 },
   closeFriendsBadgeText: { color: colors.onAccent, fontSize: 11, fontWeight: "700" },

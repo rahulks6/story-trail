@@ -337,6 +337,10 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   // gesture while actually recording (spec: "nothing else should interpret
   // that motion"). A hold past RECORD_HOLD_DELAY_MS starts recording,
   // exactly like the old onLongPress; a release before that is a photo tap.
+  // Created once; calls the latest functions through this ref. Recording re-renders the screen,
+  // and rebuilding the handlers mid-hold lost the release, so recording might not stop.
+  const cg = useRef({ startRecording, stopRecording, onShutterTap, applyZoom });
+  cg.current = { startRecording, stopRecording, onShutterTap, applyZoom };
   const captureGesture = useMemo(() => {
     let holdTimer: ReturnType<typeof setTimeout> | null = null;
     let recordingStarted = false;
@@ -353,13 +357,13 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
         if (modeRef.current !== "normal") return;
         holdTimer = setTimeout(() => {
           recordingStarted = true;
-          startRecording();
+          cg.current.startRecording();
         }, RECORD_HOLD_DELAY_MS);
       },
       onPanResponderMove: (evt: GestureResponderEvent) => {
         if (!recordingStarted) return;
         const dy = dragStartY - evt.nativeEvent.pageY; // dragging up = zoom in
-        applyZoom(dragStartZoom + dy / RECORD_DRAG_ZOOM_SENSITIVITY);
+        cg.current.applyZoom(dragStartZoom + dy / RECORD_DRAG_ZOOM_SENSITIVITY);
       },
       onPanResponderRelease: () => {
         if (holdTimer) {
@@ -367,9 +371,9 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
           holdTimer = null;
         }
         if (recordingStarted) {
-          void stopRecording();
+          void cg.current.stopRecording();
         } else {
-          onShutterTap();
+          cg.current.onShutterTap();
         }
       },
       onPanResponderTerminate: () => {
@@ -377,11 +381,11 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
           clearTimeout(holdTimer);
           holdTimer = null;
         }
-        if (recordingStarted) void stopRecording();
+        if (recordingStarted) void cg.current.stopRecording();
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startRecording, stopRecording, onShutterTap, applyZoom]);
+  }, []);
 
   if (!hasCameraPermission) {
     return <View style={styles.container}><EmptyState title="Camera access needed" message="Enable camera access in Settings, or choose media from your gallery."/><Pressable accessibilityRole="button" style={styles.sideButton} onPress={()=>void Linking.openSettings().catch(()=>undefined)}><Text style={{color:colors.textPrimary}}>Open Settings</Text></Pressable><Pressable accessibilityRole="button" style={styles.sideButton} onPress={()=>void openGallery()}><Text style={{color:colors.textPrimary}}>Choose from gallery</Text></Pressable></View>;

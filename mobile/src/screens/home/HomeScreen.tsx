@@ -42,7 +42,7 @@ export function HomeScreen():React.JSX.Element {
  if(feed===null&&!error)return <View style={styles.root}><StorySkeleton/>{activityButton}{uploads}</View>;
  if(feed===null)return <View style={styles.empty}>{activityButton}<Text style={typography.body}>{error||'Loading Stories…'}</Text>{error&&<Pressable onPress={refresh} accessibilityRole="button"><Text style={typography.body}>Try again</Text></Pressable>}</View>;
  if(!feed.length)return <View style={styles.root}><EmptyState title="No active Stories yet" message="Stories from people you follow and eligible new creators will appear here."/>{activityButton}{uploads}</View>;
- return <View style={styles.root}><StoryFeed key={`${user?.id}:${retry}`} creators={feed.map(e=>e.owner.username)} startIndex={0} sponsored={sponsored} onNeedMore={more} onRefresh={refresh}
+ return <View style={styles.root}><StoryFeed key={`${user?.id}:${retry}`} creators={feed.map(e=>e.owner.username)} following={Object.fromEntries(feed.map(e=>[e.owner.username,e.isFollowing]))} startIndex={0} sponsored={sponsored} onNeedMore={more} onRefresh={refresh}
   onOpenDM={({storyId,ownerUsername})=>navigation.navigate('DM',{screen:'SendStory',initial:false,params:{storyId,ownerUsername}})}
   onOpenProfile={username=>navigation.navigate('Search',{screen:'UserProfile',params:{username}})}/>
   {!!error&&<View style={styles.error}><Text style={typography.caption}>{error}</Text><Pressable onPress={more} accessibilityRole="button"><Text style={typography.body}>Retry</Text></Pressable><Pressable onPress={refresh} accessibilityRole="button"><Text style={typography.body}>Refresh</Text></Pressable></View>}

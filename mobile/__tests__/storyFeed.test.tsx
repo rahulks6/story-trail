@@ -1,6 +1,7 @@
 import React from "react";
 import { act, create, type ReactTestInstance, type ReactTestRenderer } from "react-test-renderer";
-import { AppState, Dimensions, Image, Text } from "react-native";
+import { AppState, Dimensions, Image, StyleSheet, Text } from "react-native";
+import * as usersApi from "../src/api/users";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StoryFeed } from "../src/screens/story/StoryFeed";
 import * as storiesApi from "../src/api/stories";
@@ -96,7 +97,7 @@ async function gesture(from: [number, number], to: [number, number], holdMs = 0)
   if (holdMs) await act(async () => { jest.advanceTimersByTime(holdMs); });
   await act(async () => view.props.onResponderRelease(touch(...to)));
 }
-const sequence = () => texts().find((t) => / of \d+ today$/.test(t));
+const sequence = () => tree.root.findAll((n) => typeof n.type === "string" && n.props.accessibilityRole === "progressbar").map((n) => n.props.accessibilityLabel as string)[0];
 
 test("the right rail is Like, Comment, Share, More; everyone sees the view count, only owners open viewers", async () => {
   await renderFeed();
@@ -132,15 +133,15 @@ test("under someone's Story: a comment bar; the name opens their profile; your o
 test("tap right and left move within a creator; a double-tap likes instead of moving", async () => {
   await renderFeed();
   const width = Dimensions.get("window").width;
-  expect(sequence()).toBe("1 of 2 today");
+  expect(sequence()).toBe("Story 1 of 2");
   await gesture([width * 0.8, 400], [width * 0.8, 400]);
   await act(async () => { jest.advanceTimersByTime(300); });
   await settle();
-  expect(sequence()).toBe("2 of 2 today");
+  expect(sequence()).toBe("Story 2 of 2");
   await gesture([width * 0.2, 400], [width * 0.2, 400]);
   await act(async () => { jest.advanceTimersByTime(300); });
   await settle();
-  expect(sequence()).toBe("1 of 2 today");
+  expect(sequence()).toBe("Story 1 of 2");
 
   await gesture([width * 0.8, 400], [width * 0.8, 400]);
   await act(async () => { jest.advanceTimersByTime(100); });
@@ -148,7 +149,7 @@ test("tap right and left move within a creator; a double-tap likes instead of mo
   await act(async () => { jest.advanceTimersByTime(300); });
   await settle();
   expect(engagementApi.likeStory).toHaveBeenCalledWith("a1", "token");
-  expect(sequence()).toBe("1 of 2 today");
+  expect(sequence()).toBe("Story 1 of 2");
 });
 
 test("swipe up moves to the next creator, swipe down back; holding pauses without moving", async () => {
@@ -167,5 +168,36 @@ test("swipe up moves to the next creator, swipe down back; holding pauses withou
   await gesture([300, 400], [300, 400], 400);
   await act(async () => { jest.advanceTimersByTime(300); });
   await settle();
-  expect(sequence()).toBe("1 of 2 today");
+  expect(sequence()).toBe("Story 1 of 2");
+});
+
+test("the top shows who posted it and when, with Follow for a creator you don't follow yet", async () => {
+  const follow = jest.spyOn(usersApi, "followUser").mockResolvedValue({ status: "following" } as never);
+  mockSession.user.username = "viewer";
+  await act(async () => {
+    tree = create(
+      <SafeAreaProvider initialMetrics={metrics}>
+        <StoryFeed creators={["alice"]} following={{ alice: false }} startIndex={0} onOpenDM={jest.fn()} onOpenProfile={openProfile} />
+      </SafeAreaProvider>,
+    );
+  });
+  await settle();
+  await act(async () => storyImage().props.onLoad());
+  await settle();
+  expect(texts()).toEqual(expect.arrayContaining(["alice", "Follow"]));
+  expect(texts().some((t) => /^(just now|\d+[mhdw])$/.test(t))).toBe(true);
+  await act(async () => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === "Follow @alice").props.onPress());
+  expect(follow).toHaveBeenCalledWith("alice", "token");
+  expect(texts()).toContain("Following");
+});
+
+test("holding a Story clears the screen to just the Story", async () => {
+  await renderFeed();
+  const rail = () => tree.root.find((n: ReactTestInstance) => typeof n.type === "string" && Array.isArray(n.props.style) && n.props.pointerEvents !== undefined && n.findAll((c) => c.props.accessibilityLabel === "Comments").length > 0 && n.props.style.some((st: unknown) => st && typeof st === "object" && "right" in (st as object)));
+  expect(StyleSheet.flatten(rail().props.style).opacity ?? 1).toBe(1);
+  await act(async () => surface().props.onResponderGrant(touch(300, 400)));
+  await act(async () => { jest.advanceTimersByTime(400); });
+  expect(StyleSheet.flatten(rail().props.style).opacity).toBe(0);
+  await act(async () => surface().props.onResponderRelease(touch(300, 400)));
+  expect(StyleSheet.flatten(rail().props.style).opacity ?? 1).toBe(1);
 });
