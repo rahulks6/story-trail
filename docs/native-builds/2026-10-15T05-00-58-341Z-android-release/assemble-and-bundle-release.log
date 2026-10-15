@@ -1,0 +1,1432 @@
+Picked up JAVA_TOOL_OPTIONS: -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts -Djavax.net.ssl.trustStoreType=JKS -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=45723 -Dhttp.nonProxyHosts=localhost|127.0.0.1|::1|127.*|0.*|::|169.254.*|api.anthropic.com|api-staging.anthropic.com|api-pr-preview.anthropic.com|mcp-proxy.anthropic.com|mcp-proxy-staging.anthropic.com|registry.npmjs.org|jsr.io|npm.jsr.io|pypi.org|files.pythonhosted.org|index.crates.io|proxy.golang.org|host.docker.internal|10.*|172.16.*|172.17.*|172.18.*|172.19.*|172.20.*|172.21.*|172.22.*|172.23.*|172.24.*|172.25.*|172.26.*|172.27.*|172.28.*|172.29.*|172.30.*|172.31.*|192.168.*|100.64.0.0/10|*.svc.cluster.local|*.svc.cluster.local -Djdk.http.auth.tunneling.disabledSchemes= -Djdk.http.auth.proxying.disabledSchemes=
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.4.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :gradle-plugin:settings-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :gradle-plugin:shared:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :gradle-plugin:shared:compileKotlin UP-TO-DATE
+> Task :gradle-plugin:shared:compileJava NO-SOURCE
+> Task :gradle-plugin:shared:processResources NO-SOURCE
+> Task :gradle-plugin:shared:classes UP-TO-DATE
+> Task :gradle-plugin:shared:jar UP-TO-DATE
+> Task :gradle-plugin:settings-plugin:compileKotlin UP-TO-DATE
+> Task :gradle-plugin:settings-plugin:compileJava NO-SOURCE
+> Task :gradle-plugin:settings-plugin:pluginDescriptors UP-TO-DATE
+> Task :gradle-plugin:settings-plugin:processResources UP-TO-DATE
+> Task :gradle-plugin:settings-plugin:classes UP-TO-DATE
+> Task :gradle-plugin:settings-plugin:jar UP-TO-DATE
+> Task :gradle-plugin:react-native-gradle-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :gradle-plugin:react-native-gradle-plugin:compileKotlin UP-TO-DATE
+> Task :gradle-plugin:react-native-gradle-plugin:compileJava NO-SOURCE
+> Task :gradle-plugin:react-native-gradle-plugin:pluginDescriptors UP-TO-DATE
+> Task :gradle-plugin:react-native-gradle-plugin:processResources UP-TO-DATE
+> Task :gradle-plugin:react-native-gradle-plugin:classes UP-TO-DATE
+> Task :gradle-plugin:react-native-gradle-plugin:jar UP-TO-DATE
+
+> Configure project :app
+WARNING: The option setting 'android.builtInKotlin=false' is deprecated.
+The current default is 'true'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+WARNING: The option setting 'android.newDsl=false' is deprecated.
+The current default is 'true'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+WARNING: API 'applicationVariants' is obsolete and has been replaced with 'AndroidComponentsExtension'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+The legacy variant API is disabled by default in AGP 9.0, but can be re-enabled by adding 
+    android.newDsl=false
+to this project's gradle.properties file.
+For more information, see http://developer.android.com/build/r/new-dsl.
+
+To determine what is calling applicationVariants, use -Pandroid.debug.obsoleteApi=true on the command line to display more information.
+WARNING: API 'testVariants' is obsolete and has been replaced with 'AndroidComponentsExtension'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+The legacy variant API is disabled by default in AGP 9.0, but can be re-enabled by adding 
+    android.newDsl=false
+to this project's gradle.properties file.
+For more information, see http://developer.android.com/build/r/new-dsl.
+
+To determine what is calling testVariants, use -Pandroid.debug.obsoleteApi=true on the command line to display more information.
+WARNING: API 'unitTestVariants' is obsolete and has been replaced with 'AndroidComponentsExtension'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+The legacy variant API is disabled by default in AGP 9.0, but can be re-enabled by adding 
+    android.newDsl=false
+to this project's gradle.properties file.
+For more information, see http://developer.android.com/build/r/new-dsl.
+
+To determine what is calling unitTestVariants, use -Pandroid.debug.obsoleteApi=true on the command line to display more information.
+
+> Configure project :dr.pogodin_react-native-fs
+WARNING: API 'libraryVariants' is obsolete and has been replaced with 'AndroidComponentsExtension'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+The legacy variant API is disabled by default in AGP 9.0, but can be re-enabled by adding 
+    android.newDsl=false
+to this project's gradle.properties file.
+For more information, see http://developer.android.com/build/r/new-dsl.
+
+To determine what is calling libraryVariants, use -Pandroid.debug.obsoleteApi=true on the command line to display more information.
+
+> Configure project :react-native-async-storage_async-storage
+ksp-2.2.0-2.0.2 is too old for kotlin-2.2.10. Please upgrade ksp or downgrade kotlin-gradle-plugin to 2.2.0.
+ksp-2.2.0-2.0.2 is too old for kotlin-2.2.10. Please upgrade ksp or downgrade kotlin-gradle-plugin to 2.2.0.
+ksp-2.2.0-2.0.2 is too old for kotlin-2.2.10. Please upgrade ksp or downgrade kotlin-gradle-plugin to 2.2.0.
+ksp-2.2.0-2.0.2 is too old for kotlin-2.2.10. Please upgrade ksp or downgrade kotlin-gradle-plugin to 2.2.0.
+ksp-2.2.0-2.0.2 is too old for kotlin-2.2.10. Please upgrade ksp or downgrade kotlin-gradle-plugin to 2.2.0.
+ksp-2.2.0-2.0.2 is too old for kotlin-2.2.10. Please upgrade ksp or downgrade kotlin-gradle-plugin to 2.2.0.
+ksp-2.2.0-2.0.2 is too old for kotlin-2.2.10. Please upgrade ksp or downgrade kotlin-gradle-plugin to 2.2.0.
+ksp-2.2.0-2.0.2 is too old for kotlin-2.2.10. Please upgrade ksp or downgrade kotlin-gradle-plugin to 2.2.0.
+
+> Configure project :react-native-firebase_app
+:react-native-firebase_app package.json found at /home/user/story-trail/mobile/node_modules/@react-native-firebase/app/package.json
+:react-native-firebase_app:firebase.bom using default value: 34.18.0
+:react-native-firebase_app:play.play-services-auth using default value: 21.5.0
+:react-native-firebase_app package.json found at /home/user/story-trail/mobile/node_modules/@react-native-firebase/app/package.json
+:react-native-firebase_app:version set from package.json: 26.4.0 (26,4,0 - 26004000)
+:react-native-firebase_app:android.compileSdk using custom value: 37
+:react-native-firebase_app:android.targetSdk using custom value: 36
+:react-native-firebase_app:android.minSdk using custom value: 24
+:react-native-firebase_app:reactNativeAndroidDir /home/user/story-trail/mobile/node_modules/react-native
+
+> Configure project :react-native-firebase_messaging
+:react-native-firebase_messaging package.json found at /home/user/story-trail/mobile/node_modules/@react-native-firebase/messaging/package.json
+:react-native-firebase_app package.json found at /home/user/story-trail/mobile/node_modules/@react-native-firebase/app/package.json
+:react-native-firebase_messaging:firebase.bom using default value: 34.18.0
+:react-native-firebase_messaging package.json found at /home/user/story-trail/mobile/node_modules/@react-native-firebase/messaging/package.json
+:react-native-firebase_messaging:version set from package.json: 26.4.0 (26,4,0 - 26004000)
+:react-native-firebase_messaging:android.compileSdk using custom value: 37
+:react-native-firebase_messaging:android.targetSdk using custom value: 36
+:react-native-firebase_messaging:android.minSdk using custom value: 24
+:react-native-firebase_messaging:reactNativeAndroidDir /home/user/story-trail/mobile/node_modules/react-native
+
+> Configure project :react-native-nitro-image
+[NitroModules] ? NitroImage is boosted by nitro!
+
+> Configure project :react-native-nitro-modules
+[NitroModules] ? Your app is boosted by nitro modules!
+
+> Configure project :react-native-video
+Kotlin version is correct: 2.2.0
+AndroidX version is correct: 1.9.3
+useExoplayerIMA: false
+useExoplayerSmoothStreaming: true
+useExoplayerDash: true
+useExoplayerHls: true
+useExoplayerRtsp: false
+buildFromSource: false
+
+> Configure project :react-native-vision-camera
+[NitroModules] ? VisionCamera is boosted by nitro!
+Checking the license for package Android SDK Build-Tools 36 in /opt/android-sdk/licenses
+License for package Android SDK Build-Tools 36 accepted.
+Preparing "Install Android SDK Build-Tools 36 v.36.0.0".
+"Install Android SDK Build-Tools 36 v.36.0.0" ready.
+Installing Android SDK Build-Tools 36 in /opt/android-sdk/build-tools/36.0.0
+"Install Android SDK Build-Tools 36 v.36.0.0" complete.
+"Install Android SDK Build-Tools 36 v.36.0.0" finished.
+[=========                              ] 25%                                   
+Checking the license for package Android SDK Platform 35 in /opt/android-sdk/licenses
+License for package Android SDK Platform 35 accepted.
+Preparing "Install Android SDK Platform 35 (revision 2)".
+"Install Android SDK Platform 35 (revision 2)" ready.
+Installing Android SDK Platform 35 in /opt/android-sdk/platforms/android-35
+"Install Android SDK Platform 35 (revision 2)" complete.
+"Install Android SDK Platform 35 (revision 2)" finished.
+[=========                              ] 25%                                   
+> Task :app:generateAutolinkingNewArchitectureFiles
+> Task :app:generateAutolinkingPackageList
+> Task :app:generateCodegenSchemaFromJavaScript SKIPPED
+> Task :app:generateCodegenArtifactsFromSchema SKIPPED
+> Task :app:generateReactNativeEntryPoint
+> Task :dr.pogodin_react-native-fs:generateCodegenSchemaFromJavaScript
+> Task :dr.pogodin_react-native-fs:generateCodegenArtifactsFromSchema
+> Task :dr.pogodin_react-native-fs:preBuild
+> Task :react-native-async-storage_async-storage:generateCodegenSchemaFromJavaScript
+> Task :react-native-async-storage_async-storage:generateCodegenArtifactsFromSchema
+> Task :react-native-async-storage_async-storage:preBuild
+> Task :react-native-clipboard_clipboard:generateCodegenSchemaFromJavaScript
+> Task :react-native-clipboard_clipboard:generateCodegenArtifactsFromSchema
+> Task :react-native-clipboard_clipboard:preBuild
+> Task :react-native-community_geolocation:generateCodegenSchemaFromJavaScript
+> Task :react-native-community_geolocation:generateCodegenArtifactsFromSchema
+> Task :react-native-community_geolocation:preBuild
+> Task :react-native-firebase_app:preBuild UP-TO-DATE
+> Task :react-native-firebase_messaging:preBuild UP-TO-DATE
+> Task :react-native-google-signin_google-signin:generateCodegenSchemaFromJavaScript
+> Task :react-native-google-signin_google-signin:generateCodegenArtifactsFromSchema
+> Task :react-native-google-signin_google-signin:preBuild
+> Task :react-native-haptic-feedback:generateCodegenSchemaFromJavaScript
+> Task :react-native-haptic-feedback:generateCodegenArtifactsFromSchema
+> Task :react-native-haptic-feedback:preBuild
+> Task :react-native-image-picker:generateCodegenSchemaFromJavaScript
+> Task :react-native-image-picker:generateCodegenArtifactsFromSchema
+> Task :react-native-image-picker:preBuild
+
+> Task :react-native-keychain:generateCodegenSchemaFromJavaScript
+No modules to process in combine-js-to-schema-cli. If this is unexpected, please check if you set up your NativeComponent correctly. See combine-js-to-schema.js for how codegen finds modules.
+
+> Task :react-native-keychain:generateCodegenArtifactsFromSchema
+> Task :react-native-keychain:preBuild
+
+> Task :react-native-nitro-image:generateCodegenSchemaFromJavaScript
+No modules to process in combine-js-to-schema-cli. If this is unexpected, please check if you set up your NativeComponent correctly. See combine-js-to-schema.js for how codegen finds modules.
+
+> Task :react-native-nitro-image:generateCodegenArtifactsFromSchema
+> Task :react-native-nitro-image:prepareHeaders
+> Task :react-native-nitro-image:preBuild
+> Task :react-native-nitro-modules:generateCodegenSchemaFromJavaScript
+> Task :react-native-nitro-modules:generateCodegenArtifactsFromSchema
+> Task :react-native-nitro-modules:prepareHeaders
+> Task :react-native-nitro-modules:preBuild
+> Task :react-native-safe-area-context:generateCodegenSchemaFromJavaScript
+> Task :react-native-safe-area-context:generateCodegenArtifactsFromSchema
+> Task :react-native-safe-area-context:preBuild
+> Task :react-native-screens:generateCodegenSchemaFromJavaScript
+> Task :react-native-screens:generateCodegenArtifactsFromSchema
+> Task :react-native-screens:preBuild
+> Task :react-native-svg:generateCodegenSchemaFromJavaScript
+> Task :react-native-svg:generateCodegenArtifactsFromSchema
+> Task :react-native-svg:preBuild
+> Task :react-native-video:preBuild UP-TO-DATE
+
+> Task :react-native-vision-camera:generateCodegenSchemaFromJavaScript
+No modules to process in combine-js-to-schema-cli. If this is unexpected, please check if you set up your NativeComponent correctly. See combine-js-to-schema.js for how codegen finds modules.
+
+> Task :react-native-vision-camera:generateCodegenArtifactsFromSchema
+> Task :react-native-vision-camera:prepareHeaders
+> Task :react-native-vision-camera:preBuild
+> Task :app:preBuild
+
+> Task :app:validateKatkeeRelease
+Configuration checks passed only. Native builds, provider checks and device acceptance are still required.
+
+> Task :app:preReleaseBuild
+> Task :react-native-nitro-image:preReleaseBuild
+> Task :react-native-nitro-modules:preReleaseBuild
+
+> Task :react-native-nitro-modules:configureCMakeRelWithDebInfo[arm64-v8a]
+Checking the license for package CMake 3.22.1 in /opt/android-sdk/licenses
+License for package CMake 3.22.1 accepted.
+Preparing "Install CMake 3.22.1 v.3.22.1".
+"Install CMake 3.22.1 v.3.22.1" ready.
+Installing CMake 3.22.1 in /opt/android-sdk/cmake/3.22.1
+"Install CMake 3.22.1 v.3.22.1" complete.
+"Install CMake 3.22.1 v.3.22.1" finished.
+
+> Task :react-native-nitro-modules:buildCMakeRelWithDebInfo[arm64-v8a]
+> Task :react-native-nitro-modules:configureCMakeRelWithDebInfo[armeabi-v7a]
+> Task :react-native-nitro-modules:buildCMakeRelWithDebInfo[armeabi-v7a]
+> Task :react-native-nitro-modules:configureCMakeRelWithDebInfo[x86]
+> Task :react-native-nitro-modules:buildCMakeRelWithDebInfo[x86]
+> Task :react-native-nitro-modules:configureCMakeRelWithDebInfo[x86_64]
+> Task :react-native-nitro-modules:buildCMakeRelWithDebInfo[x86_64]
+> Task :react-native-nitro-modules:externalNativeBuildRelease
+> Task :react-native-nitro-modules:generateJsonModelRelease
+> Task :react-native-nitro-modules:prefabReleaseConfigurePackage
+> Task :react-native-nitro-image:configureCMakeRelWithDebInfo[arm64-v8a]
+> Task :react-native-nitro-modules:prefabReleasePackage
+> Task :react-native-nitro-image:buildCMakeRelWithDebInfo[arm64-v8a]
+> Task :react-native-nitro-image:configureCMakeRelWithDebInfo[armeabi-v7a]
+> Task :react-native-nitro-image:buildCMakeRelWithDebInfo[armeabi-v7a]
+> Task :react-native-nitro-image:configureCMakeRelWithDebInfo[x86]
+> Task :react-native-nitro-image:buildCMakeRelWithDebInfo[x86]
+> Task :react-native-nitro-image:configureCMakeRelWithDebInfo[x86_64]
+> Task :react-native-nitro-image:buildCMakeRelWithDebInfo[x86_64]
+> Task :react-native-nitro-modules:mergeReleaseJniLibFolders
+> Task :react-native-nitro-image:generateJsonModelRelease
+> Task :react-native-nitro-image:mergeReleaseJniLibFolders
+> Task :react-native-vision-camera:preReleaseBuild
+> Task :app:mergeReleaseJniLibFolders
+> Task :dr.pogodin_react-native-fs:preReleaseBuild
+> Task :dr.pogodin_react-native-fs:mergeReleaseJniLibFolders
+> Task :dr.pogodin_react-native-fs:mergeReleaseNativeLibs NO-SOURCE
+> Task :react-native-async-storage_async-storage:preReleaseBuild
+> Task :dr.pogodin_react-native-fs:copyReleaseJniLibsProjectOnly
+> Task :react-native-async-storage_async-storage:mergeReleaseJniLibFolders
+> Task :react-native-async-storage_async-storage:mergeReleaseNativeLibs NO-SOURCE
+> Task :react-native-clipboard_clipboard:preReleaseBuild
+> Task :react-native-async-storage_async-storage:copyReleaseJniLibsProjectOnly
+> Task :react-native-clipboard_clipboard:mergeReleaseJniLibFolders
+> Task :react-native-clipboard_clipboard:mergeReleaseNativeLibs NO-SOURCE
+> Task :react-native-community_geolocation:preReleaseBuild
+> Task :react-native-clipboard_clipboard:copyReleaseJniLibsProjectOnly
+> Task :react-native-community_geolocation:mergeReleaseJniLibFolders
+> Task :react-native-community_geolocation:mergeReleaseNativeLibs NO-SOURCE
+> Task :react-native-firebase_app:preReleaseBuild UP-TO-DATE
+> Task :react-native-community_geolocation:copyReleaseJniLibsProjectOnly
+> Task :react-native-firebase_app:mergeReleaseJniLibFolders
+> Task :react-native-firebase_app:mergeReleaseNativeLibs NO-SOURCE
+> Task :react-native-firebase_messaging:preReleaseBuild UP-TO-DATE
+> Task :react-native-firebase_app:copyReleaseJniLibsProjectOnly
+> Task :react-native-firebase_messaging:mergeReleaseJniLibFolders
+> Task :react-native-firebase_messaging:mergeReleaseNativeLibs NO-SOURCE
+> Task :react-native-google-signin_google-signin:preReleaseBuild
+> Task :react-native-firebase_messaging:copyReleaseJniLibsProjectOnly
+> Task :react-native-google-signin_google-signin:mergeReleaseJniLibFolders
+> Task :react-native-google-signin_google-signin:mergeReleaseNativeLibs NO-SOURCE
+> Task :react-native-haptic-feedback:preReleaseBuild
+> Task :react-native-google-signin_google-signin:copyReleaseJniLibsProjectOnly
+> Task :react-native-nitro-modules:mergeReleaseNativeLibs
+> Task :react-native-nitro-image:mergeReleaseNativeLibs
+> Task :react-native-haptic-feedback:mergeReleaseJniLibFolders
+> Task :react-native-haptic-feedback:mergeReleaseNativeLibs NO-SOURCE
+> Task :react-native-image-picker:preReleaseBuild
+> Task :react-native-haptic-feedback:copyReleaseJniLibsProjectOnly
+> Task :react-native-image-picker:mergeReleaseJniLibFolders
+> Task :react-native-image-picker:mergeReleaseNativeLibs NO-SOURCE
+> Task :react-native-keychain:preReleaseBuild
+> Task :react-native-image-picker:copyReleaseJniLibsProjectOnly
+> Task :react-native-keychain:mergeReleaseJniLibFolders
+> Task :react-native-keychain:mergeReleaseNativeLibs NO-SOURCE
+> Task :react-native-safe-area-context:preReleaseBuild
+> Task :react-native-keychain:copyReleaseJniLibsProjectOnly
+> Task :react-native-safe-area-context:mergeReleaseJniLibFolders
+> Task :react-native-safe-area-context:mergeReleaseNativeLibs NO-SOURCE
+> Task :react-native-nitro-modules:copyReleaseJniLibsProjectOnly
+> Task :react-native-safe-area-context:copyReleaseJniLibsProjectOnly
+> Task :react-native-nitro-image:copyReleaseJniLibsProjectOnly
+> Task :react-native-nitro-image:externalNativeBuildRelease
+> Task :react-native-nitro-image:prefabReleaseConfigurePackage
+> Task :react-native-nitro-image:prefabReleasePackage
+> Task :react-native-vision-camera:configureCMakeRelWithDebInfo[arm64-v8a]
+
+> Task :react-native-vision-camera:buildCMakeRelWithDebInfo[arm64-v8a]
+C/C++: ninja: Entering directory `/home/user/story-trail/mobile/node_modules/react-native-vision-camera/android/.cxx/RelWithDebInfo/k383c4h1/arm64-v8a'
+C/C++: /home/user/story-trail/mobile/node_modules/react-native-vision-camera/android/src/main/cpp/NativeBufferHelper.cpp:14:110: warning: unused parameter 'hardwareBufferBoxed' [-Wunused-parameter]
+C/C++:    14 | jlong NativeBufferHelper::getHardwareBufferPointer(jni::alias_ref<jni::JClass>, jni::alias_ref<jni::JObject> hardwareBufferBoxed) {
+C/C++:       |                                                                                                              ^
+C/C++: /home/user/story-trail/mobile/node_modules/react-native-vision-camera/android/src/main/cpp/NativeBufferHelper.cpp:25:90: warning: unused parameter 'hardwareBufferPointer' [-Wunused-parameter]
+C/C++:    25 | void NativeBufferHelper::releaseHardwareBufferPointer(jni::alias_ref<jni::JClass>, jlong hardwareBufferPointer) {
+C/C++:       |                                                                                          ^
+C/C++: 2 warnings generated.
+C/C++: /home/user/story-trail/mobile/node_modules/react-native-vision-camera/nitrogen/generated/shared/c++/HybridZoomGestureControllerSpec.cpp:17:41: warning: unused parameter 'prototype' [-Wunused-parameter]
+C/C++:    17 |     registerHybrids(this, [](Prototype& prototype) {
+C/C++:       |                                         ^
+C/C++: 1 warning generated.
+C/C++: /home/user/story-trail/mobile/node_modules/react-native-vision-camera/nitrogen/generated/shared/c++/HybridTapToFocusGestureControllerSpec.cpp:17:41: warning: unused parameter 'prototype' [-Wunused-parameter]
+C/C++:    17 |     registerHybrids(this, [](Prototype& prototype) {
+C/C++:       |                                         ^
+C/C++: 1 warning generated.
+C/C++: /home/user/story-trail/mobile/node_modules/react-native-vision-camera/nitrogen/generated/shared/c++/HybridCameraPreviewOutputSpec.cpp:17:41: warning: unused parameter 'prototype' [-Wunused-parameter]
+C/C++:    17 |     registerHybrids(this, [](Prototype& prototype) {
+C/C++:       |                                         ^
+C/C++: 1 warning generated.
+
+> Task :react-native-vision-camera:configureCMakeRelWithDebInfo[armeabi-v7a]
+
+> Task :react-native-vision-camera:buildCMakeRelWithDebInfo[armeabi-v7a]
+C/C++: ninja: Entering directory `/home/user/story-trail/mobile/node_modules/react-native-vision-camera/android/.cxx/RelWithDebInfo/k383c4h1/armeabi-v7a'
+C/C++: /home/user/story-trail/mobile/node_modules/react-native-vision-camera/android/src/main/cpp/NativeBufferHelper.cpp:14:110: warning: unused parameter 'hardwareBufferBoxed' [-Wunused-parameter]
+C/C++:    14 | jlong NativeBufferHelper::getHardwareBufferPointer(jni::alias_ref<jni::JClass>, jni::alias_ref<jni::JObject> hardwareBufferBoxed) {
+C/C++:       |                                                                                                              ^
+C/C++: /home/user/story-trail/mobile/node_modules/react-native-vision-camera/android/src/main/cpp/NativeBufferHelper.cpp:25:90: warning: unused parameter 'hardwareBufferPointer' [-Wunused-parameter]
+C/C++:    25 | void NativeBufferHelper::releaseHardwareBufferPointer(jni::alias_ref<jni::JClass>, jlong hardwareBufferPointer) {
+C/C++:       |                                                                                          ^
+C/C++: 2 warnings generated.
+C/C++: /home/user/story-trail/mobile/node_modules/react-native-vision-camera/nitrogen/generated/shared/c++/HybridTapToFocusGestureControllerSpec.cpp:17:41: warning: unused parameter 'prototype' [-Wunused-parameter]
+C/C++:    17 |     registerHybrids(this, [](Prototype& prototype) {
+C/C++:       |                                         ^
+C/C++: 1 warning generated.
+C/C++: /home/user/story-trail/mobile/node_modules/react-native-vision-camera/nitrogen/generated/shared/c++/HybridZoomGestureControllerSpec.cpp:17:41: warning: unused parameter 'prototype' [-Wunused-parameter]
+C/C++:    17 |     registerHybrids(this, [](Prototype& prototype) {
+C/C++:       |                                         ^
+C/C++: 1 warning generated.
+C/C++: /home/user/story-trail/mobile/node_modules/react-native-vision-camera/nitrogen/generated/shared/c++/HybridCameraPreviewOutputSpec.cpp:17:41: warning: unused parameter 'prototype' [-Wunused-parameter]
+C/C++:    17 |     registerHybrids(this, [](Prototype& prototype) {
+C/C++:       |                                         ^
+C/C++: 1 warning generated.
+
+> Task :react-native-vision-camera:configureCMakeRelWithDebInfo[x86]
+
+> Task :react-native-vision-camera:buildCMakeRelWithDebInfo[x86]
+C/C++: ninja: Entering directory `/home/user/story-trail/mobile/node_modules/react-native-vision-camera/android/.cxx/RelWithDebInfo/k383c4h1/x86'
+C/C++: /home/user/story-trail/mobile/node_modules/react-native-vision-camera/android/src/main/cpp/NativeBufferHelper.cpp:14:110: warning: unused parameter 'hardwareBufferBoxed' [-Wunused-parameter]
+C/C++:    14 | jlong NativeBufferHelper::getHardwareBufferPointer(jni::alias_ref<jni::JClass>, jni::alias_ref<jni::JObject> hardwareBufferBoxed) {
+C/C++:       |                                                                                                              ^
+C/C++: /home/user/story-trail/mobile/node_modules/react-native-vision-camera/android/src/main/cpp/NativeBufferHelper.cpp:25:90: warning: unused parameter 'hardwareBufferPointer' [-Wunused-parameter]
+C/C++:    25 | void NativeBufferHelper::releaseHardwareBufferPointer(jni::alias_ref<jni::JClass>, jlong hardwareBufferPointer) {
+C/C++:       |                                                                                          ^
+C/C++: 2 warnings generated.
+C/C++: /home/user/story-trail/mobile/node_modules/react-native-vision-camera/nitrogen/generated/shared/c++/HybridTapToFocusGestureControllerSpec.cpp:17:41: warning: unused parameter 'prototype' [-Wunused-parameter]
+C/C++:    17 |     registerHybrids(this, [](Prototype& prototype) {
+C/C++:       |                                         ^
+C/C++: 1 warning generated.
+C/C++: /home/user/story-trail/mobile/node_modules/react-native-vision-camera/nitrogen/generated/shared/c++/HybridZoomGestureControllerSpec.cpp:17:41: warning: unused parameter 'prototype' [-Wunused-parameter]
+C/C++:    17 |     registerHybrids(this, [](Prototype& prototype) {
+C/C++:       |                                         ^
+C/C++: 1 warning generated.
+C/C++: /home/user/story-trail/mobile/node_modules/react-native-vision-camera/nitrogen/generated/shared/c++/HybridCameraPreviewOutputSpec.cpp:17:41: warning: unused parameter 'prototype' [-Wunused-parameter]
+C/C++:    17 |     registerHybrids(this, [](Prototype& prototype) {
+C/C++:       |                                         ^
+C/C++: 1 warning generated.
+
+> Task :react-native-vision-camera:configureCMakeRelWithDebInfo[x86_64]
+
+> Task :react-native-vision-camera:buildCMakeRelWithDebInfo[x86_64]
+C/C++: ninja: Entering directory `/home/user/story-trail/mobile/node_modules/react-native-vision-camera/android/.cxx/RelWithDebInfo/k383c4h1/x86_64'
+C/C++: /home/user/story-trail/mobile/node_modules/react-native-vision-camera/android/src/main/cpp/NativeBufferHelper.cpp:14:110: warning: unused parameter 'hardwareBufferBoxed' [-Wunused-parameter]
+C/C++:    14 | jlong NativeBufferHelper::getHardwareBufferPointer(jni::alias_ref<jni::JClass>, jni::alias_ref<jni::JObject> hardwareBufferBoxed) {
+C/C++:       |                                                                                                              ^
+C/C++: /home/user/story-trail/mobile/node_modules/react-native-vision-camera/android/src/main/cpp/NativeBufferHelper.cpp:25:90: warning: unused parameter 'hardwareBufferPointer' [-Wunused-parameter]
+C/C++:    25 | void NativeBufferHelper::releaseHardwareBufferPointer(jni::alias_ref<jni::JClass>, jlong hardwareBufferPointer) {
+C/C++:       |                                                                                          ^
+C/C++: 2 warnings generated.
+C/C++: /home/user/story-trail/mobile/node_modules/react-native-vision-camera/nitrogen/generated/shared/c++/HybridZoomGestureControllerSpec.cpp:17:41: warning: unused parameter 'prototype' [-Wunused-parameter]
+C/C++:    17 |     registerHybrids(this, [](Prototype& prototype) {
+C/C++:       |                                         ^
+C/C++: 1 warning generated.
+C/C++: /home/user/story-trail/mobile/node_modules/react-native-vision-camera/nitrogen/generated/shared/c++/HybridTapToFocusGestureControllerSpec.cpp:17:41: warning: unused parameter 'prototype' [-Wunused-parameter]
+C/C++:    17 |     registerHybrids(this, [](Prototype& prototype) {
+C/C++:       |                                         ^
+C/C++: 1 warning generated.
+C/C++: /home/user/story-trail/mobile/node_modules/react-native-vision-camera/nitrogen/generated/shared/c++/HybridCameraPreviewOutputSpec.cpp:17:41: warning: unused parameter 'prototype' [-Wunused-parameter]
+C/C++:    17 |     registerHybrids(this, [](Prototype& prototype) {
+C/C++:       |                                         ^
+C/C++: 1 warning generated.
+
+> Task :react-native-vision-camera:externalNativeBuildRelease
+> Task :react-native-vision-camera:generateJsonModelRelease
+> Task :react-native-vision-camera:prefabReleaseConfigurePackage
+> Task :app:configureCMakeRelWithDebInfo[arm64-v8a]
+> Task :react-native-vision-camera:prefabReleasePackage
+> Task :app:buildCMakeRelWithDebInfo[arm64-v8a]
+> Task :app:configureCMakeRelWithDebInfo[armeabi-v7a]
+> Task :app:buildCMakeRelWithDebInfo[armeabi-v7a]
+> Task :app:configureCMakeRelWithDebInfo[x86]
+> Task :app:buildCMakeRelWithDebInfo[x86]
+> Task :app:configureCMakeRelWithDebInfo[x86_64]
+> Task :app:buildCMakeRelWithDebInfo[x86_64]
+> Task :react-native-screens:preReleaseBuild
+> Task :react-native-screens:configureCMakeRelWithDebInfo[arm64-v8a]
+> Task :react-native-screens:buildCMakeRelWithDebInfo[arm64-v8a]
+> Task :react-native-screens:configureCMakeRelWithDebInfo[armeabi-v7a]
+> Task :react-native-screens:buildCMakeRelWithDebInfo[armeabi-v7a]
+> Task :react-native-screens:configureCMakeRelWithDebInfo[x86]
+> Task :react-native-screens:buildCMakeRelWithDebInfo[x86]
+> Task :react-native-screens:configureCMakeRelWithDebInfo[x86_64]
+> Task :react-native-screens:buildCMakeRelWithDebInfo[x86_64]
+> Task :react-native-screens:mergeReleaseJniLibFolders
+> Task :react-native-svg:preReleaseBuild
+> Task :react-native-svg:mergeReleaseJniLibFolders
+> Task :react-native-svg:mergeReleaseNativeLibs NO-SOURCE
+> Task :react-native-video:preReleaseBuild UP-TO-DATE
+> Task :react-native-svg:copyReleaseJniLibsProjectOnly
+> Task :react-native-screens:mergeReleaseNativeLibs
+> Task :react-native-video:mergeReleaseJniLibFolders
+> Task :react-native-video:mergeReleaseNativeLibs NO-SOURCE
+> Task :react-native-video:copyReleaseJniLibsProjectOnly
+> Task :react-native-screens:copyReleaseJniLibsProjectOnly
+> Task :react-native-vision-camera:mergeReleaseJniLibFolders
+> Task :dr.pogodin_react-native-fs:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :dr.pogodin_react-native-fs:generateReleaseBuildConfig
+> Task :dr.pogodin_react-native-fs:generateReleaseResources
+> Task :dr.pogodin_react-native-fs:packageReleaseResources
+> Task :dr.pogodin_react-native-fs:processReleaseNavigationResources
+> Task :react-native-async-storage_async-storage:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :dr.pogodin_react-native-fs:javaPreCompileRelease
+> Task :react-native-async-storage_async-storage:generateReleaseBuildConfig
+> Task :react-native-async-storage_async-storage:generateReleaseResources
+> Task :react-native-async-storage_async-storage:packageReleaseResources
+> Task :react-native-async-storage_async-storage:processReleaseNavigationResources
+> Task :react-native-async-storage_async-storage:parseReleaseLocalResources
+> Task :dr.pogodin_react-native-fs:parseReleaseLocalResources
+> Task :react-native-vision-camera:mergeReleaseNativeLibs
+> Task :react-native-async-storage_async-storage:javaPreCompileRelease
+> Task :react-native-google-signin_google-signin:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :react-native-google-signin_google-signin:generateReleaseBuildConfig
+> Task :react-native-google-signin_google-signin:generateReleaseResources
+> Task :react-native-google-signin_google-signin:packageReleaseResources
+> Task :react-native-google-signin_google-signin:processReleaseNavigationResources
+> Task :react-native-async-storage_async-storage:generateReleaseRFile
+> Task :dr.pogodin_react-native-fs:generateReleaseRFile
+> Task :react-native-google-signin_google-signin:parseReleaseLocalResources
+> Task :react-native-vision-camera:copyReleaseJniLibsProjectOnly
+> Task :app:mergeReleaseNativeLibs
+> Task :react-native-google-signin_google-signin:generateReleaseRFile
+
+> Task :dr.pogodin_react-native-fs:compileReleaseKotlin
+w: file:///home/user/story-trail/mobile/node_modules/@dr.pogodin/react-native-fs/android/src/main/java/com/drpogodin/reactnativefs/Downloader.kt:3:8 'class AsyncTask<Params : Any!, Progress : Any!, Result : Any!> : Any' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/@dr.pogodin/react-native-fs/android/src/main/java/com/drpogodin/reactnativefs/Downloader.kt:17:20 'constructor<Params : Any!, Progress : Any!, Result : Any!>(): AsyncTask<Params, Progress, Result>' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/@dr.pogodin/react-native-fs/android/src/main/java/com/drpogodin/reactnativefs/Downloader.kt:17:20 'class AsyncTask<Params : Any!, Progress : Any!, Result : Any!> : Any' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/@dr.pogodin/react-native-fs/android/src/main/java/com/drpogodin/reactnativefs/Downloader.kt:110:33 'fun publishProgress(vararg p0: LongArray?): Unit' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/@dr.pogodin/react-native-fs/android/src/main/java/com/drpogodin/reactnativefs/Downloader.kt:113:29 'fun publishProgress(vararg p0: LongArray?): Unit' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/@dr.pogodin/react-native-fs/android/src/main/java/com/drpogodin/reactnativefs/Downloader.kt:120:37 'fun publishProgress(vararg p0: LongArray?): Unit' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/@dr.pogodin/react-native-fs/android/src/main/java/com/drpogodin/reactnativefs/Downloader.kt:163:15 'fun onProgressUpdate(vararg p0: LongArray?): Unit' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/@dr.pogodin/react-native-fs/android/src/main/java/com/drpogodin/reactnativefs/ReactNativeFsModule.kt:8:8 'class AsyncTask<Params : Any!, Progress : Any!, Result : Any!> : Any' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/@dr.pogodin/react-native-fs/android/src/main/java/com/drpogodin/reactnativefs/ReactNativeFsModule.kt:137:11 'fun execute(vararg p0: String?): AsyncTask<String?, Void?, Exception?>!' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/@dr.pogodin/react-native-fs/android/src/main/java/com/drpogodin/reactnativefs/ReactNativeFsModule.kt:285:24 'fun execute(vararg p0: DownloadParams?): AsyncTask<DownloadParams?, LongArray?, DownloadResult!>!' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/@dr.pogodin/react-native-fs/android/src/main/java/com/drpogodin/reactnativefs/ReactNativeFsModule.kt:437:19 'fun execute(vararg p0: String?): AsyncTask<String?, Void?, Exception?>!' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/@dr.pogodin/react-native-fs/android/src/main/java/com/drpogodin/reactnativefs/ReactNativeFsModule.kt:503:31 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'Array<(out) File!>?'.
+w: file:///home/user/story-trail/mobile/node_modules/@dr.pogodin/react-native-fs/android/src/main/java/com/drpogodin/reactnativefs/ReactNativeFsModule.kt:753:22 'fun execute(vararg p0: UploadParams?): AsyncTask<UploadParams?, IntArray?, UploadResult!>!' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/@dr.pogodin/react-native-fs/android/src/main/java/com/drpogodin/reactnativefs/ReactNativeFsModule.kt:807:45 'constructor<Params : Any!, Progress : Any!, Result : Any!>(): AsyncTask<Params, Progress, Result>' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/@dr.pogodin/react-native-fs/android/src/main/java/com/drpogodin/reactnativefs/ReactNativeFsModule.kt:807:45 'class AsyncTask<Params : Any!, Progress : Any!, Result : Any!> : Any' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/@dr.pogodin/react-native-fs/android/src/main/java/com/drpogodin/reactnativefs/ReactNativeFsModule.kt:869:27 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'Array<(out) File!>?'.
+w: file:///home/user/story-trail/mobile/node_modules/@dr.pogodin/react-native-fs/android/src/main/java/com/drpogodin/reactnativefs/Uploader.kt:3:8 'class AsyncTask<Params : Any!, Progress : Any!, Result : Any!> : Any' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/@dr.pogodin/react-native-fs/android/src/main/java/com/drpogodin/reactnativefs/Uploader.kt:19:18 'constructor<Params : Any!, Progress : Any!, Result : Any!>(): AsyncTask<Params, Progress, Result>' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/@dr.pogodin/react-native-fs/android/src/main/java/com/drpogodin/reactnativefs/Uploader.kt:19:18 'class AsyncTask<Params : Any!, Progress : Any!, Result : Any!> : Any' is deprecated. Deprecated in Java.
+
+> Task :app:stripReleaseDebugSymbols
+
+> Task :react-native-google-signin_google-signin:compileReleaseKotlin
+w: file:///home/user/story-trail/mobile/node_modules/@react-native-google-signin/google-signin/android/src/main/java/com/reactnativegooglesignin/ErrorDto.kt:3:8 'class GoogleSignInStatusCodes : CommonStatusCodes' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/@react-native-google-signin/google-signin/android/src/main/java/com/reactnativegooglesignin/ErrorDto.kt:23:31 Condition is always 'true'.
+w: file:///home/user/story-trail/mobile/node_modules/@react-native-google-signin/google-signin/android/src/main/java/com/reactnativegooglesignin/ErrorDto.kt:24:16 'class GoogleSignInStatusCodes : CommonStatusCodes' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/@react-native-google-signin/google-signin/android/src/main/java/com/reactnativegooglesignin/ErrorDto.kt:29:33 'class GoogleSignInStatusCodes : CommonStatusCodes' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/@react-native-google-signin/google-signin/android/src/main/java/com/reactnativegooglesignin/ErrorDto.kt:30:38 'class GoogleSignInStatusCodes : CommonStatusCodes' is deprecated. Deprecated in Java.
+
+> Task :app:extractReleaseNativeSymbolTables
+
+> Task :dr.pogodin_react-native-fs:compileReleaseJavaWithJavac
+Picked up JAVA_TOOL_OPTIONS: -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts -Djavax.net.ssl.trustStoreType=JKS -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=45723 -Dhttp.nonProxyHosts=localhost|127.0.0.1|::1|127.*|0.*|::|169.254.*|api.anthropic.com|api-staging.anthropic.com|api-pr-preview.anthropic.com|mcp-proxy.anthropic.com|mcp-proxy-staging.anthropic.com|registry.npmjs.org|jsr.io|npm.jsr.io|pypi.org|files.pythonhosted.org|index.crates.io|proxy.golang.org|host.docker.internal|10.*|172.16.*|172.17.*|172.18.*|172.19.*|172.20.*|172.21.*|172.22.*|172.23.*|172.24.*|172.25.*|172.26.*|172.27.*|172.28.*|172.29.*|172.30.*|172.31.*|192.168.*|100.64.0.0/10|*.svc.cluster.local|*.svc.cluster.local -Djdk.http.auth.tunneling.disabledSchemes= -Djdk.http.auth.proxying.disabledSchemes=
+
+Picked up JAVA_TOOL_OPTIONS: -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts -Djavax.net.ssl.trustStoreType=JKS -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=45723 -Dhttp.nonProxyHosts=localhost|127.0.0.1|::1|127.*|0.*|::|169.254.*|api.anthropic.com|api-staging.anthropic.com|api-pr-preview.anthropic.com|mcp-proxy.anthropic.com|mcp-proxy-staging.anthropic.com|registry.npmjs.org|jsr.io|npm.jsr.io|pypi.org|files.pythonhosted.org|index.crates.io|proxy.golang.org|host.docker.internal|10.*|172.16.*|172.17.*|172.18.*|172.19.*|172.20.*|172.21.*|172.22.*|172.23.*|172.24.*|172.25.*|172.26.*|172.27.*|172.28.*|172.29.*|172.30.*|172.31.*|192.168.*|100.64.0.0/10|*.svc.cluster.local|*.svc.cluster.local -Djdk.http.auth.tunneling.disabledSchemes= -Djdk.http.auth.proxying.disabledSchemes=
+
+Picked up JAVA_TOOL_OPTIONS: -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts -Djavax.net.ssl.trustStoreType=JKS -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=45723 -Dhttp.nonProxyHosts=localhost|127.0.0.1|::1|127.*|0.*|::|169.254.*|api.anthropic.com|api-staging.anthropic.com|api-pr-preview.anthropic.com|mcp-proxy.anthropic.com|mcp-proxy-staging.anthropic.com|registry.npmjs.org|jsr.io|npm.jsr.io|pypi.org|files.pythonhosted.org|index.crates.io|proxy.golang.org|host.docker.internal|10.*|172.16.*|172.17.*|172.18.*|172.19.*|172.20.*|172.21.*|172.22.*|172.23.*|172.24.*|172.25.*|172.26.*|172.27.*|172.28.*|172.29.*|172.30.*|172.31.*|192.168.*|100.64.0.0/10|*.svc.cluster.local|*.svc.cluster.local -Djdk.http.auth.tunneling.disabledSchemes= -Djdk.http.auth.proxying.disabledSchemes=
+
+
+> Task :react-native-async-storage_async-storage:kspReleaseKotlin
+> Task :dr.pogodin_react-native-fs:bundleLibRuntimeToDirRelease
+> Task :react-native-google-signin_google-signin:javaPreCompileRelease
+
+> Task :react-native-google-signin_google-signin:compileReleaseJavaWithJavac
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: /home/user/story-trail/mobile/node_modules/@react-native-google-signin/google-signin/android/src/main/java/com/reactnativegooglesignin/RNGoogleSigninModule.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :react-native-google-signin_google-signin:bundleLibRuntimeToDirRelease
+> Task :react-native-keychain:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :react-native-keychain:generateReleaseBuildConfig
+> Task :react-native-keychain:generateReleaseResources
+> Task :react-native-keychain:packageReleaseResources
+> Task :react-native-keychain:processReleaseNavigationResources
+> Task :react-native-keychain:parseReleaseLocalResources
+> Task :react-native-keychain:generateReleaseRFile
+
+> Task :react-native-async-storage_async-storage:compileReleaseKotlin
+w: file:///home/user/story-trail/mobile/node_modules/@react-native-async-storage/async-storage/android/src/main/kotlin/org/asyncstorage/legacy_storage/LegacyStorageSupplier.kt:63:69 Java type mismatch: inferred type is 'String?', but 'String' was expected.
+w: file:///home/user/story-trail/mobile/node_modules/@react-native-async-storage/async-storage/android/src/main/kotlin/org/asyncstorage/legacy_storage/LegacyStorageSupplier.kt:91:26 The corresponding parameter in the supertype 'Migration' is named 'db'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/@react-native-async-storage/async-storage/android/src/main/kotlin/org/asyncstorage/legacy_storage/LegacyStorageSupplier.kt:202:17 Unchecked cast of 'ArrayList<Any?>' to 'List<String>'.
+
+> Task :app:mergeReleaseNativeDebugMetadata
+> Task :react-native-async-storage_async-storage:compileReleaseJavaWithJavac
+> Task :react-native-nitro-image:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :react-native-keychain:javaPreCompileRelease
+> Task :react-native-nitro-image:generateReleaseBuildConfig
+> Task :react-native-nitro-image:generateReleaseResources
+> Task :react-native-async-storage_async-storage:bundleLibRuntimeToDirRelease
+> Task :react-native-nitro-image:packageReleaseResources
+> Task :react-native-nitro-image:processReleaseNavigationResources
+> Task :react-native-nitro-modules:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :react-native-nitro-modules:generateReleaseBuildConfig
+> Task :react-native-nitro-image:parseReleaseLocalResources
+> Task :react-native-nitro-modules:generateReleaseResources
+> Task :react-native-nitro-image:generateReleaseRFile
+> Task :react-native-nitro-modules:packageReleaseResources
+> Task :react-native-nitro-modules:processReleaseNavigationResources
+> Task :react-native-nitro-modules:javaPreCompileRelease
+> Task :react-native-nitro-image:javaPreCompileRelease
+> Task :react-native-vision-camera:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :react-native-nitro-modules:parseReleaseLocalResources
+> Task :react-native-vision-camera:generateReleaseBuildConfig
+> Task :react-native-nitro-modules:generateReleaseRFile
+> Task :react-native-vision-camera:generateReleaseResources
+> Task :react-native-vision-camera:packageReleaseResources
+> Task :react-native-vision-camera:processReleaseNavigationResources
+> Task :react-native-vision-camera:parseReleaseLocalResources
+> Task :react-native-vision-camera:generateReleaseRFile
+> Task :react-native-vision-camera:javaPreCompileRelease
+> Task :react-native-safe-area-context:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :react-native-safe-area-context:generateReleaseBuildConfig
+> Task :react-native-safe-area-context:generateReleaseResources
+> Task :react-native-safe-area-context:packageReleaseResources
+> Task :react-native-safe-area-context:processReleaseNavigationResources
+> Task :react-native-safe-area-context:parseReleaseLocalResources
+> Task :react-native-safe-area-context:generateReleaseRFile
+> Task :react-native-safe-area-context:javaPreCompileRelease
+> Task :react-native-screens:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :react-native-screens:generateReleaseBuildConfig
+> Task :react-native-screens:generateReleaseResources
+> Task :react-native-screens:packageReleaseResources
+> Task :react-native-screens:processReleaseNavigationResources
+> Task :react-native-screens:parseReleaseLocalResources
+> Task :react-native-screens:generateReleaseRFile
+> Task :react-native-nitro-modules:compileReleaseKotlin
+> Task :react-native-nitro-modules:compileReleaseJavaWithJavac
+> Task :react-native-nitro-modules:bundleLibCompileToJarRelease
+
+> Task :react-native-safe-area-context:compileReleaseKotlin
+w: file:///home/user/story-trail/mobile/node_modules/react-native-safe-area-context/android/src/main/java/com/th3rdwave/safeareacontext/SafeAreaProviderManager.kt:40:19 'fun getEventDispatcherForReactTag(context: ReactContext, reactTag: Int): EventDispatcher?' is deprecated. reactTag is no longer needed.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-safe-area-context/android/src/main/java/com/th3rdwave/safeareacontext/SafeAreaView.kt:8:8 'class UIManagerModule : ReactContextBaseJavaModule, LifecycleEventListener, UIManager' is deprecated. This class is part of Legacy Architecture and will be removed in a future release.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-safe-area-context/android/src/main/java/com/th3rdwave/safeareacontext/SafeAreaView.kt:46:54 'class UIManagerModule : ReactContextBaseJavaModule, LifecycleEventListener, UIManager' is deprecated. This class is part of Legacy Architecture and will be removed in a future release.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-safe-area-context/android/src/main/java/com/th3rdwave/safeareacontext/SafeAreaViewShadowNode.kt:9:32 'class LayoutShadowNode : ReactShadowNodeImpl' is deprecated. This class is part of Legacy Architecture and will be removed in a future release.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-safe-area-context/android/src/main/java/com/th3rdwave/safeareacontext/SafeAreaViewShadowNode.kt:110:61 'class NativeViewHierarchyOptimizer : Any' is deprecated. This class is part of Legacy Architecture and will be removed in a future release.
+
+> Task :react-native-nitro-modules:bundleLibRuntimeToDirRelease
+> Task :react-native-safe-area-context:compileReleaseJavaWithJavac
+> Task :react-native-safe-area-context:bundleLibRuntimeToDirRelease
+> Task :react-native-screens:javaPreCompileRelease
+> Task :react-native-video:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :react-native-video:generateReleaseBuildConfig
+> Task :react-native-video:generateReleaseResources
+> Task :react-native-video:packageReleaseResources
+> Task :react-native-video:processReleaseNavigationResources
+> Task :react-native-video:parseReleaseLocalResources
+> Task :react-native-video:generateReleaseRFile
+
+> Task :react-native-keychain:compileReleaseKotlin
+w: file:///home/user/story-trail/mobile/node_modules/react-native-keychain/android/src/main/java/com/oblador/keychain/KeychainPackage.kt:11:16 This declaration overrides a deprecated member but is not marked as deprecated itself. Add the '@Deprecated' annotation or suppress the diagnostic.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-keychain/android/src/main/java/com/oblador/keychain/cipherStorage/CipherStorageBase.kt:256:40 'val isInsideSecureHardware: Boolean' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-keychain/android/src/main/java/com/oblador/keychain/cipherStorage/CipherStorageKeystoreAesGcm.kt:175:44 'fun setUserAuthenticationValidityDurationSeconds(p0: Int): KeyGenParameterSpec.Builder' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-keychain/android/src/main/java/com/oblador/keychain/cipherStorage/CipherStorageKeystoreRsaEcb.kt:200:40 'fun setUserAuthenticationValidityDurationSeconds(p0: Int): KeyGenParameterSpec.Builder' is deprecated. Deprecated in Java.
+
+> Task :react-native-keychain:compileReleaseJavaWithJavac
+> Task :react-native-keychain:bundleLibRuntimeToDirRelease
+> Task :react-native-nitro-image:compileReleaseKotlin
+> Task :react-native-nitro-image:compileReleaseJavaWithJavac
+> Task :react-native-nitro-image:bundleLibCompileToJarRelease
+> Task :react-native-nitro-image:bundleLibRuntimeToDirRelease
+> Task :react-native-video:javaPreCompileRelease
+> Task :react-native-clipboard_clipboard:generateReleaseBuildConfig
+> Task :react-native-clipboard_clipboard:generateReleaseResources
+> Task :react-native-clipboard_clipboard:packageReleaseResources
+> Task :react-native-clipboard_clipboard:processReleaseNavigationResources
+> Task :react-native-clipboard_clipboard:parseReleaseLocalResources
+> Task :react-native-clipboard_clipboard:generateReleaseRFile
+> Task :react-native-clipboard_clipboard:javaPreCompileRelease
+
+> Task :react-native-clipboard_clipboard:compileReleaseJavaWithJavac
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: /home/user/story-trail/mobile/node_modules/@react-native-clipboard/clipboard/android/src/main/java/com/reactnativecommunity/clipboard/ClipboardPackage.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :react-native-clipboard_clipboard:bundleLibRuntimeToDirRelease
+> Task :react-native-community_geolocation:generateReleaseBuildConfig
+> Task :react-native-community_geolocation:generateReleaseResources
+> Task :react-native-community_geolocation:packageReleaseResources
+> Task :react-native-community_geolocation:processReleaseNavigationResources
+> Task :react-native-community_geolocation:parseReleaseLocalResources
+> Task :react-native-community_geolocation:generateReleaseRFile
+> Task :react-native-community_geolocation:javaPreCompileRelease
+
+> Task :react-native-community_geolocation:compileReleaseJavaWithJavac
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :react-native-community_geolocation:bundleLibRuntimeToDirRelease
+> Task :react-native-firebase_app:generateReleaseBuildConfig
+> Task :react-native-firebase_app:generateReleaseResources
+> Task :react-native-firebase_app:packageReleaseResources
+> Task :react-native-firebase_app:processReleaseNavigationResources
+> Task :react-native-firebase_app:parseReleaseLocalResources
+> Task :react-native-firebase_app:generateReleaseRFile
+> Task :react-native-firebase_app:javaPreCompileRelease
+
+> Task :react-native-firebase_app:compileReleaseJavaWithJavac
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :react-native-firebase_app:bundleLibCompileToJarRelease
+> Task :react-native-firebase_messaging:generateReleaseBuildConfig
+> Task :react-native-firebase_messaging:generateReleaseResources
+> Task :react-native-firebase_messaging:packageReleaseResources
+> Task :react-native-firebase_messaging:processReleaseNavigationResources
+> Task :react-native-firebase_messaging:parseReleaseLocalResources
+> Task :react-native-firebase_messaging:generateReleaseRFile
+> Task :react-native-firebase_messaging:javaPreCompileRelease
+
+> Task :react-native-video:compileReleaseKotlin
+w: file:///home/user/story-trail/mobile/node_modules/react-native-video/android/src/main/java/com/brentvatne/common/react/VideoEventEmitter.kt:97:42 'fun getEventDispatcherForReactTag(context: ReactContext, reactTag: Int): EventDispatcher?' is deprecated. reactTag is no longer needed.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-video/android/src/main/java/com/brentvatne/exoplayer/AudioOutput.kt:7:56 This annotation is currently applied to the value parameter only, but in the future it will also be applied to field.
+- To opt in to applying to both value parameter and field, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-video/android/src/main/java/com/brentvatne/exoplayer/DRMManager.kt:21:18 'static field SDK_INT: Int' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-video/android/src/main/java/com/brentvatne/exoplayer/DataSourceUtil.kt:64:23 'constructor(reactContext: ReactContext): ForwardingCookieHandler' is deprecated. Use the default constructor.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-video/android/src/main/java/com/brentvatne/exoplayer/ExoPlayerView.kt:50:9 'fun setUseArtwork(p0: Boolean): Unit' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-video/android/src/main/java/com/brentvatne/exoplayer/VideoPlaybackService.kt:38:48 'constructor(): CommandButton.Builder' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-video/android/src/main/java/com/brentvatne/exoplayer/VideoPlaybackService.kt:41:10 'fun setIconResId(p0: Int): CommandButton.Builder' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-video/android/src/main/java/com/brentvatne/exoplayer/VideoPlaybackService.kt:45:49 'constructor(): CommandButton.Builder' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-video/android/src/main/java/com/brentvatne/exoplayer/VideoPlaybackService.kt:48:10 'fun setIconResId(p0: Int): CommandButton.Builder' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-video/android/src/main/java/com/brentvatne/react/ReactVideoPackage.kt:14:18 This declaration overrides a deprecated member but is not marked as deprecated itself. Add the '@Deprecated' annotation or suppress the diagnostic.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-video/android/src/main/java/com/brentvatne/react/VideoManagerModule.kt:23:106 'val DEFAULT: Int' is deprecated. UIManagerType.DEFAULT will be deleted in the next release of React Native. Use [LEGACY] instead.
+
+> Task :react-native-firebase_messaging:compileReleaseJavaWithJavac
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :react-native-video:compileReleaseJavaWithJavac
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: /home/user/story-trail/mobile/node_modules/react-native-video/android/src/main/java/com/brentvatne/exoplayer/ReactExoplayerView.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :react-native-firebase_messaging:bundleLibRuntimeToDirRelease
+> Task :react-native-video:bundleLibRuntimeToDirRelease
+> Task :react-native-firebase_app:bundleLibRuntimeToDirRelease
+> Task :react-native-haptic-feedback:generateReleaseBuildConfig
+> Task :react-native-haptic-feedback:generateReleaseResources
+> Task :react-native-haptic-feedback:packageReleaseResources
+> Task :react-native-haptic-feedback:processReleaseNavigationResources
+> Task :react-native-haptic-feedback:parseReleaseLocalResources
+> Task :react-native-haptic-feedback:generateReleaseRFile
+> Task :react-native-haptic-feedback:javaPreCompileRelease
+
+> Task :react-native-haptic-feedback:compileReleaseJavaWithJavac
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :react-native-haptic-feedback:bundleLibRuntimeToDirRelease
+> Task :react-native-image-picker:generateReleaseBuildConfig
+> Task :react-native-image-picker:generateReleaseResources
+> Task :react-native-image-picker:packageReleaseResources
+> Task :react-native-image-picker:processReleaseNavigationResources
+> Task :react-native-image-picker:parseReleaseLocalResources
+> Task :react-native-image-picker:generateReleaseRFile
+> Task :react-native-image-picker:javaPreCompileRelease
+
+> Task :react-native-image-picker:compileReleaseJavaWithJavac
+Picked up JAVA_TOOL_OPTIONS: -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts -Djavax.net.ssl.trustStoreType=JKS -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=45723 -Dhttp.nonProxyHosts=localhost|127.0.0.1|::1|127.*|0.*|::|169.254.*|api.anthropic.com|api-staging.anthropic.com|api-pr-preview.anthropic.com|mcp-proxy.anthropic.com|mcp-proxy-staging.anthropic.com|registry.npmjs.org|jsr.io|npm.jsr.io|pypi.org|files.pythonhosted.org|index.crates.io|proxy.golang.org|host.docker.internal|10.*|172.16.*|172.17.*|172.18.*|172.19.*|172.20.*|172.21.*|172.22.*|172.23.*|172.24.*|172.25.*|172.26.*|172.27.*|172.28.*|172.29.*|172.30.*|172.31.*|192.168.*|100.64.0.0/10|*.svc.cluster.local|*.svc.cluster.local -Djdk.http.auth.tunneling.disabledSchemes= -Djdk.http.auth.proxying.disabledSchemes=
+
+Picked up JAVA_TOOL_OPTIONS: -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts -Djavax.net.ssl.trustStoreType=JKS -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=45723 -Dhttp.nonProxyHosts=localhost|127.0.0.1|::1|127.*|0.*|::|169.254.*|api.anthropic.com|api-staging.anthropic.com|api-pr-preview.anthropic.com|mcp-proxy.anthropic.com|mcp-proxy-staging.anthropic.com|registry.npmjs.org|jsr.io|npm.jsr.io|pypi.org|files.pythonhosted.org|index.crates.io|proxy.golang.org|host.docker.internal|10.*|172.16.*|172.17.*|172.18.*|172.19.*|172.20.*|172.21.*|172.22.*|172.23.*|172.24.*|172.25.*|172.26.*|172.27.*|172.28.*|172.29.*|172.30.*|172.31.*|192.168.*|100.64.0.0/10|*.svc.cluster.local|*.svc.cluster.local -Djdk.http.auth.tunneling.disabledSchemes= -Djdk.http.auth.proxying.disabledSchemes=
+
+Picked up JAVA_TOOL_OPTIONS: -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts -Djavax.net.ssl.trustStoreType=JKS -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=45723 -Dhttp.nonProxyHosts=localhost|127.0.0.1|::1|127.*|0.*|::|169.254.*|api.anthropic.com|api-staging.anthropic.com|api-pr-preview.anthropic.com|mcp-proxy.anthropic.com|mcp-proxy-staging.anthropic.com|registry.npmjs.org|jsr.io|npm.jsr.io|pypi.org|files.pythonhosted.org|index.crates.io|proxy.golang.org|host.docker.internal|10.*|172.16.*|172.17.*|172.18.*|172.19.*|172.20.*|172.21.*|172.22.*|172.23.*|172.24.*|172.25.*|172.26.*|172.27.*|172.28.*|172.29.*|172.30.*|172.31.*|192.168.*|100.64.0.0/10|*.svc.cluster.local|*.svc.cluster.local -Djdk.http.auth.tunneling.disabledSchemes= -Djdk.http.auth.proxying.disabledSchemes=
+
+Note: /home/user/story-trail/mobile/node_modules/react-native-image-picker/android/src/main/java/com/imagepicker/ImagePickerPackage.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :react-native-screens:compileReleaseKotlin
+
+> Task :react-native-vision-camera:compileReleaseKotlin
+w: file:///home/user/story-trail/mobile/node_modules/react-native-vision-camera/android/src/main/java/com/margelo/nitro/camera/hybrids/inputs/HybridCameraExtension.kt:25:30 'fun getExtensionEnabledCameraSelector(cameraSelector: CameraSelector, mode: Int): CameraSelector' is deprecated. Use ExtensionSessionConfig instead.
+
+> Task :react-native-vision-camera:compileReleaseJavaWithJavac
+> Task :react-native-svg:generateReleaseBuildConfig
+> Task :react-native-image-picker:bundleLibRuntimeToDirRelease
+> Task :react-native-svg:generateReleaseResources
+> Task :react-native-svg:packageReleaseResources
+> Task :react-native-svg:processReleaseNavigationResources
+> Task :react-native-svg:parseReleaseLocalResources
+> Task :react-native-svg:generateReleaseRFile
+> Task :react-native-svg:javaPreCompileRelease
+> Task :react-native-vision-camera:bundleLibRuntimeToDirRelease
+
+> Task :react-native-svg:compileReleaseJavaWithJavac
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :react-native-screens:compileReleaseKotlin
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/RNScreensPackage.kt:70:9 The corresponding parameter in the supertype 'BaseReactPackage' is named 'name'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/RNScreensPackage.kt:71:9 The corresponding parameter in the supertype 'BaseReactPackage' is named 'reactContext'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/RNScreensPackage.kt:83:17 'constructor(name: String, className: String, canOverrideExistingModule: Boolean, needsEagerInit: Boolean, hasConstants: Boolean, isCxxModule: Boolean, isTurboModule: Boolean): ReactModuleInfo' is deprecated. This constructor is deprecated and will be removed in the future. Use ReactModuleInfo(String, String, boolean, boolean, boolean, boolean)].
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/Screen.kt:54:77 Unchecked cast of '(CoordinatorLayout.Behavior<View!>?..CoordinatorLayout.Behavior<*>?)' to 'BottomSheetBehavior<Screen>'.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/Screen.kt:59:33 'fun getEventDispatcherForReactTag(context: ReactContext, reactTag: Int): EventDispatcher?' is deprecated. reactTag is no longer needed.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/Screen.kt:534:14 'fun getEventDispatcherForReactTag(context: ReactContext, reactTag: Int): EventDispatcher?' is deprecated. reactTag is no longer needed.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenContainer.kt:71:74 'static field HIDE_NOT_ALWAYS: Int' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenContainer.kt:250:18 'fun getEventDispatcherForReactTag(context: ReactContext, reactTag: Int): EventDispatcher?' is deprecated. reactTag is no longer needed.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenContainer.kt:260:18 'fun getEventDispatcherForReactTag(context: ReactContext, reactTag: Int): EventDispatcher?' is deprecated. reactTag is no longer needed.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenFragment.kt:225:37 'fun getEventDispatcherForReactTag(context: ReactContext, reactTag: Int): EventDispatcher?' is deprecated. reactTag is no longer needed.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenFragment.kt:242:14 'fun getEventDispatcherForReactTag(context: ReactContext, reactTag: Int): EventDispatcher?' is deprecated. reactTag is no longer needed.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenFragment.kt:258:22 'fun getEventDispatcherForReactTag(context: ReactContext, reactTag: Int): EventDispatcher?' is deprecated. reactTag is no longer needed.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenFragment.kt:327:22 'fun getEventDispatcherForReactTag(context: ReactContext, reactTag: Int): EventDispatcher?' is deprecated. reactTag is no longer needed.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenModalFragment.kt:180:22 'fun getEventDispatcherForReactTag(context: ReactContext, reactTag: Int): EventDispatcher?' is deprecated. reactTag is no longer needed.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenStack.kt:120:14 'fun getEventDispatcherForReactTag(context: ReactContext, reactTag: Int): EventDispatcher?' is deprecated. reactTag is no longer needed.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenStackFragment.kt:179:18 'fun getEventDispatcherForReactTag(context: ReactContext, reactTag: Int): EventDispatcher?' is deprecated. reactTag is no longer needed.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenStackFragment.kt:236:31 'var targetElevation: Float' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenStackFragment.kt:239:13 'fun setHasOptionsMenu(p0: Boolean): Unit' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenStackFragment.kt:450:18 This declaration overrides a deprecated member but is not marked as deprecated itself. Add the '@Deprecated' annotation or suppress the diagnostic.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenStackFragment.kt:457:22 'fun onPrepareOptionsMenu(p0: Menu): Unit' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenStackFragment.kt:460:18 This declaration overrides a deprecated member but is not marked as deprecated itself. Add the '@Deprecated' annotation or suppress the diagnostic.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenStackFragment.kt:465:22 'fun onCreateOptionsMenu(p0: Menu, p1: MenuInflater): Unit' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenStackHeaderConfig.kt:199:14 'fun getEventDispatcherForReactTag(context: ReactContext, reactTag: Int): EventDispatcher?' is deprecated. reactTag is no longer needed.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenStackHeaderConfig.kt:209:14 'fun getEventDispatcherForReactTag(context: ReactContext, reactTag: Int): EventDispatcher?' is deprecated. reactTag is no longer needed.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenWindowTraits.kt:48:42 'fun replaceSystemWindowInsets(p0: Int, p1: Int, p2: Int, p3: Int): @NonNull() WindowInsetsCompat' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenWindowTraits.kt:49:39 'val systemWindowInsetLeft: Int' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenWindowTraits.kt:51:39 'val systemWindowInsetRight: Int' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenWindowTraits.kt:52:39 'val systemWindowInsetBottom: Int' is deprecated. Deprecated in Java.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreensModule.kt:100:14 'fun getEventDispatcherForReactTag(context: ReactContext, reactTag: Int): EventDispatcher?' is deprecated. reactTag is no longer needed.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/SearchBarView.kt:137:29 'fun getEventDispatcherForReactTag(context: ReactContext, reactTag: Int): EventDispatcher?' is deprecated. reactTag is no longer needed.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/bottomsheet/BottomSheetDialogRootView.kt:7:8 'object ReactFeatureFlags : Any' is deprecated. Use com.facebook.react.internal.featureflags.ReactNativeFeatureFlags instead.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/bottomsheet/BottomSheetDialogRootView.kt:25:13 'object ReactFeatureFlags : Any' is deprecated. Use com.facebook.react.internal.featureflags.ReactNativeFeatureFlags instead.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/bottomsheet/BottomSheetDialogRootView.kt:32:9 The corresponding parameter in the supertype 'ReactViewGroup' is named 'left'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/bottomsheet/BottomSheetDialogRootView.kt:33:9 The corresponding parameter in the supertype 'ReactViewGroup' is named 'top'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/bottomsheet/BottomSheetDialogRootView.kt:34:9 The corresponding parameter in the supertype 'ReactViewGroup' is named 'right'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/bottomsheet/BottomSheetDialogRootView.kt:35:9 The corresponding parameter in the supertype 'ReactViewGroup' is named 'bottom'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/bottomsheet/BottomSheetDialogRootView.kt:71:9 The corresponding parameter in the supertype 'RootView' is named 'childView'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/bottomsheet/BottomSheetDialogRootView.kt:72:9 The corresponding parameter in the supertype 'RootView' is named 'ev'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/bottomsheet/BottomSheetDialogRootView.kt:79:46 The corresponding parameter in the supertype 'RootView' is named 'ev'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/bottomsheet/BottomSheetDialogRootView.kt:83:9 The corresponding parameter in the supertype 'RootView' is named 'childView'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/bottomsheet/BottomSheetDialogRootView.kt:84:9 The corresponding parameter in the supertype 'RootView' is named 'ev'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/bottomsheet/BottomSheetDialogRootView.kt:95:34 The corresponding parameter in the supertype 'RootView' is named 't'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/bottomsheet/DimmingView.kt:64:9 The corresponding parameter in the supertype 'ReactCompoundView' is named 'touchX'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/bottomsheet/DimmingView.kt:65:9 The corresponding parameter in the supertype 'ReactCompoundView' is named 'touchY'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/bottomsheet/DimmingView.kt:69:9 The corresponding parameter in the supertype 'ReactCompoundViewGroup' is named 'touchX'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/bottomsheet/DimmingView.kt:70:9 The corresponding parameter in the supertype 'ReactCompoundViewGroup' is named 'touchY'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/gamma/common/event/BaseEventEmitter.kt:12:38 'fun getEventDispatcherForReactTag(context: ReactContext, reactTag: Int): EventDispatcher?' is deprecated. reactTag is no longer needed.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/gamma/modals/dimmingview/DimmingView.kt:64:9 The corresponding parameter in the supertype 'ReactCompoundView' is named 'touchX'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/gamma/modals/dimmingview/DimmingView.kt:65:9 The corresponding parameter in the supertype 'ReactCompoundView' is named 'touchY'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/gamma/modals/dimmingview/DimmingView.kt:69:9 The corresponding parameter in the supertype 'ReactCompoundViewGroup' is named 'touchX'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/gamma/modals/dimmingview/DimmingView.kt:70:9 The corresponding parameter in the supertype 'ReactCompoundViewGroup' is named 'touchY'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/gamma/modals/formsheet/FormSheetContentView.kt:11:8 'object ReactFeatureFlags : Any' is deprecated. Use com.facebook.react.internal.featureflags.ReactNativeFeatureFlags instead.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/gamma/modals/formsheet/FormSheetContentView.kt:39:33 'fun getEventDispatcher(context: ReactContext, uiManagerType: Int): EventDispatcher?' is deprecated. UIManagerType is no longer needed.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/gamma/modals/formsheet/FormSheetContentView.kt:44:13 'object ReactFeatureFlags : Any' is deprecated. Use com.facebook.react.internal.featureflags.ReactNativeFeatureFlags instead.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/gamma/modals/formsheet/FormSheetHostViewManager.kt:38:9 The corresponding parameter in the supertype 'ViewGroupManager' is named 'view'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/gamma/tabs/host/TabsHostViewManager.kt:44:9 The corresponding parameter in the supertype 'ViewGroupManager' is named 'view'. This may cause problems when calling this function with named arguments.
+w: file:///home/user/story-trail/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/safearea/SafeAreaView.kt:143:45 'fun consumeDisplayCutout(): @NonNull() WindowInsetsCompat' is deprecated. Deprecated in Java.
+
+> Task :react-native-svg:bundleLibRuntimeToDirRelease
+> Task :app:checkReleaseDuplicateClasses
+> Task :react-native-screens:compileReleaseJavaWithJavac
+> Task :app:buildKotlinToolingMetadata
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:generateReleaseBuildConfig
+> Task :react-native-screens:bundleLibRuntimeToDirRelease
+
+> Task :app:createBundleReleaseJsAndAssets
+
+                        ????????????????????????
+                     ??????????????????????????????????????????
+                  ????????????????????????????????????????????????????????????
+                 ??????????????????????????????????????????????????????????????????
+                 ??????????????????????????????????????????????????????????????????
+                 ??????????????????????????????????????????????????????????????????
+                 ??????????????????????????????????????????????????????????????????
+                 ??????????????????????????????????????????????????????????????????
+                 ??????????????????????????????????????????????????????????????????
+                  ????????????????????????????????????????????????????????????
+                     ??????????????????????????????????????????
+                        ????????????????????????
+
+
+ WARN  the transform cache was reset.
+                Welcome to Metro v0.87.1
+              Fast - Scalable - Integrated
+
+
+ WARN  Attempted to import the module "/home/user/story-trail/mobile/node_modules/react-native/src/private/featureflags/ReactNativeFeatureFlags" which is not listed in the "exports" of "/home/user/story-trail/mobile/node_modules/react-native" under the requested subpath "./src/private/featureflags/ReactNativeFeatureFlags". Falling back to file-based resolution. Consider updating the call site or asking the package maintainer(s) to expose this API.
+LOG:Writing bundle output to: /home/user/story-trail/mobile/android/app/build/generated/assets/react/release/index.android.bundle
+LOG:Writing sourcemap output to: /home/user/story-trail/mobile/android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map
+LOG:Done writing bundle output
+LOG:Done writing sourcemap output
+Copying 19 asset files
+Done copying assets
+
+> Task :app:generateReleaseResValues
+> Task :app:generateReleaseResources
+> Task :app:processReleaseGoogleServices
+> Task :app:packageReleaseResources
+> Task :app:processReleaseNavigationResources
+> Task :dr.pogodin_react-native-fs:bundleLibCompileToJarRelease
+> Task :react-native-async-storage_async-storage:bundleLibCompileToJarRelease
+> Task :react-native-clipboard_clipboard:bundleLibCompileToJarRelease
+> Task :app:parseReleaseLocalResources
+> Task :react-native-community_geolocation:bundleLibCompileToJarRelease
+> Task :react-native-firebase_messaging:bundleLibCompileToJarRelease
+> Task :app:generateReleaseRFile
+> Task :react-native-google-signin_google-signin:bundleLibCompileToJarRelease
+> Task :react-native-haptic-feedback:bundleLibCompileToJarRelease
+> Task :react-native-image-picker:bundleLibCompileToJarRelease
+> Task :react-native-keychain:bundleLibCompileToJarRelease
+> Task :react-native-safe-area-context:bundleLibCompileToJarRelease
+> Task :react-native-screens:bundleLibCompileToJarRelease
+> Task :react-native-video:bundleLibCompileToJarRelease
+> Task :app:javaPreCompileRelease
+> Task :react-native-svg:bundleLibCompileToJarRelease
+> Task :react-native-vision-camera:bundleLibCompileToJarRelease
+> Task :dr.pogodin_react-native-fs:writeReleaseAarMetadata
+> Task :react-native-async-storage_async-storage:writeReleaseAarMetadata
+> Task :react-native-clipboard_clipboard:writeReleaseAarMetadata
+> Task :react-native-community_geolocation:writeReleaseAarMetadata
+> Task :react-native-firebase_app:writeReleaseAarMetadata
+> Task :react-native-google-signin_google-signin:writeReleaseAarMetadata
+> Task :react-native-firebase_messaging:writeReleaseAarMetadata
+> Task :react-native-haptic-feedback:writeReleaseAarMetadata
+> Task :react-native-image-picker:writeReleaseAarMetadata
+> Task :react-native-keychain:writeReleaseAarMetadata
+> Task :react-native-nitro-image:writeReleaseAarMetadata
+> Task :react-native-nitro-modules:writeReleaseAarMetadata
+> Task :react-native-safe-area-context:writeReleaseAarMetadata
+> Task :react-native-screens:writeReleaseAarMetadata
+> Task :react-native-svg:writeReleaseAarMetadata
+> Task :react-native-vision-camera:writeReleaseAarMetadata
+> Task :react-native-video:writeReleaseAarMetadata
+> Task :app:mapReleaseSourceSetPaths
+> Task :app:checkReleaseAarMetadata
+
+> Task :app:compileReleaseKotlin
+w: file:///home/user/story-trail/mobile/android/app/src/main/java/com/katkee/MainActivity.kt:28:7 'constructor(activity: ReactActivity, mainComponentName: String, fabricEnabled: Boolean): DefaultReactActivityDelegate' is deprecated. Creating DefaultReactActivityDelegate with flags is deprecated.
+
+> Task :app:compileReleaseNavigationResources
+> Task :app:compileReleaseJavaWithJavac
+> Task :app:createReleaseCompatibleScreenManifests
+> Task :app:extractDeepLinksRelease
+> Task :dr.pogodin_react-native-fs:extractDeepLinksRelease
+> Task :react-native-async-storage_async-storage:extractDeepLinksRelease
+> Task :react-native-clipboard_clipboard:extractDeepLinksRelease
+> Task :react-native-async-storage_async-storage:processReleaseManifest
+> Task :react-native-clipboard_clipboard:processReleaseManifest
+> Task :dr.pogodin_react-native-fs:processReleaseManifest
+> Task :react-native-community_geolocation:extractDeepLinksRelease
+> Task :react-native-firebase_app:extractDeepLinksRelease
+
+> Task :react-native-community_geolocation:processReleaseManifest
+package="com.reactnativecommunity.geolocation" found in source AndroidManifest.xml: /home/user/story-trail/mobile/node_modules/@react-native-community/geolocation/android/src/main/AndroidManifest.xml.
+Setting the namespace via the package attribute in the source AndroidManifest.xml is no longer supported, and the value is ignored.
+Recommendation: remove package="com.reactnativecommunity.geolocation" from the source AndroidManifest.xml: /home/user/story-trail/mobile/node_modules/@react-native-community/geolocation/android/src/main/AndroidManifest.xml.
+
+> Task :react-native-firebase_messaging:extractDeepLinksRelease
+
+> Task :react-native-firebase_app:processReleaseManifest
+package="io.invertase.firebase" found in source AndroidManifest.xml: /home/user/story-trail/mobile/node_modules/@react-native-firebase/app/android/src/main/AndroidManifest.xml.
+Setting the namespace via the package attribute in the source AndroidManifest.xml is no longer supported, and the value is ignored.
+Recommendation: remove package="io.invertase.firebase" from the source AndroidManifest.xml: /home/user/story-trail/mobile/node_modules/@react-native-firebase/app/android/src/main/AndroidManifest.xml.
+
+> Task :app:mergeReleaseResources
+> Task :react-native-google-signin_google-signin:extractDeepLinksRelease
+
+> Task :react-native-firebase_messaging:processReleaseManifest
+package="io.invertase.firebase.messaging" found in source AndroidManifest.xml: /home/user/story-trail/mobile/node_modules/@react-native-firebase/messaging/android/src/main/AndroidManifest.xml.
+Setting the namespace via the package attribute in the source AndroidManifest.xml is no longer supported, and the value is ignored.
+Recommendation: remove package="io.invertase.firebase.messaging" from the source AndroidManifest.xml: /home/user/story-trail/mobile/node_modules/@react-native-firebase/messaging/android/src/main/AndroidManifest.xml.
+
+> Task :react-native-haptic-feedback:extractDeepLinksRelease
+
+> Task :react-native-google-signin_google-signin:processReleaseManifest
+package="com.reactnativegooglesignin" found in source AndroidManifest.xml: /home/user/story-trail/mobile/node_modules/@react-native-google-signin/google-signin/android/src/main/AndroidManifest.xml.
+Setting the namespace via the package attribute in the source AndroidManifest.xml is no longer supported, and the value is ignored.
+Recommendation: remove package="com.reactnativegooglesignin" from the source AndroidManifest.xml: /home/user/story-trail/mobile/node_modules/@react-native-google-signin/google-signin/android/src/main/AndroidManifest.xml.
+
+> Task :react-native-haptic-feedback:processReleaseManifest
+> Task :react-native-image-picker:extractDeepLinksRelease
+
+> Task :react-native-image-picker:processReleaseManifest
+package="com.imagepicker" found in source AndroidManifest.xml: /home/user/story-trail/mobile/node_modules/react-native-image-picker/android/src/main/AndroidManifest.xml.
+Setting the namespace via the package attribute in the source AndroidManifest.xml is no longer supported, and the value is ignored.
+Recommendation: remove package="com.imagepicker" from the source AndroidManifest.xml: /home/user/story-trail/mobile/node_modules/react-native-image-picker/android/src/main/AndroidManifest.xml.
+
+> Task :react-native-keychain:extractDeepLinksRelease
+> Task :react-native-nitro-image:extractDeepLinksRelease
+
+> Task :react-native-keychain:processReleaseManifest
+package="com.oblador.keychain" found in source AndroidManifest.xml: /home/user/story-trail/mobile/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml.
+Setting the namespace via the package attribute in the source AndroidManifest.xml is no longer supported, and the value is ignored.
+Recommendation: remove package="com.oblador.keychain" from the source AndroidManifest.xml: /home/user/story-trail/mobile/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml.
+
+> Task :react-native-nitro-modules:extractDeepLinksRelease
+> Task :react-native-nitro-image:processReleaseManifest
+> Task :react-native-safe-area-context:extractDeepLinksRelease
+> Task :react-native-nitro-modules:processReleaseManifest
+
+> Task :react-native-safe-area-context:processReleaseManifest
+package="com.th3rdwave.safeareacontext" found in source AndroidManifest.xml: /home/user/story-trail/mobile/node_modules/react-native-safe-area-context/android/src/main/AndroidManifest.xml.
+Setting the namespace via the package attribute in the source AndroidManifest.xml is no longer supported, and the value is ignored.
+Recommendation: remove package="com.th3rdwave.safeareacontext" from the source AndroidManifest.xml: /home/user/story-trail/mobile/node_modules/react-native-safe-area-context/android/src/main/AndroidManifest.xml.
+
+> Task :react-native-screens:extractDeepLinksRelease
+> Task :react-native-svg:extractDeepLinksRelease
+> Task :react-native-screens:processReleaseManifest
+> Task :react-native-svg:processReleaseManifest
+> Task :react-native-video:extractDeepLinksRelease
+> Task :react-native-video:processReleaseManifest
+> Task :react-native-vision-camera:extractDeepLinksRelease
+> Task :react-native-vision-camera:processReleaseManifest
+> Task :dr.pogodin_react-native-fs:mapReleaseSourceSetPaths
+> Task :app:processReleaseMainManifest
+> Task :app:processReleaseManifest
+> Task :dr.pogodin_react-native-fs:compileReleaseLibraryResources
+> Task :react-native-async-storage_async-storage:mapReleaseSourceSetPaths
+> Task :react-native-async-storage_async-storage:compileReleaseLibraryResources
+> Task :app:processReleaseManifestForPackage
+> Task :react-native-clipboard_clipboard:mapReleaseSourceSetPaths
+> Task :react-native-clipboard_clipboard:compileReleaseLibraryResources
+> Task :react-native-community_geolocation:mapReleaseSourceSetPaths
+> Task :react-native-community_geolocation:compileReleaseLibraryResources
+> Task :react-native-firebase_app:mapReleaseSourceSetPaths
+> Task :react-native-firebase_app:compileReleaseLibraryResources
+> Task :react-native-firebase_messaging:mapReleaseSourceSetPaths
+> Task :react-native-firebase_messaging:compileReleaseLibraryResources
+> Task :react-native-google-signin_google-signin:mapReleaseSourceSetPaths
+> Task :react-native-google-signin_google-signin:compileReleaseLibraryResources
+> Task :react-native-haptic-feedback:mapReleaseSourceSetPaths
+> Task :react-native-haptic-feedback:compileReleaseLibraryResources
+> Task :react-native-image-picker:mapReleaseSourceSetPaths
+> Task :react-native-image-picker:compileReleaseLibraryResources
+> Task :react-native-keychain:mapReleaseSourceSetPaths
+> Task :react-native-keychain:compileReleaseLibraryResources
+> Task :react-native-nitro-image:mapReleaseSourceSetPaths
+> Task :react-native-nitro-image:compileReleaseLibraryResources
+> Task :react-native-nitro-modules:mapReleaseSourceSetPaths
+> Task :react-native-nitro-modules:compileReleaseLibraryResources
+> Task :react-native-safe-area-context:mapReleaseSourceSetPaths
+> Task :react-native-safe-area-context:compileReleaseLibraryResources
+> Task :react-native-screens:mapReleaseSourceSetPaths
+> Task :react-native-svg:mapReleaseSourceSetPaths
+> Task :react-native-svg:compileReleaseLibraryResources
+> Task :react-native-screens:compileReleaseLibraryResources
+> Task :react-native-video:mapReleaseSourceSetPaths
+> Task :react-native-vision-camera:mapReleaseSourceSetPaths
+> Task :react-native-vision-camera:compileReleaseLibraryResources
+> Task :app:desugarReleaseFileDependencies
+> Task :app:mergeReleaseStartupProfile
+> Task :react-native-video:compileReleaseLibraryResources
+
+> Task :app:mergeExtDexRelease
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbd, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbo, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.signin.zbb, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 7: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbv, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 7: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbv, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 7: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbi, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 7: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbi, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbp, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbs, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 10: invokespecial Lcom/google/android/gms/common/api/Api$AbstractClientBuilder;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.zba, but was com.google.android.gms.common.api.Api$AbstractClientBuilder.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbl, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbn, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbu, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbq, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 6: invokespecial Lcom/google/android/gms/common/api/Api$AbstractClientBuilder;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.internal.auth-api.zbae, but was com.google.android.gms.common.api.Api$AbstractClientBuilder.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbh, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbg, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbm, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbk, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 17: invokespecial Lcom/google/android/gms/auth/api/signin/internal/zbl;<init>(Lcom/google/android/gms/common/api/GoogleApiClient;)V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.signin.internal.zbi, but was com.google.android.gms.auth.api.signin.internal.zbl.<init>(com.google.android.gms.common.api.GoogleApiClient).
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 20: invokespecial Lcom/google/android/gms/auth/api/signin/internal/zbl;<init>(Lcom/google/android/gms/common/api/GoogleApiClient;)V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.signin.internal.zbk, but was com.google.android.gms.auth.api.signin.internal.zbl.<init>(com.google.android.gms.common.api.GoogleApiClient).
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbw, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbc, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbe, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbj, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbr, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.internal.auth-api.zbay, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 6: invokespecial Lcom/google/android/gms/common/api/Api$AbstractClientBuilder;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.internal.auth-api.zbak, but was com.google.android.gms.common.api.Api$AbstractClientBuilder.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbt, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.signin.internal.zbu, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 2: invokespecial Ljava/lang/Object;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.auth.api.identity.zbb, but was java.lang.Object.<init>().
+WARNING: /root/.gradle/caches/9.4.1/transforms/2de7f2a333cd3cf8126e893c4ee9d4a7/transformed/play-services-auth-21.5.0-runtime.jar: D8: Invalid stack map table at instruction index 6: invokespecial Lcom/google/android/gms/common/api/Api$AbstractClientBuilder;<init>()V, error: Constructor mismatch, expected constructor from com.google.android.gms.internal.auth-api.zbw, but was com.google.android.gms.common.api.Api$AbstractClientBuilder.<init>().
+
+> Task :dr.pogodin_react-native-fs:prepareReleaseArtProfile
+> Task :react-native-async-storage_async-storage:prepareReleaseArtProfile
+> Task :react-native-clipboard_clipboard:prepareReleaseArtProfile
+> Task :react-native-community_geolocation:prepareReleaseArtProfile
+> Task :react-native-firebase_app:prepareReleaseArtProfile
+> Task :react-native-firebase_messaging:prepareReleaseArtProfile
+> Task :react-native-google-signin_google-signin:prepareReleaseArtProfile
+> Task :react-native-haptic-feedback:prepareReleaseArtProfile
+> Task :react-native-image-picker:prepareReleaseArtProfile
+> Task :react-native-keychain:prepareReleaseArtProfile
+> Task :react-native-nitro-image:prepareReleaseArtProfile
+> Task :react-native-nitro-modules:prepareReleaseArtProfile
+> Task :react-native-safe-area-context:prepareReleaseArtProfile
+> Task :react-native-screens:prepareReleaseArtProfile
+> Task :react-native-svg:prepareReleaseArtProfile
+> Task :react-native-video:prepareReleaseArtProfile
+> Task :react-native-vision-camera:prepareReleaseArtProfile
+> Task :app:mergeReleaseArtProfile
+> Task :dr.pogodin_react-native-fs:bundleLibRuntimeToJarRelease
+> Task :react-native-async-storage_async-storage:bundleLibRuntimeToJarRelease
+> Task :react-native-google-signin_google-signin:bundleLibRuntimeToJarRelease
+> Task :react-native-keychain:bundleLibRuntimeToJarRelease
+> Task :react-native-vision-camera:bundleLibRuntimeToJarRelease
+> Task :react-native-nitro-image:bundleLibRuntimeToJarRelease
+> Task :app:processReleaseResources
+> Task :app:dexBuilderRelease
+> Task :react-native-nitro-modules:bundleLibRuntimeToJarRelease
+> Task :react-native-safe-area-context:bundleLibRuntimeToJarRelease
+> Task :react-native-screens:bundleLibRuntimeToJarRelease
+> Task :react-native-video:bundleLibRuntimeToJarRelease
+> Task :react-native-clipboard_clipboard:bundleLibRuntimeToJarRelease
+> Task :react-native-community_geolocation:bundleLibRuntimeToJarRelease
+> Task :react-native-firebase_messaging:bundleLibRuntimeToJarRelease
+> Task :react-native-firebase_app:bundleLibRuntimeToJarRelease
+> Task :react-native-haptic-feedback:bundleLibRuntimeToJarRelease
+> Task :react-native-image-picker:bundleLibRuntimeToJarRelease
+> Task :react-native-svg:bundleLibRuntimeToJarRelease
+> Task :app:generateReleaseAssets UP-TO-DATE
+> Task :dr.pogodin_react-native-fs:generateReleaseAssets UP-TO-DATE
+> Task :dr.pogodin_react-native-fs:mergeReleaseAssets
+> Task :react-native-async-storage_async-storage:generateReleaseAssets UP-TO-DATE
+> Task :react-native-async-storage_async-storage:mergeReleaseAssets
+> Task :react-native-clipboard_clipboard:generateReleaseAssets UP-TO-DATE
+> Task :react-native-clipboard_clipboard:mergeReleaseAssets
+> Task :react-native-community_geolocation:generateReleaseAssets UP-TO-DATE
+> Task :react-native-community_geolocation:mergeReleaseAssets
+> Task :react-native-firebase_app:generateReleaseAssets UP-TO-DATE
+> Task :react-native-firebase_app:mergeReleaseAssets
+> Task :react-native-firebase_messaging:generateReleaseAssets UP-TO-DATE
+> Task :react-native-firebase_messaging:mergeReleaseAssets
+> Task :react-native-google-signin_google-signin:generateReleaseAssets UP-TO-DATE
+> Task :react-native-google-signin_google-signin:mergeReleaseAssets
+> Task :react-native-haptic-feedback:generateReleaseAssets UP-TO-DATE
+> Task :react-native-haptic-feedback:mergeReleaseAssets
+> Task :react-native-image-picker:generateReleaseAssets UP-TO-DATE
+> Task :react-native-image-picker:mergeReleaseAssets
+> Task :react-native-keychain:generateReleaseAssets UP-TO-DATE
+> Task :react-native-keychain:mergeReleaseAssets
+> Task :react-native-nitro-image:generateReleaseAssets UP-TO-DATE
+> Task :react-native-nitro-image:mergeReleaseAssets
+> Task :react-native-nitro-modules:generateReleaseAssets UP-TO-DATE
+> Task :react-native-nitro-modules:mergeReleaseAssets
+> Task :react-native-safe-area-context:generateReleaseAssets UP-TO-DATE
+> Task :react-native-safe-area-context:mergeReleaseAssets
+> Task :react-native-screens:generateReleaseAssets UP-TO-DATE
+> Task :react-native-screens:mergeReleaseAssets
+> Task :react-native-svg:generateReleaseAssets UP-TO-DATE
+> Task :react-native-svg:mergeReleaseAssets
+> Task :react-native-video:generateReleaseAssets UP-TO-DATE
+> Task :react-native-video:mergeReleaseAssets
+> Task :react-native-vision-camera:generateReleaseAssets UP-TO-DATE
+> Task :react-native-vision-camera:mergeReleaseAssets
+> Task :app:mergeReleaseAssets
+> Task :app:compressReleaseAssets
+> Task :app:extractReleaseVersionControlInfo
+> Task :app:extractProguardFiles
+> Task :dr.pogodin_react-native-fs:processReleaseJavaRes
+> Task :dr.pogodin_react-native-fs:createFullJarRelease
+> Task :dr.pogodin_react-native-fs:extractProguardFiles
+> Task :dr.pogodin_react-native-fs:generateReleaseLintModel
+> Task :dr.pogodin_react-native-fs:prepareLintJarForPublish
+> Task :react-native-async-storage_async-storage:processReleaseJavaRes
+> Task :app:mergeReleaseGlobalSynthetics
+> Task :react-native-async-storage_async-storage:createFullJarRelease
+> Task :react-native-async-storage_async-storage:extractProguardFiles
+> Task :react-native-async-storage_async-storage:generateReleaseLintModel
+> Task :react-native-async-storage_async-storage:prepareLintJarForPublish
+> Task :react-native-clipboard_clipboard:processReleaseJavaRes NO-SOURCE
+> Task :react-native-clipboard_clipboard:createFullJarRelease
+> Task :react-native-clipboard_clipboard:extractProguardFiles
+> Task :react-native-clipboard_clipboard:generateReleaseLintModel
+> Task :react-native-clipboard_clipboard:prepareLintJarForPublish
+> Task :react-native-community_geolocation:processReleaseJavaRes NO-SOURCE
+> Task :react-native-community_geolocation:createFullJarRelease
+> Task :react-native-community_geolocation:extractProguardFiles
+> Task :react-native-community_geolocation:generateReleaseLintModel
+> Task :react-native-community_geolocation:prepareLintJarForPublish
+> Task :react-native-firebase_app:processReleaseJavaRes NO-SOURCE
+> Task :react-native-firebase_app:createFullJarRelease
+> Task :react-native-firebase_app:extractProguardFiles
+> Task :react-native-firebase_app:generateReleaseLintModel
+> Task :react-native-firebase_app:prepareLintJarForPublish
+> Task :react-native-firebase_messaging:processReleaseJavaRes NO-SOURCE
+> Task :react-native-firebase_messaging:createFullJarRelease
+> Task :react-native-firebase_messaging:extractProguardFiles
+> Task :react-native-firebase_messaging:generateReleaseLintModel
+> Task :react-native-firebase_messaging:prepareLintJarForPublish
+> Task :react-native-google-signin_google-signin:processReleaseJavaRes
+> Task :react-native-google-signin_google-signin:createFullJarRelease
+> Task :react-native-google-signin_google-signin:extractProguardFiles
+> Task :react-native-google-signin_google-signin:generateReleaseLintModel
+> Task :react-native-haptic-feedback:processReleaseJavaRes NO-SOURCE
+> Task :react-native-google-signin_google-signin:prepareLintJarForPublish
+> Task :react-native-haptic-feedback:createFullJarRelease
+> Task :react-native-haptic-feedback:extractProguardFiles
+> Task :react-native-haptic-feedback:generateReleaseLintModel
+> Task :react-native-haptic-feedback:prepareLintJarForPublish
+> Task :react-native-image-picker:processReleaseJavaRes NO-SOURCE
+> Task :react-native-image-picker:createFullJarRelease
+> Task :react-native-image-picker:extractProguardFiles
+> Task :react-native-image-picker:generateReleaseLintModel
+> Task :react-native-image-picker:prepareLintJarForPublish
+> Task :react-native-keychain:processReleaseJavaRes
+> Task :react-native-keychain:createFullJarRelease
+> Task :react-native-keychain:extractProguardFiles
+> Task :react-native-keychain:generateReleaseLintModel
+> Task :react-native-keychain:prepareLintJarForPublish
+> Task :react-native-nitro-image:processReleaseJavaRes
+> Task :react-native-nitro-image:createFullJarRelease
+> Task :react-native-nitro-image:extractProguardFiles
+> Task :react-native-nitro-modules:processReleaseJavaRes
+> Task :react-native-nitro-modules:createFullJarRelease
+> Task :react-native-nitro-modules:extractProguardFiles
+> Task :react-native-nitro-modules:generateReleaseLintModel
+> Task :react-native-nitro-modules:prepareLintJarForPublish
+> Task :react-native-nitro-image:prepareLintJarForPublish
+> Task :react-native-nitro-image:generateReleaseLintModel
+> Task :react-native-safe-area-context:processReleaseJavaRes
+> Task :react-native-safe-area-context:createFullJarRelease
+> Task :react-native-safe-area-context:extractProguardFiles
+> Task :react-native-safe-area-context:generateReleaseLintModel
+> Task :react-native-safe-area-context:prepareLintJarForPublish
+> Task :react-native-screens:processReleaseJavaRes
+> Task :react-native-screens:createFullJarRelease
+> Task :react-native-screens:extractProguardFiles
+> Task :react-native-screens:generateReleaseLintModel
+> Task :react-native-svg:processReleaseJavaRes NO-SOURCE
+> Task :react-native-screens:prepareLintJarForPublish
+> Task :react-native-svg:createFullJarRelease
+> Task :react-native-svg:extractProguardFiles
+> Task :react-native-svg:generateReleaseLintModel
+> Task :react-native-svg:prepareLintJarForPublish
+> Task :react-native-video:processReleaseJavaRes
+> Task :react-native-video:createFullJarRelease
+> Task :react-native-video:extractProguardFiles
+> Task :react-native-video:generateReleaseLintModel
+> Task :react-native-video:prepareLintJarForPublish
+> Task :react-native-vision-camera:processReleaseJavaRes
+> Task :react-native-vision-camera:createFullJarRelease
+> Task :react-native-vision-camera:extractProguardFiles
+> Task :react-native-vision-camera:generateReleaseLintModel
+> Task :react-native-vision-camera:prepareLintJarForPublish
+> Task :dr.pogodin_react-native-fs:checkReleaseAarMetadata
+> Task :app:mergeDexRelease
+> Task :app:generateReleaseLintVitalReportModel
+> Task :dr.pogodin_react-native-fs:stripReleaseDebugSymbols NO-SOURCE
+> Task :dr.pogodin_react-native-fs:copyReleaseJniLibsProjectAndLocalJars
+> Task :dr.pogodin_react-native-fs:extractDeepLinksForAarRelease
+> Task :app:compileReleaseArtProfile
+> Task :dr.pogodin_react-native-fs:extractReleaseAnnotations
+> Task :dr.pogodin_react-native-fs:mergeReleaseGeneratedProguardFiles
+> Task :dr.pogodin_react-native-fs:mergeReleaseConsumerProguardFiles
+> Task :react-native-async-storage_async-storage:stripReleaseDebugSymbols NO-SOURCE
+> Task :react-native-async-storage_async-storage:checkReleaseAarMetadata
+> Task :react-native-async-storage_async-storage:copyReleaseJniLibsProjectAndLocalJars
+> Task :react-native-async-storage_async-storage:extractDeepLinksForAarRelease
+> Task :react-native-async-storage_async-storage:extractReleaseAnnotations
+> Task :react-native-async-storage_async-storage:mergeReleaseGeneratedProguardFiles
+> Task :react-native-async-storage_async-storage:mergeReleaseConsumerProguardFiles
+> Task :react-native-google-signin_google-signin:checkReleaseAarMetadata
+> Task :react-native-google-signin_google-signin:stripReleaseDebugSymbols NO-SOURCE
+> Task :react-native-google-signin_google-signin:copyReleaseJniLibsProjectAndLocalJars
+> Task :react-native-google-signin_google-signin:extractDeepLinksForAarRelease
+> Task :dr.pogodin_react-native-fs:mergeReleaseJavaResource
+> Task :react-native-async-storage_async-storage:mergeReleaseJavaResource
+> Task :react-native-google-signin_google-signin:extractReleaseAnnotations
+> Task :dr.pogodin_react-native-fs:syncReleaseLibJars
+> Task :dr.pogodin_react-native-fs:bundleReleaseLocalLintAar
+> Task :react-native-async-storage_async-storage:syncReleaseLibJars
+> Task :react-native-async-storage_async-storage:bundleReleaseLocalLintAar
+> Task :react-native-google-signin_google-signin:mergeReleaseGeneratedProguardFiles
+> Task :react-native-google-signin_google-signin:mergeReleaseConsumerProguardFiles
+> Task :react-native-google-signin_google-signin:mergeReleaseJavaResource
+> Task :react-native-keychain:checkReleaseAarMetadata
+> Task :react-native-google-signin_google-signin:syncReleaseLibJars
+> Task :react-native-google-signin_google-signin:bundleReleaseLocalLintAar
+> Task :react-native-keychain:stripReleaseDebugSymbols NO-SOURCE
+> Task :react-native-keychain:copyReleaseJniLibsProjectAndLocalJars
+> Task :react-native-keychain:extractDeepLinksForAarRelease
+> Task :react-native-keychain:mergeReleaseGeneratedProguardFiles
+> Task :react-native-keychain:mergeReleaseConsumerProguardFiles
+> Task :react-native-keychain:mergeReleaseJavaResource
+> Task :react-native-vision-camera:checkReleaseAarMetadata
+> Task :react-native-vision-camera:extractDeepLinksForAarRelease
+> Task :react-native-vision-camera:extractReleaseAnnotations
+> Task :react-native-vision-camera:mergeReleaseGeneratedProguardFiles
+> Task :react-native-vision-camera:mergeReleaseConsumerProguardFiles
+> Task :react-native-vision-camera:mergeReleaseJavaResource
+> Task :react-native-nitro-image:checkReleaseAarMetadata
+> Task :react-native-vision-camera:stripReleaseDebugSymbols
+> Task :react-native-vision-camera:syncReleaseLibJars
+> Task :react-native-nitro-image:extractDeepLinksForAarRelease
+> Task :react-native-nitro-image:extractReleaseAnnotations
+> Task :react-native-nitro-image:mergeReleaseGeneratedProguardFiles
+> Task :react-native-nitro-image:mergeReleaseConsumerProguardFiles
+> Task :react-native-nitro-image:mergeReleaseJavaResource
+> Task :react-native-nitro-image:stripReleaseDebugSymbols
+> Task :react-native-nitro-image:syncReleaseLibJars
+> Task :react-native-vision-camera:copyReleaseJniLibsProjectAndLocalJars
+> Task :react-native-nitro-modules:checkReleaseAarMetadata
+> Task :react-native-nitro-image:copyReleaseJniLibsProjectAndLocalJars
+> Task :react-native-vision-camera:bundleReleaseLocalLintAar
+> Task :react-native-nitro-image:bundleReleaseLocalLintAar
+> Task :react-native-nitro-modules:stripReleaseDebugSymbols
+> Task :react-native-nitro-modules:copyReleaseJniLibsProjectAndLocalJars
+> Task :react-native-nitro-modules:extractDeepLinksForAarRelease
+> Task :react-native-nitro-modules:extractReleaseAnnotations
+> Task :react-native-nitro-modules:mergeReleaseGeneratedProguardFiles
+> Task :react-native-nitro-modules:mergeReleaseConsumerProguardFiles
+> Task :react-native-nitro-modules:mergeReleaseJavaResource
+> Task :react-native-nitro-modules:syncReleaseLibJars
+> Task :react-native-nitro-modules:bundleReleaseLocalLintAar
+> Task :react-native-safe-area-context:checkReleaseAarMetadata
+> Task :react-native-safe-area-context:stripReleaseDebugSymbols NO-SOURCE
+> Task :react-native-safe-area-context:copyReleaseJniLibsProjectAndLocalJars
+> Task :react-native-safe-area-context:extractDeepLinksForAarRelease
+> Task :react-native-safe-area-context:extractReleaseAnnotations
+> Task :react-native-safe-area-context:mergeReleaseGeneratedProguardFiles
+> Task :react-native-safe-area-context:mergeReleaseConsumerProguardFiles
+> Task :react-native-safe-area-context:mergeReleaseJavaResource
+> Task :react-native-safe-area-context:syncReleaseLibJars
+> Task :react-native-safe-area-context:bundleReleaseLocalLintAar
+> Task :react-native-screens:checkReleaseAarMetadata
+> Task :react-native-screens:extractDeepLinksForAarRelease
+> Task :react-native-screens:extractReleaseAnnotations
+> Task :react-native-screens:mergeReleaseGeneratedProguardFiles
+> Task :react-native-screens:stripReleaseDebugSymbols
+> Task :react-native-screens:mergeReleaseConsumerProguardFiles
+> Task :react-native-screens:copyReleaseJniLibsProjectAndLocalJars
+> Task :react-native-screens:mergeReleaseJavaResource
+> Task :react-native-video:checkReleaseAarMetadata
+> Task :react-native-screens:syncReleaseLibJars
+> Task :react-native-screens:bundleReleaseLocalLintAar
+> Task :react-native-video:stripReleaseDebugSymbols NO-SOURCE
+> Task :react-native-video:copyReleaseJniLibsProjectAndLocalJars
+> Task :react-native-video:extractDeepLinksForAarRelease
+> Task :react-native-video:mergeReleaseGeneratedProguardFiles
+> Task :react-native-video:mergeReleaseConsumerProguardFiles
+> Task :react-native-clipboard_clipboard:checkReleaseAarMetadata
+> Task :react-native-clipboard_clipboard:stripReleaseDebugSymbols NO-SOURCE
+> Task :react-native-clipboard_clipboard:copyReleaseJniLibsProjectAndLocalJars
+> Task :react-native-clipboard_clipboard:extractDeepLinksForAarRelease
+> Task :react-native-clipboard_clipboard:extractReleaseAnnotations
+> Task :react-native-clipboard_clipboard:mergeReleaseGeneratedProguardFiles
+> Task :react-native-clipboard_clipboard:mergeReleaseConsumerProguardFiles
+> Task :react-native-video:mergeReleaseJavaResource
+> Task :react-native-clipboard_clipboard:mergeReleaseJavaResource
+> Task :react-native-community_geolocation:checkReleaseAarMetadata
+> Task :react-native-clipboard_clipboard:syncReleaseLibJars
+> Task :react-native-clipboard_clipboard:bundleReleaseLocalLintAar
+> Task :react-native-community_geolocation:stripReleaseDebugSymbols NO-SOURCE
+> Task :react-native-community_geolocation:copyReleaseJniLibsProjectAndLocalJars
+> Task :react-native-community_geolocation:extractDeepLinksForAarRelease
+> Task :react-native-community_geolocation:extractReleaseAnnotations
+> Task :react-native-community_geolocation:mergeReleaseGeneratedProguardFiles
+> Task :react-native-community_geolocation:mergeReleaseConsumerProguardFiles
+> Task :react-native-community_geolocation:mergeReleaseJavaResource
+> Task :react-native-firebase_messaging:checkReleaseAarMetadata
+> Task :react-native-community_geolocation:syncReleaseLibJars
+> Task :react-native-community_geolocation:bundleReleaseLocalLintAar
+> Task :react-native-firebase_messaging:stripReleaseDebugSymbols NO-SOURCE
+> Task :react-native-firebase_messaging:copyReleaseJniLibsProjectAndLocalJars
+> Task :react-native-firebase_messaging:extractDeepLinksForAarRelease
+> Task :react-native-firebase_messaging:extractReleaseAnnotations
+> Task :react-native-firebase_messaging:mergeReleaseGeneratedProguardFiles
+> Task :react-native-firebase_messaging:mergeReleaseConsumerProguardFiles
+> Task :react-native-firebase_messaging:mergeReleaseJavaResource
+> Task :react-native-firebase_app:checkReleaseAarMetadata
+> Task :react-native-firebase_messaging:syncReleaseLibJars
+> Task :react-native-firebase_messaging:bundleReleaseLocalLintAar
+> Task :react-native-firebase_app:stripReleaseDebugSymbols NO-SOURCE
+> Task :react-native-firebase_app:copyReleaseJniLibsProjectAndLocalJars
+> Task :react-native-firebase_app:extractDeepLinksForAarRelease
+> Task :react-native-firebase_app:extractReleaseAnnotations
+> Task :react-native-firebase_app:mergeReleaseGeneratedProguardFiles
+> Task :react-native-firebase_app:mergeReleaseConsumerProguardFiles
+> Task :react-native-firebase_app:mergeReleaseJavaResource
+> Task :react-native-haptic-feedback:checkReleaseAarMetadata
+> Task :react-native-firebase_app:syncReleaseLibJars
+> Task :react-native-firebase_app:bundleReleaseLocalLintAar
+> Task :react-native-haptic-feedback:stripReleaseDebugSymbols NO-SOURCE
+> Task :react-native-haptic-feedback:copyReleaseJniLibsProjectAndLocalJars
+> Task :react-native-haptic-feedback:extractDeepLinksForAarRelease
+> Task :react-native-haptic-feedback:extractReleaseAnnotations
+> Task :react-native-haptic-feedback:mergeReleaseGeneratedProguardFiles
+> Task :react-native-haptic-feedback:mergeReleaseConsumerProguardFiles
+> Task :react-native-haptic-feedback:mergeReleaseJavaResource
+> Task :react-native-haptic-feedback:syncReleaseLibJars
+> Task :react-native-image-picker:checkReleaseAarMetadata
+> Task :react-native-haptic-feedback:bundleReleaseLocalLintAar
+> Task :react-native-image-picker:stripReleaseDebugSymbols NO-SOURCE
+> Task :react-native-image-picker:copyReleaseJniLibsProjectAndLocalJars
+> Task :react-native-image-picker:extractDeepLinksForAarRelease
+> Task :react-native-image-picker:extractReleaseAnnotations
+> Task :react-native-image-picker:mergeReleaseGeneratedProguardFiles
+> Task :react-native-image-picker:mergeReleaseConsumerProguardFiles
+> Task :react-native-image-picker:mergeReleaseJavaResource
+> Task :react-native-svg:checkReleaseAarMetadata
+> Task :react-native-image-picker:syncReleaseLibJars
+> Task :react-native-image-picker:bundleReleaseLocalLintAar
+> Task :react-native-svg:stripReleaseDebugSymbols NO-SOURCE
+> Task :react-native-svg:copyReleaseJniLibsProjectAndLocalJars
+> Task :react-native-svg:extractDeepLinksForAarRelease
+> Task :react-native-svg:extractReleaseAnnotations
+> Task :react-native-svg:mergeReleaseGeneratedProguardFiles
+> Task :react-native-svg:mergeReleaseConsumerProguardFiles
+> Task :react-native-svg:mergeReleaseJavaResource
+> Task :react-native-svg:syncReleaseLibJars
+> Task :react-native-svg:bundleReleaseLocalLintAar
+> Task :dr.pogodin_react-native-fs:writeReleaseLintModelMetadata
+
+> Task :react-native-keychain:extractReleaseAnnotations
+Warning: com.oblador.keychain.KeychainModule.AccessControl: The typedef annotation should have @Retention(RetentionPolicy.SOURCE)
+Warning: com.oblador.keychain.KeychainModule.KnownCiphers: The typedef annotation should have @Retention(RetentionPolicy.SOURCE)
+
+> Task :react-native-keychain:syncReleaseLibJars
+> Task :react-native-keychain:bundleReleaseLocalLintAar
+> Task :react-native-async-storage_async-storage:writeReleaseLintModelMetadata
+> Task :react-native-video:extractReleaseAnnotations
+> Task :react-native-video:syncReleaseLibJars
+> Task :react-native-video:bundleReleaseLocalLintAar
+> Task :react-native-clipboard_clipboard:writeReleaseLintModelMetadata
+> Task :react-native-community_geolocation:lintVitalAnalyzeRelease
+> Task :react-native-community_geolocation:writeReleaseLintModelMetadata
+> Task :react-native-clipboard_clipboard:lintVitalAnalyzeRelease
+> Task :react-native-firebase_app:writeReleaseLintModelMetadata
+> Task :react-native-async-storage_async-storage:lintVitalAnalyzeRelease
+> Task :react-native-firebase_messaging:writeReleaseLintModelMetadata
+> Task :react-native-firebase_app:lintVitalAnalyzeRelease
+> Task :react-native-google-signin_google-signin:writeReleaseLintModelMetadata
+> Task :react-native-firebase_messaging:lintVitalAnalyzeRelease
+> Task :react-native-haptic-feedback:writeReleaseLintModelMetadata
+> Task :react-native-image-picker:lintVitalAnalyzeRelease
+> Task :react-native-image-picker:writeReleaseLintModelMetadata
+> Task :react-native-haptic-feedback:lintVitalAnalyzeRelease
+> Task :react-native-keychain:writeReleaseLintModelMetadata
+> Task :react-native-nitro-modules:writeReleaseLintModelMetadata
+> Task :react-native-google-signin_google-signin:lintVitalAnalyzeRelease
+> Task :react-native-nitro-image:writeReleaseLintModelMetadata
+> Task :dr.pogodin_react-native-fs:lintVitalAnalyzeRelease
+> Task :react-native-nitro-modules:lintVitalAnalyzeRelease
+> Task :react-native-safe-area-context:writeReleaseLintModelMetadata
+> Task :react-native-safe-area-context:lintVitalAnalyzeRelease
+> Task :react-native-screens:writeReleaseLintModelMetadata
+> Task :react-native-nitro-image:lintVitalAnalyzeRelease
+> Task :react-native-svg:writeReleaseLintModelMetadata
+> Task :react-native-svg:lintVitalAnalyzeRelease
+> Task :react-native-video:writeReleaseLintModelMetadata
+> Task :react-native-keychain:lintVitalAnalyzeRelease
+> Task :react-native-vision-camera:writeReleaseLintModelMetadata
+> Task :dr.pogodin_react-native-fs:generateReleaseLintVitalModel
+> Task :react-native-async-storage_async-storage:generateReleaseLintVitalModel
+> Task :react-native-clipboard_clipboard:generateReleaseLintVitalModel
+> Task :react-native-community_geolocation:generateReleaseLintVitalModel
+> Task :react-native-firebase_app:generateReleaseLintVitalModel
+> Task :react-native-firebase_messaging:generateReleaseLintVitalModel
+> Task :react-native-google-signin_google-signin:generateReleaseLintVitalModel
+> Task :react-native-haptic-feedback:generateReleaseLintVitalModel
+> Task :react-native-image-picker:generateReleaseLintVitalModel
+> Task :react-native-keychain:generateReleaseLintVitalModel
+> Task :react-native-nitro-image:generateReleaseLintVitalModel
+> Task :react-native-nitro-modules:generateReleaseLintVitalModel
+> Task :react-native-safe-area-context:generateReleaseLintVitalModel
+> Task :react-native-screens:generateReleaseLintVitalModel
+> Task :react-native-svg:generateReleaseLintVitalModel
+> Task :react-native-video:generateReleaseLintVitalModel
+> Task :react-native-vision-camera:generateReleaseLintVitalModel
+> Task :app:processReleaseJavaRes
+> Task :app:mergeReleaseJavaResource
+> Task :app:optimizeReleaseResources
+> Task :app:collectReleaseDependencies
+> Task :app:sdkReleaseDependencyData
+> Task :app:validateSigningRelease
+> Task :app:writeReleaseAppMetadata
+> Task :app:writeReleaseSigningConfigVersions
+> Task :app:processApplicationManifestReleaseForBundle
+> Task :app:bundleReleaseResources
+> Task :app:buildReleasePreBundle
+> Task :app:configureReleaseDependencies
+> Task :app:parseReleaseIntegrityConfig
+> Task :react-native-video:lintVitalAnalyzeRelease
+> Task :react-native-vision-camera:lintVitalAnalyzeRelease
+> Task :react-native-screens:lintVitalAnalyzeRelease
+> Task :app:lintVitalAnalyzeRelease
+> Task :app:lintVitalReportRelease
+> Task :app:lintVitalRelease
+> Task :app:packageRelease
+> Task :app:createReleaseApkListingFileRedirect
+> Task :app:assembleRelease
+> Task :app:packageReleaseBundle
+> Task :app:signReleaseBundle
+> Task :app:produceReleaseBundleIdeListingFile
+> Task :app:createReleaseBundleListingFileRedirect
+> Task :app:bundleRelease
+
+[Incubating] Problems report is available at: file:///home/user/story-trail/mobile/android/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.4.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 24m 51s
+799 actionable tasks: 789 executed, 10 up-to-date
