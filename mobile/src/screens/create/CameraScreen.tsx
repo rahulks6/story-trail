@@ -32,7 +32,10 @@ const SHUTTER = 80;
 const RING_RADIUS = SHUTTER / 2 - 3;
 const RING_LENGTH = 2 * Math.PI * RING_RADIUS;
 const RECORD_HOLD_DELAY_MS = 250;
-const RECORD_DRAG_ZOOM_SENSITIVITY = 4; // px of vertical drag per 1x of zoom
+/** Dragging up this far while recording doubles the zoom (gradual, like Instagram). */
+const RECORD_DRAG_PX_PER_DOUBLING = 180;
+/** Beyond this, digital zoom is just blur. */
+const MAX_USEFUL_ZOOM = 10;
 const ZOOM_INDICATOR_HOLD_MS = 900;
 
 type CameraPosition = "back" | "front";
@@ -74,7 +77,6 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   const [flash, setFlash] = useState<"off" | "on">("off");
   const [timerSeconds, setTimerSeconds] = useState<0 | 3 | 10>(0);
   const [countdown, setCountdown] = useState(0);
-  const [zoom, setZoom] = useState(1);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [zoomIndicator, setZoomIndicator] = useState<{ visible: boolean; label: string }>({ visible: false, label: "" });
@@ -102,12 +104,9 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   // guessed constant that would be wrong on a differently-sized device.
   const previewSize = useRef({ width: 0, height: 0 });
   const minZoom = device?.minZoom ?? 1;
-  const maxZoom = device?.maxZoom ?? 4;
-  useEffect(()=>{setZoom(z=>clamp(z,minZoom,maxZoom));if(!device?.hasFlash)setFlash('off');},[device?.id,minZoom,maxZoom]);
-
-  useEffect(() => {
-    zoomRef.current = zoom;
-  }, [zoom]);
+  const maxZoom = Math.min(device?.maxZoom ?? 4, MAX_USEFUL_ZOOM);
+  // A different camera starts at its normal zoom.
+  useEffect(()=>{zoomRef.current=clamp(1,minZoom,maxZoom);if(!device?.hasFlash)setFlash('off');},[device?.id,minZoom,maxZoom]);
 
   useEffect(() => {
     if (!hasCameraPermission) void requestCameraPermission().catch(()=>undefined);
@@ -128,11 +127,20 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
     zoomIndicatorTimer.current = setTimeout(() => setZoomIndicator((v) => ({ ...v, visible: false })), ZOOM_INDICATOR_HOLD_MS);
   }, []);
 
+  // Zoom goes straight to the camera once per screen frame, without re-rendering the screen:
+  // sending every finger movement through React state is what made it stutter.
+  const zoomFrame = useRef<number | null>(null);
+  useEffect(() => () => { if (zoomFrame.current !== null) cancelAnimationFrame(zoomFrame.current); }, []);
   const applyZoom = useCallback(
     (next: number) => {
-      const clamped = clamp(next, minZoom, maxZoom);
-      setZoom(clamped);
-      flashZoomIndicator(clamped);
+      zoomRef.current = clamp(next, minZoom, maxZoom);
+      if (zoomFrame.current !== null) return;
+      zoomFrame.current = requestAnimationFrame(() => {
+        zoomFrame.current = null;
+        const z = zoomRef.current;
+        void camera.current?.controller?.setZoom(z).catch(() => undefined);
+        flashZoomIndicator(z);
+      });
     },
     [minZoom, maxZoom, flashZoomIndicator],
   );
@@ -368,7 +376,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
       onPanResponderMove: (evt: GestureResponderEvent) => {
         if (!recordingStarted) return;
         const dy = dragStartY - evt.nativeEvent.pageY; // dragging up = zoom in
-        cg.current.applyZoom(dragStartZoom + dy / RECORD_DRAG_ZOOM_SENSITIVITY);
+        cg.current.applyZoom(dragStartZoom * Math.pow(2, dy / RECORD_DRAG_PX_PER_DOUBLING));
       },
       onPanResponderRelease: () => {
         if (holdTimer) {
@@ -426,7 +434,6 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
           device={device}
           isActive={focused&&foreground}
           outputs={[photoOutput, videoOutput]}
-          zoom={zoom}
           torchMode={isRecording && flash === "on" && device.hasTorch ? "on" : "off"}
           onError={() => { if (activeRef.current) Alert.alert("Camera unavailable", "Close the camera and try again."); }}
         />

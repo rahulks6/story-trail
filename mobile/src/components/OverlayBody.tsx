@@ -96,14 +96,15 @@ export function textStyleLook(style: TextOverlayProperties["style"]): StyleProp<
 
 const styles = StyleSheet.create({
   text: { fontWeight: "600", color: colors.textPrimary },
-  bold: { fontWeight: "800" },
-  outline: { textShadowColor: "#000", textShadowRadius: 4, textShadowOffset: { width: 1, height: 1 } },
-  // Fonts every phone has: Courier and Georgia exist only on iPhone, so on Android every style
-  // used to look the same.
-  typewriter: { fontFamily: Platform.select({ ios: "Courier", default: "monospace" }) },
-  classic: { fontFamily: Platform.select({ ios: "Georgia", default: "serif" }) },
-  modern: { fontWeight: "300", letterSpacing: 1 },
-  soft: { fontWeight: "400", textShadowColor: "rgba(255,255,255,0.4)", textShadowRadius: 6 },
+  // Each style has its own font, one every phone has (Android's built-in families; iOS fonts),
+  // so all eight look clearly different. Android has no light or extra-bold weights for the
+  // default font, so weights alone made several styles look the same.
+  bold: { fontFamily: Platform.select({ ios: "AvenirNext-Heavy", default: "sans-serif-black" }), fontWeight: "normal", textTransform: "uppercase" },
+  outline: { fontWeight: "800", textShadowColor: "#000", textShadowRadius: 1, textShadowOffset: { width: 2, height: 2 } },
+  typewriter: { fontFamily: Platform.select({ ios: "Courier", default: "monospace" }), fontWeight: "normal" },
+  classic: { fontFamily: Platform.select({ ios: "Georgia", default: "serif" }), fontWeight: "normal", fontStyle: "italic" },
+  modern: { fontFamily: Platform.select({ ios: "AvenirNextCondensed-DemiBold", default: "sans-serif-condensed" }), fontWeight: "normal", textTransform: "uppercase", letterSpacing: 2 },
+  soft: { fontFamily: Platform.select({ ios: "SnellRoundhand-Bold", default: "cursive" }), fontWeight: "normal" },
   highlight: { backgroundColor: colors.accent, paddingHorizontal: 6, borderRadius: radii.sm, overflow: "hidden" },
   sticker: { color: colors.accent },
   chip: {

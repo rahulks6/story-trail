@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as RNFS from '@dr.pogodin/react-native-fs';
 import {ApiError} from '../api/client';
 import {abortUploadSession,completeUploadSession,createUploadSession,getUploadSession,PartUploadError,retryMediaProcessing,uploadPart,type UploadSessionResponse} from '../api/media';
-import {getPublishRequest,publishStory,type PublishStoryInput} from '../api/stories';
+import {deleteStory,getPublishRequest,publishStory,type PublishStoryInput} from '../api/stories';
 import {base64ToBytes} from '../utils/base64';
 import {storyPublished} from './storyChanges';
 import {track} from '../analytics/analytics';
@@ -22,7 +22,9 @@ export type UploadJob={id:string;ownerId:string;kind:'photo'|'video';mimeType:st
  /** A server-side effect made while processing the video (Boomerang). */
  effect?:'boomerang';mediaId?:string;storyId?:string;error?:string;
  /** For a processing failure: whether Retry can help (true) or the file itself is unusable (false). */
- retryable?:boolean;byteSize?:number};
+ retryable?:boolean;byteSize?:number;
+ /** Stopped while the server was already processing it: deleted as soon as it posts. */
+ cancelAfterPublish?:boolean};
 const PREFIX='katkee.upload.v1.',ROOT=RNFS.DocumentDirectoryPath+'/katkee-outbox';
 const PART_ATTEMPTS=3,RETRY_DELAYS=[1000,3000];
 const POLL_DELAYS=[1500,2000,3000,5000,8000,13000,15000];
@@ -142,7 +144,12 @@ export function runUpload(ownerId:string,id:string,session:()=>{ownerId:string;t
   if(job.ownerId!==ownerId||job.id!==id)throw Error('Upload owner mismatch.');
   if(job.status==='published')return;
   const token=()=>{const current=session();if(!current||current.ownerId!==ownerId)throw Error('Sign in to resume this upload.');return current.token;};
-  const persist=async(next:UploadJob)=>{job=next;await save(next);return next;};
+  const persist=async(next:UploadJob)=>{
+   // Keep a Stop that arrived while this was running.
+   const current=JSON.parse((await AsyncStorage.getItem(storageKey))??'{}') as Partial<UploadJob>;
+   if(current.cancelAfterPublish)next={...next,cancelAfterPublish:true};
+   job=next;await save(next);return next;
+  };
   try{
    const wasRetryableFailure=job.status==='failed'&&job.retryable===true&&!!job.mediaId;
    if(job.status!=='processing'){
@@ -166,6 +173,13 @@ export function runUpload(ownerId:string,id:string,session:()=>{ownerId:string;t
    // The server reported a processing failure (no exception): counted like a thrown one.
    if(job.status==='failed')track('upload_failed',{mediaKind:job.kind,stage:'processing',reason:job.retryable===true?'server':'rejected'});
    if(job.status==='published'){
+    // Stopped while processing: take it down straight away and leave nothing behind.
+    if(job.cancelAfterPublish&&job.storyId){
+     await deleteStory(job.storyId,token()).catch(()=>undefined);
+     await RNFS.unlink(file(ownerId,id)).catch(()=>undefined);
+     await AsyncStorage.removeItem(storageKey);progress.delete(storageKey);storyPublished();
+     return;
+    }
     track('upload_succeeded',{mediaKind:job.kind,durationMs:Math.min(3_600_000,Date.now()-attemptStarted)});
     storyPublished();
     await RNFS.unlink(file(ownerId,id)).catch(()=>undefined);
@@ -194,7 +208,9 @@ export async function cancelUpload(ownerId:string,id:string,token:string|null):P
  const storageKey=key(ownerId,id);
  const raw=await AsyncStorage.getItem(storageKey);if(!raw)return true;
  const job=JSON.parse(raw) as UploadJob;
- if(job.status==='published'||job.status==='processing')return false;
+ if(job.status==='published')return false;
+ // The server is finishing it and will post it by itself: delete it the moment it posts.
+ if(job.status==='processing'){await save({...job,cancelAfterPublish:true});return true;}
  cancelling.add(storageKey);
  try{
   await inFlight.get(storageKey)?.catch(()=>undefined);

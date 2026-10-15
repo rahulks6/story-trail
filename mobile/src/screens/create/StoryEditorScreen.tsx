@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import {
   ActivityIndicator,
   Alert,
+  BackHandler,
   Image,
   Keyboard,
   PanResponder,
@@ -17,7 +18,7 @@ import {
 } from "react-native";
 import Video from "react-native-video";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { CreateStackParamList, RootStackParamList } from "../../navigation/types";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
@@ -418,11 +419,32 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
     [draft],
   );
 
+  // Discarding goes back to the camera (like Instagram). The camera was replaced by this
+  // editor, so going "back" used to leave the Create tab with the discarded photo still open
+  // behind it, and it came back the next time you tapped +.
   const onClose = () =>
     confirmDiscard(() => {
       if (user) void clearPendingDraft(user.id, mediaUri);
-      navigation.goBack();
+      navigation.reset({ index: 0, routes: [{ name: "Camera" }] });
     });
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = () => {
+    // Back leaves drawing or cropping first, like their Done buttons.
+    if (drawMode) setDrawMode(false);
+    else if (cropMode) setCropMode(false);
+    else onClose();
+  };
+
+  // Android's back button asks before throwing edits away, the same as the close button.
+  useFocusEffect(
+    useCallback(() => {
+      const sub = BackHandler.addEventListener("hardwareBackPress", () => {
+        onCloseRef.current();
+        return true;
+      });
+      return () => sub.remove();
+    }, []),
+  );
 
   const onShare = async (target: Audience = audience) => {
     if (!accessToken||!user||submittingUpload.current) return;

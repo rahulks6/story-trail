@@ -33,6 +33,7 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [job, setJob] = useState<UploadJob | null>(null);
   const [, setTick] = useState(0);
+  const [stopping, setStopping] = useState(false);
   const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const refresh = useCallback(async () => {
@@ -87,7 +88,9 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
         text: "Stop",
         style: "destructive",
         onPress: async () => {
+          setStopping(true);
           const stopped = await cancelUpload(current.ownerId, current.id, accessToken ?? null).catch(() => false);
+          setStopping(false);
           if (!stopped) Alert.alert("Already posted", "It finished just now. Open the Story, tap More, then Delete.");
         },
       },
@@ -97,7 +100,7 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
   if (!job) return null;
   const percent = uploadProgress(job.ownerId, job.id);
   const running = uploadRunning(job.ownerId, job.id);
-  const label = pillLabel(job, percent, running);
+  const label = stopping ? "Stopping…" : job.cancelAfterPublish ? "Removing…" : pillLabel(job, percent, running);
   const preview = uploadPreviewUri(job);
   const shown = job.status === "uploading" && percent !== undefined ? percent : job.status === "published" || job.status === "processing" ? 1 : 0.05;
 
@@ -123,7 +126,7 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
         <Pressable onPress={() => stop(job)} hitSlop={10} accessibilityRole="button" accessibilityLabel="Undo, delete this Story">
           <Text style={styles.undo}>Undo</Text>
         </Pressable>
-      ) : job.status !== "processing" ? (
+      ) : !stopping && !job.cancelAfterPublish ? (
         <Pressable onPress={() => stop(job)} hitSlop={10} style={styles.close} accessibilityRole="button" accessibilityLabel="Stop sharing">
           <Icon name={ICONS.close} size={16} color={colors.textPrimary} />
         </Pressable>

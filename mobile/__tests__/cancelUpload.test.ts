@@ -18,12 +18,12 @@ describe("stopping a Story that is sharing", () => {
     expect(await saved("story_stopstopstopstop")).toBeNull();
   });
 
-  it("can't stop one that has posted or is being finished by the server", async () => {
+  it("can't stop one that has posted; one the server is finishing is deleted the moment it posts", async () => {
     await save("story_postedpostedpost", "published", { storyId: "s-1" });
     await save("story_processingproces", "processing", { mediaId: "m-2" });
     expect(await cancelUpload(owner, "story_postedpostedpost", "token")).toBe(false);
-    expect(await cancelUpload(owner, "story_processingproces", "token")).toBe(false);
     expect((await saved("story_postedpostedpost")).status).toBe("published");
-    expect((await saved("story_processingproces")).status).toBe("processing");
+    expect(await cancelUpload(owner, "story_processingproces", "token")).toBe(true);
+    expect(await saved("story_processingproces")).toMatchObject({ status: "processing", cancelAfterPublish: true });
   });
 });

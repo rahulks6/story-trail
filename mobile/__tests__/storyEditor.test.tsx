@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Modal, StyleSheet, Text } from "react-native";
+import { Alert, BackHandler, Modal, StyleSheet, Text } from "react-native";
 import * as uploadQueue from "../src/state/uploadQueue";
 import * as usersApi from "../src/api/users";
 import { snapToCentre } from "../src/components/DraggableCanvasObject";
@@ -9,7 +9,7 @@ import { StoryEditorScreen } from "../src/screens/create/StoryEditorScreen";
 import { FILTER_PREVIEWS } from "../src/models/filterPreviews";
 
 jest.mock("../src/state/AuthContext", () => ({ useAuth: () => ({ accessToken: "token", user: { id: "me", username: "rahul" } }) }));
-jest.mock("@react-navigation/native", () => ({ ...jest.requireActual("@react-navigation/native"), useNavigation: () => ({ reset: jest.fn() }) }));
+jest.mock("@react-navigation/native", () => ({ ...jest.requireActual("@react-navigation/native"), useNavigation: () => ({ reset: jest.fn(), navigate: jest.fn() }), useFocusEffect: (effect: () => () => void) => require("react").useEffect(effect, []) }));
 jest.mock("../src/analytics/analytics", () => ({ track: jest.fn() }));
 
 type Point = [number, number];
@@ -25,7 +25,7 @@ function touchEvent(points: Point[], at: number) {
 let tree: ReactTestRenderer;
 const flush = async () => { for (let i = 0; i < 6; i++) await act(async () => { await Promise.resolve(); }); };
 const g = globalThis as unknown as { __haptics: string[] };
-const navigation = { goBack: jest.fn(), replace: jest.fn() };
+const navigation = { goBack: jest.fn(), replace: jest.fn(), reset: jest.fn() };
 
 async function open() {
   await act(async () => {
@@ -124,5 +124,26 @@ describe("placing text and stickers", () => {
     expect(StyleSheet.flatten(view().props.style).opacity).toBe(0);
     await act(async () => view().props.onLayout({ nativeEvent: { layout: { x: 0, y: 0, width: 100, height: 40 } } }));
     expect(StyleSheet.flatten(view().props.style)).toMatchObject({ left: 150, top: 380, opacity: 1 });
+  });
+});
+
+describe("discarding", () => {
+  it("asks before throwing edits away, on the close button and Android's back button, then returns to the camera", async () => {
+    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+    const listeners: Array<() => boolean> = [];
+    jest.spyOn(BackHandler, "addEventListener").mockImplementation((_e, fn) => { listeners.push(fn as () => boolean); return { remove: jest.fn() }; });
+    await open();
+    // Add text so there is something to lose.
+    await act(async () => canvas().props.onResponderGrant(touchEvent([[200, 300]], 1)));
+    await act(async () => canvas().props.onResponderRelease(touchEvent([[200, 300]], 2)));
+    const input = tree.root.find((n: ReactTestInstance) => n.props.placeholder === "Type something…");
+    await act(async () => input.props.onChangeText("Hello"));
+    await act(async () => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.findAll((c) => c.props.children === "Done").length > 0).props.onPress());
+    expect(listeners.at(-1)!()).toBe(true);
+    expect(alert.mock.calls.at(-1)![0]).toBe("Discard Story?");
+    const discard = (alert.mock.calls.at(-1)![2] as Array<{ text: string; onPress?: () => void }>).find((b) => b.text === "Discard")!;
+    await act(async () => discard.onPress!());
+    expect(navigation.reset).toHaveBeenCalledWith({ index: 0, routes: [{ name: "Camera" }] });
+    expect(navigation.goBack).not.toHaveBeenCalled();
   });
 });
