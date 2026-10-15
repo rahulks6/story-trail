@@ -3,7 +3,7 @@ import { requireAuth } from "../../http/middleware/auth.middleware";
 import { sendJson } from "../../http/respond";
 import { parsePagination, parseQueryString } from "../../http/pagination";
 import { parseUsernameParam } from "../../shared/validation";
-import { parseReportMessageInput, parseSendMessageInput } from "./dto";
+import { parseReportMessageInput, parseSendMessageInput, parseStoryReplyInput } from "./dto";
 import { reportLimiter } from "../moderation/moderation.routes";
 import { HttpError } from "../../http/errors";
 import * as conversationsService from "./conversations.service";
@@ -50,6 +50,13 @@ export function registerConversationsRoutes(router: Router): void {
     sendJson(res, 200, { messages: page.messages, limit, offset, ...(page.hasMore === null ? {} : { hasMore: page.hasMore }) });
   });
 
+  // A reply or quick reaction to a Story, delivered to its owner's DMs.
+  router.post("/api/v1/stories/:id/replies", async (req, res) => {
+    requireAuth(req);
+    const input = parseStoryReplyInput(req.body);
+    const { message, created, conversationId } = await conversationsService.replyToStory(req.userId as string, req.params.id as string, input);
+    sendJson(res, created ? 201 : 200, { message, conversationId });
+  });
   router.post("/api/v1/conversations/:id/messages", async (req, res) => {
     requireAuth(req);
     const input = parseSendMessageInput(req.body);

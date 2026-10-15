@@ -1,5 +1,5 @@
 import { ValidationError } from "../auth/dto";
-import type { SendMessageInput } from "./conversations.service";
+import { STORY_REACTIONS, type SendMessageInput, type StoryReplyInput } from "./conversations.service";
 import { REPORT_REASONS } from "../moderation/dto";
 
 const MAX_BODY_LENGTH = 2000;
@@ -70,4 +70,26 @@ export function parseReportMessageInput(body: unknown): ReportMessageInput {
   }
   if (Object.keys(errors).length > 0) throw new ValidationError(errors);
   return { messageId, reason, details };
+}
+
+/** POST /api/v1/stories/:id/replies: `{ body }` for a written reply or `{ reaction }` for a quick one. */
+export function parseStoryReplyInput(body: unknown): StoryReplyInput {
+  const errors: Record<string, string> = {};
+  const b = (typeof body === "object" && body !== null ? body : {}) as Record<string, unknown>;
+  const text = typeof b.body === "string" ? b.body.trim() : "";
+  const reaction = typeof b.reaction === "string" ? b.reaction : "";
+  if (text && reaction) errors.body = "Send either a reply or a reaction, not both.";
+  else if (reaction && !(STORY_REACTIONS as readonly string[]).includes(reaction)) errors.reaction = "Choose one of the quick reactions.";
+  else if (!text && !reaction) errors.body = "Write a reply.";
+  else if (text.length > MAX_BODY_LENGTH) errors.body = `Replies can be at most ${MAX_BODY_LENGTH} characters.`;
+  let clientMessageId: string | null = null;
+  if (b.clientMessageId !== undefined && b.clientMessageId !== null) {
+    if (typeof b.clientMessageId !== "string" || !/^[A-Za-z0-9_-]{16,64}$/.test(b.clientMessageId)) {
+      errors.clientMessageId = "clientMessageId must be 16-64 letters, digits, '-' or '_'.";
+    } else {
+      clientMessageId = b.clientMessageId;
+    }
+  }
+  if (Object.keys(errors).length > 0) throw new ValidationError(errors);
+  return reaction ? { body: reaction, kind: "reaction", clientMessageId } : { body: text, kind: "reply", clientMessageId };
 }

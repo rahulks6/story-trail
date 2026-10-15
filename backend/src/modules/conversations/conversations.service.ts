@@ -6,7 +6,8 @@ import * as usersRepo from "../users/users.repository";
 import * as socialRepo from "../social/social.repository";
 import * as engagementService from "../stories/engagement.service";
 import * as conversationsRepo from "./conversations.repository";
-import type { ConversationRow, ConversationSummary, MessageRow } from "./conversations.repository";
+import type { ConversationRow, ConversationSummary, MessageRow, StoryReplyKind } from "./conversations.repository";
+import { getStoryForViewer } from "../stories/stories.service";
 
 async function requireOtherUser(username: string, viewerId: string): Promise<usersRepo.UserRecord> {
   const target = await usersRepo.findUserByUsername(username);
@@ -83,6 +84,8 @@ export interface SendMessageInput {
   storyId: string | null;
   /** The device's id for this message: a retried send with the same id never duplicates it. */
   clientMessageId: string | null;
+  /** Set by replyToStory only: the Story this message answers. */
+  storyReply?: { storyId: string; kind: StoryReplyKind } | null;
 }
 
 export async function sendMessage(viewerId: string, conversationId: string, input: SendMessageInput): Promise<{ message: MessageRow; created: boolean }> {
@@ -107,12 +110,44 @@ export async function sendMessage(viewerId: string, conversationId: string, inpu
     await engagementService.shareStory(viewerId, input.storyId);
   }
 
-  const result = await conversationsRepo.createMessage(conversationId, viewerId, input.body, input.storyId, input.clientMessageId);
+  const result = await conversationsRepo.createMessage(conversationId, viewerId, input.body, input.storyId, input.clientMessageId, input.storyReply ?? null);
   return result.created ? result : replayed(result.message, input);
 }
 
+/** The quick reactions a viewer can send to a Story with one tap. */
+export const STORY_REACTIONS = ["😂", "😮", "😍", "😢", "👏", "🔥", "🎉", "💯"] as const;
+
+export interface StoryReplyInput {
+  /** A written reply, or one of STORY_REACTIONS for a quick reaction. */
+  body: string;
+  kind: StoryReplyKind;
+  clientMessageId: string | null;
+}
+
+/**
+ * A viewer answers a Story in its owner's DMs (like Instagram): only someone who can see the
+ * Story right now can reply to it, and every rule for a direct message still applies (blocks,
+ * spam limits, links). The message keeps which Story it answers.
+ */
+export async function replyToStory(viewerId: string, storyId: string, input: StoryReplyInput): Promise<{ message: MessageRow; created: boolean; conversationId: string }> {
+  const story = await getStoryForViewer(storyId, viewerId); // 404 unless the viewer can see it
+  if (story.ownerId === viewerId) throw new HttpError(400, "You can't reply to your own Story.");
+  const owner = await usersRepo.findUserById(story.ownerId);
+  if (!owner) throw new HttpError(404, "Story not found.");
+  const conversation = await openConversationWith(viewerId, owner.username);
+  const result = await sendMessage(viewerId, conversation.id, {
+    body: input.body,
+    storyId: null,
+    clientMessageId: input.clientMessageId,
+    storyReply: { storyId, kind: input.kind },
+  });
+  return { ...result, conversationId: conversation.id };
+}
+
 function replayed(message: MessageRow, input: SendMessageInput): { message: MessageRow; created: boolean } {
-  if (message.body !== input.body || message.sharedStoryId !== input.storyId) {
+  const reply = input.storyReply ?? null;
+  if (message.body !== input.body || message.sharedStoryId !== input.storyId ||
+      (message.storyReply?.kind ?? null) !== (reply?.kind ?? null) || (reply && message.storyReply?.storyId !== reply.storyId)) {
     throw new HttpError(409, "This message id was already used for a different message.");
   }
   return { message, created: false };

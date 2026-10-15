@@ -57,9 +57,20 @@ export interface MessageRow {
   senderId: string;
   body: string | null;
   sharedStoryId: string | null;
+  /**
+   * Set when the message answers a Story (a reply or a quick reaction from its viewer).
+   * `storyId` becomes null once that Story is deleted; the message stays a reply.
+   */
+  storyReply: StoryReply | null;
   createdAt: string;
   /** The sender's device id for the message; only ever shown to the sender (see conversations.service.ts). */
   clientMessageId?: string;
+}
+
+export type StoryReplyKind = "reply" | "reaction";
+export interface StoryReply {
+  storyId: string | null;
+  kind: StoryReplyKind;
 }
 
 function mapMessageRow(row: Row): MessageRow {
@@ -69,12 +80,13 @@ function mapMessageRow(row: Row): MessageRow {
     senderId: row.sender_id as string,
     body: (row.body as string | null) ?? null,
     sharedStoryId: (row.shared_story_id as string | null) ?? null,
+    storyReply: row.reply_kind ? { storyId: (row.reply_story_id as string | null) ?? null, kind: row.reply_kind as StoryReplyKind } : null,
     createdAt: row.created_at as string,
     ...(row.client_message_id ? { clientMessageId: row.client_message_id as string } : {}),
   };
 }
 
-const MESSAGE_COLUMNS = "id, conversation_id, sender_id, body, shared_story_id, created_at, client_message_id";
+const MESSAGE_COLUMNS = "id, conversation_id, sender_id, body, shared_story_id, created_at, client_message_id, reply_story_id, reply_kind";
 
 /**
  * Inserts a message, or — when `clientMessageId` was already used by this sender in
@@ -88,11 +100,13 @@ export async function createMessage(
   body: string | null,
   sharedStoryId: string | null,
   clientMessageId: string | null = null,
+  storyReply: { storyId: string; kind: StoryReplyKind } | null = null,
 ): Promise<{ message: MessageRow; created: boolean }> {
   const row = await queryOne(
     `WITH m AS (
-       INSERT INTO messages (conversation_id, sender_id, body, shared_story_id, client_message_id)
-       VALUES (:'conversation_id', :'sender_id', ${nullable("body")}, ${nullable("shared_story_id", "uuid")}, ${nullable("client_message_id")})
+       INSERT INTO messages (conversation_id, sender_id, body, shared_story_id, client_message_id, reply_story_id, reply_kind)
+       VALUES (:'conversation_id', :'sender_id', ${nullable("body")}, ${nullable("shared_story_id", "uuid")}, ${nullable("client_message_id")},
+               ${nullable("reply_story_id", "uuid")}, ${nullable("reply_kind")})
        ON CONFLICT (conversation_id, sender_id, client_message_id) WHERE client_message_id IS NOT NULL DO NOTHING
        RETURNING ${MESSAGE_COLUMNS}),
      c AS (SELECT CASE WHEN user_a_id = :'sender_id' THEN user_b_id ELSE user_a_id END AS recipient_id
@@ -107,6 +121,7 @@ export async function createMessage(
     {
       conversation_id: conversationId, sender_id: senderId, body: body ?? "",
       shared_story_id: sharedStoryId ?? "", client_message_id: clientMessageId ?? "",
+      reply_story_id: storyReply?.storyId ?? "", reply_kind: storyReply?.kind ?? "",
     },
   );
   if (row) {

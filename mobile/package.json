@@ -2,7 +2,7 @@
   "name": "@katkee/mobile",
   "version": "1.0.0",
   "private": true,
-  "description": "KATKEE \u2014 Story-first social network. React Native app (Phase 1-11: full feature set through moderation + production hardening \u2014 see README.md).",
+  "description": "KATKEE — Story-first social network. React Native app (Phase 1-11: full feature set through moderation + production hardening — see README.md).",
   "scripts": {
     "start": "react-native start",
     "android": "react-native run-android",
@@ -27,6 +27,7 @@
     "@react-navigation/native-stack": "7.20.0",
     "react": "19.2.3",
     "react-native": "0.87.1",
+    "react-native-haptic-feedback": "3.0.0",
     "react-native-image-picker": "8.2.1",
     "react-native-keychain": "10.0.0",
     "react-native-nitro-image": "0.15.2",

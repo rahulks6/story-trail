@@ -92,6 +92,10 @@ jest.mock("react-native-nitro-image", () => {
   };
 });
 
+// Haptics: records each trigger.
+global.__haptics = [];
+jest.mock("react-native-haptic-feedback", () => ({ trigger: jest.fn((type) => global.__haptics.push(type)) }));
+
 global.__picker = { result: { didCancel: true } };
 jest.mock("react-native-image-picker", () => ({
   launchImageLibrary: jest.fn(async () => global.__picker.result),

@@ -21,12 +21,19 @@ export interface ConversationSummary {
 
 export type MessageDeliveryStatus = "sent" | "delivered" | "read";
 
+export type StoryReplyKind = "reply" | "reaction";
+
+/** The quick reactions to a Story — same list as backend conversations.service.ts STORY_REACTIONS. */
+export const STORY_REACTIONS = ["😂", "😮", "😍", "😢", "👏", "🔥", "🎉", "💯"] as const;
+
 export interface Message {
   id: string;
   conversationId: string;
   senderId: string;
   body: string | null;
   sharedStoryId: string | null;
+  /** Set when the message answers a Story; `storyId` is null once that Story is deleted. */
+  storyReply?: { storyId: string | null; kind: StoryReplyKind } | null;
   createdAt: string;
   /** Only present on messages the viewer themselves sent — see backend/src/modules/conversations/conversations.service.ts's listMessages. */
   status?: MessageDeliveryStatus;
@@ -106,4 +113,14 @@ export function sendMessage(
 
 export function markConversationRead(conversationId: string, accessToken: string): Promise<void> {
   return apiPost(`/api/v1/conversations/${conversationId}/read`, undefined, accessToken);
+}
+
+/** A reply or quick reaction to a Story, delivered to its owner's DMs. */
+export function replyToStory(
+  storyId: string,
+  input: { body: string } | { reaction: string },
+  accessToken: string,
+  clientMessageId?: string,
+): Promise<{ message: Message; conversationId: string }> {
+  return apiPost(`/api/v1/stories/${encodeURIComponent(storyId)}/replies`, { ...input, ...(clientMessageId ? { clientMessageId } : {}) }, accessToken);
 }

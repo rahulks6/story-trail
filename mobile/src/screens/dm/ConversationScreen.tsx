@@ -1,4 +1,5 @@
 import { Icon } from "../../components/Icon";
+import { storyReplyLabel } from "../../models/storyReplies";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -357,7 +358,10 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           const mine = row.kind === "pending" || row.senderId === user?.id;
           const failed = row.kind === "pending" && row.status === "failed";
           const showStatus = rowKey(row) === statusRowKey;
-          const shared = row.kind === "sent" ? (row.sharedStoryId ? "Shared a Story" : null) : row.storyId ? "Shared a Story" : null;
+          const reply = row.kind === "sent" ? row.storyReply ?? null : null;
+          const replyLabel = reply ? storyReplyLabel(reply, mine) : null;
+          const openableStory = row.kind === "sent" ? row.sharedStoryId ?? reply?.storyId ?? null : null;
+          const shared = row.kind === "sent" ? (row.sharedStoryId ? "Shared a Story" : replyLabel) : row.storyId ? "Shared a Story" : null;
           // Bubbles show who sent what by their side of the screen; a screen reader says it.
           const spoken = [shared, row.body].filter(Boolean).join(". ");
           return (
@@ -365,23 +369,23 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
               <View style={[styles.bubbleColumn, mine ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
                 <Pressable
                   // A button only where a tap does something (retry, open the shared Story).
-                  accessibilityRole={row.kind === "pending" || (row.kind === "sent" && row.sharedStoryId) ? "button" : undefined}
+                  accessibilityRole={row.kind === "pending" || openableStory ? "button" : undefined}
                   style={[
                     styles.bubble,
                     mine ? styles.bubbleMine : styles.bubbleTheirs,
                     row.kind === "pending" && styles.bubblePending,
                     failed && styles.bubbleFailed,
                   ]}
-                  disabled={row.kind === "sent" ? !row.sharedStoryId && mine : row.status === "sending"}
+                  disabled={row.kind === "sent" ? !openableStory && mine : row.status === "sending"}
                   onPress={() => {
                     if (row.kind === "pending") onPendingPress(row);
-                    else if (row.sharedStoryId) void onOpenSharedStory(row.sharedStoryId);
+                    else if (openableStory) void onOpenSharedStory(openableStory);
                   }}
                   onLongPress={() => onMessageLongPress(row)}
                   accessibilityLabel={`${mine ? "You" : otherUsername ? `@${otherUsername}` : "Them"}: ${spoken}`}
                   accessibilityHint={
                     row.kind === "pending" && row.status !== "sending" ? "Retry or delete this message"
-                      : row.kind === "sent" && row.sharedStoryId ? "Opens the Story" : undefined
+                      : openableStory ? "Opens the Story" : undefined
                   }
                   accessibilityActions={canReport(row) ? [{ name: "report", label: "Report message" }] : undefined}
                   onAccessibilityAction={(event) => {
@@ -394,7 +398,10 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
                   {row.kind === "pending" && row.storyId ? (
                     <Text style={styles.bubbleTextMine}>Shared a Story</Text>
                   ) : null}
-                  {row.body ? <Text style={mine ? styles.bubbleTextMine : styles.bubbleTextTheirs}>{row.body}</Text> : null}
+                  {replyLabel ? <Text style={[styles.replyLabel, mine ? styles.bubbleTextMine : styles.bubbleTextTheirs]}>{replyLabel}</Text> : null}
+                  {row.body ? (
+                    <Text style={[mine ? styles.bubbleTextMine : styles.bubbleTextTheirs, reply?.kind === "reaction" && styles.reactionGlyph]}>{row.body}</Text>
+                  ) : null}
                 </Pressable>
                 {showStatus ? <Text style={styles.statusCaption}>{statusLabel(row)}</Text> : null}
               </View>
@@ -466,6 +473,8 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
+  replyLabel: { fontSize: 12, opacity: 0.75, marginBottom: 2 },
+  reactionGlyph: { fontSize: 34, lineHeight: 42 },
   container: { flex: 1, backgroundColor: colors.background },
   centered: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background, padding: spacing.lg },
   loadError: { textAlign: "center", marginBottom: spacing.md },

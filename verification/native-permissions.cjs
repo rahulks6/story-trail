@@ -5,7 +5,8 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const mobile=path.join(__dirname,'../mobile');
 
 const RULES=[
- {name:'vibration',uses:/Vibration\.vibrate\(/,android:['android.permission.VIBRATE']},
+ // Haptic feedback (react-native-haptic-feedback) vibrates on Android, which needs VIBRATE.
+ {name:'vibration',uses:/Vibration\.vibrate\(|from "react-native-haptic-feedback"/,android:['android.permission.VIBRATE']},
  {name:'camera',uses:/useCameraPermission\(|<Camera\b|launchCamera\(/,android:['android.permission.CAMERA'],ios:['NSCameraUsageDescription']},
  {name:'microphone',uses:/useMicrophonePermission\(/,android:['android.permission.RECORD_AUDIO'],ios:['NSMicrophoneUsageDescription']},
  {name:'location',uses:/Geolocation\.getCurrentPosition\(/,android:['android.permission.ACCESS_COARSE_LOCATION'],ios:['NSLocationWhenInUseUsageDescription']},

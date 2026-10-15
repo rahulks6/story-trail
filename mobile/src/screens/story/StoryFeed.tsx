@@ -1,6 +1,6 @@
 import { Icon } from "../../components/Icon";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Animated, AppState, Dimensions, Image, PanResponder, Pressable, StyleSheet, Text, Vibration, View } from "react-native";
+import { Animated, AppState, Dimensions, Image, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import Video, {type VideoRef} from "react-native-video";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
@@ -22,6 +22,8 @@ import { SponsoredStory } from "../ads/SponsoredStory";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
 import type { SponsoredPlacement } from "../../api/ads";
 import { Avatar } from "../../components/Avatar";
+import { ReplySheet } from "../../components/ReplySheet";
+import { tapFeedback } from "../../utils/haptics";
 
 const PHOTO_DURATION_MS = 5000;
 const HOLD_DELAY_MS = 250;
@@ -103,6 +105,10 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   const [shareOpen, setShareOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [insightsOpen, setInsightsOpen] = useState(false);
+  const [replyOpen, setReplyOpen] = useState(false);
+  const [replySent, setReplySent] = useState<string | null>(null);
+  const replySentTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (replySentTimer.current) clearTimeout(replySentTimer.current); }, []);
 
   const progress = useRef(new Animated.Value(0)).current;
   const animationRef = useRef<Animated.CompositeAnimation | null>(null);
@@ -116,7 +122,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   const currentStoryIndex = currentUsername ? (storyIndexByCreator[currentUsername] ?? 0) : 0;
   const currentStory = currentStories?.[currentStoryIndex] ?? null;
 
-  const sheetOpen = commentsOpen || shareOpen || moreOpen || insightsOpen;
+  const sheetOpen = commentsOpen || shareOpen || moreOpen || insightsOpen || replyOpen;
   const playbackActive = focused && foreground && !paused && !sheetOpen && !caughtUp && !loadError && !currentAd;
   const progressValue = useRef(0);
   useEffect(() => {
@@ -336,7 +342,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   const ensureLiked = useCallback(async () => {
     if (!accessToken || !currentStory || !detail || detail.viewerHasLiked) return;
     setDetail((d) => (d ? { ...d, viewerHasLiked: true, likeCount: d.likeCount + 1 } : d));
-    Vibration.vibrate(10); // no haptics package available — a short vibration is a real, if blunter, substitute
+    tapFeedback("tap");
     // Reduce Motion (spec: "reduced-motion support where practical") — the
     // pulse is purely decorative, so it collapses to an instant flash
     // (duration 0) rather than the scaling/fading animation. The
@@ -358,7 +364,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
     if (!accessToken || !currentStory || !detail) return;
     const wasLiked = detail.viewerHasLiked;
     setDetail((d) => (d ? { ...d, viewerHasLiked: !wasLiked, likeCount: d.likeCount + (wasLiked ? -1 : 1) } : d));
-    if (!wasLiked) Vibration.vibrate(10);
+    if (!wasLiked) tapFeedback("tap");
     try {
       if (wasLiked) await unlikeStory(currentStory.id, accessToken);
       else await likeStory(currentStory.id, accessToken);
@@ -637,6 +643,11 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           <Icon style={styles.actionIcon} name={ICONS.comment} />
           <Text style={styles.actionCount}>{detail?.commentCount ?? "—"}</Text>
         </Pressable>
+        {!isOwnStory ? (
+          <Pressable onPress={() => setReplyOpen(true)} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel="Reply">
+            <Icon style={styles.actionIcon} name={ICONS.send} />
+          </Pressable>
+        ) : null}
         <Pressable onPress={() => setShareOpen(true)} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel="Share">
           <Icon style={styles.actionIcon} name={ICONS.share} />
         </Pressable>
@@ -678,6 +689,25 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         </Pressable>
       ) : null}
 
+      {replySent ? (
+        <View style={styles.replyToast} pointerEvents="none" accessibilityLiveRegion="polite">
+          <Text style={styles.replyToastText}>{replySent}</Text>
+        </View>
+      ) : null}
+
+      {!isOwnStory ? (
+        <ReplySheet
+          visible={replyOpen}
+          storyId={currentStory.id}
+          ownerUsername={currentUsername ?? ""}
+          onClose={() => setReplyOpen(false)}
+          onSent={(kind) => {
+            setReplySent(kind === "reaction" ? "Reaction sent" : "Reply sent");
+            if (replySentTimer.current) clearTimeout(replySentTimer.current);
+            replySentTimer.current = setTimeout(() => setReplySent(null), 1500);
+          }}
+        />
+      ) : null}
       <CommentsSheet
         visible={commentsOpen}
         storyId={currentStory.id}
@@ -776,5 +806,15 @@ const styles = StyleSheet.create({
   viewCount: { color: "rgba(255,255,255,0.85)", fontSize: 12, fontWeight: "600" },
   viewCountRow: { flexDirection: "row", alignItems: "center", gap: 4 },
   closeButton: { position: "absolute", top: spacing.xl, right: spacing.md },
+  replyToast: {
+    position: "absolute",
+    alignSelf: "center",
+    top: "45%",
+    backgroundColor: "rgba(0,0,0,0.7)",
+    borderRadius: radii.pill,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  replyToastText: { color: colors.textPrimary, fontWeight: "700" },
   closeIcon: { color: colors.textPrimary, fontSize: 22 },
 });
