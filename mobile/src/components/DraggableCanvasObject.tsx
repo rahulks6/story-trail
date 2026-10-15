@@ -1,160 +1,142 @@
 import React, { useMemo, useRef, useState } from "react";
-import { PanResponder, StyleSheet, View, type GestureResponderEvent, type PanResponderGestureState } from "react-native";
+import { PanResponder, StyleSheet, View, type GestureResponderEvent } from "react-native";
 import { clampOverlayPosition, type Overlay } from "../models/storyDraft";
+import { pinchPlacement, TAP_SLOP, type Placement, type Touch } from "../models/canvasGestures";
 import { OverlayBody } from "./OverlayBody";
 
 interface Props {
   overlay: Overlay;
   containerWidth: number;
   containerHeight: number;
-  isOverTrash: (x: number, y: number) => boolean;
+  isOverTrash: (pageX: number, pageY: number) => boolean;
   onChange: (id: string, patch: Partial<Pick<Overlay, "x" | "y" | "scale" | "rotation">>) => void;
-  /** A clean tap (no drag) — selects the object; see OverlayAdjustSheet, the non-gesture path to move/resize/rotate/delete. */
+  /** A finger landed on the object: bring it to the front and make it the one two-finger gestures on the photo act on. */
+  onTouchStart: (id: string) => void;
+  /** A clean tap (no movement): edit text, a location or a date. */
   onTap: (id: string) => void;
-  onDoubleTap: (id: string) => void;
+  /** The screen reader's "activate": the buttons for moving, resizing, rotating and deleting. */
+  onOpenControls: (id: string) => void;
   onDragStateChange: (dragging: boolean) => void;
+  /** While dragging: whether the finger is over the trash. */
+  onOverTrashChange: (over: boolean) => void;
   onDeleted: (id: string) => void;
 }
 
-function distance(x1: number, y1: number, x2: number, y2: number): number {
-  return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-}
-
-function angleDeg(x1: number, y1: number, x2: number, y2: number): number {
-  return (Math.atan2(y2 - y1, x2 - x1) * 180) / Math.PI;
-}
-
-const DOUBLE_TAP_MS = 250;
-const TAP_MOVE_THRESHOLD = 6;
+const touchesOf = (evt: GestureResponderEvent): Touch[] => evt.nativeEvent.touches.map((t) => ({ pageX: t.pageX, pageY: t.pageY }));
 
 /**
- * The one gesture model shared by every canvas object type — text, emoji,
- * mention, location, datetime, sticker (spec section 21: "a single unified
- * gesture model for ALL object types"): one-finger drag to move (1:1,
- * attached to the finger), two-finger pinch+twist to scale and rotate
- * simultaneously, tap-then-tap-again within DOUBLE_TAP_MS to edit, drag onto
- * the trash zone to delete. Only the rendered body differs per type — see
- * OverlayBody.tsx, shared with the read-only viewer so editor and published
- * Story render identically (spec section 47).
+ * One gesture model for every object on a Story (text, emoji, mention, location, date, sticker),
+ * like Instagram: touch and drag to move it with the finger; two fingers to resize, turn and move
+ * it at once (a second finger can join at any time); tap text to edit it; drag onto the trash to
+ * delete. The same OverlayBody renders it in the viewer, so it publishes exactly as placed.
  *
- * Built on React Native's core `PanResponder` reading `nativeEvent.touches`
- * directly — no gesture library dependency, the same technique this file
- * used when it only handled text. Hand-rolled multitouch math like this is
- * exactly the kind of code that most needs on-device verification, which
- * this sandbox can't do (see mobile/README.md).
+ * The touch handlers are created once and read the latest values from a ref: recreating them
+ * during a drag (as this did before) restarted the gesture on every movement.
  */
-export function DraggableCanvasObject({
-  overlay,
-  containerWidth,
-  containerHeight,
-  isOverTrash,
-  onChange,
-  onTap,
-  onDoubleTap,
-  onDragStateChange,
-  onDeleted,
-}: Props): React.JSX.Element {
+export function DraggableCanvasObject(props: Props): React.JSX.Element {
+  const { overlay, containerWidth, containerHeight } = props;
   const [dragging, setDragging] = useState(false);
-  const gestureStart = useRef({
-    x: overlay.x,
-    y: overlay.y,
-    scale: overlay.scale,
-    rotation: overlay.rotation,
-    pinchDistance: 0,
-    pinchAngle: 0,
-  });
-  const lastTapTime = useRef(0);
+  const latest = useRef(props);
+  latest.current = props;
 
-  const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
-        onMoveShouldSetPanResponder: () => true,
-        onPanResponderGrant: (evt: GestureResponderEvent) => {
-          const now = Date.now();
-          if (now - lastTapTime.current < DOUBLE_TAP_MS) {
-            onDoubleTap(overlay.id);
-            lastTapTime.current = 0;
-            return;
-          }
-          lastTapTime.current = now;
+  const panResponder = useMemo(() => {
+    let mode: "drag" | "pinch" = "drag";
+    let start: Placement = { x: 0, y: 0, scale: 1, rotation: 0 };
+    let from: Touch[] = [];
+    let moved = false;
+    let pinched = false;
+    let overTrash = false;
 
-          const touches = evt.nativeEvent.touches;
-          gestureStart.current.x = overlay.x;
-          gestureStart.current.y = overlay.y;
-          gestureStart.current.scale = overlay.scale;
-          gestureStart.current.rotation = overlay.rotation;
-          if (touches.length >= 2) {
-            const [a, b] = touches;
-            gestureStart.current.pinchDistance = distance(a.pageX, a.pageY, b.pageX, b.pageY);
-            gestureStart.current.pinchAngle = angleDeg(a.pageX, a.pageY, b.pageX, b.pageY);
-          }
-        },
-        onPanResponderMove: (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
-          const touches = evt.nativeEvent.touches;
+    const current = (): Placement => {
+      const o = latest.current.overlay;
+      return { x: o.x, y: o.y, scale: o.scale, rotation: o.rotation };
+    };
+    const begin = (touches: Touch[]) => {
+      start = current();
+      from = touches.slice(0, 2);
+      mode = touches.length >= 2 ? "pinch" : "drag";
+      if (mode === "pinch") pinched = true;
+    };
+    const end = (deleteIfOverTrash: boolean) => {
+      const p = latest.current;
+      if (moved && deleteIfOverTrash && overTrash) p.onDeleted(p.overlay.id);
+      else if (!moved && !pinched && deleteIfOverTrash) p.onTap(p.overlay.id);
+      if (moved) {
+        setDragging(false);
+        p.onDragStateChange(false);
+        p.onOverTrashChange(false);
+      }
+      moved = false;
+      pinched = false;
+      overTrash = false;
+    };
 
-          if (touches.length >= 2) {
-            const [a, b] = touches;
-            const currentDistance = distance(a.pageX, a.pageY, b.pageX, b.pageY);
-            const currentAngle = angleDeg(a.pageX, a.pageY, b.pageX, b.pageY);
-            const scaleFactor = gestureStart.current.pinchDistance > 0 ? currentDistance / gestureStart.current.pinchDistance : 1;
-            const nextScale = Math.min(Math.max(gestureStart.current.scale * scaleFactor, 0.4), 4);
-            const nextRotation = gestureStart.current.rotation + (currentAngle - gestureStart.current.pinchAngle);
-            onChange(overlay.id, { scale: nextScale, rotation: nextRotation });
-            return;
-          }
+    return PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderTerminationRequest: () => false,
+      onPanResponderGrant: (evt) => {
+        moved = false;
+        pinched = false;
+        overTrash = false;
+        latest.current.onTouchStart(latest.current.overlay.id);
+        begin(touchesOf(evt));
+      },
+      onPanResponderMove: (evt) => {
+        const p = latest.current;
+        const touches = touchesOf(evt);
+        if (touches.length === 0) return;
+        // A finger joined or left: carry on from where the object is now.
+        if ((touches.length >= 2) !== (mode === "pinch")) begin(touches);
 
-          if (!dragging && (Math.abs(gestureState.dx) > TAP_MOVE_THRESHOLD || Math.abs(gestureState.dy) > TAP_MOVE_THRESHOLD)) {
-            setDragging(true);
-            onDragStateChange(true);
-          }
-          const rawX = gestureStart.current.x + gestureState.dx / containerWidth;
-          const rawY = gestureStart.current.y + gestureState.dy / containerHeight;
-          onChange(overlay.id, clampOverlayPosition(rawX, rawY));
-        },
-        onPanResponderRelease: (evt: GestureResponderEvent) => {
-          if (dragging) {
-            const touch = evt.nativeEvent.changedTouches[0];
-            if (touch && isOverTrash(touch.pageX, touch.pageY)) {
-              onDeleted(overlay.id);
-            }
-          } else if (gestureStart.current.pinchDistance === 0) {
-            // Neither a drag nor a pinch happened — a clean tap, selecting
-            // this object (see OverlayAdjustSheet's non-gesture path).
-            onTap(overlay.id);
-          }
-          gestureStart.current.pinchDistance = 0;
-          setDragging(false);
-          onDragStateChange(false);
-        },
-      }),
-    [overlay, containerWidth, containerHeight, dragging, onChange, onTap, onDoubleTap, onDragStateChange, isOverTrash, onDeleted],
-  );
+        if (mode === "pinch") {
+          const next = pinchPlacement(start, [from[0]!, from[1]!], [touches[0]!, touches[1]!], p.containerWidth, p.containerHeight);
+          moved = true;
+          p.onChange(p.overlay.id, { ...next, ...clampOverlayPosition(next.x, next.y) });
+          return;
+        }
+
+        const dx = touches[0]!.pageX - from[0]!.pageX;
+        const dy = touches[0]!.pageY - from[0]!.pageY;
+        if (!moved) {
+          if (Math.hypot(dx, dy) < TAP_SLOP) return;
+          moved = true;
+          setDragging(true);
+          p.onDragStateChange(true);
+        }
+        p.onChange(p.overlay.id, clampOverlayPosition(start.x + dx / p.containerWidth, start.y + dy / p.containerHeight));
+        const over = p.isOverTrash(touches[0]!.pageX, touches[0]!.pageY);
+        if (over !== overTrash) {
+          overTrash = over;
+          p.onOverTrashChange(over);
+        }
+      },
+      onPanResponderRelease: () => end(true),
+      onPanResponderTerminate: () => end(false),
+    });
+  }, []);
 
   return (
     <View
       {...panResponder.panHandlers}
+      collapsable={false}
       hitSlop={{ top: 16, bottom: 16, left: 16, right: 16 }}
       accessible
       accessibilityRole="button"
-      accessibilityLabel={`${overlayDescription(overlay)}. Activate to open position, size, and rotation controls without gestures.`}
+      accessibilityLabel={overlayDescription(overlay)}
       accessibilityHint="Drag to move, pinch with two fingers to resize and rotate, or activate for button controls"
-      // A screen reader intercepts raw touches for its own navigation, so
-      // the PanResponder-driven `onTap` above this comment (fired from a
-      // real touch release) never reaches this view while VoiceOver/
-      // TalkBack is running — its standard "activate" gesture is delivered
-      // here instead, as a real accessibility action, not a touch. Without
-      // this, "tap = select" (and everything the OverlayAdjustSheet it
-      // opens leads to) would be gesture-only after all.
+      // A screen reader takes raw touches for its own navigation, so its "activate" opens the
+      // buttons for moving, resizing, rotating and deleting instead.
       accessibilityActions={[{ name: "activate", label: "Open controls" }]}
       onAccessibilityAction={(event) => {
-        if (event.nativeEvent.actionName === "activate") onTap(overlay.id);
+        if (event.nativeEvent.actionName === "activate") props.onOpenControls(overlay.id);
       }}
       style={[
         styles.wrapper,
         {
           left: overlay.x * containerWidth,
           top: overlay.y * containerHeight,
+          zIndex: overlay.zIndex,
           transform: [{ scale: overlay.scale }, { rotate: `${overlay.rotation}deg` }],
           opacity: dragging ? 0.85 : 1,
         },

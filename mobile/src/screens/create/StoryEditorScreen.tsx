@@ -5,6 +5,7 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  Keyboard,
   PanResponder,
   Pressable,
   StyleSheet,
@@ -13,7 +14,6 @@ import {
   View,
   type GestureResponderEvent,
   type LayoutChangeEvent,
-  type PanResponderGestureState,
 } from "react-native";
 import Video from "react-native-video";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -28,7 +28,9 @@ import { FILTER_PREVIEWS, type FilterKey } from "../../models/filterPreviews";
 import { FilterStrip } from "../../components/FilterStrip";
 import { tapFeedback } from "../../utils/haptics";
 import { filteredPhotoUri, forgetFilteredPhoto } from "../../utils/filterPhoto";
+import { filterSwipeStep, pinchPlacement, TAP_SLOP, type Placement, type Touch } from "../../models/canvasGestures";
 import {
+  clampOverlayPosition,
   createEmptyDraft,
   hasMeaningfulEdits,
   filterKey,
@@ -88,6 +90,9 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   const [editingStickerOverlayId, setEditingStickerOverlayId] = useState<string | null>(null);
   const [selectedOverlayId, setSelectedOverlayId] = useState<string | null>(null);
   const [isDraggingOverlay, setIsDraggingOverlay] = useState(false);
+  const [overTrash, setOverTrash] = useState(false);
+  // The object two fingers on the photo resize and rotate: the last one touched or added.
+  const activeOverlayId = useRef<string | null>(null);
   const [uploadState, setUploadState] = useState<"idle" | "uploading" | "done" | "error">("idle");
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [filterToastName, setFilterToastName] = useState<string | null>(null);
@@ -177,15 +182,15 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
 
   const isOverTrash = useCallback(
     (pageX: number, pageY: number) => {
-      // Trash zone sits bottom-center of the editor; approximate its hit box
-      // in absolute (page) coordinates from the container's own layout.
-      const zoneLeft = containerSize.width / 2 - TRASH_ZONE_SIZE / 2;
-      const zoneTop = containerSize.height - TRASH_ZONE_SIZE - spacing.xl;
-      return (
-        pageX >= zoneLeft && pageX <= zoneLeft + TRASH_ZONE_SIZE && pageY >= zoneTop && pageY <= zoneTop + TRASH_ZONE_SIZE
-      );
+      // The trash sits bottom-centre of the full-screen editor, above the home indicator; a little
+      // extra room around it so a finger doesn't have to land exactly on it.
+      const slop = 24;
+      const zoneLeft = containerSize.width / 2 - TRASH_ZONE_SIZE / 2 - slop;
+      const zoneTop = containerSize.height - TRASH_ZONE_SIZE - spacing.xl - insets.bottom - slop;
+      const size = TRASH_ZONE_SIZE + slop * 2;
+      return pageX >= zoneLeft && pageX <= zoneLeft + size && pageY >= zoneTop && pageY <= zoneTop + size;
     },
-    [containerSize],
+    [containerSize, insets.bottom],
   );
 
   const addOrUpdateText = (text: string, properties: TextOverlayProperties) => {
@@ -205,6 +210,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         zIndex: nextZIndex.current++,
         properties,
       };
+      activeOverlayId.current = overlay.id;
       setDraft((d) => ({ ...d, overlays: [...d.overlays, overlay] }));
     }
     setEditingOverlayId(null);
@@ -221,6 +227,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
       zIndex: nextZIndex.current++,
       ...payload,
     } as Overlay;
+    activeOverlayId.current = overlay.id;
     setDraft((d) => ({ ...d, overlays: [...d.overlays, overlay] }));
   }, []);
 
@@ -261,45 +268,116 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
     filterToastTimer.current = setTimeout(() => setFilterToastName(null), 900);
   }, []);
 
+  const currentFilter = useRef(draft.filter);
+  currentFilter.current = draft.filter;
   const cycleFilter = useCallback(
     (direction: 1 | -1) => {
-      setDraft((d) => {
-        const currentIndex = FILTER_PREVIEWS.findIndex((f) => f.name === d.filter);
-        const nextIndex = (currentIndex + direction + FILTER_PREVIEWS.length) % FILTER_PREVIEWS.length;
-        const next = FILTER_PREVIEWS[nextIndex];
-        showFilterToast(next.name);
-        tapFeedback("select");
-        return { ...d, filter: next.name };
-      });
+      const currentIndex = FILTER_PREVIEWS.findIndex((f) => f.name === currentFilter.current);
+      const next = FILTER_PREVIEWS[(currentIndex + direction + FILTER_PREVIEWS.length) % FILTER_PREVIEWS.length]!;
+      currentFilter.current = next.name;
+      showFilterToast(next.name);
+      tapFeedback("select");
+      setDraft((d) => ({ ...d, filter: next.name }));
     },
     [showFilterToast],
   );
 
-  const SWIPE_FILTER_THRESHOLD = 40;
+  /** Touching an object brings it to the front and makes it the one two fingers on the photo act on. */
+  const raiseOverlay = useCallback((id: string) => {
+    activeOverlayId.current = id;
+    setDraft((d) => {
+      const top = Math.max(0, ...d.overlays.map((o) => o.zIndex));
+      const target = d.overlays.find((o) => o.id === id);
+      if (!target || target.zIndex === top) return d;
+      nextZIndex.current = top + 2;
+      return { ...d, overlays: d.overlays.map((o) => (o.id === id ? { ...o, zIndex: top + 1 } : o)) };
+    });
+  }, []);
 
-  // Swipe-to-cycle filters (spec: "swipe-to-cycle with a briefly-shown
-  // filter name, suppressed while actively manipulating a text/sticker
-  // object"). This layer sits beneath the canvas objects in paint order
-  // (rendered before them, right below), so it only ever receives a touch
-  // that starts on empty canvas — a touch that starts on an object hits
-  // that object's own PanResponder first (RN's topmost-sibling-wins
-  // hit-testing), which is what "suppressed while manipulating an object"
-  // means in practice here, with no extra flag needed. Rendered only
-  // outside draw mode, and any modal (text/stickers/adjust) already
-  // blocks all touches to the screen beneath it while open.
-  const filterSwipeGesture = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
-        onMoveShouldSetPanResponder: (_evt: GestureResponderEvent, gestureState: PanResponderGestureState) =>
-          Math.abs(gestureState.dx) > 10 && Math.abs(gestureState.dx) > Math.abs(gestureState.dy),
-        onPanResponderRelease: (_evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
-          if (gestureState.dx <= -SWIPE_FILTER_THRESHOLD) cycleFilter(1);
-          else if (gestureState.dx >= SWIPE_FILTER_THRESHOLD) cycleFilter(-1);
-        },
-      }),
-    [cycleFilter],
+  /** A tap on an object: text opens for editing, a location or date opens its editor. */
+  const editOverlay = useCallback(
+    (id: string) => {
+      const o = draft.overlays.find((x) => x.id === id);
+      if (o?.type === "text") {
+        setEditingOverlayId(id);
+        setTextModalVisible(true);
+      } else if (o?.type === "location" || o?.type === "datetime") {
+        openStickerEditor(id);
+      }
+    },
+    [draft.overlays, openStickerEditor],
   );
+
+  // The photo itself (like Instagram): swipe sideways to change the filter as the finger moves,
+  // tap to add text, and pinch with two fingers to resize and turn the last object touched. Objects
+  // sit above this layer and take their own touches first. It must stay a real native view
+  // (`collapsable={false}`): an empty view is dropped on Android and touches fall through.
+  const canvasLatest = useRef({ cycleFilter, draft, containerSize });
+  canvasLatest.current = { cycleFilter, draft, containerSize };
+  const canvasGesture = useMemo(() => {
+    let steps = 0;
+    let moved = false;
+    let pinch: { id: string; start: Placement; from: [Touch, Touch] } | null = null;
+    let pinched = false;
+    let swipeStart = { x: 0, y: 0 };
+    const touchesOf = (evt: GestureResponderEvent): Touch[] => evt.nativeEvent.touches.map((t) => ({ pageX: t.pageX, pageY: t.pageY }));
+    const startPinch = (touches: Touch[]) => {
+      const id = activeOverlayId.current;
+      const o = canvasLatest.current.draft.overlays.find((x) => x.id === id);
+      pinch = o ? { id: o.id, start: { x: o.x, y: o.y, scale: o.scale, rotation: o.rotation }, from: [touches[0]!, touches[1]!] } : null;
+      pinched = true;
+    };
+    return PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderTerminationRequest: () => false,
+      onPanResponderGrant: (evt) => {
+        steps = 0;
+        moved = false;
+        pinched = false;
+        pinch = null;
+        swipeStart = { x: evt.nativeEvent.pageX, y: evt.nativeEvent.pageY };
+        const touches = touchesOf(evt);
+        if (touches.length >= 2) startPinch(touches);
+      },
+      onPanResponderMove: (evt) => {
+        const touches = touchesOf(evt);
+        if (touches.length >= 2) {
+          if (!pinch) startPinch(touches);
+          if (!pinch) return;
+          const { width, height } = canvasLatest.current.containerSize;
+          const next = pinchPlacement(pinch.start, pinch.from, [touches[0]!, touches[1]!], width, height);
+          updateOverlay(pinch.id, { ...next, ...clampOverlayPosition(next.x, next.y) });
+          return;
+        }
+        if (pinched || touches.length === 0) return;
+        const dx = touches[0]!.pageX - swipeStart.x;
+        const dy = touches[0]!.pageY - swipeStart.y;
+        if (Math.hypot(dx, dy) > TAP_SLOP) moved = true;
+        // Each further swipe distance moves one more filter, while the finger is still down.
+        const step = filterSwipeStep(dx, dy);
+        if (step !== 0) {
+          canvasLatest.current.cycleFilter(step === -1 ? 1 : -1);
+          steps += 1;
+          swipeStart = { x: touches[0]!.pageX, y: touches[0]!.pageY };
+        }
+      },
+      onPanResponderRelease: () => {
+        if (!moved && !pinched && steps === 0) {
+          // The first tap with the caption keyboard open only closes it.
+          if (Keyboard.isVisible()) Keyboard.dismiss();
+          else {
+            setEditingOverlayId(null);
+            setTextModalVisible(true);
+          }
+        }
+        pinch = null;
+      },
+      onPanResponderTerminate: () => {
+        pinch = null;
+      },
+    });
+  }, [updateOverlay]);
 
   const confirmDiscard = useCallback(
     (onDiscard: () => void) => {
@@ -387,7 +465,8 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         {!drawMode && !cropMode ? (
           <View
             style={StyleSheet.absoluteFill}
-            {...filterSwipeGesture.panHandlers}
+            collapsable={false}
+            {...canvasGesture.panHandlers}
             accessibilityElementsHidden
             importantForAccessibility="no-hide-descendants"
           />
@@ -428,18 +507,13 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
                   setSelectedOverlayId((s) => (s === id ? null : s));
                 }}
                 onDragStateChange={setIsDraggingOverlay}
-                onTap={(id) => setSelectedOverlayId(id)}
-                onDoubleTap={(id) => {
-                  const o = draft.overlays.find((x) => x.id === id);
-                  if (o?.type === "text") {
-                    setEditingOverlayId(id);
-                    setTextModalVisible(true);
-                  } else if (o?.type === "location" || o?.type === "datetime") {
-                    openStickerEditor(id);
-                  } else {
-                    setSelectedOverlayId(id);
-                  }
+                onOverTrashChange={(over) => {
+                  if (over) tapFeedback("tap");
+                  setOverTrash(over);
                 }}
+                onTouchStart={raiseOverlay}
+                onTap={editOverlay}
+                onOpenControls={(id) => setSelectedOverlayId(id)}
               />
             ))
           : containerSize.width > 0
@@ -469,11 +543,15 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             strokes={draft.drawing}
             onChangeStrokes={(strokes) => setDraft((d) => ({ ...d, drawing: strokes }))}
             onDone={() => setDrawMode(false)}
+            insets={{ top: insets.top, bottom: insets.bottom }}
           />
         ) : null}
 
         {isDraggingOverlay ? (
-          <View style={[styles.trashZone, { width: TRASH_ZONE_SIZE, height: TRASH_ZONE_SIZE, bottom: spacing.xl + insets.bottom }]}>
+          <View
+            pointerEvents="none"
+            style={[styles.trashZone, overTrash && styles.trashZoneActive, { width: TRASH_ZONE_SIZE, height: TRASH_ZONE_SIZE, bottom: spacing.xl + insets.bottom }]}
+          >
             <Icon style={styles.trashIcon} name={ICONS.trash} />
           </View>
         ) : null}
@@ -499,7 +577,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         </>
       ) : null}
 
-      {!drawMode && !cropMode ? (
+      {!drawMode && !cropMode && !isDraggingOverlay ? (
         <View style={[styles.topBar, { top: insets.top + spacing.md }]}>
           <Pressable onPress={onClose} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close editor">
             <Icon style={styles.topIcon} name={ICONS.close} />
@@ -547,7 +625,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         </View>
       ) : null}
 
-      {!drawMode && !cropMode ? (
+      {!drawMode && !cropMode && !isDraggingOverlay ? (
         // Lifted above the keyboard while the caption is typed (the canvas behind stays put).
         <KeyboardAvoider
           behavior="position"
@@ -686,6 +764,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  trashZoneActive: { backgroundColor: colors.danger, transform: [{ scale: 1.25 }] },
   trashIcon: { fontSize: 28 },
   filterToast: {
     position: "absolute",
