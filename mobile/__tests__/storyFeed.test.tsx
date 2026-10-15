@@ -66,12 +66,14 @@ afterEach(async () => {
 async function settle(): Promise<void> {
   for (let i = 0; i < 5; i++) await act(async () => { await Promise.resolve(); });
 }
-async function renderFeed(username = "viewer"): Promise<void> {
+const openProfile = jest.fn();
+async function renderFeed(username = "viewer", creators = ["alice", "bob"]): Promise<void> {
+  openProfile.mockClear();
   mockSession.user.username = username;
   await act(async () => {
     tree = create(
       <SafeAreaProvider initialMetrics={metrics}>
-        <StoryFeed creators={["alice", "bob"]} startIndex={0} onOpenDM={jest.fn()} onOpenProfile={jest.fn()} />
+        <StoryFeed creators={creators} startIndex={0} onOpenDM={jest.fn()} onOpenProfile={openProfile} />
       </SafeAreaProvider>,
     );
   });
@@ -107,6 +109,24 @@ test("the right rail is Like, Comment, Share, More; everyone sees the view count
   await act(async () => tree.unmount());
   await renderFeed("alice");
   expect(storiesApi.getMyActiveStories).toHaveBeenCalled();
+});
+
+test("under someone's Story: a comment bar; the name opens their profile; your own Story shows its views", async () => {
+  await renderFeed();
+  const byLabel = (label: string) => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === label);
+  expect(texts()).toContain("Add a comment…");
+  await act(async () => byLabel("Add a comment").props.onPress());
+  // The comments open with the keyboard up, ready to write.
+  expect(tree.root.findByType("CommentsSheet" as never).props).toMatchObject({ visible: true, autoFocus: true });
+  await act(async () => byLabel("Open @alice's profile").props.onPress());
+  expect(openProfile).toHaveBeenCalledWith("alice");
+
+  await act(async () => tree.unmount());
+  // Your own Stories come from your own list.
+  (storiesApi.getMyActiveStories as jest.Mock).mockResolvedValueOnce({ stories: (await storiesApi.getUserActiveStories("alice", "t")).stories });
+  await renderFeed("alice", ["alice"]);
+  expect(texts()).toContain("12 views");
+  expect(texts()).not.toContain("Add a comment…");
 });
 
 test("tap right and left move within a creator; a double-tap likes instead of moving", async () => {

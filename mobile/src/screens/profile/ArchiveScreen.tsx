@@ -1,3 +1,4 @@
+import { AddToHighlightSheet } from "../../components/AddToHighlightSheet";
 import { Icon } from "../../components/Icon";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Alert, Image, Pressable, SectionList, StyleSheet, Text, View, useWindowDimensions } from "react-native";
@@ -105,11 +106,9 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
     setSelected((current) => (current.includes(storyId) ? current.filter((id) => id !== storyId) : [...current, storyId]));
   };
 
-  const onCreateHighlight = () => {
-    const storyIds = selected;
-    setSelected([]);
-    navigation.navigate("HighlightEditor", { initialStoryIds: storyIds });
-  };
+  // Add the selection to a Highlight you have, or start a new one.
+  const [addOpen, setAddOpen] = useState(false);
+  const onCreateHighlight = () => setAddOpen(true);
 
   const onDelete = () => {
     if (selected.length === 0 || !accessToken) return;
@@ -202,11 +201,20 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
               {deleting ? <ActivityIndicator color={colors.danger} /> : <View style={{flexDirection:"row",alignItems:"center",gap:6}}><Icon name="trash" color={colors.danger}/><Text style={styles.actionDelete}>Delete</Text></View>}
             </Pressable>
             <Pressable accessibilityRole="button" onPress={onCreateHighlight} hitSlop={8} style={styles.actionButton}>
-              <View style={{flexDirection:"row",alignItems:"center",gap:6}}><Icon name="add" color={colors.onAccent}/><Text style={styles.actionCreate}>Create Highlight</Text></View>
+              <View style={{flexDirection:"row",alignItems:"center",gap:6}}><Icon name="add" color={colors.onAccent}/><Text style={styles.actionCreate}>Add to Highlight</Text></View>
             </Pressable>
           </View>
         </View>
       ) : null}
+      <AddToHighlightSheet
+        visible={addOpen}
+        storyIds={selected}
+        onClose={() => setAddOpen(false)}
+        onAdded={(title) => {
+          setSelected([]);
+          Alert.alert("Added", `Added to ${title}.`);
+        }}
+      />
     </View>
   );
 }

@@ -361,3 +361,28 @@ describe("reordering Highlights", () => {
     assert.equal(foreignId.status, 422, "someone else's Highlight id can't be smuggled into your own order");
   });
 });
+
+describe("a profile's Story count", () => {
+  it("counts every Story posted and not deleted, for anyone who looks", async () => {
+    const owner = await signupUser();
+    const visitor = await signupUser();
+    const first = await publishStory(owner.accessToken);
+    await publishStory(owner.accessToken);
+    await publishStory(owner.accessToken, { audience: "followers" });
+    const count = async () => (await client.get(`/api/v1/users/${owner.input.username}`, authHeader(visitor.accessToken))).body.profile.storyCount;
+    assert.equal(await count(), 3);
+    assert.equal((await client.delete(`/api/v1/stories/${first}`, authHeader(owner.accessToken))).status, 204);
+    assert.equal(await count(), 2);
+  });
+
+  it("adds Archive Stories to an existing Highlight, keeping its own first", async () => {
+    const owner = await signupUser();
+    const headers = authHeader(owner.accessToken);
+    const a = await publishStory(owner.accessToken);
+    const b = await publishStory(owner.accessToken);
+    const created = await client.post("/api/v1/highlights", { title: "Trips", storyIds: [a] }, headers);
+    const updated = await client.patch(`/api/v1/highlights/${created.body.highlight.id}`, { storyIds: [a, b] }, headers);
+    assert.equal(updated.status, 200);
+    assert.deepEqual(updated.body.highlight.items.map((i: { storyId: string }) => i.storyId), [a, b]);
+  });
+});

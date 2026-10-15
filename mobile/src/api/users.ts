@@ -16,6 +16,8 @@ export interface ProfileView {
   isSelf: boolean;
   followerCount: number;
   followingCount: number;
+  /** Stories posted so far (not deleted, expired included); missing from a server before release r3. */
+  storyCount?: number;
   viewer: {
     isFollowing: boolean;
     isFollowedBy: boolean;

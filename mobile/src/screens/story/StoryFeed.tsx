@@ -67,6 +67,9 @@ export interface StoryFeedProps {
  * opened from their profile, a notification, or a DM share — `onClose`
  * provided so there's something to return to).
  */
+/** The comment box (or your Story's Activity button) along the bottom. */
+const BOTTOM_BAR_HEIGHT = 46;
+
 export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpenDM, onOpenProfile, onRefresh, onNeedMore, sponsored = [] }: StoryFeedProps): React.JSX.Element {
   // Overlays clear the status bar / notch; the bottom ones also the home indicator when no tab bar is below.
   const insets = useScreenInsets();
@@ -103,6 +106,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   const [heartPulse] = useState(() => new Animated.Value(0));
 
   const [commentsOpen, setCommentsOpen] = useState(false);
+  const [commentFocus, setCommentFocus] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [insightsOpen, setInsightsOpen] = useState(false);
@@ -624,7 +628,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         ))}
       </View>
 
-      <View style={[styles.actionRail, { bottom: spacing.xl * 3 + insets.bottom }]}>
+      <View style={[styles.actionRail, { bottom: BOTTOM_BAR_HEIGHT + spacing.xl * 2 + insets.bottom }]}>
         <Pressable onPress={toggleLike} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel={detail?.viewerHasLiked ? "Unlike" : "Like"}>
           <Icon style={[styles.actionIcon, detail?.viewerHasLiked && styles.actionIconLiked]} name={detail?.viewerHasLiked ? ICONS.liked : ICONS.like} />
           <Text style={styles.actionCount}>{detail?.likeCount ?? "—"}</Text>
@@ -643,6 +647,13 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           <Text style={styles.actionCount}>{detail?.commentCount ?? "—"}</Text>
         </Pressable>
         {!isOwnStory ? (
+          // How many have seen it; who they are is the owner's to see (StoryInsightsSheet).
+          <View style={styles.actionButton} accessible accessibilityLabel={`${viewCount ?? 0} views`}>
+            <Icon style={styles.actionIcon} name={ICONS.viewers} />
+            <Text style={styles.actionCount}>{viewCount ?? "—"}</Text>
+          </View>
+        ) : null}
+        {!isOwnStory ? (
           <Pressable onPress={() => setReplyOpen(true)} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel="Reply">
             <Icon style={styles.actionIcon} name={ICONS.send} />
           </Pressable>
@@ -655,12 +666,15 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         </Pressable>
       </View>
 
-      <View style={[styles.footer, { bottom: spacing.xl + insets.bottom }]}>
-        <View style={styles.avatarRing}>
+      <View style={[styles.footer, { bottom: BOTTOM_BAR_HEIGHT + spacing.md + insets.bottom }]}>
+        {/* The creator's photo and name open their profile. */}
+        <Pressable onPress={() => currentUsername && onOpenProfile(currentUsername)} hitSlop={8} style={styles.avatarRing} accessibilityRole="button" accessibilityLabel={`@${currentUsername ?? ""}'s profile`}>
           <Avatar username={currentUsername ?? ""} size={30} />
-        </View>
+        </Pressable>
         <View style={styles.footerText}>
-          <Text style={styles.username}>@{currentUsername}</Text>
+          <Pressable onPress={() => currentUsername && onOpenProfile(currentUsername)} hitSlop={8} accessibilityRole="button" accessibilityLabel={`Open @${currentUsername ?? ""}'s profile`}>
+            <Text style={styles.username}>@{currentUsername}</Text>
+          </Pressable>
           {currentStory.audience === "close_friends" ? (
             <View style={styles.closeFriendsBadge} accessible accessibilityLabel="Shared with Close Friends">
               <Icon name={ICONS.starFilled} size={11} color={colors.onAccent} />
@@ -674,17 +688,32 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
             </Text>
           ) : null}
         </View>
-        {/* Visible to any authorized viewer — who's behind the number, and the rest of Insights, is owner-only (StoryInsightsSheet). */}
+      </View>
+
+      {/* Like Instagram: write a comment under someone's Story; your own shows who has seen it. */}
+      <View style={[styles.bottomBar, { bottom: spacing.md + insets.bottom }]}>
         {isOwnStory ? (
-          <Pressable onPress={() => setInsightsOpen(true)} hitSlop={8} style={[styles.viewCountButton, styles.viewCountRow]} accessibilityRole="button" accessibilityLabel={`${viewCount ?? 0} views. Open viewers and Insights`}>
-            <Icon name={ICONS.viewers} size={20} color={styles.viewCount.color} />
-            <Text style={styles.viewCount}>{viewCount ?? "—"}</Text>
+          <Pressable onPress={() => setInsightsOpen(true)} style={styles.activityButton} accessibilityRole="button" accessibilityLabel={`Activity, ${viewCount ?? 0} views. Open viewers and Insights`}>
+            <Icon name={ICONS.viewers} size={22} color={colors.textPrimary} />
+            <Text style={styles.activityLabel}>{viewCount === null ? "Activity" : `${viewCount} ${viewCount === 1 ? "view" : "views"}`}</Text>
+          </Pressable>
+        ) : currentStory.allowComments === "disabled" ? (
+          <Pressable onPress={() => setReplyOpen(true)} style={styles.commentBar} accessibilityRole="button" accessibilityLabel={`Send a message to @${currentUsername ?? ""}`}>
+            <Text style={styles.commentPlaceholder}>Send a message…</Text>
           </Pressable>
         ) : (
-          <View style={styles.viewCountRow} accessible accessibilityLabel={`${viewCount ?? 0} views`}>
-            <Icon name={ICONS.viewers} size={20} color={styles.viewCount.color} />
-            <Text style={styles.viewCount}>{viewCount ?? "—"}</Text>
-          </View>
+          <Pressable
+            onPress={() => {
+              emit("comment_open", { storyId: currentStory.id, creatorId: currentStory.ownerId });
+              setCommentFocus(true);
+              setCommentsOpen(true);
+            }}
+            style={styles.commentBar}
+            accessibilityRole="button"
+            accessibilityLabel="Add a comment"
+          >
+            <Text style={styles.commentPlaceholder}>Add a comment…</Text>
+          </Pressable>
         )}
       </View>
 
@@ -718,7 +747,11 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         storyId={currentStory.id}
         storyOwnerId={currentStory.ownerId}
         commentsDisabled={currentStory.allowComments === "disabled"}
-        onClose={() => setCommentsOpen(false)}
+        autoFocus={commentFocus}
+        onClose={() => {
+          setCommentsOpen(false);
+          setCommentFocus(false);
+        }}
         onCommentCountChange={(delta) => setDetail((d) => (d ? { ...d, commentCount: Math.max(0, d.commentCount + delta) } : d))}
       />
       <ShareSheet
@@ -772,6 +805,20 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   progressFill: { height: "100%", backgroundColor: colors.textPrimary },
+  bottomBar: { position: "absolute", left: spacing.md, right: spacing.md, height: BOTTOM_BAR_HEIGHT, flexDirection: "row", alignItems: "center" },
+  commentBar: {
+    flex: 1,
+    height: BOTTOM_BAR_HEIGHT,
+    justifyContent: "center",
+    paddingHorizontal: spacing.md,
+    borderRadius: radii.pill,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.55)",
+    backgroundColor: "rgba(0,0,0,0.25)",
+  },
+  commentPlaceholder: { color: "rgba(255,255,255,0.85)", fontSize: 15 },
+  activityButton: { flexDirection: "row", alignItems: "center", gap: spacing.sm, height: BOTTOM_BAR_HEIGHT, paddingHorizontal: spacing.md, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.4)" },
+  activityLabel: { color: colors.textPrimary, fontSize: 15, fontWeight: "700" },
   actionRail: {
     position: "absolute",
     right: spacing.md,
@@ -807,9 +854,6 @@ const styles = StyleSheet.create({
   username: { color: colors.textPrimary, fontWeight: "700" },
   caption: { color: colors.textPrimary, marginTop: 2 },
   sequence: { color: "rgba(255,255,255,0.7)", fontSize: 12, marginTop: 2 },
-  viewCountButton: { alignItems: "flex-end" },
-  viewCount: { color: colors.textPrimary, fontSize: 15, fontWeight: "700" },
-  viewCountRow: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 12, paddingVertical: 7, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.4)" },
   closeButton: { position: "absolute", top: spacing.xl, right: spacing.md },
   closeFriendsBadge: { flexDirection: "row", alignItems: "center", gap: 3, alignSelf: "flex-start", backgroundColor: colors.success, borderRadius: radii.pill, paddingHorizontal: spacing.sm, paddingVertical: 2, marginTop: 4 },
   closeFriendsBadgeText: { color: colors.onAccent, fontSize: 11, fontWeight: "700" },

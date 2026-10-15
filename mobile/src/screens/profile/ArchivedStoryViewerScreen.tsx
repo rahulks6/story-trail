@@ -1,3 +1,4 @@
+import { AddToHighlightSheet } from "../../components/AddToHighlightSheet";
 import { Icon } from "../../components/Icon";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Animated, Image, Pressable, StyleSheet, Text, View } from "react-native";
@@ -5,7 +6,7 @@ import Video from "react-native-video";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import type { RootStackParamList } from "../../navigation/types";
-import { colors, spacing, ICONS } from "../../theme";
+import { colors, radii, spacing, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { getStoryDetail, type StoryDetail } from "../../api/engagement";
 import { getMedia } from "../../api/media";
@@ -43,6 +44,8 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
   const [mediaKind, setMediaKind] = useState<"photo" | "video" | null>(null);
   const [videoDurationMs, setVideoDurationMs] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
+  const [added, setAdded] = useState<string | null>(null);
   const [containerSize, onContainerLayout] = useContainerLayout();
   const progress = useRef(new Animated.Value(0)).current;
   const animationRef = useRef<Animated.CompositeAnimation | null>(null);
@@ -146,7 +149,22 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
         />
       </View>
 
-      {detail.caption ? <Text style={[styles.caption, { bottom: spacing.xl + insets.bottom }]}>{detail.caption}</Text> : null}
+      {detail.caption ? <Text style={[styles.caption, { bottom: spacing.xl * 3 + insets.bottom }]}>{detail.caption}</Text> : null}
+
+      <Pressable
+        onPress={() => {
+          // Stay on this Story while choosing.
+          animationRef.current?.stop();
+          setAddOpen(true);
+        }}
+        style={[styles.addButton, { bottom: spacing.md + insets.bottom }]}
+        accessibilityRole="button"
+        accessibilityLabel="Add to Highlight"
+      >
+        <Icon name={added ? ICONS.check : ICONS.add} size={18} color={colors.onAccent} />
+        <Text style={styles.addLabel}>{added ? `Added to ${added}` : "Add to Highlight"}</Text>
+      </Pressable>
+      <AddToHighlightSheet visible={addOpen} storyIds={[storyId]} onClose={() => setAddOpen(false)} onAdded={setAdded} />
 
       <Pressable style={[styles.closeButton, { top: insets.top + spacing.sm + 10 }]} onPress={close} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close">
         <Icon style={styles.closeIcon} name={ICONS.close} />
@@ -171,6 +189,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   progressFill: { height: "100%", backgroundColor: "#fff" },
+  addButton: { position: "absolute", alignSelf: "center", flexDirection: "row", alignItems: "center", gap: spacing.xs, backgroundColor: colors.accent, borderRadius: radii.pill, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
+  addLabel: { color: colors.onAccent, fontWeight: "700" },
   caption: {
     position: "absolute",
     bottom: spacing.xl,

@@ -247,7 +247,8 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
         onOpenStory={() => rootNavigation.navigate("StoryViewer", { creators: [profile.username], startIndex: 0 })}
         followsYou={!profile.isSelf && profile.viewer.isFollowedBy}
         stats={[
-          { key: "highlights", value: locked ? null : highlightCount, singular: "Highlight", plural: "Highlights" },
+          // Like the follower count, the number of Stories posted shows even on a private account.
+          { key: "stories", value: profile.storyCount ?? null, singular: "Story", plural: "Stories" },
           {
             key: "followers", value: profile.followerCount, singular: "Follower", plural: "Followers",
             onPress: locked ? undefined : () => rootNavigation.navigate("FollowList", { username: profile.username, mode: "followers" }),

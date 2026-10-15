@@ -51,7 +51,7 @@ const stories = storiesApi as jest.Mocked<typeof storiesApi>;
 const metrics = { frame: { x: 0, y: 0, width: 390, height: 844 }, insets: { top: 47, left: 0, right: 0, bottom: 34 } };
 const profile = (over: Partial<usersApi.ProfileView> = {}, viewer: Partial<usersApi.ProfileView["viewer"]> = {}): usersApi.ProfileView => ({
   id: "11111111-2222-4333-8444-555555555555", username: "asha_k", displayName: "Asha K", bio: "Street food in Pune.", avatarMediaId: null,
-  interests: ["Food", "Travel"], isPrivate: false, isSelf: false, followerCount: 12345, followingCount: 180,
+  interests: ["Food", "Travel"], isPrivate: false, isSelf: false, followerCount: 12345, followingCount: 180, storyCount: 27,
   ...over,
   viewer: { isFollowing: false, isFollowedBy: false, hasPendingRequestFromViewer: false, hasPendingRequestFromTarget: false, isMutedByViewer: false, ...viewer },
 });
@@ -112,7 +112,7 @@ describe("someone else's page", () => {
     api.getProfile.mockResolvedValue({ profile: profile({}, { isFollowedBy: true }) });
     await renderOther();
     expect(navigation.setOptions).toHaveBeenLastCalledWith(expect.objectContaining({ title: "asha_k" }));
-    expect(texts()).toEqual(expect.arrayContaining(["3", "Highlights", "12.3K", "Followers", "180", "Following", "Asha K", "@asha_k", "Follows you", "Street food in Pune.", "Food", "Travel"]));
+    expect(texts()).toEqual(expect.arrayContaining(["27", "Stories", "12.3K", "Followers", "180", "Following", "Asha K", "@asha_k", "Follows you", "Street food in Pune.", "Food", "Travel"]));
     expect(labelled("12,345 followers")).toHaveLength(1);
     expect(texts()).toContain("Follow back");
     expect(tree.root.findAllByType("HighlightsGrid" as never)).toHaveLength(1);
@@ -145,8 +145,8 @@ describe("someone else's page", () => {
     expect(texts()).toEqual(expect.arrayContaining(["This account is private", "Follow @asha_k to see their Stories and Highlights."]));
     expect(tree.root.findAllByType("HighlightsGrid" as never)).toHaveLength(0);
     expect(labelled("Private account")).toHaveLength(1);
-    // Counts still show, but the lists can't be opened and Highlights aren't known.
-    expect(texts()).toContain("—");
+    // Counts still show (the lists can't be opened). How many Stories they have posted shows to everyone, like the follower count.
+    expect(texts()).toEqual(expect.arrayContaining(["27", "Stories"]));
     expect(tree.root.findAll((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === "12,345 followers")).toHaveLength(0);
   });
 
@@ -224,7 +224,7 @@ describe("your own page", () => {
     api.getProfile.mockResolvedValue({ profile: profile({ username: "me_now", isSelf: true, followerCount: 2, followingCount: 1 }) });
     const share = jest.spyOn(Share, "share").mockResolvedValue({ action: "sharedAction" } as never);
     await render(<ProfileScreen />);
-    expect(texts()).toEqual(expect.arrayContaining(["me_now", "Me Now", "@me_now", "Chai and cricket.", "Cricket", "2", "Followers", "1", "Following", "3", "Highlights", "Insights"]));
+    expect(texts()).toEqual(expect.arrayContaining(["me_now", "Me Now", "@me_now", "Chai and cricket.", "Cricket", "2", "Followers", "1", "Following", "27", "Stories", "Insights"]));
     await press("Share profile");
     expect(share).toHaveBeenCalledWith({ message: "@me_now on Katkee: katkee://user/me_now?id=u-me" });
     await press("Edit profile");

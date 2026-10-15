@@ -25,6 +25,8 @@ interface Props {
   commentsDisabled: boolean;
   onClose: () => void;
   onCommentCountChange: (delta: number) => void;
+  /** Opened from the comment bar under a Story: the keyboard comes up straight away. */
+  autoFocus?: boolean;
 }
 
 /**
@@ -35,7 +37,7 @@ interface Props {
  * pauses the Story underneath while open (the caller is responsible for
  * that — see StoryViewerScreen passing `paused` alongside `visible`).
  */
-export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled, onClose, onCommentCountChange }: Props): React.JSX.Element {
+export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled, onClose, onCommentCountChange, autoFocus = false }: Props): React.JSX.Element {
   // Clears Android's navigation bar and the iPhone home indicator.
   const bottomInset = useSafeAreaInsets().bottom;
   const { user, accessToken } = useAuth();
@@ -144,6 +146,7 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
               style={styles.input}
               placeholder="Add a comment…"
               placeholderTextColor={colors.textDisabled}
+              autoFocus={autoFocus}
               value={draft}
               onChangeText={setDraft}
               maxLength={500}

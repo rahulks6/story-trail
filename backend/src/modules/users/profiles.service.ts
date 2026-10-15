@@ -22,6 +22,8 @@ export interface ProfileView {
   isSelf: boolean;
   followerCount: number;
   followingCount: number;
+  /** Stories posted so far (not deleted, expired included). Shown to everyone, like the follower count. */
+  storyCount: number;
   viewer: {
     isFollowing: boolean;
     isFollowedBy: boolean;
@@ -52,9 +54,10 @@ async function profileView(target: usersRepo.UserRecord | null, viewerId: string
     await eventsRepo.insertEvent({ viewerId, eventType: "profile_visit", creatorId: target.id });
   }
 
-  const [relationship, counts] = await Promise.all([
+  const [relationship, counts, storyCount] = await Promise.all([
     socialRepo.getRelationship(viewerId, target.id),
     socialRepo.followCounts(target.id),
+    storiesRepo.countStoriesForOwner(target.id),
   ]);
 
   return {
@@ -68,6 +71,7 @@ async function profileView(target: usersRepo.UserRecord | null, viewerId: string
     isSelf: target.id === viewerId,
     followerCount: counts.followers,
     followingCount: counts.following,
+    storyCount,
     viewer: {
       isFollowing: relationship.isFollowing,
       isFollowedBy: relationship.isFollowedBy,

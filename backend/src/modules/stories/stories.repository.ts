@@ -169,6 +169,12 @@ export async function findStoryByMediaId(mediaId: string): Promise<StoryRecord |
   return row ? mapRow(row) : null;
 }
 
+/** Every Story someone has posted and not deleted, expired ones included: the number on their profile. */
+export async function countStoriesForOwner(ownerId: string): Promise<number> {
+  const row = await queryOne(`SELECT COUNT(*) AS n FROM stories WHERE owner_id = :'owner_id' AND deleted_at IS NULL`, { owner_id: ownerId });
+  return Number(row?.n ?? 0);
+}
+
 export async function softDeleteStory(id: string): Promise<void> {
   await query(`UPDATE stories SET deleted_at = now() WHERE id = :'id'`, { id });
 }

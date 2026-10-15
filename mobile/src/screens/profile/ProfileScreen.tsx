@@ -24,8 +24,8 @@ export function ProfileScreen(): React.JSX.Element {
   const { user, accessToken } = useAuth();
   const insets = useScreenInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [counts, setCounts] = useState<{ followerCount: number; followingCount: number } | null>(null);
-  const [highlightCount, setHighlightCount] = useState<number | null>(null);
+  const [counts, setCounts] = useState<{ followerCount: number; followingCount: number; storyCount: number | null } | null>(null);
+  const [, setHighlightCount] = useState<number | null>(null);
   const [hasActiveStory, setHasActiveStory] = useState(false);
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -35,7 +35,7 @@ export function ProfileScreen(): React.JSX.Element {
     if (!user || !accessToken) return;
     try {
       const { profile } = await getProfile(user.username, accessToken);
-      setCounts({ followerCount: profile.followerCount, followingCount: profile.followingCount });
+      setCounts({ followerCount: profile.followerCount, followingCount: profile.followingCount, storyCount: profile.storyCount ?? null });
     } catch {
       // Non-fatal: the counts show dashes and the rest of the page still works.
     }
@@ -115,7 +115,8 @@ export function ProfileScreen(): React.JSX.Element {
           onOpenStory={() => navigation.navigate("StoryViewer", { creators: [user.username], startIndex: 0 })}
           onAddStory={() => navigation.navigate("Main", { screen: "Create" })}
           stats={[
-            { key: "highlights", value: highlightCount, singular: "Highlight", plural: "Highlights" },
+            // Everyone sees how many Stories have been posted so far.
+            { key: "stories", value: counts?.storyCount ?? null, singular: "Story", plural: "Stories" },
             {
               key: "followers", value: counts?.followerCount ?? null, singular: "Follower", plural: "Followers",
               onPress: () => navigation.navigate("FollowList", { username: user.username, mode: "followers" }),
