@@ -1,0 +1,58 @@
+{
+  "generatedAt": "2026-10-15T08:55:16.104Z",
+  "platform": "android-release",
+  "results": [
+    {
+      "name": "assemble-and-bundle-release",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 121437
+    },
+    {
+      "name": "zipalign-16kb-app-release.apk",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 28
+    },
+    {
+      "name": "apksigner-verify-app-release.apk",
+      "status": "passed",
+      "exitCode": 0,
+      "durationMs": 588
+    }
+  ],
+  "checks": [
+    {
+      "name": "16kb-elf-alignment:app-release.apk",
+      "status": "passed",
+      "librariesChecked": 42,
+      "failures": 0
+    },
+    {
+      "name": "16kb-elf-alignment:app-release.aab",
+      "status": "passed",
+      "librariesChecked": 42,
+      "failures": 0
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "mobile/android/app/build/outputs/apk/release/app-release.apk",
+      "bytes": 114790571,
+      "sha256": "aa836a5bcd222f51ee3dec6f1d9c80b25e4bdc0db45e85a973f91802ca4fb13d"
+    },
+    {
+      "path": "mobile/android/app/build/outputs/bundle/release/app-release.aab",
+      "bytes": 75460187,
+      "sha256": "4f32c3684a739eb4da507d915aaa674215b497c63c39d1729370e99483c114aa"
+    }
+  ],
+  "artifact": "mobile/android/app/build/outputs/apk/release/app-release.apk, mobile/android/app/build/outputs/bundle/release/app-release.aab",
+  "reason": null,
+  "releaseReady": false,
+  "notVerified": [
+    "production signing identity",
+    "physical-device acceptance",
+    "store submission"
+  ]
+}
