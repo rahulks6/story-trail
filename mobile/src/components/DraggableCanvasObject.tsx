@@ -3,6 +3,8 @@ import { PanResponder, StyleSheet, View, type GestureResponderEvent } from "reac
 import { clampOverlayPosition, type Overlay } from "../models/storyDraft";
 import { pinchPlacement, TAP_SLOP, type Placement, type Touch } from "../models/canvasGestures";
 import { OverlayBody } from "./OverlayBody";
+import { PlacedOverlay } from "./PlacedOverlay";
+import { tapFeedback } from "../utils/haptics";
 
 interface Props {
   overlay: Overlay;
@@ -20,6 +22,18 @@ interface Props {
   /** While dragging: whether the finger is over the trash. */
   onOverTrashChange: (over: boolean) => void;
   onDeleted: (id: string) => void;
+  /** While dragging: whether it has snapped to the middle across (x) or down (y). */
+  onGuidesChange?: (guides: { x: boolean; y: boolean }) => void;
+}
+
+/** How close (px) to the middle a drag snaps onto it. */
+export const SNAP_PX = 10;
+
+/** A dragged position, snapped to the middle when it's close: Instagram's centre guides. */
+export function snapToCentre(x: number, y: number, width: number, height: number): { x: number; y: number; guides: { x: boolean; y: boolean } } {
+  const gx = Math.abs(x - 0.5) * width < SNAP_PX;
+  const gy = Math.abs(y - 0.5) * height < SNAP_PX;
+  return { x: gx ? 0.5 : x, y: gy ? 0.5 : y, guides: { x: gx, y: gy } };
 }
 
 const touchesOf = (evt: GestureResponderEvent): Touch[] => evt.nativeEvent.touches.map((t) => ({ pageX: t.pageX, pageY: t.pageY }));
@@ -46,6 +60,13 @@ export function DraggableCanvasObject(props: Props): React.JSX.Element {
     let moved = false;
     let pinched = false;
     let overTrash = false;
+    let guides = { x: false, y: false };
+    const setGuides = (next: { x: boolean; y: boolean }) => {
+      if (next.x === guides.x && next.y === guides.y) return;
+      if ((next.x && !guides.x) || (next.y && !guides.y)) tapFeedback("select");
+      guides = next;
+      latest.current.onGuidesChange?.(next);
+    };
 
     const current = (): Placement => {
       const o = latest.current.overlay;
@@ -61,6 +82,7 @@ export function DraggableCanvasObject(props: Props): React.JSX.Element {
       const p = latest.current;
       if (moved && deleteIfOverTrash && overTrash) p.onDeleted(p.overlay.id);
       else if (!moved && !pinched && deleteIfOverTrash) p.onTap(p.overlay.id);
+      setGuides({ x: false, y: false });
       if (moved) {
         setDragging(false);
         p.onDragStateChange(false);
@@ -104,7 +126,10 @@ export function DraggableCanvasObject(props: Props): React.JSX.Element {
           setDragging(true);
           p.onDragStateChange(true);
         }
-        p.onChange(p.overlay.id, clampOverlayPosition(start.x + dx / p.containerWidth, start.y + dy / p.containerHeight));
+        const placed = clampOverlayPosition(start.x + dx / p.containerWidth, start.y + dy / p.containerHeight);
+        const snapped = snapToCentre(placed.x, placed.y, p.containerWidth, p.containerHeight);
+        setGuides(snapped.guides);
+        p.onChange(p.overlay.id, { x: snapped.x, y: snapped.y });
         const over = p.isOverTrash(touches[0]!.pageX, touches[0]!.pageY);
         if (over !== overTrash) {
           overTrash = over;
@@ -117,7 +142,11 @@ export function DraggableCanvasObject(props: Props): React.JSX.Element {
   }, []);
 
   return (
-    <View
+    <PlacedOverlay
+      overlay={overlay}
+      containerWidth={containerWidth}
+      containerHeight={containerHeight}
+      dimmed={dragging}
       {...panResponder.panHandlers}
       collapsable={false}
       hitSlop={{ top: 16, bottom: 16, left: 16, right: 16 }}
@@ -131,19 +160,9 @@ export function DraggableCanvasObject(props: Props): React.JSX.Element {
       onAccessibilityAction={(event) => {
         if (event.nativeEvent.actionName === "activate") props.onOpenControls(overlay.id);
       }}
-      style={[
-        styles.wrapper,
-        {
-          left: overlay.x * containerWidth,
-          top: overlay.y * containerHeight,
-          zIndex: overlay.zIndex,
-          transform: [{ scale: overlay.scale }, { rotate: `${overlay.rotation}deg` }],
-          opacity: dragging ? 0.85 : 1,
-        },
-      ]}
     >
       <OverlayBody overlay={overlay} containerWidth={containerWidth} containerHeight={containerHeight} />
-    </View>
+    </PlacedOverlay>
   );
 }
 
@@ -168,5 +187,4 @@ function overlayDescription(overlay: Overlay): string {
 }
 
 const styles = StyleSheet.create({
-  wrapper: { position: "absolute" },
 });

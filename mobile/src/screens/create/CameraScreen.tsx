@@ -1,3 +1,4 @@
+import Svg, { Circle } from "react-native-svg";
 import { Icon } from "../../components/Icon";
 import { tapFeedback } from '../../utils/haptics';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -26,6 +27,10 @@ import { BOOMERANG_RECORD_MS, CAPTURE_MODES, shutterLabel, shutterTap, type Capt
 type Props = NativeStackScreenProps<CreateStackParamList, "Camera">;
 
 const MAX_RECORDING_SECONDS = 60;
+/** The shutter's size, and the recording ring just inside its edge. */
+const SHUTTER = 80;
+const RING_RADIUS = SHUTTER / 2 - 3;
+const RING_LENGTH = 2 * Math.PI * RING_RADIUS;
 const RECORD_HOLD_DELAY_MS = 250;
 const RECORD_DRAG_ZOOM_SENSITIVITY = 4; // px of vertical drag per 1x of zoom
 const ZOOM_INDICATOR_HOLD_MS = 900;
@@ -434,14 +439,15 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
       ) : null}
 
       <View style={[styles.topBar, { top: insets.top + spacing.md }]}>
-        <Pressable onPress={() => navigation.goBack()} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close camera">
+        <Pressable onPress={() => navigation.goBack()} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel="Close camera">
           <Icon style={styles.topIcon} name={ICONS.close} />
         </Pressable>
         <View style={styles.topRight}>
           <Pressable
             disabled={!device.hasFlash||isRecording}
             onPress={() => setFlash((f) => (f === "off" ? "on" : "off"))}
-            hitSlop={12}
+            hitSlop={8}
+            style={[styles.toolButton, !device.hasFlash && styles.toolDisabled]}
             accessibilityRole="button"
             accessibilityLabel="Flash"
             accessibilityState={{ selected: flash === "on" }}
@@ -450,15 +456,22 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
           </Pressable>
           <Pressable
             onPress={() => setTimerSeconds((t) => (t === 0 ? 3 : t === 3 ? 10 : 0))}
-            hitSlop={12}
-            style={styles.timerButton}
+            hitSlop={8}
+            style={[styles.toolButton, styles.timerButton]}
             accessibilityRole="button"
             accessibilityLabel={timerSeconds === 0 ? "Timer off" : `Timer, ${timerSeconds} seconds`}
           >
-            <Icon name="timer" style={[styles.topIcon, timerSeconds > 0 && styles.topIconActive]}/><Text style={styles.topIcon}>{timerSeconds > 0 ? `${timerSeconds}s` : ""}</Text>
+            <Icon name="timer" style={[styles.topIcon, timerSeconds > 0 && styles.topIconActive]}/>{timerSeconds > 0 ? <Text style={styles.timerLabel}>{`${timerSeconds}s`}</Text> : null}
           </Pressable>
         </View>
       </View>
+
+      {!hasMicPermission && !isRecording ? (
+        <Pressable onPress={() => void Linking.openSettings().catch(() => undefined)} style={[styles.micNote, { top: insets.top + spacing.md + 52 }]} accessibilityRole="button" accessibilityLabel="Microphone off. Videos record without sound. Open Settings to allow it.">
+          <Icon name={ICONS.audioMuted} size={14} color={colors.textPrimary} />
+          <Text style={styles.micNoteLabel}>Microphone off · videos have no sound</Text>
+        </Pressable>
+      ) : null}
 
       {countdown > 0 ? (
         <View style={styles.countdown} pointerEvents="none" accessibilityLiveRegion="assertive">
@@ -500,7 +513,6 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
       ) : null}
 
       <View style={[styles.bottomBar, { bottom: spacing.xl + insets.bottom }]}>
-        {!hasMicPermission&&<Text style={{color:colors.textPrimary}}>Microphone off</Text>}
         <Pressable onPress={openGallery} hitSlop={12} style={styles.sideButton} accessibilityRole="button" accessibilityLabel="Choose from gallery">
           <Icon style={styles.sideButtonIcon} name={ICONS.gallery} />
         </Pressable>
@@ -528,7 +540,26 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
             if (event.nativeEvent.actionName === "activate") onShutterTap();
             else if (event.nativeEvent.actionName === "longpress" && !isRecording && mode === "normal") startRecording();
           }}
-        />
+        >
+          {/* Like Instagram: a white disc in a ring; while recording, the ring fills as time runs out. */}
+          {isRecording ? (
+            <Svg width={SHUTTER} height={SHUTTER} style={StyleSheet.absoluteFill} pointerEvents="none">
+              <Circle
+                cx={SHUTTER / 2}
+                cy={SHUTTER / 2}
+                r={RING_RADIUS}
+                stroke={mode === "boomerang" ? colors.accent : colors.danger}
+                strokeWidth={5}
+                fill="none"
+                strokeDasharray={`${RING_LENGTH} ${RING_LENGTH}`}
+                strokeDashoffset={RING_LENGTH * (1 - Math.min(1, recordingSeconds / (mode === "boomerang" ? 2 : MAX_RECORDING_SECONDS)))}
+                strokeLinecap="round"
+                transform={`rotate(-90 ${SHUTTER / 2} ${SHUTTER / 2})`}
+              />
+            </Svg>
+          ) : null}
+          <View pointerEvents="none" style={[styles.shutterDisc, mode === "boomerang" && styles.shutterDiscBoomerang, isRecording && styles.shutterDiscRecording]} />
+        </View>
 
         <Pressable
           disabled={isRecording}
@@ -557,9 +588,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   topRight: { flexDirection: "row", gap: spacing.lg },
-  topIcon: { color: colors.textPrimary, fontSize: 20, fontWeight: "600" },
+  topIcon: { color: colors.textPrimary, fontSize: 24, fontWeight: "600" },
+  toolDisabled: { opacity: 0.4 },
+  timerLabel: { color: colors.accent, fontSize: 14, fontWeight: "700" },
   topIconActive: { color: colors.accent },
-  timerButton: { minWidth: 40 },
+  timerButton: { minWidth: 42, flexDirection: "row", gap: 2 },
+  toolButton: { minWidth: 42, height: 42, paddingHorizontal: 9, borderRadius: 21, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0,0,0,0.35)" },
   zoomBadge: {
     position: "absolute",
     alignSelf: "center",
@@ -594,18 +628,25 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: spacing.xl,
   },
-  sideButton: { width: 56, alignItems: "center" },
-  sideButtonIcon: { color: colors.textPrimary, fontSize: 24 },
+  sideButton: { width: 52, height: 52, borderRadius: 26, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0,0,0,0.35)" },
+  sideButtonIcon: { color: colors.textPrimary, fontSize: 26 },
   captureButton: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-    borderWidth: 4,
+    width: SHUTTER,
+    height: SHUTTER,
+    borderRadius: SHUTTER / 2,
+    borderWidth: 5,
     borderColor: colors.textPrimary,
-    backgroundColor: "transparent",
+    alignItems: "center",
+    justifyContent: "center",
   },
   captureButtonBoomerang: { borderColor: colors.accent },
-  captureButtonRecording: { backgroundColor: colors.danger, borderColor: colors.danger },
+  captureButtonRecording: { borderColor: "rgba(255,255,255,0.35)" },
+  shutterDisc: { width: SHUTTER - 18, height: SHUTTER - 18, borderRadius: (SHUTTER - 18) / 2, backgroundColor: colors.textPrimary },
+  shutterDiscBoomerang: { backgroundColor: colors.accent },
+  // Recording: the disc becomes a small red square, like Instagram's stop button.
+  shutterDiscRecording: { width: 30, height: 30, borderRadius: 8, backgroundColor: colors.danger },
+  micNote: { position: "absolute", alignSelf: "center", flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: spacing.md, paddingVertical: 6, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.5)" },
+  micNoteLabel: { color: colors.textPrimary, fontSize: 12, fontWeight: "600" },
   modeRow: { position: "absolute", left: 0, right: 0, flexDirection: "row", justifyContent: "center", gap: spacing.sm },
   modeChip: { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.35)" },
   modeChipActive: { backgroundColor: colors.textPrimary },

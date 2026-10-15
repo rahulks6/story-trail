@@ -41,6 +41,7 @@ import {
 } from "../../models/storyDraft";
 import { DraggableCanvasObject } from "../../components/DraggableCanvasObject";
 import { OverlayBody } from "../../components/OverlayBody";
+import { PlacedOverlay } from "../../components/PlacedOverlay";
 import { TextToolModal } from "../../components/TextToolModal";
 import { StickerSheet, type StickerAddPayload } from "../../components/StickerSheet";
 import { DrawingCanvas } from "../../components/DrawingCanvas";
@@ -50,10 +51,11 @@ import { CropAdjustControls } from "../../components/CropAdjustControls";
 import { savePendingDraft, loadPendingDraft, clearPendingDraft } from "../../state/draftStorage";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
 import { useScreenReader } from "../../hooks/useScreenReader";
+import { Avatar } from "../../components/Avatar";
+import { listCloseFriends } from "../../api/users";
 
 type Props = NativeStackScreenProps<CreateStackParamList, "StoryEditor">;
 type Audience = "public" | "followers" | "close_friends";
-const AUDIENCE_LABELS: Record<Audience, string> = { public: "Public", followers: "Followers", close_friends: "Close Friends" };
 
 const TRASH_ZONE_SIZE = 80;
 /** Long edge of the editor's filtered photo preview, in pixels. */
@@ -95,6 +97,19 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   const [selectedOverlayId, setSelectedOverlayId] = useState<string | null>(null);
   const [isDraggingOverlay, setIsDraggingOverlay] = useState(false);
   const [overTrash, setOverTrash] = useState(false);
+  const [guides, setGuides] = useState({ x: false, y: false });
+  // Whether you have anyone on your Close Friends list (sharing to an empty list reaches no one).
+  const [hasCloseFriends, setHasCloseFriends] = useState<boolean | null>(null);
+  useEffect(() => {
+    if (!accessToken) return;
+    let cancelled = false;
+    listCloseFriends(accessToken, { limit: 1 })
+      .then((r) => { if (!cancelled) setHasCloseFriends(r.closeFriends.length > 0); })
+      .catch(() => { if (!cancelled) setHasCloseFriends(null); });
+    return () => { cancelled = true; };
+  }, [accessToken]);
+  // "Your story" goes to everyone or to followers only; Close Friends has its own button.
+  const storyAudience: Audience = audience === "followers" ? "followers" : "public";
   // The object two fingers on the photo resize and rotate: the last one touched or added.
   const activeOverlayId = useRef<string | null>(null);
   const [uploadState, setUploadState] = useState<"idle" | "uploading" | "done" | "error">("idle");
@@ -409,16 +424,17 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
       navigation.goBack();
     });
 
-  const onShare = async () => {
+  const onShare = async (target: Audience = audience) => {
     if (!accessToken||!user||submittingUpload.current) return;
     submittingUpload.current=true;
+    setAudience(target);
     setUploadState("uploading");
     setUploadError(null);
     try {
       await enqueueUpload(user.id,mediaUri,kind,mimeType,
         {
           caption: draft.caption,
-          audience,
+          audience: target,
           allowComments: "everyone",
           allowSharing: true,
           overlays: draft.overlays,
@@ -523,6 +539,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
                   setOverTrash(over);
                 }}
                 onTouchStart={raiseOverlay}
+                onGuidesChange={setGuides}
                 onTap={editOverlay}
                 onOpenControls={(id) => setSelectedOverlayId(id)}
               />
@@ -530,20 +547,9 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           : containerSize.width > 0
             ? // While drawing or cropping, overlays render statically (no gesture handlers) so drag/pinch never fights with those gestures.
               draft.overlays.map((overlay) => (
-                <View
-                  key={overlay.id}
-                  pointerEvents="none"
-                  style={[
-                    styles.staticOverlay,
-                    {
-                      left: overlay.x * containerSize.width,
-                      top: overlay.y * containerSize.height,
-                      transform: [{ scale: overlay.scale }, { rotate: `${overlay.rotation}deg` }],
-                    },
-                  ]}
-                >
+                <PlacedOverlay key={overlay.id} overlay={overlay} containerWidth={containerSize.width} containerHeight={containerSize.height} pointerEvents="none">
                   <OverlayBody overlay={overlay} containerWidth={containerSize.width} containerHeight={containerSize.height} />
-                </View>
+                </PlacedOverlay>
               ))
             : null}
 
@@ -557,6 +563,10 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             insets={{ top: insets.top, bottom: insets.bottom }}
           />
         ) : null}
+
+        {/* Centre guides while dragging, like Instagram. */}
+        {guides.x ? <View pointerEvents="none" style={styles.guideVertical} /> : null}
+        {guides.y ? <View pointerEvents="none" style={styles.guideHorizontal} /> : null}
 
         {isDraggingOverlay ? (
           <View
@@ -593,11 +603,11 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
 
       {!drawMode && !cropMode && !isDraggingOverlay ? (
         <View style={[styles.topBar, { top: insets.top + spacing.md }]}>
-          <Pressable onPress={onClose} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close editor">
+          <Pressable onPress={onClose} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel="Close editor">
             <Icon style={styles.topIcon} name={ICONS.close} />
           </Pressable>
           <View style={styles.topRight}>
-            <Pressable onPress={() => setCropMode(true)} hitSlop={12} accessibilityRole="button" accessibilityLabel="Crop">
+            <Pressable onPress={() => setCropMode(true)} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel="Crop">
               <Icon style={styles.topIcon} name={ICONS.crop} />
             </Pressable>
             <Pressable
@@ -605,7 +615,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
                 setEditingOverlayId(null);
                 setTextModalVisible(true);
               }}
-              hitSlop={12}
+              hitSlop={8} style={styles.toolButton}
               accessibilityRole="button"
               accessibilityLabel="Add text"
             >
@@ -616,19 +626,19 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
                 setEditingStickerOverlayId(null);
                 setStickerSheetVisible(true);
               }}
-              hitSlop={12}
+              hitSlop={8} style={styles.toolButton}
               accessibilityRole="button"
               accessibilityLabel="Add sticker, emoji, mention, location, or date and time"
             >
               <Icon style={styles.topIcon} name={ICONS.sticker} />
             </Pressable>
-            <Pressable onPress={() => setDrawMode(true)} hitSlop={12} accessibilityRole="button" accessibilityLabel="Draw">
+            <Pressable onPress={() => setDrawMode(true)} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel="Draw">
               <Icon style={styles.topIcon} name={ICONS.draw} />
             </Pressable>
             {kind === "video" && !boomerang ? (
               <Pressable
                 onPress={() => setDraft((d) => ({ ...d, audioMuted: !d.audioMuted }))}
-                hitSlop={12}
+                hitSlop={8} style={styles.toolButton}
                 accessibilityRole="button"
                 accessibilityLabel={draft.audioMuted ? "Audio muted, tap to turn on" : "Audio on, tap to mute"}
               >
@@ -670,57 +680,75 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             returnKeyType="done"
           />
 
-          <View style={styles.audienceRow}>
-            {(["public", "followers", "close_friends"] as Audience[]).map((a) => (
-              <Pressable
-                key={a}
-                onPress={() => setAudience(a)}
-                style={[styles.audienceChip, audience === a && (a === "close_friends" ? styles.audienceChipCloseFriends : styles.audienceChipActive)]}
-                accessibilityRole="button"
-                accessibilityState={{ selected: audience === a }}
-              >
-                <View style={styles.audienceLabelRow}>
-                  {a === "close_friends" ? <Icon name={ICONS.starFilled} size={13} style={[styles.audienceLabel, audience === a && styles.audienceLabelActive]} /> : null}
-                  <Text style={[styles.audienceLabel, audience === a && styles.audienceLabelActive]}>{AUDIENCE_LABELS[a]}</Text>
-                </View>
-              </Pressable>
-            ))}
-          </View>
-          {audience === "close_friends" ? (
-            // Like Instagram: who's on the list is one tap away while sharing to it.
-            <Pressable onPress={() => rootNavigation.navigate("CloseFriends")} hitSlop={8} style={styles.editList} accessibilityRole="button" accessibilityLabel="Edit your Close Friends list">
-              <Text style={styles.editListLabel}>Edit Close Friends list</Text>
-            </Pressable>
-          ) : null}
+          <Pressable
+            onPress={() => setAudience(storyAudience === "public" ? "followers" : "public")}
+            hitSlop={8}
+            style={styles.visibility}
+            accessibilityRole="switch"
+            accessibilityLabel="Your story for followers only"
+            accessibilityState={{ checked: storyAudience === "followers" }}
+          >
+            <Text style={styles.visibilityLabel}>Your story: {storyAudience === "public" ? "Everyone" : "Followers only"}</Text>
+            <Icon name={ICONS.chevron} size={14} color={colors.textPrimary} />
+          </Pressable>
 
           {uploadError ? (
             <View>
               <Text style={styles.uploadError}>{uploadError}</Text>
-              <Pressable style={styles.retryButton} onPress={onShare} accessibilityRole="button">
+              <Pressable style={styles.retryButton} onPress={() => void onShare()} accessibilityRole="button">
                 <Text style={styles.retryButtonLabel}>Retry</Text>
               </Pressable>
             </View>
           ) : null}
 
-          <Pressable
-            style={[styles.uploadButton, uploadState === "uploading" && styles.uploadButtonDisabled]}
-            disabled={uploadState === "uploading" || uploadState === "done"}
-            onPress={onShare}
-            accessibilityRole="button"
-            accessibilityLabel={uploadState === "done" ? "Story published" : "Share Story"}
-            accessibilityState={{ busy: uploadState === "uploading", disabled: uploadState === "uploading" || uploadState === "done" }}
-          >
-            {uploadState === "uploading" ? (
-              <ActivityIndicator color={colors.onAccent} />
-            ) : uploadState === "done" ? (
-              <View style={styles.uploadButtonDone}>
-                <Icon name="check" size={18} color={colors.onAccent} />
-                <Text style={styles.uploadButtonLabel}>Story published</Text>
-              </View>
-            ) : (
-              <Text style={styles.uploadButtonLabel}>Share Story</Text>
-            )}
-          </Pressable>
+          {/* Like Instagram: one tap shares to Your story or to Close Friends. */}
+          <View style={styles.shareRow}>
+            <Pressable
+              style={[styles.shareButton, styles.shareYourStory, uploadState === "uploading" && styles.uploadButtonDisabled]}
+              disabled={uploadState === "uploading" || uploadState === "done"}
+              onPress={() => void onShare(storyAudience)}
+              accessibilityRole="button"
+              accessibilityLabel={`Share to Your story, ${storyAudience === "public" ? "everyone" : "followers only"}`}
+              accessibilityState={{ busy: uploadState === "uploading" && audience !== "close_friends" }}
+            >
+              {uploadState === "uploading" && audience !== "close_friends" ? (
+                <ActivityIndicator color={colors.background} />
+              ) : (
+                <>
+                  <Avatar username={user?.username ?? ""} avatarMediaId={user?.avatarMediaId} size={24} />
+                  <Text style={styles.shareYourStoryLabel}>Your story</Text>
+                </>
+              )}
+            </Pressable>
+            <Pressable
+              style={[styles.shareButton, styles.shareCloseFriends, uploadState === "uploading" && styles.uploadButtonDisabled]}
+              disabled={uploadState === "uploading" || uploadState === "done"}
+              onPress={() => {
+                if (hasCloseFriends === false) {
+                  Alert.alert("No Close Friends yet", "Add people to your Close Friends list, then share to them.", [
+                    { text: "Not now", style: "cancel" },
+                    { text: "Add people", onPress: () => rootNavigation.navigate("CloseFriends") },
+                  ]);
+                  return;
+                }
+                void onShare("close_friends");
+              }}
+              onLongPress={() => rootNavigation.navigate("CloseFriends")}
+              accessibilityRole="button"
+              accessibilityLabel="Share to Close Friends"
+              accessibilityHint="Long press to edit your Close Friends list"
+              accessibilityState={{ busy: uploadState === "uploading" && audience === "close_friends" }}
+            >
+              {uploadState === "uploading" && audience === "close_friends" ? (
+                <ActivityIndicator color={colors.onAccent} />
+              ) : (
+                <>
+                  <Icon name={ICONS.starFilled} size={18} color={colors.onAccent} />
+                  <Text style={styles.shareCloseFriendsLabel}>Close Friends</Text>
+                </>
+              )}
+            </Pressable>
+          </View>
         </KeyboardAvoider>
       ) : null}
 
@@ -764,7 +792,6 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#000" },
   mediaContainer: { flex: 1 },
-  staticOverlay: { position: "absolute" },
   topBar: {
     position: "absolute",
     top: spacing.xl,
@@ -773,8 +800,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  topRight: { flexDirection: "row", gap: spacing.lg },
-  topIcon: { color: colors.textPrimary, fontSize: 16, fontWeight: "600" },
+  topRight: { flexDirection: "row", gap: spacing.sm },
+  // Big, round and readable over any photo, like Instagram's editing tools.
+  toolButton: { width: 42, height: 42, borderRadius: 21, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0,0,0,0.35)" },
+  topIcon: { color: colors.textPrimary, fontSize: 24, fontWeight: "600" },
   cropHint: { color: "rgba(255,255,255,0.85)", fontSize: 13 },
   cropDoneButton: { backgroundColor: colors.accent, borderRadius: radii.pill, paddingHorizontal: spacing.md, paddingVertical: 6 },
   cropDoneLabel: { color: colors.onAccent, fontWeight: "700" },
@@ -794,6 +823,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  guideVertical: { position: "absolute", top: 0, bottom: 0, left: "50%", width: 1, marginLeft: -0.5, backgroundColor: "rgba(80,190,255,0.9)" },
+  guideHorizontal: { position: "absolute", left: 0, right: 0, top: "50%", height: 1, marginTop: -0.5, backgroundColor: "rgba(80,190,255,0.9)" },
   trashZoneActive: { backgroundColor: colors.danger, transform: [{ scale: 1.25 }] },
   trashIcon: { fontSize: 28 },
   filterToast: {
@@ -817,9 +848,14 @@ const styles = StyleSheet.create({
   filterButtons: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.md },
   filterButton: { padding: spacing.sm, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.35)" },
   filterName: { color: colors.textPrimary, fontWeight: "700", minWidth: 90, textAlign: "center" },
-  editList: { alignSelf: "center" },
-  editListLabel: { color: colors.success, fontWeight: "700", fontSize: 13 },
-  audienceLabelRow: { flexDirection: "row", alignItems: "center", gap: 4 },
+  visibility: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: spacing.sm, paddingVertical: 4, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.35)" },
+  visibilityLabel: { color: colors.textPrimary, fontSize: 13, fontWeight: "600" },
+  shareRow: { flexDirection: "row", gap: spacing.sm },
+  shareButton: { flex: 1, height: 48, borderRadius: radii.pill, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm },
+  shareYourStory: { backgroundColor: colors.textPrimary },
+  shareYourStoryLabel: { color: colors.background, fontWeight: "700", fontSize: 15 },
+  shareCloseFriends: { backgroundColor: colors.success },
+  shareCloseFriendsLabel: { color: colors.onAccent, fontWeight: "700", fontSize: 15 },
   boomerangLabel: { color: colors.textPrimary, fontWeight: "700" },
   filterToastLabel: { color: colors.textPrimary, fontSize: 18, fontWeight: "700" },
   bottomArea: { position: "absolute", bottom: spacing.xl, left: 0, right: 0 },
@@ -831,28 +867,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
   },
-  audienceRow: { flexDirection: "row", gap: spacing.xs, justifyContent: "center" },
-  audienceChip: {
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.3)",
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 6,
-  },
-  audienceChipActive: { backgroundColor: colors.textPrimary, borderColor: colors.textPrimary },
-  audienceChipCloseFriends: { backgroundColor: colors.success, borderColor: colors.success },
-  audienceLabel: { color: colors.textPrimary, fontSize: 13 },
-  audienceLabelActive: { color: colors.background, fontWeight: "700" },
   uploadError: { ...typography.caption, color: colors.danger, textAlign: "center" },
   retryButton: { alignSelf: "center", marginTop: spacing.xs, paddingHorizontal: spacing.md, paddingVertical: 4 },
   retryButtonLabel: { color: colors.accent, fontWeight: "700" },
-  uploadButton: {
-    backgroundColor: colors.accent,
-    borderRadius: radii.md,
-    paddingVertical: spacing.sm + 2,
-    alignItems: "center",
-  },
   uploadButtonDisabled: { opacity: 0.7 },
-  uploadButtonLabel: { color: colors.onAccent, fontWeight: "700", fontSize: 16 },
-  uploadButtonDone: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
 });

@@ -1,5 +1,9 @@
 import React from "react";
-import { Modal, Text } from "react-native";
+import { Alert, Modal, StyleSheet, Text } from "react-native";
+import * as uploadQueue from "../src/state/uploadQueue";
+import * as usersApi from "../src/api/users";
+import { snapToCentre } from "../src/components/DraggableCanvasObject";
+import { PlacedOverlay } from "../src/components/PlacedOverlay";
 import { act, create, type ReactTestInstance, type ReactTestRenderer } from "react-test-renderer";
 import { StoryEditorScreen } from "../src/screens/create/StoryEditorScreen";
 import { FILTER_PREVIEWS } from "../src/models/filterPreviews";
@@ -68,5 +72,57 @@ describe("Story editor canvas", () => {
     act(() => canvas().props.onResponderGrant(touchEvent([[200, 300]], 1)));
     act(() => canvas().props.onResponderRelease(touchEvent([[201, 301]], 2)));
     expect(textModalOpen()).toBe(true);
+  });
+});
+
+describe("sharing from the editor, like Instagram", () => {
+  beforeEach(() => jest.restoreAllMocks());
+  const press = (label: string) => act(async () => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === label).props.onPress());
+
+  it("shares to Your story in one tap, to everyone or followers only", async () => {
+    const enqueue = jest.spyOn(uploadQueue, "enqueueUpload").mockResolvedValue({} as never);
+    jest.spyOn(usersApi, "listCloseFriends").mockResolvedValue({ closeFriends: [], limit: 1, offset: 0 });
+    await open();
+    await press("Share to Your story, everyone");
+    expect(enqueue.mock.calls[0]![4]).toMatchObject({ audience: "public" });
+    await act(async () => tree.unmount());
+    enqueue.mockClear();
+    await open();
+    await press("Your story for followers only");
+    await press("Share to Your story, followers only");
+    expect(enqueue.mock.calls[0]![4]).toMatchObject({ audience: "followers" });
+  });
+
+  it("asks you to add people before sharing to an empty Close Friends list, and shares once you have some", async () => {
+    const enqueue = jest.spyOn(uploadQueue, "enqueueUpload").mockResolvedValue({} as never);
+    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+    jest.spyOn(usersApi, "listCloseFriends").mockResolvedValue({ closeFriends: [], limit: 1, offset: 0 });
+    await open();
+    await press("Share to Close Friends");
+    expect(alert.mock.calls.at(-1)![0]).toBe("No Close Friends yet");
+    expect(enqueue).not.toHaveBeenCalled();
+    await act(async () => tree.unmount());
+    jest.spyOn(usersApi, "listCloseFriends").mockResolvedValue({ closeFriends: [{ id: "u1", username: "asha", displayName: "Asha", avatarMediaId: null, addedAt: "" }], limit: 1, offset: 0 });
+    await open();
+    await press("Share to Close Friends");
+    expect(enqueue.mock.calls[0]![4]).toMatchObject({ audience: "close_friends" });
+  });
+});
+
+describe("placing text and stickers", () => {
+  it("snaps to the middle when dragged close to it", () => {
+    expect(snapToCentre(0.51, 0.3, 400, 800)).toEqual({ x: 0.5, y: 0.3, guides: { x: true, y: false } });
+    expect(snapToCentre(0.6, 0.505, 400, 800)).toEqual({ x: 0.6, y: 0.5, guides: { x: false, y: true } });
+  });
+
+  it("centres each one on its spot once measured", async () => {
+    let placed!: ReactTestRenderer;
+    await act(async () => {
+      placed = create(<PlacedOverlay overlay={{ x: 0.5, y: 0.5, scale: 1, rotation: 0, zIndex: 1 }} containerWidth={400} containerHeight={800}><Text>Hi</Text></PlacedOverlay>);
+    });
+    const view = () => placed.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && typeof n.props.onLayout === "function")[0]!;
+    expect(StyleSheet.flatten(view().props.style).opacity).toBe(0);
+    await act(async () => view().props.onLayout({ nativeEvent: { layout: { x: 0, y: 0, width: 100, height: 40 } } }));
+    expect(StyleSheet.flatten(view().props.style)).toMatchObject({ left: 150, top: 380, opacity: 1 });
   });
 });

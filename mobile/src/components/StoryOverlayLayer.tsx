@@ -4,6 +4,7 @@ import type { Overlay, DrawStroke, FilterName } from "../models/storyDraft";
 import { FILTER_PREVIEWS } from "../models/filterPreviews";
 import { OverlayBody } from "./OverlayBody";
 import { DrawingStrokes } from "./DrawingStrokes";
+import { PlacedOverlay } from "./PlacedOverlay";
 
 /**
  * The read-only counterpart to the editor's live canvas: renders a
@@ -49,20 +50,15 @@ export function StoryOverlayLayer({
 
       {containerWidth > 0
         ? sorted.map((overlay) => (
-            <View
+            <PlacedOverlay
               key={overlay.id}
+              overlay={overlay}
+              containerWidth={containerWidth}
+              containerHeight={containerHeight}
               pointerEvents={overlay.type === "mention" ? "auto" : "none"}
-              style={[
-                styles.wrapper,
-                {
-                  left: overlay.x * containerWidth,
-                  top: overlay.y * containerHeight,
-                  transform: [{ scale: overlay.scale }, { rotate: `${overlay.rotation}deg` }],
-                },
-              ]}
             >
               <OverlayBody overlay={overlay} containerWidth={containerWidth} containerHeight={containerHeight} onMentionPress={onMentionPress} />
-            </View>
+            </PlacedOverlay>
           ))
         : null}
     </View>
@@ -80,5 +76,4 @@ export function useContainerLayout(): [{ width: number; height: number }, (e: La
 }
 
 const styles = StyleSheet.create({
-  wrapper: { position: "absolute" },
 });
