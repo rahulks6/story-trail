@@ -88,7 +88,15 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   const device = useCameraDevice(position);
   const camera = useRef<CameraRef>(null);
   const photoOutput = usePhotoOutput({ containerFormat: "jpeg", quality: 0.9 });
-  const videoOutput = useVideoOutput({ enableAudio: hasMicPermission, fileType: "mp4" });
+  // Sound is decided once both permission questions are answered, so the camera isn't rebuilt
+  // mid-session when the microphone answer arrives (a likely cause of "Camera unavailable").
+  const [permissionsSettled, setPermissionsSettled] = useState(hasCameraPermission && hasMicPermission);
+  const [audioEnabled, setAudioEnabled] = useState(hasMicPermission);
+  const videoOutput = useVideoOutput({ enableAudio: audioEnabled, fileType: "mp4" });
+  // A camera error first restarts the camera quietly; only repeated errors are shown.
+  const outputs = useMemo(() => [photoOutput, videoOutput], [photoOutput, videoOutput]);
+  const [cameraKey, setCameraKey] = useState(0);
+  const cameraErrors = useRef<number[]>([]);
   const recorderRef = useRef<Recorder | null>(null);
   const focused=useIsFocused();
   const [foreground,setForeground]=useState(AppState.currentState==='active');
@@ -108,10 +116,33 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   // A different camera starts at its normal zoom.
   useEffect(()=>{zoomRef.current=clamp(1,minZoom,maxZoom);if(!device?.hasFlash)setFlash('off');},[device?.id,minZoom,maxZoom]);
 
+  // One question at a time (Android shows one permission prompt at a time): camera, then microphone.
   useEffect(() => {
-    if (!hasCameraPermission) void requestCameraPermission().catch(()=>undefined);
-    if (!hasMicPermission) void requestMicPermission().catch(()=>undefined);
-  }, [hasCameraPermission, hasMicPermission, requestCameraPermission, requestMicPermission]);
+    let cancelled = false;
+    (async () => {
+      const camOk = hasCameraPermission || (await requestCameraPermission().catch(() => false));
+      const micOk = hasMicPermission || (camOk ? await requestMicPermission().catch(() => false) : false);
+      if (cancelled) return;
+      setAudioEnabled(!!micOk);
+      setPermissionsSettled(true);
+    })();
+    return () => { cancelled = true; };
+    // Asked once when the camera opens.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const onCameraError = useCallback((error: Error) => {
+    if (!activeRef.current) return;
+    const now = Date.now();
+    cameraErrors.current = [...cameraErrors.current.filter((t) => now - t < 10_000), now];
+    if (cameraErrors.current.length <= 2) {
+      // Restart the camera; most errors (a busy camera, an interrupted session) clear on a restart.
+      setCameraKey((k) => k + 1);
+      return;
+    }
+    cameraErrors.current = [];
+    Alert.alert("Camera unavailable", `Close the camera and try again.\n\n(${(error?.message ?? "Unknown error").slice(0, 120)})`);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -406,6 +437,9 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   if (!device) {
     return <EmptyState title="No camera available" message="This device doesn't have a usable camera." />;
   }
+  if (!permissionsSettled) {
+    return <View style={styles.container} />;
+  }
 
   return (
     <View style={styles.container}>
@@ -429,13 +463,14 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
         }}
       >
         <Camera
+          key={cameraKey}
           ref={camera}
           style={StyleSheet.absoluteFill}
           device={device}
           isActive={focused&&foreground}
-          outputs={[photoOutput, videoOutput]}
+          outputs={outputs}
           torchMode={isRecording && flash === "on" && device.hasTorch ? "on" : "off"}
-          onError={() => { if (activeRef.current) Alert.alert("Camera unavailable", "Close the camera and try again."); }}
+          onError={onCameraError}
         />
       </View>
 

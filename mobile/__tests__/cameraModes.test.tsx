@@ -100,3 +100,32 @@ describe("camera modes", () => {
     expect(navigation.replace).toHaveBeenCalledWith("StoryEditor", expect.objectContaining({ kind: "video", effect: "boomerang" }));
   });
 });
+
+describe("starting the camera on a fresh install", () => {
+  afterEach(() => { g.__camera.permission = true; g.__camera.microphone = true; });
+
+  it("asks for the camera, then the microphone, and starts the camera only after both answers", async () => {
+    g.__camera.permission = false;
+    g.__camera.microphone = false;
+    await act(async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      tree = create(<CameraScreen navigation={navigation as any} route={{ key: "Camera", name: "Camera" } as any} />);
+    });
+    await flush();
+    // Both declined: no camera session is started.
+    expect(tree.root.findAll((n: ReactTestInstance) => (n.type as unknown) === "Camera")).toHaveLength(0);
+  });
+
+  it("restarts the camera quietly after an error, and explains only if it keeps failing", async () => {
+    const { Alert } = require("react-native");
+    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+    await render();
+    const cam = () => tree.root.find((n: ReactTestInstance) => (n.type as unknown) === "Camera");
+    await act(async () => cam().props.onError(new Error("busy")));
+    await act(async () => cam().props.onError(new Error("busy")));
+    expect(alert).not.toHaveBeenCalled();
+    await act(async () => cam().props.onError(new Error("busy")));
+    expect(alert.mock.calls[0]![0]).toBe("Camera unavailable");
+    alert.mockRestore();
+  });
+});
