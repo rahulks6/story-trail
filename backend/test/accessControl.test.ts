@@ -330,6 +330,24 @@ describe("the Admin API", () => {
   });
 });
 
+describe("Story replies and Close Friends", () => {
+  it("a stranger can't reply to a private account's Story, and nothing reaches the owner", async () => {
+    refused(await attempt("POST /api/v1/stories/:id/replies", `/api/v1/stories/${ids.story}/replies`, stranger, { body: "hello" }), "reply");
+    refused(await request("POST", `/api/v1/stories/${ids.story}/replies`, { reaction: "🔥" }, stranger.auth), "reaction");
+    assert.equal(await count(`messages WHERE sender_id = :'stranger'`, { stranger: stranger.id }), 0, "no message was sent");
+  });
+
+  it("a Close Friends list is its owner's own: putting someone on yours opens nothing of theirs", async () => {
+    const add = await attempt("PUT /api/v1/close-friends/:username", `/api/v1/close-friends/${owner.username}`, stranger);
+    assert.equal(add.status, 204, "a stranger may list anyone on their own list");
+    refused(await request("GET", `/api/v1/stories/${ids.story}`, undefined, stranger.auth), "story after listing its owner");
+    assert.equal(await count(`close_friends WHERE owner_id = :'owner'`, { owner: owner.id }), 0, "the owner's own list is untouched");
+    const lists = await request("GET", "/api/v1/close-friends", undefined, owner.auth);
+    assert.deepEqual(lists.body.closeFriends, [], "and the owner never sees who listed them");
+    assert.equal((await attempt("DELETE /api/v1/close-friends/:username", `/api/v1/close-friends/${owner.username}`, stranger)).status, 204);
+  });
+});
+
 describe("coverage", () => {
   it("every route that takes an id or a username was tried above", () => {
     const parameterized = server.routes().filter((r) => r.path.includes("/:")).map((r) => `${r.method} ${r.path}`);

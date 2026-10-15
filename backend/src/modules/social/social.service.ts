@@ -72,6 +72,8 @@ export async function block(viewerId: string, targetUsername: string): Promise<v
   await socialRepo.createBlock(viewerId, target.id);
   await socialRepo.deleteFollowsBothDirections(viewerId, target.id);
   await socialRepo.deletePendingFollowRequestsBothDirections(viewerId, target.id);
+  await socialRepo.removeCloseFriend(viewerId, target.id);
+  await socialRepo.removeCloseFriend(target.id, viewerId);
 }
 
 export async function unblock(viewerId: string, targetUsername: string): Promise<void> {
@@ -97,4 +99,26 @@ export async function unmute(viewerId: string, targetUsername: string): Promise<
 
 export async function listMuted(viewerId: string, limit: number, offset: number) {
   return socialRepo.listMuted(viewerId, limit, offset);
+}
+
+/** A Close Friends list holds at most this many people. */
+export const MAX_CLOSE_FRIENDS = 1000;
+
+export async function addCloseFriend(viewerId: string, targetUsername: string): Promise<void> {
+  const target = await requireOtherUser(targetUsername, viewerId);
+  if (await socialRepo.anyBlockBetween(viewerId, target.id)) throw new HttpError(404, "User not found.");
+  if ((await socialRepo.countCloseFriends(viewerId)) >= MAX_CLOSE_FRIENDS) {
+    throw new HttpError(409, `Close Friends can hold up to ${MAX_CLOSE_FRIENDS} people.`);
+  }
+  await socialRepo.addCloseFriend(viewerId, target.id);
+}
+
+export async function removeCloseFriend(viewerId: string, targetUsername: string): Promise<void> {
+  const target = await usersRepo.findUserByUsername(targetUsername);
+  if (!target) return; // idempotent
+  await socialRepo.removeCloseFriend(viewerId, target.id);
+}
+
+export async function listCloseFriends(viewerId: string, limit: number, offset: number) {
+  return socialRepo.listCloseFriends(viewerId, limit, offset);
 }

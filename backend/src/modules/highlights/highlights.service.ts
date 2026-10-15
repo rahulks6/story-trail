@@ -1,4 +1,5 @@
 import { HttpError } from "../../http/errors";
+import { audienceAllows, isCloseFriendOf, type AudienceAccess } from "../stories/audience";
 import * as usersRepo from "../users/users.repository";
 import * as socialRepo from "../social/social.repository";
 import * as storiesRepo from "../stories/stories.repository";
@@ -32,10 +33,19 @@ export interface HighlightDetail extends HighlightSummary {
   items: { storyId: string; mediaId: string; position: number; addedAt: string }[];
 }
 
-/** A non-owner viewer only ever sees a Highlight's 'public' items — a followers-only Story keeps that rule inside a Highlight too, not just outside one. */
-function filterVisible(highlight: HighlightWithItems, canSeeFollowersOnly: boolean): HighlightWithItems {
-  if (canSeeFollowersOnly) return highlight;
-  return { ...highlight, items: highlight.items.filter((item) => item.audience === "public") };
+/**
+ * A non-owner viewer only sees the items whose Story audience allows them (stories/audience.ts):
+ * a followers-only or Close Friends Story keeps its rule inside a Highlight too.
+ */
+type HighlightAccess = "owner" | AudienceAccess;
+
+function filterVisible(highlight: HighlightWithItems, access: HighlightAccess): HighlightWithItems {
+  if (access === "owner") return highlight;
+  return { ...highlight, items: highlight.items.filter((item) => audienceAllows(item.audience, access)) };
+}
+
+async function viewerAccess(ownerId: string, viewerId: string, isFollowing: boolean): Promise<AudienceAccess> {
+  return { isFollowing, isCloseFriend: await isCloseFriendOf(ownerId, viewerId) };
 }
 
 function toSummary(highlight: HighlightWithItems): HighlightSummary {
@@ -150,7 +160,7 @@ export async function listHighlightsForUser(username: string, viewerId: string):
   const owner = await usersRepo.findUserByUsername(username);
   if (!owner || !owner.isActive) throw new HttpError(404, "User not found.");
 
-  let canSeeFollowersOnly = owner.id === viewerId;
+  let access: HighlightAccess = "owner";
   if (owner.id !== viewerId) {
     const blocked = await socialRepo.anyBlockBetween(viewerId, owner.id);
     if (blocked) throw new HttpError(404, "User not found.");
@@ -158,20 +168,20 @@ export async function listHighlightsForUser(username: string, viewerId: string):
     if (owner.isPrivate && !relationship.isFollowing) {
       throw new HttpError(403, "This account is private.");
     }
-    canSeeFollowersOnly = relationship.isFollowing;
+    access = await viewerAccess(owner.id, viewerId, relationship.isFollowing);
   }
 
   const highlights = await highlightsRepo.listForOwner(owner.id);
-  return highlights.map((h) => toSummary(filterVisible(h, canSeeFollowersOnly)));
+  return highlights.map((h) => toSummary(filterVisible(h, access)));
 }
 
 async function requireVisibleHighlight(
   highlightId: string,
   viewerId: string,
-): Promise<{ highlight: HighlightWithItems; canSeeFollowersOnly: boolean }> {
+): Promise<{ highlight: HighlightWithItems; access: HighlightAccess }> {
   const highlight = await highlightsRepo.getWithItems(highlightId);
   if (!highlight) throw new HttpError(404, "Highlight not found.");
-  if (highlight.ownerId === viewerId) return { highlight, canSeeFollowersOnly: true };
+  if (highlight.ownerId === viewerId) return { highlight, access: "owner" };
 
   const blocked = await socialRepo.anyBlockBetween(viewerId, highlight.ownerId);
   if (blocked) throw new HttpError(404, "Highlight not found.");
@@ -182,12 +192,12 @@ async function requireVisibleHighlight(
   if (owner.isPrivate && !relationship.isFollowing) {
     throw new HttpError(403, "This account is private.");
   }
-  return { highlight, canSeeFollowersOnly: relationship.isFollowing };
+  return { highlight, access: await viewerAccess(highlight.ownerId, viewerId, relationship.isFollowing) };
 }
 
 export async function getHighlightDetail(highlightId: string, viewerId: string): Promise<HighlightDetail> {
-  const { highlight, canSeeFollowersOnly } = await requireVisibleHighlight(highlightId, viewerId);
-  return toDetail(filterVisible(highlight, canSeeFollowersOnly));
+  const { highlight, access } = await requireVisibleHighlight(highlightId, viewerId);
+  return toDetail(filterVisible(highlight, access));
 }
 
 /**

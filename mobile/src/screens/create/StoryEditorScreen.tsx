@@ -50,7 +50,8 @@ import { savePendingDraft, loadPendingDraft, clearPendingDraft } from "../../sta
 import { useScreenInsets } from "../../hooks/useScreenInsets";
 
 type Props = NativeStackScreenProps<CreateStackParamList, "StoryEditor">;
-type Audience = "public" | "followers";
+type Audience = "public" | "followers" | "close_friends";
+const AUDIENCE_LABELS: Record<Audience, string> = { public: "Public", followers: "Followers", close_friends: "Close Friends" };
 
 const TRASH_ZONE_SIZE = 80;
 /** Long edge of the editor's filtered photo preview, in pixels. */
@@ -560,16 +561,17 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           />
 
           <View style={styles.audienceRow}>
-            {(["public", "followers"] as Audience[]).map((a) => (
+            {(["public", "followers", "close_friends"] as Audience[]).map((a) => (
               <Pressable
                 key={a}
                 onPress={() => setAudience(a)}
-                style={[styles.audienceChip, audience === a && styles.audienceChipActive]}
+                style={[styles.audienceChip, audience === a && (a === "close_friends" ? styles.audienceChipCloseFriends : styles.audienceChipActive)]}
                 accessibilityRole="button"
                 accessibilityState={{ selected: audience === a }}
               >
                 <Text style={[styles.audienceLabel, audience === a && styles.audienceLabelActive]}>
-                  {a === "public" ? "Public" : "Followers"}
+                  {a === "close_friends" ? "★ " : ""}
+                  {AUDIENCE_LABELS[a]}
                 </Text>
               </Pressable>
             ))}
@@ -703,6 +705,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   audienceChipActive: { backgroundColor: colors.textPrimary, borderColor: colors.textPrimary },
+  audienceChipCloseFriends: { backgroundColor: colors.success, borderColor: colors.success },
   audienceLabel: { color: colors.textPrimary, fontSize: 13 },
   audienceLabelActive: { color: colors.background, fontWeight: "700" },
   uploadError: { ...typography.caption, color: colors.danger, textAlign: "center" },

@@ -1,4 +1,4 @@
-import { API_BASE_URL, apiGet, apiPatch, apiPost, apiDelete, type PublicUser } from "./client";
+import { API_BASE_URL, apiGet, apiPatch, apiPost, apiPut, apiDelete, type PublicUser } from "./client";
 
 /**
  * Shapes here mirror backend/src/modules/users/profiles.service.ts
@@ -229,4 +229,32 @@ export function getFollowers(
   if (params.offset) query.set("offset", String(params.offset));
   const qs = query.toString();
   return apiGet(`/api/v1/users/${encodeURIComponent(username)}/followers${qs ? `?${qs}` : ""}`, accessToken);
+}
+
+/** Someone on your Close Friends list (only you ever see it). */
+export interface CloseFriend {
+  id: string;
+  username: string;
+  displayName: string;
+  avatarMediaId?: string | null;
+  addedAt: string;
+}
+
+export function listCloseFriends(
+  accessToken: string,
+  params: { limit?: number; offset?: number } = {},
+): Promise<{ closeFriends: CloseFriend[]; limit: number; offset: number }> {
+  const query = new URLSearchParams();
+  if (params.limit) query.set("limit", String(params.limit));
+  if (params.offset) query.set("offset", String(params.offset));
+  const qs = query.toString();
+  return apiGet(`/api/v1/close-friends${qs ? `?${qs}` : ""}`, accessToken);
+}
+
+export function addCloseFriend(username: string, accessToken: string): Promise<void> {
+  return apiPut(`/api/v1/close-friends/${encodeURIComponent(username)}`, undefined, accessToken);
+}
+
+export function removeCloseFriend(username: string, accessToken: string): Promise<void> {
+  return apiDelete(`/api/v1/close-friends/${encodeURIComponent(username)}`, accessToken);
 }

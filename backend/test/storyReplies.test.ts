@@ -78,7 +78,7 @@ describe("Story replies and reactions", () => {
     const owner = await signupUser();
     const stranger = await signupUser();
     const followersOnly = await publishStory(owner.token, { audience: "followers" });
-    assert.equal((await reply(followersOnly, stranger.token, { body: "hi" })).status, 404);
+    assert.equal((await reply(followersOnly, stranger.token, { body: "hi" })).status, 403, "followers-only");
 
     const publicStory = await publishStory(owner.token);
     assert.equal((await reply(publicStory, owner.token, { body: "me" })).status, 400);

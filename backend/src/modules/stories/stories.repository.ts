@@ -3,7 +3,7 @@ import {HttpError} from '../../http/errors';
 import type {PublishStoryInput} from './dto';
 import type { StoryOverlay, DrawStroke, FilterKey, StoryCrop } from "./overlays";
 
-export type Audience = "public" | "followers";
+export type Audience = "public" | "followers" | "close_friends";
 export type CommentSetting = "everyone" | "followers" | "disabled";
 
 const STORY_COLUMNS =

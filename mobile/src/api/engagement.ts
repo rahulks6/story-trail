@@ -6,7 +6,7 @@ export interface StoryDetail {
   ownerId: string;
   mediaId: string;
   caption: string;
-  audience: "public" | "followers";
+  audience: "public" | "followers" | "close_friends";
   allowComments: "everyone" | "followers" | "disabled";
   allowSharing: boolean;
   createdAt: string;

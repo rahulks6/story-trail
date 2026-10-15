@@ -8,7 +8,7 @@ const member = (v: unknown, values: string[]) => text(v) && values.includes(v);
 /** Storage is untrusted input: reject incomplete drafts before rendering them. */
 export function isSavedDraft(value: unknown, mediaUri: string): value is SavedDraft {
   if (!record(value) || !record(value.draft)) return false;
-  if (!member(value.audience, ["public", "followers"]) || !text(value.mimeType) || !text(value.savedAt) || !Number.isFinite(Date.parse(value.savedAt))) return false;
+  if (!member(value.audience, ["public", "followers", "close_friends"]) || !text(value.mimeType) || !text(value.savedAt) || !Number.isFinite(Date.parse(value.savedAt))) return false;
   const d = value.draft, source = d.sourceMedia, crop = d.crop;
   if (!record(source) || source.uri !== mediaUri || !member(source.kind, ["photo", "video"])) return false;
   if (![source.width, source.height].every(v => v === null || (number(v) && v > 0))) return false;

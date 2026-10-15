@@ -1,4 +1,5 @@
 import { consumeAction } from "../safety/limits";
+import { audienceAllows, isCloseFriendOf } from "./audience";
 import { assertLinksAllowed } from "../safety/links";
 import { config } from "../../config/env";
 import {createHash} from 'node:crypto';
@@ -240,6 +241,11 @@ async function checkStoryAccess(
   if (story.audience === "followers" && !relationship.isFollowing) {
     throw new HttpError(403, "This Story is visible to followers only.");
   }
+  // A Close Friends Story doesn't exist for anyone who isn't on the list.
+  const isCloseFriend = story.audience === "close_friends" && (await isCloseFriendOf(owner.id, viewerId));
+  if (!audienceAllows(story.audience, { isFollowing: relationship.isFollowing, isCloseFriend })) {
+    throw new HttpError(404, "Story not found.");
+  }
 
   return toPublicStory(story, viewerId);
 }
@@ -339,7 +345,8 @@ export async function listUserActiveStories(username: string, viewerId: string):
   }
 
   const stories = await storiesRepo.listActiveStoriesForOwner(owner.id);
-  const visible = stories.filter((s) => s.audience === "public" || relationship.isFollowing);
+  const isCloseFriend = stories.some((s) => s.audience === "close_friends") && (await isCloseFriendOf(owner.id, viewerId));
+  const visible = stories.filter((s) => audienceAllows(s.audience, { isFollowing: relationship.isFollowing, isCloseFriend }));
   return toPublicStories(visible, viewerId);
 }
 
@@ -348,13 +355,22 @@ export interface FeedEntry {
   stories: PublicStory[];
 }
 
+async function visibleToFollower(stories: StoryRecord[], ownerId: string, viewerId: string): Promise<StoryRecord[]> {
+  const isCloseFriend = stories.some((s) => s.audience === "close_friends") && (await isCloseFriendOf(ownerId, viewerId));
+  return stories.filter((s) => audienceAllows(s.audience, { isFollowing: true, isCloseFriend }));
+}
+
 export async function getFollowingFeed(viewerId: string): Promise<FeedEntry[]> {
   const owners = await storiesRepo.listActiveStoryOwnersForViewer(viewerId, true);
   const entries: FeedEntry[] = [];
   for (const { ownerId } of owners) {
     const owner = await usersRepo.findUserById(ownerId);
     if (!owner || !owner.isActive) continue;
-    const stories = await storiesRepo.listActiveStoriesForOwner(ownerId);
+    const all = await storiesRepo.listActiveStoriesForOwner(ownerId);
+    // Everyone listed here is followed by the viewer (or is the viewer); Close Friends Stories
+    // still need the viewer on the owner's list.
+    const stories = ownerId === viewerId ? all : await visibleToFollower(all, ownerId, viewerId);
+    if (stories.length === 0) continue;
     entries.push({
       owner: { id: owner.id, username: owner.username, displayName: owner.displayName, avatarMediaId: owner.avatarMediaId },
       stories: await toPublicStories(stories, viewerId),

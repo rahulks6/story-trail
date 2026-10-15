@@ -31,6 +31,7 @@ import { AboutScreen } from "../screens/profile/AboutScreen";
 import { FollowRequestsScreen } from "../screens/profile/FollowRequestsScreen";
 import { BlockedAccountsScreen } from "../screens/profile/BlockedAccountsScreen";
 import { MutedAccountsScreen } from "../screens/profile/MutedAccountsScreen";
+import { CloseFriendsScreen } from "../screens/profile/CloseFriendsScreen";
 import { FollowListScreen } from "../screens/profile/FollowListScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -171,6 +172,17 @@ function SignedInNavigator(): React.JSX.Element {
         options={{
           headerShown: true,
           title: "Muted Accounts",
+          headerStyle: { backgroundColor: colors.background },
+          headerTintColor: colors.textPrimary,
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="CloseFriends"
+        component={CloseFriendsScreen}
+        options={{
+          headerShown: true,
+          title: "Close Friends",
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,

@@ -23,7 +23,7 @@ function keyFor(ownerId: string, mediaUri: string): string {
 
 export interface SavedDraft {
   draft: StoryDraft;
-  audience: "public" | "followers";
+  audience: "public" | "followers" | "close_friends";
   mimeType: string;
   savedAt: string;
 }

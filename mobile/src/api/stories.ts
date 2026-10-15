@@ -2,13 +2,16 @@ import { API_BASE_URL, apiDelete, apiGet, apiPost } from "./client";
 import type { Overlay, DrawStroke, StoryCrop } from "../models/storyDraft";
 import type { MediaDelivery } from "./media";
 
+/** Who a Story is shared with; "close_friends" is the owner's Close Friends list. */
+export type StoryAudience = "public" | "followers" | "close_friends";
+
 /** Mirrors backend/src/modules/stories/stories.service.ts's PublicStory — kept in lockstep by hand, same as the rest of src/api/. */
 export interface PublicStory {
   id: string;
   ownerId: string;
   mediaId: string;
   caption: string;
-  audience: "public" | "followers";
+  audience: StoryAudience;
   allowComments: "everyone" | "followers" | "disabled";
   allowSharing: boolean;
   createdAt: string;
@@ -40,7 +43,7 @@ export interface PublishStoryInput {
   requestId?: string;
   mediaId: string;
   caption?: string;
-  audience?: "public" | "followers";
+  audience?: StoryAudience;
   allowComments?: "everyone" | "followers" | "disabled";
   allowSharing?: boolean;
   overlays?: Overlay[];

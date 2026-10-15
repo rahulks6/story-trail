@@ -153,6 +153,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
           detail={pendingRequestCount ? String(pendingRequestCount) : undefined}
           onPress={() => navigation.navigate("FollowRequests")}
         />
+        <ListRow label="Close Friends" onPress={() => navigation.navigate("CloseFriends")} />
         <ListRow label="Blocked accounts" onPress={() => navigation.navigate("BlockedAccounts")} />
         <ListRow label="Muted accounts" onPress={() => navigation.navigate("MutedAccounts")} />
       </View>

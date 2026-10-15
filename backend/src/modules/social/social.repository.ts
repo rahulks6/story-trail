@@ -327,3 +327,48 @@ export async function listMuted(muterId: string, limit: number, offset: number):
 }
 
 export { nullable };
+
+export interface CloseFriendRow {
+  id: string;
+  username: string;
+  displayName: string;
+  avatarMediaId: string | null;
+  addedAt: string;
+}
+
+/** Close Friends (stories/audience.ts): the owner's private list. */
+export async function addCloseFriend(ownerId: string, friendId: string): Promise<void> {
+  await query(
+    `INSERT INTO close_friends (owner_id, friend_id) VALUES (:'owner_id', :'friend_id')
+     ON CONFLICT (owner_id, friend_id) DO NOTHING`,
+    { owner_id: ownerId, friend_id: friendId },
+  );
+}
+
+export async function removeCloseFriend(ownerId: string, friendId: string): Promise<void> {
+  await query(`DELETE FROM close_friends WHERE owner_id = :'owner_id' AND friend_id = :'friend_id'`, { owner_id: ownerId, friend_id: friendId });
+}
+
+export async function countCloseFriends(ownerId: string): Promise<number> {
+  const row = await queryOne(`SELECT count(*) AS n FROM close_friends WHERE owner_id = :'owner_id'`, { owner_id: ownerId });
+  return Number(row?.n ?? 0);
+}
+
+export async function listCloseFriends(ownerId: string, limit: number, offset: number): Promise<CloseFriendRow[]> {
+  const rows = await query(
+    `SELECT u.id, u.username, u.display_name, u.avatar_media_id, c.created_at AS added_at
+     FROM close_friends c
+     JOIN users u ON u.id = c.friend_id
+     WHERE c.owner_id = :'owner_id' AND u.deleted_at IS NULL
+     ORDER BY lower(u.username)
+     LIMIT :'limit' OFFSET :'offset'`,
+    { owner_id: ownerId, limit, offset },
+  );
+  return rows.map((row) => ({
+    id: row.id as string,
+    username: row.username as string,
+    displayName: row.display_name as string,
+    avatarMediaId: (row.avatar_media_id as string | null) ?? null,
+    addedAt: row.added_at as string,
+  }));
+}

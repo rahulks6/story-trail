@@ -4,7 +4,7 @@ import type { StoryOverlay, DrawStroke, StoryCrop } from "./overlays";
 import { OVERLAY_TYPES, TEXT_STYLES, STICKER_IDS, DATETIME_MODES, DRAW_TOOLS, FILTER_NAMES, MAX_CROP_ZOOM } from "./overlays";
 
 const MAX_CAPTION_LENGTH = 280;
-const AUDIENCES: Audience[] = ["public", "followers"];
+const AUDIENCES: Audience[] = ["public", "followers", "close_friends"];
 const COMMENT_SETTINGS: CommentSetting[] = ["everyone", "followers", "disabled"];
 
 export interface PublishStoryInput {

@@ -661,6 +661,11 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         </View>
         <View style={styles.footerText}>
           <Text style={styles.username}>@{currentUsername}</Text>
+          {currentStory.audience === "close_friends" ? (
+            <View style={styles.closeFriendsBadge} accessible accessibilityLabel="Shared with Close Friends">
+              <Text style={styles.closeFriendsBadgeText}>★ Close Friends</Text>
+            </View>
+          ) : null}
           {currentStory.caption ? <Text style={styles.caption}>{currentStory.caption}</Text> : null}
           {currentStories && currentStories.length > 1 ? (
             <Text style={styles.sequence}>
@@ -805,6 +810,8 @@ const styles = StyleSheet.create({
   viewCount: { color: "rgba(255,255,255,0.85)", fontSize: 12, fontWeight: "600" },
   viewCountRow: { flexDirection: "row", alignItems: "center", gap: 4 },
   closeButton: { position: "absolute", top: spacing.xl, right: spacing.md },
+  closeFriendsBadge: { alignSelf: "flex-start", backgroundColor: colors.success, borderRadius: radii.pill, paddingHorizontal: spacing.sm, paddingVertical: 2, marginTop: 4 },
+  closeFriendsBadgeText: { color: colors.onAccent, fontSize: 11, fontWeight: "700" },
   replyToast: {
     position: "absolute",
     alignSelf: "center",

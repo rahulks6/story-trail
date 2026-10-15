@@ -80,4 +80,24 @@ export function registerSocialRoutes(router: Router): void {
     const muted = await socialService.listMuted(req.userId as string, limit, offset);
     sendJson(res, 200, { muted, limit, offset });
   });
+
+  // Close Friends: your private list for Stories shared with Close Friends only.
+  router.get("/api/v1/close-friends", async (req, res) => {
+    requireAuth(req);
+    const { limit, offset } = parsePagination(parseQueryString(req.url ?? ""));
+    const closeFriends = await socialService.listCloseFriends(req.userId as string, limit, offset);
+    sendJson(res, 200, { closeFriends, limit, offset });
+  });
+
+  router.put("/api/v1/close-friends/:username", async (req, res) => {
+    requireAuth(req);
+    await socialService.addCloseFriend(req.userId as string, parseUsernameParam(req.params.username));
+    sendJson(res, 204, undefined);
+  });
+
+  router.delete("/api/v1/close-friends/:username", async (req, res) => {
+    requireAuth(req);
+    await socialService.removeCloseFriend(req.userId as string, parseUsernameParam(req.params.username));
+    sendJson(res, 204, undefined);
+  });
 }

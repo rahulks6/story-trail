@@ -1,6 +1,7 @@
 import { HttpError } from "../../http/errors";
 import * as usersRepo from "../users/users.repository";
 import * as notificationsRepo from "./notifications.repository";
+import { getStoryForViewer } from "../stories/stories.service";
 import type { NotificationRecord, NotificationPreferences } from "./notifications.repository";
 import type { UpdateNotificationPreferencesInput } from "./dto";
 
@@ -71,6 +72,13 @@ export async function notifyMentions(actorId: string, storyId: string, commentId
   for (const username of usernames) {
     const user = await usersRepo.findUserByUsername(username);
     if (!user || user.id === actorId) continue;
+    // Only someone who can see the Story hears about it: a mention never reveals a followers-only
+    // or Close Friends Story to a person outside its audience.
+    try {
+      await getStoryForViewer(storyId, user.id);
+    } catch {
+      continue;
+    }
     await notificationsRepo.createNotification({
       recipientId: user.id,
       actorId,
