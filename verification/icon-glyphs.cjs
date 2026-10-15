@@ -19,6 +19,7 @@ const CONTENT=[
  ['screens/dm/ConversationScreen.tsx',/^\s*("[^"]+",\s*)+$/],
  ['screens/dm/ConversationScreen.tsx',/Say hi to @\$\{otherUsername\} 👋` : "Say hi 👋"/],
  ['screens/dm/DMInboxScreen.tsx',/return "Say hi 👋";/],
+ ['api/conversations.ts',/export const STORY_REACTIONS = \[/],
  ['screens/auth/ProviderEntry.tsx',/\$\{country\} •••• \$\{phone/],
 ];
 

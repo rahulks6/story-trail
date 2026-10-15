@@ -44,6 +44,8 @@ export type CreateStackParamList = {
     mimeType: string;
     width: number | null;
     height: number | null;
+    /** Recorded in Boomerang mode: the server makes the forward-and-back loop. */
+    effect?: "boomerang";
   };
 };
 

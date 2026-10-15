@@ -24,7 +24,7 @@ beforeEach(() => {
 afterEach(async () => {
   await act(async () => {
     tree.unmount();
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    await new Promise<void>((resolve) => setTimeout(resolve, 0));
   });
 });
 

@@ -70,6 +70,8 @@ const startedStories = new Set<string>();
 
 export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Element {
   const { mediaUri, kind, mimeType } = route.params;
+  // A Boomerang plays forward and back with no sound; the server makes it while processing.
+  const boomerang = kind === "video" && route.params.effect === "boomerang";
   const { accessToken,user } = useAuth();
   const insets = useScreenInsets();
   const submittingUpload=useRef(false);
@@ -337,6 +339,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           audioMuted: draft.audioMuted,
           crop: draft.crop,
         },
+        boomerang ? "boomerang" : undefined,
       );
       setUploadState("done");
       tapFeedback("success");
@@ -368,7 +371,8 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             style={[StyleSheet.absoluteFill, mediaTransformStyle(draft.crop, containerSize.width, containerSize.height)]}
             resizeMode="cover"
             repeat
-            muted={draft.audioMuted}
+            muted={boomerang || draft.audioMuted}
+            rate={boomerang ? 1.5 : 1}
             paused={false}
           />
         )}
@@ -387,6 +391,12 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             accessibilityElementsHidden
             importantForAccessibility="no-hide-descendants"
           />
+        ) : null}
+
+        {boomerang ? (
+          <View style={styles.boomerangBadge} pointerEvents="none">
+            <Text style={styles.boomerangLabel} accessibilityLabel="Boomerang. It loops back and forth once you share it.">Boomerang</Text>
+          </View>
         ) : null}
 
         {filterToastName ? (
@@ -523,7 +533,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             <Pressable onPress={() => setDrawMode(true)} hitSlop={12} accessibilityRole="button" accessibilityLabel="Draw">
               <Icon style={styles.topIcon} name={ICONS.draw} />
             </Pressable>
-            {kind === "video" ? (
+            {kind === "video" && !boomerang ? (
               <Pressable
                 onPress={() => setDraft((d) => ({ ...d, audioMuted: !d.audioMuted }))}
                 hitSlop={12}
@@ -569,10 +579,10 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
                 accessibilityRole="button"
                 accessibilityState={{ selected: audience === a }}
               >
-                <Text style={[styles.audienceLabel, audience === a && styles.audienceLabelActive]}>
-                  {a === "close_friends" ? "★ " : ""}
-                  {AUDIENCE_LABELS[a]}
-                </Text>
+                <View style={styles.audienceLabelRow}>
+                  {a === "close_friends" ? <Icon name={ICONS.starFilled} size={13} style={[styles.audienceLabel, audience === a && styles.audienceLabelActive]} /> : null}
+                  <Text style={[styles.audienceLabel, audience === a && styles.audienceLabelActive]}>{AUDIENCE_LABELS[a]}</Text>
+                </View>
               </Pressable>
             ))}
           </View>
@@ -686,6 +696,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
   },
+  boomerangBadge: {
+    position: "absolute",
+    top: "12%",
+    alignSelf: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    borderRadius: radii.pill,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+  },
+  audienceLabelRow: { flexDirection: "row", alignItems: "center", gap: 4 },
+  boomerangLabel: { color: colors.textPrimary, fontWeight: "700" },
   filterToastLabel: { color: colors.textPrimary, fontSize: 18, fontWeight: "700" },
   bottomArea: { position: "absolute", bottom: spacing.xl, left: 0, right: 0 },
   bottomAreaContent: { gap: spacing.sm, paddingHorizontal: spacing.md },

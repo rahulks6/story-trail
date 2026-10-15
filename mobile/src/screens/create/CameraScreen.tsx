@@ -21,6 +21,7 @@ import { useTapGesture } from "../../hooks/useTapGesture";
 import { EmptyState } from "../../components/EmptyState";
 import { guessMimeTypeFromUri } from "../../utils/mime";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
+import { BOOMERANG_RECORD_MS, CAPTURE_MODES, shutterLabel, shutterTap, type CaptureMode, type MediaEffect } from "../../models/captureModes";
 
 type Props = NativeStackScreenProps<CreateStackParamList, "Camera">;
 
@@ -44,7 +45,9 @@ function clamp(n: number, min: number, max: number): number {
  * press-and-hold for video, two-finger pinch-zoom on the preview AND
  * one-finger drag-to-zoom while holding the capture button (spec section
  * 18) with a temporary "Nx" indicator, tap-to-focus/double-tap-to-flip,
- * flash, timer, and gallery import.
+ * flash, timer, and gallery import. A mode row above the shutter adds
+ * Hands-free (tap to start, tap to stop) and Boomerang (one tap records a
+ * short burst; the server loops it forward and back), see models/captureModes.
  *
  * Both zoom gestures are hand-rolled on core `PanResponder`
  * (`nativeEvent.touches`) rather than `react-native-gesture-handler` — this
@@ -70,6 +73,10 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [zoomIndicator, setZoomIndicator] = useState<{ visible: boolean; label: string }>({ visible: false, label: "" });
+  const [mode, setMode] = useState<CaptureMode>("normal");
+  const modeRef = useRef<CaptureMode>("normal");
+  modeRef.current = mode;
+  const boomerangTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const device = useCameraDevice(position);
   const camera = useRef<CameraRef>(null);
@@ -80,7 +87,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   const [foreground,setForeground]=useState(AppState.currentState==='active');
   const activeRef=useRef(false);activeRef.current=focused&&foreground;
   const recordingRef=useRef(false),stoppingRef=useRef(false),capturingRef=useRef(false);
-  const pendingCapture=useRef<{uri:string;kind:'photo'|'video';width:number|null;height:number|null}|null>(null);
+  const pendingCapture=useRef<{uri:string;kind:'photo'|'video';width:number|null;height:number|null;mimeType?:string;effect:MediaEffect}|null>(null);
   useEffect(()=>{const sub=AppState.addEventListener('change',state=>setForeground(state==='active'));return()=>{activeRef.current=false;sub.remove();};},[]);
   const recordingTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const zoomIndicatorTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -106,6 +113,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
     return () => {
       if (recordingTimer.current) clearInterval(recordingTimer.current);
       if (zoomIndicatorTimer.current) clearTimeout(zoomIndicatorTimer.current);
+      if (boomerangTimer.current) clearTimeout(boomerangTimer.current);
     };
   }, []);
 
@@ -125,19 +133,20 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   );
 
   const goToEditor = useCallback(
-    (mediaUri: string, kind: "photo" | "video", width: number | null, height: number | null, mimeType?: string) => {
-      if(!activeRef.current){pendingCapture.current={uri:mediaUri,kind,width,height};return;}
+    (mediaUri: string, kind: "photo" | "video", width: number | null, height: number | null, mimeType?: string, effect: MediaEffect = "none") => {
+      if(!activeRef.current){pendingCapture.current={uri:mediaUri,kind,width,height,mimeType,effect};return;}
       navigation.replace("StoryEditor", {
         mediaUri,
         kind,
         width,
         height,
         mimeType: mimeType ?? guessMimeTypeFromUri(mediaUri, kind),
+        ...(effect === "boomerang" ? { effect } : {}),
       });
     },
     [navigation],
   );
-  useEffect(()=>{if(focused&&foreground&&pendingCapture.current){const pending=pendingCapture.current;pendingCapture.current=null;goToEditor(pending.uri,pending.kind,pending.width,pending.height);}},[focused,foreground,goToEditor]);
+  useEffect(()=>{if(focused&&foreground&&pendingCapture.current){const pending=pendingCapture.current;pendingCapture.current=null;goToEditor(pending.uri,pending.kind,pending.width,pending.height,pending.mimeType,pending.effect);}},[focused,foreground,goToEditor]);
 
   const takePhoto = useCallback(async () => {
     if (!camera.current||capturingRef.current||recordingRef.current||!activeRef.current) return;
@@ -167,11 +176,14 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   const finishRecordingState = useCallback(() => {
     if (recordingTimer.current) clearInterval(recordingTimer.current);
     recordingTimer.current = null;
+    if (boomerangTimer.current) clearTimeout(boomerangTimer.current);
+    boomerangTimer.current = null;
     setIsRecording(false);
     recordingRef.current=false;stoppingRef.current=false;recorderRef.current=null;
   }, []);
 
-  const startRecording = useCallback(() => {
+  const stopRecordingRef = useRef<() => Promise<void>>(async () => undefined);
+  const startRecording = useCallback((effect: MediaEffect = "none") => {
     if (!camera.current || recordingRef.current||capturingRef.current||!activeRef.current) return;
     recordingRef.current=true;
     setIsRecording(true);
@@ -180,13 +192,14 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
     recordingTimer.current = setInterval(() => setRecordingSeconds((s) => s + 1), 1000);
     void (async () => {
       try{
-        // maxDuration is enforced natively, so a stalled JS thread can't overrun the Story limit.
-        const recorder=await videoOutput.createRecorder({maxDuration:MAX_RECORDING_SECONDS});
+        // maxDuration is enforced natively, so a stalled JS thread can't overrun the Story limit
+        // (or a Boomerang's short burst).
+        const recorder=await videoOutput.createRecorder({maxDuration:effect==='boomerang'?3:MAX_RECORDING_SECONDS});
         recorderRef.current=recorder;
         await recorder.startRecording(
           (filePath) => {
             finishRecordingState();
-            goToEditor(filePath.startsWith('file://')?filePath:`file://${filePath}`, "video", null, null, 'video/mp4');
+            goToEditor(filePath.startsWith('file://')?filePath:`file://${filePath}`, "video", null, null, 'video/mp4', effect);
           },
           () => {
             finishRecordingState();
@@ -195,6 +208,8 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
         );
         // A release that happened while the recorder was still being created.
         if(stoppingRef.current)await recorder.stopRecording();
+        // A Boomerang is a short burst: it stops itself.
+        else if(effect==='boomerang')boomerangTimer.current=setTimeout(()=>void stopRecordingRef.current(),BOOMERANG_RECORD_MS);
       }catch{
         finishRecordingState();
         if(activeRef.current)Alert.alert('Could not start recording','Please try again.');
@@ -209,6 +224,16 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
     if(!recorder)return; // startRecording stops it as soon as it exists.
     try{await recorder.stopRecording();}catch{stoppingRef.current=false;if(activeRef.current)Alert.alert('Could not stop recording','Try stopping again.');}
   }, []);
+  stopRecordingRef.current = stopRecording;
+
+  // A quick tap on the shutter (or a screen reader's activate), in whichever mode is chosen.
+  const onShutterTap = useCallback(() => {
+    const action = shutterTap(modeRef.current, recordingRef.current);
+    if (action === "photo") void takePhoto();
+    else if (action === "start") startRecording();
+    else if (action === "boomerang") startRecording("boomerang");
+    else if (action === "stop") void stopRecording();
+  }, [takePhoto, startRecording, stopRecording]);
   useEffect(()=>{if(!focused||!foreground)void stopRecording();},[focused,foreground,stopRecording]);
 
   const openGallery = useCallback(async () => {
@@ -324,6 +349,8 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
         recordingStarted = false;
         dragStartY = evt.nativeEvent.pageY;
         dragStartZoom = zoomRef.current;
+        // Only Normal records on a hold; the other modes act on the tap itself.
+        if (modeRef.current !== "normal") return;
         holdTimer = setTimeout(() => {
           recordingStarted = true;
           startRecording();
@@ -342,7 +369,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
         if (recordingStarted) {
           void stopRecording();
         } else {
-          void takePhoto();
+          onShutterTap();
         }
       },
       onPanResponderTerminate: () => {
@@ -354,7 +381,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startRecording, stopRecording, takePhoto, applyZoom]);
+  }, [startRecording, stopRecording, onShutterTap, applyZoom]);
 
   if (!hasCameraPermission) {
     return <View style={styles.container}><EmptyState title="Camera access needed" message="Enable camera access in Settings, or choose media from your gallery."/><Pressable accessibilityRole="button" style={styles.sideButton} onPress={()=>void Linking.openSettings().catch(()=>undefined)}><Text style={{color:colors.textPrimary}}>Open Settings</Text></Pressable><Pressable accessibilityRole="button" style={styles.sideButton} onPress={()=>void openGallery()}><Text style={{color:colors.textPrimary}}>Choose from gallery</Text></Pressable></View>;
@@ -445,6 +472,29 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
         </View>
       ) : null}
 
+      {!isRecording ? (
+        <View style={[styles.modeRow, { bottom: spacing.xl + insets.bottom + 92 }]} accessibilityRole="radiogroup" accessibilityLabel="Camera mode">
+          {CAPTURE_MODES.map((m) => (
+            <Pressable
+              key={m.mode}
+              onPress={() => {
+                if (recordingRef.current || capturingRef.current || m.mode === mode) return;
+                tapFeedback("select");
+                setMode(m.mode);
+              }}
+              hitSlop={8}
+              style={[styles.modeChip, m.mode === mode && styles.modeChipActive]}
+              accessibilityRole="radio"
+              accessibilityLabel={m.label}
+              accessibilityHint={m.hint}
+              accessibilityState={{ selected: m.mode === mode }}
+            >
+              <Text style={[styles.modeLabel, m.mode === mode && styles.modeLabelActive]}>{m.label}</Text>
+            </Pressable>
+          ))}
+        </View>
+      ) : null}
+
       <View style={[styles.bottomBar, { bottom: spacing.xl + insets.bottom }]}>
         {!hasMicPermission&&<Text style={{color:colors.textPrimary}}>Microphone off</Text>}
         <Pressable onPress={openGallery} hitSlop={12} style={styles.sideButton} accessibilityRole="button" accessibilityLabel="Choose from gallery">
@@ -461,22 +511,18 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
         */}
         <View
           {...captureGesture.panHandlers}
-          style={[styles.captureButton, isRecording && styles.captureButtonRecording]}
+          style={[styles.captureButton, mode === "boomerang" && styles.captureButtonBoomerang, isRecording && styles.captureButtonRecording]}
           accessible
           accessibilityRole="button"
-          accessibilityLabel={isRecording ? "Recording — activate to stop" : "Take photo"}
-          accessibilityHint={isRecording ? undefined : "Use the actions menu to record video instead"}
+          accessibilityLabel={shutterLabel(mode, isRecording)}
+          accessibilityHint={isRecording || mode !== "normal" ? undefined : "Use the actions menu to record video instead"}
           accessibilityActions={[
-            { name: "activate", label: isRecording ? "Stop recording" : "Take photo" },
-            { name: "longpress", label: "Record video" },
+            { name: "activate", label: shutterLabel(mode, isRecording) },
+            ...(mode === "normal" ? [{ name: "longpress", label: "Record video" }] : []),
           ]}
           onAccessibilityAction={(event) => {
-            if (event.nativeEvent.actionName === "activate") {
-              if (isRecording) void stopRecording();
-              else void takePhoto();
-            } else if (event.nativeEvent.actionName === "longpress" && !isRecording) {
-              startRecording();
-            }
+            if (event.nativeEvent.actionName === "activate") onShutterTap();
+            else if (event.nativeEvent.actionName === "longpress" && !isRecording && mode === "normal") startRecording();
           }}
         />
 
@@ -554,7 +600,13 @@ const styles = StyleSheet.create({
     borderColor: colors.textPrimary,
     backgroundColor: "transparent",
   },
+  captureButtonBoomerang: { borderColor: colors.accent },
   captureButtonRecording: { backgroundColor: colors.danger, borderColor: colors.danger },
+  modeRow: { position: "absolute", left: 0, right: 0, flexDirection: "row", justifyContent: "center", gap: spacing.sm },
+  modeChip: { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.35)" },
+  modeChipActive: { backgroundColor: colors.textPrimary },
+  modeLabel: { color: colors.textPrimary, fontWeight: "600", fontSize: 13 },
+  modeLabelActive: { color: "#000" },
   countdown: { ...StyleSheet.absoluteFill, alignItems: "center", justifyContent: "center" },
   countdownLabel: { color: colors.textPrimary, fontSize: 96, fontWeight: "700" },
 });

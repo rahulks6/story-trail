@@ -41,10 +41,10 @@ test('every filter the API accepts has a recipe, and the editor offers exactly t
 });
 
 test('the upload carries the chosen filter, and viewers skip the tint once it is baked in',()=>{
- assert.match(read('mobile/src/state/uploadQueue.ts'),/createUploadSession\(\{clientUploadId:job\.id,kind:job\.kind,mimeType:job\.mimeType,byteSize:size,filter:job\.payload\.filter\|\|'original'\}/);
- assert.match(read('backend/src/modules/media/uploads.ts'),/INSERT INTO media \(id, owner_id, kind, mime_type, byte_size, storage_key, status, filter\)/);
+ assert.match(read('mobile/src/state/uploadQueue.ts'),/createUploadSession\(\{clientUploadId:job\.id,kind:job\.kind,mimeType:job\.mimeType,byteSize:size,filter:job\.payload\.filter\|\|'original'[,}]/);
+ assert.match(read('backend/src/modules/media/uploads.ts'),/INSERT INTO media \(id, owner_id, kind, mime_type, byte_size, storage_key, status, filter[,)]/);
  assert.match(read('backend/src/modules/media/worker.ts'),/processPhoto\(original, workDir, media\.mimeType, media\.filter\)/);
- assert.match(read('backend/src/modules/media/worker.ts'),/\}, media\.filter\);/);
+ assert.match(read('backend/src/modules/media/worker.ts'),/\}, media\.filter[,)]/);
  for(const screen of ['mobile/src/screens/story/StoryFeed.tsx','mobile/src/screens/profile/ArchivedStoryViewerScreen.tsx','mobile/src/screens/highlight/HighlightViewerScreen.tsx'])
   assert.match(read(screen),/filterApplied=\{detail\.filterApplied === true\}/,screen);
 });

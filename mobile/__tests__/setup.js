@@ -56,7 +56,7 @@ jest.mock("react-native-vision-camera", () => {
     useCameraPermission: permission("permission"),
     useMicrophonePermission: permission("microphone"),
     usePhotoOutput: () => ({ capturePhoto: jest.fn() }),
-    useVideoOutput: () => ({ startRecording: jest.fn() }),
+    useVideoOutput: () => global.__camera.videoOutput ?? { startRecording: jest.fn() },
   };
 });
 

@@ -51,7 +51,7 @@ export interface UploadSessionResponse {
  * with per-part signed URLs; the bytes never pass through the API in production.
  */
 export function createUploadSession(
-  input: { clientUploadId: string; kind: "photo" | "video"; mimeType: string; byteSize: number; filter?: string },
+  input: { clientUploadId: string; kind: "photo" | "video"; mimeType: string; byteSize: number; filter?: string; effect?: "none" | "boomerang" },
   accessToken: string,
 ): Promise<UploadSessionResponse> {
   return apiPost("/api/v1/media/uploads", input, accessToken);

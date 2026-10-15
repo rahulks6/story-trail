@@ -115,7 +115,7 @@ export function CloseFriendsScreen(): React.JSX.Element {
   return (
     <View style={styles.screen}>
       <Text style={[typography.caption, styles.intro]}>
-        Only you can see this list. Stories you share with ★ Close Friends are seen only by these people, and nobody is told when you add or remove them.
+        Only you can see this list. Stories you share with Close Friends are seen only by these people, and nobody is told when you add or remove them.
       </Text>
       <TextInput
         style={styles.search}

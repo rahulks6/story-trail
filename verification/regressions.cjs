@@ -70,7 +70,7 @@ test('invalid Highlight cover causes no writes', async () => {
   const service = load('backend/src/modules/highlights/highlights.service.ts', {
     '../../http/errors': { HttpError: Error }, '../users/users.repository': {}, '../social/social.repository': {},
     '../stories/stories.repository': { findStoryById: async () => ({ ownerId: 'owner', deletedAt: null }) },
-    '../stories/stories.service': {}, '../auth/dto': { ValidationError },
+    '../stories/stories.service': {}, '../stories/audience': { audienceAllows: () => true, isCloseFriendOf: async () => false }, '../auth/dto': { ValidationError },
     './highlights.repository': {
       getWithItems: async () => ({ ownerId: 'owner', items: [{ storyId: 'A' }] }),
       replaceHighlightItems: async () => writes.push('items'), renameHighlight: async () => writes.push('title'),
