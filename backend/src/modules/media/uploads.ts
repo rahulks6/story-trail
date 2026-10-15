@@ -18,7 +18,7 @@ import { query, queryOne } from "../../db/psql";
 import { HttpError } from "../../http/errors";
 import { enforceSharedLimit } from "../../shared/sharedRateLimit";
 import { assertCanContribute } from "../admin/account-policy";
-import { MEDIA_COLUMNS, mapMediaRow, findMediaById, type MediaRecord } from "./media.repository";
+import { MEDIA_COLUMNS, mapMediaRow, findMediaById, type MediaEffect, type MediaRecord } from "./media.repository";
 import { LocalObjectStore, ObjectTooLargeError, verifyLocalPartSignature, type ObjectStore } from "./storage";
 import { MAX_PHOTO_BYTES, MAX_VIDEO_BYTES, type MediaKind } from "./validation";
 import { notifyJobQueued } from "./jobs";
@@ -36,6 +36,8 @@ export interface CreateUploadInput {
   byteSize: number;
   /** The Story filter to apply while processing; "original" when none. */
   filter: FilterKey;
+  /** A video effect to build while processing ("boomerang"); "none" otherwise. */
+  effect: MediaEffect;
 }
 
 export function parseCreateUploadInput(body: unknown): CreateUploadInput {
@@ -58,8 +60,11 @@ export function parseCreateUploadInput(body: unknown): CreateUploadInput {
   else if (byteSize > max) throw new HttpError(413, `${kind === "video" ? "Videos" : "Photos"} can be up to ${max / (1024 * 1024)} MiB.`);
   const filter = b.filter === undefined || b.filter === null ? "original" : b.filter;
   if (!isFilterKey(filter)) errors.filter = "filter must be one of the Story filters.";
-  if (Object.keys(errors).length || !kind || !isFilterKey(filter)) throw new HttpError(422, "Invalid upload request.", errors);
-  return { clientUploadId, kind, mimeType, byteSize, filter };
+  const effect = b.effect === undefined || b.effect === null ? "none" : b.effect;
+  if (effect !== "none" && effect !== "boomerang") errors.effect = "effect must be none or boomerang.";
+  else if (effect === "boomerang" && kind !== "video") errors.effect = "Boomerang is for videos.";
+  if (Object.keys(errors).length || !kind || !isFilterKey(filter) || (effect !== "none" && effect !== "boomerang")) throw new HttpError(422, "Invalid upload request.", errors);
+  return { clientUploadId, kind, mimeType, byteSize, filter, effect };
 }
 
 interface SessionRow {
@@ -154,7 +159,7 @@ export async function createUpload(store: ObjectStore, ownerId: string, input: C
   if (existing) {
     if (existing.media.status !== "uploading") return { media: existing.media, upload: null, created: false };
     if (!existing.expired) {
-      if (existing.media.kind !== input.kind || existing.media.mimeType !== input.mimeType || existing.media.byteSize !== input.byteSize || existing.media.filter !== input.filter) {
+      if (existing.media.kind !== input.kind || existing.media.mimeType !== input.mimeType || existing.media.byteSize !== input.byteSize || existing.media.filter !== input.filter || existing.media.effect !== input.effect) {
         throw new HttpError(409, "This upload id was already used for a different file.");
       }
       try {
@@ -177,15 +182,15 @@ export async function createUpload(store: ObjectStore, ownerId: string, input: C
   const uploadId = await store.createMultipartUpload(key, input.mimeType);
   const row = await queryOne(
     `WITH m AS (
-       INSERT INTO media (id, owner_id, kind, mime_type, byte_size, storage_key, status, filter)
-       VALUES (:'id', :'owner', :'kind', :'mime', :'size', :'key', 'uploading', :'filter') RETURNING id, owner_id),
+       INSERT INTO media (id, owner_id, kind, mime_type, byte_size, storage_key, status, filter, effect)
+       VALUES (:'id', :'owner', :'kind', :'mime', :'size', :'key', 'uploading', :'filter', :'effect') RETURNING id, owner_id),
      s AS (
        INSERT INTO media_upload_sessions (media_id, owner_id, client_upload_id, multipart_upload_id, part_size, part_count, expires_at)
        SELECT id, owner_id, :'client', :'upload', :'part_size'::integer, :'part_count'::integer, now() + make_interval(hours => :'hours'::integer) FROM m
        ON CONFLICT (owner_id, client_upload_id) DO NOTHING RETURNING media_id)
      SELECT count(*) AS created FROM s`,
     {
-      id: mediaId, owner: ownerId, kind: input.kind, mime: input.mimeType, size: input.byteSize, key, filter: input.filter,
+      id: mediaId, owner: ownerId, kind: input.kind, mime: input.mimeType, size: input.byteSize, key, filter: input.filter, effect: input.effect,
       client: input.clientUploadId, upload: uploadId, part_size: partSize, part_count: partCount, hours: config.media.uploadSessionHours,
     },
   );

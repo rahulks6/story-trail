@@ -56,7 +56,7 @@ export async function processClaimedJob(job: MediaJob, store: ObjectStore, optio
         ffprobe: config.media.ffprobePath,
         maxSeconds: config.media.maxVideoSeconds,
         deadline: started + options.jobTimeoutSeconds * 1000,
-      }, media.filter);
+      }, media.filter, media.effect);
     const variants: Record<string, unknown> = {};
     for (const variant of result.variants) {
       const key = `m/${media.id}/${variant.fileName}`;

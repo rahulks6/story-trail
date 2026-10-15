@@ -36,11 +36,15 @@ export interface MediaRecord {
   purgedAt: string | null;
   /** The Story filter applied to the processed variants ("original" for none); see filters.ts. */
   filter: FilterKey;
+  /** A video effect built while processing: "boomerang", or "none". */
+  effect: MediaEffect;
 }
+
+export type MediaEffect = "none" | "boomerang";
 
 export const MEDIA_COLUMNS =
   "id, owner_id, kind, mime_type, byte_size, width, height, duration_ms, checksum_sha256, storage_key, status, created_at, " +
-  "variants, processing_error, processing_error_retryable, processed_at, original_purged_at, purged_at, filter";
+  "variants, processing_error, processing_error_retryable, processed_at, original_purged_at, purged_at, filter, effect";
 
 export function mapMediaRow(row: Record<string, string | null>): MediaRecord {
   let variants: MediaRecord["variants"] = {};
@@ -69,6 +73,7 @@ export function mapMediaRow(row: Record<string, string | null>): MediaRecord {
     originalPurgedAt: row.original_purged_at ?? null,
     purgedAt: row.purged_at ?? null,
     filter: isFilterKey(row.filter) ? row.filter : "original",
+    effect: row.effect === "boomerang" ? "boomerang" : "none",
   };
 }
 

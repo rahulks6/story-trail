@@ -564,3 +564,31 @@ describe("story filters", () => {
     assert.equal(again.status, 409);
   });
 });
+
+describe("Boomerang", () => {
+  it("turns a clip into a forward-and-back loop, three times, without sound, filter included", async () => {
+    const owner = await signup();
+    const clip = makeVideo({ width: 640, height: 360, seconds: 2, rotation: 90 });
+    const uploaded = await uploadDirect(baseUrl, owner.token, clip, "video", "video/mp4", { effect: "boomerang", filter: "mono" });
+    await worker.drain();
+    const ready = (await media(owner.token, uploaded.id)).body.media;
+    assert.equal(ready.status, "ready", ready.processingError);
+    assert.deepEqual([ready.width, ready.height], [360, 640], "upright, like the clip");
+    assert.ok(Math.abs(ready.durationMs - 4800) < 250, `1.2 s forward and back, 1.5× speed, three times: ${ready.durationMs} ms`);
+    const video = probe((await fileBytes(owner.token, ready.delivery.videos[0].url)).bytes);
+    assert.ok(!video.streams.some((s) => s.codec_type === "audio"), "no sound");
+    const stats = await sharp((await fileBytes(owner.token, ready.delivery.imageUrl)).bytes).stats();
+    const [r, g, b] = stats.channels.map((c) => c.mean);
+    assert.ok(Math.abs(r! - g!) < 3 && Math.abs(g! - b!) < 3, "the Mono filter is applied too");
+  });
+
+  it("is only for videos", async () => {
+    const owner = await signup();
+    const bytes = await sharp({ create: { width: 40, height: 40, channels: 3, background: "#123456" } }).jpeg().toBuffer();
+    const res = await createUploadSession(baseUrl, owner.token, { clientUploadId: clientUploadId(), kind: "photo", mimeType: "image/jpeg", byteSize: bytes.length, effect: "boomerang" });
+    assert.equal(res.status, 422);
+    assert.match(res.body.fields.effect, /for videos/);
+    const odd = await createUploadSession(baseUrl, owner.token, { clientUploadId: clientUploadId(), kind: "video", mimeType: "video/mp4", byteSize: 1000, effect: "slowmo" });
+    assert.equal(odd.status, 422);
+  });
+});

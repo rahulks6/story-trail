@@ -21,6 +21,7 @@ import sharp from "sharp";
 import type { Metadata, Sharp } from "sharp";
 import type { FilterKey } from "../stories/overlays";
 import { applyToPixels, transformFor, writeCubeFile } from "./filters";
+import type { MediaEffect } from "./media.repository";
 
 sharp.block({ operation: ["VipsForeignLoad"] });
 sharp.unblock({
@@ -225,7 +226,17 @@ const RENDITIONS = [
   { name: "video_480" as const, shortMax: 480, longMax: 854, crf: 26, maxrateK: 1200, audioK: 96 },
 ];
 
-export async function processVideo(input: string, workDir: string, declaredMime: string, tools: VideoTools, filter: FilterKey = "original"): Promise<ProcessedMedia> {
+/** How much of a Boomerang clip is used: the loop is this, then the same backwards, three times. */
+export const BOOMERANG_CLIP_SECONDS = 1.2;
+
+export async function processVideo(
+  input: string,
+  workDir: string,
+  declaredMime: string,
+  tools: VideoTools,
+  filter: FilterKey = "original",
+  effect: MediaEffect = "none",
+): Promise<ProcessedMedia> {
   if (!VIDEO_MIME_TYPES.includes(declaredMime)) throw new MediaRejectedError("Only MP4 and MOV videos are supported.");
   const head = await readHead(input, 12);
   if (head.length < 12 || head.subarray(4, 8).toString("latin1") !== "ftyp") {
@@ -249,6 +260,35 @@ export async function processVideo(input: string, workDir: string, declaredMime:
   if (Math.max(width, height) > MAX_VIDEO_EDGE) throw new MediaRejectedError("Videos larger than 4K aren't supported.");
   const hdrTransfer = video.color_transfer === "arib-std-b67" || video.color_transfer === "smpte2084" ? video.color_transfer : null;
   const hasAudio = (info.streams ?? []).some((s) => s.codec_type === "audio");
+
+  if (effect === "boomerang") {
+    // Build the loop first (forward, then backward, a little faster, three times; no sound), then
+    // process it like any other video: renditions, poster, filter.
+    const loop = path.join(workDir, "boomerang.mp4");
+    const size = fitInside(width, height, DISPLAY_BOX.width, DISPLAY_BOX.height);
+    const clip = Math.min(seconds, BOOMERANG_CLIP_SECONDS).toFixed(3);
+    let built = false;
+    for (const transfer of hdrTransfer ? [hdrTransfer, null] : [null]) {
+      const picture = videoFilter(size, transfer, null);
+      const graph = `[0:v]trim=duration=${clip},setpts=PTS-STARTPTS,${picture},split[f][b];[b]reverse[r];` +
+        `[f][r]concat=n=2:v=1:a=0,setpts=PTS/1.5,split=3[x][y][z];[x][y][z]concat=n=3:v=1:a=0[out]`;
+      try {
+        await run(tools.ffmpeg, [
+          "-hide_banner", "-nostdin", "-y", ...SAFE_INPUT, "-i", input, "-filter_complex", graph, "-map", "[out]", "-an",
+          "-map_metadata", "-1", "-c:v", "libx264", "-preset", "veryfast", "-crf", "14", "-pix_fmt", "yuv420p", "-r", "30",
+          "-movflags", "+faststart", "-f", "mp4", loop,
+        ], tools.deadline);
+        built = true;
+        break;
+      } catch (error) {
+        if (!(error instanceof ProcessFailure) || error.killed) throw error;
+      }
+    }
+    if (!built) throw new MediaRejectedError("This video couldn't be turned into a Boomerang.");
+    // The loop is ours, and longer than the clip (BOOMERANG_CLIP_SECONDS × 2 ÷ 1.5 × 3 = 4.8 s).
+    const result = await processVideo(loop, workDir, "video/mp4", { ...tools, maxSeconds: Math.max(tools.maxSeconds, 6) }, filter, "none");
+    return { ...result, checksumSha256: await sha256File(input) };
+  }
 
   const transform = transformFor(filter);
   const lutFile = transform ? path.join(workDir, "filter.cube") : null;
