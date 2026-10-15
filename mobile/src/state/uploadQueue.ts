@@ -65,7 +65,8 @@ export function enqueueUpload(ownerId:string,uri:string,kind:UploadJob['kind'],m
 /** Sends every part the server doesn't have yet, then completes the upload. */
 async function sendBytes(job:UploadJob,path:string,storageKey:string,token:()=>string,persist:(next:UploadJob)=>Promise<UploadJob>):Promise<UploadJob>{
  const size=Number((await RNFS.stat(path)).size);
- let session:UploadSessionResponse=await createUploadSession({clientUploadId:job.id,kind:job.kind,mimeType:job.mimeType,byteSize:size},token());
+ // The Story filter travels with the upload: the server applies it while processing the media.
+ let session:UploadSessionResponse=await createUploadSession({clientUploadId:job.id,kind:job.kind,mimeType:job.mimeType,byteSize:size,filter:job.payload.filter||'original'},token());
  job=await persist({...job,mediaId:session.media.id,byteSize:size});
  for(let round=0;session.upload;round++){
   if(round>=4)throw Error('Upload could not be completed. Try again.');

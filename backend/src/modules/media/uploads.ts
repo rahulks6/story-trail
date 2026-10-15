@@ -22,6 +22,8 @@ import { MEDIA_COLUMNS, mapMediaRow, findMediaById, type MediaRecord } from "./m
 import { LocalObjectStore, ObjectTooLargeError, verifyLocalPartSignature, type ObjectStore } from "./storage";
 import { MAX_PHOTO_BYTES, MAX_VIDEO_BYTES, type MediaKind } from "./validation";
 import { notifyJobQueued } from "./jobs";
+import { isFilterKey } from "./filters";
+import type { FilterKey } from "../stories/overlays";
 
 export const PHOTO_UPLOAD_TYPES = ["image/jpeg", "image/png", "image/webp"];
 export const VIDEO_UPLOAD_TYPES = ["video/mp4", "video/quicktime"];
@@ -32,6 +34,8 @@ export interface CreateUploadInput {
   kind: MediaKind;
   mimeType: string;
   byteSize: number;
+  /** The Story filter to apply while processing; "original" when none. */
+  filter: FilterKey;
 }
 
 export function parseCreateUploadInput(body: unknown): CreateUploadInput {
@@ -52,8 +56,10 @@ export function parseCreateUploadInput(body: unknown): CreateUploadInput {
   const max = kind === "video" ? MAX_VIDEO_BYTES : MAX_PHOTO_BYTES;
   if (!Number.isSafeInteger(byteSize) || byteSize <= 0) errors.byteSize = "byteSize must be a positive whole number of bytes.";
   else if (byteSize > max) throw new HttpError(413, `${kind === "video" ? "Videos" : "Photos"} can be up to ${max / (1024 * 1024)} MiB.`);
-  if (Object.keys(errors).length || !kind) throw new HttpError(422, "Invalid upload request.", errors);
-  return { clientUploadId, kind, mimeType, byteSize };
+  const filter = b.filter === undefined || b.filter === null ? "original" : b.filter;
+  if (!isFilterKey(filter)) errors.filter = "filter must be one of the Story filters.";
+  if (Object.keys(errors).length || !kind || !isFilterKey(filter)) throw new HttpError(422, "Invalid upload request.", errors);
+  return { clientUploadId, kind, mimeType, byteSize, filter };
 }
 
 interface SessionRow {
@@ -148,7 +154,7 @@ export async function createUpload(store: ObjectStore, ownerId: string, input: C
   if (existing) {
     if (existing.media.status !== "uploading") return { media: existing.media, upload: null, created: false };
     if (!existing.expired) {
-      if (existing.media.kind !== input.kind || existing.media.mimeType !== input.mimeType || existing.media.byteSize !== input.byteSize) {
+      if (existing.media.kind !== input.kind || existing.media.mimeType !== input.mimeType || existing.media.byteSize !== input.byteSize || existing.media.filter !== input.filter) {
         throw new HttpError(409, "This upload id was already used for a different file.");
       }
       try {
@@ -171,15 +177,15 @@ export async function createUpload(store: ObjectStore, ownerId: string, input: C
   const uploadId = await store.createMultipartUpload(key, input.mimeType);
   const row = await queryOne(
     `WITH m AS (
-       INSERT INTO media (id, owner_id, kind, mime_type, byte_size, storage_key, status)
-       VALUES (:'id', :'owner', :'kind', :'mime', :'size', :'key', 'uploading') RETURNING id, owner_id),
+       INSERT INTO media (id, owner_id, kind, mime_type, byte_size, storage_key, status, filter)
+       VALUES (:'id', :'owner', :'kind', :'mime', :'size', :'key', 'uploading', :'filter') RETURNING id, owner_id),
      s AS (
        INSERT INTO media_upload_sessions (media_id, owner_id, client_upload_id, multipart_upload_id, part_size, part_count, expires_at)
        SELECT id, owner_id, :'client', :'upload', :'part_size'::integer, :'part_count'::integer, now() + make_interval(hours => :'hours'::integer) FROM m
        ON CONFLICT (owner_id, client_upload_id) DO NOTHING RETURNING media_id)
      SELECT count(*) AS created FROM s`,
     {
-      id: mediaId, owner: ownerId, kind: input.kind, mime: input.mimeType, size: input.byteSize, key,
+      id: mediaId, owner: ownerId, kind: input.kind, mime: input.mimeType, size: input.byteSize, key, filter: input.filter,
       client: input.clientUploadId, upload: uploadId, part_size: partSize, part_count: partCount, hours: config.media.uploadSessionHours,
     },
   );

@@ -19,6 +19,8 @@ import * as path from "node:path";
 import { pipeline } from "node:stream/promises";
 import sharp from "sharp";
 import type { Metadata, Sharp } from "sharp";
+import type { FilterKey } from "../stories/overlays";
+import { applyToPixels, transformFor, writeCubeFile } from "./filters";
 
 sharp.block({ operation: ["VipsForeignLoad"] });
 sharp.unblock({
@@ -101,7 +103,7 @@ async function jpegVariant(source: Sharp, box: { width: number; height: number }
   return { name, file, fileName: path.basename(file), mimeType: "image/jpeg", width: info.width, height: info.height, byteSize: info.size };
 }
 
-export async function processPhoto(input: string, workDir: string, declaredMime: string): Promise<ProcessedMedia> {
+export async function processPhoto(input: string, workDir: string, declaredMime: string, filter: FilterKey = "original"): Promise<ProcessedMedia> {
   let meta: Metadata;
   try {
     meta = await sharp(input, SHARP_INPUT).metadata();
@@ -121,9 +123,21 @@ export async function processPhoto(input: string, workDir: string, declaredMime:
 
   // rotate() applies the EXIF orientation; output is sRGB with all metadata removed.
   const base = () => sharp(input, SHARP_INPUT).rotate().flatten({ background: "#000000" });
+  const transform = transformFor(filter);
   try {
-    const display = await jpegVariant(base(), DISPLAY_BOX, 82, path.join(workDir, "display.jpg"), "display");
-    const thumbnail = await jpegVariant(base(), THUMB_BOX, 72, path.join(workDir, "thumb.jpg"), "thumbnail");
+    let source = base;
+    if (transform) {
+      // The Story filter runs once over the display-size pixels; both variants are made from them.
+      const { data, info } = await base()
+        .resize({ width: DISPLAY_BOX.width, height: DISPLAY_BOX.height, fit: "inside", withoutEnlargement: true })
+        .toColourspace("srgb")
+        .raw({ depth: "uchar" })
+        .toBuffer({ resolveWithObject: true });
+      applyToPixels(data, info.channels, transform);
+      source = () => sharp(data, { raw: { width: info.width, height: info.height, channels: info.channels } });
+    }
+    const display = await jpegVariant(source(), DISPLAY_BOX, 82, path.join(workDir, "display.jpg"), "display");
+    const thumbnail = await jpegVariant(source(), THUMB_BOX, 72, path.join(workDir, "thumb.jpg"), "thumbnail");
     return { width, height, durationMs: null, checksumSha256: await sha256File(input), variants: [display, thumbnail] };
   } catch (error) {
     if (error instanceof MediaRejectedError) throw error;
@@ -190,12 +204,20 @@ export function fitInside(width: number, height: number, shortMax: number, longM
   return { width: even(width * scale), height: even(height * scale) };
 }
 
-function videoFilter(size: { width: number; height: number }, hdrTransfer: string | null): string {
+/** A path for an ffmpeg filtergraph option. Work directories are ours, so plain characters only. */
+function filterPath(file: string): string {
+  if (!/^[A-Za-z0-9_./-]+$/.test(file)) throw new Error(`Unsafe path for an ffmpeg filter: ${file}`);
+  return file;
+}
+
+function videoFilter(size: { width: number; height: number }, hdrTransfer: string | null, lutFile: string | null): string {
   const scale = `scale=${size.width}:${size.height}:flags=lanczos`;
-  if (!hdrTransfer) return `${scale},format=yuv420p`;
+  // The Story filter (a 3D lookup table, see filters.ts) runs on the SDR picture, last.
+  const look = lutFile ? `,lut3d=file=${filterPath(lutFile)}:interp=trilinear` : "";
+  if (!hdrTransfer) return `${scale}${look},format=yuv420p`;
   // HLG/PQ (e.g. iPhone HDR) tone-mapped to SDR BT.709, otherwise it looks washed out.
   return `${scale},zscale=tin=${hdrTransfer}:min=2020_ncl:pin=2020:t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,` +
-    `tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p`;
+    `tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv${look},format=yuv420p`;
 }
 
 const RENDITIONS = [
@@ -203,7 +225,7 @@ const RENDITIONS = [
   { name: "video_480" as const, shortMax: 480, longMax: 854, crf: 26, maxrateK: 1200, audioK: 96 },
 ];
 
-export async function processVideo(input: string, workDir: string, declaredMime: string, tools: VideoTools): Promise<ProcessedMedia> {
+export async function processVideo(input: string, workDir: string, declaredMime: string, tools: VideoTools, filter: FilterKey = "original"): Promise<ProcessedMedia> {
   if (!VIDEO_MIME_TYPES.includes(declaredMime)) throw new MediaRejectedError("Only MP4 and MOV videos are supported.");
   const head = await readHead(input, 12);
   if (head.length < 12 || head.subarray(4, 8).toString("latin1") !== "ftyp") {
@@ -228,16 +250,20 @@ export async function processVideo(input: string, workDir: string, declaredMime:
   const hdrTransfer = video.color_transfer === "arib-std-b67" || video.color_transfer === "smpte2084" ? video.color_transfer : null;
   const hasAudio = (info.streams ?? []).some((s) => s.codec_type === "audio");
 
+  const transform = transformFor(filter);
+  const lutFile = transform ? path.join(workDir, "filter.cube") : null;
+  if (transform && lutFile) await writeCubeFile(lutFile, transform);
+
   const variants: ProducedVariant[] = [];
   // ffmpeg applies the rotation itself (autorotate), so filters work in oriented dimensions.
   const encode = async (args: (filter: string) => string[], size: { width: number; height: number }) => {
     try {
-      await run(tools.ffmpeg, args(videoFilter(size, hdrTransfer)), tools.deadline);
+      await run(tools.ffmpeg, args(videoFilter(size, hdrTransfer, lutFile)), tools.deadline);
     } catch (error) {
       if (!(error instanceof ProcessFailure) || error.killed) throw error;
       if (hdrTransfer) {
         try {
-          await run(tools.ffmpeg, args(videoFilter(size, null)), tools.deadline);
+          await run(tools.ffmpeg, args(videoFilter(size, null, lutFile)), tools.deadline);
           return;
         } catch (fallback) {
           if (!(fallback instanceof ProcessFailure) || fallback.killed) throw fallback;

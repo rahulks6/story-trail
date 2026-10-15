@@ -115,8 +115,8 @@ export function clientUploadId(): string {
 }
 
 /** The whole direct-upload flow: session, every part, complete. Returns the media (status 'processing'). */
-export async function uploadDirect(baseUrl: string, token: string, bytes: Buffer, kind: "photo" | "video", mimeType: string): Promise<any> {
-  const created = await createUploadSession(baseUrl, token, { clientUploadId: clientUploadId(), kind, mimeType, byteSize: bytes.length });
+export async function uploadDirect(baseUrl: string, token: string, bytes: Buffer, kind: "photo" | "video", mimeType: string, extra: Record<string, unknown> = {}): Promise<any> {
+  const created = await createUploadSession(baseUrl, token, { clientUploadId: clientUploadId(), kind, mimeType, byteSize: bytes.length, ...extra });
   if (created.status !== 201) throw new Error(`create failed: ${created.status} ${JSON.stringify(created.body)}`);
   for (const part of created.body.upload.parts as UploadPlanPart[]) {
     const res = await putPart(baseUrl, part, bytes, created.body.upload.partSize);

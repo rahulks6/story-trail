@@ -60,16 +60,24 @@ jest.mock("react-native-vision-camera", () => {
   };
 });
 
-// Nitro Image (the on-phone crop for profile photos): records each step and the saved result.
-global.__nitroImage = { size: { width: 2048, height: 1536 }, saved: [], fail: false };
+// Nitro Image (the on-phone crop for profile photos, and the editor's filter previews): records
+// each step and the saved result. Raw pixels are a flat RGBA fill of `colour`.
+global.__nitroImage = { size: { width: 2048, height: 1536 }, colour: [200, 120, 90, 255], saved: [], fail: false };
 jest.mock("react-native-nitro-image", () => {
-  const make = (width, height, steps) => ({
+  const make = (width, height, steps, pixels) => ({
     width,
     height,
     cropAsync: jest.fn(async (sx, sy, ex, ey) => make(ex - sx, ey - sy, [...steps, ["crop", sx, sy, ex, ey]])),
     resizeAsync: jest.fn(async (w, h) => make(w, h, [...steps, ["resize", w, h]])),
+    rotateAsync: jest.fn(async (degrees) => make(degrees % 180 ? height : width, degrees % 180 ? width : height, [...steps, ["rotate", degrees]])),
+    mirrorHorizontallyAsync: jest.fn(async () => make(width, height, [...steps, ["mirror"]])),
+    toRawPixelDataAsync: jest.fn(async () => {
+      const bytes = new Uint8Array(width * height * 4);
+      for (let i = 0; i < bytes.length; i += 4) bytes.set(global.__nitroImage.colour, i);
+      return { buffer: bytes.buffer, width, height, pixelFormat: "RGBA" };
+    }),
     saveToTemporaryFileAsync: jest.fn(async (format, quality) => {
-      global.__nitroImage.saved.push({ steps, width, height, format, quality });
+      global.__nitroImage.saved.push({ steps, width, height, format, quality, pixels });
       return `/tmp/katkee-crop-${global.__nitroImage.saved.length}.jpg`;
     }),
   });
@@ -78,6 +86,9 @@ jest.mock("react-native-nitro-image", () => {
       if (global.__nitroImage.fail) throw new Error("unreadable");
       return make(global.__nitroImage.size.width, global.__nitroImage.size.height, [["load", filePath]]);
     }),
+    Images: {
+      loadFromRawPixelDataAsync: jest.fn(async (data) => make(data.width, data.height, [["raw", data.pixelFormat]], new Uint8Array(data.buffer.slice(0)))),
+    },
   };
 });
 

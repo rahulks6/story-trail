@@ -476,3 +476,91 @@ describe("delivery and legacy uploads", () => {
     await worker.drain();
   });
 });
+
+describe("story filters", () => {
+  /** Mean colour of a region, as 0..255 channel values. */
+  async function meanColour(bytes: Buffer): Promise<number[]> {
+    const stats = await sharp(bytes).stats();
+    return stats.channels.slice(0, 3).map((c) => c.mean);
+  }
+
+  it("bakes the chosen filter into a photo's display and thumbnail, exactly as the editor previews it", async () => {
+    const owner = await signup();
+    // Flat colours, so the expected output is exact: a warm orange and a sky blue.
+    const swatch = await sharp({ create: { width: 400, height: 300, channels: 3, background: { r: 200, g: 120, b: 90 } } })
+      .composite([{ input: await sharp({ create: { width: 200, height: 300, channels: 3, background: { r: 90, g: 160, b: 220 } } }).png().toBuffer(), left: 200, top: 0 }])
+      .png().toBuffer();
+    const plain = await uploadDirect(baseUrl, owner.token, swatch, "photo", "image/png");
+    const mono = await uploadDirect(baseUrl, owner.token, swatch, "photo", "image/png", { filter: "mono" });
+    const vivid = await uploadDirect(baseUrl, owner.token, swatch, "photo", "image/png", { filter: "vivid" });
+    await worker.drain();
+
+    const { colorTransform, RECIPES } = await import("../src/modules/media/filters");
+    const expected = (key: keyof typeof RECIPES, rgb: number[]) => {
+      const t = colorTransform(RECIPES[key]);
+      return [0, 1, 2].map((c) => Math.round(255 * Math.min(1, Math.max(0, rgb.reduce((sum, v, i) => sum + t.matrix[c * 3 + i]! * (v / 255), t.offset[c]!)))));
+    };
+    const pixel = async (bytes: Buffer, x: number, y: number) => {
+      const { data, info } = await sharp(bytes).raw().toBuffer({ resolveWithObject: true });
+      const i = (y * info.width + x) * info.channels;
+      return [data[i]!, data[i + 1]!, data[i + 2]!];
+    };
+    for (const [uploaded, key] of [[plain, "original"], [mono, "mono"], [vivid, "vivid"]] as const) {
+      const ready = (await media(owner.token, uploaded.id)).body.media;
+      assert.equal(ready.status, "ready", ready.processingError);
+      const display = (await fileBytes(owner.token, ready.delivery.imageUrl)).bytes;
+      for (const [x, rgb] of [[100, [200, 120, 90]], [300, [90, 160, 220]]] as const) {
+        const got = await pixel(display, x, 150);
+        const want = expected(key, [...rgb]);
+        assert.ok(got.every((v, i) => Math.abs(v - want[i]!) <= 2), `${key} at x=${x}: got ${got}, want ${want}`);
+      }
+      const thumb = (await fileBytes(owner.token, ready.delivery.thumbnailUrl)).bytes;
+      const [r, g, b] = await meanColour(thumb);
+      if (key === "mono") assert.ok(Math.abs(r! - g!) < 2 && Math.abs(g! - b!) < 2, `mono thumbnail is grey: ${r},${g},${b}`);
+    }
+  });
+
+  it("bakes the filter into every video rendition and the poster", async () => {
+    const owner = await signup();
+    const uploaded = await uploadDirect(baseUrl, owner.token, makeVideo({ width: 640, height: 360, seconds: 1, audio: false }), "video", "video/mp4", { filter: "mono" });
+    await worker.drain();
+    const ready = (await media(owner.token, uploaded.id)).body.media;
+    assert.equal(ready.status, "ready", ready.processingError);
+    const [r, g, b] = await meanColour((await fileBytes(owner.token, ready.delivery.imageUrl)).bytes);
+    assert.ok(Math.abs(r! - g!) < 3 && Math.abs(g! - b!) < 3, `mono poster is grey: ${r},${g},${b}`);
+    const video = await fileBytes(owner.token, ready.delivery.videos[0].url);
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "katkee-filter-"));
+    fs.writeFileSync(path.join(dir, "v.mp4"), video.bytes);
+    const frame = path.join(dir, "frame.png");
+    require("node:child_process").execFileSync("ffmpeg", ["-v", "error", "-y", "-i", path.join(dir, "v.mp4"), "-frames:v", "1", frame]);
+    const [fr, fg, fb] = await meanColour(fs.readFileSync(frame));
+    assert.ok(Math.abs(fr! - fg!) < 3 && Math.abs(fg! - fb!) < 3, `mono video frame is grey: ${fr},${fg},${fb}`);
+  });
+
+  it("tells the app whether a Story's pictures already carry its filter", async () => {
+    const owner = await signup();
+    const photo = await sharp({ create: { width: 120, height: 200, channels: 3, background: "#806040" } }).jpeg().toBuffer();
+    const baked = await uploadDirect(baseUrl, owner.token, photo, "photo", "image/jpeg", { filter: "warm" });
+    const legacy = await uploadDirect(baseUrl, owner.token, photo, "photo", "image/jpeg");
+    await worker.drain();
+    const a = await client.post("/api/v1/stories", storyBody(baked.id, { filter: "warm" }), authHeader(owner.token));
+    const b = await client.post("/api/v1/stories", storyBody(legacy.id, { filter: "cool" }), authHeader(owner.token));
+    assert.equal(a.status, 201, JSON.stringify(a.body));
+    assert.equal(b.status, 201, JSON.stringify(b.body));
+    assert.deepEqual([a.body.story.filter, a.body.story.filterApplied], ["warm", true]);
+    assert.deepEqual([b.body.story.filter, b.body.story.filterApplied], ["cool", false], "uploaded without a filter: the app tints it");
+  });
+
+  it("rejects an unknown filter, and a reused upload id with a different filter", async () => {
+    const owner = await signup();
+    const bytes = await sharp({ create: { width: 40, height: 40, channels: 3, background: "#123456" } }).jpeg().toBuffer();
+    const bad = await createUploadSession(baseUrl, owner.token, { clientUploadId: clientUploadId(), kind: "photo", mimeType: "image/jpeg", byteSize: bytes.length, filter: "sparkle" });
+    assert.equal(bad.status, 422);
+    assert.ok(bad.body.fields?.filter, JSON.stringify(bad.body));
+    const id = clientUploadId();
+    const first = await createUploadSession(baseUrl, owner.token, { clientUploadId: id, kind: "photo", mimeType: "image/jpeg", byteSize: bytes.length, filter: "soft" });
+    assert.equal(first.status, 201);
+    const again = await createUploadSession(baseUrl, owner.token, { clientUploadId: id, kind: "photo", mimeType: "image/jpeg", byteSize: bytes.length, filter: "fade" });
+    assert.equal(again.status, 409);
+  });
+});

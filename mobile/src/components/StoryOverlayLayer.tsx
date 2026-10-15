@@ -7,7 +7,8 @@ import { DrawingStrokes } from "./DrawingStrokes";
 
 /**
  * The read-only counterpart to the editor's live canvas: renders a
- * published Story's filter tint, drawing, and overlays exactly where they
+ * published Story's filter tint (only for media uploaded without its filter
+ * applied, `filterApplied` false), drawing, and overlays exactly where they
  * were placed (same normalized x/y/scale/rotation, same OverlayBody used
  * while editing — spec section 47's "preview accuracy"). Not interactive
  * except a mention, which is the one overlay type the spec requires stay
@@ -18,6 +19,7 @@ export function StoryOverlayLayer({
   overlays,
   drawing,
   filter,
+  filterApplied = false,
   containerWidth,
   containerHeight,
   onMentionPress,
@@ -25,11 +27,13 @@ export function StoryOverlayLayer({
   overlays: Overlay[];
   drawing: DrawStroke[];
   filter: FilterName;
+  /** The media's pixels already carry the filter (applied on upload): no tint on top. */
+  filterApplied?: boolean;
   containerWidth: number;
   containerHeight: number;
   onMentionPress?: (username: string) => void;
 }): React.JSX.Element {
-  const activeFilter = FILTER_PREVIEWS.find((f) => f.name === filter) ?? FILTER_PREVIEWS[0];
+  const activeFilter = filterApplied ? FILTER_PREVIEWS[0] : FILTER_PREVIEWS.find((f) => f.name === filter) ?? FILTER_PREVIEWS[0];
   const sorted = [...overlays].sort((a, b) => a.zIndex - b.zIndex);
 
   return (

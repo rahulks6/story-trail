@@ -31,6 +31,12 @@ export interface PublicStory {
   overlays: StoryOverlay[];
   drawing: DrawStroke[];
   filter: FilterKey;
+  /**
+   * True when the media's pixels already carry the filter (applied while processing, see
+   * media/filters.ts): the app shows the media as it is. False for media uploaded without one,
+   * which the app shows with a light tint for `filter`.
+   */
+  filterApplied: boolean;
   audioMuted: boolean;
   crop: StoryCrop;
   /** Ready-to-use URLs for this viewer (thumbnail, full-screen image/poster, video renditions). */
@@ -84,7 +90,9 @@ async function toPublicStory(story: StoryRecord, viewerId: string, preloaded?: M
     expiresAt: story.expiresAt,
     overlays: await resolveOverlaysForViewer(story.overlays, viewerId),
     drawing: story.drawing,
-    filter: story.filter,
+    // The pixels win: media processed with a filter is reported with that filter.
+    filter: media && media.filter !== "original" ? media.filter : story.filter,
+    filterApplied: Boolean(media && media.filter !== "original"),
     audioMuted: story.audioMuted,
     crop: story.crop,
     media: media ? deliveryFor(media, story.ownerId === viewerId) : null,

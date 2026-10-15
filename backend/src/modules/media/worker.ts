@@ -50,13 +50,13 @@ export async function processClaimedJob(job: MediaJob, store: ObjectStore, optio
     const original = path.join(workDir, "original");
     await store.downloadToFile(media.storageKey, original, media.kind === "photo" ? MAX_PHOTO_BYTES : MAX_VIDEO_BYTES);
     const result = media.kind === "photo"
-      ? await processPhoto(original, workDir, media.mimeType)
+      ? await processPhoto(original, workDir, media.mimeType, media.filter)
       : await processVideo(original, workDir, media.mimeType, {
         ffmpeg: config.media.ffmpegPath,
         ffprobe: config.media.ffprobePath,
         maxSeconds: config.media.maxVideoSeconds,
         deadline: started + options.jobTimeoutSeconds * 1000,
-      });
+      }, media.filter);
     const variants: Record<string, unknown> = {};
     for (const variant of result.variants) {
       const key = `m/${media.id}/${variant.fileName}`;

@@ -131,6 +131,7 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
           overlays={detail.overlays}
           drawing={detail.drawing}
           filter={filterNameFromKey(detail.filter)}
+          filterApplied={detail.filterApplied === true}
           containerWidth={containerSize.width}
           containerHeight={containerSize.height}
           onMentionPress={(username) =>

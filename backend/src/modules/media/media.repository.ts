@@ -1,6 +1,8 @@
 import { nullable, query, queryOne } from "../../db/psql";
 import type { MediaKind } from "./validation";
 import type { VariantName } from "./processing";
+import type { FilterKey } from "../stories/overlays";
+import { isFilterKey } from "./filters";
 
 export type MediaStatus = "uploading" | "processing" | "ready" | "failed";
 
@@ -32,11 +34,13 @@ export interface MediaRecord {
   processedAt: string | null;
   originalPurgedAt: string | null;
   purgedAt: string | null;
+  /** The Story filter applied to the processed variants ("original" for none); see filters.ts. */
+  filter: FilterKey;
 }
 
 export const MEDIA_COLUMNS =
   "id, owner_id, kind, mime_type, byte_size, width, height, duration_ms, checksum_sha256, storage_key, status, created_at, " +
-  "variants, processing_error, processing_error_retryable, processed_at, original_purged_at, purged_at";
+  "variants, processing_error, processing_error_retryable, processed_at, original_purged_at, purged_at, filter";
 
 export function mapMediaRow(row: Record<string, string | null>): MediaRecord {
   let variants: MediaRecord["variants"] = {};
@@ -64,6 +68,7 @@ export function mapMediaRow(row: Record<string, string | null>): MediaRecord {
     processedAt: row.processed_at ?? null,
     originalPurgedAt: row.original_purged_at ?? null,
     purgedAt: row.purged_at ?? null,
+    filter: isFilterKey(row.filter) ? row.filter : "original",
   };
 }
 

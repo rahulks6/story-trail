@@ -17,6 +17,8 @@ export interface PublicStory {
   drawing: DrawStroke[];
   /** Lowercase key (e.g. "cinema") — see models/storyDraft.ts's filterKey/filterNameFromKey. */
   filter: string;
+  /** True when the media's pixels already carry the filter (show it as it is); absent/false: tint it. */
+  filterApplied?: boolean;
   audioMuted: boolean;
   crop: StoryCrop;
   /** URLs for this viewer: thumbnail, full-screen image/poster, video renditions (null from older servers). */

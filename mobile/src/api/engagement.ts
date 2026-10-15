@@ -20,6 +20,8 @@ export interface StoryDetail {
   drawing: DrawStroke[];
   /** Lowercase key — see models/storyDraft.ts's filterKey/filterNameFromKey. */
   filter: string;
+  /** True when the media's pixels already carry the filter (show it as it is); absent/false: tint it. */
+  filterApplied?: boolean;
   audioMuted: boolean;
   crop: StoryCrop;
 }

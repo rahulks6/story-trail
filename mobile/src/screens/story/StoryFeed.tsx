@@ -585,6 +585,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           overlays={detail.overlays}
           drawing={detail.drawing}
           filter={filterNameFromKey(detail.filter)}
+          filterApplied={detail.filterApplied === true}
           containerWidth={containerSize.width}
           containerHeight={containerSize.height}
           onMentionPress={onOpenProfile}

@@ -7,7 +7,6 @@ import {
   Image,
   PanResponder,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -25,7 +24,9 @@ import { useAuth } from "../../state/AuthContext";
 import {enqueueUpload} from '../../state/uploadQueue';
 import { track } from "../../analytics/analytics";
 import { ApiError } from "../../api/client";
-import { FILTER_PREVIEWS } from "../../models/filterPreviews";
+import { FILTER_PREVIEWS, type FilterKey } from "../../models/filterPreviews";
+import { FilterStrip } from "../../components/FilterStrip";
+import { filteredPhotoUri, forgetFilteredPhoto } from "../../utils/filterPhoto";
 import {
   createEmptyDraft,
   hasMeaningfulEdits,
@@ -51,6 +52,8 @@ type Props = NativeStackScreenProps<CreateStackParamList, "StoryEditor">;
 type Audience = "public" | "followers";
 
 const TRASH_ZONE_SIZE = 80;
+/** Long edge of the editor's filtered photo preview, in pixels. */
+const PREVIEW_EDGE = 1080;
 
 /**
  * Story editor (spec sections 19-30): text/emoji/mention/location/datetime/
@@ -84,6 +87,10 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   const [uploadState, setUploadState] = useState<"idle" | "uploading" | "done" | "error">("idle");
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [filterToastName, setFilterToastName] = useState<string | null>(null);
+  // The photo as it will be published: the filter applied on the phone with the server's own
+  // arithmetic (utils/filterPhoto.ts). Until a preview is ready the previous one stays on screen.
+  const [photoPreviewUri, setPhotoPreviewUri] = useState(mediaUri);
+  const [photoPreviewFailed, setPhotoPreviewFailed] = useState(false);
 
   const nextZIndex = useRef(1);
   const filterToastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -94,6 +101,28 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
       if (filterToastTimer.current) clearTimeout(filterToastTimer.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (kind !== "photo") return;
+    let cancelled = false;
+    filteredPhotoUri(mediaUri, filterKey(draft.filter) as FilterKey, PREVIEW_EDGE)
+      .then((uri) => {
+        if (cancelled) return;
+        setPhotoPreviewUri(uri);
+        setPhotoPreviewFailed(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        // Couldn't process it on this phone: show the photo with the filter's tint instead.
+        setPhotoPreviewUri(mediaUri);
+        setPhotoPreviewFailed(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [kind, mediaUri, draft.filter]);
+
+  useEffect(() => () => forgetFilteredPhoto(mediaUri), [mediaUri]);
 
   // Admin analytics: a Story started in the editor (once per photo or video, even if the
   // editor reopens for the same draft).
@@ -325,7 +354,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
       <View style={styles.mediaContainer} onLayout={onContainerLayout}>
         {kind === "photo" ? (
           <Image
-            source={{ uri: mediaUri }}
+            source={{ uri: photoPreviewUri }}
             style={[StyleSheet.absoluteFill, mediaTransformStyle(draft.crop, containerSize.width, containerSize.height)]}
             resizeMode="cover"
           />
@@ -340,7 +369,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           />
         )}
 
-        {activeFilter.overlayOpacity > 0 ? (
+        {activeFilter.overlayOpacity > 0 && (kind === "video" || photoPreviewFailed) ? (
           <View
             pointerEvents="none"
             style={[StyleSheet.absoluteFill, { backgroundColor: activeFilter.overlayColor, opacity: activeFilter.overlayOpacity }]}
@@ -511,19 +540,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           style={[styles.bottomArea, { bottom: spacing.xl + insets.bottom }]}
           contentContainerStyle={styles.bottomAreaContent}
         >
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterStrip}>
-            {FILTER_PREVIEWS.map((f) => (
-              <Pressable
-                key={f.name}
-                onPress={() => setDraft((d) => ({ ...d, filter: f.name }))}
-                style={[styles.filterChip, draft.filter === f.name && styles.filterChipActive]}
-                accessibilityRole="button"
-                accessibilityState={{ selected: draft.filter === f.name }}
-              >
-                <Text style={[styles.filterChipLabel, draft.filter === f.name && styles.filterChipLabelActive]}>{f.name}</Text>
-              </Pressable>
-            ))}
-          </ScrollView>
+          <FilterStrip kind={kind} mediaUri={mediaUri} selected={draft.filter} onSelect={(name) => setDraft((d) => ({ ...d, filter: name }))} />
 
           <TextInput
             style={styles.captionInput}
@@ -664,17 +681,6 @@ const styles = StyleSheet.create({
   filterToastLabel: { color: colors.textPrimary, fontSize: 18, fontWeight: "700" },
   bottomArea: { position: "absolute", bottom: spacing.xl, left: 0, right: 0 },
   bottomAreaContent: { gap: spacing.sm, paddingHorizontal: spacing.md },
-  filterStrip: { gap: spacing.xs, paddingBottom: spacing.sm },
-  filterChip: {
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.3)",
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 6,
-  },
-  filterChipActive: { backgroundColor: colors.accent, borderColor: colors.accent },
-  filterChipLabel: { color: colors.textPrimary, fontSize: 12 },
-  filterChipLabelActive: { color: colors.onAccent, fontWeight: "700" },
   captionInput: {
     color: colors.textPrimary,
     backgroundColor: "rgba(0,0,0,0.35)",

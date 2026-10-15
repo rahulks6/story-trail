@@ -228,6 +228,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
           overlays={detail.overlays}
           drawing={detail.drawing}
           filter={filterNameFromKey(detail.filter)}
+          filterApplied={detail.filterApplied === true}
           containerWidth={containerSize.width}
           containerHeight={containerSize.height}
           onMentionPress={(username) =>
