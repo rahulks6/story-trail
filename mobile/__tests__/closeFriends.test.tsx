@@ -28,6 +28,20 @@ afterEach(async () => {
   });
 });
 
+describe("loading the list", () => {
+  it("asks for 50 at a time, the most the server gives in one request, until it has them all", async () => {
+    const page = (n: number, from: number) => Array.from({ length: n }, (_, i) => ({ id: `p${from + i}`, username: `p${from + i}`, displayName: "P", avatarMediaId: null, addedAt: "" }));
+    const list = jest.spyOn(usersApi, "listCloseFriends")
+      .mockResolvedValueOnce({ closeFriends: page(50, 0), limit: 50, offset: 0 })
+      .mockResolvedValueOnce({ closeFriends: page(3, 50), limit: 50, offset: 50 });
+    await act(async () => { tree = create(<CloseFriendsScreen />); });
+    await flush();
+    expect(list.mock.calls.map((c) => c[1])).toEqual([{ limit: 50, offset: 0 }, { limit: 50, offset: 50 }]);
+    expect(usersApi.getFollowers).toHaveBeenCalledWith("rahul", "token", { limit: 50 });
+    expect(texts()).toContain("On your list · 53");
+  });
+});
+
 describe("Close Friends screen", () => {
   it("shows the list first, then followers who aren't on it", async () => {
     await act(async () => { tree = create(<CloseFriendsScreen />); });

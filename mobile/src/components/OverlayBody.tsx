@@ -1,6 +1,6 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import type { Overlay } from "../models/storyDraft";
+import { Platform, StyleSheet, Text, View, type StyleProp, type TextStyle } from "react-native";
+import type { Overlay, TextOverlayProperties } from "../models/storyDraft";
 import { colors, radii } from "../theme";
 
 export /** Text wraps within this fraction of the container's own width (spec: "auto-wrap ... text") rather than growing indefinitely off-canvas. */
@@ -50,13 +50,7 @@ export function OverlayBody({
             style={[
               styles.text,
               { color: properties.color, fontSize: properties.fontSize * containerHeight, textAlign: properties.align },
-              properties.style === "Bold" && styles.bold,
-              properties.style === "Outline" && styles.outline,
-              properties.style === "Typewriter" && styles.typewriter,
-              properties.style === "Classic" && styles.classic,
-              properties.style === "Modern" && styles.modern,
-              properties.style === "Soft" && styles.soft,
-              properties.style === "Highlight" && [styles.highlight, { color: colors.background }],
+              textStyleLook(properties.style),
             ]}
           >
             {properties.text}
@@ -86,12 +80,28 @@ export function OverlayBody({
   }
 }
 
+/** How a text style looks: on the Story, and in the text tool while writing. */
+export function textStyleLook(style: TextOverlayProperties["style"]): StyleProp<TextStyle> {
+  switch (style) {
+    case "Bold": return styles.bold;
+    case "Outline": return styles.outline;
+    case "Typewriter": return styles.typewriter;
+    case "Classic": return styles.classic;
+    case "Modern": return styles.modern;
+    case "Soft": return styles.soft;
+    case "Highlight": return [styles.highlight, { color: colors.background }];
+    default: return null;
+  }
+}
+
 const styles = StyleSheet.create({
   text: { fontWeight: "600", color: colors.textPrimary },
   bold: { fontWeight: "800" },
   outline: { textShadowColor: "#000", textShadowRadius: 4, textShadowOffset: { width: 1, height: 1 } },
-  typewriter: { fontFamily: "Courier" },
-  classic: { fontFamily: "Georgia" },
+  // Fonts every phone has: Courier and Georgia exist only on iPhone, so on Android every style
+  // used to look the same.
+  typewriter: { fontFamily: Platform.select({ ios: "Courier", default: "monospace" }) },
+  classic: { fontFamily: Platform.select({ ios: "Georgia", default: "serif" }) },
   modern: { fontWeight: "300", letterSpacing: 1 },
   soft: { fontWeight: "400", textShadowColor: "rgba(255,255,255,0.4)", textShadowRadius: 6 },
   highlight: { backgroundColor: colors.accent, paddingHorizontal: 6, borderRadius: radii.sm, overflow: "hidden" },

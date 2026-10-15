@@ -3,6 +3,7 @@ import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleShee
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing, ICONS } from "../theme";
 import { Icon } from "./Icon";
+import { textStyleLook } from "./OverlayBody";
 import type { TextOverlayProperties, TextStyle } from "../models/storyDraft";
 
 const STYLES: TextStyle[] = ["Clean", "Bold", "Classic", "Modern", "Typewriter", "Outline", "Soft", "Highlight"];
@@ -100,7 +101,8 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
             <TextInput
               autoFocus
               multiline
-              style={[styles.input, { color, textAlign: align, fontSize: 18 + fontSizeIndex * 5 }]}
+              // Previews the chosen style, colour and size as it will appear on the Story.
+              style={[styles.input, textStyleLook(style), { color: style === "Highlight" ? colors.background : color, textAlign: align, fontSize: 18 + fontSizeIndex * 5 }]}
               placeholder="Type something…"
               placeholderTextColor="rgba(255,255,255,0.6)"
               value={text}
@@ -109,7 +111,7 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
           </View>
         </View>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="always" contentContainerStyle={styles.colorsRow}>
+        <ScrollView horizontal style={styles.row} showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="always" contentContainerStyle={styles.colorsRow}>
           {COLORS.map((c) => (
             <Pressable
               key={c}
@@ -123,7 +125,7 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
           ))}
         </ScrollView>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="always" contentContainerStyle={styles.stylesRow}>
+        <ScrollView horizontal style={styles.row} showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="always" contentContainerStyle={styles.stylesRow}>
           {STYLES.map((s) => (
             <Pressable
               key={s}
@@ -133,7 +135,8 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
               accessibilityLabel={`${s} text style`}
               accessibilityState={{ selected: style === s }}
             >
-              <Text style={[styles.styleChipLabel, style === s && styles.styleChipLabelActive]}>{s}</Text>
+              {/* Each name is written in its own style, so you see the look before choosing. */}
+              <Text style={[styles.styleChipLabel, textStyleLook(s), style === s && styles.styleChipLabelActive]} numberOfLines={1}>{s}</Text>
             </Pressable>
           ))}
         </ScrollView>
@@ -156,11 +159,13 @@ const styles = StyleSheet.create({
   inputBox: { maxWidth: "100%", paddingHorizontal: 10, paddingVertical: 4, borderRadius: radii.sm },
   inputBoxOn: { backgroundColor: "rgba(0,0,0,0.55)" },
   input: { fontWeight: "600", minWidth: 40 },
+  // A horizontal list must not grow to fill the screen (it stretched the style buttons into tall ovals).
+  row: { flexGrow: 0, flexShrink: 0 },
   colorsRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.sm },
   colorSwatch: { width: 30, height: 30, borderRadius: 15, borderWidth: 2, borderColor: "rgba(255,255,255,0.85)" },
   colorSwatchActive: { borderColor: colors.accent, borderWidth: 3, transform: [{ scale: 1.15 }] },
-  stylesRow: { flexDirection: "row", gap: spacing.xs, paddingBottom: spacing.xs },
-  styleChip: { borderWidth: 1, borderColor: "rgba(255,255,255,0.35)", borderRadius: radii.pill, paddingHorizontal: spacing.md, paddingVertical: 7, backgroundColor: "rgba(0,0,0,0.3)" },
+  stylesRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs, paddingBottom: spacing.xs },
+  styleChip: { height: 36, justifyContent: "center", borderWidth: 1, borderColor: "rgba(255,255,255,0.35)", borderRadius: radii.pill, paddingHorizontal: spacing.md, backgroundColor: "rgba(0,0,0,0.3)" },
   styleChipActive: { backgroundColor: colors.textPrimary, borderColor: colors.textPrimary },
   styleChipLabel: { color: colors.textPrimary, fontSize: 13 },
   styleChipLabelActive: { color: colors.background, fontWeight: "700" },

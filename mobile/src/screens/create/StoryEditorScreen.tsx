@@ -686,6 +686,12 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               </Pressable>
             ))}
           </View>
+          {audience === "close_friends" ? (
+            // Like Instagram: who's on the list is one tap away while sharing to it.
+            <Pressable onPress={() => rootNavigation.navigate("CloseFriends")} hitSlop={8} style={styles.editList} accessibilityRole="button" accessibilityLabel="Edit your Close Friends list">
+              <Text style={styles.editListLabel}>Edit Close Friends list</Text>
+            </Pressable>
+          ) : null}
 
           {uploadError ? (
             <View>
@@ -811,6 +817,8 @@ const styles = StyleSheet.create({
   filterButtons: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.md },
   filterButton: { padding: spacing.sm, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.35)" },
   filterName: { color: colors.textPrimary, fontWeight: "700", minWidth: 90, textAlign: "center" },
+  editList: { alignSelf: "center" },
+  editListLabel: { color: colors.success, fontWeight: "700", fontSize: 13 },
   audienceLabelRow: { flexDirection: "row", alignItems: "center", gap: 4 },
   boomerangLabel: { color: colors.textPrimary, fontWeight: "700" },
   filterToastLabel: { color: colors.textPrimary, fontSize: 18, fontWeight: "700" },

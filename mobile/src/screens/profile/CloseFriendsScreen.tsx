@@ -16,6 +16,19 @@ interface Person {
 }
 
 const MAX_LIST = 1000;
+/** The most the server returns in one request (backend/src/http/pagination.ts). */
+const PAGE = 50;
+
+/** Your whole list, a page at a time: asking for more than a page at once was refused. */
+async function allCloseFriends(token: string): Promise<Person[]> {
+  const all: Person[] = [];
+  for (let offset = 0; offset < MAX_LIST; offset += PAGE) {
+    const { closeFriends } = await listCloseFriends(token, { limit: PAGE, offset });
+    all.push(...closeFriends);
+    if (closeFriends.length < PAGE) break;
+  }
+  return all;
+}
 
 /**
  * Close Friends (Settings › Privacy): the people who see Stories shared with "Close Friends".
@@ -37,10 +50,10 @@ export function CloseFriendsScreen(): React.JSX.Element {
     if (!accessToken || !username) return;
     try {
       const [list, mine] = await Promise.all([
-        listCloseFriends(accessToken, { limit: 200 }),
-        getFollowers(username, accessToken, { limit: 100 }).catch(() => ({ followers: [] as Person[] })),
+        allCloseFriends(accessToken),
+        getFollowers(username, accessToken, { limit: PAGE }).catch(() => ({ followers: [] as Person[] })),
       ]);
-      setFriends(list.closeFriends);
+      setFriends(list);
       setFollowers(mine.followers);
       setError(null);
     } catch {
