@@ -1,15 +1,17 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../navigation/types";
 import { colors, radii, spacing, ICONS } from "../theme";
 import { Icon } from "./Icon";
 import { useAuth } from "../state/AuthContext";
-import { listUploads, removeUpload, subscribeUploads, uploadPreviewUri, uploadProgress, uploadRunning, type UploadJob } from "../state/uploadQueue";
+import { cancelUpload, listUploads, removeUpload, subscribeUploads, uploadPreviewUri, uploadProgress, uploadRunning, type UploadJob } from "../state/uploadQueue";
+import { deleteStory } from "../api/stories";
+import { storyPublished } from "../state/storyChanges";
 
 /** How long "Shared" stays before the pill goes away. */
-export const SHARED_NOTICE_MS = 3000;
+export const SHARED_NOTICE_MS = 5000;
 
 /** What the pill says for a Story on its way. */
 export function pillLabel(job: UploadJob, percent: number | undefined, running: boolean): string {
@@ -26,6 +28,7 @@ export function pillLabel(job: UploadJob, percent: number | undefined, running: 
  * where a failed Story can be retried.
  */
 export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | null {
+  const { accessToken } = useAuth();
   const userId = useAuth().user?.id;
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [job, setJob] = useState<UploadJob | null>(null);
@@ -57,6 +60,40 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
     };
   }, [refresh]);
 
+  // Stop a Story that is still on its way, or take back one that has just posted.
+  const stop = (current: UploadJob) => {
+    if (current.status === "published") {
+      Alert.alert("Delete this Story?", "It has been shared. Deleting removes it for everyone.", [
+        { text: "Keep it", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              if (current.storyId && accessToken) await deleteStory(current.storyId, accessToken);
+              await removeUpload(current.ownerId, current.id).catch(() => undefined);
+              storyPublished(); // Home and your profile reload without it.
+            } catch {
+              Alert.alert("Couldn't delete", "Open the Story, tap More, then Delete.");
+            }
+          },
+        },
+      ]);
+      return;
+    }
+    Alert.alert("Stop sharing?", "This Story won't be posted. Your photo or video stays on your phone.", [
+      { text: "Keep sharing", style: "cancel" },
+      {
+        text: "Stop",
+        style: "destructive",
+        onPress: async () => {
+          const stopped = await cancelUpload(current.ownerId, current.id, accessToken ?? null).catch(() => false);
+          if (!stopped) Alert.alert("Already posted", "It finished just now. Open the Story, tap More, then Delete.");
+        },
+      },
+    ]);
+  };
+
   if (!job) return null;
   const percent = uploadProgress(job.ownerId, job.id);
   const running = uploadRunning(job.ownerId, job.id);
@@ -82,7 +119,15 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
           </View>
         ) : null}
       </View>
-      {job.status === "published" ? <Icon name="check" size={16} color={colors.accent} /> : null}
+      {job.status === "published" ? (
+        <Pressable onPress={() => stop(job)} hitSlop={10} accessibilityRole="button" accessibilityLabel="Undo, delete this Story">
+          <Text style={styles.undo}>Undo</Text>
+        </Pressable>
+      ) : job.status !== "processing" ? (
+        <Pressable onPress={() => stop(job)} hitSlop={10} style={styles.close} accessibilityRole="button" accessibilityLabel="Stop sharing">
+          <Icon name={ICONS.close} size={16} color={colors.textPrimary} />
+        </Pressable>
+      ) : null}
     </Pressable>
   );
 }
@@ -106,6 +151,8 @@ const styles = StyleSheet.create({
   body: { gap: 4, flexShrink: 1, minWidth: 140 },
   label: { color: colors.textPrimary, fontSize: 13, fontWeight: "600" },
   failed: { color: colors.danger },
+  undo: { color: colors.accent, fontWeight: "700", fontSize: 13 },
+  close: { padding: 2 },
   track: { height: 3, borderRadius: 2, backgroundColor: "rgba(255,255,255,0.2)", overflow: "hidden" },
   fill: { height: 3, backgroundColor: colors.accent },
 });

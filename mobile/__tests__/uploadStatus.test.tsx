@@ -1,6 +1,7 @@
 import React from "react";
 import { act, create, type ReactTestRenderer } from "react-test-renderer";
-import { Text } from "react-native";
+import { Alert, Text } from "react-native";
+import * as storiesApi from "../src/api/stories";
 import { pillLabel, SHARED_NOTICE_MS, UploadStatusPill } from "../src/components/UploadStatusPill";
 import { UploadRunner } from "../src/state/UploadRunner";
 import * as queue from "../src/state/uploadQueue";
@@ -43,11 +44,37 @@ describe("the sharing status on Home", () => {
     const remove = jest.spyOn(queue, "removeUpload").mockResolvedValue();
     await act(async () => { tree = create(<UploadStatusPill top={40} />); });
     await flush();
-    expect(texts()).toEqual(["Shared to your Story"]);
+    expect(texts()).toEqual(["Shared to your Story", "Undo"]);
     await act(async () => tree.root.findByProps({ accessibilityHint: "Opens your Story uploads" }).props.onPress());
     expect(mockNavigate).toHaveBeenCalledWith("UploadQueue");
     await act(async () => { jest.advanceTimersByTime(SHARED_NOTICE_MS); });
     expect(remove).toHaveBeenCalledWith(owner, "story_abcdefghijklmnop");
+  });
+
+  it("stops a Story still on its way, and takes back one that has just posted", async () => {
+    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+    const confirm = async (button: string) => {
+      const buttons = alert.mock.calls.at(-1)![2] as Array<{ text: string; onPress?: () => unknown }>;
+      await act(async () => { await buttons.find((b) => b.text === button)!.onPress?.(); });
+    };
+    const cancel = jest.spyOn(queue, "cancelUpload").mockResolvedValue(true);
+    jest.spyOn(queue, "listUploads").mockResolvedValue([job("uploading")]);
+    await act(async () => { tree = create(<UploadStatusPill top={40} />); });
+    await flush();
+    await act(async () => tree.root.findByProps({ accessibilityLabel: "Stop sharing" }).props.onPress());
+    expect(alert.mock.calls.at(-1)![0]).toBe("Stop sharing?");
+    await confirm("Stop");
+    expect(cancel).toHaveBeenCalledWith(owner, "story_abcdefghijklmnop", "token");
+
+    const del = jest.spyOn(storiesApi, "deleteStory").mockResolvedValue(undefined as never);
+    jest.spyOn(queue, "removeUpload").mockResolvedValue();
+    jest.spyOn(queue, "listUploads").mockResolvedValue([{ ...job("published"), storyId: "s-9" } as UploadJob]);
+    await act(async () => tree.unmount());
+    await act(async () => { tree = create(<UploadStatusPill top={40} />); });
+    await flush();
+    await act(async () => tree.root.findByProps({ accessibilityLabel: "Undo, delete this Story" }).props.onPress());
+    await confirm("Delete");
+    expect(del).toHaveBeenCalledWith("s-9", "token");
   });
 
   it("shows nothing when nothing is sharing", async () => {

@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as RNFS from '@dr.pogodin/react-native-fs';
 import {ApiError} from '../api/client';
-import {completeUploadSession,createUploadSession,getUploadSession,PartUploadError,retryMediaProcessing,uploadPart,type UploadSessionResponse} from '../api/media';
+import {abortUploadSession,completeUploadSession,createUploadSession,getUploadSession,PartUploadError,retryMediaProcessing,uploadPart,type UploadSessionResponse} from '../api/media';
 import {getPublishRequest,publishStory,type PublishStoryInput} from '../api/stories';
 import {base64ToBytes} from '../utils/base64';
 import {storyPublished} from './storyChanges';
@@ -30,6 +30,10 @@ const POLL_BUDGET_MS=10*60*1000;
 const inFlight=new Map<string,Promise<void>>();
 const progress=new Map<string,number>();
 const removing=new Set<string>();
+/** Uploads being cancelled: the run stops at its next step and leaves nothing behind. */
+const cancelling=new Set<string>();
+class UploadCancelled extends Error{constructor(){super('Upload cancelled.');}}
+function checkCancelled(storageKey:string){if(cancelling.has(storageKey))throw new UploadCancelled();}
 const listeners=new Set<()=>void>();
 let mutations:Promise<unknown>=Promise.resolve();
 let lastProgressNotify=0;
@@ -79,6 +83,7 @@ async function sendBytes(job:UploadJob,path:string,storageKey:string,token:()=>s
   let refresh=false;
   for(const part of plan.parts){
    if(part.uploaded||!part.url)continue;
+   checkCancelled(storageKey);
    const chunk=base64ToBytes(await RNFS.read(path,part.byteLength,(part.partNumber-1)*plan.partSize,'base64'));
    if(chunk.byteLength!==part.byteLength)throw Error('The saved media changed. Remove this upload and choose the photo or video again.');
    for(let attempt=1;;attempt++){
@@ -151,6 +156,7 @@ export function runUpload(ownerId:string,id:string,session:()=>{ownerId:string;t
      try{await retryMediaProcessing(job.mediaId!,token());}
      catch(e){if(!(e instanceof ApiError&&e.status===409))throw e;}
     }
+    checkCancelled(storageKey);
     job=await persist({...job,status:'publishing',error:undefined,retryable:undefined});
     const result=await publishStory({...job.payload,mediaId:job.mediaId!,requestId:job.id},token());
     if('story' in result)job=await persist({...job,status:'published',storyId:result.story.id});
@@ -166,6 +172,7 @@ export function runUpload(ownerId:string,id:string,session:()=>{ownerId:string;t
    }
   }catch(e){
    progress.delete(storageKey);
+   if(e instanceof UploadCancelled)return;
    const failure=failureOf(job,e);if(failure)track('upload_failed',{mediaKind:job.kind,...failure});
    if(e instanceof ApiError&&e.details?.error==='media_failed'){
     await persist({...job,status:'failed',error:e.message,retryable:e.details.retryable===true});
@@ -176,6 +183,27 @@ export function runUpload(ownerId:string,id:string,session:()=>{ownerId:string;t
   }
  }).finally(()=>{inFlight.delete(storageKey);notify();});
  inFlight.set(storageKey,work);return work;
+}
+
+/**
+ * Stops sharing a Story that hasn't posted yet, wherever it is: the upload stops at its next step,
+ * the half-sent file is dropped on the server, and the saved copy is removed. Returns false once
+ * it has already posted (delete the Story instead).
+ */
+export async function cancelUpload(ownerId:string,id:string,token:string|null):Promise<boolean>{
+ const storageKey=key(ownerId,id);
+ const raw=await AsyncStorage.getItem(storageKey);if(!raw)return true;
+ const job=JSON.parse(raw) as UploadJob;
+ if(job.status==='published'||job.status==='processing')return false;
+ cancelling.add(storageKey);
+ try{
+  await inFlight.get(storageKey)?.catch(()=>undefined);
+  const latest=JSON.parse((await AsyncStorage.getItem(storageKey))??raw) as UploadJob;
+  if(latest.status==='published'||latest.status==='processing')return false;
+  if(latest.mediaId&&token)await abortUploadSession(latest.mediaId,token).catch(()=>undefined);
+  await removeUpload(ownerId,id);
+  return true;
+ }finally{cancelling.delete(storageKey);}
 }
 export function uploadRunning(ownerId:string,id:string){return inFlight.has(key(ownerId,id));}
 /** The saved copy of a photo being shared, for a thumbnail while it uploads. */

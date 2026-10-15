@@ -653,11 +653,6 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
             <Text style={styles.actionCount}>{viewCount ?? "—"}</Text>
           </View>
         ) : null}
-        {!isOwnStory ? (
-          <Pressable onPress={() => setReplyOpen(true)} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel="Reply">
-            <Icon style={styles.actionIcon} name={ICONS.send} />
-          </Pressable>
-        ) : null}
         <Pressable onPress={() => setShareOpen(true)} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel="Share">
           <Icon style={styles.actionIcon} name={ICONS.share} />
         </Pressable>
@@ -715,6 +710,12 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
             <Text style={styles.commentPlaceholder}>Add a comment…</Text>
           </Pressable>
         )}
+        {!isOwnStory && currentStory.allowComments !== "disabled" ? (
+          // A private reply goes to their messages (comments are public).
+          <Pressable onPress={() => setReplyOpen(true)} hitSlop={8} style={styles.replyButton} accessibilityRole="button" accessibilityLabel={`Message @${currentUsername ?? ""} privately`}>
+            <Icon name={ICONS.dm} size={26} color={colors.textPrimary} />
+          </Pressable>
+        ) : null}
       </View>
 
       {onClose ? (
@@ -824,12 +825,14 @@ const styles = StyleSheet.create({
     right: spacing.md,
     bottom: spacing.xl * 3,
     alignItems: "center",
-    gap: spacing.lg,
+    gap: spacing.lg + 2,
   },
-  actionButton: { alignItems: "center", gap: 2 },
-  actionIcon: { color: colors.textPrimary, fontSize: 26 },
+  actionButton: { alignItems: "center", gap: 3, minWidth: 44 },
+  actionIcon: { color: colors.textPrimary, fontSize: 32 },
   actionIconLiked: { color: colors.accent },
-  actionCount: { color: colors.textPrimary, fontSize: 12 },
+  // Readable over any photo.
+  actionCount: { color: colors.textPrimary, fontSize: 14, fontWeight: "700", textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 3, textShadowOffset: { width: 0, height: 1 } },
+  replyButton: { width: BOTTOM_BAR_HEIGHT, height: BOTTOM_BAR_HEIGHT, marginLeft: spacing.sm, alignItems: "center", justifyContent: "center" },
   footer: {
     position: "absolute",
     bottom: spacing.xl,
