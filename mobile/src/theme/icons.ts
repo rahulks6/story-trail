@@ -52,6 +52,10 @@ export const ICONS = {minus:"minus",up:"up",down:"down",left:"left",right:"right
   "following": "following",
   "mention": "mention",
   "filter": "filter",
-  "chevron": "chevron"
+  "chevron": "chevron",
+  "alignLeft": "alignLeft",
+  "alignCenter": "alignCenter",
+  "alignRight": "alignRight",
+  "textBackground": "textBackground"
 } as const;
 export type IconName = keyof typeof ICONS;

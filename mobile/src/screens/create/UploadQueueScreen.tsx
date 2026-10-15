@@ -26,18 +26,11 @@ export function UploadQueueScreen():React.JSX.Element {
  const refresh=useCallback(async()=>{if(!user)return;try{const next=await listUploads(user.id);if(mounted.current){setJobs(next);setTick(t=>t+1);}}catch{if(mounted.current)setError('Could not load saved uploads. Try again.');}},[user?.id]);
  useEffect(()=>{void refresh();return subscribeUploads(()=>void refresh());},[refresh]);
  const run=useCallback((job:UploadJob)=>{setError('');void runUpload(job.ownerId,job.id,()=>session.current).catch(e=>{if(mounted.current)setError(e instanceof Error?e.message:'Upload failed.');});},[]);
- // One upload at a time; Stories already on the server just get checked on. Failed or
- // interrupted items wait for a deliberate Retry.
- useEffect(()=>{
-  if(!jobs)return;
-  for(const job of jobs)if(job.status==='processing'&&!uploadRunning(job.ownerId,job.id))run(job);
-  if(jobs.some(j=>j.status!=='processing'&&uploadRunning(j.ownerId,j.id)))return;
-  const next=jobs.find(j=>j.status==='queued');if(next)run(next);
- },[jobs,run]);
+ // Uploads run in the background (state/UploadRunner); failed or interrupted ones wait here for a Retry.
  const remove=(job:UploadJob)=>Alert.alert(job.status==='published'?'Dismiss receipt?':'Remove this Story?',job.status==='published'?'The posted Story stays up.':'This removes the saved copy and your edits. Your original photo or video is unchanged.',[{text:'Cancel',style:'cancel'},{text:'Remove',style:'destructive',onPress:()=>void removeUpload(job.ownerId,job.id).catch(e=>setError(e.message))}]);
  return <ScrollView style={styles.root} contentContainerStyle={styles.content}>
   <Text style={styles.title} accessibilityRole="header">Story uploads</Text>
-  <Text style={styles.muted}>Keep Katkee open while a Story uploads. Once it's processing, it posts automatically — you can close the app. Saved uploads continue where they stopped.</Text>
+  <Text style={styles.muted}>Stories share in the background while Katkee is open. Once one is processing it posts by itself, even if you close the app. Anything interrupted waits here to continue.</Text>
   {jobs===null?<ActivityIndicator color={colors.accent}/>:!jobs.length?<Text style={styles.muted}>No pending uploads.</Text>:jobs.map(job=>{
    const active=uploadRunning(job.ownerId,job.id);const percent=uploadProgress(job.ownerId,job.id);
    const label=describe(job,active,percent);

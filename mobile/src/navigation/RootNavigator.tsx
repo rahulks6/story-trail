@@ -34,6 +34,7 @@ import { MutedAccountsScreen } from "../screens/profile/MutedAccountsScreen";
 import { CloseFriendsScreen } from "../screens/profile/CloseFriendsScreen";
 import { FollowListScreen } from "../screens/profile/FollowListScreen";
 import { ActivityScreen } from "../screens/activity/ActivityScreen";
+import { UploadRunner } from "../state/UploadRunner";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -270,7 +271,7 @@ export function RootNavigator(): React.JSX.Element {
   }
 
   if (status === "signedIn") {
-    return <NavigationContainer key={user?.id ?? "signedIn"} linking={linking}><SignedInNavigator /><NearbyPrompt /></NavigationContainer>;
+    return <NavigationContainer key={user?.id ?? "signedIn"} linking={linking}><SignedInNavigator /><NearbyPrompt /><UploadRunner /></NavigationContainer>;
   }
   return <NavigationContainer key="signedOut" linking={signedOutLinking}><AuthNavigator /></NavigationContainer>;
 }

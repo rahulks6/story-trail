@@ -677,12 +677,12 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         {/* Visible to any authorized viewer — who's behind the number, and the rest of Insights, is owner-only (StoryInsightsSheet). */}
         {isOwnStory ? (
           <Pressable onPress={() => setInsightsOpen(true)} hitSlop={8} style={[styles.viewCountButton, styles.viewCountRow]} accessibilityRole="button" accessibilityLabel={`${viewCount ?? 0} views. Open viewers and Insights`}>
-            <Icon name={ICONS.viewers} size={14} color={styles.viewCount.color} />
+            <Icon name={ICONS.viewers} size={20} color={styles.viewCount.color} />
             <Text style={styles.viewCount}>{viewCount ?? "—"}</Text>
           </Pressable>
         ) : (
           <View style={styles.viewCountRow} accessible accessibilityLabel={`${viewCount ?? 0} views`}>
-            <Icon name={ICONS.viewers} size={14} color={styles.viewCount.color} />
+            <Icon name={ICONS.viewers} size={20} color={styles.viewCount.color} />
             <Text style={styles.viewCount}>{viewCount ?? "—"}</Text>
           </View>
         )}
@@ -808,8 +808,8 @@ const styles = StyleSheet.create({
   caption: { color: colors.textPrimary, marginTop: 2 },
   sequence: { color: "rgba(255,255,255,0.7)", fontSize: 12, marginTop: 2 },
   viewCountButton: { alignItems: "flex-end" },
-  viewCount: { color: "rgba(255,255,255,0.85)", fontSize: 12, fontWeight: "600" },
-  viewCountRow: { flexDirection: "row", alignItems: "center", gap: 4 },
+  viewCount: { color: colors.textPrimary, fontSize: 15, fontWeight: "700" },
+  viewCountRow: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 12, paddingVertical: 7, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.4)" },
   closeButton: { position: "absolute", top: spacing.xl, right: spacing.md },
   closeFriendsBadge: { flexDirection: "row", alignItems: "center", gap: 3, alignSelf: "flex-start", backgroundColor: colors.success, borderRadius: radii.pill, paddingHorizontal: spacing.sm, paddingVertical: 2, marginTop: 4 },
   closeFriendsBadgeText: { color: colors.onAccent, fontSize: 11, fontWeight: "700" },

@@ -178,6 +178,8 @@ export function runUpload(ownerId:string,id:string,session:()=>{ownerId:string;t
  inFlight.set(storageKey,work);return work;
 }
 export function uploadRunning(ownerId:string,id:string){return inFlight.has(key(ownerId,id));}
+/** The saved copy of a photo being shared, for a thumbnail while it uploads. */
+export function uploadPreviewUri(job:UploadJob):string|null{return job.kind==='photo'?'file://'+file(job.ownerId,job.id):null;}
 /** A failure Retry can't fix: the file itself was rejected by processing. */
 export function needsNewFile(job:UploadJob){return job.status==='failed'&&job.retryable===false;}
 export function removeUpload(ownerId:string,id:string):Promise<void>{return serial(async()=>{

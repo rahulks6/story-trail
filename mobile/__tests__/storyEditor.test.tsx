@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal } from "react-native";
+import { Modal, Text } from "react-native";
 import { act, create, type ReactTestInstance, type ReactTestRenderer } from "react-test-renderer";
 import { StoryEditorScreen } from "../src/screens/create/StoryEditorScreen";
 import { FILTER_PREVIEWS } from "../src/models/filterPreviews";
@@ -37,7 +37,8 @@ async function open() {
 }
 const canvas = () => tree.root.find((n: ReactTestInstance) => typeof n.type === "string" && n.props.collapsable === false && n.props.importantForAccessibility === "no-hide-descendants");
 const textModalOpen = () => tree.root.findAllByType(Modal).some((m) => m.props.visible && m.findAll((n: ReactTestInstance) => n.props.placeholder !== undefined && /type|text/i.test(String(n.props.placeholder))).length > 0);
-const filterSelected = () => tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && n.props.accessibilityRole === "button" && n.props.accessibilityState?.selected === true && /filter$/.test(n.props.accessibilityLabel ?? "")).map((n) => n.props.accessibilityLabel);
+// The filter's name shows briefly on the photo when it changes (there's no strip of filters).
+const filterToast = () => tree.root.findAllByType(Text).map((t) => [t.props.children].flat().join("")).filter((t) => FILTER_PREVIEWS.some((f) => f.name === t) || t === "Swipe for filters");
 
 beforeEach(() => {
   g.__haptics = [];
@@ -49,13 +50,15 @@ afterEach(async () => {
 describe("Story editor canvas", () => {
   it("changes the filter while the finger is still swiping, one step per swipe distance", async () => {
     await open();
+    // The first time, a hint says filters are a swipe away.
+    expect(filterToast()).toEqual(["Swipe for filters"]);
     const c = canvas();
     act(() => c.props.onResponderGrant(touchEvent([[300, 400]], 1)));
     act(() => c.props.onResponderMove(touchEvent([[240, 402]], 2)));
-    expect(filterSelected()).toEqual([`${FILTER_PREVIEWS[1]!.name} filter`]);
+    expect(filterToast()).toEqual([FILTER_PREVIEWS[1]!.name]);
     act(() => canvas().props.onResponderMove(touchEvent([[180, 404]], 3)));
     act(() => canvas().props.onResponderRelease(touchEvent([[180, 404]], 4)));
-    expect(filterSelected()).toEqual([`${FILTER_PREVIEWS[2]!.name} filter`]);
+    expect(filterToast()).toEqual([FILTER_PREVIEWS[2]!.name]);
     expect(g.__haptics.filter((h) => h === "selection")).toHaveLength(2);
     expect(textModalOpen()).toBe(false);
   });

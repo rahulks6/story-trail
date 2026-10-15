@@ -25,7 +25,6 @@ import {enqueueUpload} from '../../state/uploadQueue';
 import { track } from "../../analytics/analytics";
 import { ApiError } from "../../api/client";
 import { FILTER_PREVIEWS, type FilterKey } from "../../models/filterPreviews";
-import { FilterStrip } from "../../components/FilterStrip";
 import { tapFeedback } from "../../utils/haptics";
 import { filteredPhotoUri, forgetFilteredPhoto } from "../../utils/filterPhoto";
 import { filterSwipeStep, pinchPlacement, TAP_SLOP, type Placement, type Touch } from "../../models/canvasGestures";
@@ -50,6 +49,7 @@ import { CropGestureLayer } from "../../components/CropGestureLayer";
 import { CropAdjustControls } from "../../components/CropAdjustControls";
 import { savePendingDraft, loadPendingDraft, clearPendingDraft } from "../../state/draftStorage";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
+import { useScreenReader } from "../../hooks/useScreenReader";
 
 type Props = NativeStackScreenProps<CreateStackParamList, "StoryEditor">;
 type Audience = "public" | "followers" | "close_friends";
@@ -67,6 +67,9 @@ const PREVIEW_EDGE = 1080;
  * overlays and the chosen filter on publish, the single most important
  * correctness bug this module closes; see backend migration 0015).
  */
+/** The "Swipe for filters" hint shows once per app run. */
+let filterHintShown = false;
+
 /** Media already counted as a started Story in this app run. */
 const startedStories = new Set<string>();
 
@@ -76,6 +79,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   const boomerang = kind === "video" && route.params.effect === "boomerang";
   const { accessToken,user } = useAuth();
   const insets = useScreenInsets();
+  const screenReader = useScreenReader();
   const submittingUpload=useRef(false);
   const rootNavigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [audience, setAudience] = useState<Audience>("public");
@@ -268,6 +272,12 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
     filterToastTimer.current = setTimeout(() => setFilterToastName(null), 900);
   }, []);
 
+  useEffect(() => {
+    if (filterHintShown) return;
+    filterHintShown = true;
+    showFilterToast("Swipe for filters");
+  }, [showFilterToast]);
+
   const currentFilter = useRef(draft.filter);
   currentFilter.current = draft.filter;
   const cycleFilter = useCallback(
@@ -422,7 +432,8 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
       setUploadState("done");
       tapFeedback("success");
       void clearPendingDraft(user.id, mediaUri);
-      rootNavigation.reset({ index: 1, routes: [{ name: "Main" },{name:'UploadQueue'}] });
+      // Back to Home, where a small status shows the Story sharing (components/UploadStatusPill).
+      rootNavigation.reset({ index: 0, routes: [{ name: "Main" }] });
     } catch (err) {
       // Nothing is lost on failure — `draft` (media uri, overlays, drawing,
       // filter, caption, audience) stays exactly as it was so Retry can
@@ -571,9 +582,12 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               <Text style={styles.cropDoneLabel}>Done</Text>
             </Pressable>
           </View>
-          <View style={[styles.cropControlsBar, { bottom: spacing.xxl + insets.bottom }]}>
-            <CropAdjustControls crop={draft.crop} onChange={(crop) => setDraft((d) => ({ ...d, crop }))} />
-          </View>
+          {/* Pinch and drag crop the photo; the step buttons are for a screen reader. */}
+          {screenReader ? (
+            <View style={[styles.cropControlsBar, { bottom: spacing.xxl + insets.bottom }]}>
+              <CropAdjustControls crop={draft.crop} onChange={(crop) => setDraft((d) => ({ ...d, crop }))} />
+            </View>
+          ) : null}
         </>
       ) : null}
 
@@ -632,10 +646,18 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           style={[styles.bottomArea, { bottom: spacing.xl + insets.bottom }]}
           contentContainerStyle={styles.bottomAreaContent}
         >
-          <FilterStrip kind={kind} mediaUri={mediaUri} selected={draft.filter} onSelect={(name) => {
-              if (name !== draft.filter) tapFeedback("select");
-              setDraft((d) => ({ ...d, filter: name }));
-            }} />
+          {/* Filters change by swiping the photo (like Instagram); a screen reader gets buttons instead. */}
+          {screenReader ? (
+            <View style={styles.filterButtons}>
+              <Pressable onPress={() => cycleFilter(-1)} style={styles.filterButton} accessibilityRole="button" accessibilityLabel="Previous filter">
+                <Icon name={ICONS.left} size={18} color={colors.textPrimary} />
+              </Pressable>
+              <Text style={styles.filterName} accessibilityLiveRegion="polite">{draft.filter}</Text>
+              <Pressable onPress={() => cycleFilter(1)} style={styles.filterButton} accessibilityRole="button" accessibilityLabel="Next filter">
+                <Icon name={ICONS.right} size={18} color={colors.textPrimary} />
+              </Pressable>
+            </View>
+          ) : null}
 
           <TextInput
             style={styles.captionInput}
@@ -697,6 +719,8 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
       ) : null}
 
       <TextToolModal
+        // Starts fresh each time it opens: new text, or the text being edited.
+        key={textModalVisible ? editingOverlayId ?? "new" : "closed"}
         visible={textModalVisible}
         initialText={editingOverlay?.properties.text}
         initialProperties={editingOverlay?.properties}
@@ -784,6 +808,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
   },
+  filterButtons: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.md },
+  filterButton: { padding: spacing.sm, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.35)" },
+  filterName: { color: colors.textPrimary, fontWeight: "700", minWidth: 90, textAlign: "center" },
   audienceLabelRow: { flexDirection: "row", alignItems: "center", gap: 4 },
   boomerangLabel: { color: colors.textPrimary, fontWeight: "700" },
   filterToastLabel: { color: colors.textPrimary, fontSize: 18, fontWeight: "700" },

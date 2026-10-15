@@ -1,7 +1,7 @@
 import { Icon } from "../components/Icon";
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { BottomTabBarHeightCallbackContext, type BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing, typography, ICONS } from "../theme";
@@ -39,10 +39,21 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
   const { unreadCount: unreadMessages } = useDM();
   // Clears the iPhone home indicator and Android's gesture/navigation bar (edge-to-edge).
   const { bottom } = useSafeAreaInsets();
-  if (tabBarHidden(state)) return <View />;
+  // Screens read the tab bar's height to know whether they must clear the bottom edge
+  // themselves (hooks/useScreenInsets.ts); a custom bar has to report it, 0 while hidden.
+  const reportHeight = useContext(BottomTabBarHeightCallbackContext);
+  const hidden = tabBarHidden(state);
+  useEffect(() => {
+    if (hidden) reportHeight?.(0);
+  }, [hidden, reportHeight]);
+  if (hidden) return <View />;
 
   return (
-    <View style={[styles.container, { paddingBottom: Math.max(bottom, spacing.sm) }]} accessibilityRole="tablist">
+    <View
+      style={[styles.container, { paddingBottom: Math.max(bottom, spacing.sm) }]}
+      onLayout={(e) => reportHeight?.(e.nativeEvent.layout.height)}
+      accessibilityRole="tablist"
+    >
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
