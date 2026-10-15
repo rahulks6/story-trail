@@ -1,4 +1,5 @@
 import { Icon } from "../../components/Icon";
+import { tapFeedback } from '../../utils/haptics';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {Alert,AppState,Linking, PanResponder, Pressable, StyleSheet, Text, View, type GestureResponderEvent } from "react-native";
 import {useIsFocused} from '@react-navigation/native';
@@ -149,6 +150,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
       }
       setCountdown(0);
       if(!camera.current||!activeRef.current)return;
+      tapFeedback('tap');
       const photo=await photoOutput.capturePhoto({flashMode:device?.hasFlash?flash:'off'},{});
       try{
         // Sensor-native dimensions are landscape for a portrait capture; swap them
@@ -173,6 +175,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
     if (!camera.current || recordingRef.current||capturingRef.current||!activeRef.current) return;
     recordingRef.current=true;
     setIsRecording(true);
+    tapFeedback('tap');
     setRecordingSeconds(0);
     recordingTimer.current = setInterval(() => setRecordingSeconds((s) => s + 1), 1000);
     void (async () => {

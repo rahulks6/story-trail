@@ -26,6 +26,7 @@ import { track } from "../../analytics/analytics";
 import { ApiError } from "../../api/client";
 import { FILTER_PREVIEWS, type FilterKey } from "../../models/filterPreviews";
 import { FilterStrip } from "../../components/FilterStrip";
+import { tapFeedback } from "../../utils/haptics";
 import { filteredPhotoUri, forgetFilteredPhoto } from "../../utils/filterPhoto";
 import {
   createEmptyDraft,
@@ -264,6 +265,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         const nextIndex = (currentIndex + direction + FILTER_PREVIEWS.length) % FILTER_PREVIEWS.length;
         const next = FILTER_PREVIEWS[nextIndex];
         showFilterToast(next.name);
+        tapFeedback("select");
         return { ...d, filter: next.name };
       });
     },
@@ -336,6 +338,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         },
       );
       setUploadState("done");
+      tapFeedback("success");
       void clearPendingDraft(user.id, mediaUri);
       rootNavigation.reset({ index: 1, routes: [{ name: "Main" },{name:'UploadQueue'}] });
     } catch (err) {
@@ -540,7 +543,10 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           style={[styles.bottomArea, { bottom: spacing.xl + insets.bottom }]}
           contentContainerStyle={styles.bottomAreaContent}
         >
-          <FilterStrip kind={kind} mediaUri={mediaUri} selected={draft.filter} onSelect={(name) => setDraft((d) => ({ ...d, filter: name }))} />
+          <FilterStrip kind={kind} mediaUri={mediaUri} selected={draft.filter} onSelect={(name) => {
+              if (name !== draft.filter) tapFeedback("select");
+              setDraft((d) => ({ ...d, filter: name }));
+            }} />
 
           <TextInput
             style={styles.captionInput}
