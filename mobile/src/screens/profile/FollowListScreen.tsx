@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from "react";
+import { ListSkeleton } from "../../components/Skeleton";
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -79,11 +80,7 @@ export function FollowListScreen({ route }: Props): React.JSX.Element {
   }, [accessToken, fetchList, loadingMore, hasMore, users, offset]);
 
   if (users === null) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator color={colors.accent} />
-      </View>
-    );
+    return <ListSkeleton label="Loading people" />;
   }
 
   if (error) {

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ListSkeleton } from "../../components/Skeleton";
 import { ActivityIndicator, Pressable, RefreshControl, SectionList, StyleSheet, Text, View } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -353,7 +354,9 @@ export function ActivityScreen(): React.JSX.Element {
             <Button label="Try again" onPress={() => void loadFirstPage()} />
           </>
         ) : (
-          <ActivityIndicator color={colors.accent} accessibilityLabel="Loading activity" />
+          <View style={StyleSheet.absoluteFill}>
+            <ListSkeleton label="Loading activity" />
+          </View>
         )}
       </View>
     );

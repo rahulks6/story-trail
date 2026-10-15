@@ -1,4 +1,5 @@
 import { Icon } from "../../components/Icon";
+import { ThreadSkeleton } from "../../components/Skeleton";
 import { storyReplyLabel } from "../../models/storyReplies";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -338,7 +339,9 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
             </Pressable>
           </>
         ) : (
-          <ActivityIndicator color={colors.accent} />
+          <View style={StyleSheet.absoluteFill}>
+            <ThreadSkeleton />
+          </View>
         )}
       </View>
     );

@@ -1,4 +1,5 @@
 import React,{useCallback,useEffect,useRef,useState} from 'react';
+import {StorySkeleton} from '../../components/Skeleton';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
 import {useNavigation,type CompositeNavigationProp} from '@react-navigation/native';
 import type {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
@@ -28,6 +29,7 @@ export function HomeScreen():React.JSX.Element {
   void getRankedHomeFeed(token.current,cursor).then(result=>{if(generation!==request.current)return;setFeed(previous=>{const ids=new Set(previous?.map(e=>e.owner.id));return [...(previous??[]),...result.feed.filter(e=>!ids.has(e.owner.id))];});setCursor(result.nextCursor);setError('');}).catch(()=>{if(generation===request.current)setError('More Stories could not load. Retry or refresh your feed.');}).finally(()=>{if(generation===request.current)loadingMore.current=false;});
  },[cursor]);
  const refresh=()=>setRetry(n=>n+1);
+ if(feed===null&&!error)return <StorySkeleton/>;
  if(feed===null)return <View style={styles.empty}><Text style={typography.body}>{error||'Loading Stories…'}</Text>{error&&<Pressable onPress={refresh} accessibilityRole="button"><Text style={typography.body}>Try again</Text></Pressable>}</View>;
  if(!feed.length)return <EmptyState title="No active Stories yet" message="Stories from people you follow and eligible new creators will appear here."/>;
  return <View style={styles.root}><StoryFeed key={`${user?.id}:${retry}`} creators={feed.map(e=>e.owner.username)} startIndex={0} sponsored={sponsored} onNeedMore={more} onRefresh={refresh}

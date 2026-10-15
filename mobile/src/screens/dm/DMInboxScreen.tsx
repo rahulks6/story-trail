@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Text, TextInput, View } from "react-native";
+import { ListSkeleton } from "../../components/Skeleton";
+import { FlatList, Pressable, RefreshControl, StyleSheet, Text, TextInput, View } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { DMStackParamList } from "../../navigation/types";
@@ -121,9 +122,7 @@ export function DMInboxScreen(): React.JSX.Element {
         </Pressable>
       </View>
     ) : (
-      <View style={styles.centered}>
-        <ActivityIndicator color={colors.accent} />
-      </View>
+      <ListSkeleton label="Loading messages" />
     );
   }
 

@@ -1,4 +1,5 @@
 import { Icon } from "../../components/Icon";
+import { ListSkeleton } from "../../components/Skeleton";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -264,7 +265,7 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
 
       {!debouncedQuery ? (
         suggestions === null ? (
-          <ActivityIndicator color={colors.accent} style={styles.spinner} />
+          <ListSkeleton rows={6} label="Loading suggestions" />
         ) : suggestions.length === 0 ? (
           <EmptyState title="Find people" message="Search by name, username or interest." />
         ) : (

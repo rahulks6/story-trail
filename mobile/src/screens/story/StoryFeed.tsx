@@ -1,4 +1,5 @@
 import { Icon } from "../../components/Icon";
+import { StorySkeleton } from "../../components/Skeleton";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated, AppState, Dimensions, Image, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
@@ -489,9 +490,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   }
   if (!currentStory) {
     return (
-      <View style={styles.centered}>
-        <Text style={typography.body}>Loading…</Text>
-      </View>
+      <StorySkeleton />
     );
   }
 
