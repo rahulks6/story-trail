@@ -1,0 +1,24 @@
+
+                        ▒▒▓▓▓▓▒▒
+                     ▒▓▓▓▒▒░░▒▒▓▓▓▒
+                  ▒▓▓▓▓░░░▒▒▒▒░░░▓▓▓▓▒
+                 ▓▓▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▓▓
+                 ▓▓░░░░░▒▓▓▓▓▓▓▒░░░░░▓▓
+                 ▓▓░░▓▓▒░░░▒▒░░░▒▓▒░░▓▓
+                 ▓▓░░▓▓▓▓▓▒▒▒▒▓▓▓▓▒░░▓▓
+                 ▓▓░░▓▓▓▓▓▓▓▓▓▓▓▓▓▒░░▓▓
+                 ▓▓▒░░▒▒▓▓▓▓▓▓▓▓▒░░░▒▓▓
+                  ▒▓▓▓▒░░░▒▓▓▒░░░▒▓▓▓▒
+                     ▒▓▓▓▒░░░░▒▓▓▓▒
+                        ▒▒▓▓▓▓▒▒
+
+
+                Welcome to Metro v0.87.1
+              Fast - Scalable - Integrated
+
+
+ WARN  Attempted to import the module "/home/user/story-trail/mobile/node_modules/react-native/src/private/featureflags/ReactNativeFeatureFlags" which is not listed in the "exports" of "/home/user/story-trail/mobile/node_modules/react-native" under the requested subpath "./src/private/featureflags/ReactNativeFeatureFlags". Falling back to file-based resolution. Consider updating the call site or asking the package maintainer(s) to expose this API.
+LOG:Writing bundle output to: build/main.jsbundle
+LOG:Done writing bundle output
+Copying 15 asset files
+Done copying assets
