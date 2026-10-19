@@ -1,0 +1,120 @@
+name: iOS build
+
+# Builds the iPhone app on GitHub's Macs (there's no Mac in the cloud sessions).
+#   simulator:  an unsigned build that proves the app compiles (no Apple account needed).
+#   testflight: a signed App Store build, uploaded to TestFlight. Needs the repository secrets
+#               APPLE_TEAM_ID, ASC_KEY_ID, ASC_ISSUER_ID and ASC_KEY_P8_BASE64 (an App Store
+#               Connect API key with the App Manager role), and optionally
+#               GOOGLE_SERVICE_INFO_PLIST_BASE64 for push. See docs/IOS_APP_STORE_DEPLOYMENT.md.
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "simulator or testflight"
+        required: true
+        default: simulator
+        type: choice
+        options: [simulator, testflight]
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+          working-directory: mobile
+
+      - name: Xcode
+        run: |
+          sudo xcode-select -s "$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)"
+          xcodebuild -version
+
+      - name: JavaScript dependencies
+        run: npm ci
+
+      - name: Firebase config (push)
+        env:
+          PLIST: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_BASE64 }}
+        run: |
+          if [ -n "$PLIST" ]; then echo "$PLIST" | base64 --decode > ios/KatkeeMobile/GoogleService-Info.plist; echo "Push config added."; else echo "No push config: the app builds without push."; fi
+
+      - name: CocoaPods
+        run: cd ios && bundle exec pod install
+
+      - name: Simulator build (unsigned)
+        if: inputs.mode == 'simulator'
+        run: |
+          cd ios
+          set -o pipefail
+          xcodebuild -workspace KatkeeMobile.xcworkspace -scheme KatkeeMobile -configuration Release \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO build | tee xcodebuild.log | grep -E "error:|warning: .*deprecated|\*\* BUILD" || true
+          test -d build/Build/Products/Release-iphonesimulator/KatkeeMobile.app
+          cd build/Build/Products/Release-iphonesimulator && zip -qr "$GITHUB_WORKSPACE/KatkeeMobile-simulator.zip" KatkeeMobile.app
+
+      - name: App Store build and TestFlight upload
+        if: inputs.mode == 'testflight'
+        env:
+          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          KEY_P8: ${{ secrets.ASC_KEY_P8_BASE64 }}
+        run: |
+          for v in TEAM_ID KEY_ID ISSUER_ID KEY_P8; do [ -n "${!v}" ] || { echo "Missing secret for $v"; exit 1; }; done
+          KEY="$RUNNER_TEMP/AuthKey_$KEY_ID.p8"; echo "$KEY_P8" | base64 --decode > "$KEY"
+          AUTH=(-allowProvisioningUpdates -authenticationKeyPath "$KEY" -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER_ID")
+          BUILD_NUMBER=$((100 + GITHUB_RUN_NUMBER))
+          cd ios
+          set -o pipefail
+          xcodebuild -workspace KatkeeMobile.xcworkspace -scheme KatkeeMobile -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/Katkee.xcarchive" \
+            DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Automatic CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+            "${AUTH[@]}" archive | tee xcodebuild.log | grep -E "error:|\*\* ARCHIVE" || true
+          test -d "$RUNNER_TEMP/Katkee.xcarchive"
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>$TEAM_ID</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict></plist>
+          EOF
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Katkee.xcarchive" -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -exportPath "$RUNNER_TEMP/export" "${AUTH[@]}"
+          echo "Uploaded build $BUILD_NUMBER to TestFlight."
+
+      - name: Build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-log
+          path: mobile/ios/xcodebuild.log
+          if-no-files-found: ignore
+
+      - name: Simulator app
+        if: inputs.mode == 'simulator'
+        uses: actions/upload-artifact@v4
+        with:
+          name: KatkeeMobile-simulator
+          path: KatkeeMobile-simulator.zip
