@@ -237,9 +237,11 @@ Safety and privacy
 Katkee is for people 18 and older.
 ```
 
-**Countries and regions** (Test and release, Production, Countries / regions): add **India**
-only for the first launch. Add more countries later without a new build (update the legal
-pages first: `legal/README.md`).
+**Countries and regions** (Test and release, Production, Countries / regions): choose
+**Add countries / regions**, tick **all**, and keep "New countries and regions" on so Katkee
+is offered wherever Google adds one. The legal pages cover users everywhere
+(`legal/README.md`, "Worldwide release", has what to check with a lawyer). Play also asks for
+your **EU trader status** (Policy, App content, then Digital Services Act).
 
 ## 8. Test, then release
 

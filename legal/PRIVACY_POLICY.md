@@ -1,6 +1,6 @@
 # Katkee Privacy Policy
 
-**Last updated:** 13 October 2026
+**Last updated:** 19 October 2026
 
 This policy explains what Katkee collects, how we use it, who can see it, how long we keep it
 and the choices you have. It covers the Katkee apps for iPhone and Android, the website at
@@ -11,7 +11,9 @@ katkee.com and the service behind them.
 Katkee is operated by Rahul Katakdhond, a sole proprietorship registered in India ("Katkee",
 "we", "us"). We decide how and why your personal data is used for the Katkee apps, the website
 at katkee.com and the service they use, which makes us the Data Fiduciary under India's Digital
-Personal Data Protection Act 2023.
+Personal Data Protection Act 2023, and the controller under the EU and UK General Data Protection
+Regulation (GDPR) and similar laws elsewhere. Katkee is available worldwide; section 8 explains the
+rights you have wherever you live.
 
 Katkee is only for people 18 and older (section 9).
 
@@ -39,8 +41,13 @@ entered it wrongly, write to privacy@katkee.com to correct it.
 ### Content you create
 Photos and videos you publish as Stories (with any sound they contain),
 captions, stickers and drawings, Highlights you keep, comments, likes,
-shares, and the direct messages you send (including Stories you share into
-a conversation).
+shares, and the direct messages you send (including photos and videos, and
+Stories you share into a conversation). A photo or video you send in a message
+can be opened only by you and the person you sent it to.
+
+If you add a song to a Story, we record which song from Katkee's music
+library and which part of it plays. The songs are openly licensed and credited
+on the Story; choosing one tells us nothing else about you.
 
 When you change your profile photo, the app cuts out the square you choose
 on your phone and uploads only that square.
@@ -68,8 +75,9 @@ is shown on that Story.
 
 ### Activity used to rank Home and Story reach
 We record views, how much of a Story was watched, likes, comments, shares,
-profile visits, follows, quick skips, and "Not interested". We use them for
-three things:
+profile visits, follows, quick skips, and "Not interested". We use them, and
+the interests you chose on your profile (people you don't follow who share
+your interests appear higher on your Home), for three things:
 - to order your Home;
 - to decide how far a public Story reaches beyond its owner's followers;
 - to give creators aggregate Insights.
@@ -97,7 +105,8 @@ message is kept as evidence for the moderator.
 
 ### Technical information
 - Your IP address: to limit abuse and secure accounts. It also appears in
-  server logs, which Indian law requires us to keep for 180 days.
+  server logs, which Indian law requires us to keep for 180 days (Katkee is
+  run from India; see section 5).
 - Device and app details for each signed-in session, so you can sign out a
   device.
 - The push token Apple or Google gives your phone, so we can send
@@ -150,6 +159,15 @@ message is kept as evidence for the moderator.
 They process data only to provide these services to us. Our servers,
 database and files are in India (Amazon Web Services, Mumbai); Twilio,
 Google and Apple may process the data they handle for us outside India.
+
+**Wherever you use Katkee from, your data is stored and processed in India.**
+If you live in the European Economic Area, the UK or Switzerland, you give it
+to us directly when you use Katkee, and India is not a country the European
+Commission or the UK has found to give adequate protection. We protect it as
+this policy describes wherever it is, and where a service provider moves it
+on, we rely on that provider's Standard Contractual Clauses (or the UK
+Addendum) or other safeguards the law recognises. Ask privacy@katkee.com for
+a copy of them.
 
 ## 6. How we protect it
 
@@ -216,15 +234,55 @@ with our answer, you can complain to the Data Protection Board of India.
 If you'd like this policy in Hindi or another language listed in the
 Eighth Schedule to the Constitution of India, ask us at the same address.
 
-If you're in the EU or UK you have rights under GDPR: access, correction,
-deletion, portability and objection. Residents of California have similar
-rights under the CCPA/CPRA. Contact us to use any of them.
+### Wherever you live
+You can ask us, at privacy@katkee.com, for a copy of your data, to correct
+it, to delete it, or to stop or limit something we do with it. We answer
+within a month (within 45 days for California), we don't charge for it, and
+using a right never changes how Katkee treats you. We may ask you to confirm
+the request from your account's email address so no one else can make it.
+
+### European Economic Area, UK and Switzerland (GDPR)
+You have the right to access, correct, delete and move (port) your data, to
+object to our use of it, to restrict it, and to withdraw any consent at any
+time. The legal bases we rely on:
+- **Contract**: running your account, Stories, Highlights, messages and
+  notifications, which you asked for by signing up (Article 6(1)(b)).
+- **Legitimate interests**: ordering Home and how far public Stories
+  reach, choosing Sponsored Stories from the interests you chose, keeping
+  Katkee safe (rate limits, link checks, moderation), security records,
+  and our own analytics, which identify nobody once counted
+  (Article 6(1)(f)). You can object to any of these; for Sponsored Stories,
+  removing your interests in Edit Profile stops them being used.
+- **Consent**: Nearby Stories (your area) and a location sticker; you can
+  turn them off at any time.
+- **Legal obligation**: keeping server logs and the details of deleted
+  accounts for as long as the law requires (section 7).
+
+You can complain to the data protection authority where you live or work
+(in the UK, the Information Commissioner's Office).
+
+### United States (California and other states)
+In the last 12 months we collected the categories in section 2 (identifiers,
+account details, your content and activity on Katkee, approximate area if you
+turned it on, and device information), from you and your use of Katkee, for
+the purposes in section 3. **We don't sell your personal information or share
+it for cross-context behavioural advertising**, and we don't use sensitive
+personal information to infer things about you. You have the right to know,
+correct and delete your data, and to opt out of sale or sharing (which we
+don't do). You can use an authorised agent.
+
+### Other countries
+Data protection laws elsewhere (for example Brazil's LGPD, Canada's PIPEDA,
+Singapore's PDPA, Australia's Privacy Act, Japan's APPI and South Korea's
+PIPA) give similar rights: to know what we hold, to correct or delete it, and
+to complain to your regulator. Write to privacy@katkee.com and we'll help.
 
 ## 9. Katkee is for adults (18 and older)
 
-Katkee is only for people 18 and older. Under India's Digital Personal Data
-Protection Act 2023, anyone under 18 is a child, and we don't knowingly
-collect personal data from children.
+Katkee is only for people 18 and older. That's true in every country, even
+where the law would allow younger people to sign up. Under India's Digital
+Personal Data Protection Act 2023, anyone under 18 is a child, and we don't
+knowingly collect personal data from children anywhere.
 
 - When you create an account, we ask for your date of birth. If it shows
   you're under 18, we don't create the account and keep nothing you

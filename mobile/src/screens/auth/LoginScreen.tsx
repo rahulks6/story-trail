@@ -50,7 +50,7 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
             <Text style={styles.brandKat}>Kat</Text>
             <Text style={styles.brandKee}>kee</Text>
           </Text>
-          <Text style={styles.subtitle}>Log in to see Stories from your friends.</Text>
+          <Text style={styles.subtitle}>Story that connects.</Text>
 
           {error ? <Banner text={error} /> : null}
 

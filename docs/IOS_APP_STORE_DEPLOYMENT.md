@@ -182,9 +182,11 @@ At <https://appstoreconnect.apple.com>, open Apps, then +, then **New App**:
   Whatever the store rating, the app refuses anyone under 18 at sign-up (date of birth, checked
   on the server).
 
-**Pricing and Availability**: Free. For the India launch, under Availability, choose **India**
-only. You can add countries later without a new build (update the legal pages first:
-`legal/README.md`).
+**Pricing and Availability**: Free. Under Availability choose **all countries or regions**,
+and keep "Make available in new countries and regions" on. The legal pages cover users
+everywhere (`legal/README.md`, "Worldwide release", has what to check with a lawyer). App Store
+Connect also asks for your **EU trader status** (Business, then Digital Services Act) before the
+app can be offered in the EU.
 
 **App Privacy** (the "nutrition label"). Add the Privacy Policy URL,
 `https://katkee.com/privacy`, then declare these. They

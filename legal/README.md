@@ -33,6 +33,23 @@ reviewed them. Have them reviewed before launch, in particular:
   Schedule languages on request. Keep watching for the Data Protection Board's procedures.
 - **GDPR, UK GDPR and CCPA/CPRA**, if you have users there: the rights are listed in policy
   section 8; check the legal bases and transfer mechanisms with your lawyer.
+- **Worldwide release (from 19 October 2026).** Katkee is offered in every country, run from India
+  with the data in AWS Mumbai. The policy now covers GDPR (legal bases, transfers, the right to
+  complain), US state laws (no sale or sharing) and other countries (section 8). Before launch,
+  check with a lawyer:
+  - **EU and UK representatives (GDPR Article 27, UK GDPR Article 27).** A controller outside the
+    EU or UK that offers its service there usually needs a representative there. Representative
+    services exist for a yearly fee; add their address to policy section 11.
+  - **EU Digital Services Act.** Katkee is an online platform for EU users: it needs a published
+    point of contact and an EU legal representative, the reasons for each moderation decision
+    (Katkee's moderation records them, and appeals exist), and a yearly count of EU users.
+  - **UK Online Safety Act.** Services with UK users must assess and act on illegal-content risks
+    and publish how. Katkee's reporting, blocking and moderation are the base for it.
+  - **Store "trader" status for the EU.** App Store Connect and Play Console ask whether you're a
+    trader under the DSA; a trader must publish an address, phone number and email on the EU
+    store pages.
+  - **Twilio phone sign-in** (if you turn it on): each country you add to `PHONE_AUTH_COUNTRIES`
+    must also be allowed in Twilio's Geo permissions; some countries need sender registration.
 - **The store answers must match.** Apple's App Privacy answers and Google Play's Data safety
   form (`STORE_LISTING.md`, `docs/IOS_APP_STORE_DEPLOYMENT.md`,
   `docs/GOOGLE_PLAY_DEPLOYMENT.md`) must say the same as the policy.

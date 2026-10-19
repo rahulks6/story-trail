@@ -47,6 +47,7 @@ import { TextToolModal } from "../../components/TextToolModal";
 import { StickerSheet, type StickerAddPayload } from "../../components/StickerSheet";
 import { MusicSheet, type ChosenMusic } from "../../components/MusicSheet";
 import { MusicPlayer } from "../../components/MusicPlayer";
+import { listMusic } from "../../api/music";
 import { DrawingCanvas } from "../../components/DrawingCanvas";
 import { OverlayAdjustSheet } from "../../components/OverlayAdjustSheet";
 import { CropGestureLayer } from "../../components/CropGestureLayer";
@@ -97,6 +98,16 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   const [music, setMusic] = useState<ChosenMusic | null>(null);
   const [musicSheetVisible, setMusicSheetVisible] = useState(false);
   const focused = useIsFocused();
+  // The Music button shows once the library has songs.
+  const [musicAvailable, setMusicAvailable] = useState(false);
+  useEffect(() => {
+    if (!accessToken) return;
+    let cancelled = false;
+    listMusic(accessToken)
+      .then((r) => { if (!cancelled) setMusicAvailable(r.tracks.length > 0); })
+      .catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [accessToken]);
   const [drawMode, setDrawMode] = useState(false);
   const [cropMode, setCropMode] = useState(false);
   const [editingOverlayId, setEditingOverlayId] = useState<string | null>(null);
@@ -664,9 +675,9 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             <Pressable onPress={() => setDrawMode(true)} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel="Draw">
               <Icon style={styles.topIcon} name={ICONS.draw} />
             </Pressable>
-            <Pressable onPress={() => setMusicSheetVisible(true)} hitSlop={8} style={[styles.toolButton, music && styles.toolButtonOn]} accessibilityRole="button" accessibilityLabel={music ? `Music: ${music.track.title}. Change` : "Add music"}>
+            {musicAvailable || music ? <Pressable onPress={() => setMusicSheetVisible(true)} hitSlop={8} style={[styles.toolButton, music && styles.toolButtonOn]} accessibilityRole="button" accessibilityLabel={music ? `Music: ${music.track.title}. Change` : "Add music"}>
               <Icon style={[styles.topIcon, music && styles.topIconOn]} name={ICONS.music} />
-            </Pressable>
+            </Pressable> : null}
             {kind === "video" && !boomerang ? (
               <Pressable
                 onPress={() => setDraft((d) => ({ ...d, audioMuted: !d.audioMuted }))}
