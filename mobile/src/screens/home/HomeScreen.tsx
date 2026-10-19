@@ -1,10 +1,11 @@
+import { useMediaStatusBar } from "../../hooks/useMediaStatusBar";
 import React,{useCallback,useEffect,useRef,useState} from 'react';
 import {StorySkeleton} from '../../components/Skeleton';
 import {Pressable,StyleSheet,Text,View} from 'react-native';
 import {useNavigation,type CompositeNavigationProp} from '@react-navigation/native';
 import type {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {colors,spacing,typography,ICONS} from '../../theme';
+import { mediaColors as colors, spacing, mediaTypography as typography, ICONS } from '../../theme';
 import {Icon} from '../../components/Icon';
 import {useNotifications} from '../../state/NotificationsContext';
 import {useScreenInsets} from '../../hooks/useScreenInsets';
@@ -18,6 +19,7 @@ import {getAdPlacements,type SponsoredPlacement} from '../../api/ads';
 import type {MainTabParamList,RootStackParamList} from '../../navigation/types';
 type HomeNavigationProp=CompositeNavigationProp<BottomTabNavigationProp<MainTabParamList,'Home'>,NativeStackNavigationProp<RootStackParamList>>;
 export function HomeScreen():React.JSX.Element {
+  useMediaStatusBar();
  const {accessToken,user}=useAuth();const navigation=useNavigation<HomeNavigationProp>();
  const {unreadCount}=useNotifications();const insets=useScreenInsets();
  // Activity (likes, comments, follows) lives behind the heart at the top, like Instagram.

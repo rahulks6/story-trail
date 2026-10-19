@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { ActivityIndicator, Alert, Animated, AppState, Dimensions, Image, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import Video, {type VideoRef} from "react-native-video";
-import { colors, radii, spacing, typography, ICONS } from "../../theme";
+import { mediaColors as colors, radii, spacing, mediaTypography as typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { getMyActiveStories, getUserActiveStories, getViewCount, mediaFileUrl, recordStoryView, type PublicStory } from "../../api/stories";
 import { getMedia, mediaSource } from "../../api/media";

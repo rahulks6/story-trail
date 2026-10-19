@@ -7,6 +7,7 @@ import { DMProvider } from "./src/state/DMContext";
 import { RealtimeProvider } from "./src/state/RealtimeContext";
 import { RootNavigator } from "./src/navigation/RootNavigator";
 import { ErrorBoundary } from "./src/components/ErrorBoundary";
+import { colorScheme } from "./src/theme/colors";
 
 export default function App(): React.JSX.Element {
   return (
@@ -14,7 +15,8 @@ export default function App(): React.JSX.Element {
     // AuthProvider/the providers below it, not just from screens.
     <ErrorBoundary>
       <SafeAreaProvider>
-        <StatusBar barStyle="light-content" />
+        {/* Dark icons on light screens; Story screens switch to light icons (useMediaStatusBar). */}
+        <StatusBar barStyle={colorScheme() === "light" ? "dark-content" : "light-content"} />
         <AuthProvider>
           <RealtimeProvider>
             <NotificationsProvider>

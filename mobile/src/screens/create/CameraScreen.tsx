@@ -1,3 +1,4 @@
+import { useMediaStatusBar } from "../../hooks/useMediaStatusBar";
 import Svg, { Circle } from "react-native-svg";
 import { Icon } from "../../components/Icon";
 import { tapFeedback } from '../../utils/haptics';
@@ -17,7 +18,7 @@ import {
 import { launchImageLibrary } from "react-native-image-picker";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { CreateStackParamList } from "../../navigation/types";
-import { colors, radii, spacing, ICONS } from "../../theme";
+import { mediaColors as colors, radii, spacing, ICONS } from "../../theme";
 import { useTapGesture } from "../../hooks/useTapGesture";
 import { EmptyState } from "../../components/EmptyState";
 import { guessMimeTypeFromUri } from "../../utils/mime";
@@ -70,6 +71,7 @@ function clamp(n: number, min: number, max: number): number {
  * needs physical-device acceptance (see docs/MANUAL_TEST_PLAN_CAMERA.md).
  */
 export function CameraScreen({ navigation }: Props): React.JSX.Element {
+  useMediaStatusBar();
   const insets = useScreenInsets();
   const { hasPermission: hasCameraPermission, requestPermission: requestCameraPermission } = useCameraPermission();
   const { hasPermission: hasMicPermission, requestPermission: requestMicPermission } = useMicrophonePermission();

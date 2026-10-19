@@ -1,3 +1,4 @@
+import { useMediaStatusBar } from "../../hooks/useMediaStatusBar";
 import { AddToHighlightSheet } from "../../components/AddToHighlightSheet";
 import { Icon } from "../../components/Icon";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -6,7 +7,7 @@ import Video from "react-native-video";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import type { RootStackParamList } from "../../navigation/types";
-import { colors, radii, spacing, ICONS } from "../../theme";
+import { mediaColors as colors, radii, spacing, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { getStoryDetail, type StoryDetail } from "../../api/engagement";
 import { getMedia } from "../../api/media";
@@ -35,6 +36,7 @@ const PHOTO_DURATION_MS = 5000;
  * no next/previous (Archive's own grid is the "next", one tap away).
  */
 export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.JSX.Element {
+  useMediaStatusBar();
   const { storyId } = route.params;
   const { accessToken } = useAuth();
   const insets = useScreenInsets();

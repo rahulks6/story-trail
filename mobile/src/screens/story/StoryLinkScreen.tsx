@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../navigation/types";
-import { colors, spacing } from "../../theme";
+import { mediaColors as colors, spacing } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { getStoryOwnerUsername } from "../../api/stories";
 import { ApiError } from "../../api/client";

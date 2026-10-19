@@ -119,7 +119,8 @@ export function ThreadSkeleton({ label = "Loading messages" }: { label?: string 
 }
 
 const styles = StyleSheet.create({
-  block: { backgroundColor: "rgba(255,255,255,0.14)" },
+  // Neutral grey: visible on both the dark and the light background.
+  block: { backgroundColor: "rgba(128,128,128,0.22)" },
   story: { flex: 1, backgroundColor: "#000" },
   storyProgress: { position: "absolute", top: spacing.xxl, left: spacing.sm, right: spacing.sm, flexDirection: "row", justifyContent: "space-between" },
   storyRail: { position: "absolute", right: spacing.md, bottom: spacing.xl * 4, gap: spacing.lg },

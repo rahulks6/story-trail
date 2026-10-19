@@ -5,7 +5,11 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 
 const source=fs.readFileSync(path.join(__dirname,'../mobile/src/theme/colors.ts'),'utf8');
-const palette=Object.fromEntries([...source.matchAll(/^\s*(\w+): "(#[0-9A-Fa-f]{6})"/gm)].map((m)=>[m[1],m[2]]));
+// Two palettes: dark (the locked spec) and light; each is checked the same way.
+const block=(name)=>{const start=source.indexOf(`export const ${name}`);assert.ok(start>=0,name);return source.slice(start,source.indexOf('};',start));};
+const parse=(text)=>Object.fromEntries([...text.matchAll(/^\s*(\w+): "(#[0-9A-Fa-f]{6})"/gm)].map((m)=>[m[1],m[2]]));
+const palette=parse(block('darkPalette'));
+const light=parse(block('lightPalette'));
 
 function luminance(hex){
  const [r,g,b]=[1,3,5].map((i)=>parseInt(hex.slice(i,i+2),16)/255).map((c)=>(c<=0.04045?c/12.92:((c+0.055)/1.055)**2.4));
@@ -63,4 +67,15 @@ test('red text on its own tints reaches 4.5:1, and the tints follow the palette 
 test('the formula matches known values',()=>{
  assert.equal(ratio('#FFFFFF','#000000').toFixed(1),'21.0');
  assert.equal(ratio('#777777','#FFFFFF').toFixed(2),'4.48');
+});
+
+test('light mode: every text pair reaches 4.5:1, red text on the tints too',()=>{
+ for(const name of ['background','surface','surfaceElevated','textPrimary','textSecondary','accent','accentPressed','onAccent','danger','success'])assert.match(light[name]??'',/^#[0-9A-Fa-f]{6}$/,name);
+ const short=TEXT.map(([fg,bg])=>[`${fg} on ${bg}`,ratio(light[fg],light[bg])]).filter(([,r])=>r<4.5).map(([pair,r])=>`${pair} ${r.toFixed(2)}:1`);
+ assert.deepEqual(short,[]);
+ for(const [file,pattern,base] of TINTS){
+  const rgba=pattern.exec(read(file)).slice(1,5).map(Number);
+  const r=ratio(light.danger,over(rgba,light[base]));
+  assert.ok(r>=4.5,`${file}: light danger on its tint ${r.toFixed(2)}:1`);
+ }
 });

@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   title: { fontWeight: "700", marginBottom: spacing.sm },
   reactions: { flexDirection: "row", justifyContent: "space-between", marginBottom: spacing.md },
   reaction: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center" },
-  reactionPressed: { backgroundColor: "rgba(255,255,255,0.12)", transform: [{ scale: 1.15 }] },
+  reactionPressed: { backgroundColor: colors.border, transform: [{ scale: 1.15 }] },
   reactionGlyph: { fontSize: 28 },
   inputRow: { flexDirection: "row", alignItems: "flex-end", gap: spacing.sm },
   input: {
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     minHeight: 44,
     maxHeight: 120,
     color: colors.textPrimary,
-    backgroundColor: "rgba(255,255,255,0.08)",
+    backgroundColor: colors.surfaceElevated,
     borderRadius: radii.md,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,

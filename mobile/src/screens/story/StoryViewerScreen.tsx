@@ -1,3 +1,4 @@
+import { useMediaStatusBar } from "../../hooks/useMediaStatusBar";
 import React from "react";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../navigation/types";
@@ -13,6 +14,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "StoryViewer">;
  * this wrapper, since it has no "back" to go to.
  */
 export function StoryViewerScreen({ route, navigation }: Props): React.JSX.Element {
+  useMediaStatusBar();
   const { creators, startIndex, initialStoryId } = route.params;
 
   return (

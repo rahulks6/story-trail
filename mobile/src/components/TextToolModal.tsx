@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Keyboard, Modal, PanResponder, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { colors, radii, spacing, ICONS } from "../theme";
+import { mediaColors as colors, radii, spacing, ICONS } from "../theme";
 import { Icon } from "./Icon";
 import { contrastOn, STYLE_LABELS, TEXT_STYLES, textStyleLook } from "./textLook";
 import type { TextOverlayProperties, TextStyle } from "../models/storyDraft";

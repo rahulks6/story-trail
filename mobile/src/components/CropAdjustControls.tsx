@@ -1,7 +1,7 @@
 import {Icon} from "./Icon";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { colors, radii, spacing } from "../theme";
+import { mediaColors as colors, radii, spacing } from "../theme";
 import { clampCrop, type StoryCrop } from "../models/storyDraft";
 
 const ZOOM_STEP = 0.25;

@@ -3,7 +3,7 @@ import { Alert, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../navigation/types";
-import { colors, radii, spacing, ICONS } from "../theme";
+import { mediaColors as colors, radii, spacing, ICONS } from "../theme";
 import { Icon } from "./Icon";
 import { useAuth } from "../state/AuthContext";
 import { cancelUpload, listUploads, removeUpload, subscribeUploads, uploadPreviewUri, uploadProgress, uploadRunning, type UploadJob } from "../state/uploadQueue";

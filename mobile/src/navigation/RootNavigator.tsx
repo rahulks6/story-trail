@@ -3,7 +3,8 @@ import {UploadQueueScreen} from '../screens/create/UploadQueueScreen';
 import {AppealsScreen} from '../screens/profile/AppealsScreen';
 import React, { useEffect, useMemo, useRef } from "react";
 import { ActivityIndicator, Linking, View } from "react-native";
-import { NavigationContainer, type LinkingOptions } from "@react-navigation/native";
+import { DarkTheme, DefaultTheme, NavigationContainer, type LinkingOptions, type Theme } from "@react-navigation/native";
+import { colorScheme } from "../theme/colors";
 import { deepLinkTarget } from "./profileLinks";
 import { initialNotificationLink, onNotificationOpened } from "../push/pushNotifications";
 import { usePushRegistration } from "../push/usePushRegistration";
@@ -271,7 +272,17 @@ export function RootNavigator(): React.JSX.Element {
   }
 
   if (status === "signedIn") {
-    return <NavigationContainer key={user?.id ?? "signedIn"} linking={linking}><SignedInNavigator /><NearbyPrompt /><UploadRunner /></NavigationContainer>;
+    return <NavigationContainer key={user?.id ?? "signedIn"} linking={linking} theme={navigationTheme()}><SignedInNavigator /><NearbyPrompt /><UploadRunner /></NavigationContainer>;
   }
-  return <NavigationContainer key="signedOut" linking={signedOutLinking}><AuthNavigator /></NavigationContainer>;
+  return <NavigationContainer key="signedOut" linking={signedOutLinking} theme={navigationTheme()}><AuthNavigator /></NavigationContainer>;
+}
+
+/** Headers, screen backgrounds and borders in the app's light or dark colours. */
+function navigationTheme(): Theme {
+  const base = colorScheme() === "light" ? DefaultTheme : DarkTheme;
+  return {
+    ...base,
+    dark: colorScheme() === "dark",
+    colors: { ...base.colors, primary: colors.accent, background: colors.background, card: colors.background, text: colors.textPrimary, border: colors.border, notification: colors.accent },
+  };
 }

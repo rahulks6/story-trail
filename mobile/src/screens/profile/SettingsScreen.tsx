@@ -8,6 +8,8 @@ import { useAuth } from "../../state/AuthContext";
 import { updateMyProfile, listFollowRequests } from "../../api/users";
 import { countPendingDrafts, clearAllPendingDrafts } from "../../state/draftStorage";
 import { ListRow } from "../../components/ListRow";
+import { ActionSheet } from "../../components/ActionSheet";
+import { appearanceChoice, setAppearance, type AppearanceChoice } from "../../theme/appearance";
 import { DeleteAccountSheet } from "../../components/DeleteAccountSheet";
 import { nearbyChoice, turnNearbyOff, turnNearbyOn } from "../../state/nearby";
 
@@ -25,6 +27,14 @@ type Props = NativeStackScreenProps<RootStackParamList, "Settings">;
 export function SettingsScreen({ navigation }: Props): React.JSX.Element {
   const { user, accessToken, logout, applyProfile } = useAuth();
   const [isPrivate, setIsPrivate] = useState(user?.isPrivate ?? false);
+  const [appearanceOpen, setAppearanceOpen] = useState(false);
+  const chooseAppearance = async (next: AppearanceChoice) => {
+    setAppearanceOpen(false);
+    if (next === appearanceChoice()) return;
+    // Android reloads the app in the new colours; iPhone applies them when Katkee is opened again.
+    const restarted = await setAppearance(next);
+    if (!restarted) Alert.alert("Appearance saved", "Close Katkee and open it again to see the new colours.");
+  };
   const [togglingPrivacy, setTogglingPrivacy] = useState(false);
   const [draftCount, setDraftCount] = useState<number | null>(null);
   const [pendingRequestCount, setPendingRequestCount] = useState<number | null>(null);
@@ -158,6 +168,20 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
         <ListRow label="Muted accounts" onPress={() => navigation.navigate("MutedAccounts")} />
       </View>
 
+      <Text style={styles.sectionHeader}>Appearance</Text>
+      <View style={styles.card}>
+        <ListRow label="Appearance" detail={APPEARANCE_LABELS[appearanceChoice()]} onPress={() => setAppearanceOpen(true)} />
+      </View>
+      <ActionSheet
+        visible={appearanceOpen}
+        title="Appearance"
+        groups={[(["system", "light", "dark"] as AppearanceChoice[]).map((c) => ({
+          label: c === appearanceChoice() ? `${APPEARANCE_LABELS[c]} (current)` : APPEARANCE_LABELS[c],
+          onPress: () => void chooseAppearance(c),
+        }))]}
+        onClose={() => setAppearanceOpen(false)}
+      />
+
       <Text style={styles.sectionHeader}>Notifications</Text>
       <View style={styles.card}>
         <ListRow label="Notifications" icon={ICONS.notifications} onPress={() => navigation.navigate("NotificationSettings")} />
@@ -211,3 +235,5 @@ const styles = StyleSheet.create({
   switchLabelGroup: { flex: 1, marginRight: spacing.md, gap: spacing.xs / 2 },
   switchHint: { ...typography.caption, color: colors.textSecondary },
 });
+
+const APPEARANCE_LABELS: Record<AppearanceChoice, string> = { system: "Automatic (phone setting)", light: "Light", dark: "Dark" };

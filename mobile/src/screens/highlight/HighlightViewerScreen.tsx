@@ -1,3 +1,4 @@
+import { useMediaStatusBar } from "../../hooks/useMediaStatusBar";
 import { Icon } from "../../components/Icon";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Animated, Image, Pressable, StyleSheet, Text, View } from "react-native";
@@ -5,7 +6,7 @@ import Video from "react-native-video";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import type { RootStackParamList } from "../../navigation/types";
-import { colors, spacing, ICONS } from "../../theme";
+import { mediaColors as colors, spacing, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { getHighlightDetail, getHighlightItemDetail, type HighlightItem } from "../../api/highlights";
 import { track } from "../../analytics/analytics";
@@ -39,6 +40,7 @@ const PHOTO_DURATION_MS = 5000;
  * mobile/README.md's "Phase 9 specifically" for this tradeoff spelled out.
  */
 export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.Element {
+  useMediaStatusBar();
   const { highlightId, title } = route.params;
   const { accessToken, user } = useAuth();
   const insets = useScreenInsets();

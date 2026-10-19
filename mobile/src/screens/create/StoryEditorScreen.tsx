@@ -1,3 +1,4 @@
+import { useMediaStatusBar } from "../../hooks/useMediaStatusBar";
 import { Icon } from "../../components/Icon";
 import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -20,7 +21,7 @@ import Video from "react-native-video";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
 import type { CreateStackParamList, RootStackParamList } from "../../navigation/types";
-import { colors, radii, spacing, typography, ICONS } from "../../theme";
+import { mediaColors as colors, radii, spacing, mediaTypography as typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import {enqueueUpload} from '../../state/uploadQueue';
 import { track } from "../../analytics/analytics";
@@ -80,6 +81,7 @@ let filterHintShown = false;
 const startedStories = new Set<string>();
 
 export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Element {
+  useMediaStatusBar();
   const { mediaUri, kind, mimeType } = route.params;
   // A Boomerang plays forward and back with no sound; the server makes it while processing.
   const boomerang = kind === "video" && route.params.effect === "boomerang";
@@ -891,7 +893,7 @@ const styles = StyleSheet.create({
   guideVertical: { position: "absolute", top: 0, bottom: 0, left: "50%", width: 1, marginLeft: -0.5, backgroundColor: "rgba(80,190,255,0.9)" },
   guideHorizontal: { position: "absolute", left: 0, right: 0, top: "50%", height: 1, marginTop: -0.5, backgroundColor: "rgba(80,190,255,0.9)" },
   trashZoneActive: { backgroundColor: colors.danger, transform: [{ scale: 1.25 }] },
-  trashIcon: { fontSize: 28 },
+  trashIcon: { fontSize: 28, color: colors.textPrimary },
   filterToast: {
     position: "absolute",
     alignSelf: "center",

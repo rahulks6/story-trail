@@ -1,5 +1,9 @@
-/** Locked master spec palette (pages 2?3). */
-export const colors = {
+/**
+ * Katkee's colours, dark and light. Dark is the locked master spec palette (pages 2-3); light is
+ * its daytime counterpart: the same roles, with a deeper gold accent because amber is unreadable
+ * as text on white (verification/contrast.cjs checks every text pair in both).
+ */
+export const darkPalette = {
   background: "#0B0B0B",
   surface: "#141820",
   surfaceElevated: "#1D212A",
@@ -20,6 +24,51 @@ export const colors = {
 
   overlayScrimStart: "rgba(0,0,0,0)",
   overlayScrimEnd: "rgba(0,0,0,0.65)",
-} as const;
+};
 
-export type ColorToken = keyof typeof colors;
+export const lightPalette: Palette = {
+  background: "#FFFFFF",
+  surface: "#F7F7F8",
+  surfaceElevated: "#EDEDF0",
+  border: "#DADCE0",
+
+  textPrimary: "#0B0B0B",
+  textSecondary: "#5C5F66",
+  textDisabled: "#A0A4AB",
+
+  accent: "#8A5E00", // deep gold: Katkee's amber, dark enough to read on white
+  accentPressed: "#6F4B00",
+  onAccent: "#FFFFFF",
+
+  danger: "#C5221F",
+  success: "#137333",
+
+  overlayScrimStart: "rgba(0,0,0,0)",
+  overlayScrimEnd: "rgba(0,0,0,0.65)",
+};
+
+export type Palette = typeof darkPalette;
+export type ColorToken = keyof Palette;
+export type ColorScheme = "dark" | "light";
+
+/**
+ * The app's colours. Screens read these when their styles are created, so the scheme is chosen
+ * once at launch (theme/appearance.ts) before any screen loads; changing it restarts the app.
+ */
+export const colors: Palette = { ...darkPalette };
+let current: ColorScheme = "dark";
+
+export function applyColorScheme(scheme: ColorScheme): void {
+  current = scheme;
+  Object.assign(colors, scheme === "light" ? lightPalette : darkPalette);
+}
+
+export function colorScheme(): ColorScheme {
+  return current;
+}
+
+/**
+ * Story, camera and editor screens: always dark, whatever the app's scheme, like Instagram. Text
+ * and controls over photos and video stay readable.
+ */
+export const mediaColors: Palette = darkPalette;

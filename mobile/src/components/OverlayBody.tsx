@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import type { Overlay } from "../models/storyDraft";
 import { contrastOn, textStyleLook } from "./textLook";
-import { colors, radii } from "../theme";
+import { mediaColors as colors, radii } from "../theme";
 
 export /** Text wraps within this fraction of the container's own width (spec: "auto-wrap ... text") rather than growing indefinitely off-canvas. */
 const TEXT_MAX_WIDTH_FRACTION = 0.8;
