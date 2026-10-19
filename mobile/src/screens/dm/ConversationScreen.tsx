@@ -48,7 +48,10 @@ import { launchCamera, launchImageLibrary, type Asset } from "react-native-image
 import Video from "react-native-video";
 import { Avatar } from "../../components/Avatar";
 import { mediaFileUrl } from "../../api/stories";
-import { MAX_DM_VIDEO_BYTES, newPendingMedia, sendPendingMedia, type PendingMedia } from "./sendMedia";
+import { MAX_DM_VIDEO_BYTES, newPendingMedia, newVoiceNote, sendPendingMedia, type PendingMedia } from "./sendMedia";
+import { VoiceNoteBubble } from "../../components/VoiceNote";
+import { useVoiceRecorder } from "../../hooks/useVoiceRecorder";
+import { formatClock } from "../../api/music";
 
 type Props = NativeStackScreenProps<DMStackParamList, "Conversation">;
 
@@ -140,6 +143,8 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   const [reportingMessageId, setReportingMessageId] = useState<string | null>(null);
   const [pendingMedia, setPendingMedia] = useState<PendingMedia[]>([]);
   const [viewing, setViewing] = useState<{ id?: string; uri?: string; kind: "photo" | "video" } | null>(null);
+  // Which voice note is playing (one at a time).
+  const [playingKey, setPlayingKey] = useState<string | null>(null);
   const focusedRef = useRef(true);
   const messagesRef = useRef<Message[] | null>(null);
   messagesRef.current = messages;
@@ -334,6 +339,12 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     }
   }, [conversationId, getToken]);
 
+  const recorder = useVoiceRecorder(
+    (uri, durationMs) => void sendMedia(newVoiceNote(uri, durationMs)),
+    (message) => setComposerError(message),
+  );
+  const recording = recorder.state.status !== "idle";
+
   const onPickedAssets = (assets: Asset[] | undefined) => {
     for (const asset of assets ?? []) {
       if (!asset.uri) continue;
@@ -472,6 +483,28 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
             const box = row.kind === "media" ? mediaBox(row.width, row.height) : mediaBox(row.media!.width, row.media!.height);
             const source = row.kind === "media" ? { uri: row.uri } : { uri: mediaFileUrl(row.media!.id, kind === "video" ? "poster" : "display"), headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined };
             const failedMedia = row.kind === "media" && row.status === "failed";
+            if (kind === "audio") {
+              const key = rowKey(row);
+              return (
+                <View style={[styles.bubbleRow, mineMedia ? styles.bubbleRowMine : styles.bubbleRowTheirs]}>
+                  <View style={[styles.bubbleColumn, mineMedia ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
+                    <VoiceNoteBubble
+                      url={row.kind === "media" ? row.uri : mediaFileUrl(row.media!.id, "audio")}
+                      accessToken={accessToken}
+                      durationMs={row.kind === "media" ? row.durationMs ?? null : row.media!.durationMs}
+                      mine={mineMedia}
+                      sending={row.kind === "media" && row.status === "sending"}
+                      playing={playingKey === key}
+                      onPlay={() => (row.kind === "media" && row.status === "failed" ? onPendingMediaPress(row) : setPlayingKey(key))}
+                      onStop={() => setPlayingKey((k) => (k === key ? null : k))}
+                      label={mineMedia ? "You" : otherUsername ? `@${otherUsername}` : "Them"}
+                      onLongPress={() => (row.kind === "media" ? onPendingMediaPress(row) : onMessageLongPress(row))}
+                    />
+                    {rowKey(row) === statusRowKey || failedMedia ? <Text style={styles.statusCaption}>{statusLabel(row)}</Text> : null}
+                  </View>
+                </View>
+              );
+            }
             return (
               <View style={[styles.bubbleRow, mineMedia ? styles.bubbleRowMine : styles.bubbleRowTheirs]}>
                 <View style={[styles.bubbleColumn, mineMedia ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
@@ -481,7 +514,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
                     accessibilityHint={row.kind === "media" ? (failedMedia ? "Retry or delete" : undefined) : "Opens it full screen"}
                     onPress={() => {
                       if (row.kind === "media") onPendingMediaPress(row);
-                      else setViewing({ id: row.media!.id, kind });
+                      else setViewing({ id: row.media!.id, kind: kind === "video" ? "video" : "photo" });
                     }}
                     onLongPress={() => onMessageLongPress(row)}
                     style={[styles.mediaBubble, box, failedMedia && styles.mediaFailed]}
@@ -610,9 +643,30 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         onClose={() => setReportingMessageId(null)}
       />
       {composerError ? <Text style={styles.composerError}>{composerError}</Text> : null}
+      {recording ? (
+        <View style={[styles.composerRow, styles.recordingRow, { paddingBottom: spacing.sm + (keyboardOpen ? 0 : bottomInset) }]}>
+          <Pressable onPress={() => void recorder.cancel()} hitSlop={8} style={styles.recordCancel} accessibilityRole="button" accessibilityLabel="Delete voice message">
+            <Icon name={ICONS.trash} size={22} color={colors.danger} />
+          </Pressable>
+          <View style={styles.recordDot} />
+          <Text style={styles.recordTime} accessibilityLiveRegion="polite">
+            {recorder.state.status === "recording" ? formatClock(recorder.state.elapsedMs) : "0:00"}
+          </Text>
+          <Text style={styles.recordHint} numberOfLines={1}>Recording…</Text>
+          <Pressable
+            style={styles.sendButton}
+            onPress={() => void recorder.send()}
+            disabled={recorder.state.status !== "recording"}
+            accessibilityRole="button"
+            accessibilityLabel="Send voice message"
+          >
+            <Icon style={styles.sendButtonText} name={ICONS.send} />
+          </Pressable>
+        </View>
+      ) : (
       <View style={[styles.composerRow, { paddingBottom: spacing.sm + (keyboardOpen ? 0 : bottomInset) }]}>
         <Pressable style={styles.cameraButton} onPress={() => void onTakePhoto()} hitSlop={6} accessibilityRole="button" accessibilityLabel="Take a photo or video">
-          <Icon name={ICONS.capture} size={20} color={colors.onAccent} />
+          <Icon name={ICONS.camera} size={20} color={colors.onAccent} />
         </Pressable>
         <Pressable style={styles.attachButton} onPress={() => void onPickFromGallery()} hitSlop={6} accessibilityRole="button" accessibilityLabel="Send a photo or video from your gallery">
           <Icon name={ICONS.gallery} size={24} color={colors.textPrimary} />
@@ -637,21 +691,29 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           maxLength={MAX_MESSAGE_LENGTH}
           multiline
         />
-        <Pressable
-          style={[styles.sendButton, !draft.trim() && styles.sendButtonDisabled]}
-          disabled={!draft.trim()}
-          onPress={() => void onSend()}
-          accessibilityRole="button"
-          accessibilityLabel="Send"
-        >
-          <Icon style={styles.sendButtonText} name={ICONS.send} />
-        </Pressable>
+        {draft.trim() ? (
+          <Pressable style={styles.sendButton} onPress={() => void onSend()} accessibilityRole="button" accessibilityLabel="Send">
+            <Icon style={styles.sendButtonText} name={ICONS.send} />
+          </Pressable>
+        ) : (
+          // Nothing typed: the microphone, like Instagram and WhatsApp. Tap to record.
+          <Pressable style={styles.micButton} onPress={() => { setPlayingKey(null); void recorder.start(); }} accessibilityRole="button" accessibilityLabel="Record a voice message">
+            <Icon name={ICONS.mic} size={22} color={colors.textPrimary} />
+          </Pressable>
+        )}
       </View>
+      )}
     </KeyboardAvoider>
   );
 }
 
 const styles = StyleSheet.create({
+  micButton: { width: 44, height: 40, borderRadius: radii.md, alignItems: "center", justifyContent: "center", backgroundColor: colors.surfaceElevated },
+  recordingRow: { alignItems: "center" },
+  recordCancel: { width: 40, height: 40, alignItems: "center", justifyContent: "center" },
+  recordDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: colors.danger },
+  recordTime: { color: colors.textPrimary, fontSize: 16, fontWeight: "600", fontVariant: ["tabular-nums"] },
+  recordHint: { flex: 1, color: colors.textSecondary, fontSize: 14 },
   header: { flexDirection: "row", alignItems: "center", gap: spacing.sm, maxWidth: 260 },
   headerNames: { flexShrink: 1 },
   headerName: { color: colors.textPrimary, fontSize: 16, fontWeight: "700" },

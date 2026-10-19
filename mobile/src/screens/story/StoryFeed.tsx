@@ -288,7 +288,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         // Show the public aggregate immediately from Story detail. After this viewer is recorded,
         // the count is refreshed; identities are never requested unless this is the owner Insights sheet.
         setViewCount(story.viewCount);
-        if (media) setMediaKind(media.kind);
+        if (media) setMediaKind(media.kind === "video" ? "video" : "photo");
       } catch {
         if (!cancelled) setLoadError("Couldn't load this Story.");
       }

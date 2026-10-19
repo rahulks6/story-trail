@@ -18,6 +18,7 @@ jest.mock("../src/state/dmOutbox", () => ({
 }));
 jest.mock("../src/api/conversations", () => ({
   MAX_MESSAGE_LENGTH: 1000,
+  newClientMessageId: () => `m_test_${Math.random().toString(36).slice(2, 12)}`,
   getConversation: jest.fn(),
   markConversationRead: jest.fn(async () => undefined),
   listMessages: jest.fn(async () => ({
@@ -124,4 +125,25 @@ test("photos in the thread open full screen, and there are buttons to send photo
   expect(tree.root.findAllByType(Modal).some((m: ReactTestInstance) => m.props.visible)).toBe(true);
   expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Send a photo or video from your gallery" && typeof n.props.onPress === "function")).toHaveLength(1);
   expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Take a photo or video" && typeof n.props.onPress === "function")).toHaveLength(1);
+});
+
+test("with nothing typed the microphone records a voice message; Send sends it, the bin throws it away", async () => {
+  const sendMedia = require("../src/screens/dm/sendMedia");
+  const sent = jest.spyOn(sendMedia, "sendPendingMedia").mockImplementation(() => new Promise(() => undefined));
+  await render();
+  const pressLabel = (label: string) => act(async () => tree.root.find((n) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === label).props.onPress());
+  await pressLabel("Record a voice message");
+  const g = globalThis as unknown as { __sound: { listener: ((e: { currentPosition: number }) => void) | null } };
+  await act(async () => g.__sound.listener!({ currentPosition: 3200 }));
+  expect(tree.root.findAll((n) => typeof n.props.children === "string" && n.props.children === "0:03")).not.toHaveLength(0);
+  await pressLabel("Send voice message");
+  for (let i = 0; i < 5; i++) await act(async () => { await Promise.resolve(); });
+  expect(sent.mock.calls[0]![1]).toMatchObject({ mediaKind: "audio", uri: "file:///data/voice.mp4", durationMs: 3200 });
+  // A voice bubble appears straight away.
+  expect(tree.root.findAll((n) => typeof n.props.accessibilityLabel === "string" && n.props.accessibilityLabel.startsWith("You. Voice message"))).not.toHaveLength(0);
+
+  await pressLabel("Record a voice message");
+  await act(async () => g.__sound.listener!({ currentPosition: 2000 }));
+  await pressLabel("Delete voice message");
+  expect(sent).toHaveBeenCalledTimes(1);
 });

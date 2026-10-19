@@ -25,3 +25,14 @@ test("videos go up as videos, and a failed processing is reported", async () => 
   expect(item.mediaKind).toBe("video");
   await expect(sendPendingMedia("c1", item, () => "token")).rejects.toThrow("Unsupported video.");
 });
+
+test("a voice note goes up as audio and is sent once it's ready", async () => {
+  const { newVoiceNote } = require("../src/screens/dm/sendMedia");
+  const upload = jest.spyOn(media, "uploadAudio").mockResolvedValue({ id: "a1", kind: "audio", status: "ready" } as unknown as media.UploadedMedia);
+  const send = jest.spyOn(conversations, "sendMessage").mockResolvedValue({ message: { id: "m9" } as conversations.Message });
+  const note = newVoiceNote("file:///data/voice.mp4", 4200);
+  expect(note.mediaKind).toBe("audio");
+  await expect(sendPendingMedia("c1", note, () => "token")).resolves.toMatchObject({ id: "m9" });
+  expect(upload).toHaveBeenCalledWith("file:///data/voice.mp4", "token");
+  expect(send).toHaveBeenCalledWith("c1", { mediaId: "a1", clientMessageId: note.clientMessageId }, "token");
+});

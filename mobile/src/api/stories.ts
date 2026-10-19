@@ -179,7 +179,7 @@ export function getStoryOwnerUsername(storyId: string, accessToken: string): Pro
   return apiGet(`/api/v1/stories/${storyId}/owner`, accessToken);
 }
 
-export type MediaVariant = "display" | "thumbnail" | "poster" | "video_720" | "video_480";
+export type MediaVariant = "display" | "thumbnail" | "poster" | "video_720" | "video_480" | "audio";
 
 export function mediaFileUrl(mediaId: string, variant?: MediaVariant): string {
   // Consumed with an Authorization header by the viewer (Image/Video source supports a `headers` field).

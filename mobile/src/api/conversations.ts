@@ -14,7 +14,7 @@ export interface ConversationSummary {
     body: string | null;
     sharedStoryId: string | null;
     /** Set when the last message was a photo or video. */
-    mediaKind?: "photo" | "video" | null;
+    mediaKind?: "photo" | "video" | "audio" | null;
     createdAt: string;
   } | null;
   unread: boolean;
@@ -37,7 +37,7 @@ export interface Message {
   /** Set when the message answers a Story; `storyId` is null once that Story is deleted. */
   storyReply?: { storyId: string | null; kind: StoryReplyKind } | null;
   /** A photo or video sent in the message (null once it's been removed). */
-  media?: { id: string; kind: "photo" | "video"; width: number | null; height: number | null; durationMs: number | null } | null;
+  media?: { id: string; kind: "photo" | "video" | "audio"; width: number | null; height: number | null; durationMs: number | null } | null;
   createdAt: string;
   /** Only present on messages the viewer themselves sent — see backend/src/modules/conversations/conversations.service.ts's listMessages. */
   status?: MessageDeliveryStatus;

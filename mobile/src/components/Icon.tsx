@@ -52,7 +52,7 @@ export function Icon({name,size,color,selected=false,style}: {name:IconName;size
   following:'M3 22v-3a5 5 0 0 1 5-5h3a5 5 0 0 1 5 5v3m1-11h6m-3-3v6',
   mention:'M16 8v7c0 3 6 2 6-4A10 10 0 1 0 18 20M16 10c-4-6-10 4-5 6 4 2 5-6 5-6',
   filter:'M3 6h5m5 0h8M3 12h11m5 0h2M3 18h3m5 0h10',
-  alignLeft:'M4 6h16M4 10h10M4 14h16M4 18h10',alignCenter:'M4 6h16M7 10h10M4 14h16M7 18h10',alignRight:'M4 6h16M10 10h10M4 14h16M10 18h10',textBackground:'M3 4h18v16H3zM8 16l4-9 4 9M9.5 13h5',music:'M9 18V5l12-2v13',play:'M7 4v16l13-8Z',pause:'M8 5v14M16 5v14',
+  alignLeft:'M4 6h16M4 10h10M4 14h16M4 18h10',alignCenter:'M4 6h16M7 10h10M4 14h16M7 18h10',alignRight:'M4 6h16M10 10h10M4 14h16M10 18h10',textBackground:'M3 4h18v16H3zM8 16l4-9 4 9M9.5 13h5',music:'M9 18V5l12-2v13',camera:'M3 8a2 2 0 0 1 2-2h2.5l1.5-2h6l1.5 2H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z',mic:'M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3ZM5 11a7 7 0 0 0 14 0M12 18v3',play:'M7 4v16l13-8Z',pause:'M8 5v14M16 5v14',
   chevron:'M9 5l7 7-7 7',minus:'M5 12h14',up:'M12 21V3m-7 7 7-7 7 7',down:'M12 3v18m-7-7 7 7 7-7',left:'M21 12H3m7-7-7 7 7 7',right:'M3 12h18m-7-7 7 7-7 7',
  };
  const alias:Partial<Record<IconName,IconName>>={activity:'like',liked:'like',clear:'close',send:'share',changeCover:'gallery',starFilled:'star'};
@@ -71,6 +71,7 @@ export function Icon({name,size,color,selected=false,style}: {name:IconName;size
     {key==='settings'&&<Circle cx={12} cy={11} r={3}/>}
     {(key==='help'||key==='about')&&<Circle cx={12} cy={12} r={10}/>}
     {key==='data'&&<><Path d="M4 6c0-5 16-5 16 0v13c0 5-16 5-16 0V6Zm0 0c0 5 16 5 16 0M4 12c0 5 16 5 16 0"/></>}
+    {key==='camera'&&<Circle cx={12} cy={13} r={3.5}/>}
     {key==='music'&&<><Circle cx={6} cy={18} r={3}/><Circle cx={18} cy={16} r={3}/></>}
     {key==='filter'&&<><Circle cx={10.5} cy={6} r={2.5}/><Circle cx={16.5} cy={12} r={2.5}/><Circle cx={8.5} cy={18} r={2.5}/></>}
    </G>

@@ -92,6 +92,19 @@ jest.mock("react-native-nitro-image", () => {
   };
 });
 
+// Voice recorder: global.__sound drives it (the file it "records" and the progress events).
+global.__sound = { path: "/data/voice.mp4", listener: null };
+jest.mock("react-native-nitro-sound", () => ({
+  AudioEncoderAndroidType: { AAC: 3 },
+  OutputFormatAndroidType: { MPEG_4: 2 },
+  createSound: () => ({
+    addRecordBackListener: (fn) => { global.__sound.listener = fn; },
+    removeRecordBackListener: () => { global.__sound.listener = null; },
+    startRecorder: jest.fn(async () => global.__sound.path),
+    stopRecorder: jest.fn(async () => global.__sound.path),
+  }),
+}));
+
 // Haptics: records each trigger.
 global.__haptics = [];
 jest.mock("react-native-haptic-feedback", () => ({ trigger: jest.fn((type) => global.__haptics.push(type)) }));

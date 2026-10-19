@@ -95,7 +95,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
       .then(([{ story }, media]) => {
         if (!cancelled) {
           setDetail(story);
-          setMediaKind(media.kind);
+          setMediaKind(media.kind === "video" ? "video" : "photo");
         }
       })
       .catch((err) => {

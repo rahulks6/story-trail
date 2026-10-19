@@ -1,4 +1,4 @@
-import { getMedia, uploadPhoto, uploadVideo } from "../../api/media";
+import { getMedia, uploadAudio, uploadPhoto, uploadVideo } from "../../api/media";
 import { sendMessage, newClientMessageId, type Message } from "../../api/conversations";
 import { ApiError } from "../../api/client";
 
@@ -7,8 +7,10 @@ export interface PendingMedia {
   clientMessageId: string;
   uri: string;
   mimeType: string;
-  mediaKind: "photo" | "video";
+  mediaKind: "photo" | "video" | "audio";
   width: number | null;
+  /** A voice note's length, shown while it sends. */
+  durationMs?: number;
   height: number | null;
   status: "sending" | "failed";
   error?: string;
@@ -31,6 +33,11 @@ export function newPendingMedia(asset: { uri: string; type?: string; width?: num
   };
 }
 
+/** A recorded voice note, ready to send. */
+export function newVoiceNote(uri: string, durationMs: number): PendingMedia {
+  return { clientMessageId: newClientMessageId(), uri, mimeType: "audio/mp4", mediaKind: "audio", width: null, height: null, durationMs, status: "sending" };
+}
+
 const wait = (ms: number) => new Promise<void>((resolve) => { setTimeout(resolve, ms); });
 
 /**
@@ -43,7 +50,9 @@ export async function sendPendingMedia(conversationId: string, item: PendingMedi
     if (!t) throw new Error("You're signed out.");
     return t;
   };
-  const uploaded = item.mediaKind === "video" ? await uploadVideo(item.uri, item.mimeType, token()) : await uploadPhoto(item.uri, item.mimeType, token());
+  const uploaded = item.mediaKind === "audio" ? await uploadAudio(item.uri, token())
+    : item.mediaKind === "video" ? await uploadVideo(item.uri, item.mimeType, token())
+    : await uploadPhoto(item.uri, item.mimeType, token());
   let media = uploaded;
   const deadline = Date.now() + READY_TIMEOUT_MS;
   for (let delay = 700; media.status !== "ready"; delay = Math.min(delay * 1.5, 5_000)) {

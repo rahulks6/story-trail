@@ -59,7 +59,7 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
         const media = await getMedia(story.mediaId, accessToken);
         if (cancelled) return;
         setDetail(story);
-        setMediaKind(media.kind);
+        setMediaKind(media.kind === "video" ? "video" : "photo");
       } catch (err) {
         if (!cancelled) setError(err instanceof ApiError ? err.message : "Couldn't load this Story.");
       }
