@@ -20,6 +20,7 @@ jest.mock("../src/components/CommentsSheet", () => ({ CommentsSheet: (p: object)
 jest.mock("../src/components/ShareSheet", () => ({ ShareSheet: (p: object) => require("react").createElement("ShareSheet", p) }));
 jest.mock("../src/components/StoryMoreMenu", () => ({ StoryMoreMenu: (p: object) => require("react").createElement("StoryMoreMenu", p) }));
 jest.mock("../src/components/StoryInsightsSheet", () => ({ StoryInsightsSheet: (p: object) => require("react").createElement("StoryInsightsSheet", p) }));
+jest.mock("../src/components/AddToHighlightSheet", () => ({ AddToHighlightSheet: (p: object) => require("react").createElement("AddToHighlightSheet", p) }));
 jest.mock("../src/api/events", () => ({ recordEvent: jest.fn(async () => undefined) }));
 jest.mock("../src/api/media", () => ({ getMedia: jest.fn(async () => ({ kind: "photo" })), mediaSource: (uri: string) => ({ uri }) }));
 jest.mock("../src/api/stories", () => {
@@ -128,6 +129,12 @@ test("under someone's Story: a comment bar; the name opens their profile; your o
   await renderFeed("alice", ["alice"]);
   expect(texts()).toContain("12 views");
   expect(texts()).not.toContain("Add a comment…");
+  // …and can be added to a Highlight from right there, pausing the Story meanwhile.
+  await act(async () => byLabel("Add this Story to a Highlight").props.onPress());
+  const sheet = tree.root.findByType("AddToHighlightSheet" as never);
+  expect(sheet.props).toMatchObject({ visible: true, storyIds: [expect.any(String)] });
+  await act(async () => sheet.props.onAdded("Trips"));
+  expect(texts()).toContain("Added");
 });
 
 test("tap right and left move within a creator; a double-tap likes instead of moving", async () => {

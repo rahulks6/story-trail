@@ -33,6 +33,8 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
   const { width: screenWidth } = useWindowDimensions();
 
   const [archive, setArchive] = useState<PublicStory[] | null>(null);
+  // The media of the Highlight's own Stories, which may be further back in the Archive than has loaded.
+  const [itemMedia, setItemMedia] = useState<Record<string, string>>({});
   const [title, setTitle] = useState("");
   // Selection order matters (it becomes the Highlight's item order), so this is an ordered array, not a Set.
   const [selected, setSelected] = useState<string[]>(initialStoryIds ?? []);
@@ -62,6 +64,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
         if (existing) {
           setTitle(existing.highlight.title);
           setSelected(existing.highlight.items.map((item) => item.storyId));
+          setItemMedia(Object.fromEntries(existing.highlight.items.map((item) => [item.storyId, item.mediaId])));
           const currentCover = existing.highlight.items.find((item) => item.mediaId === existing.highlight.coverMediaId);
           setCoverStoryId(currentCover?.storyId);
           setInitialCoverStoryId(currentCover?.storyId);
@@ -102,15 +105,16 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
     setCoverStoryId((current) => (current === storyId ? undefined : storyId));
   };
 
-  // Selected stories, in current order, as full records — needed to
-  // actually render the reorder strip's thumbnails (the archive picker
-  // grid below only has ids selected, not full story data).
+  // Selected Stories, in order, with their media for the reorder strip's thumbnails. Every one is
+  // shown, even those older than the part of the Archive loaded below, so reordering keeps them all.
   const selectedStories = selected
-    .map((id) => (archive ?? []).find((s) => s.id === id))
-    .filter((s): s is PublicStory => s !== undefined);
+    .map((id) => ({ id, mediaId: itemMedia[id] ?? (archive ?? []).find((s) => s.id === id)?.mediaId }))
+    .filter((s): s is { id: string; mediaId: string } => s.mediaId !== undefined);
 
-  const onReorderSelected = (newOrder: PublicStory[]) => {
-    setSelected(newOrder.map((s) => s.id));
+  const onReorderSelected = (newOrder: Array<{ id: string }>) => {
+    // Anything the strip couldn't show keeps its place at the end rather than being dropped.
+    const shown = newOrder.map((s) => s.id);
+    setSelected((current) => [...shown, ...current.filter((id) => !shown.includes(id))]);
   };
 
   const onSave = async () => {
@@ -148,7 +152,11 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
         onPress: async () => {
           try {
             await deleteHighlight(highlightId, accessToken);
-            navigation.goBack();
+            // Opened from the Highlight itself: go back past it too, it's gone.
+            const routes = navigation.getState().routes;
+            const opener = routes[routes.length - 2];
+            if (opener?.name === "HighlightViewer") navigation.pop(2);
+            else navigation.goBack();
           } catch {
             setError("Couldn't delete — try again.");
           }

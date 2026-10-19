@@ -20,6 +20,8 @@ interface DraggableGridItemProps {
   onDragMove: (key: string, dx: number, dy: number) => void;
   onDragEnd: (key: string) => void;
   onPress: () => void;
+  /** A long press while not reordering (when reordering, a long press picks the item up). */
+  onLongPress?: () => void;
   /** The non-gesture equivalent of a long-press-and-drag reorder — see this file's own doc comment. */
   onMoveStep: (key: string, direction: -1 | 1) => void;
   /** What a screen reader announces for this item (e.g. "Travel, Highlight"). */
@@ -38,6 +40,7 @@ function DraggableGridItem({
   onDragMove,
   onDragEnd,
   onPress,
+  onLongPress,
   onMoveStep,
   accessibilityLabel,
   children,
@@ -177,7 +180,7 @@ function DraggableGridItem({
         // PanResponder anywhere in this subtree — the enclosing
         // ScrollView (if any) gets touch priority exactly as if this
         // component didn't exist.
-        <Pressable style={styles.fill} onPress={onPress} accessibilityRole="button" accessibilityLabel={accessibilityLabel}>
+        <Pressable style={styles.fill} onPress={onPress} onLongPress={onLongPress} accessibilityRole="button" accessibilityLabel={accessibilityLabel}>
           {children}
         </Pressable>
       )}
@@ -197,6 +200,8 @@ export interface DraggableGridProps<T> {
   onReorder: (newOrder: T[]) => void;
   /** Fired on a plain tap — see this component's own doc comment for why this replaces a nested `<Pressable>`'s onPress. Omit if items aren't individually tappable. */
   onPress?: (item: T) => void;
+  /** Fired on a long press while the grid isn't draggable (e.g. the owner's Highlight options). */
+  onLongPress?: (item: T) => void;
   /**
    * Whether items can actually be picked up at all — default `true`.
    * Pass `false` while this grid sits inside a `ScrollView`/`FlatList`
@@ -265,6 +270,7 @@ export function DraggableGrid<T>({
   renderItem,
   onReorder,
   onPress,
+  onLongPress,
   draggable = true,
   startIndex = 0,
   leadingChildren,
@@ -383,6 +389,7 @@ export function DraggableGrid<T>({
             onDragEnd={onDragEnd}
             onMoveStep={onMoveStep}
             onPress={() => onPress?.(item)}
+            onLongPress={onLongPress ? () => onLongPress(item) : undefined}
             accessibilityLabel={itemAccessibilityLabel?.(item)}
           >
             {renderItem(item)}

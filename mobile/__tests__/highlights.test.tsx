@@ -1,6 +1,6 @@
 import React from "react";
 import { act, create, type ReactTestInstance, type ReactTestRenderer } from "react-test-renderer";
-import { StyleSheet, useWindowDimensions } from "react-native";
+import { Alert, Modal, StyleSheet, useWindowDimensions } from "react-native";
 import { HighlightsRow } from "../src/components/HighlightsRow";
 
 const mockNavigate = jest.fn();
@@ -15,6 +15,7 @@ jest.mock("../src/api/highlights", () => ({
     highlights: ["Travel", "Food", "Friends", "Diwali"].map((title, i) => ({ id: `h${i}`, title, coverMediaId: `m${i}`, itemCount: 3 })),
   })),
   reorderHighlights: jest.fn(async () => undefined),
+  deleteHighlight: jest.fn(async () => undefined),
 }));
 jest.mock("../src/api/stories", () => ({ mediaFileUrl: (id: string) => `https://api.test/media/${id}` }));
 
@@ -86,4 +87,33 @@ test("reports how many Highlights there are, or that they can't be shown, and re
   await act(async () => tree.update(<HighlightsRow username="alice" isOwner={false} onCountChange={(n) => counts.push(n)} refreshToken={1} />));
   await act(async () => { await Promise.resolve(); });
   expect(counts).toEqual([4, null]);
+});
+
+test("pressing and holding your Highlight offers Edit and Delete; Delete asks first, then removes it", async () => {
+  const { deleteHighlight } = jest.requireMock("../src/api/highlights") as { deleteHighlight: jest.Mock };
+  const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+  await render(true);
+  const card = () => tree.root.find((n: ReactTestInstance) => typeof n.props.onLongPress === "function" && n.props.accessibilityLabel === "Food, Highlight");
+  await act(async () => card().props.onLongPress());
+  // iOS runs the chosen action once the sheet has finished closing.
+  const choose = async (label: string) => {
+    await act(async () => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === label).props.onPress());
+    await act(async () => tree.root.findAllByType(Modal).find((m) => typeof m.props.onDismiss === "function")!.props.onDismiss());
+  };
+  await choose("Edit Highlight");
+  expect(mockNavigate).toHaveBeenCalledWith("HighlightEditor", { highlightId: "h1" });
+
+  await act(async () => card().props.onLongPress());
+  await choose("Delete Highlight");
+  expect(deleteHighlight).not.toHaveBeenCalled();
+  const buttonsOfAlert = alert.mock.calls[0]![2] as Array<{ text: string; onPress?: () => void }>;
+  await act(async () => buttonsOfAlert.find((b) => b.text === "Delete")!.onPress!());
+  expect(deleteHighlight).toHaveBeenCalledWith("h1", "token");
+  expect(buttons()).not.toContain("Food, Highlight");
+  alert.mockRestore();
+});
+
+test("other people's Highlights can't be held for options", async () => {
+  await render(false);
+  expect(tree.root.findAll((n: ReactTestInstance) => typeof n.props.onLongPress === "function")).toHaveLength(0);
 });

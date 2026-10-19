@@ -28,6 +28,7 @@ import { ReplySheet } from "../../components/ReplySheet";
 import { tapFeedback } from "../../utils/haptics";
 import { timeAgo } from "../../utils/serverTime";
 import { followUser } from "../../api/users";
+import { AddToHighlightSheet } from "../../components/AddToHighlightSheet";
 
 const PHOTO_DURATION_MS = 5000;
 const HOLD_DELAY_MS = 250;
@@ -127,6 +128,9 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   const [shareOpen, setShareOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [insightsOpen, setInsightsOpen] = useState(false);
+  const [highlightOpen, setHighlightOpen] = useState(false);
+  // The Story just added to a Highlight, so its button says so.
+  const [highlightAddedId, setHighlightAdded] = useState<string | null>(null);
   const [replyOpen, setReplyOpen] = useState(false);
   const [replySent, setReplySent] = useState<string | null>(null);
   const replySentTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -144,7 +148,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   const currentStoryIndex = currentUsername ? (storyIndexByCreator[currentUsername] ?? 0) : 0;
   const currentStory = currentStories?.[currentStoryIndex] ?? null;
 
-  const sheetOpen = commentsOpen || shareOpen || moreOpen || insightsOpen || replyOpen;
+  const sheetOpen = commentsOpen || shareOpen || moreOpen || insightsOpen || replyOpen || highlightOpen;
   const playbackActive = focused && foreground && !paused && !sheetOpen && !caughtUp && !loadError && !currentAd;
   const progressValue = useRef(0);
   useEffect(() => {
@@ -590,6 +594,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   const imageSource = delivery?.imageUrl ? mediaSource(delivery.imageUrl, accessToken) : apiSource(mediaKind === "video" ? "poster" : "display");
   const videoSource = delivery?.videos[0] ? mediaSource(delivery.videos[0].url, accessToken) : apiSource("video_720");
   const isOwnStory = authUser?.username === currentUsername;
+  const highlightAdded = highlightAddedId === currentStory.id;
 
   const creatorMuted = detail?.audioMuted ?? currentStory.audioMuted;
   const showFollow = !isOwnStory && !!currentUsername && following?.[currentUsername] === false;
@@ -877,6 +882,13 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
             <Icon name={ICONS.dm} size={26} color={colors.textPrimary} />
           </Pressable>
         ) : null}
+        {isOwnStory ? (
+          // Keep it after the 24 hours: add it to one of your Highlights, or start a new one.
+          <Pressable onPress={() => setHighlightOpen(true)} style={[styles.activityButton, styles.highlightButton]} accessibilityRole="button" accessibilityLabel="Add this Story to a Highlight">
+            <Icon name={ICONS.add} size={20} color={colors.textPrimary} />
+            <Text style={styles.activityLabel}>{highlightAdded ? "Added" : "Highlight"}</Text>
+          </Pressable>
+        ) : null}
       </View>
 
       {onClose ? (
@@ -942,6 +954,14 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         }}
       />
       {isOwnStory ? (
+        <AddToHighlightSheet
+          visible={highlightOpen}
+          storyIds={[currentStory.id]}
+          onClose={() => setHighlightOpen(false)}
+          onAdded={() => setHighlightAdded(currentStory.id)}
+        />
+      ) : null}
+      {isOwnStory ? (
         <StoryInsightsSheet visible={insightsOpen} storyId={currentStory.id} onClose={() => setInsightsOpen(false)} />
       ) : null}
     </Animated.View>
@@ -987,6 +1007,7 @@ const styles = StyleSheet.create({
   commentPlaceholder: { color: "rgba(255,255,255,0.85)", fontSize: 15 },
   activityButton: { flexDirection: "row", alignItems: "center", gap: spacing.sm, height: BOTTOM_BAR_HEIGHT, paddingHorizontal: spacing.md, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.4)" },
   activityLabel: { color: colors.textPrimary, fontSize: 15, fontWeight: "700" },
+  highlightButton: { marginLeft: "auto" },
   actionRail: {
     position: "absolute",
     right: spacing.md,

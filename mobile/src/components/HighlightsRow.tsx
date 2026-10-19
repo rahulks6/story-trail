@@ -1,12 +1,14 @@
 import { Icon } from "./Icon";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Image, Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { Alert, Image, Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../navigation/types";
 import { colors, radii, spacing, typography, ICONS } from "../theme";
 import { useAuth } from "../state/AuthContext";
-import { listHighlightsForUser, reorderHighlights, type HighlightSummary } from "../api/highlights";
+import { deleteHighlight, listHighlightsForUser, reorderHighlights, type HighlightSummary } from "../api/highlights";
+import { ActionSheet } from "./ActionSheet";
+import { tapFeedback } from "../utils/haptics";
 import { mediaFileUrl } from "../api/stories";
 import { DraggableGrid } from "./DraggableGrid";
 
@@ -59,6 +61,8 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
   const { width: screenWidth } = useWindowDimensions();
   const [highlights, setHighlights] = useState<HighlightSummary[] | null>(null);
   const [reordering, setReordering] = useState(false);
+  // The Highlight whose options (Edit, Delete) are open: a long press on your own, like Instagram.
+  const [options, setOptions] = useState<HighlightSummary | null>(null);
 
   const countRef = useRef(onCountChange);
   countRef.current = onCountChange;
@@ -97,6 +101,26 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
     },
     [accessToken, highlights],
   );
+
+  const confirmDelete = (highlight: HighlightSummary) => {
+    Alert.alert(`Delete "${highlight.title}"?`, "The Stories in it stay in your Archive.", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => {
+          if (!accessToken) return;
+          setHighlights((current) => current?.filter((h) => h.id !== highlight.id) ?? current);
+          deleteHighlight(highlight.id, accessToken)
+            .then(() => tapFeedback("success"))
+            .catch(() => {
+              Alert.alert("Couldn't delete", "Check your connection and try again.");
+              void load();
+            });
+        },
+      },
+    ]);
+  };
 
   const toggleReordering = () => {
     const next = !reordering;
@@ -141,6 +165,7 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
         // Tapping a card opens it, except mid-reorder — nothing should
         // navigate away while you're in the middle of dragging cards around.
         onPress={reordering ? undefined : (highlight) => navigation.navigate("HighlightViewer", { highlightId: highlight.id, title: highlight.title })}
+        onLongPress={isOwner && !reordering ? (highlight) => { tapFeedback("select"); setOptions(highlight); } : undefined}
         leadingChildren={
           isOwner ? (
             <Pressable
@@ -174,6 +199,20 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
             </View>
           </View>
         )}
+      />
+      {isOwner && highlights.length > 0 ? (
+        <Text style={styles.hint}>Press and hold a Highlight to edit or delete it.</Text>
+      ) : null}
+      <ActionSheet
+        visible={options !== null}
+        title={options?.title}
+        groups={[
+          [
+            { label: "Edit Highlight", onPress: () => options && navigation.navigate("HighlightEditor", { highlightId: options.id }) },
+            { label: "Delete Highlight", destructive: true, onPress: () => options && confirmDelete(options) },
+          ],
+        ]}
+        onClose={() => setOptions(null)}
       />
     </View>
   );
@@ -218,4 +257,5 @@ const styles = StyleSheet.create({
   },
   newGlyph: { color: colors.accent, fontSize: 28, fontWeight: "700" },
   newLabel: { ...typography.caption, fontSize: 11 },
+  hint: { ...typography.caption, marginTop: spacing.xs },
 });

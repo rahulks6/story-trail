@@ -16,6 +16,11 @@ const FAQS: Array<{ question: string; answer: string }> = [
     answer: "24 hours from when you publish it, unless you add it to a Highlight — Highlights never expire.",
   },
   {
+    question: "How do I add a Story to a Highlight, or delete a Highlight?",
+    answer:
+      "Open your Story and tap Highlight to add it to one of your Highlights or start a new one; older Stories are in Profile > Archive. To edit or delete a Highlight, press and hold it on your profile, or open it and tap the options button at the top.",
+  },
+  {
     question: "How do I stop getting a certain kind of notification?",
     answer: "Settings > Notifications lets you turn off messages, likes, comments, follows, or mentions independently.",
   },

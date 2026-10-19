@@ -1,14 +1,16 @@
 import { useMediaStatusBar } from "../../hooks/useMediaStatusBar";
 import { Icon } from "../../components/Icon";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Animated, Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Animated, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import Video from "react-native-video";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { RootStackParamList } from "../../navigation/types";
 import { mediaColors as colors, spacing, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
-import { getHighlightDetail, getHighlightItemDetail, type HighlightItem } from "../../api/highlights";
+import { deleteHighlight, getHighlightDetail, getHighlightItemDetail, updateHighlight, type HighlightItem } from "../../api/highlights";
+import { ActionSheet } from "../../components/ActionSheet";
+import { tapFeedback } from "../../utils/haptics";
 import { track } from "../../analytics/analytics";
 import { getMedia } from "../../api/media";
 import { mediaFileUrl } from "../../api/stories";
@@ -58,30 +60,48 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
   const animationRef = useRef<Animated.CompositeAnimation | null>(null);
   const countedView = useRef(false);
 
-  useEffect(() => {
-    if (!accessToken) return;
-    let cancelled = false;
-    getHighlightDetail(highlightId, accessToken)
-      .then(({ highlight }) => {
-        if (!cancelled) {
+  const [optionsOpen, setOptionsOpen] = useState(false);
+  const currentItem = items?.[index] ?? null;
+  const showingRef = useRef<string | null>(null);
+  showingRef.current = currentItem?.storyId ?? null;
+  const [shownTitle, setShownTitle] = useState(title);
+
+  // Loaded on every visit, so coming back from editing shows the Highlight as it now is.
+  useFocusEffect(
+    useCallback(() => {
+      if (!accessToken) return;
+      let cancelled = false;
+      getHighlightDetail(highlightId, accessToken)
+        .then(({ highlight }) => {
+          if (cancelled) return;
+          // Keep showing the same Story if it's still there; otherwise start from the first.
+          const showing = showingRef.current;
+          const at = showing ? highlight.items.findIndex((item) => item.storyId === showing) : -1;
           setItems(highlight.items);
+          setIndex(at >= 0 ? at : 0);
           setOwnerId(highlight.ownerId);
+          setShownTitle(highlight.title);
           // Admin analytics: someone else's Highlight opened (once per visit, not per token refresh).
           if (!countedView.current && highlight.ownerId !== user?.id && highlight.items.length) {
             countedView.current = true;
             track("highlight_viewed");
           }
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setItems([]);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [highlightId, accessToken]);
+        })
+        .catch(() => {
+          if (!cancelled) setItems((previous) => previous ?? []);
+        });
+      return () => {
+        cancelled = true;
+      };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [highlightId, accessToken]),
+  );
 
-  const currentItem = items?.[index] ?? null;
+  // Where the progress bar stopped when the options sheet opened, to carry on from there.
+  const resumeFrom = useRef(0);
+  useEffect(() => {
+    if (optionsOpen) progress.stopAnimation((value) => { resumeFrom.current = value > 0 && value < 1 ? value : 0; });
+  }, [optionsOpen, progress]);
 
   useEffect(() => {
     if (!currentItem || !accessToken) return;
@@ -123,17 +143,54 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
   }, []);
 
   useEffect(() => {
-    if (!currentItem || mediaKind === null) return;
+    if (!currentItem || mediaKind === null || optionsOpen) return;
     if (mediaKind === "video" && videoDurationMs === null) return;
     const durationMs = mediaKind === "video" ? (videoDurationMs as number) : detail?.music?.durationMs ?? PHOTO_DURATION_MS;
 
-    progress.setValue(0);
-    animationRef.current = Animated.timing(progress, { toValue: 1, duration: durationMs, useNativeDriver: false });
+    const from = resumeFrom.current;
+    resumeFrom.current = 0;
+    progress.setValue(from);
+    animationRef.current = Animated.timing(progress, { toValue: 1, duration: durationMs * (1 - from), useNativeDriver: false });
     animationRef.current.start(({ finished }) => {
       if (finished) goNext();
     });
     return () => animationRef.current?.stop();
-  }, [currentItem, mediaKind, videoDurationMs, goNext, progress, detail?.music?.durationMs]);
+  }, [currentItem, mediaKind, videoDurationMs, goNext, progress, detail?.music?.durationMs, optionsOpen]);
+
+  const removeCurrent = () => {
+    if (!accessToken || !items || !currentItem) return;
+    const remaining = items.filter((item) => item.storyId !== currentItem.storyId).map((item) => item.storyId);
+    if (remaining.length === 0) {
+      confirmDelete("This is the only Story in it, so removing it deletes the Highlight. The Story stays in your Archive.");
+      return;
+    }
+    updateHighlight(highlightId, { storyIds: remaining }, accessToken)
+      .then(({ highlight }) => {
+        tapFeedback("success");
+        setItems(highlight.items);
+        setIndex((i) => Math.min(i, highlight.items.length - 1));
+      })
+      .catch(() => Alert.alert("Couldn't remove", "Check your connection and try again."));
+  };
+
+  const confirmDelete = (message = "The Stories in it stay in your Archive.") => {
+    Alert.alert(`Delete "${shownTitle}"?`, message, [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => {
+          if (!accessToken) return;
+          deleteHighlight(highlightId, accessToken)
+            .then(() => {
+              tapFeedback("success");
+              navigation.goBack();
+            })
+            .catch(() => Alert.alert("Couldn't delete", "Check your connection and try again."));
+        },
+      },
+    ]);
+  };
 
   if (items === null) {
     return (
@@ -200,18 +257,18 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
         ))}
       </View>
       <Text style={[styles.title, { top: insets.top + spacing.sm + 14 }]} numberOfLines={1}>
-        {title}
+        {shownTitle}
       </Text>
 
       {ownerId === user?.id ? (
         <Pressable
           style={[styles.editButton, { top: insets.top + spacing.sm + 10 }]}
-          onPress={() => navigation.navigate("HighlightEditor", { highlightId })}
+          onPress={() => setOptionsOpen(true)}
           hitSlop={12}
           accessibilityRole="button"
-          accessibilityLabel="Edit Highlight"
+          accessibilityLabel="Highlight options"
         >
-          <Icon style={styles.editIcon} name={ICONS.edit} />
+          <Icon style={styles.editIcon} name={ICONS.more} />
         </Pressable>
       ) : null}
       <Pressable
@@ -242,6 +299,20 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
           }
         />
       ) : null}
+      {ownerId === user?.id ? (
+        <ActionSheet
+          visible={optionsOpen}
+          title={shownTitle}
+          groups={[
+            [
+              { label: "Edit Highlight", onPress: () => navigation.navigate("HighlightEditor", { highlightId }) },
+              { label: "Remove this Story from the Highlight", onPress: removeCurrent },
+            ],
+            [{ label: "Delete Highlight", destructive: true, onPress: () => confirmDelete() }],
+          ]}
+          onClose={() => setOptionsOpen(false)}
+        />
+      ) : null}
     </View>
   );
 }
@@ -267,10 +338,11 @@ const styles = StyleSheet.create({
   },
   progressFill: { height: "100%", backgroundColor: "#fff" },
   title: { position: "absolute", top: spacing.xl + 14, left: spacing.md, color: "#fff", fontWeight: "700" },
-  closeButton: { position: "absolute", top: spacing.xl + 10, right: spacing.md, padding: spacing.xs },
+  // Above the tap zones and the Story's own text, which are drawn after them.
+  closeButton: { position: "absolute", top: spacing.xl + 10, right: spacing.md, padding: spacing.xs, zIndex: 10, elevation: 10 },
   closeIcon: { color: "#fff", fontSize: 20 },
-  editButton: { position: "absolute", top: spacing.xl + 10, right: spacing.xxl + spacing.sm, padding: spacing.xs },
-  editIcon: { color: "#fff", fontSize: 18 },
+  editButton: { position: "absolute", top: spacing.xl + 10, right: spacing.xxl + spacing.sm, padding: spacing.xs, zIndex: 10, elevation: 10 },
+  editIcon: { color: "#fff", fontSize: 20 },
   tapZones: { ...StyleSheet.absoluteFill, flexDirection: "row" },
   tapZone: { flex: 1 },
 });
