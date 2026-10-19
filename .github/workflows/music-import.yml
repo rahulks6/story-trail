@@ -1,0 +1,88 @@
+name: Music import
+
+# Fetches openly licensed songs (Kevin MacLeod, incompetech.com, CC BY 4.0) on GitHub's runners,
+# which can reach the site, converts them to 128 kbps MP3 of at most 3 minutes, and pushes them
+# with a manifest to the `music-import` branch. scripts/add-music.cjs then adds each to the
+# catalogue and uploads it; the branch is deleted afterwards.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Tools
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg jq >/dev/null
+      - name: Download and convert
+        run: |
+          mkdir -p out
+          # title|mood
+          cat > list.txt <<'EOF'
+          Carefree|Happy
+          Wallpaper|Happy
+          Monkeys Spinning Monkeys|Fun
+          Fluffing a Duck|Fun
+          Sneaky Snitch|Fun
+          Scheming Weasel faster|Fun
+          Pixel Peeker Polka - faster|Fun
+          Life of Riley|Happy
+          Merry Go|Happy
+          Happy Alley|Happy
+          Easy Lemon|Chill
+          Lobby Time|Chill
+          Local Forecast - Elevator|Chill
+          Airport Lounge|Chill
+          Bossa Antigua|Chill
+          Daily Beetle|Chill
+          Vibing Over Venus|Chill
+          Sincerely|Romantic
+          Smooth Lovin|Romantic
+          Touching Moments Two - Higher|Romantic
+          Dreamer|Romantic
+          Heartwarming|Romantic
+          Cipher|Energetic
+          Cut and Run|Energetic
+          Hyperfun|Energetic
+          Funkorama|Energetic
+          Rollin at 5|Energetic
+          Movement Proposition|Energetic
+          Investigations|Cinematic
+          Hidden Agenda|Cinematic
+          Mesmerize|Cinematic
+          Perspectives|Cinematic
+          Inspired|Cinematic
+          Sardana|Cinematic
+          Thatched Villagers|Cinematic
+          Wholesome|Happy
+          Bright Wish|Romantic
+          Feelin Good|Happy
+          Night on the Docks - Sax|Chill
+          Quirky Dog|Fun
+          EOF
+          echo "[]" > out/manifest.json
+          while IFS='|' read -r title mood; do
+            title="$(echo "$title" | sed 's/^ *//')"; [ -n "$title" ] || continue
+            enc="$(jq -rn --arg t "$title" '$t|@uri')"
+            url="https://incompetech.com/music/royalty-free/mp3-royaltyfree/${enc}.mp3"
+            slug="$(echo "$title" | tr 'A-Z ' 'a-z-' | tr -cd 'a-z0-9-')"
+            if curl -fsSL --retry 2 -o raw.mp3 "$url"; then
+              ffmpeg -v error -y -i raw.mp3 -t 180 -vn -ac 2 -ar 44100 -b:a 128k -map_metadata -1 "out/$slug.mp3" && \
+              jq --arg t "$title" --arg m "$mood" --arg f "$slug.mp3" --arg u "$url" '. + [{title:$t, mood:$m, file:$f, sourceUrl:$u}]' out/manifest.json > m.json && mv m.json out/manifest.json && \
+              echo "ok   $title" || echo "skip $title (convert)"
+            else
+              echo "skip $title (not found)"
+            fi
+          done < list.txt
+          jq length out/manifest.json
+      - name: Push to music-import branch
+        run: |
+          cd out
+          git init -q -b music-import
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -A && git commit -qm "Music import $(date -u +%F)"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" music-import
