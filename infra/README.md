@@ -140,6 +140,10 @@ production if it cannot write there.
 
 ## 5. Releases
 
+**Use `node scripts/release-server.cjs <tag>`** once the images are pushed: it does the steps
+below in order and stops if the migrations fail. The API's `/ready` also refuses until the
+newest migration has run, so a version deployed without them is rolled back, not served.
+
 Migrations only ever add (project rule), so the running version keeps working on the new
 schema. Migrate first, then roll the services:
 

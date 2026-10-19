@@ -1,3 +1,5 @@
+import * as fs from "node:fs";
+import * as path from "node:path";
 import {registerProviderAuthRoutes} from "./modules/auth/provider.routes";
 import type {ProviderGateway} from "./modules/auth/providers";
 import type { Server } from "node:http";
@@ -33,6 +35,22 @@ import { RealtimeHub } from "./realtime/hub";
 /** The API server, with its readiness/shutdown state (see http/lifecycle.ts) and its route table. */
 export type KatkeeServer = Server & { lifecycle: Lifecycle; routes: () => Array<{ method: string; path: string }> };
 
+/** The newest migration this build ships (migrations/*.sql, by name). */
+const LATEST_MIGRATION = (() => {
+  try {
+    return fs.readdirSync(path.resolve(process.cwd(), "migrations")).filter((f) => f.endsWith(".sql")).sort().pop()?.replace(/\.sql$/, "") ?? null;
+  } catch {
+    return null;
+  }
+})();
+let schemaChecked = false;
+async function schemaIsCurrent(): Promise<boolean> {
+  if (schemaChecked || !LATEST_MIGRATION) return true;
+  const rows = await query(`SELECT 1 AS ok FROM schema_migrations WHERE version = :'v'`, { v: LATEST_MIGRATION });
+  schemaChecked = rows.length > 0;
+  return schemaChecked;
+}
+
 export function buildApp(providers?:ProviderGateway): KatkeeServer {
   const router = new Router();
   const lifecycle = new Lifecycle();
@@ -60,6 +78,12 @@ export function buildApp(providers?:ProviderGateway): KatkeeServer {
     }
     try {
       await query("SELECT 1");
+      // A new version isn't ready until the database has its migrations: otherwise the load
+      // balancer would send traffic to code that queries columns that don't exist yet.
+      if (!(await schemaIsCurrent())) {
+        sendJson(res, 503, { status: "not_ready", db: "migrations pending", expected: LATEST_MIGRATION });
+        return;
+      }
       sendJson(res, 200, { status: "ready" });
     } catch {
       sendJson(res, 503, { status: "not_ready", db: "down" });
