@@ -110,7 +110,7 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
           ref={birthInput}
           label="Date of birth"
           error={fieldErrors?.birthDate ?? birthProblem}
-          hint="DD/MM/YYYY. It confirms your age and is never shown on your profile."
+          hint="Day, month, then year (DD/MM/YYYY). It confirms your age and is never shown on your profile."
           placeholder="DD/MM/YYYY"
           keyboardType="number-pad"
           autoComplete="off"
