@@ -59,7 +59,8 @@ export async function acceptFollowRequest(viewerId: string, requestId: string): 
   const request = await requireOwnedPendingRequest(requestId, viewerId);
   await socialRepo.createFollow(request.requesterId, request.targetId);
   await socialRepo.resolveFollowRequest(requestId, "accepted");
-  await notificationsService.notifyFollow(request.targetId, request.requesterId);
+  // "@target accepted your follow request" for the person who asked.
+  await notificationsService.notifyFollowAccepted(request.targetId, request.requesterId);
 }
 
 export async function declineFollowRequest(viewerId: string, requestId: string): Promise<void> {

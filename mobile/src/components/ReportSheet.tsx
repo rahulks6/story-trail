@@ -1,6 +1,6 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useState } from "react";
-import { ActivityIndicator, Alert, Modal, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { colors, radii, spacing, typography } from "../theme";
 import { useAuth } from "../state/AuthContext";
 import { createReport, reportDirectMessage, REPORT_REASONS, type ReportReason, type ReportTargetType } from "../api/moderation";
@@ -86,11 +86,14 @@ export function ReportSheet({ visible, targetType, targetId, conversationId, onC
           ) : null}
 
           {selectedReason === null ? (
-            REPORT_REASONS.map((reason) => (
-              <Pressable key={reason.value} style={styles.row} onPress={() => setSelectedReason(reason.value)} accessibilityRole="button">
-                <Text style={typography.body}>{reason.label}</Text>
-              </Pressable>
-            ))
+            // Eleven reasons don't fit on small phones: they scroll inside the sheet.
+            <ScrollView style={styles.reasons} bounces={false}>
+              {REPORT_REASONS.map((reason) => (
+                <Pressable key={reason.value} style={styles.row} onPress={() => setSelectedReason(reason.value)} accessibilityRole="button">
+                  <Text style={typography.body}>{reason.label}</Text>
+                </Pressable>
+              ))}
+            </ScrollView>
           ) : (
             <>
               <Text style={[typography.caption, styles.selectedReason]}>
@@ -122,7 +125,9 @@ export function ReportSheet({ visible, targetType, targetId, conversationId, onC
 const styles = StyleSheet.create({
   fill: { flex: 1 },
   backdrop: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
+  reasons: { flexGrow: 0, flexShrink: 1 },
   sheet: {
+    maxHeight: "88%",
     backgroundColor: colors.surface,
     borderTopLeftRadius: radii.lg,
     borderTopRightRadius: radii.lg,

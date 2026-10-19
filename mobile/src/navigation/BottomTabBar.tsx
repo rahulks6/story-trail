@@ -64,6 +64,8 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
           if (event.defaultPrevented) return;
           // Messages always opens on the list of conversations; pick one to open the chat.
           if (route.name === "DM") navigation.navigate("DM", { screen: "DMInbox" });
+          // Search always gets back to searching, even after a profile opened from elsewhere.
+          else if (route.name === "Search") navigation.navigate("Search", { screen: "SearchHome" });
           else if (!isFocused) navigation.navigate(route.name);
         };
 
@@ -104,7 +106,7 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
               <Icon style={[styles.tabIcon, isFocused && styles.labelFocused]} name={TAB_ICONS[route.name] ?? "home"} selected={isFocused} />
               {showUnreadBadge ? (
                 <View style={styles.unreadBadge}>
-                  <Text style={styles.unreadBadgeText}>{badgeCount > 99 ? "99+" : badgeCount}</Text>
+                  <Text style={styles.unreadBadgeText} maxFontSizeMultiplier={1.2}>{badgeCount > 99 ? "99+" : badgeCount}</Text>
                 </View>
               ) : null}
             </View>

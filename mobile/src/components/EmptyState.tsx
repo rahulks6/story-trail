@@ -1,18 +1,25 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { colors, spacing, typography } from "../theme";
+import { colors, mediaColors, spacing, typography, mediaTypography } from "../theme";
 
 interface EmptyStateProps {
   title: string;
   message: string;
+  /** "media" for screens that are always dark (Home's Story feed, viewers), whatever the app's scheme. */
+  variant?: "app" | "media";
+  /** An action under the message, e.g. a "Find people" button. */
+  children?: React.ReactNode;
 }
 
 /** Shared empty/not-yet-available state — every screen needs one; see spec section 54. */
-export function EmptyState({ title, message }: EmptyStateProps): React.JSX.Element {
+export function EmptyState({ title, message, variant = "app", children }: EmptyStateProps): React.JSX.Element {
+  const media = variant === "media";
+  const type = media ? mediaTypography : typography;
   return (
-    <View style={styles.container}>
-      <Text style={[typography.title, styles.title]}>{title}</Text>
-      <Text style={[typography.body, styles.message]}>{message}</Text>
+    <View style={[styles.container, media && styles.mediaContainer]}>
+      <Text style={[type.title, styles.title]}>{title}</Text>
+      <Text style={[type.body, styles.message, media && styles.mediaMessage]}>{message}</Text>
+      {children}
     </View>
   );
 }
@@ -26,6 +33,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     backgroundColor: colors.background,
   },
+  mediaContainer: { backgroundColor: mediaColors.background },
   title: {
     textAlign: "center",
   },
@@ -33,4 +41,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: colors.textSecondary,
   },
+  mediaMessage: { color: mediaColors.textSecondary },
 });

@@ -1,5 +1,5 @@
-import React, { useMemo, useRef, useState } from "react";
-import { PanResponder, StyleSheet, View, type GestureResponderEvent } from "react-native";
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { PanResponder, StyleSheet, View, type AccessibilityActionEvent, type GestureResponderEvent } from "react-native";
 import { clampOverlayPosition, type Overlay } from "../models/storyDraft";
 import { pinchPlacement, TAP_SLOP, type Placement, type Touch } from "../models/canvasGestures";
 import { OverlayBody } from "./OverlayBody";
@@ -24,6 +24,11 @@ interface Props {
   onDeleted: (id: string) => void;
   /** While dragging: whether it has snapped to the middle across (x) or down (y). */
   onGuidesChange?: (guides: { x: boolean; y: boolean }) => void;
+  /**
+   * Hands the editor a way to move this object live (its two-finger pinch on the photo) without
+   * committing every movement to the draft. Called with null when the object goes away.
+   */
+  registerLive?: (id: string, show: ((placement: Placement | null) => void) | null) => void;
 }
 
 /** How close (px) to the middle a drag snaps onto it. */
@@ -36,6 +41,9 @@ export function snapToCentre(x: number, y: number, width: number, height: number
   return { x: gx ? 0.5 : x, y: gy ? 0.5 : y, guides: { x: gx, y: gy } };
 }
 
+const HIT_SLOP = { top: 16, bottom: 16, left: 16, right: 16 };
+const ACCESSIBILITY_ACTIONS = [{ name: "activate", label: "Open controls" }];
+
 const touchesOf = (evt: GestureResponderEvent): Touch[] => evt.nativeEvent.touches.map((t) => ({ pageX: t.pageX, pageY: t.pageY }));
 
 /**
@@ -46,12 +54,29 @@ const touchesOf = (evt: GestureResponderEvent): Touch[] => evt.nativeEvent.touch
  *
  * The touch handlers are created once and read the latest values from a ref: recreating them
  * during a drag (as this did before) restarted the gesture on every movement.
+ *
+ * While a finger moves, the object follows it from its own state (`live`), so only this object
+ * redraws; the new place is committed with `onChange` once, when the finger lifts. Committing on
+ * every movement redrew the whole editor (and every other object) many times a second.
  */
-export function DraggableCanvasObject(props: Props): React.JSX.Element {
+function DraggableCanvasObjectImpl(props: Props): React.JSX.Element {
   const { overlay, containerWidth, containerHeight } = props;
   const [dragging, setDragging] = useState(false);
+  const [live, setLive] = useState<Placement | null>(null);
+  const liveRef = useRef<Placement | null>(null);
+  const showLive = useRef((next: Placement | null) => {
+    liveRef.current = next;
+    setLive(next);
+  }).current;
   const latest = useRef(props);
   latest.current = props;
+
+  const { registerLive } = props;
+  useEffect(() => {
+    if (!registerLive) return;
+    registerLive(overlay.id, showLive);
+    return () => registerLive(overlay.id, null);
+  }, [registerLive, overlay.id, showLive]);
 
   const panResponder = useMemo(() => {
     let mode: "drag" | "pinch" = "drag";
@@ -69,8 +94,23 @@ export function DraggableCanvasObject(props: Props): React.JSX.Element {
     };
 
     const current = (): Placement => {
+      if (liveRef.current) return liveRef.current;
       const o = latest.current.overlay;
       return { x: o.x, y: o.y, scale: o.scale, rotation: o.rotation };
+    };
+    /** Commits where the finger left it (once per gesture), then stops showing the live place. */
+    const commit = () => {
+      const placed = liveRef.current;
+      if (!placed) return;
+      const p = latest.current;
+      const o = p.overlay;
+      const patch: Partial<Placement> = {};
+      if (placed.x !== o.x) patch.x = placed.x;
+      if (placed.y !== o.y) patch.y = placed.y;
+      if (placed.scale !== o.scale) patch.scale = placed.scale;
+      if (placed.rotation !== o.rotation) patch.rotation = placed.rotation;
+      if (Object.keys(patch).length > 0) p.onChange(o.id, patch);
+      showLive(null);
     };
     const begin = (touches: Touch[]) => {
       start = current();
@@ -80,8 +120,13 @@ export function DraggableCanvasObject(props: Props): React.JSX.Element {
     };
     const end = (deleteIfOverTrash: boolean) => {
       const p = latest.current;
-      if (moved && deleteIfOverTrash && overTrash) p.onDeleted(p.overlay.id);
-      else if (!moved && !pinched && deleteIfOverTrash) p.onTap(p.overlay.id);
+      if (moved && deleteIfOverTrash && overTrash) {
+        p.onDeleted(p.overlay.id);
+        showLive(null);
+      } else {
+        commit();
+        if (!moved && !pinched && deleteIfOverTrash) p.onTap(p.overlay.id);
+      }
       setGuides({ x: false, y: false });
       if (moved) {
         setDragging(false);
@@ -114,7 +159,7 @@ export function DraggableCanvasObject(props: Props): React.JSX.Element {
         if (mode === "pinch") {
           const next = pinchPlacement(start, [from[0]!, from[1]!], [touches[0]!, touches[1]!], p.containerWidth, p.containerHeight);
           moved = true;
-          p.onChange(p.overlay.id, { ...next, ...clampOverlayPosition(next.x, next.y) });
+          showLive({ ...next, ...clampOverlayPosition(next.x, next.y) });
           return;
         }
 
@@ -129,7 +174,7 @@ export function DraggableCanvasObject(props: Props): React.JSX.Element {
         const placed = clampOverlayPosition(start.x + dx / p.containerWidth, start.y + dy / p.containerHeight);
         const snapped = snapToCentre(placed.x, placed.y, p.containerWidth, p.containerHeight);
         setGuides(snapped.guides);
-        p.onChange(p.overlay.id, { x: snapped.x, y: snapped.y });
+        showLive({ ...current(), x: snapped.x, y: snapped.y });
         const over = p.isOverTrash(touches[0]!.pageX, touches[0]!.pageY);
         if (over !== overTrash) {
           overTrash = over;
@@ -141,30 +186,41 @@ export function DraggableCanvasObject(props: Props): React.JSX.Element {
     });
   }, []);
 
+  // The body doesn't change while it moves, so moving redraws only the frame around it.
+  const body = useMemo(
+    () => <OverlayBody overlay={overlay} containerWidth={containerWidth} containerHeight={containerHeight} />,
+    [overlay, containerWidth, containerHeight],
+  );
+  const placement = live ? { ...overlay, ...live } : overlay;
+  const onAccessibilityAction = useCallback((event: AccessibilityActionEvent) => {
+    if (event.nativeEvent.actionName === "activate") latest.current.onOpenControls(latest.current.overlay.id);
+  }, []);
+
   return (
     <PlacedOverlay
-      overlay={overlay}
+      overlay={placement}
       containerWidth={containerWidth}
       containerHeight={containerHeight}
       dimmed={dragging}
       {...panResponder.panHandlers}
       collapsable={false}
-      hitSlop={{ top: 16, bottom: 16, left: 16, right: 16 }}
+      hitSlop={HIT_SLOP}
       accessible
       accessibilityRole="button"
       accessibilityLabel={overlayDescription(overlay)}
       accessibilityHint="Drag to move, pinch with two fingers to resize and rotate, or activate for button controls"
       // A screen reader takes raw touches for its own navigation, so its "activate" opens the
       // buttons for moving, resizing, rotating and deleting instead.
-      accessibilityActions={[{ name: "activate", label: "Open controls" }]}
-      onAccessibilityAction={(event) => {
-        if (event.nativeEvent.actionName === "activate") props.onOpenControls(overlay.id);
-      }}
+      accessibilityActions={ACCESSIBILITY_ACTIONS}
+      onAccessibilityAction={onAccessibilityAction}
     >
-      <OverlayBody overlay={overlay} containerWidth={containerWidth} containerHeight={containerHeight} />
+      {body}
     </PlacedOverlay>
   );
 }
+
+/** Memoised: an object redraws only when its own overlay (or the canvas size) changes. */
+export const DraggableCanvasObject = memo(DraggableCanvasObjectImpl);
 
 /** A short, human description for screen readers — the on-canvas glyph/text alone isn't always self-describing (an emoji, a sticker glyph). */
 function overlayDescription(overlay: Overlay): string {

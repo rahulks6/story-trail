@@ -61,6 +61,8 @@ test('no shared-storage or photo-library permission reaches the store build',()=
  // Libraries can add permissions in the merged manifest: this one is removed at merge time.
  assert.match(manifest,/xmlns:tools="http:\/\/schemas\.android\.com\/tools"/);
  assert.match(manifest,/<uses-permission android:name="android\.permission\.WRITE_EXTERNAL_STORAGE" tools:node="remove" \/>/);
- assert.doesNotMatch(manifest,/<uses-permission android:name="android\.permission\.(READ_EXTERNAL_STORAGE|READ_MEDIA_[A-Z_]+|MANAGE_EXTERNAL_STORAGE)"/);
+ assert.doesNotMatch(manifest,/<uses-permission android:name="android\.permission\.(READ_EXTERNAL_STORAGE|READ_MEDIA_[A-Z_]+|MANAGE_EXTERNAL_STORAGE)"(?! tools:node="remove")/);
+ // The merger implies READ from a library's WRITE; it is removed too.
+ assert.match(manifest,/<uses-permission android:name="android\.permission\.READ_EXTERNAL_STORAGE" tools:node="remove" \/>/);
  for(const text of code)assert.doesNotMatch(text,/ExternalStorageDirectoryPath|DownloadDirectoryPath|PicturesDirectoryPath/,'files stay in the app\'s own storage');
 });

@@ -17,19 +17,26 @@ const RANK: Record<MessageDeliveryStatus, number> = { sent: 0, delivered: 1, rea
 /**
  * Adds fetched messages to the thread: no duplicates, newest first, and a message's
  * status never moves backwards (a page fetched before a receipt arrived can't undo it).
+ * A message that didn't change keeps its object (and an unchanged thread its array), so
+ * the rows on screen don't re-render on every poll.
  */
 export function mergeMessages(current: readonly Message[], incoming: readonly Message[]): Message[] {
   const byId = new Map(current.map((m) => [m.id, m]));
+  let changed = false;
   for (const message of incoming) {
     const known = byId.get(message.id);
     if (!known) {
       byId.set(message.id, message);
+      changed = true;
       continue;
     }
     const status = known.status && message.status && RANK[known.status] > RANK[message.status] ? known.status : message.status ?? known.status;
-    byId.set(message.id, { ...known, ...message, ...(status ? { status } : {}) });
+    const merged = { ...known, ...message, ...(status ? { status } : {}) };
+    if (JSON.stringify(merged) === JSON.stringify(known)) continue;
+    byId.set(message.id, merged);
+    changed = true;
   }
-  return [...byId.values()].sort(newestFirst);
+  return changed ? [...byId.values()].sort(newestFirst) : (current as Message[]);
 }
 
 /** The other participant's read/delivered watermarks, applied to the viewer's own messages. */

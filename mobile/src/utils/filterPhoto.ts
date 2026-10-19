@@ -19,6 +19,24 @@ interface BasePixels {
   format: string;
 }
 
+/**
+ * Rows filtered between pauses: the whole photo in one go held the JS thread (and so any finger
+ * on the screen) for a noticeable moment. Each pixel is still worked out by applyToPixels itself,
+ * so the result is exactly the same.
+ */
+const ROWS_PER_SLICE = 96;
+const pause = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
+
+async function applyInSlices(bytes: Uint8Array, width: number, height: number, format: string, t: ReturnType<typeof colorTransform>): Promise<void> {
+  if (height <= 0) return;
+  const rowBytes = Math.floor(bytes.length / height);
+  for (let y = 0; y < height; y += ROWS_PER_SLICE) {
+    if (y > 0) await pause();
+    const rows = Math.min(ROWS_PER_SLICE, height - y);
+    applyToPixels(bytes.subarray(y * rowBytes, (y + rows) * rowBytes), width, rows, format, t);
+  }
+}
+
 const bases = new Map<string, Promise<BasePixels>>();
 const previews = new Map<string, Promise<string>>();
 
@@ -70,7 +88,7 @@ export function filteredPhotoUri(uri: string, filter: FilterKey, maxEdge: number
     preview = (async () => {
       const base = await basePixels(uri, maxEdge);
       const bytes = base.bytes.slice();
-      applyToPixels(bytes, base.width, base.height, base.format, colorTransform(RECIPES[filter]));
+      await applyInSlices(bytes, base.width, base.height, base.format, colorTransform(RECIPES[filter]));
       const image = await Images.loadFromRawPixelDataAsync(
         { buffer: bytes.buffer as ArrayBuffer, width: base.width, height: base.height, pixelFormat: base.format as never },
         false,

@@ -23,6 +23,8 @@ interface Props {
   initialProperties?: TextOverlayProperties;
   onCancel: () => void;
   onDone: (text: string, properties: TextOverlayProperties) => void;
+  /** The Story canvas's height, so the text is previewed at the size it will have on the photo. */
+  canvasHeight?: number;
 }
 
 /**
@@ -31,7 +33,7 @@ interface Props {
  * the slider on the left sets the size; "A" puts the text on a label in the chosen colour. Tapping
  * anywhere outside the text, or Done, places it. Nothing typed just closes.
  */
-export function TextToolModal({ visible, initialText, initialProperties, onCancel, onDone }: Props): React.JSX.Element {
+export function TextToolModal({ visible, initialText, initialProperties, onCancel, onDone, canvasHeight }: Props): React.JSX.Element {
   const [text, setText] = useState(initialText ?? "");
   const [style, setStyle] = useState<TextStyle>(initialProperties?.style ?? "Clean");
   const hadBackground = initialProperties?.backgroundColor != null;
@@ -76,7 +78,7 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
   const nextAlign = () => setAlign((a) => ALIGNS[(ALIGNS.indexOf(a) + 1) % ALIGNS.length]!);
   const alignIcon = align === "left" ? ICONS.alignLeft : align === "right" ? ICONS.alignRight : ICONS.alignCenter;
   // The preview is the size it will be on a full-screen Story.
-  const previewSize = Math.round(size * 760);
+  const previewSize = Math.round(size * (canvasHeight && canvasHeight > 0 ? canvasHeight : 760));
 
   return (
     <Modal visible={visible} animationType="fade" transparent statusBarTranslucent navigationBarTranslucent onRequestClose={done}>
@@ -124,6 +126,7 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
           </View>
           <View style={[styles.inputBox, hasBackground && { backgroundColor: color, borderRadius: previewSize * 0.28, paddingHorizontal: previewSize * 0.35, paddingVertical: previewSize * 0.12 }, { alignSelf: align === "left" ? "flex-start" : align === "right" ? "flex-end" : "center" }]}>
             <TextInput
+              allowFontScaling={false}
               autoFocus
               multiline
               // Previews the chosen style, colour and size as it will appear on the Story.
@@ -208,7 +211,7 @@ const styles = StyleSheet.create({
   toolButton: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0,0,0,0.35)" },
   toolButtonOn: { backgroundColor: colors.textPrimary },
   colorDot: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: "#FFFFFF" },
-  doneButton: { paddingHorizontal: spacing.md, height: 40, borderRadius: radii.pill, backgroundColor: colors.textPrimary, justifyContent: "center" },
+  doneButton: { paddingHorizontal: spacing.md, minHeight: 40, paddingVertical: 6, borderRadius: radii.pill, backgroundColor: colors.textPrimary, justifyContent: "center" },
   doneLabel: { color: colors.background, fontSize: 16, fontWeight: "700" },
   middle: { flex: 1, justifyContent: "center", paddingLeft: 36 },
   slider: { position: "absolute", left: -4, top: "50%", marginTop: -SLIDER_HEIGHT / 2, width: 36, height: SLIDER_HEIGHT, alignItems: "center" },
@@ -222,7 +225,7 @@ const styles = StyleSheet.create({
   rowContent: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.sm },
   colorSwatch: { width: 32, height: 32, borderRadius: 16, borderWidth: 2, borderColor: "rgba(255,255,255,0.9)" },
   colorSwatchActive: { borderColor: colors.accent, borderWidth: 3, transform: [{ scale: 1.15 }] },
-  styleChip: { height: 38, justifyContent: "center", borderRadius: radii.pill, paddingHorizontal: spacing.md, backgroundColor: "rgba(0,0,0,0.45)" },
+  styleChip: { minHeight: 38, paddingVertical: 6, justifyContent: "center", borderRadius: radii.pill, paddingHorizontal: spacing.md, backgroundColor: "rgba(0,0,0,0.45)" },
   styleChipActive: { backgroundColor: colors.textPrimary },
   styleChipLabel: { color: colors.textPrimary, fontSize: 15 },
   styleChipLabelActive: { color: colors.background },

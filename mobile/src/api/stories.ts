@@ -146,8 +146,9 @@ export interface StoryViewer {
 }
 
 /** Owner-only — who's actually behind getViewCount's number (backend rejects this for anyone else). */
-export function getStoryViewers(storyId: string, accessToken: string): Promise<{ viewers: StoryViewer[] }> {
-  return apiGet(`/api/v1/stories/${storyId}/viewers`, accessToken);
+export function getStoryViewers(storyId: string, accessToken: string, page: { limit?: number; offset?: number } = {}): Promise<{ viewers: StoryViewer[] }> {
+  const query = new URLSearchParams({ limit: String(page.limit ?? 50), offset: String(page.offset ?? 0) });
+  return apiGet(`/api/v1/stories/${storyId}/viewers?${query.toString()}`, accessToken);
 }
 
 /** Mirrors backend/src/modules/stories/stories.service.ts's Insights. Every rate is 0-100, already rounded. */

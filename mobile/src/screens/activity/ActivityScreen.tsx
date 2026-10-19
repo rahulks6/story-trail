@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ListSkeleton } from "../../components/Skeleton";
-import { ActivityIndicator, Pressable, RefreshControl, SectionList, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, SectionList, StyleSheet, Text, View } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../navigation/types";
@@ -38,7 +38,7 @@ const TABS: Array<{ key: ActivityTab; label: string }> = [
 /** A `follow_request` reads as the same relationship-y thing a `follow` does — the "Follows" tab covers both rather than needing a 5th tab. */
 function matchesTab(notification: NotificationRecord, tab: ActivityTab): boolean {
   if (tab === "all") return true;
-  if (tab === "follow") return notification.type === "follow" || notification.type === "follow_request";
+  if (tab === "follow") return notification.type === "follow" || notification.type === "follow_request" || notification.type === "follow_accepted";
   return notification.type === tab;
 }
 
@@ -66,8 +66,11 @@ function messageFor(notification: NotificationRecord): string {
       return `${name} started following you.`;
     case "follow_request":
       return `${name} requested to follow you.`;
+    case "follow_accepted":
+      return `${name} accepted your follow request.`;
     case "mention":
-      return `${name} mentioned you in a comment.`;
+      // A mention sticker on their Story, or @you in a comment.
+      return notification.comment ? `${name} mentioned you in a comment.` : `${name} mentioned you in their Story.`;
     default:
       return `${name} did something.`;
   }
@@ -324,8 +327,15 @@ export function ActivityScreen(): React.JSX.Element {
       }
     }
 
+    // Requests are answered on the Follow requests screen.
+    if (notification.type === "follow_request") {
+      navigation.navigate("FollowRequests");
+      return;
+    }
+
     if (notification.actor) {
-      navigation.navigate("Main", { screen: "Search", params: { screen: "UserProfile", params: { username: notification.actor.username } } });
+      // initial: false keeps Search's own screen under the profile, so Back and the tab still work.
+      navigation.navigate("Main", { screen: "Search", params: { screen: "UserProfile", params: { username: notification.actor.username }, initial: false } });
     }
   };
 
@@ -393,7 +403,8 @@ export function ActivityScreen(): React.JSX.Element {
     <View style={styles.container}>
       {header}
       {loadError ? <Banner text={loadError} /> : null}
-      <View style={styles.tabBar} accessibilityRole="tablist">
+      {/* Scrolls sideways when the five tabs don't fit (small phones, large text). */}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabScroll} contentContainerStyle={styles.tabBar} accessibilityRole="tablist">
         {TABS.map((tab) => (
           <Pressable
             key={tab.key}
@@ -403,10 +414,10 @@ export function ActivityScreen(): React.JSX.Element {
             accessibilityLabel={tab.label}
             accessibilityState={{ selected: activeTab === tab.key }}
           >
-            <Text style={[styles.tabLabel, activeTab === tab.key && styles.tabLabelActive]}>{tab.label}</Text>
+            <Text style={[styles.tabLabel, activeTab === tab.key && styles.tabLabelActive]} numberOfLines={1}>{tab.label}</Text>
           </Pressable>
         ))}
-      </View>
+      </ScrollView>
       {tabFiltered.length === 0 ? (
         <View style={styles.emptyTab}>
           <Text style={typography.body}>Nothing here yet.</Text>
@@ -418,6 +429,7 @@ export function ActivityScreen(): React.JSX.Element {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
           onEndReachedThreshold={0.4}
           onEndReached={() => void loadMore()}
+          contentContainerStyle={{ paddingBottom: insets.bottom + spacing.md }}
           renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
           renderItem={({ item: row }) => {
             const actor = row.kind === "grouped-like" ? row.firstActor : row.notification.actor;
@@ -469,12 +481,11 @@ const styles = StyleSheet.create({
   },
   headerStart: { flexDirection: "row", alignItems: "center", gap: spacing.md },
   markAllRead: { color: colors.accent, fontSize: 13, fontWeight: "600" },
+  tabScroll: { flexGrow: 0, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border },
   tabBar: {
     flexDirection: "row",
     paddingHorizontal: spacing.md,
     gap: spacing.xs,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.border,
     paddingBottom: spacing.sm,
   },
   tab: { paddingVertical: spacing.xs, paddingHorizontal: spacing.sm, borderRadius: radii.pill },

@@ -148,7 +148,7 @@ describe("notifications — follow", () => {
     assert.ok(!carolNotifications.some((n) => n.type === "follow"), "a private-account follow must not fire an immediate follow notification");
   });
 
-  it("accepting a follow request notifies the original requester that they're now following", async () => {
+  it("accepting a follow request tells the requester it was accepted (not that the account followed them)", async () => {
     const alice = await signupUser();
     const carol = await signupUser();
     await client.patch("/api/v1/users/me", { isPrivate: true }, authHeader(carol.accessToken));
@@ -159,9 +159,30 @@ describe("notifications — follow", () => {
     await client.post(`/api/v1/follow-requests/${requestId}/accept`, undefined, authHeader(carol.accessToken));
 
     const aliceNotifications = await listNotifications(alice.accessToken);
-    const followNotifications = aliceNotifications.filter((n) => n.type === "follow");
-    assert.equal(followNotifications.length, 1);
-    assert.equal(followNotifications[0].actor.username, carol.input.username);
+    assert.equal(aliceNotifications.filter((n) => n.type === "follow").length, 0);
+    const accepted = aliceNotifications.filter((n) => n.type === "follow_accepted");
+    assert.equal(accepted.length, 1);
+    assert.equal(accepted[0].actor.username, carol.input.username);
+  });
+
+  it("a mention sticker on a Story notifies the tagged person once, only if they can see it", async () => {
+    const owner = await signupUser();
+    const friend = await signupUser();
+    const outsider = await signupUser();
+    const me = async (token: string) => (await client.get("/api/v1/auth/me", authHeader(token))).body.user.id as string;
+    const mention = (userId: string, username: string) => ({
+      id: `m-${userId}`, type: "mention", x: 0.5, y: 0.5, scale: 1, rotation: 0, zIndex: 1, properties: { userId, username },
+    });
+    const friendId = await me(friend.accessToken);
+    const storyId = await publishStory(owner.accessToken, { overlays: [mention(friendId, friend.input.username)] });
+    const friendMentions = (await listNotifications(friend.accessToken)).filter((n) => n.type === "mention");
+    assert.equal(friendMentions.length, 1);
+    assert.equal(friendMentions[0].story?.id ?? friendMentions[0].storyId, storyId);
+
+    // A Close Friends Story never reveals itself to a tagged person outside its audience.
+    const outsiderId = await me(outsider.accessToken);
+    await publishStory(owner.accessToken, { audience: "close_friends", overlays: [mention(outsiderId, outsider.input.username)] });
+    assert.equal((await listNotifications(outsider.accessToken)).filter((n) => n.type === "mention").length, 0);
   });
 
   it("re-requesting a follow while already pending does not duplicate the follow_request notification", async () => {

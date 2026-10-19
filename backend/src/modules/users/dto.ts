@@ -67,7 +67,8 @@ export function parseUpdateProfileInput(body: unknown): UpdateProfileInput {
 }
 
 export function parseSearchQuery(q: string | undefined): string {
-  const term = (q ?? "").trim();
+  // "@name" finds name: people type usernames the way they appear in the app.
+  const term = (q ?? "").trim().replace(/^@+/, "").trim();
   if (term.length < 1 || term.length > 60) {
     throw new ValidationError({ q: "q must be 1-60 characters." });
   }

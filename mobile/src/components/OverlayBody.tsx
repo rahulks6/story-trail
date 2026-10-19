@@ -27,6 +27,8 @@ export const STICKER_GLYPHS: Record<string, string> = {
  * overlay's own `properties.fontSize` (text) is itself normalized —
  * see storyDraft.ts.
  */
+// Story text and stickers are drawn at a size relative to the photo, so they look the same for
+// every viewer: the phone's text-size setting never resizes them (allowFontScaling={false}).
 export function OverlayBody({
   overlay,
   containerWidth,
@@ -65,28 +67,29 @@ export function OverlayBody({
         <View style={[{ maxWidth: containerWidth * TEXT_MAX_WIDTH_FRACTION + (neon ? glow * 2 : 0) }, backgroundStyle]}>
           {outline
             ? OUTLINE_OFFSETS.map(([dx, dy], i) => (
-                <Text key={i} style={[...textStyle, styles.outlineCopy, { color: contrastOn(properties.color), textShadowRadius: 0, transform: [{ translateX: dx * w }, { translateY: dy * w }] }]} accessible={false} importantForAccessibility="no">
+                <Text allowFontScaling={false} key={i} style={[...textStyle, styles.outlineCopy, { color: contrastOn(properties.color), textShadowRadius: 0, transform: [{ translateX: dx * w }, { translateY: dy * w }] }]} accessible={false} importantForAccessibility="no">
                   {properties.text}
                 </Text>
               ))
             : null}
           {/* A second, wider glow behind the text, so the colour reads on any photo. */}
           {neon ? (
-            <Text style={[...textStyle, styles.outlineCopy, { color: properties.color }]} accessible={false} importantForAccessibility="no">
+            <Text allowFontScaling={false} style={[...textStyle, styles.outlineCopy, { color: properties.color }]} accessible={false} importantForAccessibility="no">
               {properties.text}
             </Text>
           ) : null}
-          <Text style={[...textStyle, outline && { textShadowRadius: 0 }, neon && { textShadowRadius: glow * 0.5 }]}>{properties.text}</Text>
+          <Text allowFontScaling={false} style={[...textStyle, outline && { textShadowRadius: 0 }, neon && { textShadowRadius: glow * 0.5 }]}>{properties.text}</Text>
         </View>
       );
     }
     case "emoji":
-      return <Text style={{ fontSize: 0.09 * containerHeight }}>{overlay.properties.emoji}</Text>;
+      return <Text allowFontScaling={false} style={{ fontSize: 0.09 * containerHeight }}>{overlay.properties.emoji}</Text>;
     case "sticker":
-      return <Text style={[styles.sticker, { fontSize: 0.08 * containerHeight }]}>{STICKER_GLYPHS[overlay.properties.stickerId] ?? "✦"}</Text>;
+      return <Text allowFontScaling={false} style={[styles.sticker, { fontSize: 0.08 * containerHeight }]}>{STICKER_GLYPHS[overlay.properties.stickerId] ?? "✦"}</Text>;
     case "mention":
       return (
         <Text
+          allowFontScaling={false}
           style={styles.chip}
           onPress={overlay.properties.username && onMentionPress ? () => onMentionPress!(overlay.properties.username as string) : undefined}
         >
@@ -94,9 +97,9 @@ export function OverlayBody({
         </Text>
       );
     case "location":
-      return <Text style={styles.chip}>📍 {overlay.properties.label}</Text>;
+      return <Text allowFontScaling={false} style={styles.chip}>📍 {overlay.properties.label}</Text>;
     case "datetime":
-      return <Text style={styles.chip}>{overlay.properties.display}</Text>;
+      return <Text allowFontScaling={false} style={styles.chip}>{overlay.properties.display}</Text>;
     default:
       return <View />;
   }

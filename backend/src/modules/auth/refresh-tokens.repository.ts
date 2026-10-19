@@ -79,13 +79,35 @@ export async function revokeRefreshToken(id: string, replacedById: string | null
 /** Only one concurrent caller may consume a refresh token. */
 export async function consumeRefreshToken(id: string, token: string): Promise<boolean> {
   const row = await queryOne(
-    `UPDATE refresh_tokens SET revoked_at = now()
+    `UPDATE refresh_tokens SET revoked_at = now(), rotated_at = now()
      WHERE id = :'id' AND token_hash = :'hash'
        AND revoked_at IS NULL AND expires_at > now()
      RETURNING id`,
     { id, hash: hashToken(token) },
   );
   return row !== null;
+}
+
+/** How long after rotation a refresh token may be presented again (once). */
+export const REFRESH_GRACE_SECONDS = 60;
+
+/**
+ * The second chance for a refresh token rotated moments ago, when the phone never received the
+ * new pair (a dropped response, or two requests refreshing at once). Allowed once per token,
+ * within REFRESH_GRACE_SECONDS, and never for a sign-in that has since been ended (logout,
+ * password change, "log out of other devices"), which revoked_sessions records.
+ */
+export async function claimRefreshGrace(id: string, token: string): Promise<{ userId: string; sessionId: string } | null> {
+  const row = await queryOne(
+    `UPDATE refresh_tokens SET grace_used_at = now()
+     WHERE id = :'id' AND token_hash = :'hash'
+       AND rotated_at IS NOT NULL AND rotated_at > now() - make_interval(secs => ${REFRESH_GRACE_SECONDS})
+       AND grace_used_at IS NULL AND expires_at > now()
+       AND NOT EXISTS (SELECT 1 FROM revoked_sessions rs WHERE rs.session_id = refresh_tokens.session_id)
+     RETURNING user_id, session_id`,
+    { id, hash: hashToken(token) },
+  );
+  return row ? { userId: row.user_id as string, sessionId: row.session_id as string } : null;
 }
 
 export async function revokeAllRefreshTokensForUser(userId: string): Promise<void> {

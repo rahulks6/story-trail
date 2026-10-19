@@ -77,7 +77,7 @@ export function ProfileHeader({
             const spoken = stat.value === null ? stat.plural : countLabel(stat.value, stat.singular.toLowerCase(), stat.plural.toLowerCase());
             const content = (
               <>
-                <Text style={styles.statValue}>{stat.value === null ? "—" : formatCount(stat.value)}</Text>
+                <Text style={styles.statValue} numberOfLines={1} adjustsFontSizeToFit>{stat.value === null ? "—" : formatCount(stat.value)}</Text>
                 <Text style={styles.statLabel} numberOfLines={1}>{label}</Text>
               </>
             );
@@ -173,8 +173,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  stats: { flex: 1, flexDirection: "row", justifyContent: "space-around" },
-  stat: { alignItems: "center", minWidth: 64, paddingVertical: spacing.xs, gap: 2 },
+  stats: { flex: 1, minWidth: 0, flexDirection: "row", justifyContent: "space-around" },
+  // Each stat shares the row equally and may shrink, so small phones and large text never overflow.
+  stat: { flex: 1, minWidth: 0, alignItems: "center", paddingVertical: spacing.xs, gap: 2 },
   statValue: { color: colors.textPrimary, fontSize: 18, fontWeight: "700" },
   statLabel: { color: colors.textSecondary, fontSize: 13 },
   identity: { gap: spacing.xs },

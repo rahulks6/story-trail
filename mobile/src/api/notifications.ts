@@ -5,7 +5,7 @@ import { apiGet, apiPatch, apiPost } from "./client";
  * NotificationRecord — see the note atop client.ts about keeping these in
  * lockstep by hand until there's a shared types package.
  */
-export type NotificationType = "like" | "comment" | "follow" | "follow_request" | "mention";
+export type NotificationType = "like" | "comment" | "follow" | "follow_request" | "follow_accepted" | "mention";
 
 export interface NotificationRecord {
   id: string;

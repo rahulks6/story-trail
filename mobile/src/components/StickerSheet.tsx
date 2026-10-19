@@ -1,13 +1,14 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {Icon} from "./Icon";
 import React, { useState } from "react";
-import { ActivityIndicator, FlatList, KeyboardAvoidingView, Modal, PermissionsAndroid, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, FlatList, Linking, Modal, PermissionsAndroid, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import Geolocation from "@react-native-community/geolocation";
 import { colors, radii, spacing, typography } from "../theme";
 import { useAuth } from "../state/AuthContext";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { searchUsers, type SearchResult } from "../api/users";
 import { STICKER_GLYPHS } from "./OverlayBody";
+import { KeyboardAvoider } from "./KeyboardAvoider";
 import {
   STICKER_IDS,
   type Overlay,
@@ -17,6 +18,14 @@ import {
   type DateTimeOverlayProperties,
   type StickerOverlayProperties,
 } from "../models/storyDraft";
+
+/** Location was turned off for Katkee for good: only Settings can turn it back on. */
+function offerLocationSettings(): void {
+  Alert.alert("Location is off for Katkee", "To add where you are, allow location in Settings. You can also type a place instead.", [
+    { text: "Not now", style: "cancel" },
+    { text: "Open Settings", onPress: () => void Linking.openSettings().catch(() => undefined) },
+  ]);
+}
 
 type Tab = "emoji" | "mention" | "location" | "datetime" | "stickers";
 
@@ -165,6 +174,8 @@ export function StickerSheet({ visible, onClose, onAdd, editingOverlay, onEditDo
       if (Platform.OS === "android") {
         const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION);
         if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          // "Don't ask again": Android won't ask any more, so the only way back is Settings.
+          if (granted === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) offerLocationSettings();
           setLocationError("Location permission denied.");
           setLocatingDevice(false);
           return;
@@ -177,8 +188,14 @@ export function StickerSheet({ visible, onClose, onAdd, editingOverlay, onEditDo
           setLocationLabel(`Near ${lat}, ${lng}`);
           setLocatingDevice(false);
         },
-        () => {
-          setLocationError("Couldn't get your location.");
+        (error) => {
+          // PERMISSION_DENIED (1): on iOS the system never asks twice; Settings is the way back.
+          if (error?.code === 1) {
+            offerLocationSettings();
+            setLocationError("Location permission denied.");
+          } else {
+            setLocationError("Couldn't get your location.");
+          }
           setLocatingDevice(false);
         },
         { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 },
@@ -230,7 +247,7 @@ export function StickerSheet({ visible, onClose, onAdd, editingOverlay, onEditDo
       {/* Mention search's TextInput/FlatList sit inside this sheet — without
           keyboard avoidance, an opening keyboard would cover the results
           list the same way it used to cover TextToolModal's controls. */}
-      <KeyboardAvoidingView style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+      <KeyboardAvoider style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]} behavior="padding">
         <View style={styles.handle} />
         {editingOverlay ? (
           <Text style={styles.editingHeader}>Editing {editingOverlay.type === "location" ? "location" : "date/time"}</Text>
@@ -384,7 +401,7 @@ export function StickerSheet({ visible, onClose, onAdd, editingOverlay, onEditDo
             />
           ) : null}
         </View>
-      </KeyboardAvoidingView>
+      </KeyboardAvoider>
     </Modal>
   );
 }

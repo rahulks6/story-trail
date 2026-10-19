@@ -6,14 +6,17 @@ import {
   ActivityIndicator,
   Alert,
   BackHandler,
+  Dimensions,
   Image,
   Keyboard,
   PanResponder,
+  PixelRatio,
   Pressable,
   StyleSheet,
   Text,
   TextInput,
   View,
+  useWindowDimensions,
   type GestureResponderEvent,
   type LayoutChangeEvent,
 } from "react-native";
@@ -63,8 +66,50 @@ type Props = NativeStackScreenProps<CreateStackParamList, "StoryEditor">;
 type Audience = "public" | "followers" | "close_friends";
 
 const TRASH_ZONE_SIZE = 80;
-/** Long edge of the editor's filtered photo preview, in pixels. */
-const PREVIEW_EDGE = 1080;
+/**
+ * Long edge of the editor's filtered photo preview, in pixels: the screen's own height in pixels,
+ * at most 1080 (more is never seen, and each pass works through every pixel).
+ */
+const PREVIEW_EDGE = Math.min(
+  1080,
+  Math.max(320, Math.round(PixelRatio.getPixelSizeForLayoutSize(Math.max(Dimensions.get("window").width, Dimensions.get("window").height)) || 1080)),
+);
+/** How long after the finger lifts (and the filter settles) the exact filtered photo is worked out. */
+const FILTER_SETTLE_MS = 300;
+/**
+ * Runs `work` once the JS thread is idle (requestIdleCallback; InteractionManager is gone from
+ * React Native), or a little later where the runtime doesn't have it.
+ */
+function whenIdle(work: () => void): { cancel: () => void } {
+  const g = globalThis as {
+    requestIdleCallback?: (cb: () => void, options?: { timeout: number }) => number;
+    cancelIdleCallback?: (handle: number) => void;
+  };
+  if (typeof g.requestIdleCallback === "function") {
+    const handle = g.requestIdleCallback(work, { timeout: 2000 });
+    return { cancel: () => g.cancelIdleCallback?.(handle) };
+  }
+  const timer = setTimeout(work, 500);
+  return { cancel: () => clearTimeout(timer) };
+}
+/** Below this screen width the top tools shrink so all of them fit beside Close. */
+const COMPACT_WIDTH = 370;
+
+/**
+ * What to tell the person when their Story couldn't be added to the upload queue. The queue's own
+ * reasons (too large, too many pending) are said as they are; only a real network failure is
+ * blamed on the connection.
+ */
+export function shareErrorMessage(err: unknown): string {
+  if (err instanceof ApiError) return err.message;
+  const message = err instanceof Error ? err.message : "";
+  if (err instanceof TypeError || /network|internet|offline|timed? ?out/i.test(message)) {
+    return "Sharing failed — check your connection and try again.";
+  }
+  // The upload queue's reasons are short sentences meant for people; a raw system error isn't.
+  if (/^[A-Z][^\n]{0,160}[.!]$/.test(message) && !/^E[A-Z]+[:\s]/.test(message)) return message;
+  return "Couldn't get your Story ready to share. Try again.";
+}
 
 /**
  * Story editor (spec sections 19-30): text/emoji/mention/location/datetime/
@@ -88,6 +133,10 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   const { accessToken,user } = useAuth();
   const insets = useScreenInsets();
   const screenReader = useScreenReader();
+  // A narrow phone (320–360 wide) can't fit seven 42-point tools beside Close: they shrink.
+  const compact = useWindowDimensions().width < COMPACT_WIDTH;
+  const toolButtonStyle = compact ? [styles.toolButton, styles.toolButtonCompact] : styles.toolButton;
+  const topIconStyle = compact ? [styles.topIcon, styles.topIconCompact] : styles.topIcon;
   const submittingUpload=useRef(false);
   const rootNavigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [audience, setAudience] = useState<Audience>("public");
@@ -151,28 +200,52 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
     };
   }, []);
 
+  // Whether a finger is on the photo (swiping filters or pinching): working out a filter blocks
+  // the JS thread that follows the finger, so it waits until the finger lifts.
+  const fingerDown = useRef(false);
+  const afterFingerUp = useRef<(() => void) | null>(null);
+  // The way the last swipe went, so the next filter that way is the one got ready.
+  const swipeDirection = useRef<1 | -1>(1);
+
   useEffect(() => {
     if (kind !== "photo" || draft.filter === "Original") return;
     let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    let prefetch: { cancel: () => void } | null = null;
     const filter = draft.filter;
     const index = FILTER_PREVIEWS.findIndex((f) => f.name === filter);
     const neighbour = (step: number) => FILTER_PREVIEWS[(index + step + FILTER_PREVIEWS.length) % FILTER_PREVIEWS.length]!.name;
-    // Wait for swiping to settle, then work out this filter and get the ones either side ready.
-    const timer = setTimeout(() => {
+    const run = () => {
+      if (cancelled) return;
+      if (fingerDown.current) {
+        afterFingerUp.current = schedule;
+        return;
+      }
       filteredPhotoUri(mediaUri, filterKey(filter) as FilterKey, PREVIEW_EDGE)
         .then((uri) => {
           if (cancelled) return;
           setProcessedPhoto({ filter, uri });
-          for (const next of [neighbour(1), neighbour(-1)]) {
-            void filteredPhotoUri(mediaUri, filterKey(next) as FilterKey, PREVIEW_EDGE).catch(() => undefined);
-          }
+          // Then, once nothing is moving, the next filter in the direction of the swipe.
+          prefetch = whenIdle(() => {
+            if (cancelled || fingerDown.current) return;
+            const next = neighbour(swipeDirection.current);
+            if (next !== "Original") void filteredPhotoUri(mediaUri, filterKey(next) as FilterKey, PREVIEW_EDGE).catch(() => undefined);
+          });
         })
         // Couldn't process it on this phone: the tint stays on.
         .catch(() => undefined);
-    }, 150);
+    };
+    // Wait for swiping to settle (and the finger to lift), then work out this filter.
+    function schedule() {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(run, FILTER_SETTLE_MS);
+    }
+    schedule();
     return () => {
       cancelled = true;
-      clearTimeout(timer);
+      if (timer) clearTimeout(timer);
+      prefetch?.cancel();
+      if (afterFingerUp.current === schedule) afterFingerUp.current = null;
     };
   }, [kind, mediaUri, draft.filter]);
 
@@ -323,6 +396,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   currentFilter.current = draft.filter;
   const cycleFilter = useCallback(
     (direction: 1 | -1) => {
+      swipeDirection.current = direction;
       const currentIndex = FILTER_PREVIEWS.findIndex((f) => f.name === currentFilter.current);
       const next = FILTER_PREVIEWS[(currentIndex + direction + FILTER_PREVIEWS.length) % FILTER_PREVIEWS.length]!;
       currentFilter.current = next.name;
@@ -345,10 +419,12 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
     });
   }, []);
 
+  const overlaysRef = useRef(draft.overlays);
+  overlaysRef.current = draft.overlays;
   /** A tap on an object: text opens for editing, a location or date opens its editor. */
   const editOverlay = useCallback(
     (id: string) => {
-      const o = draft.overlays.find((x) => x.id === id);
+      const o = overlaysRef.current.find((x) => x.id === id);
       if (o?.type === "text") {
         setEditingOverlayId(id);
         setTextModalVisible(true);
@@ -356,8 +432,30 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         openStickerEditor(id);
       }
     },
-    [draft.overlays, openStickerEditor],
+    [openStickerEditor],
   );
+
+  // Stable callbacks for the objects on the photo, so moving one doesn't redraw the others.
+  const onOverlayDeleted = useCallback(
+    (id: string) => {
+      deleteOverlay(id);
+      setSelectedOverlayId((s) => (s === id ? null : s));
+    },
+    [deleteOverlay],
+  );
+  const onOverTrashChange = useCallback((over: boolean) => {
+    if (over) tapFeedback("tap");
+    setOverTrash(over);
+  }, []);
+  const openOverlayControls = useCallback((id: string) => setSelectedOverlayId(id), []);
+
+  // Each object's way of showing a live place while two fingers on the photo move it; the place
+  // is committed to the draft once, when the fingers lift.
+  const liveOverlays = useRef(new Map<string, (placement: Placement | null) => void>());
+  const registerLiveOverlay = useCallback((id: string, show: ((placement: Placement | null) => void) | null) => {
+    if (show) liveOverlays.current.set(id, show);
+    else liveOverlays.current.delete(id);
+  }, []);
 
   // The photo itself (like Instagram): swipe sideways to change the filter as the finger moves,
   // tap to add text, and pinch with two fingers to resize and turn the last object touched. Objects
@@ -368,10 +466,24 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   const canvasGesture = useMemo(() => {
     let steps = 0;
     let moved = false;
-    let pinch: { id: string; start: Placement; from: [Touch, Touch] } | null = null;
+    let pinch: { id: string; start: Placement; from: [Touch, Touch]; now?: Placement } | null = null;
     let pinched = false;
     let swipeStart = { x: 0, y: 0 };
     const touchesOf = (evt: GestureResponderEvent): Touch[] => evt.nativeEvent.touches.map((t) => ({ pageX: t.pageX, pageY: t.pageY }));
+    /** Commits a pinch's last place (once, as the fingers lift) and stops the live one. */
+    const endPinch = () => {
+      if (pinch?.now) {
+        updateOverlay(pinch.id, pinch.now);
+        liveOverlays.current.get(pinch.id)?.(null);
+      }
+      pinch = null;
+    };
+    const fingerUp = () => {
+      fingerDown.current = false;
+      const pending = afterFingerUp.current;
+      afterFingerUp.current = null;
+      pending?.();
+    };
     const startPinch = (touches: Touch[]) => {
       const id = activeOverlayId.current;
       const o = canvasLatest.current.draft.overlays.find((x) => x.id === id);
@@ -387,6 +499,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         moved = false;
         pinched = false;
         pinch = null;
+        fingerDown.current = true;
         swipeStart = { x: evt.nativeEvent.pageX, y: evt.nativeEvent.pageY };
         const touches = touchesOf(evt);
         if (touches.length >= 2) startPinch(touches);
@@ -398,7 +511,8 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           if (!pinch) return;
           const { width, height } = canvasLatest.current.containerSize;
           const next = pinchPlacement(pinch.start, pinch.from, [touches[0]!, touches[1]!], width, height);
-          updateOverlay(pinch.id, { ...next, ...clampOverlayPosition(next.x, next.y) });
+          pinch.now = { ...next, ...clampOverlayPosition(next.x, next.y) };
+          liveOverlays.current.get(pinch.id)?.(pinch.now);
           return;
         }
         if (pinched || touches.length === 0) return;
@@ -422,10 +536,12 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             setTextModalVisible(true);
           }
         }
-        pinch = null;
+        endPinch();
+        fingerUp();
       },
       onPanResponderTerminate: () => {
-        pinch = null;
+        endPinch();
+        fingerUp();
       },
     });
   }, [updateOverlay]);
@@ -503,7 +619,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
       // filter, caption, audience) stays exactly as it was so Retry can
       // simply call onShare again (spec section 43).
       setUploadState("error");
-      setUploadError(err instanceof ApiError ? err.message : "Sharing failed — check your connection and try again.");
+      setUploadError(shareErrorMessage(err));
     } finally {
       submittingUpload.current=false;
     }
@@ -594,19 +710,14 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
                 containerHeight={containerSize.height}
                 isOverTrash={isOverTrash}
                 onChange={updateOverlay}
-                onDeleted={(id) => {
-                  deleteOverlay(id);
-                  setSelectedOverlayId((s) => (s === id ? null : s));
-                }}
+                onDeleted={onOverlayDeleted}
                 onDragStateChange={setIsDraggingOverlay}
-                onOverTrashChange={(over) => {
-                  if (over) tapFeedback("tap");
-                  setOverTrash(over);
-                }}
+                onOverTrashChange={onOverTrashChange}
                 onTouchStart={raiseOverlay}
                 onGuidesChange={setGuides}
                 onTap={editOverlay}
-                onOpenControls={(id) => setSelectedOverlayId(id)}
+                onOpenControls={openOverlayControls}
+                registerLive={registerLiveOverlay}
               />
             ))
           : containerSize.width > 0
@@ -668,49 +779,49 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
 
       {!drawMode && !cropMode && !isDraggingOverlay && !textModalVisible ? (
         <View style={[styles.topBar, { top: insets.top + spacing.md }]}>
-          <Pressable onPress={onClose} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel="Close editor">
-            <Icon style={styles.topIcon} name={ICONS.close} />
+          <Pressable onPress={onClose} hitSlop={8} style={toolButtonStyle} accessibilityRole="button" accessibilityLabel="Close editor">
+            <Icon style={topIconStyle} name={ICONS.close} />
           </Pressable>
-          <View style={styles.topRight}>
-            <Pressable onPress={() => setCropMode(true)} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel="Crop">
-              <Icon style={styles.topIcon} name={ICONS.crop} />
+          <View style={[styles.topRight, compact && styles.topRightCompact]}>
+            <Pressable onPress={() => setCropMode(true)} hitSlop={8} style={toolButtonStyle} accessibilityRole="button" accessibilityLabel="Crop">
+              <Icon style={topIconStyle} name={ICONS.crop} />
             </Pressable>
             <Pressable
               onPress={() => {
                 setEditingOverlayId(null);
                 setTextModalVisible(true);
               }}
-              hitSlop={8} style={styles.toolButton}
+              hitSlop={8} style={toolButtonStyle}
               accessibilityRole="button"
               accessibilityLabel="Add text"
             >
-              <Icon style={styles.topIcon} name={ICONS.text} />
+              <Icon style={topIconStyle} name={ICONS.text} />
             </Pressable>
             <Pressable
               onPress={() => {
                 setEditingStickerOverlayId(null);
                 setStickerSheetVisible(true);
               }}
-              hitSlop={8} style={styles.toolButton}
+              hitSlop={8} style={toolButtonStyle}
               accessibilityRole="button"
               accessibilityLabel="Add sticker, emoji, mention, location, or date and time"
             >
-              <Icon style={styles.topIcon} name={ICONS.sticker} />
+              <Icon style={topIconStyle} name={ICONS.sticker} />
             </Pressable>
-            <Pressable onPress={() => setDrawMode(true)} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel="Draw">
-              <Icon style={styles.topIcon} name={ICONS.draw} />
+            <Pressable onPress={() => setDrawMode(true)} hitSlop={8} style={toolButtonStyle} accessibilityRole="button" accessibilityLabel="Draw">
+              <Icon style={topIconStyle} name={ICONS.draw} />
             </Pressable>
-            {musicAvailable || music ? <Pressable onPress={() => setMusicSheetVisible(true)} hitSlop={8} style={[styles.toolButton, music && styles.toolButtonOn]} accessibilityRole="button" accessibilityLabel={music ? `Music: ${music.track.title}. Change` : "Add music"}>
-              <Icon style={[styles.topIcon, music && styles.topIconOn]} name={ICONS.music} />
+            {musicAvailable || music ? <Pressable onPress={() => setMusicSheetVisible(true)} hitSlop={8} style={[toolButtonStyle, music && styles.toolButtonOn]} accessibilityRole="button" accessibilityLabel={music ? `Music: ${music.track.title}. Change` : "Add music"}>
+              <Icon style={[topIconStyle, music && styles.topIconOn]} name={ICONS.music} />
             </Pressable> : null}
             {kind === "video" && !boomerang ? (
               <Pressable
                 onPress={() => setDraft((d) => ({ ...d, audioMuted: !d.audioMuted }))}
-                hitSlop={8} style={styles.toolButton}
+                hitSlop={8} style={toolButtonStyle}
                 accessibilityRole="button"
                 accessibilityLabel={draft.audioMuted ? "Audio muted, tap to turn on" : "Audio on, tap to mute"}
               >
-                <Icon style={styles.topIcon} name={draft.audioMuted ? ICONS.audioMuted : ICONS.audioOn} />
+                <Icon style={topIconStyle} name={draft.audioMuted ? ICONS.audioMuted : ICONS.audioOn} />
               </Pressable>
             ) : null}
           </View>
@@ -799,7 +910,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               ) : (
                 <>
                   <Avatar username={user?.username ?? ""} avatarMediaId={user?.avatarMediaId} size={24} />
-                  <Text style={styles.shareYourStoryLabel}>Your story</Text>
+                  <Text style={styles.shareYourStoryLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>Your story</Text>
                 </>
               )}
             </Pressable>
@@ -827,7 +938,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               ) : (
                 <>
                   <Icon name={ICONS.starFilled} size={18} color={colors.onAccent} />
-                  <Text style={styles.shareCloseFriendsLabel}>Close Friends</Text>
+                  <Text style={styles.shareCloseFriendsLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>Close Friends</Text>
                 </>
               )}
             </Pressable>
@@ -846,6 +957,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           setEditingOverlayId(null);
         }}
         onDone={addOrUpdateText}
+        canvasHeight={containerSize.height}
       />
       <MusicSheet visible={musicSheetVisible} current={music} onClose={() => setMusicSheetVisible(false)} onChoose={setMusic} />
       <StickerSheet
@@ -885,15 +997,18 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   topRight: { flexDirection: "row", gap: spacing.sm },
+  topRightCompact: { gap: spacing.xs },
   // Big, round and readable over any photo, like Instagram's editing tools.
   toolButton: { width: 42, height: 42, borderRadius: 21, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0,0,0,0.35)" },
+  toolButtonCompact: { width: 36, height: 36, borderRadius: 18 },
   toolButtonOn: { backgroundColor: "#FFFFFF" },
   topIconOn: { color: "#000000" },
   musicChipRow: { position: "absolute", left: 0, right: 0, flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 6 },
-  musicChip: { flexDirection: "row", alignItems: "center", gap: 6, maxWidth: "70%", paddingHorizontal: 12, height: 32, borderRadius: 16, backgroundColor: "rgba(0,0,0,0.5)" },
+  musicChip: { flexDirection: "row", alignItems: "center", gap: 6, maxWidth: "70%", paddingHorizontal: 12, paddingVertical: 6, minHeight: 32, borderRadius: 16, backgroundColor: "rgba(0,0,0,0.5)" },
   musicChipText: { color: "#FFFFFF", fontSize: 13, fontWeight: "600", flexShrink: 1 },
   musicRemove: { width: 28, height: 28, borderRadius: 14, backgroundColor: "rgba(0,0,0,0.5)", alignItems: "center", justifyContent: "center" },
   topIcon: { color: colors.textPrimary, fontSize: 24, fontWeight: "600" },
+  topIconCompact: { fontSize: 20 },
   cropHint: { color: "rgba(255,255,255,0.85)", fontSize: 13 },
   cropDoneButton: { backgroundColor: colors.accent, borderRadius: radii.pill, paddingHorizontal: spacing.md, paddingVertical: 6 },
   cropDoneLabel: { color: colors.onAccent, fontWeight: "700" },
@@ -942,11 +1057,11 @@ const styles = StyleSheet.create({
   visibility: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: spacing.sm, paddingVertical: 4, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.35)" },
   visibilityLabel: { color: colors.textPrimary, fontSize: 13, fontWeight: "600" },
   shareRow: { flexDirection: "row", gap: spacing.sm },
-  shareButton: { flex: 1, height: 48, borderRadius: radii.pill, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm },
+  shareButton: { flex: 1, minHeight: 48, paddingVertical: spacing.sm, paddingHorizontal: spacing.sm, borderRadius: radii.pill, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm },
   shareYourStory: { backgroundColor: colors.textPrimary },
-  shareYourStoryLabel: { color: colors.background, fontWeight: "700", fontSize: 15 },
+  shareYourStoryLabel: { color: colors.background, fontWeight: "700", fontSize: 15, flexShrink: 1 },
   shareCloseFriends: { backgroundColor: colors.success },
-  shareCloseFriendsLabel: { color: colors.onAccent, fontWeight: "700", fontSize: 15 },
+  shareCloseFriendsLabel: { color: colors.onAccent, fontWeight: "700", fontSize: 15, flexShrink: 1 },
   boomerangLabel: { color: colors.textPrimary, fontWeight: "700" },
   filterToastLabel: { color: colors.textPrimary, fontSize: 18, fontWeight: "700" },
   bottomArea: { position: "absolute", bottom: spacing.xl, left: 0, right: 0 },

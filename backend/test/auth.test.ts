@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import type { AddressInfo } from "node:net";
 import { randomUUID } from "node:crypto";
 import { buildApp } from "../src/app";
+import { query } from "../src/db/psql";
 
 let baseUrl: string;
 const server = buildApp();
@@ -90,14 +91,16 @@ describe("signup", () => {
 });
 
 describe("login", () => {
-  it("allows only one concurrent refresh of the same token", async () => {
+  it("lets one concurrent refresh rotate the token, and at most one more use its second chance", async () => {
     const registered = await postJson("/api/v1/auth/signup", uniqueUser());
     const refreshToken = registered.body.tokens.refreshToken;
     const results = await Promise.all(Array.from({ length: 6 }, () =>
       postJson("/api/v1/auth/refresh", { refreshToken }),
     ));
-    assert.equal(results.filter((result) => result.status === 200).length, 1);
-    assert.equal(results.filter((result) => result.status === 401).length, 5);
+    // Two requests refreshing at once (e.g. two screens after waking) both keep the user signed in;
+    // the token can't be spent any further than that.
+    assert.equal(results.filter((result) => result.status === 200).length, 2);
+    assert.equal(results.filter((result) => result.status === 401).length, 4);
     const winner = results.find((result) => result.status === 200)!;
     const next = await postJson("/api/v1/auth/refresh", { refreshToken: winner.body.tokens.refreshToken });
     assert.equal(next.status, 200);
@@ -155,8 +158,29 @@ describe("refresh token rotation", () => {
     assert.equal(refreshed.status, 200);
     assert.notEqual(refreshed.body.tokens.refreshToken, firstRefresh);
 
+    // A phone that lost the response may present the rotated token once more, moments later…
+    const retry = await postJson("/api/v1/auth/refresh", { refreshToken: firstRefresh });
+    assert.equal(retry.status, 200, "a just-rotated token gets one second chance");
+    const me = await getJson("/api/v1/auth/me", { Authorization: `Bearer ${retry.body.tokens.accessToken}` });
+    assert.equal(me.status, 200);
+
+    // …but only once.
     const reuse = await postJson("/api/v1/auth/refresh", { refreshToken: firstRefresh });
     assert.equal(reuse.status, 401, "a rotated refresh token must not be usable again");
+  });
+
+  it("gives no second chance after the grace window or once the sign-in has ended", async () => {
+    const late = await postJson("/api/v1/auth/signup", uniqueUser());
+    const lateToken = late.body.tokens.refreshToken;
+    assert.equal((await postJson("/api/v1/auth/refresh", { refreshToken: lateToken })).status, 200);
+    await query(`UPDATE refresh_tokens SET rotated_at = now() - interval '2 minutes' WHERE rotated_at IS NOT NULL AND grace_used_at IS NULL`);
+    assert.equal((await postJson("/api/v1/auth/refresh", { refreshToken: lateToken })).status, 401);
+
+    const ended = await postJson("/api/v1/auth/signup", uniqueUser());
+    const endedToken = ended.body.tokens.refreshToken;
+    const rotated = await postJson("/api/v1/auth/refresh", { refreshToken: endedToken });
+    assert.equal((await postJson("/api/v1/auth/logout", { refreshToken: rotated.body.tokens.refreshToken })).status, 204);
+    assert.equal((await postJson("/api/v1/auth/refresh", { refreshToken: endedToken })).status, 401, "logged out: no second chance");
   });
 
   it("rejects an already-used-then-logged-out refresh token", async () => {

@@ -1,7 +1,7 @@
 import { Icon } from "../../components/Icon";
 import { ThreadSkeleton } from "../../components/Skeleton";
 import { storyReplyLabel } from "../../models/storyReplies";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -9,6 +9,7 @@ import {
   FlatList,
   Image,
   Keyboard,
+  Linking,
   Modal,
   PermissionsAndroid,
   Platform,
@@ -16,7 +17,9 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  useWindowDimensions,
   View,
+  type ListRenderItem,
 } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -44,11 +47,22 @@ import { getStoryOwnerUsername } from "../../api/stories";
 import { ReportSheet } from "../../components/ReportSheet";
 import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import { applyReceipt, mergeMessages, newestId, oldestId } from "./threadState";
-import { launchCamera, launchImageLibrary, type Asset } from "react-native-image-picker";
+import { launchCamera, launchImageLibrary, type Asset, type ImagePickerResponse } from "react-native-image-picker";
 import Video from "react-native-video";
 import { Avatar } from "../../components/Avatar";
 import { mediaFileUrl } from "../../api/stories";
-import { MAX_DM_VIDEO_BYTES, newPendingMedia, newVoiceNote, sendPendingMedia, type PendingMedia } from "./sendMedia";
+import { MAX_DM_VIDEO_BYTES, newPendingMedia, newVoiceNote } from "./sendMedia";
+import {
+  discardMedia,
+  enqueueMedia,
+  loadMediaOutbox,
+  onMediaSent,
+  pendingMedia as pendingMediaFor,
+  resumeMedia,
+  retryMedia,
+  subscribeMediaOutbox,
+  type MediaOutboxEntry,
+} from "./dmMediaOutbox";
 import { VoiceNoteBubble } from "../../components/VoiceNote";
 import { useVoiceRecorder } from "../../hooks/useVoiceRecorder";
 import { formatClock } from "../../api/music";
@@ -61,6 +75,8 @@ const POLL_OFFLINE_MS = 4_000;
 const POLL_LIVE_MS = 30_000;
 /** Catching up after a long gap: past this many pages, reload the latest page instead. */
 const MAX_CATCH_UP_PAGES = 5;
+/** Right after Send the mic takes the button's place: a second tap there isn't a new recording. */
+const SEND_TAP_GUARD_MS = 600;
 
 // A fixed emoji set; it inserts into the text composer.
 const EMOJIS = [
@@ -74,18 +90,32 @@ const EMOJIS = [
  * persisted DM outbox (state/dmOutbox.ts): it survives the app closing and is sent
  * once, in order, as soon as possible. A message that exists server-side is
  * definitionally at least "sent" (Sent/Delivered/Read come from the server and
- * from realtime read receipts).
+ * from realtime read receipts). Photos, videos and voice notes on their way have
+ * their own persisted outbox (dmMediaOutbox.ts).
  */
-type ListRow = (OutboxMessage & { kind: "pending" }) | (Message & { kind: "sent" }) | (PendingMedia & { kind: "media" });
+type ListRow = (OutboxMessage & { kind: "pending" }) | (Message & { kind: "sent" }) | (MediaOutboxEntry & { kind: "media" });
+
+// One row object per message object, so a row whose message didn't change keeps its
+// props and its memoized bubble doesn't re-render.
+const rowCache = new WeakMap<object, ListRow>();
+function rowOf<T extends object>(source: T, make: (s: T) => ListRow): ListRow {
+  let row = rowCache.get(source);
+  if (!row) {
+    row = make(source);
+    rowCache.set(source, row);
+  }
+  return row;
+}
 
 function rowKey(row: ListRow): string {
   return row.kind === "sent" ? row.id : row.clientMessageId;
 }
 
-/** A photo or video bubble's size: its own shape, within a box. */
-function mediaBox(width: number | null | undefined, height: number | null | undefined): { width: number; height: number } {
+/** A photo or video bubble's size: its own shape, within a box no wider than `maxSide`. */
+function mediaBox(width: number | null | undefined, height: number | null | undefined, maxSide: number): { width: number; height: number } {
   const ratio = width && height ? Math.min(1.6, Math.max(0.56, width / height)) : 0.75;
-  return ratio >= 1 ? { width: 230, height: 230 / ratio } : { width: 300 * ratio, height: 300 };
+  const tall = maxSide * (300 / 230);
+  return ratio >= 1 ? { width: maxSide, height: maxSide / ratio } : { width: tall * ratio, height: tall };
 }
 
 function statusLabel(row: ListRow): string {
@@ -104,18 +134,173 @@ function statusLabel(row: ListRow): string {
   }
 }
 
+function authHeaders(accessToken: string | null | undefined): Record<string, string> | undefined {
+  return accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
+}
+
+/** Stable handlers every row shares (they read the screen's latest state through a ref). */
+interface RowActions {
+  onPendingPress: (row: OutboxMessage) => void;
+  onPendingMediaPress: (row: MediaOutboxEntry) => void;
+  onLongPress: (row: ListRow) => void;
+  onReport: (messageId: string) => void;
+  onOpenStory: (storyId: string) => void;
+  onView: (viewing: { id: string; kind: "photo" | "video" }) => void;
+  onPlay: (key: string) => void;
+  onStop: (key: string) => void;
+}
+
+interface RowProps {
+  row: ListRow;
+  userId: string | undefined;
+  otherUsername: string | undefined;
+  accessToken: string | null | undefined;
+  showStatus: boolean;
+  playing: boolean;
+  maxMediaSide: number;
+  actions: RowActions;
+}
+
+/** One message in the thread. Memoized: typing, recording or a poll that changed nothing doesn't re-render it. */
+const MessageRow = memo(function MessageRow({ row, userId, otherUsername, accessToken, showStatus, playing, maxMediaSide, actions }: RowProps): React.JSX.Element {
+  const canReport = row.kind === "sent" && row.senderId !== userId;
+  if (row.kind === "media" || (row.kind === "sent" && row.media)) {
+    const mineMedia = row.kind === "media" || row.senderId === userId;
+    const kind = row.kind === "media" ? row.mediaKind : row.media!.kind;
+    const failedMedia = row.kind === "media" && row.status === "failed";
+    const who = mineMedia ? "You" : otherUsername ? `@${otherUsername}` : "Them";
+    if (kind === "audio") {
+      const key = rowKey(row);
+      return (
+        <View style={[styles.bubbleRow, mineMedia ? styles.bubbleRowMine : styles.bubbleRowTheirs]}>
+          <View style={[styles.bubbleColumn, mineMedia ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
+            <VoiceNoteBubble
+              url={row.kind === "media" ? row.uri : mediaFileUrl(row.media!.id, "audio")}
+              accessToken={accessToken}
+              durationMs={row.kind === "media" ? row.durationMs ?? null : row.media!.durationMs}
+              mine={mineMedia}
+              sending={row.kind === "media" && row.status === "sending"}
+              playing={playing}
+              onPlay={() => (row.kind === "media" && row.status === "failed" ? actions.onPendingMediaPress(row) : actions.onPlay(key))}
+              onStop={() => actions.onStop(key)}
+              label={who}
+              onLongPress={() => (row.kind === "media" ? actions.onPendingMediaPress(row) : actions.onLongPress(row))}
+            />
+            {showStatus || failedMedia ? <Text style={styles.statusCaption}>{statusLabel(row)}</Text> : null}
+          </View>
+        </View>
+      );
+    }
+    const box = row.kind === "media" ? mediaBox(row.width, row.height, maxMediaSide) : mediaBox(row.media!.width, row.media!.height, maxMediaSide);
+    // Bubbles load the small variant; the full-screen viewer loads "display".
+    const source = row.kind === "media" ? { uri: row.uri } : { uri: mediaFileUrl(row.media!.id, "thumbnail"), headers: authHeaders(accessToken) };
+    return (
+      <View style={[styles.bubbleRow, mineMedia ? styles.bubbleRowMine : styles.bubbleRowTheirs]}>
+        <View style={[styles.bubbleColumn, mineMedia ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`${who}: ${kind === "video" ? "Video" : "Photo"}`}
+            accessibilityHint={row.kind === "media" ? (failedMedia ? "Retry or delete" : undefined) : "Opens it full screen"}
+            onPress={() => {
+              if (row.kind === "media") actions.onPendingMediaPress(row);
+              else actions.onView({ id: row.media!.id, kind: kind === "video" ? "video" : "photo" });
+            }}
+            onLongPress={() => actions.onLongPress(row)}
+            style={[styles.mediaBubble, box, failedMedia && styles.mediaFailed]}
+          >
+            {/* A video on its way is a still placeholder: never a video player per row. */}
+            {row.kind === "media" && kind === "video" ? (
+              <View style={[StyleSheet.absoluteFill, styles.videoPlaceholder]} />
+            ) : (
+              <Image source={source} style={StyleSheet.absoluteFill} resizeMode="cover" resizeMethod="resize" />
+            )}
+            {kind === "video" ? (
+              <View style={styles.playBadge} pointerEvents="none"><Icon name={ICONS.play} size={22} color="#FFFFFF" /></View>
+            ) : null}
+            {row.kind === "media" && row.status === "sending" ? (
+              <View style={styles.mediaSending} pointerEvents="none"><ActivityIndicator color="#FFFFFF" /></View>
+            ) : null}
+          </Pressable>
+          {row.kind === "sent" && row.body ? (
+            <View style={[styles.bubble, mineMedia ? styles.bubbleMine : styles.bubbleTheirs, styles.mediaCaption]}>
+              <Text style={mineMedia ? styles.bubbleTextMine : styles.bubbleTextTheirs}>{row.body}</Text>
+            </View>
+          ) : null}
+          {showStatus || failedMedia ? <Text style={styles.statusCaption}>{statusLabel(row)}</Text> : null}
+        </View>
+      </View>
+    );
+  }
+  const mine = row.kind === "pending" || row.senderId === userId;
+  const failed = row.kind === "pending" && row.status === "failed";
+  const reply = row.kind === "sent" ? row.storyReply ?? null : null;
+  const replyLabel = reply ? storyReplyLabel(reply, mine) : null;
+  const openableStory = row.kind === "sent" ? row.sharedStoryId ?? reply?.storyId ?? null : null;
+  const shared = row.kind === "sent" ? (row.sharedStoryId ? "Shared a Story" : replyLabel) : row.storyId ? "Shared a Story" : null;
+  // Bubbles show who sent what by their side of the screen; a screen reader says it.
+  const spoken = [shared, row.body].filter(Boolean).join(". ");
+  return (
+    <View style={[styles.bubbleRow, mine ? styles.bubbleRowMine : styles.bubbleRowTheirs]}>
+      <View style={[styles.bubbleColumn, mine ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
+        <Pressable
+          // A button only where a tap does something (retry, open the shared Story).
+          accessibilityRole={row.kind === "pending" || openableStory ? "button" : undefined}
+          style={[
+            styles.bubble,
+            mine ? styles.bubbleMine : styles.bubbleTheirs,
+            row.kind === "pending" && styles.bubblePending,
+            failed && styles.bubbleFailed,
+          ]}
+          disabled={row.kind === "sent" ? !openableStory && mine : row.status === "sending"}
+          onPress={() => {
+            if (row.kind === "pending") actions.onPendingPress(row);
+            else if (openableStory) actions.onOpenStory(openableStory);
+          }}
+          onLongPress={() => actions.onLongPress(row)}
+          accessibilityLabel={`${mine ? "You" : otherUsername ? `@${otherUsername}` : "Them"}: ${spoken}`}
+          accessibilityHint={
+            row.kind === "pending" && row.status !== "sending" ? "Retry or delete this message"
+              : openableStory ? "Opens the Story" : undefined
+          }
+          accessibilityActions={canReport ? [{ name: "report", label: "Report message" }] : undefined}
+          onAccessibilityAction={(event) => {
+            if (event.nativeEvent.actionName === "report" && row.kind === "sent" && canReport) actions.onReport(row.id);
+          }}
+        >
+          {row.kind === "sent" && row.sharedStoryId ? (
+            <Text style={mine ? styles.bubbleTextMine : styles.bubbleTextTheirs}>Shared a Story — tap to view</Text>
+          ) : null}
+          {row.kind === "pending" && row.storyId ? (
+            <Text style={styles.bubbleTextMine}>Shared a Story</Text>
+          ) : null}
+          {replyLabel ? <Text style={[styles.replyLabel, mine ? styles.bubbleTextMine : styles.bubbleTextTheirs]}>{replyLabel}</Text> : null}
+          {row.body ? (
+            <Text style={[mine ? styles.bubbleTextMine : styles.bubbleTextTheirs, reply?.kind === "reaction" && styles.reactionGlyph]}>{row.body}</Text>
+          ) : null}
+        </Pressable>
+        {showStatus ? <Text style={styles.statusCaption}>{statusLabel(row)}</Text> : null}
+      </View>
+    </View>
+  );
+});
+
+interface ComposerProps {
+  /** Queues a text message; throws (with a message to show) when it can't. */
+  onSendText: (body: string) => Promise<void>;
+  onVoiceNote: (uri: string, durationMs: number) => void;
+  onStartRecording: () => void;
+  onTakePhoto: () => void;
+  onPickFromGallery: () => void;
+}
+
 /**
- * Real message thread (spec sections 32-33). The list is `inverted` with data
- * kept in the backend's own newest-first order — the standard React Native chat
- * pattern (bottom of screen = index 0), so "load older" is just `onEndReached`.
- * New messages and read receipts arrive over the realtime connection; history
- * pages use message-id cursors, which don't shift as new messages arrive.
+ * The message box, emoji panel and voice recorder. Its own component so typing and
+ * the recording timer re-render only this, never the thread above it.
  */
-export function ConversationScreen({ route }: Props): React.JSX.Element {
-  const { conversationId, otherUsername, otherDisplayName, otherAvatarMediaId } = route.params;
+const Composer = memo(function Composer({ onSendText, onVoiceNote, onStartRecording, onTakePhoto, onPickFromGallery }: ComposerProps): React.JSX.Element {
   // The tab bar hides in a chat, so the message box keeps clear of Android's navigation bar and
   // the iPhone home indicator itself — except while the keyboard covers them.
-  const { bottom: bottomInset, top: insetsTop } = useSafeAreaInsets();
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   useEffect(() => {
     const shown = Keyboard.addListener("keyboardDidShow", () => setKeyboardOpen(true));
@@ -125,6 +310,158 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       hidden.remove();
     };
   }, []);
+  const [draft, setDraft] = useState("");
+  const [composerError, setComposerError] = useState<string | null>(null);
+  const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
+  // A double tap on Send sends once: the draft clears at the first tap, before anything is awaited.
+  const sendingRef = useRef(false);
+  const lastSendAt = useRef(0);
+
+  const recorder = useVoiceRecorder(onVoiceNote, setComposerError);
+  const recording = recorder.state.status !== "idle";
+
+  const onSend = async () => {
+    const body = draft.trim();
+    if (!body || sendingRef.current) return;
+    sendingRef.current = true;
+    lastSendAt.current = Date.now();
+    setDraft("");
+    try {
+      await onSendText(body);
+      setComposerError(null);
+    } catch (error) {
+      setDraft((current) => current || body); // nothing lost: it's back in the box
+      setComposerError(error instanceof Error ? error.message : "Couldn't send that message.");
+    } finally {
+      sendingRef.current = false;
+    }
+  };
+
+  const onMic = () => {
+    if (sendingRef.current || Date.now() - lastSendAt.current < SEND_TAP_GUARD_MS) return;
+    onStartRecording();
+    void recorder.start();
+  };
+
+  const toggleEmojiPicker = () => {
+    // The panel replaces the keyboard rather than stacking on top of it.
+    if (!emojiPickerOpen) Keyboard.dismiss();
+    setEmojiPickerOpen((open) => !open);
+  };
+
+  const onInsertEmoji = (emoji: string) => {
+    setDraft((current) => (current + emoji).slice(0, MAX_MESSAGE_LENGTH));
+  };
+
+  const padBottom = { paddingBottom: spacing.sm + (keyboardOpen ? 0 : bottomInset) };
+  return (
+    <>
+      {emojiPickerOpen ? (
+        <View style={styles.emojiPanel}>
+          <FlatList
+            data={EMOJIS}
+            keyExtractor={(emoji) => emoji}
+            numColumns={8}
+            renderItem={({ item }) => (
+              <Pressable style={styles.emojiKey} onPress={() => onInsertEmoji(item)} hitSlop={4} accessibilityRole="button">
+                <Text style={styles.emojiKeyGlyph}>{item}</Text>
+              </Pressable>
+            )}
+          />
+        </View>
+      ) : null}
+      {composerError ? <Text style={styles.composerError}>{composerError}</Text> : null}
+      {recording ? (
+        <View style={[styles.composerRow, styles.recordingRow, padBottom]}>
+          <Pressable onPress={() => void recorder.cancel()} hitSlop={8} style={styles.recordCancel} accessibilityRole="button" accessibilityLabel="Delete voice message">
+            <Icon name={ICONS.trash} size={22} color={colors.danger} />
+          </Pressable>
+          <View style={styles.recordDot} />
+          <Text style={styles.recordTime} accessibilityLiveRegion="polite">
+            {recorder.state.status === "recording" ? formatClock(recorder.state.elapsedMs) : "0:00"}
+          </Text>
+          <Text style={styles.recordHint} numberOfLines={1}>Recording…</Text>
+          <Pressable
+            style={styles.sendButton}
+            onPress={() => void recorder.send()}
+            disabled={recorder.state.status !== "recording"}
+            accessibilityRole="button"
+            accessibilityLabel="Send voice message"
+          >
+            <Icon style={styles.sendButtonText} name={ICONS.send} />
+          </Pressable>
+        </View>
+      ) : (
+        <View style={[styles.composerRow, padBottom]}>
+          <Pressable style={styles.cameraButton} onPress={() => { setEmojiPickerOpen(false); onTakePhoto(); }} hitSlop={6} accessibilityRole="button" accessibilityLabel="Take a photo or video">
+            <Icon name={ICONS.camera} size={20} color={colors.onAccent} />
+          </Pressable>
+          <Pressable style={styles.attachButton} onPress={() => { setEmojiPickerOpen(false); onPickFromGallery(); }} hitSlop={6} accessibilityRole="button" accessibilityLabel="Send a photo or video from your gallery">
+            <Icon name={ICONS.gallery} size={24} color={colors.textPrimary} />
+          </Pressable>
+          <Pressable
+            style={styles.emojiToggle}
+            onPress={toggleEmojiPicker}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel={emojiPickerOpen ? "Hide emoji picker" : "Show emoji picker"}
+          >
+            <Icon style={styles.emojiToggleGlyph} name={ICONS.emoji} />
+          </Pressable>
+          <TextInput
+            style={styles.composerInput}
+            accessibilityLabel="Message"
+            placeholder="Message…"
+            placeholderTextColor={colors.textDisabled}
+            value={draft}
+            onChangeText={setDraft}
+            onFocus={() => setEmojiPickerOpen(false)}
+            maxLength={MAX_MESSAGE_LENGTH}
+            multiline
+          />
+          {draft.trim() ? (
+            <Pressable style={styles.sendButton} onPress={() => void onSend()} accessibilityRole="button" accessibilityLabel="Send">
+              <Icon style={styles.sendButtonText} name={ICONS.send} />
+            </Pressable>
+          ) : (
+            // Nothing typed: the microphone, like Instagram and WhatsApp. Tap to record.
+            <Pressable style={styles.micButton} onPress={onMic} accessibilityRole="button" accessibilityLabel="Record a voice message">
+              <Icon name={ICONS.mic} size={22} color={colors.textPrimary} />
+            </Pressable>
+          )}
+        </View>
+      )}
+    </>
+  );
+});
+
+/** Camera or photos refused for good: only Settings can turn them back on. */
+function accessRefused(what: "camera" | "photos"): void {
+  Alert.alert(
+    what === "camera" ? "Allow camera access" : "Allow photo access",
+    what === "camera"
+      ? "To take a photo or video here, allow Katkee to use the camera in your phone's Settings."
+      : "To send photos and videos, allow Katkee to access them in your phone's Settings.",
+    [
+      { text: "Not now", style: "cancel" },
+      { text: "Open Settings", onPress: () => void Linking.openSettings().catch(() => undefined) },
+    ],
+  );
+}
+
+/**
+ * Real message thread (spec sections 32-33). The list is `inverted` with data
+ * kept in the backend's own newest-first order — the standard React Native chat
+ * pattern (bottom of screen = index 0), so "load older" is just `onEndReached`.
+ * New messages and read receipts arrive over the realtime connection; history
+ * pages use message-id cursors, which don't shift as new messages arrive.
+ */
+export function ConversationScreen({ route }: Props): React.JSX.Element {
+  const { conversationId, otherUsername, otherDisplayName, otherAvatarMediaId } = route.params;
+  const { top: insetsTop } = useSafeAreaInsets();
+  const { width: windowWidth } = useWindowDimensions();
+  // Media bubbles fit the 78% column on small phones too.
+  const maxMediaSide = Math.min(230, Math.round(windowWidth * 0.62));
   const { accessToken, user } = useAuth();
   const { refreshUnreadCount } = useDM();
   const { connected } = useRealtime();
@@ -136,12 +473,9 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [draft, setDraft] = useState("");
-  const [composerError, setComposerError] = useState<string | null>(null);
   const [outbox, setOutbox] = useState<OutboxMessage[]>([]);
-  const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
   const [reportingMessageId, setReportingMessageId] = useState<string | null>(null);
-  const [pendingMedia, setPendingMedia] = useState<PendingMedia[]>([]);
+  const [pendingMedia, setPendingMedia] = useState<MediaOutboxEntry[]>([]);
   const [viewing, setViewing] = useState<{ id?: string; uri?: string; kind: "photo" | "video" } | null>(null);
   // Which voice note is playing (one at a time).
   const [playingKey, setPlayingKey] = useState<string | null>(null);
@@ -167,9 +501,10 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       });
   }, [accessToken, conversationId, navigation, otherUsername]);
 
-  // The header: who you're talking to, with their photo; a tap opens their profile.
+  // The header: who you're talking to, with their photo; a tap opens their profile. `initial: false`
+  // keeps the Search tab's own first screen under it (a first visit creates that stack).
   const openProfile = useCallback(() => {
-    if (otherUsername) rootNavigation.navigate("Main", { screen: "Search", params: { screen: "UserProfile", params: { username: otherUsername } } });
+    if (otherUsername) rootNavigation.navigate("Main", { screen: "Search", params: { screen: "UserProfile", params: { username: otherUsername }, initial: false } });
   }, [otherUsername, rootNavigation]);
   useEffect(() => {
     navigation.setOptions({
@@ -206,6 +541,21 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     });
     return () => { unsubscribe(); unsubscribeSent(); };
   }, [conversationId, userId]);
+
+  // Photos, videos and voice notes on their way: persisted, and carried on from where they
+  // stopped when the thread opens again (sending doesn't stop when you leave it).
+  useEffect(() => {
+    if (!userId) return;
+    const sync = () => setPendingMedia(pendingMediaFor(userId, conversationId));
+    const unsubscribe = subscribeMediaOutbox(sync);
+    void loadMediaOutbox(userId).then(sync).then(() => resumeMedia(userId, conversationId, getToken));
+    const unsubscribeSent = onMediaSent((owner, message) => {
+      if (owner === userId && message.conversationId === conversationId) {
+        setMessages((current) => mergeMessages(current ?? [], [message]));
+      }
+    });
+    return () => { unsubscribe(); unsubscribeSent(); };
+  }, [conversationId, getToken, userId]);
 
   const markRead = useCallback(() => {
     const token = tokenRef.current;
@@ -313,107 +663,60 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       setLoadingMore(false);
     }
   }, [conversationId, hasMore, loadingMore]);
+  const onEndReached = useCallback(() => void loadOlder(), [loadOlder]);
 
-  const onSend = async () => {
-    const body = draft.trim();
-    if (!body || !userId) return;
-    try {
-      await enqueueMessage(userId, conversationId, { body });
-      setDraft("");
-      setComposerError(null);
-      void flushOutbox(userId, getToken, { force: true });
-    } catch (error) {
-      setComposerError(error instanceof Error ? error.message : "Couldn't send that message.");
-    }
-  };
+  const onSendText = useCallback(async (body: string) => {
+    if (!userId) throw new Error("You're signed out.");
+    await enqueueMessage(userId, conversationId, { body });
+    void flushOutbox(userId, getToken, { force: true });
+  }, [conversationId, getToken, userId]);
 
-  const sendMedia = useCallback(async (item: PendingMedia) => {
-    setPendingMedia((list) => [...list.filter((m) => m.clientMessageId !== item.clientMessageId), { ...item, status: "sending", error: undefined }]);
-    try {
-      const message = await sendPendingMedia(conversationId, item, getToken);
-      setMessages((current) => mergeMessages(current ?? [], [message]));
-      setPendingMedia((list) => list.filter((m) => m.clientMessageId !== item.clientMessageId));
-    } catch (error) {
-      const text = error instanceof Error ? error.message : "Couldn't send.";
-      setPendingMedia((list) => list.map((m) => (m.clientMessageId === item.clientMessageId ? { ...m, status: "failed", error: text } : m)));
-    }
-  }, [conversationId, getToken]);
+  const sendMedia = useCallback((item: Parameters<typeof enqueueMedia>[2]) => {
+    if (!userId) return;
+    void enqueueMedia(userId, conversationId, item, getToken).catch(() => {
+      Alert.alert("Not sent", "Couldn't send that. Try again.");
+    });
+  }, [conversationId, getToken, userId]);
 
-  const recorder = useVoiceRecorder(
-    (uri, durationMs) => void sendMedia(newVoiceNote(uri, durationMs)),
-    (message) => setComposerError(message),
-  );
-  const recording = recorder.state.status !== "idle";
+  const onVoiceNote = useCallback((uri: string, durationMs: number) => sendMedia(newVoiceNote(uri, durationMs)), [sendMedia]);
+  const onStartRecording = useCallback(() => setPlayingKey(null), []);
 
-  const onPickedAssets = (assets: Asset[] | undefined) => {
+  const onPickedAssets = useCallback((assets: Asset[] | undefined) => {
     for (const asset of assets ?? []) {
       if (!asset.uri) continue;
       if (asset.type?.startsWith("video/") && (asset.fileSize ?? 0) > MAX_DM_VIDEO_BYTES) {
         Alert.alert("Video too large", "Choose a video under 100 MB, or a shorter one.");
         continue;
       }
-      void sendMedia(newPendingMedia({ uri: asset.uri, type: asset.type, width: asset.width, height: asset.height }));
+      sendMedia(newPendingMedia({ uri: asset.uri, type: asset.type, width: asset.width, height: asset.height }));
     }
-  };
-  const onPickFromGallery = async () => {
-    setEmojiPickerOpen(false);
-    const result = await launchImageLibrary({ mediaType: "mixed", selectionLimit: 10, maxWidth: 2048, maxHeight: 2048, quality: 0.8, videoQuality: "medium", assetRepresentationMode: "compatible" });
-    if (result.errorCode) Alert.alert("Gallery unavailable", result.errorMessage ?? "Try again.");
+  }, [sendMedia]);
+  const onPicked = useCallback((result: ImagePickerResponse, source: "camera" | "photos") => {
+    if (result.didCancel) return;
+    // iOS reports a refused camera or photo library as "permission": offer Settings, not "try again".
+    if (result.errorCode === "permission") accessRefused(source);
+    else if (result.errorCode === "camera_unavailable") Alert.alert("No camera", "There's no camera available. Choose from your gallery instead.");
+    else if (result.errorCode) Alert.alert(source === "camera" ? "Camera unavailable" : "Gallery unavailable", result.errorMessage ?? "Try again.");
     else onPickedAssets(result.assets);
-  };
-  const onTakePhoto = async () => {
-    setEmojiPickerOpen(false);
+  }, [onPickedAssets]);
+  const onPickFromGallery = useCallback(async () => {
+    const result = await launchImageLibrary({ mediaType: "mixed", selectionLimit: 10, maxWidth: 2048, maxHeight: 2048, quality: 0.8, videoQuality: "medium", assetRepresentationMode: "compatible" });
+    onPicked(result, "photos");
+  }, [onPicked]);
+  const onTakePhoto = useCallback(async () => {
     // The app declares the camera permission, so Android needs it granted before the camera opens.
     if (Platform.OS === "android") {
       const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
       if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-        Alert.alert("Camera access needed", "Allow camera access in Settings to take a photo here.");
+        accessRefused("camera");
         return;
       }
     }
     const result = await launchCamera({ mediaType: "mixed", maxWidth: 2048, maxHeight: 2048, quality: 0.8, videoQuality: "medium", durationLimit: 60, saveToPhotos: false });
-    if (result.errorCode) Alert.alert("Camera unavailable", result.errorMessage ?? "Try again.");
-    else onPickedAssets(result.assets);
-  };
-
-  const onPendingMediaPress = (row: PendingMedia) => {
-    if (row.status !== "failed") return;
-    Alert.alert("Not sent", row.error ?? undefined, [
-      { text: "Try again", onPress: () => void sendMedia(row) },
-      { text: "Delete", style: "destructive", onPress: () => setPendingMedia((list) => list.filter((m) => m.clientMessageId !== row.clientMessageId)) },
-      { text: "Cancel", style: "cancel" },
-    ]);
-  };
-
-  const onPendingPress = (row: OutboxMessage) => {
-    if (!userId || row.status === "sending") return;
-    Alert.alert(row.status === "failed" ? "Message not sent" : "Message waiting to send", row.error ?? undefined, [
-      { text: "Try again", onPress: () => void retryMessage(userId, row.clientMessageId, getToken) },
-      { text: "Delete", style: "destructive", onPress: () => void discardMessage(userId, row.clientMessageId) },
-      { text: "Cancel", style: "cancel" },
-    ]);
-  };
-
-  // Long-press a message the other person sent to report it (DM safety workflow). Screen
-  // reader users get the same choice as an action on the message.
-  const canReport = (row: ListRow): row is Message & { kind: "sent" } => row.kind === "sent" && row.senderId !== userId;
-  const onMessageLongPress = (row: ListRow) => {
-    if (!canReport(row)) return;
-    Alert.alert("Message", undefined, [
-      { text: "Report", style: "destructive", onPress: () => setReportingMessageId(row.id) },
-      { text: "Cancel", style: "cancel" },
-    ]);
-  };
-
-  const toggleEmojiPicker = () => {
-    // The panel replaces the keyboard rather than stacking on top of it.
-    if (!emojiPickerOpen) Keyboard.dismiss();
-    setEmojiPickerOpen((open) => !open);
-  };
-
-  const onInsertEmoji = (emoji: string) => {
-    setDraft((current) => (current + emoji).slice(0, MAX_MESSAGE_LENGTH));
-  };
+    onPicked(result, "camera");
+  }, [onPicked]);
+  const onTakePhotoPress = useCallback(() => void onTakePhoto(), [onTakePhoto]);
+  const onPickFromGalleryPress = useCallback(() => void onPickFromGallery(), [onPickFromGallery]);
 
   const onOpenSharedStory = async (storyId: string) => {
     if (!accessToken) return;
@@ -425,14 +728,52 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     }
   };
 
+  // The rows' handlers never change identity; they act on the screen's latest state.
+  const latest = useRef({ userId, getToken, onOpenSharedStory });
+  latest.current = { userId, getToken, onOpenSharedStory };
+  const actions = useMemo((): RowActions => ({
+    onPendingMediaPress: (row) => {
+      const owner = latest.current.userId;
+      if (row.status !== "failed" || !owner) return;
+      Alert.alert("Not sent", row.error ?? undefined, [
+        { text: "Try again", onPress: () => void retryMedia(owner, row.clientMessageId, latest.current.getToken) },
+        { text: "Delete", style: "destructive", onPress: () => void discardMedia(owner, row.clientMessageId) },
+        { text: "Cancel", style: "cancel" },
+      ]);
+    },
+    onPendingPress: (row) => {
+      const owner = latest.current.userId;
+      if (!owner || row.status === "sending") return;
+      Alert.alert(row.status === "failed" ? "Message not sent" : "Message waiting to send", row.error ?? undefined, [
+        { text: "Try again", onPress: () => void retryMessage(owner, row.clientMessageId, latest.current.getToken) },
+        { text: "Delete", style: "destructive", onPress: () => void discardMessage(owner, row.clientMessageId) },
+        { text: "Cancel", style: "cancel" },
+      ]);
+    },
+    // Long-press a message the other person sent to report it (DM safety workflow). Screen
+    // reader users get the same choice as an action on the message.
+    onLongPress: (row) => {
+      if (row.kind !== "sent" || row.senderId === latest.current.userId) return;
+      Alert.alert("Message", undefined, [
+        { text: "Report", style: "destructive", onPress: () => setReportingMessageId(row.id) },
+        { text: "Cancel", style: "cancel" },
+      ]);
+    },
+    onReport: (messageId) => setReportingMessageId(messageId),
+    onOpenStory: (storyId) => void latest.current.onOpenSharedStory(storyId),
+    onView: (item) => setViewing(item),
+    onPlay: (key) => setPlayingKey(key),
+    onStop: (key) => setPlayingKey((k) => (k === key ? null : k)),
+  }), []);
+
   const rows = useMemo((): ListRow[] => {
     const stored = messages ?? [];
     // An outbox entry the server already stored (seen via realtime before the send
     // response came back) is shown once, as the stored message.
     const storedIds = new Set(stored.flatMap((m) => (m.clientMessageId ? [m.clientMessageId] : [])));
-    const pending = outbox.filter((m) => !storedIds.has(m.clientMessageId)).reverse().map((m) => ({ ...m, kind: "pending" as const }));
-    const media = pendingMedia.filter((m) => !storedIds.has(m.clientMessageId)).reverse().map((m) => ({ ...m, kind: "media" as const }));
-    return [...media, ...pending, ...stored.map((m) => ({ ...m, kind: "sent" as const }))];
+    const pending = outbox.filter((m) => !storedIds.has(m.clientMessageId)).reverse().map((m) => rowOf(m, (s) => ({ ...s, kind: "pending" as const })));
+    const media = pendingMedia.filter((m) => !storedIds.has(m.clientMessageId)).reverse().map((m) => rowOf(m, (s) => ({ ...s, kind: "media" as const })));
+    return [...media, ...pending, ...stored.map((m) => rowOf(m, (s) => ({ ...s, kind: "sent" as const })))];
   }, [outbox, messages, pendingMedia]);
 
   // A status caption only ever makes sense under the single most recent
@@ -446,6 +787,22 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     if (first.kind !== "sent") return first.clientMessageId;
     return first.senderId === userId ? first.id : null;
   }, [rows, userId]);
+
+  const renderItem = useCallback<ListRenderItem<ListRow>>(({ item }) => {
+    const key = rowKey(item);
+    return (
+      <MessageRow
+        row={item}
+        userId={userId}
+        otherUsername={otherUsername}
+        accessToken={accessToken}
+        showStatus={key === statusRowKey}
+        playing={playingKey === key}
+        maxMediaSide={maxMediaSide}
+        actions={actions}
+      />
+    );
+  }, [accessToken, actions, maxMediaSide, otherUsername, playingKey, statusRowKey, userId]);
 
   if (messages === null) {
     return (
@@ -475,126 +832,11 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         inverted
         keyExtractor={rowKey}
         onEndReachedThreshold={0.4}
-        onEndReached={() => void loadOlder()}
-        renderItem={({ item: row }) => {
-          if (row.kind === "media" || (row.kind === "sent" && row.media)) {
-            const mineMedia = row.kind === "media" || row.senderId === user?.id;
-            const kind = row.kind === "media" ? row.mediaKind : row.media!.kind;
-            const box = row.kind === "media" ? mediaBox(row.width, row.height) : mediaBox(row.media!.width, row.media!.height);
-            const source = row.kind === "media" ? { uri: row.uri } : { uri: mediaFileUrl(row.media!.id, kind === "video" ? "poster" : "display"), headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined };
-            const failedMedia = row.kind === "media" && row.status === "failed";
-            if (kind === "audio") {
-              const key = rowKey(row);
-              return (
-                <View style={[styles.bubbleRow, mineMedia ? styles.bubbleRowMine : styles.bubbleRowTheirs]}>
-                  <View style={[styles.bubbleColumn, mineMedia ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
-                    <VoiceNoteBubble
-                      url={row.kind === "media" ? row.uri : mediaFileUrl(row.media!.id, "audio")}
-                      accessToken={accessToken}
-                      durationMs={row.kind === "media" ? row.durationMs ?? null : row.media!.durationMs}
-                      mine={mineMedia}
-                      sending={row.kind === "media" && row.status === "sending"}
-                      playing={playingKey === key}
-                      onPlay={() => (row.kind === "media" && row.status === "failed" ? onPendingMediaPress(row) : setPlayingKey(key))}
-                      onStop={() => setPlayingKey((k) => (k === key ? null : k))}
-                      label={mineMedia ? "You" : otherUsername ? `@${otherUsername}` : "Them"}
-                      onLongPress={() => (row.kind === "media" ? onPendingMediaPress(row) : onMessageLongPress(row))}
-                    />
-                    {rowKey(row) === statusRowKey || failedMedia ? <Text style={styles.statusCaption}>{statusLabel(row)}</Text> : null}
-                  </View>
-                </View>
-              );
-            }
-            return (
-              <View style={[styles.bubbleRow, mineMedia ? styles.bubbleRowMine : styles.bubbleRowTheirs]}>
-                <View style={[styles.bubbleColumn, mineMedia ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
-                  <Pressable
-                    accessibilityRole="button"
-                    accessibilityLabel={`${mineMedia ? "You" : otherUsername ? `@${otherUsername}` : "Them"}: ${kind === "video" ? "Video" : "Photo"}`}
-                    accessibilityHint={row.kind === "media" ? (failedMedia ? "Retry or delete" : undefined) : "Opens it full screen"}
-                    onPress={() => {
-                      if (row.kind === "media") onPendingMediaPress(row);
-                      else setViewing({ id: row.media!.id, kind: kind === "video" ? "video" : "photo" });
-                    }}
-                    onLongPress={() => onMessageLongPress(row)}
-                    style={[styles.mediaBubble, box, failedMedia && styles.mediaFailed]}
-                  >
-                    {/* Video in a chat: a local video shows as its first frame while it uploads. */}
-                    {row.kind === "media" && kind === "video" ? (
-                      <Video source={{ uri: row.uri }} paused muted resizeMode="cover" style={StyleSheet.absoluteFill} />
-                    ) : (
-                      <Image source={source} style={StyleSheet.absoluteFill} resizeMode="cover" />
-                    )}
-                    {kind === "video" ? (
-                      <View style={styles.playBadge} pointerEvents="none"><Text style={styles.playGlyph}>▶</Text></View>
-                    ) : null}
-                    {row.kind === "media" && row.status === "sending" ? (
-                      <View style={styles.mediaSending} pointerEvents="none"><ActivityIndicator color="#FFFFFF" /></View>
-                    ) : null}
-                  </Pressable>
-                  {row.kind === "sent" && row.body ? (
-                    <View style={[styles.bubble, mineMedia ? styles.bubbleMine : styles.bubbleTheirs, styles.mediaCaption]}>
-                      <Text style={mineMedia ? styles.bubbleTextMine : styles.bubbleTextTheirs}>{row.body}</Text>
-                    </View>
-                  ) : null}
-                  {rowKey(row) === statusRowKey || failedMedia ? <Text style={styles.statusCaption}>{statusLabel(row)}</Text> : null}
-                </View>
-              </View>
-            );
-          }
-          const mine = row.kind === "pending" || row.senderId === user?.id;
-          const failed = row.kind === "pending" && row.status === "failed";
-          const showStatus = rowKey(row) === statusRowKey;
-          const reply = row.kind === "sent" ? row.storyReply ?? null : null;
-          const replyLabel = reply ? storyReplyLabel(reply, mine) : null;
-          const openableStory = row.kind === "sent" ? row.sharedStoryId ?? reply?.storyId ?? null : null;
-          const shared = row.kind === "sent" ? (row.sharedStoryId ? "Shared a Story" : replyLabel) : row.storyId ? "Shared a Story" : null;
-          // Bubbles show who sent what by their side of the screen; a screen reader says it.
-          const spoken = [shared, row.body].filter(Boolean).join(". ");
-          return (
-            <View style={[styles.bubbleRow, mine ? styles.bubbleRowMine : styles.bubbleRowTheirs]}>
-              <View style={[styles.bubbleColumn, mine ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
-                <Pressable
-                  // A button only where a tap does something (retry, open the shared Story).
-                  accessibilityRole={row.kind === "pending" || openableStory ? "button" : undefined}
-                  style={[
-                    styles.bubble,
-                    mine ? styles.bubbleMine : styles.bubbleTheirs,
-                    row.kind === "pending" && styles.bubblePending,
-                    failed && styles.bubbleFailed,
-                  ]}
-                  disabled={row.kind === "sent" ? !openableStory && mine : row.status === "sending"}
-                  onPress={() => {
-                    if (row.kind === "pending") onPendingPress(row);
-                    else if (openableStory) void onOpenSharedStory(openableStory);
-                  }}
-                  onLongPress={() => onMessageLongPress(row)}
-                  accessibilityLabel={`${mine ? "You" : otherUsername ? `@${otherUsername}` : "Them"}: ${spoken}`}
-                  accessibilityHint={
-                    row.kind === "pending" && row.status !== "sending" ? "Retry or delete this message"
-                      : openableStory ? "Opens the Story" : undefined
-                  }
-                  accessibilityActions={canReport(row) ? [{ name: "report", label: "Report message" }] : undefined}
-                  onAccessibilityAction={(event) => {
-                    if (event.nativeEvent.actionName === "report" && canReport(row)) setReportingMessageId(row.id);
-                  }}
-                >
-                  {row.kind === "sent" && row.sharedStoryId ? (
-                    <Text style={mine ? styles.bubbleTextMine : styles.bubbleTextTheirs}>Shared a Story — tap to view</Text>
-                  ) : null}
-                  {row.kind === "pending" && row.storyId ? (
-                    <Text style={styles.bubbleTextMine}>Shared a Story</Text>
-                  ) : null}
-                  {replyLabel ? <Text style={[styles.replyLabel, mine ? styles.bubbleTextMine : styles.bubbleTextTheirs]}>{replyLabel}</Text> : null}
-                  {row.body ? (
-                    <Text style={[mine ? styles.bubbleTextMine : styles.bubbleTextTheirs, reply?.kind === "reaction" && styles.reactionGlyph]}>{row.body}</Text>
-                  ) : null}
-                </Pressable>
-                {showStatus ? <Text style={styles.statusCaption}>{statusLabel(row)}</Text> : null}
-              </View>
-            </View>
-          );
-        }}
+        onEndReached={onEndReached}
+        renderItem={renderItem}
+        initialNumToRender={12}
+        maxToRenderPerBatch={8}
+        windowSize={7}
         ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} /> : undefined}
       />
       {/* Outside the inverted list: Android flips an inverted list on both axes, which mirrored this text. */}
@@ -603,32 +845,18 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           <Text style={typography.body}>{otherUsername ? `Say hi to @${otherUsername} 👋` : "Say hi 👋"}</Text>
         </View>
       ) : null}
-      {emojiPickerOpen ? (
-        <View style={styles.emojiPanel}>
-          <FlatList
-            data={EMOJIS}
-            keyExtractor={(emoji) => emoji}
-            numColumns={8}
-            renderItem={({ item }) => (
-              <Pressable style={styles.emojiKey} onPress={() => onInsertEmoji(item)} hitSlop={4} accessibilityRole="button">
-                <Text style={styles.emojiKeyGlyph}>{item}</Text>
-              </Pressable>
-            )}
-          />
-        </View>
-      ) : null}
       <Modal visible={viewing !== null} animationType="fade" transparent={false} statusBarTranslucent navigationBarTranslucent onRequestClose={() => setViewing(null)}>
         <View style={styles.viewer}>
           {viewing?.kind === "video" && viewing.id ? (
             <Video
-              source={{ uri: mediaFileUrl(viewing.id, "video_720"), headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined }}
+              source={{ uri: mediaFileUrl(viewing.id, "video_720"), headers: authHeaders(accessToken) }}
               style={StyleSheet.absoluteFill}
               resizeMode="contain"
               controls
               repeat
             />
           ) : viewing?.id ? (
-            <Image source={{ uri: mediaFileUrl(viewing.id, "display"), headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined }} style={StyleSheet.absoluteFill} resizeMode="contain" />
+            <Image source={{ uri: mediaFileUrl(viewing.id, "display"), headers: authHeaders(accessToken) }} style={StyleSheet.absoluteFill} resizeMode="contain" />
           ) : null}
           <Pressable style={[styles.viewerClose, { top: insetsTop + spacing.sm }]} onPress={() => setViewing(null)} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close">
             <Icon name={ICONS.close} size={24} color="#FFFFFF" />
@@ -642,67 +870,13 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         conversationId={conversationId}
         onClose={() => setReportingMessageId(null)}
       />
-      {composerError ? <Text style={styles.composerError}>{composerError}</Text> : null}
-      {recording ? (
-        <View style={[styles.composerRow, styles.recordingRow, { paddingBottom: spacing.sm + (keyboardOpen ? 0 : bottomInset) }]}>
-          <Pressable onPress={() => void recorder.cancel()} hitSlop={8} style={styles.recordCancel} accessibilityRole="button" accessibilityLabel="Delete voice message">
-            <Icon name={ICONS.trash} size={22} color={colors.danger} />
-          </Pressable>
-          <View style={styles.recordDot} />
-          <Text style={styles.recordTime} accessibilityLiveRegion="polite">
-            {recorder.state.status === "recording" ? formatClock(recorder.state.elapsedMs) : "0:00"}
-          </Text>
-          <Text style={styles.recordHint} numberOfLines={1}>Recording…</Text>
-          <Pressable
-            style={styles.sendButton}
-            onPress={() => void recorder.send()}
-            disabled={recorder.state.status !== "recording"}
-            accessibilityRole="button"
-            accessibilityLabel="Send voice message"
-          >
-            <Icon style={styles.sendButtonText} name={ICONS.send} />
-          </Pressable>
-        </View>
-      ) : (
-      <View style={[styles.composerRow, { paddingBottom: spacing.sm + (keyboardOpen ? 0 : bottomInset) }]}>
-        <Pressable style={styles.cameraButton} onPress={() => void onTakePhoto()} hitSlop={6} accessibilityRole="button" accessibilityLabel="Take a photo or video">
-          <Icon name={ICONS.camera} size={20} color={colors.onAccent} />
-        </Pressable>
-        <Pressable style={styles.attachButton} onPress={() => void onPickFromGallery()} hitSlop={6} accessibilityRole="button" accessibilityLabel="Send a photo or video from your gallery">
-          <Icon name={ICONS.gallery} size={24} color={colors.textPrimary} />
-        </Pressable>
-        <Pressable
-          style={styles.emojiToggle}
-          onPress={toggleEmojiPicker}
-          hitSlop={8}
-          accessibilityRole="button"
-          accessibilityLabel={emojiPickerOpen ? "Hide emoji picker" : "Show emoji picker"}
-        >
-          <Icon style={styles.emojiToggleGlyph} name={ICONS.emoji} />
-        </Pressable>
-        <TextInput
-          style={styles.composerInput}
-          accessibilityLabel="Message"
-          placeholder="Message…"
-          placeholderTextColor={colors.textDisabled}
-          value={draft}
-          onChangeText={setDraft}
-          onFocus={() => setEmojiPickerOpen(false)}
-          maxLength={MAX_MESSAGE_LENGTH}
-          multiline
-        />
-        {draft.trim() ? (
-          <Pressable style={styles.sendButton} onPress={() => void onSend()} accessibilityRole="button" accessibilityLabel="Send">
-            <Icon style={styles.sendButtonText} name={ICONS.send} />
-          </Pressable>
-        ) : (
-          // Nothing typed: the microphone, like Instagram and WhatsApp. Tap to record.
-          <Pressable style={styles.micButton} onPress={() => { setPlayingKey(null); void recorder.start(); }} accessibilityRole="button" accessibilityLabel="Record a voice message">
-            <Icon name={ICONS.mic} size={22} color={colors.textPrimary} />
-          </Pressable>
-        )}
-      </View>
-      )}
+      <Composer
+        onSendText={onSendText}
+        onVoiceNote={onVoiceNote}
+        onStartRecording={onStartRecording}
+        onTakePhoto={onTakePhotoPress}
+        onPickFromGallery={onPickFromGalleryPress}
+      />
     </KeyboardAvoider>
   );
 }
@@ -723,7 +897,7 @@ const styles = StyleSheet.create({
   mediaCaption: { marginTop: 4 },
   mediaSending: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.35)", alignItems: "center", justifyContent: "center" },
   playBadge: { position: "absolute", top: "50%", left: "50%", width: 48, height: 48, marginLeft: -24, marginTop: -24, borderRadius: 24, backgroundColor: "rgba(0,0,0,0.5)", alignItems: "center", justifyContent: "center" },
-  playGlyph: { color: "#FFFFFF", fontSize: 20, marginLeft: 3 },
+  videoPlaceholder: { backgroundColor: "#111111" },
   cameraButton: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.accent, alignItems: "center", justifyContent: "center", marginBottom: 3 },
   attachButton: { width: 32, height: 36, alignItems: "center", justifyContent: "center", marginBottom: 3 },
   viewer: { flex: 1, backgroundColor: "#000000" },

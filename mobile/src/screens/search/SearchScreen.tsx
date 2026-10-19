@@ -55,7 +55,8 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
   const { accessToken } = useAuth();
   const input = useRef<React.ComponentRef<typeof TextInput>>(null);
   const [query, setQuery] = useState("");
-  const debouncedQuery = useDebouncedValue(query.trim(), 300);
+  // "@name" searches for name, the way usernames appear in the app.
+  const debouncedQuery = useDebouncedValue(query.trim().replace(/^@+/, "").trim(), 300);
   const countedQuery = useRef<string | null>(null);
   const [results, setResults] = useState<SearchResult[]>([]);
   const [hasMore, setHasMore] = useState(false);

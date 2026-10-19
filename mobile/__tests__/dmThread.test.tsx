@@ -1,6 +1,6 @@
 import React from "react";
 import { act, create, type ReactTestInstance, type ReactTestRenderer } from "react-test-renderer";
-import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, TextInput, View } from "react-native";
+import { Alert, Keyboard, KeyboardAvoidingView, Linking, PermissionsAndroid, Platform, StyleSheet, TextInput, View } from "react-native";
 import { ConversationScreen } from "../src/screens/dm/ConversationScreen";
 
 // The DM thread as the DM tab shows it, with the network, outbox and realtime replaced.
@@ -46,6 +46,8 @@ const realOS = Platform.OS;
 
 afterEach(async () => {
   await act(async () => tree?.unmount());
+  // Unsent photos and voice notes are kept between visits (that's the point): start each test clean.
+  await require("../src/screens/dm/dmMediaOutbox").clearMediaOutbox("u-me");
   (Platform as { OS: string }).OS = realOS;
   jest.restoreAllMocks();
 });
@@ -67,7 +69,8 @@ test("on Android the composer moves above the keyboard (edge-to-edge: the window
   expect(avoider.props.keyboardVerticalOffset).toBe(103); // starts below the stack header
 
   // What Android reports once the keyboard is open: its top edge on the screen.
-  const shown = addListener.mock.calls.filter(([name]) => name === "keyboardDidShow").at(-1)![1] as (e: unknown) => void;
+  const shownListeners = addListener.mock.calls.filter(([name]) => name === "keyboardDidShow").map(([, fn]) => fn as (e: unknown) => void);
+  const shown = (e: unknown) => shownListeners.forEach((fn) => fn(e));
   const root = avoider.findByType(View);
   await act(async () => {
     await root.props.onLayout({ nativeEvent: { layout: { x: 0, y: 0, width: 390, height: 600 } }, persist: () => undefined });
@@ -113,16 +116,20 @@ test("the header shows who you're chatting with, and opens their profile", async
   act(() => { header = create(options.headerTitle()); });
   expect(header.root.findAll((n) => (n.type as unknown) === "Avatar")[0]!.props.username).toBe("alice");
   act(() => header.root.find((n) => n.props.accessibilityHint === "Opens their profile" && typeof n.props.onPress === "function").props.onPress());
-  expect(mockNavigation.navigate).toHaveBeenCalledWith("Main", { screen: "Search", params: { screen: "UserProfile", params: { username: "alice" } } });
+  expect(mockNavigation.navigate).toHaveBeenCalledWith("Main", { screen: "Search", params: { screen: "UserProfile", params: { username: "alice" }, initial: false } });
 });
 
 test("photos in the thread open full screen, and there are buttons to send photos and videos", async () => {
   await render();
   const photo = tree.root.find((n) => n.props.accessibilityLabel === "@alice: Photo" && typeof n.props.onPress === "function");
-  expect(photo.findAll((n) => (n.type as unknown) === "Image" && n.props.source?.uri === "/media/md1/display")).not.toHaveLength(0);
+  // The bubble loads the small variant (resized on Android); the full-screen viewer the large one.
+  const images = (uri: string) => tree.root.findAll((n) => (n.type as unknown) === "Image" && n.props.source?.uri === uri);
+  expect(photo.findAll((n) => (n.type as unknown) === "Image" && n.props.source?.uri === "/media/md1/thumbnail")[0]!.props.resizeMethod).toBe("resize");
+  expect(images("/media/md1/display")).toHaveLength(0);
   await act(async () => photo.props.onPress());
   const { Modal } = require("react-native");
   expect(tree.root.findAllByType(Modal).some((m: ReactTestInstance) => m.props.visible)).toBe(true);
+  expect(images("/media/md1/display")).not.toHaveLength(0);
   expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Send a photo or video from your gallery" && typeof n.props.onPress === "function")).toHaveLength(1);
   expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Take a photo or video" && typeof n.props.onPress === "function")).toHaveLength(1);
 });
@@ -138,7 +145,9 @@ test("with nothing typed the microphone records a voice message; Send sends it, 
   expect(tree.root.findAll((n) => typeof n.props.children === "string" && n.props.children === "0:03")).not.toHaveLength(0);
   await pressLabel("Send voice message");
   for (let i = 0; i < 5; i++) await act(async () => { await Promise.resolve(); });
-  expect(sent.mock.calls[0]![1]).toMatchObject({ mediaKind: "audio", uri: "file:///data/voice.mp4", durationMs: 3200 });
+  // Sent from a copy in app storage, so it survives the recorder's cache being cleared.
+  expect(require("@dr.pogodin/react-native-fs").copyFile).toHaveBeenCalledWith("/data/voice.mp4", expect.stringMatching(/^\/documents\/katkee-dm-outbox\/m_test_\w+\.mp4$/));
+  expect(sent.mock.calls[0]![1]).toMatchObject({ mediaKind: "audio", uri: expect.stringMatching(/^file:\/\/\/documents\/katkee-dm-outbox\//), durationMs: 3200 });
   // A voice bubble appears straight away.
   expect(tree.root.findAll((n) => typeof n.props.accessibilityLabel === "string" && n.props.accessibilityLabel.startsWith("You. Voice message"))).not.toHaveLength(0);
 
@@ -146,4 +155,84 @@ test("with nothing typed the microphone records a voice message; Send sends it, 
   await act(async () => g.__sound.listener!({ currentPosition: 2000 }));
   await pressLabel("Delete voice message");
   expect(sent).toHaveBeenCalledTimes(1);
+});
+
+const pressLabel = (label: string) => act(async () => tree.root.find((n) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === label).props.onPress());
+const settle = async () => { for (let i = 0; i < 5; i++) await act(async () => { await Promise.resolve(); }); };
+
+test("a double tap on Send queues the message once, and the box clears straight away", async () => {
+  const outbox = require("../src/state/dmOutbox");
+  outbox.enqueueMessage.mockClear();
+  await render();
+  await act(async () => tree.root.findByType(TextInput).props.onChangeText("hello there"));
+  const send = tree.root.find((n) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === "Send").props.onPress;
+  await act(async () => { send(); send(); });
+  expect(outbox.enqueueMessage).toHaveBeenCalledTimes(1);
+  expect(outbox.enqueueMessage).toHaveBeenCalledWith("u-me", "c1", { body: "hello there" });
+  expect(tree.root.findByType(TextInput).props.value).toBe("");
+});
+
+test("a photo that fails to send stays in the thread with Retry, also after leaving the chat and coming back", async () => {
+  const sendMedia = require("../src/screens/dm/sendMedia");
+  jest.spyOn(sendMedia, "sendPendingMedia").mockRejectedValue(new Error("Upload timed out."));
+  (globalThis as unknown as { __picker: { result: unknown } }).__picker.result = { assets: [{ uri: "file:///cache/p.jpg", type: "image/jpeg", width: 100, height: 100 }] };
+  await render();
+  await pressLabel("Send a photo or video from your gallery");
+  await settle();
+  const caption = () => tree.root.findAll((n) => typeof n.props.children === "string" && n.props.children === "Upload timed out. · Tap to retry");
+  expect(caption()).not.toHaveLength(0);
+  // Saved on the phone, not only in the screen.
+  const stored = JSON.parse((globalThis as unknown as { __mockStorage: Map<string, string> }).__mockStorage.get("katkee.dmMediaOutbox.v1.u-me")!);
+  expect(stored).toMatchObject([{ conversationId: "c1", mediaKind: "photo", status: "failed", error: "Upload timed out." }]);
+
+  await act(async () => tree.unmount());
+  await render();
+  expect(caption()).not.toHaveLength(0);
+  (globalThis as unknown as { __picker: { result: unknown } }).__picker.result = { didCancel: true };
+});
+
+test("Android: a microphone refused for good offers Settings", async () => {
+  (Platform as { OS: string }).OS = "android";
+  jest.spyOn(PermissionsAndroid, "check").mockResolvedValue(false);
+  jest.spyOn(PermissionsAndroid, "request").mockResolvedValue(PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN);
+  const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+  const openSettings = jest.spyOn(Linking, "openSettings").mockResolvedValue(undefined);
+  await render();
+  await pressLabel("Record a voice message");
+  expect(alert).toHaveBeenCalledWith("Allow microphone access", "Allow microphone access in Settings to send voice messages.", expect.any(Array));
+  const buttons = alert.mock.calls[0]![2]!;
+  buttons.find((b) => b.text === "Open Settings")!.onPress!();
+  expect(openSettings).toHaveBeenCalled();
+  expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Delete voice message")).toHaveLength(0); // not recording
+});
+
+test("iOS: when the recorder is refused the microphone, Settings is offered instead of 'not available'", async () => {
+  (Platform as { OS: string }).OS = "ios";
+  const nitro = require("react-native-nitro-sound");
+  jest.spyOn(nitro, "createSound").mockReturnValue({
+    addRecordBackListener: jest.fn(), removeRecordBackListener: jest.fn(), setSubscriptionDuration: jest.fn(),
+    startRecorder: jest.fn(async () => { throw new Error("Recording permission denied. Please enable microphone access in Settings."); }),
+    stopRecorder: jest.fn(async () => ""),
+  });
+  const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+  await render();
+  await pressLabel("Record a voice message");
+  expect(alert.mock.calls[0]![2]!.map((b) => b.text)).toEqual(["Not now", "Open Settings"]);
+  expect(tree.root.findAll((n) => n.props.children === "The microphone isn't available right now.")).toHaveLength(0);
+});
+
+test("a refused camera offers Settings (Android after 'don't ask again', iOS's 'permission' error)", async () => {
+  const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+  (Platform as { OS: string }).OS = "android";
+  jest.spyOn(PermissionsAndroid, "request").mockResolvedValue(PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN);
+  await render();
+  await pressLabel("Take a photo or video");
+  expect(alert.mock.calls.at(-1)![0]).toBe("Allow camera access");
+  expect(alert.mock.calls.at(-1)![2]!.map((b) => b.text)).toContain("Open Settings");
+
+  (Platform as { OS: string }).OS = "ios";
+  (globalThis as unknown as { __picker: { camera?: unknown } }).__picker.camera = { errorCode: "permission" };
+  await pressLabel("Take a photo or video");
+  expect(alert.mock.calls.at(-1)![0]).toBe("Allow camera access");
+  delete (globalThis as unknown as { __picker: { camera?: unknown } }).__picker.camera;
 });

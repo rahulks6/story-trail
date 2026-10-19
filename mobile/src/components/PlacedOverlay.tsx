@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import { View, type ViewProps } from "react-native";
 import type { Overlay } from "../models/storyDraft";
 
@@ -16,7 +16,7 @@ type Props = ViewProps & {
  * and angle, the same way in the editor and the viewer. It is measured first and shown once its
  * size is known, so it never jumps. New text at (0.5, 0.5) sits in the middle of the Story.
  */
-export function PlacedOverlay({ overlay, containerWidth, containerHeight, dimmed = false, children, style, onLayout, ...rest }: Props): React.JSX.Element {
+function PlacedOverlayImpl({ overlay, containerWidth, containerHeight, dimmed = false, children, style, onLayout, ...rest }: Props): React.JSX.Element {
   const [size, setSize] = useState<{ width: number; height: number } | null>(null);
   return (
     <View
@@ -42,3 +42,6 @@ export function PlacedOverlay({ overlay, containerWidth, containerHeight, dimmed
     </View>
   );
 }
+
+/** Memoised: redraws only when its placement, size or children change. */
+export const PlacedOverlay = memo(PlacedOverlayImpl);

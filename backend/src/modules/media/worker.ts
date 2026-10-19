@@ -5,7 +5,8 @@ import { hostname } from "node:os";
 import { randomBytes } from "node:crypto";
 import type { Client } from "pg";
 import { config } from "../../config/env";
-import { openDedicatedConnection } from "../../db/psql";
+import { openDedicatedConnection, query } from "../../db/psql";
+import { notifyMentionsQuietly } from "../stories/stories.service";
 import type { ObjectStore } from "./storage";
 import { findMediaById } from "./media.repository";
 import { MAX_AUDIO_BYTES, MAX_PHOTO_BYTES, MAX_VIDEO_BYTES } from "./validation";
@@ -80,6 +81,11 @@ export async function processClaimedJob(job: MediaJob, store: ObjectStore, optio
     const published = await finishMediaJob(job, {
       width: result.width, height: result.height, durationMs: result.durationMs, checksumSha256: result.checksumSha256, variants,
     });
+    // Stories that were waiting on this media just went live: tell anyone tagged in them.
+    if (published > 0) {
+      const stories = await query(`SELECT id FROM stories WHERE media_id = :'media'`, { media: media.id });
+      for (const story of stories) await notifyMentionsQuietly(story.id as string);
+    }
     log({ event: "media_processed", mediaId: media.id, kind: media.kind, jobId: job.id, attempt: job.attempts, ms: Date.now() - started, variants: Object.keys(variants), storiesPublished: published });
     return "done";
   } catch (error) {

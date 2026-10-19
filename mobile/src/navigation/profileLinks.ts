@@ -8,6 +8,7 @@ export type DeepLinkTarget =
   | { kind: "story"; storyId: string }
   | { kind: "conversation"; conversationId: string }
   | { kind: "activity" }
+  | { kind: "followRequests" }
   | { kind: "resetPassword"; email?: string; code?: string };
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -30,6 +31,7 @@ export function deepLinkTarget(path: string): DeepLinkTarget | null {
   const conversation = /^conversation\/([^/]+)\/?$/i.exec(rawPath)?.[1];
   if (conversation) return UUID_RE.test(conversation) ? { kind: "conversation", conversationId: conversation.toLowerCase() } : null;
   if (/^activity\/?$/i.test(rawPath)) return { kind: "activity" };
+  if (/^follow-requests\/?$/i.test(rawPath)) return { kind: "followRequests" };
   if (/^reset-password\/?$/i.test(rawPath)) {
     const query = new URLSearchParams(rawQuery);
     const email = query.get("email")?.trim().toLowerCase();

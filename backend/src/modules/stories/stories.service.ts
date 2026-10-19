@@ -19,6 +19,7 @@ import type { StoryOverlay, DrawStroke, FilterKey, StoryCrop } from "./overlays"
 import { deliveryFor, type MediaDelivery } from "../media/delivery";
 import type { MediaRecord } from "../media/media.repository";
 import * as musicRepo from "../music/music.repository";
+import * as notificationsService from "../notifications/notifications.service";
 import { trackUrl, validateStoryMusic } from "../music/music.service";
 import type { MusicTrack } from "../music/music.repository";
 
@@ -191,7 +192,17 @@ export async function publishStory(
     crop: input.crop,
     music: input.music ?? null,
   });
+  await notifyMentionsQuietly(story.id);
   return toPublicStory(story, ownerId);
+}
+
+/** Mention notifications never stand in the way of the Story itself. */
+export async function notifyMentionsQuietly(storyId: string): Promise<void> {
+  try {
+    await notificationsService.notifyStoryMentions(storyId);
+  } catch (err) {
+    console.error("story mention notifications failed", storyId, err);
+  }
 }
 
 /** Voice notes are for messages only. */
@@ -240,6 +251,7 @@ export async function requestPublish(ownerId: string, input: PublishStoryInput, 
   if (outcome.state === "waiting") return { state: "processing", requestId: input.requestId!, mediaId: input.mediaId };
   const story = outcome.storyId ? await storiesRepo.findStoryById(outcome.storyId) : null;
   if (!story) throw new HttpError(404, "Story or media unavailable.");
+  await notifyMentionsQuietly(story.id);
   return { state: "published", story: await toPublicStory(story, ownerId) };
 }
 

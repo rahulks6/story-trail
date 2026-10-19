@@ -40,14 +40,16 @@ test('all TypeScript and TSX sources parse', () => {
   console.log(`Parsed ${count} TypeScript files`);
 });
 
-test('concurrent refresh requests issue only one replacement token pair', async () => {
-  let consumed = false, issued = 0;
+test('concurrent refresh requests rotate once, plus at most one grace pair', async () => {
+  let consumed = false, graceUsed = false, issued = 0;
   const service = load('backend/src/modules/auth/auth.service.ts', {
     '../../config/env': { config: { jwt: { refreshTtlSeconds: 3600 } } },
     '../users/users.repository': { findUserById: async () => ({ isActive: true }) },
     './refresh-tokens.repository': {
       findActiveRefreshToken: async () => ({ id: 'old', userId: 'user' }),
       consumeRefreshToken: async () => { if (consumed) return false; consumed = true; return true; },
+      // The just-rotated token's one second chance (a response lost on a flaky network).
+      claimRefreshGrace: async () => { if (graceUsed) return null; graceUsed = true; return { userId: 'user', sessionId: 'session' }; },
       insertRefreshToken: async () => { issued++; return { id: 'new', sessionId: 'session' }; },
       finalizeRefreshToken: async () => {},
     },
@@ -59,8 +61,8 @@ test('concurrent refresh requests issue only one replacement token pair', async 
     './tokens': { verifyRefreshToken: () => ({ jti: 'old' }), issueAccessToken: () => 'access', issueRefreshToken: () => 'refresh' },
   });
   const results = await Promise.allSettled(Array.from({ length: 6 }, () => service.refresh('old', null)));
-  assert.equal(results.filter(r => r.status === 'fulfilled').length, 1);
-  assert.equal(issued, 1);
+  assert.equal(results.filter(r => r.status === 'fulfilled').length, 2);
+  assert.equal(issued, 2);
   for (const result of results.filter(r => r.status === 'rejected')) assert.equal(result.reason.status, 401);
 });
 

@@ -1,5 +1,5 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, FlatList, Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { colors, radii, spacing, typography } from "../theme";
 import { timeAgo } from "../utils/serverTime";
@@ -43,6 +43,23 @@ export function StoryInsightsSheet({ visible, storyId, onClose }: Props): React.
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [viewersDone, setViewersDone] = useState(true);
+  const loadingMore = useRef(false);
+  // Viewers come a page at a time; more load as the list scrolls.
+  const loadMoreViewers = useCallback(async () => {
+    if (!accessToken || viewersDone || loadingMore.current) return;
+    loadingMore.current = true;
+    try {
+      const { viewers: more } = await getStoryViewers(storyId, accessToken, { limit: VIEWERS_PAGE, offset: viewers.length });
+      setViewers((current) => [...current, ...more.filter((v) => !current.some((c) => c.id === v.id))]);
+      setViewersDone(more.length < VIEWERS_PAGE);
+    } catch {
+      // Scrolling again retries.
+    } finally {
+      loadingMore.current = false;
+    }
+  }, [accessToken, storyId, viewers.length, viewersDone]);
+
   const load = useCallback(async () => {
     if (!accessToken) return;
     setLoading(true);
@@ -50,10 +67,11 @@ export function StoryInsightsSheet({ visible, storyId, onClose }: Props): React.
     try {
       const [{ insights: fetchedInsights }, { viewers: fetchedViewers }] = await Promise.all([
         getStoryInsights(storyId, accessToken),
-        getStoryViewers(storyId, accessToken),
+        getStoryViewers(storyId, accessToken, { limit: VIEWERS_PAGE }),
       ]);
       setInsights(fetchedInsights);
       setViewers(fetchedViewers);
+      setViewersDone(fetchedViewers.length < VIEWERS_PAGE);
     } catch {
       setError("Couldn't load Insights.");
     } finally {
@@ -88,10 +106,12 @@ export function StoryInsightsSheet({ visible, storyId, onClose }: Props): React.
               <StatRow label="Visited your profile" value={`${insights.profileVisitRate}%`} />
             </View>
 
-            <Text style={[typography.label, styles.viewersHeader]}>Viewed by {viewers.length}</Text>
+            <Text style={[typography.label, styles.viewersHeader]}>Viewed by {Math.max(insights.viewCount, viewers.length)}</Text>
             <FlatList
               data={viewers}
               keyExtractor={(v) => v.id}
+              onEndReachedThreshold={0.5}
+              onEndReached={() => void loadMoreViewers()}
               style={styles.list}
               renderItem={({ item }) => (
                 <View style={styles.row}>
@@ -107,6 +127,8 @@ export function StoryInsightsSheet({ visible, storyId, onClose }: Props): React.
     </Modal>
   );
 }
+
+const VIEWERS_PAGE = 50;
 
 const styles = StyleSheet.create({
   backdrop: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },

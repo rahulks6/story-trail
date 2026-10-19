@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { colors, radii, spacing } from "../theme";
 import { FILTER_PREVIEWS, type FilterKey, type FilterPreview } from "../models/filterPreviews";
@@ -12,7 +12,7 @@ const THUMB_EDGE = 160;
  * applied (the same arithmetic as the published Story, utils/filterPhoto.ts); for a video, a
  * colour swatch, since frames aren't processed on the phone.
  */
-export function FilterStrip({
+export const FilterStrip = memo(function FilterStrip({
   kind,
   mediaUri,
   selected,
@@ -47,9 +47,10 @@ export function FilterStrip({
       })}
     </ScrollView>
   );
-}
+});
 
-function PhotoThumb({ uri, filter }: { uri: string; filter: FilterName }): React.JSX.Element {
+/** Memoised: a tile's photo is worked out once, not again each time the strip redraws. */
+const PhotoThumb = memo(function PhotoThumb({ uri, filter }: { uri: string; filter: FilterName }): React.JSX.Element {
   const [thumb, setThumb] = useState<string | null>(filter === "Original" ? uri : null);
   useEffect(() => {
     let cancelled = false;
@@ -65,7 +66,7 @@ function PhotoThumb({ uri, filter }: { uri: string; filter: FilterName }): React
     };
   }, [uri, filter]);
   return thumb ? <Image source={{ uri: thumb }} style={styles.thumb} resizeMode="cover" /> : <View style={[styles.thumb, styles.loading]} />;
-}
+});
 
 function Swatch({ preview }: { preview: FilterPreview }): React.JSX.Element {
   return (

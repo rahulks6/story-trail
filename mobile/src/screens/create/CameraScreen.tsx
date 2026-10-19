@@ -3,7 +3,7 @@ import Svg, { Circle } from "react-native-svg";
 import { Icon } from "../../components/Icon";
 import { tapFeedback } from '../../utils/haptics';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {Alert,AppState,Linking, PanResponder, Pressable, StyleSheet, Text, View, type GestureResponderEvent } from "react-native";
+import {Alert,AppState,Linking, PanResponder, Pressable, ScrollView, StyleSheet, Text, View, type GestureResponderEvent } from "react-native";
 import {useIsFocused} from '@react-navigation/native';
 import {
   Camera,
@@ -31,6 +31,11 @@ const MAX_RECORDING_SECONDS = 60;
 /** The shutter's size, and the recording ring just inside its edge. */
 const SHUTTER = 80;
 const RING_RADIUS = SHUTTER / 2 - 3;
+/** The gap between the shutter's top and the mode row above it. */
+const MODE_ROW_GAP = spacing.sm + spacing.xs;
+/** The upload limits (state/uploadQueue.ts): said before editing rather than after. */
+export const MAX_VIDEO_BYTES = 200 * 1024 * 1024;
+export const MAX_PHOTO_BYTES = 25 * 1024 * 1024;
 const RING_LENGTH = 2 * Math.PI * RING_RADIUS;
 const RECORD_HOLD_DELAY_MS = 250;
 /** Dragging up this far while recording doubles the zoom (gradual, like Instagram). */
@@ -132,6 +137,12 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
     // Asked once when the camera opens.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // The microphone allowed later (in Settings, while the camera stayed open): record with sound
+  // from the next video on. Not mid-recording, which would rebuild the video output under it.
+  useEffect(() => {
+    if (permissionsSettled && hasMicPermission && !audioEnabled && !isRecording) setAudioEnabled(true);
+  }, [permissionsSettled, hasMicPermission, audioEnabled, isRecording]);
 
   // The torch is set only once the camera is running: a torch (or zoom) command sent before
   // that is refused with "Camera is not active", which showed "Camera unavailable" every time.
@@ -303,6 +314,15 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
     const asset = result.assets?.[0];
     if (!asset?.uri) return;
     const kind = asset.type?.startsWith("video") ? "video" : "photo";
+    // Too big to upload: say so now, not after the Story has been edited.
+    const limit = kind === "video" ? MAX_VIDEO_BYTES : MAX_PHOTO_BYTES;
+    if (typeof asset.fileSize === "number" && asset.fileSize > limit) {
+      Alert.alert(
+        kind === "video" ? "Video too large" : "Photo too large",
+        `Stories can be up to ${Math.round(limit / (1024 * 1024))} MB. ${kind === "video" ? "Trim the video or choose a shorter one." : "Choose a smaller photo."}`,
+      );
+      return;
+    }
     goToEditor(asset.uri, kind, asset.width ?? null, asset.height ?? null, asset.type);
     }catch{if(activeRef.current)Alert.alert('Could not open gallery','Check photo access in Settings and try again.');}
   }, [goToEditor]);
@@ -546,7 +566,15 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
       ) : null}
 
       {!isRecording ? (
-        <View style={[styles.modeRow, { bottom: spacing.xl + insets.bottom + 92 }]} accessibilityRole="radiogroup" accessibilityLabel="Camera mode">
+        // Scrolls sideways when large text doesn't fit; centred when it does.
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={[styles.modeRow, { bottom: spacing.xl + insets.bottom + SHUTTER + MODE_ROW_GAP }]}
+          contentContainerStyle={styles.modeRowContent}
+          accessibilityRole="radiogroup"
+          accessibilityLabel="Camera mode"
+        >
           {CAPTURE_MODES.map((m) => (
             <Pressable
               key={m.mode}
@@ -562,10 +590,10 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
               accessibilityHint={m.hint}
               accessibilityState={{ selected: m.mode === mode }}
             >
-              <Text style={[styles.modeLabel, m.mode === mode && styles.modeLabelActive]}>{m.label}</Text>
+              <Text style={[styles.modeLabel, m.mode === mode && styles.modeLabelActive]} numberOfLines={1}>{m.label}</Text>
             </Pressable>
           ))}
-        </View>
+        </ScrollView>
       ) : null}
 
       <View style={[styles.bottomBar, { bottom: spacing.xl + insets.bottom }]}>
@@ -703,7 +731,8 @@ const styles = StyleSheet.create({
   shutterDiscRecording: { width: 30, height: 30, borderRadius: 8, backgroundColor: colors.danger },
   micNote: { position: "absolute", alignSelf: "center", flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: spacing.md, paddingVertical: 6, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.5)" },
   micNoteLabel: { color: colors.textPrimary, fontSize: 12, fontWeight: "600" },
-  modeRow: { position: "absolute", left: 0, right: 0, flexDirection: "row", justifyContent: "center", gap: spacing.sm },
+  modeRow: { position: "absolute", left: 0, right: 0, flexGrow: 0 },
+  modeRowContent: { flexGrow: 1, flexDirection: "row", justifyContent: "center", gap: spacing.sm, paddingHorizontal: spacing.md },
   modeChip: { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.35)" },
   modeChipActive: { backgroundColor: colors.textPrimary },
   modeLabel: { color: colors.textPrimary, fontWeight: "600", fontSize: 13 },

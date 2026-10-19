@@ -11,6 +11,9 @@ import { ApiError } from "../../api/client";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { EmptyState } from "../../components/EmptyState";
 import { Avatar } from "../../components/Avatar";
+import { KeyboardAvoider } from "../../components/KeyboardAvoider";
+import { useHeaderHeight } from "@react-navigation/elements";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = NativeStackScreenProps<DMStackParamList, "SendStory">;
 
@@ -26,6 +29,9 @@ export function SendStoryScreen({ route, navigation }: Props): React.JSX.Element
   const { storyId } = route.params;
   const { accessToken } = useAuth();
   const { refreshUnreadCount } = useDM();
+  // The tab bar is hidden here: Done keeps clear of the navigation bar / home indicator, and of the keyboard.
+  const { bottom: bottomInset } = useSafeAreaInsets();
+  const headerHeight = useHeaderHeight();
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebouncedValue(query.trim(), 300);
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -78,7 +84,7 @@ export function SendStoryScreen({ route, navigation }: Props): React.JSX.Element
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoider style={[styles.container, { paddingBottom: bottomInset }]} topOffset={headerHeight}>
       <TextInput
         style={styles.input}
         placeholder="Search people"
@@ -121,7 +127,7 @@ export function SendStoryScreen({ route, navigation }: Props): React.JSX.Element
       <Pressable accessibilityRole="button" style={styles.doneButton} onPress={() => navigation.goBack()}>
         <Text style={styles.doneLabel}>Done</Text>
       </Pressable>
-    </View>
+    </KeyboardAvoider>
   );
 }
 
@@ -151,6 +157,6 @@ const styles = StyleSheet.create({
   rowText: { flex: 1, gap: 2 },
   sendLabel: { color: colors.accent, fontWeight: "700" },
   sentLabel: { color: colors.textSecondary, fontWeight: "600" },
-  doneButton: { paddingVertical: spacing.md, alignItems: "center" },
+  doneButton: { minHeight: 48, paddingVertical: spacing.md, alignItems: "center", justifyContent: "center" },
   doneLabel: { color: colors.textSecondary, fontWeight: "600" },
 });

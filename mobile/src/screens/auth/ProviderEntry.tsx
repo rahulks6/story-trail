@@ -1,3 +1,4 @@
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 ﻿import React,{useEffect,useState} from 'react';
 import {ActivityIndicator,Alert,Modal,Platform,Pressable,ScrollView,StyleSheet,Text,TextInput,View} from 'react-native';
 import {GoogleSignin,GoogleSigninButton,isSuccessResponse,isErrorWithCode,statusCodes} from '@react-native-google-signin/google-signin';
@@ -14,6 +15,8 @@ import {BIRTH_DATE_MESSAGES,birthDateFieldProblem,birthDateProblem,birthDateToIs
 const googleReady=!!providerBuild.googleWebClientId&&(Platform.OS!=='ios'||!!providerBuild.googleIosClientId);
 const PENDING_SERVICE='com.katkee.provider-onboarding.v1';
 export function ProviderEntry({onProof}:{onProof?:(proof:string)=>Promise<void>}):React.JSX.Element {
+ // Full-screen modals draw under both system bars (edge-to-edge): pad by the real insets.
+ const insets=useSafeAreaInsets();
  const {acceptSession}=useAuth();const [methods,setMethods]=useState<api.AuthMethods|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false);
  const [stage,setStage]=useState<'closed'|'phone'|'code'|'username'>('closed');const [country,setCountry]=useState(''),[phone,setPhone]=useState(''),[code,setCode]=useState('');
  const [challenge,setChallenge]=useState<api.PhoneChallenge|null>(null),[resendAt,setResendAt]=useState(0),[now,setNow]=useState(Date.now());
@@ -48,7 +51,7 @@ export function ProviderEntry({onProof}:{onProof?:(proof:string)=>Promise<void>}
   {methods?.phone&&<Pressable style={styles.button} disabled={busy} accessibilityRole="button" onPress={()=>{setError('');setStage('phone');}}><Text style={styles.buttonText}>Continue with Phone</Text></Pressable>}
   {stage==='closed'&&error?<Text accessibilityRole="alert" style={styles.error}>{error}</Text>:null}
   <Modal visible={stage!=='closed'} animationType="slide" onRequestClose={close}>
-   <KeyboardAvoider style={styles.fill}><ScrollView contentContainerStyle={styles.modal} keyboardShouldPersistTaps="handled">
+   <KeyboardAvoider style={styles.fill}><ScrollView contentContainerStyle={[styles.modal,{paddingTop:insets.top+24,paddingBottom:insets.bottom+24}]} keyboardShouldPersistTaps="handled">
     <Text style={styles.heading}>{stage==='username'?'Create your account':stage==='code'?'Enter verification code':'Continue with Phone'}</Text>
     {stage==='phone'&&<><Text style={styles.label}>Country / region</Text><View style={styles.countries}>{methods?.countries.map(c=><Pressable key={c} accessibilityRole="button" accessibilityState={{selected:country===c}} onPress={()=>setCountry(c)} style={[styles.country,country===c&&styles.selected]}><Text style={styles.label}>{c}</Text></Pressable>)}</View><TextInput style={styles.input} accessibilityLabel="Mobile number" keyboardType="phone-pad" textContentType="telephoneNumber" value={phone} onChangeText={setPhone} placeholder="Mobile number (country code allowed)" placeholderTextColor={colors.textSecondary}/><Pressable accessibilityRole="button" disabled={busy||!phone||!country} style={styles.button} onPress={confirmSend}><Text style={styles.buttonText}>Send Code</Text></Pressable><Text style={styles.label}>Your number stays private. SMS delivery may be delayed.</Text></>}
     {stage==='code'&&challenge&&<><Text style={styles.label}>Code sent to {challenge.maskedDestination}</Text><TextInput autoFocus style={styles.input} accessibilityLabel="Verification code" keyboardType="number-pad" textContentType="oneTimeCode" autoComplete="sms-otp" maxLength={challenge.codeLength} value={code} onChangeText={setCode}/><Pressable accessibilityRole="button" style={styles.button} disabled={busy||code.length!==challenge.codeLength} onPress={()=>void run(async()=>accept(await api.verifyPhone(challenge.challenge,code,!!onProof)))}><Text style={styles.buttonText}>Verify Code</Text></Pressable><Pressable accessibilityRole="button" style={styles.button} disabled={busy||now<resendAt} onPress={()=>void send()}><Text style={styles.buttonText}>{now<resendAt?`Resend in ${Math.ceil((resendAt-now)/1000)}s`:'Resend Code'}</Text></Pressable><Pressable accessibilityRole="button" style={styles.button} disabled={busy} onPress={()=>{setCode('');setStage('phone');}}><Text style={styles.buttonText}>Edit Number</Text></Pressable></>}

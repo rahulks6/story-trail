@@ -14,6 +14,9 @@ import { listConversations, type ConversationSummary } from "../../api/conversat
 import { EmptyState } from "../../components/EmptyState";
 import { Avatar } from "../../components/Avatar";
 
+/** The server's largest page; older conversations load as the list scrolls. */
+const PAGE_SIZE = 50;
+
 function previewText(conversation: ConversationSummary, myUserId: string | undefined): string {
   const lastMessage = conversation.lastMessage;
   if (!lastMessage) return "Say hi 👋";
@@ -42,20 +45,51 @@ export function DMInboxScreen(): React.JSX.Element {
   const focused = useRef(false);
   const reloadTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const latestRequest = useRef(0);
+  const [hasMore, setHasMore] = useState(false);
+  const loadingMore = useRef(false);
+  // Which search the list on screen is for: a reload of the same one keeps the older pages already loaded.
+  const listedSearch = useRef<string | null>(null);
 
   const load = useCallback(async () => {
     if (!accessToken) return;
     const request = ++latestRequest.current;
     try {
-      const { conversations: fetched } = await listConversations(accessToken, { limit: 50, q: search });
+      const { conversations: fetched } = await listConversations(accessToken, { limit: PAGE_SIZE, q: search });
       if (request !== latestRequest.current) return; // an older search answered late
-      setConversations(fetched);
+      const sameSearch = listedSearch.current === search;
+      listedSearch.current = search;
+      setConversations((current) => {
+        if (!sameSearch || !current) return fetched;
+        const fresh = new Set(fetched.map((c) => c.id));
+        return [...fetched, ...current.slice(PAGE_SIZE).filter((c) => !fresh.has(c.id))];
+      });
+      if (!sameSearch) setHasMore(fetched.length === PAGE_SIZE);
       setFailed(false);
     } catch {
       if (request === latestRequest.current) setFailed(true);
     }
     void refreshUnreadCount();
   }, [accessToken, refreshUnreadCount, search]);
+
+  /** The next page of older conversations (offset paging, as the server supports). */
+  const loadMore = useCallback(async () => {
+    if (!accessToken || !hasMore || loadingMore.current || !conversations) return;
+    loadingMore.current = true;
+    const request = latestRequest.current;
+    try {
+      const { conversations: older } = await listConversations(accessToken, { limit: PAGE_SIZE, offset: conversations.length, q: search });
+      if (request !== latestRequest.current) return; // the search changed meanwhile
+      setConversations((current) => {
+        const known = new Set((current ?? []).map((c) => c.id));
+        return [...(current ?? []), ...older.filter((c) => !known.has(c.id))];
+      });
+      setHasMore(older.length === PAGE_SIZE);
+    } catch {
+      // Scrolling again retries.
+    } finally {
+      loadingMore.current = false;
+    }
+  }, [accessToken, conversations, hasMore, search]);
 
   // First visit: the moment notification permission makes sense to ask for (once).
   const askedForPush = useRef(false);
@@ -137,6 +171,8 @@ export function DMInboxScreen(): React.JSX.Element {
       data={conversations}
       keyExtractor={(item) => item.id}
       keyboardShouldPersistTaps="handled"
+      onEndReachedThreshold={0.5}
+      onEndReached={() => void loadMore()}
       ListHeaderComponent={searchBox}
       ListEmptyComponent={<Text style={styles.noMatches}>No conversations match “{search}”.</Text>}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}

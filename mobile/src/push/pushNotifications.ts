@@ -49,7 +49,12 @@ export async function pushPermission(): Promise<PushPermission> {
   if (!fb) return "unavailable";
   try {
     if (Platform.OS === "android") {
-      if (!androidNeedsRuntimePermission()) return "granted";
+      if (!androidNeedsRuntimePermission()) {
+        // Android 12 and older never ask, but people can still switch Katkee's notifications
+        // off in system settings; Firebase reads that switch.
+        const status = await fb.mod.hasPermission(fb.messaging);
+        return status === fb.mod.AuthorizationStatus.DENIED ? "denied" : "granted";
+      }
       if (await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS)) return "granted";
       return (await AsyncStorage.getItem(ASKED_KEY)) ? "denied" : "undetermined";
     }

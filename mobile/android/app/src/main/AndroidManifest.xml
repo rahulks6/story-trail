@@ -15,6 +15,8 @@
     <!-- react-native-fs declares this; Katkee keeps its files in its own storage only, and the
          photo picker needs no storage permission. -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="remove" />
+    <!-- The merger otherwise implies READ from the WRITE above; nothing reads shared storage. -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <!-- Cleartext is allowed only in debuggable builds (the React Native Gradle
          plugin sets the placeholder); release builds are HTTPS-only. -->
@@ -24,6 +26,8 @@
       android:icon="@mipmap/ic_launcher"
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
+      android:fullBackupContent="false"
+      android:dataExtractionRules="@xml/data_extraction_rules"
       android:theme="@style/AppTheme"
       android:supportsRtl="true">
       <activity
@@ -49,8 +53,14 @@
             <data android:scheme="katkee" android:host="reset-password" />
             <data android:scheme="katkee" android:host="conversation" />
             <data android:scheme="katkee" android:host="activity" />
+            <data android:scheme="katkee" android:host="follow-requests" />
         </intent-filter>
       </activity>
+      <!-- Android 16 lets tablets and unfolded foldables ignore the portrait lock; this asks it to
+           keep Katkee portrait there for now (its screens are designed for a phone in portrait). -->
+      <property
+        android:name="android.window.PROPERTY_COMPAT_ALLOW_RESTRICTED_RESIZABILITY"
+        android:value="true" />
       <!-- Notifications drawn by Firebase while the app is in the background use this
            status-bar icon (shape only, tinted). The default channel and colour come from
            firebase.json, which @react-native-firebase/messaging merges into the manifest. -->

@@ -2,6 +2,7 @@ import { HttpError } from "../../http/errors";
 import * as usersRepo from "../users/users.repository";
 import * as notificationsRepo from "./notifications.repository";
 import { getStoryForViewer } from "../stories/stories.service";
+import * as storiesRepo from "../stories/stories.repository";
 import type { NotificationRecord, NotificationPreferences } from "./notifications.repository";
 import type { UpdateNotificationPreferencesInput } from "./dto";
 
@@ -45,6 +46,10 @@ export async function notifyFollow(actorId: string, followeeId: string): Promise
   await notificationsRepo.createNotification({ recipientId: followeeId, actorId, type: "follow" });
 }
 
+export async function notifyFollowAccepted(actorId: string, requesterId: string): Promise<void> {
+  await notificationsRepo.createNotification({ recipientId: requesterId, actorId, type: "follow_accepted" });
+}
+
 export async function notifyFollowRequest(actorId: string, targetId: string, followRequestId: string): Promise<void> {
   await notificationsRepo.createNotification({ recipientId: targetId, actorId, type: "follow_request", followRequestId });
 }
@@ -86,5 +91,28 @@ export async function notifyMentions(actorId: string, storyId: string, commentId
       storyId,
       commentId,
     });
+  }
+}
+
+/**
+ * The people tagged with a mention sticker on a newly published Story each get a 'mention'
+ * notification (no comment attached), once per Story, and only if they can see it.
+ */
+export async function notifyStoryMentions(storyId: string): Promise<void> {
+  const story = await storiesRepo.findStoryById(storyId);
+  if (!story) return;
+  const userIds = new Set<string>();
+  for (const overlay of story.overlays as Array<{ type?: string; properties?: { userId?: unknown } }>) {
+    const userId = overlay?.type === "mention" ? overlay.properties?.userId : undefined;
+    if (typeof userId === "string" && userId !== story.ownerId) userIds.add(userId);
+    if (userIds.size >= MAX_MENTIONS_PER_COMMENT) break;
+  }
+  for (const userId of userIds) {
+    try {
+      await getStoryForViewer(storyId, userId);
+    } catch {
+      continue;
+    }
+    await notificationsRepo.createNotification({ recipientId: userId, actorId: story.ownerId, type: "mention", storyId });
   }
 }

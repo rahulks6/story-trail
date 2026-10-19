@@ -1,6 +1,6 @@
 import { nullable, query, queryOne, type Row } from "../../db/psql";
 
-export type NotificationType = "like" | "comment" | "follow" | "follow_request" | "mention";
+export type NotificationType = "like" | "comment" | "follow" | "follow_request" | "follow_accepted" | "mention";
 
 export interface NotificationRecord {
   id: string;
@@ -117,6 +117,7 @@ async function isTypeEnabled(recipientId: string, type: NotificationType): Promi
     case "comment":
       return prefs.commentsEnabled;
     case "follow":
+    case "follow_accepted":
       return prefs.followsEnabled;
     case "mention":
       return prefs.mentionsEnabled;
@@ -144,12 +145,17 @@ export async function createNotification(input: {
     `WITH n AS (
        INSERT INTO notifications (recipient_id, actor_id, type, story_id, comment_id, follow_request_id)
        SELECT :'recipient_id', ${nullable("actor_id", "uuid")}, :'type', ${nullable("story_id", "uuid")}, ${nullable("comment_id", "uuid")}, ${nullable("follow_request_id", "uuid")}
-       WHERE :'type' NOT IN ('like', 'follow') OR NOT EXISTS (
+       WHERE (:'type' NOT IN ('like', 'follow') OR NOT EXISTS (
          SELECT 1 FROM notifications o
          WHERE o.recipient_id = :'recipient_id' AND o.type = :'type'
            AND o.actor_id IS NOT DISTINCT FROM ${nullable("actor_id", "uuid")}
            AND o.story_id IS NOT DISTINCT FROM ${nullable("story_id", "uuid")}
-           AND o.created_at > now() - interval '7 days')
+           AND o.created_at > now() - interval '7 days'))
+         -- A Story's mention stickers notify each person once, however often publishing is retried.
+         AND NOT (:'type' = 'mention' AND ${nullable("comment_id", "uuid")} IS NULL AND EXISTS (
+           SELECT 1 FROM notifications o
+           WHERE o.recipient_id = :'recipient_id' AND o.type = 'mention' AND o.comment_id IS NULL
+             AND o.story_id IS NOT DISTINCT FROM ${nullable("story_id", "uuid")}))
        RETURNING id, recipient_id, actor_id, type, story_id),
      p AS (
        INSERT INTO push_outbox (user_id, kind, actor_id, ref_id)

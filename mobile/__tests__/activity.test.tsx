@@ -82,3 +82,24 @@ test("a failed next page waits for Try again rather than retrying on every scrol
   expect(list).toHaveBeenCalledTimes(3);
   expect(list).toHaveBeenLastCalledWith("token", { limit: 20, offset: 20 });
 });
+
+test("an accepted request and a Story mention say so; a request opens Follow requests; a profile keeps Search underneath", async () => {
+  const actor = (user: string) => ({ id: `u-${user}`, username: user, displayName: user });
+  list.mockResolvedValue({
+    notifications: [
+      { ...follow("a", "carol", 1, false), type: "follow_accepted", actor: actor("carol") },
+      { ...follow("m", "dan", 2, false), type: "mention", actor: actor("dan"), story: null, comment: null },
+      { ...follow("r", "erin", 3, false), type: "follow_request", actor: actor("erin") },
+    ],
+  });
+  await render();
+  const row = (re: RegExp) => tree.root.find((n) => n.props.accessibilityRole === "button" && typeof n.props.onPress === "function" && re.test(n.props.accessibilityLabel ?? ""));
+  expect(row(/carol.*accepted your follow request/)).toBeTruthy();
+  expect(row(/dan.*mentioned you in their Story/)).toBeTruthy();
+
+  await act(async () => row(/erin.*requested to follow you/).props.onPress());
+  expect(mockNavigation.navigate).toHaveBeenCalledWith("FollowRequests");
+
+  await act(async () => row(/carol.*accepted/).props.onPress());
+  expect(mockNavigation.navigate).toHaveBeenCalledWith("Main", { screen: "Search", params: { screen: "UserProfile", params: { username: "carol" }, initial: false } });
+});

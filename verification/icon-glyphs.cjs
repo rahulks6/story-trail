@@ -15,7 +15,7 @@ const CONTENT=[
  ['components/StickerSheet.tsx',/EMOJI_SET = \[/],
  ['components/OverlayBody.tsx',/^\s*("?[a-z-]+"?): "[^"]+",$/],
  ['components/OverlayBody.tsx',/STICKER_GLYPHS\[overlay\.properties\.stickerId\] \?\? "✦"/],
- ['components/OverlayBody.tsx',/<Text style=\{styles\.chip\}>📍 \{overlay\.properties\.label\}<\/Text>/],
+ ['components/OverlayBody.tsx',/<Text allowFontScaling=\{false\} style=\{styles\.chip\}>📍 \{overlay\.properties\.label\}<\/Text>/],
  ['screens/dm/ConversationScreen.tsx',/^\s*("[^"]+",\s*)+$/],
  ['screens/dm/ConversationScreen.tsx',/Say hi to @\$\{otherUsername\} 👋` : "Say hi 👋"/],
  ['screens/dm/DMInboxScreen.tsx',/return "Say hi 👋";/],

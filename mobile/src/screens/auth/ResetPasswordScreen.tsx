@@ -1,3 +1,5 @@
+import { useHeaderHeight } from "@react-navigation/elements";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet, Text, type TextInput } from "react-native";
 import { KeyboardAvoider } from "../../components/KeyboardAvoider";
@@ -20,6 +22,8 @@ const RESEND_SECONDS = 60;
  * Success signs this device in; every other device is signed out by the server.
  */
 export function ResetPasswordScreen({ navigation, route }: Props): React.JSX.Element {
+  const headerHeight = useHeaderHeight();
+  const insets = useSafeAreaInsets();
   const { resetPassword } = useAuth();
   const [email, setEmail] = useState(route.params?.email ?? "");
   const [code, setCode] = useState((route.params?.code ?? "").replace(/\D/g, "").slice(0, 6));
@@ -76,13 +80,15 @@ export function ResetPasswordScreen({ navigation, route }: Props): React.JSX.Ele
 
   return (
     <KeyboardAvoider style={styles.root}>
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      {/* The header is see-through: keep the content clear of it and of the bottom inset. */}
+      <ScrollView contentContainerStyle={[styles.content, { paddingTop: headerHeight + spacing.md, paddingBottom: insets.bottom + spacing.xl }]} keyboardShouldPersistTaps="handled">
         <Text style={typography.displayLarge} accessibilityRole="header">
           Enter your code
         </Text>
         <Text style={styles.body}>We emailed a 6-digit code{email ? ` to ${email}` : ""}. It expires in 15 minutes.</Text>
         {banner ? <Banner text={banner.text} tone={banner.tone} /> : null}
-        {!route.params?.email ? (
+        {/* Shown whenever the email needs fixing, even if it came from the previous screen. */}
+        {!route.params?.email || errors.email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim()) ? (
           <TextField label="Email" value={email} onChangeText={setEmail} error={errors.email} autoCapitalize="none" keyboardType="email-address" autoComplete="email" />
         ) : null}
         <TextField

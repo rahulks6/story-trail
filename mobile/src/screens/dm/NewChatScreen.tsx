@@ -11,6 +11,7 @@ import { ApiError } from "../../api/client";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { EmptyState } from "../../components/EmptyState";
 import { Avatar } from "../../components/Avatar";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = NativeStackScreenProps<DMStackParamList, "NewChat">;
 
@@ -22,6 +23,8 @@ type Props = NativeStackScreenProps<DMStackParamList, "NewChat">;
  */
 export function NewChatScreen({ navigation }: Props): React.JSX.Element {
   const { accessToken } = useAuth();
+  // The last result scrolls clear of the navigation bar / home indicator (no tab bar here).
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebouncedValue(query.trim(), 300);
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -94,6 +97,7 @@ export function NewChatScreen({ navigation }: Props): React.JSX.Element {
         <FlatList
           data={results}
           keyExtractor={(item) => item.id}
+          contentContainerStyle={{ paddingBottom: bottomInset }}
           renderItem={({ item }) => (
             <Pressable accessibilityRole="button" style={styles.row} onPress={() => void onSelect(item)} disabled={opening !== null}>
               <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} />

@@ -80,6 +80,16 @@ function validateRelease({root,platform='all',env=process.env,checkSigning=false
    }
    if(!entries.some(e=>e.size==='1024x1024'))problems.push('Populate the iOS AppIcon catalog with approved artwork.');
   }
+  // Google sign-in on iPhone needs its URL scheme (or the app crashes on tap) and, by App Review
+  // guideline 4.8, Sign in with Apple beside it.
+  const providers=path.join(root,'src/config/providers.ts');
+  const iosClient=fs.existsSync(providers)?/googleIosClientId:\s*'([^']+)'/.exec(fs.readFileSync(providers,'utf8'))?.[1]:undefined;
+  if(iosClient){
+   const plist=fs.readFileSync(path.join(root,'ios/KatkeeMobile/Info.plist'),'utf8');
+   const reversed=iosClient.split('.').reverse().join('.');
+   if(!plist.includes(reversed))problems.push(`Add the Google URL scheme ${reversed} to CFBundleURLTypes in Info.plist.`);
+   if(!/AppleAuthentication|appleAuth|apple-authentication/i.test(fs.readdirSync(path.join(root,'src/screens/auth')).map(f=>fs.readFileSync(path.join(root,'src/screens/auth',f),'utf8')).join('\n')))problems.push('Google sign-in on iOS needs Sign in with Apple too (App Review 4.8).');
+  }
   const privacy=path.join(root,'ios/KatkeeMobile/PrivacyInfo.xcprivacy');
   if(!fs.existsSync(privacy)||/NSPrivacyCollectedDataTypes<\/key>\s*(<array\s*\/>|<array>\s*<\/array>)/.test(fs.readFileSync(privacy,'utf8')))problems.push('Complete the iOS privacy manifest and store disclosures for actual data collection.');
  }

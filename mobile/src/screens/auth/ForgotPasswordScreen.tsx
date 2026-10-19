@@ -1,3 +1,5 @@
+import { useHeaderHeight } from "@react-navigation/elements";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text } from "react-native";
 import { KeyboardAvoider } from "../../components/KeyboardAvoider";
@@ -14,6 +16,8 @@ const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
 /** Step 1 of password recovery: ask for the account email; the server always answers the same way. */
 export function ForgotPasswordScreen({ navigation, route }: Props): React.JSX.Element {
+  const headerHeight = useHeaderHeight();
+  const insets = useSafeAreaInsets();
   const [email, setEmail] = useState(route.params?.email ?? "");
   const [error, setError] = useState<string | undefined>();
   const [busy, setBusy] = useState(false);
@@ -38,7 +42,8 @@ export function ForgotPasswordScreen({ navigation, route }: Props): React.JSX.El
 
   return (
     <KeyboardAvoider style={styles.root}>
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      {/* The header is see-through: keep the content clear of it and of the bottom inset. */}
+      <ScrollView contentContainerStyle={[styles.content, { paddingTop: headerHeight + spacing.md, paddingBottom: insets.bottom + spacing.xl }]} keyboardShouldPersistTaps="handled">
         <Text style={typography.displayLarge} accessibilityRole="header">
           Reset your password
         </Text>

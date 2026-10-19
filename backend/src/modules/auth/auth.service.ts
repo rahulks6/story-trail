@@ -134,7 +134,7 @@ export async function refresh(refreshToken: string, userAgent: string | null): P
   if (!claims) throw new AuthError("Invalid or expired refresh token.", 401);
 
   const record = await refreshTokensRepo.findActiveRefreshToken(claims.jti, refreshToken);
-  if (!record) throw new AuthError("Invalid or expired refresh token.", 401);
+  if (!record) return refreshWithinGrace(claims.jti, refreshToken, userAgent);
 
   // Re-checked here, not just at login: a still-unexpired refresh token
   // from before a moderator suspension must not be usable to mint a fresh
@@ -148,9 +148,19 @@ export async function refresh(refreshToken: string, userAgent: string | null): P
 
   // Rotate: the presented refresh token is single-use; the sign-in session continues.
   if (!(await refreshTokensRepo.consumeRefreshToken(record.id, refreshToken))) {
-    throw new AuthError("Invalid or expired refresh token.", 401);
+    // Another request rotated it a moment ago (two refreshes at once).
+    return refreshWithinGrace(record.id, refreshToken, userAgent);
   }
   return issueTokenPair(record.userId, userAgent, record.sessionId);
+}
+
+/** A just-rotated token presented again: a fresh pair in the same sign-in, once, or 401. */
+async function refreshWithinGrace(id: string, refreshToken: string, userAgent: string | null): Promise<TokenPair> {
+  const grace = await refreshTokensRepo.claimRefreshGrace(id, refreshToken);
+  if (!grace) throw new AuthError("Invalid or expired refresh token.", 401);
+  const user = await usersRepo.findUserById(grace.userId);
+  if (!user || !user.isActive) throw new AuthError("Invalid or expired refresh token.", 401);
+  return issueTokenPair(grace.userId, userAgent, grace.sessionId);
 }
 
 /** Ends the whole sign-in this refresh token belongs to, including its live access token. */

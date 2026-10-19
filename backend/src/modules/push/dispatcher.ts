@@ -34,9 +34,10 @@ interface OutboxItem {
 const TEXT: Record<string, (actor: string) => string> = {
   like: (a) => `@${a} liked your Story`,
   comment: (a) => `@${a} commented on your Story`,
-  mention: (a) => `@${a} mentioned you in a comment`,
+  mention: (a) => `@${a} mentioned you`,
   follow: (a) => `@${a} started following you`,
   follow_request: (a) => `@${a} requested to follow you`,
+  follow_accepted: (a) => `@${a} accepted your follow request`,
   // Never the message itself: lock screens and notification logs are not private.
   message: (a) => `@${a} sent you a message`,
 };
@@ -80,6 +81,7 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
   if (row.actor_username) data.actorUsername = row.actor_username;
   if (item.refId) data[isMessage ? "conversationId" : "storyId"] = item.refId;
   data.url = isMessage && item.refId ? `katkee://conversation/${item.refId}`
+    : item.kind === "follow_request" ? "katkee://follow-requests"
     : item.refId ? `katkee://story/${item.refId}`
     : row.actor_username ? `katkee://user/${row.actor_username}` : "katkee://activity";
   return {
