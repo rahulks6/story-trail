@@ -1,0 +1,790 @@
+{
+  "generatedAt": "2026-10-19T03:47:50.203Z",
+  "inputs": [
+    "/home/user/story-trail/mobile/android/app/build/outputs/bundle/release/app-release.aab"
+  ],
+  "librariesFound": 84,
+  "librariesChecked": 42,
+  "failures": [],
+  "results": [
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/libNitroImage.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/libNitroModules.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/libVisionCamera.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/libappmodules.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/libc++_shared.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/libdatastore_shared_counter.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/libfbjni.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/libhermestooling.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/libhermesvm.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/libimage_processing_util_jni.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/libimagepipeline.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/libjsi.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/libnative-filters.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/libnative-imagetranscoder.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/libreact_codegen_rnscreens.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/libreact_codegen_rnsvg.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/libreact_codegen_safeareacontext.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/libreactnative.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/librnscreens.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/libsqliteJni.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/arm64-v8a/libsurface_util_jni.so",
+      "abi": "arm64-v8a",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/libNitroImage.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/libNitroModules.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/libVisionCamera.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/libappmodules.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/libc++_shared.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/libdatastore_shared_counter.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/libfbjni.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/libhermestooling.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/libhermesvm.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/libimage_processing_util_jni.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/libimagepipeline.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/libjsi.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/libnative-filters.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/libnative-imagetranscoder.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/libreact_codegen_rnscreens.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/libreact_codegen_rnsvg.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/libreact_codegen_safeareacontext.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/libreactnative.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/librnscreens.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/libsqliteJni.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/armeabi-v7a/libsurface_util_jni.so",
+      "abi": "armeabi-v7a",
+      "checked": false,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/libNitroImage.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/libNitroModules.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/libVisionCamera.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/libappmodules.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/libc++_shared.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/libdatastore_shared_counter.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/libfbjni.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/libhermestooling.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/libhermesvm.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/libimage_processing_util_jni.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/libimagepipeline.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/libjsi.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/libnative-filters.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/libnative-imagetranscoder.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/libreact_codegen_rnscreens.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/libreact_codegen_rnsvg.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/libreact_codegen_safeareacontext.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/libreactnative.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/librnscreens.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)",
+        "PT_LOAD p_align=4096 (< 16384)"
+      ],
+      "minLoadAlign": 4096
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/libsqliteJni.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86/libsurface_util_jni.so",
+      "abi": "x86",
+      "checked": false,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/libNitroImage.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/libNitroModules.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/libVisionCamera.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/libappmodules.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/libc++_shared.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/libdatastore_shared_counter.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/libfbjni.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/libhermestooling.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/libhermesvm.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/libimage_processing_util_jni.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/libimagepipeline.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/libjsi.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/libnative-filters.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/libnative-imagetranscoder.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/libreact_codegen_rnscreens.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/libreact_codegen_rnsvg.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/libreact_codegen_safeareacontext.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/libreactnative.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/librnscreens.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/libsqliteJni.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    },
+    {
+      "file": "app-release.aab!base/lib/x86_64/libsurface_util_jni.so",
+      "abi": "x86_64",
+      "checked": true,
+      "ok": true,
+      "problems": [],
+      "minLoadAlign": 16384
+    }
+  ],
+  "passed": true
+}
