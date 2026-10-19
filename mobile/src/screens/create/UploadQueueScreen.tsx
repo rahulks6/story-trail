@@ -1,7 +1,7 @@
 import React,{useCallback,useEffect,useRef,useState} from 'react';
 import {ActivityIndicator,Alert,Pressable,ScrollView,StyleSheet,Text,View} from 'react-native';
 import {useAuth} from '../../state/AuthContext';
-import {listUploads,needsNewFile,removeUpload,runUpload,subscribeUploads,uploadProgress,uploadRunning,type UploadJob} from '../../state/uploadQueue';
+import {autoResumeDue,cancelUpload,listUploads,needsNewFile,removeUpload,runUpload,subscribeUploads,uploadProgress,uploadRunning,type UploadJob} from '../../state/uploadQueue';
 import {colors} from '../../theme';
 import {serverDate} from '../../utils/serverTime';
 
@@ -14,7 +14,7 @@ function describe(job:UploadJob,active:boolean,percent:number|undefined):string{
   case 'publishing':return active?'Publishing…':'Paused — tap Retry to continue';
   case 'processing':return 'Processing — it will post automatically';
   case 'published':return 'Posted';
-  case 'failed':return needsNewFile(job)?"Couldn't use this file":"Couldn't post";
+  case 'failed':return needsNewFile(job)?"Couldn't use this file":autoResumeDue(job,Number.POSITIVE_INFINITY)?"Couldn't connect — trying again soon":"Couldn't post";
  }
 }
 
@@ -27,7 +27,12 @@ export function UploadQueueScreen():React.JSX.Element {
  useEffect(()=>{void refresh();return subscribeUploads(()=>void refresh());},[refresh]);
  const run=useCallback((job:UploadJob)=>{setError('');void runUpload(job.ownerId,job.id,()=>session.current).catch(e=>{if(mounted.current)setError(e instanceof Error?e.message:'Upload failed.');});},[]);
  // Uploads run in the background (state/UploadRunner); failed or interrupted ones wait here for a Retry.
- const remove=(job:UploadJob)=>Alert.alert(job.status==='published'?'Dismiss receipt?':'Remove this Story?',job.status==='published'?'The posted Story stays up.':'This removes the saved copy and your edits. Your original photo or video is unchanged.',[{text:'Cancel',style:'cancel'},{text:'Remove',style:'destructive',onPress:()=>void removeUpload(job.ownerId,job.id).catch(e=>setError(e.message))}]);
+ // A Story not yet posted may already be on the server: cancel it there too, or it would still post.
+ const discard=async(job:UploadJob)=>{
+  if(job.status==='published'){await removeUpload(job.ownerId,job.id);return;}
+  if(!await cancelUpload(job.ownerId,job.id,session.current?.token??null)&&mounted.current)setError('It posted just now. Open the Story, tap More, then Delete.');
+ };
+ const remove=(job:UploadJob)=>Alert.alert(job.status==='published'?'Dismiss receipt?':'Remove this Story?',job.status==='published'?'The posted Story stays up.':'This removes the saved copy and your edits, and it won\'t be posted. Your original photo or video is unchanged.',[{text:'Cancel',style:'cancel'},{text:'Remove',style:'destructive',onPress:()=>void discard(job).catch(e=>{if(mounted.current)setError(e instanceof Error?e.message:'Could not remove it. Try again.');})}]);
  return <ScrollView style={styles.root} contentContainerStyle={styles.content}>
   <Text style={styles.title} accessibilityRole="header">Story uploads</Text>
   <Text style={styles.muted}>Stories share in the background while Katkee is open. Once one is processing it posts by itself, even if you close the app. Anything interrupted waits here to continue.</Text>
@@ -44,7 +49,7 @@ export function UploadQueueScreen():React.JSX.Element {
     {active&&job.status!=='uploading'?<ActivityIndicator color={colors.accent}/>:null}
     <View style={styles.actions}>
      {canRetry&&<Pressable style={styles.button} onPress={()=>run(job)} accessibilityRole="button"><Text style={styles.text}>Retry</Text></Pressable>}
-     {!active&&<Pressable style={styles.button} onPress={()=>remove(job)} accessibilityRole="button"><Text style={styles.text}>{job.status==='published'?'Dismiss':'Remove'}</Text></Pressable>}
+     {!active&&!job.cancelAfterPublish&&<Pressable style={styles.button} onPress={()=>remove(job)} accessibilityRole="button"><Text style={styles.text}>{job.status==='published'?'Dismiss':'Remove'}</Text></Pressable>}
     </View>
    </View>;})}
   {!!error&&<Text accessibilityRole="alert" style={styles.error}>{error}</Text>}

@@ -7,6 +7,7 @@ import {
   updateNotificationPreferences,
   type NotificationPreferences,
 } from "../../api/notifications";
+import { LoadFailed } from "../../components/LoadFailed";
 import { pushPermission, registerForPush, requestPushPermission, type PushPermission } from "../../push/pushNotifications";
 
 type Row = { key: keyof NotificationPreferences; label: string };
@@ -41,17 +42,23 @@ export function NotificationSettingsScreen(): React.JSX.Element {
   const [prefs, setPrefs] = useState<NotificationPreferences | null>(null);
   const [pending, setPending] = useState<Set<keyof NotificationPreferences>>(new Set());
   const [permission, setPermission] = useState<PushPermission | null>(null);
+  // Never show made-up settings: after a failed load, say so and offer Try again.
+  const [loadFailed, setLoadFailed] = useState(false);
+  /** The switch whose change didn't save, shown under it. */
+  const [toggleError, setToggleError] = useState<keyof NotificationPreferences | null>(null);
 
   const checkPermission = useCallback(() => {
     void pushPermission().then(setPermission);
   }, []);
 
-  useEffect(() => {
+  const load = useCallback(() => {
     if (!accessToken) return;
+    setLoadFailed(false);
     getNotificationPreferences(accessToken)
       .then(({ preferences }) => setPrefs({ ...DEFAULTS, ...preferences }))
-      .catch(() => setPrefs(DEFAULTS));
+      .catch(() => setLoadFailed(true));
   }, [accessToken]);
+  useEffect(load, [load]);
 
   // Coming back from the phone's settings may have changed the permission.
   useEffect(() => {
@@ -67,15 +74,22 @@ export function NotificationSettingsScreen(): React.JSX.Element {
     const previous = prefs;
     setPrefs({ ...prefs, [key]: value }); // optimistic
     setPending((current) => new Set(current).add(key));
+    setToggleError((current) => (current === key ? null : current));
     try {
-      const { preferences } = await updateNotificationPreferences({ [key]: value }, accessToken);
-      setPrefs({ ...DEFAULTS, ...preferences });
+      let saved: NotificationPreferences;
+      try {
+        ({ preferences: saved } = await updateNotificationPreferences({ [key]: value }, accessToken));
+      } catch {
+        setPrefs(previous);
+        setToggleError(key);
+        return;
+      }
+      setPrefs({ ...DEFAULTS, ...saved });
       if (key === "pushEnabled" && value && user && permission === "undetermined" && (await requestPushPermission())) {
-        await registerForPush(user.id, accessToken);
+        // The setting is saved either way; this device signs up for pushes again on its next launch.
+        await registerForPush(user.id, accessToken).catch(() => undefined);
         checkPermission();
       }
-    } catch {
-      setPrefs(previous);
     } finally {
       setPending((current) => {
         const next = new Set(current);
@@ -86,6 +100,7 @@ export function NotificationSettingsScreen(): React.JSX.Element {
   };
 
   if (!prefs) {
+    if (loadFailed) return <LoadFailed message="Couldn't load your notification settings. Check your connection and try again." onRetry={load} />;
     return (
       <View style={styles.centered}>
         <ActivityIndicator color={colors.accent} />
@@ -96,17 +111,22 @@ export function NotificationSettingsScreen(): React.JSX.Element {
   const renderRows = (rows: Row[], disabled = false) =>
     rows.map((row, index) => (
       <View key={row.key} style={[styles.row, index === rows.length - 1 && styles.rowLast]}>
-        <Text style={[typography.body, disabled && styles.disabledLabel]}>{row.label}</Text>
-        {pending.has(row.key) ? (
-          <ActivityIndicator color={colors.accent} />
-        ) : (
-          <Switch
-            value={prefs[row.key]}
-            disabled={disabled}
-            onValueChange={(value) => void onToggle(row.key, value)}
-            accessibilityLabel={row.label}
-          />
-        )}
+        <View style={styles.rowMain}>
+          <Text style={[typography.body, disabled && styles.disabledLabel]}>{row.label}</Text>
+          {pending.has(row.key) ? (
+            <ActivityIndicator color={colors.accent} />
+          ) : (
+            <Switch
+              value={prefs[row.key]}
+              disabled={disabled}
+              onValueChange={(value) => void onToggle(row.key, value)}
+              accessibilityLabel={row.label}
+            />
+          )}
+        </View>
+        {toggleError === row.key ? (
+          <Text accessibilityRole="alert" style={styles.rowError}>Couldn't save that change. Check your connection and try again.</Text>
+        ) : null}
       </View>
     ));
 
@@ -163,13 +183,12 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   row: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.md,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.border,
   },
+  rowMain: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  rowError: { ...typography.caption, color: colors.danger, marginTop: spacing.xs },
   rowLast: { borderBottomWidth: 0 },
 });

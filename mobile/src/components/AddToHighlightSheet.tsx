@@ -21,15 +21,32 @@ export function AddToHighlightSheet({ visible, storyIds, onClose, onAdded }: { v
   const { accessToken, user } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [highlights, setHighlights] = useState<HighlightSummary[] | null>(null);
+  // A failed load must not look like "you have no Highlights": it offers Try again instead.
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  // Choosing Try again closes the sheet like any choice; this brings it straight back.
+  const [reopened, setReopened] = useState(false);
+  const shown = visible || reopened;
 
   useEffect(() => {
-    if (!visible || !accessToken || !user) return;
+    if (!shown || !accessToken || !user) return;
     let cancelled = false;
+    setLoadFailed(false);
     listHighlightsForUser(user.username, accessToken)
       .then((r) => { if (!cancelled) setHighlights(r.highlights); })
-      .catch(() => { if (!cancelled) setHighlights([]); });
+      .catch(() => { if (!cancelled) { setHighlights(null); setLoadFailed(true); } });
     return () => { cancelled = true; };
-  }, [visible, accessToken, user]);
+  }, [shown, accessToken, user, attempt]);
+
+  const close = () => {
+    setReopened(false);
+    onClose();
+  };
+  const retry = () => {
+    setHighlights(null);
+    setReopened(true);
+    setAttempt((n) => n + 1);
+  };
 
   const addTo = async (highlight: HighlightSummary) => {
     if (!accessToken) return;
@@ -50,9 +67,12 @@ export function AddToHighlightSheet({ visible, storyIds, onClose, onAdded }: { v
   };
 
   const groups: SheetAction[][] = [
-    (highlights ?? []).map((h) => ({ label: `${h.title} · ${h.itemCount}`, onPress: () => void addTo(h) })),
+    loadFailed
+      ? [{ label: "Couldn't load your Highlights — Try again", onPress: retry }]
+      : (highlights ?? []).map((h) => ({ label: `${h.title} · ${h.itemCount}`, onPress: () => void addTo(h) })),
     [{ label: "New Highlight", onPress: () => navigation.navigate("HighlightEditor", { initialStoryIds: storyIds }) }],
   ].filter((g) => g.length > 0);
 
-  return <ActionSheet visible={visible} title={highlights === null ? "Loading your Highlights…" : "Add to Highlight"} groups={groups} onClose={onClose} />;
+  const title = loadFailed ? "Add to Highlight" : highlights === null ? "Loading your Highlights…" : "Add to Highlight";
+  return <ActionSheet visible={shown} title={title} groups={groups} onClose={close} />;
 }

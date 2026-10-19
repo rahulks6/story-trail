@@ -8,11 +8,14 @@ import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { deleteStory, getMyArchivedStories, mediaFileUrl, type PublicStory } from "../../api/stories";
 import { EmptyState } from "../../components/EmptyState";
+import { LoadFailed } from "../../components/LoadFailed";
+import { Button } from "../../components/Form";
+import { ApiError } from "../../api/client";
 import { serverDate } from "../../utils/serverTime";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Archive">;
 
-const PAGE_SIZE = 60;
+const PAGE_SIZE = 50; // the server's page limit (backend/src/http/pagination.ts); more is refused
 const COLUMNS = 3;
 const GAP = spacing.xs;
 const CONTAINER_PADDING = spacing.md;
@@ -72,6 +75,9 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
   const [loadingMore, setLoadingMore] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [deleting, setDeleting] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
+  // A failed next page waits for a tap on "Try again" rather than retrying on every scroll.
+  const [moreFailed, setMoreFailed] = useState(false);
 
   const load = useCallback(
     async (nextOffset: number) => {
@@ -84,19 +90,31 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
     [accessToken],
   );
 
-  useEffect(() => {
-    void load(0);
+  const loadFirst = useCallback(async () => {
+    setLoadFailed(false);
+    try {
+      await load(0);
+    } catch {
+      setLoadFailed(true);
+    }
   }, [load]);
 
-  const onEndReached = useCallback(async () => {
-    if (loadingMore || !hasMore || !accessToken) return;
+  useEffect(() => {
+    void loadFirst();
+  }, [loadFirst]);
+
+  const onEndReached = useCallback(async (retry = false) => {
+    if (loadingMore || !hasMore || !accessToken || (moreFailed && !retry)) return;
     setLoadingMore(true);
+    setMoreFailed(false);
     try {
       await load(offset);
+    } catch {
+      setMoreFailed(true);
     } finally {
       setLoadingMore(false);
     }
-  }, [loadingMore, hasMore, accessToken, load, offset]);
+  }, [loadingMore, hasMore, accessToken, load, offset, moreFailed]);
 
   const sections = useMemo(() => groupByMonth(stories ?? []), [stories]);
   const thumbSize = (screenWidth - CONTAINER_PADDING * 2 - GAP * (COLUMNS - 1)) / COLUMNS;
@@ -123,14 +141,22 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
           onPress: async () => {
             setDeleting(true);
             const ids = selected;
-            try {
-              await Promise.all(ids.map((id) => deleteStory(id, accessToken)));
-              setStories((prev) => (prev ?? []).filter((s) => !ids.includes(s.id)));
-              setSelected([]);
-            } catch {
-              Alert.alert("Some deletions failed", "Try again for the ones that didn't go through.");
-            } finally {
-              setDeleting(false);
+            // Each one on its own: those that went through leave the list, the rest stay selected.
+            // Already gone (404, e.g. deleted on another phone) counts as done.
+            const results = await Promise.allSettled(ids.map((id) => deleteStory(id, accessToken)));
+            const done = ids.filter((_, i) => {
+              const result = results[i]!;
+              return result.status === "fulfilled" || (result.reason instanceof ApiError && result.reason.status === 404);
+            });
+            setStories((prev) => (prev ?? []).filter((s) => !done.includes(s.id)));
+            setSelected((current) => current.filter((id) => !done.includes(id)));
+            setDeleting(false);
+            const failed = ids.length - done.length;
+            if (failed > 0) {
+              Alert.alert(
+                failed === ids.length ? "Couldn't delete" : `${failed} of ${ids.length} weren't deleted`,
+                "They're still selected. Check your connection and tap Delete to try again.",
+              );
             }
           },
         },
@@ -139,6 +165,7 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
   };
 
   if (stories === null) {
+    if (loadFailed) return <LoadFailed message="Couldn't load your Archive. Check your connection and try again." onRetry={() => void loadFirst()} />;
     return (
       <View style={styles.centered}>
         <ActivityIndicator color={colors.accent} />
@@ -156,8 +183,12 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
           keyExtractor={(row, index) => `${row[0]?.id ?? index}-row`}
           contentContainerStyle={styles.listContent}
           onEndReachedThreshold={0.4}
-          onEndReached={onEndReached}
-          ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} /> : undefined}
+          onEndReached={() => void onEndReached()}
+          ListFooterComponent={
+            loadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} />
+              : moreFailed ? <View style={styles.footerSpinner}><Button label="Couldn't load more. Try again" variant="secondary" onPress={() => void onEndReached(true)} /></View>
+              : undefined
+          }
           renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
           renderItem={({ item: row }) => (
             <View style={[styles.row, { gap: GAP }]}>

@@ -5,6 +5,7 @@ import { colors, radii, spacing, typography } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { listMutedUsers, unmuteUser, type MutedUser } from "../../api/users";
 import { EmptyState } from "../../components/EmptyState";
+import { LoadFailed } from "../../components/LoadFailed";
 import { Avatar } from "../../components/Avatar";
 
 const PAGE_SIZE = 30;
@@ -21,10 +22,18 @@ export function MutedAccountsScreen(): React.JSX.Element {
   const [muted, setMuted] = useState<MutedUser[] | null>(null);
   const [resolving, setResolving] = useState<Set<string>>(new Set());
 
+  const [loadFailed, setLoadFailed] = useState(false);
+
   const load = useCallback(async () => {
     if (!accessToken) return;
-    const { muted: fetched } = await listMutedUsers(accessToken, { limit: PAGE_SIZE });
-    setMuted(fetched);
+    setLoadFailed(false);
+    try {
+      const { muted: fetched } = await listMutedUsers(accessToken, { limit: PAGE_SIZE });
+      setMuted(fetched);
+    } catch {
+      // A list already on screen stays; with nothing to show, offer Try again instead of a spinner.
+      setLoadFailed(true);
+    }
   }, [accessToken]);
 
   useFocusEffect(
@@ -51,6 +60,7 @@ export function MutedAccountsScreen(): React.JSX.Element {
   };
 
   if (muted === null) {
+    if (loadFailed) return <LoadFailed message="Couldn't load your muted accounts. Check your connection and try again." onRetry={() => void load()} />;
     return (
       <View style={styles.centered}>
         <ActivityIndicator color={colors.accent} />

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing, typography } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { addCloseFriend, getFollowers, listCloseFriends, removeCloseFriend, searchUsers } from "../../api/users";
@@ -36,6 +37,7 @@ async function allCloseFriends(token: string): Promise<Person[]> {
  * first, then your followers to add, or search for anyone.
  */
 export function CloseFriendsScreen(): React.JSX.Element {
+  const insets = useSafeAreaInsets();
   const { accessToken, user } = useAuth();
   const username = user?.username;
   const userId = user?.id;
@@ -145,6 +147,8 @@ export function CloseFriendsScreen(): React.JSX.Element {
         data={sections}
         keyExtractor={(item) => item.key}
         keyboardShouldPersistTaps="handled"
+        // The last rows clear Android's navigation bar and the iPhone home indicator.
+        contentContainerStyle={{ paddingBottom: insets.bottom + spacing.md }}
         renderItem={({ item }) => {
           if (item.title) return <Text style={styles.sectionTitle}>{item.title}</Text>;
           const person = item.person!;

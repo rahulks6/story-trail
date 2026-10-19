@@ -63,17 +63,29 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }): R
     });
 
     let backgroundTimer: ReturnType<typeof setTimeout> | null = null;
+    // iOS suspends JS timers in the background, so the close timer may never fire and the
+    // socket can be dead on return while still looking open: judge by the time away instead.
+    let awaySince: number | null = null;
     const onAppState = (state: AppStateStatus) => {
       if (state === "active") {
         if (backgroundTimer) clearTimeout(backgroundTimer);
         backgroundTimer = null;
-        client.start();
+        const awayMs = awaySince === null ? 0 : Date.now() - awaySince;
+        awaySince = null;
+        if (awayMs > BACKGROUND_GRACE_MS) client.restart();
+        else {
+          client.start();
+          client.probe(); // a short trip away can still drop the connection (network switch)
+        }
         sendOutbox(true);
       } else if (state === "background" && !backgroundTimer) {
+        awaySince ??= Date.now();
         backgroundTimer = setTimeout(() => {
           backgroundTimer = null;
           client.stop();
         }, BACKGROUND_GRACE_MS);
+      } else {
+        awaySince ??= Date.now();
       }
     };
     onAppState(AppState.currentState === "background" ? "background" : "active");
@@ -102,4 +114,16 @@ export function useRealtimeEvents(handler: (event: RealtimeEvent) => void): void
   const latest = useRef(handler);
   latest.current = handler;
   useEffect(() => subscribe((event) => latest.current(event)), [subscribe]);
+}
+
+/**
+ * Like useRealtimeEvents, for helpers that may also render outside the provider (they then
+ * simply hear nothing).
+ */
+export function useRealtimeEventsIfAvailable(handler: (event: RealtimeEvent) => void): void {
+  const ctx = useContext(RealtimeContext);
+  const latest = useRef(handler);
+  latest.current = handler;
+  const subscribe = ctx?.subscribe;
+  useEffect(() => (subscribe ? subscribe((event) => latest.current(event)) : undefined), [subscribe]);
 }

@@ -24,11 +24,18 @@ export type UploadJob={id:string;ownerId:string;kind:'photo'|'video';mimeType:st
  /** For a processing failure: whether Retry can help (true) or the file itself is unusable (false). */
  retryable?:boolean;byteSize?:number;
  /** Stopped while the server was already processing it: deleted as soon as it posts. */
- cancelAfterPublish?:boolean};
+ cancelAfterPublish?:boolean;
+ /** Failed only because the connection dropped: the outbox tries again by itself (autoResumeDue). */
+ networkFailure?:boolean;autoRetries?:number;
+ /** Date.now() of that failure, on this phone (not a server time). */
+ failedAt?:number};
 const PREFIX='katkee.upload.v1.',ROOT=RNFS.DocumentDirectoryPath+'/katkee-outbox';
 const PART_ATTEMPTS=3,RETRY_DELAYS=[1000,3000];
 const POLL_DELAYS=[1500,2000,3000,5000,8000,13000,15000];
 const POLL_BUDGET_MS=10*60*1000;
+/** Automatic retries of a Story that failed because the connection dropped, before it waits for Retry. */
+export const AUTO_RETRY_LIMIT=5;
+const AUTO_RETRY_DELAYS=[5000,15000,30000,60000,120000];
 const inFlight=new Map<string,Promise<void>>();
 const progress=new Map<string,number>();
 const removing=new Set<string>();
@@ -112,12 +119,21 @@ async function sendBytes(job:UploadJob,path:string,storageKey:string,token:()=>s
  return job;
 }
 
+/** A dropped connection, a timeout or a server hiccup: worth trying again by itself. */
+export function isTransientError(e:unknown):boolean{
+ if(e instanceof PartUploadError)return e.status===0||e.status>=500;
+ if(e instanceof ApiError)return e.status===408||e.status===429||e.status>=500; // 0 is a cancel, not a failure
+ return e instanceof TypeError; // fetch's "Network request failed"
+}
 /** Polls a publish request while the server processes the media. Returns the job as it stands. */
 async function awaitPublish(job:UploadJob,token:()=>string,persist:(next:UploadJob)=>Promise<UploadJob>):Promise<UploadJob>{
  const started=Date.now();
  for(let i=0;Date.now()-started<POLL_BUDGET_MS;i++){
   await sleep(POLL_DELAYS[Math.min(i,POLL_DELAYS.length-1)]!);
-  const {publish}=await getPublishRequest(job.id,token());
+  let publish:Awaited<ReturnType<typeof getPublishRequest>>['publish'];
+  // The server keeps processing whatever the phone's connection does: keep checking.
+  try{({publish}=await getPublishRequest(job.id,token()));}
+  catch(e){if(isTransientError(e))continue;throw e;}
   if(publish.state==='published')return persist({...job,status:'published',storyId:publish.storyId??undefined,error:undefined,retryable:undefined});
   if(publish.state==='failed')return persist({...job,status:'failed',error:publish.error??'This media could not be processed.',retryable:publish.retryable});
  }
@@ -137,7 +153,7 @@ function failureOf(job:UploadJob,e:unknown):{stage:'upload'|'processing'|'publis
 }
 export function runUpload(ownerId:string,id:string,session:()=>{ownerId:string;token:string}|null):Promise<void>{
  const storageKey=key(ownerId,id),running=inFlight.get(storageKey);if(running)return running;
- if(removing.has(storageKey))return Promise.reject(Error('This upload is being removed.'));
+ if(removing.has(storageKey)||cancelling.has(storageKey))return Promise.reject(Error('This upload is being removed.'));
  const attemptStarted=Date.now();
  const work=Promise.resolve().then(async()=>{
   const raw=await AsyncStorage.getItem(storageKey);if(!raw)throw Error('Upload not found.');let job=JSON.parse(raw) as UploadJob;
@@ -180,6 +196,7 @@ export function runUpload(ownerId:string,id:string,session:()=>{ownerId:string;t
      await AsyncStorage.removeItem(storageKey);progress.delete(storageKey);storyPublished();
      return;
     }
+    if(job.networkFailure||job.autoRetries)job=await persist({...job,networkFailure:undefined,autoRetries:undefined,failedAt:undefined});
     track('upload_succeeded',{mediaKind:job.kind,durationMs:Math.min(3_600_000,Date.now()-attemptStarted)});
     storyPublished();
     await RNFS.unlink(file(ownerId,id)).catch(()=>undefined);
@@ -188,10 +205,15 @@ export function runUpload(ownerId:string,id:string,session:()=>{ownerId:string;t
    progress.delete(storageKey);
    if(e instanceof UploadCancelled)return;
    const failure=failureOf(job,e);if(failure)track('upload_failed',{mediaKind:job.kind,...failure});
+   const transient=isTransientError(e);
    if(e instanceof ApiError&&e.details?.error==='media_failed'){
-    await persist({...job,status:'failed',error:e.message,retryable:e.details.retryable===true});
+    await persist({...job,status:'failed',error:e.message,retryable:e.details.retryable===true,networkFailure:undefined});
+   }else if(transient&&job.status==='processing'){
+    // The server already has it and posts it by itself: a dropped connection doesn't fail it.
+    await persist({...job,error:undefined});
    }else{
-    await persist({...job,status:'failed',error:e instanceof Error?e.message:'Upload failed. Try again.',retryable:job.retryable});
+    await persist({...job,status:'failed',error:e instanceof Error?e.message:'Upload failed. Try again.',retryable:job.retryable,
+     networkFailure:transient||undefined,failedAt:Date.now(),autoRetries:transient?(job.autoRetries??0)+(job.networkFailure?1:0):undefined});
    }
    throw e;
   }
@@ -222,6 +244,27 @@ export async function cancelUpload(ownerId:string,id:string,token:string|null):P
  }finally{cancelling.delete(storageKey);}
 }
 export function uploadRunning(ownerId:string,id:string){return inFlight.has(key(ownerId,id));}
+/** Stopped part-way (the app was closed or put away mid-upload): continues where it stopped. */
+export function wasInterrupted(job:UploadJob){return (job.status==='preparing'||job.status==='uploading'||job.status==='publishing')&&!uploadRunning(job.ownerId,job.id);}
+/**
+ * A Story that failed only because the connection dropped, and whose next automatic try is due
+ * (backing off; after AUTO_RETRY_LIMIT tries it waits for Retry). `ignoreBackoff` on return to the app.
+ */
+export function autoResumeDue(job:UploadJob,now=Date.now(),ignoreBackoff=false):boolean{
+ if(job.status!=='failed'||!job.networkFailure||uploadRunning(job.ownerId,job.id))return false;
+ const tries=job.autoRetries??0;if(tries>=AUTO_RETRY_LIMIT)return false;
+ if(ignoreBackoff)return true;
+ const failedAt=typeof job.failedAt==='number'?job.failedAt:0;
+ return now-failedAt>=AUTO_RETRY_DELAYS[Math.min(tries,AUTO_RETRY_DELAYS.length-1)]!;
+}
+/** When the next automatic try of a connection-failed Story is due, or null if none will be made. */
+export function nextAutoResumeAt(job:UploadJob):number|null{
+ if(job.status!=='failed'||!job.networkFailure)return null;
+ const tries=job.autoRetries??0;if(tries>=AUTO_RETRY_LIMIT)return null;
+ return (typeof job.failedAt==='number'?job.failedAt:0)+AUTO_RETRY_DELAYS[Math.min(tries,AUTO_RETRY_DELAYS.length-1)]!;
+}
+/** Waiting on the person: failed for good, or interrupted (not running). */
+export function needsAttention(job:UploadJob){return (job.status==='failed'&&!autoResumeDue(job,Number.POSITIVE_INFINITY))||wasInterrupted(job);}
 /** The saved copy of a photo being shared, for a thumbnail while it uploads. */
 export function uploadPreviewUri(job:UploadJob):string|null{return job.kind==='photo'?'file://'+file(job.ownerId,job.id):null;}
 /** A failure Retry can't fix: the file itself was rejected by processing. */

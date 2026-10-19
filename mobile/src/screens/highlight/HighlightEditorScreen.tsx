@@ -1,6 +1,6 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "../../components/Icon";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Image, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../navigation/types";
@@ -48,6 +48,8 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
   const [saving, setSaving] = useState(false);
   const [coverPickerOpen, setCoverPickerOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Set once Create has made the Highlight, so trying again never makes a second one.
+  const createdId = useRef<string | null>(null);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -136,10 +138,21 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
           { title: trimmedTitle, storyIds: selected, ...(coverChanged ? { coverStoryId: coverStoryId ?? null } : {}) },
           accessToken,
         );
+      } else if (createdId.current) {
+        // Made on an earlier tap whose last step failed: finish that one.
+        await updateHighlight(createdId.current, { title: trimmedTitle, storyIds: selected, coverStoryId: coverStoryId ?? null }, accessToken);
       } else {
         const { highlight } = await createHighlight({ title: trimmedTitle, storyIds: selected }, accessToken);
+        createdId.current = highlight.id;
         // A new Highlight can't be given a cover in the same request; set it straight after.
-        if (coverStoryId) await setHighlightCover(highlight.id, coverStoryId, accessToken);
+        // It exists either way, so a failed cover doesn't hold the editor open.
+        if (coverStoryId) {
+          try {
+            await setHighlightCover(highlight.id, coverStoryId, accessToken);
+          } catch {
+            Alert.alert("Highlight created", "Couldn't set the cover. You can change it from your profile.");
+          }
+        }
       }
       navigation.goBack();
     } catch (err) {
@@ -181,6 +194,8 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
   }
 
   const canSave = cleanTitle(title).length > 0 && selected.length > 0 && !saving;
+  // Three archive columns that always fit: the grid's padding plus each cell's margin on both sides.
+  const archiveThumbSize = Math.floor((screenWidth - spacing.md * 2 - spacing.xs * 3) / 3);
   const selectedThumbSize =
     (screenWidth - spacing.md * 2 - SELECTED_STRIP_GAP * (SELECTED_STRIP_COLUMNS - 1)) / SELECTED_STRIP_COLUMNS;
 
@@ -288,7 +303,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
             <Pressable accessibilityRole="button" style={styles.thumbWrapper} onPress={() => toggle(item.id)}>
               <Image
                 source={{ uri: mediaFileUrl(item.mediaId, "thumbnail"), headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined }}
-                style={[styles.thumb, isSelected && styles.thumbSelected]}
+                style={[styles.thumb, { width: archiveThumbSize, height: archiveThumbSize }, isSelected && styles.thumbSelected]}
                 resizeMode="cover"
               />
               {isSelected ? (
@@ -345,8 +360,6 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
   );
 }
 
-const THUMB_SIZE = 104;
-
 /** A tidy name: no spaces at the ends, none doubled. */
 function cleanTitle(value: string): string {
   return value.replace(/\s+/g, " ").trim();
@@ -391,8 +404,6 @@ const styles = StyleSheet.create({
   grid: { paddingHorizontal: spacing.md, gap: spacing.xs },
   thumbWrapper: { margin: spacing.xs / 2 },
   thumb: {
-    width: THUMB_SIZE,
-    height: THUMB_SIZE,
     borderRadius: radii.sm,
     backgroundColor: colors.surfaceElevated,
     borderWidth: 2,
@@ -423,7 +434,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  coverBadgeGlyph: { color: colors.textPrimary, fontSize: 13 },
+  // Always white: it sits on a dark circle over a photo, in light mode too.
+  coverBadgeGlyph: { color: "#FFFFFF", fontSize: 13 },
   coverBadgeGlyphActive: { color: colors.accent },
   footer: {
     flexDirection: "row",

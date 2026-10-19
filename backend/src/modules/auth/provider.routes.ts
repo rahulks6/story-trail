@@ -9,6 +9,8 @@ import {findUserById} from '../users/users.repository';
 import {verifyPassword} from './password';
 import {liveProviders,providerConfig,normalizePhone,type ProviderGateway} from './providers';
 import * as identity from './provider.service';
+import * as storiesRepo from '../stories/stories.repository';
+import * as storiesService from '../stories/stories.service';
 const authLimit=new RateLimiter(15*60000,30);
 function available(provider:'GOOGLE'|'PHONE'){if(!(provider==='GOOGLE'?providerConfig.googleEnabled:providerConfig.phoneEnabled))throw new HttpError(404,'Sign-in method unavailable.');}
 export function registerProviderAuthRoutes(router:Router,providers:ProviderGateway=liveProviders):void {
@@ -49,6 +51,9 @@ export function registerProviderAuthRoutes(router:Router,providers:ProviderGatew
  router.post('/api/v1/auth/account/delete',async(req,res)=>{
   requireAuth(req);authLimit.check(req.userId!);const b=body(req.body);if(b.confirmed!==true)throw new HttpError(422,'Confirm account deletion.');
   const result=await queryOne(`WITH ticket AS(UPDATE auth_reauth_tickets SET consumed_at=now() WHERE token_hash=:'ticket' AND user_id=:'user' AND consumed_at IS NULL AND expires_at>now() RETURNING user_id),u AS(UPDATE users SET deleted_at=now(),is_active=false WHERE id IN(SELECT user_id FROM ticket) RETURNING id),tokens AS(UPDATE refresh_tokens SET revoked_at=now() WHERE user_id IN(SELECT id FROM u)),admin AS(DELETE FROM admin_sessions WHERE user_id IN(SELECT id FROM u)) SELECT id FROM u`,{ticket:identity.proofToken(b.reauthTicket),user:req.userId!});
-  if(!result)throw new HttpError(401,'Reauthenticate before deleting your account.');sendJson(res,204,undefined);
+  if(!result)throw new HttpError(401,'Reauthenticate before deleting your account.');
+  // Live Stories go with the account, as with DELETE /users/me: nobody keeps seeing them for 24 hours.
+  for(const story of await storiesRepo.listActiveStoriesForOwner(req.userId!))await storiesService.moderatorDeleteStory(story.id);
+  sendJson(res,204,undefined);
  });
 }

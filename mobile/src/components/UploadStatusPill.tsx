@@ -6,7 +6,7 @@ import type { RootStackParamList } from "../navigation/types";
 import { mediaColors as colors, radii, spacing, ICONS } from "../theme";
 import { Icon } from "./Icon";
 import { useAuth } from "../state/AuthContext";
-import { cancelUpload, listUploads, removeUpload, subscribeUploads, uploadPreviewUri, uploadProgress, uploadRunning, type UploadJob } from "../state/uploadQueue";
+import { cancelUpload, listUploads, needsAttention, removeUpload, subscribeUploads, uploadPreviewUri, uploadProgress, uploadRunning, type UploadJob } from "../state/uploadQueue";
 import { deleteStory } from "../api/stories";
 import { storyPublished } from "../state/storyChanges";
 
@@ -32,6 +32,8 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
   const userId = useAuth().user?.id;
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [job, setJob] = useState<UploadJob | null>(null);
+  /** Stories waiting on the person (failed, or paused part-way): more than one shows a count. */
+  const [attention, setAttention] = useState(0);
   const [, setTick] = useState(0);
   const [stopping, setStopping] = useState(false);
   const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -42,6 +44,7 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
     // The newest Story still on its way, or one that just posted.
     const latest = [...jobs].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0] ?? null;
     setJob(latest);
+    setAttention(jobs.filter(needsAttention).length);
     setTick((t) => t + 1);
     if (latest?.status === "published" && !dismissTimer.current) {
       dismissTimer.current = setTimeout(() => {
@@ -101,6 +104,7 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
   const percent = uploadProgress(job.ownerId, job.id);
   const running = uploadRunning(job.ownerId, job.id);
   const label = stopping ? "Stopping…" : job.cancelAfterPublish ? "Removing…" : pillLabel(job, percent, running);
+  const othersLabel = attention > 1 ? `${attention} Stories need attention` : null;
   const preview = uploadPreviewUri(job);
   const shown = job.status === "uploading" && percent !== undefined ? percent : job.status === "published" || job.status === "processing" ? 1 : 0.05;
 
@@ -109,7 +113,7 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
       onPress={() => navigation.navigate("UploadQueue")}
       style={[styles.pill, { top }]}
       accessibilityRole="button"
-      accessibilityLabel={label}
+      accessibilityLabel={othersLabel ? `${label}. ${othersLabel}` : label}
       accessibilityHint="Opens your Story uploads"
       accessibilityLiveRegion="polite"
     >
@@ -122,6 +126,11 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
           </View>
         ) : null}
       </View>
+      {othersLabel ? (
+        <View style={styles.badge} accessibilityLabel={othersLabel}>
+          <Text style={styles.badgeText}>{attention}</Text>
+        </View>
+      ) : null}
       {job.status === "published" ? (
         <Pressable onPress={() => stop(job)} hitSlop={10} accessibilityRole="button" accessibilityLabel="Undo, delete this Story">
           <Text style={styles.undo}>Undo</Text>
@@ -156,6 +165,8 @@ const styles = StyleSheet.create({
   failed: { color: colors.danger },
   undo: { color: colors.accent, fontWeight: "700", fontSize: 13 },
   close: { padding: 2 },
+  badge: { minWidth: 20, height: 20, paddingHorizontal: 5, borderRadius: 10, alignItems: "center", justifyContent: "center", backgroundColor: colors.danger },
+  badgeText: { color: "#FFFFFF", fontSize: 12, fontWeight: "700" },
   track: { height: 3, borderRadius: 2, backgroundColor: "rgba(255,255,255,0.2)", overflow: "hidden" },
   fill: { height: 3, backgroundColor: colors.accent },
 });

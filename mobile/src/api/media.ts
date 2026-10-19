@@ -86,11 +86,23 @@ export class PartUploadError extends Error {
   }
 }
 
+/** The slowest connection a part should still get through on: 0.25 Mbps. */
+const MIN_PART_BYTES_PER_SECOND = 250_000 / 8;
+
+/**
+ * How long one part may take: at least two minutes, and long enough for the part at 0.25 Mbps
+ * plus 30 s for the connection to start (about 300 s for an 8 MB part). A fixed two minutes
+ * failed every part below about 0.55 Mbps.
+ */
+export function partTimeoutMs(byteLength: number): number {
+  return Math.max(120_000, Math.ceil((byteLength / MIN_PART_BYTES_PER_SECOND) * 1000) + 30_000);
+}
+
 /**
  * PUTs one part to its signed URL, reporting bytes sent. No Authorization header:
  * the signature is the credential (and S3 rejects a second auth mechanism).
  */
-export function uploadPart(url: string, body: ArrayBuffer, onProgress?: (sentBytes: number) => void, timeoutMs = 120_000): Promise<void> {
+export function uploadPart(url: string, body: ArrayBuffer, onProgress?: (sentBytes: number) => void, timeoutMs = partTimeoutMs(body.byteLength)): Promise<void> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open("PUT", url.startsWith("/") ? `${API_BASE_URL}${url}` : url);

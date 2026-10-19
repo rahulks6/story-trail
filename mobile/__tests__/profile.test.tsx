@@ -26,6 +26,9 @@ jest.mock("../src/api/users", () => ({
   muteUser: jest.fn(async () => undefined),
   unmuteUser: jest.fn(async () => undefined),
   blockUser: jest.fn(async () => undefined),
+  listFollowRequests: jest.fn(async () => ({ requests: [], limit: 50, offset: 0 })),
+  acceptFollowRequest: jest.fn(async () => undefined),
+  declineFollowRequest: jest.fn(async () => undefined),
 }));
 jest.mock("../src/api/stories", () => ({ getUserActiveStories: jest.fn(async () => ({ stories: [] })), getMyActiveStories: jest.fn(async () => ({ stories: [] })) }));
 jest.mock("../src/api/conversations", () => ({ openConversation: jest.fn() }));
@@ -57,7 +60,7 @@ const profile = (over: Partial<usersApi.ProfileView> = {}, viewer: Partial<users
 });
 
 let tree: ReactTestRenderer;
-const navigation = { navigate: jest.fn(), setOptions: jest.fn(), goBack: jest.fn() };
+const navigation = { navigate: jest.fn(), setOptions: jest.fn(), goBack: jest.fn(), canGoBack: jest.fn(() => true) };
 beforeEach(() => {
   mockHighlights.count = 3;
   mockHighlights.mounted = 0;
@@ -216,6 +219,52 @@ describe("someone else's page", () => {
     expect(texts()).toContain("Couldn't load this profile.");
     await press("Try again");
     expect(texts()).toContain("@asha_k");
+  });
+});
+
+describe("someone else's page: background refreshes and taps in flight", () => {
+  test("a failed refresh after Follow keeps the page and says so, instead of an error screen", async () => {
+    api.getProfile.mockResolvedValueOnce({ profile: profile() }).mockRejectedValueOnce(new Error("offline"));
+    await renderOther();
+    await press("Follow");
+    expect(api.followUser).toHaveBeenCalledTimes(1);
+    expect(texts()).toContain("@asha_k");
+    expect(texts()).toContain("Couldn't refresh this profile. Pull down to try again.");
+    expect(texts()).not.toContain("Couldn't load this profile.");
+  });
+
+  test("a second tap on Follow while the first is on its way does nothing", async () => {
+    let finish!: () => void;
+    api.getProfile.mockResolvedValue({ profile: profile() });
+    api.followUser.mockReturnValueOnce(new Promise((r) => { finish = () => r({ status: "following" } as never); }));
+    await renderOther();
+    const follow = () => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === "Follow");
+    await act(async () => { follow().props.onPress(); follow().props.onPress(); });
+    expect(api.followUser).toHaveBeenCalledTimes(1);
+    await act(async () => finish());
+    await flush();
+  });
+
+  test("their request to follow you can be confirmed from their page", async () => {
+    api.getProfile.mockResolvedValueOnce({ profile: profile({}, { hasPendingRequestFromTarget: true }) }).mockResolvedValue({ profile: profile({}, { isFollowedBy: true }) });
+    api.listFollowRequests.mockResolvedValueOnce({ requests: [{ requestId: "r-1", requesterId: "11111111-2222-4333-8444-555555555555", username: "asha_k", displayName: "Asha K", createdAt: "2026-10-01T00:00:00Z" }], limit: 50, offset: 0 });
+    await renderOther();
+    expect(texts()).toContain("@asha_k wants to follow you");
+    await press("Confirm follow request");
+    expect(api.acceptFollowRequest).toHaveBeenCalledWith("r-1", "token");
+    expect(texts()).not.toContain("@asha_k wants to follow you");
+  });
+
+  test("blocking from a profile opened by a link goes to Search (there's nothing to go back to)", async () => {
+    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+    navigation.canGoBack.mockReturnValueOnce(false);
+    api.getProfile.mockResolvedValue({ profile: profile() });
+    await renderOther();
+    await openMore();
+    await chooseInMore("Block");
+    await act(async () => { await (alertButton(alert, "Block").onPress as () => Promise<void>)(); });
+    expect(navigation.goBack).not.toHaveBeenCalled();
+    expect(navigation.navigate).toHaveBeenCalledWith("SearchHome");
   });
 });
 

@@ -10,10 +10,12 @@ import { countPendingDrafts, clearAllPendingDrafts } from "../../state/draftStor
 import { ListRow } from "../../components/ListRow";
 import { ActionSheet } from "../../components/ActionSheet";
 import { appearanceChoice, setAppearance, type AppearanceChoice } from "../../theme/appearance";
-import { DeleteAccountSheet } from "../../components/DeleteAccountSheet";
 import { nearbyChoice, turnNearbyOff, turnNearbyOn } from "../../state/nearby";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Settings">;
+
+/** The badge counts one page of requests; a full page shows as "50+". */
+const REQUEST_COUNT_CAP = 50;
 
 /**
  * The real settings hub the icon reference calls for: Privacy (backed by
@@ -38,7 +40,6 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
   const [togglingPrivacy, setTogglingPrivacy] = useState(false);
   const [draftCount, setDraftCount] = useState<number | null>(null);
   const [pendingRequestCount, setPendingRequestCount] = useState<number | null>(null);
-  const [deleteOpen, setDeleteOpen] = useState(false);
   const [nearbyOn, setNearbyOn] = useState<boolean | null>(null);
   const [togglingNearby, setTogglingNearby] = useState(false);
 
@@ -53,7 +54,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
       if (accessToken) {
         // A count-only fetch, capped at one page — this only needs to show
         // a badge, not the full list (FollowRequestsScreen does that).
-        void listFollowRequests(accessToken, { limit: 50 })
+        void listFollowRequests(accessToken, { limit: REQUEST_COUNT_CAP })
           .then(({ requests }) => setPendingRequestCount(requests.length))
           .catch(() => setPendingRequestCount(null));
       }
@@ -160,7 +161,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
         </View>
         <ListRow
           label="Follow requests"
-          detail={pendingRequestCount ? String(pendingRequestCount) : undefined}
+          detail={pendingRequestCount ? (pendingRequestCount >= REQUEST_COUNT_CAP ? `${REQUEST_COUNT_CAP}+` : String(pendingRequestCount)) : undefined}
           onPress={() => navigation.navigate("FollowRequests")}
         />
         <ListRow label="Close Friends" onPress={() => navigation.navigate("CloseFriends")} />
@@ -206,10 +207,10 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
 
       <View style={styles.card}>
         <ListRow label="Log out" destructive onPress={onLogOut} />
+        {/* One path for every account: it verifies with a password or Google/phone, so accounts without a password can delete too. */}
         <ListRow label="Delete account" destructive onPress={() => navigation.navigate("AccountSecurity")} />
       </View>
 
-      <DeleteAccountSheet visible={deleteOpen} onClose={() => setDeleteOpen(false)} />
     </ScrollView>
   );
 }

@@ -1,15 +1,19 @@
 import React from "react";
 import { act, create, type ReactTestInstance, type ReactTestRenderer } from "react-test-renderer";
-import { Alert, Image, Modal } from "react-native";
+import { Alert, AppState, Image, Modal } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { HighlightViewerScreen } from "../src/screens/highlight/HighlightViewerScreen";
 import { HighlightEditorScreen } from "../src/screens/highlight/HighlightEditorScreen";
 import * as highlightsApi from "../src/api/highlights";
+import * as mediaApi from "../src/api/media";
+import { timeNativeAnimations } from "./helpers/nativeAnimations";
 
 // Managing your own Highlight: from the Highlight itself (⋯) and in the editor.
 jest.mock("../src/state/AuthContext", () => ({ useAuth: () => ({ accessToken: "token", user: { id: "u-me", username: "me" } }) }));
+let mockFocused = true;
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
+  useIsFocused: () => mockFocused,
   useNavigation: () => ({ navigate: jest.fn() }),
   useFocusEffect: (effect: () => void) => require("react").useEffect(() => effect(), [effect]),
 }));
@@ -50,14 +54,15 @@ async function choose(label: string): Promise<void> {
   await act(async () => byLabel(label).props.onPress());
   await act(async () => tree.root.findAllByType(Modal).find((m) => typeof m.props.onDismiss === "function")!.props.onDismiss());
 }
+const viewer = () => (
+  <SafeAreaProvider initialMetrics={{ frame: { x: 0, y: 0, width: 390, height: 844 }, insets: { top: 0, left: 0, right: 0, bottom: 0 } }}>
+    <HighlightViewerScreen route={{ key: "v", name: "HighlightViewer", params: { highlightId: "h1", title: "Trips" } } as never} navigation={navigation as never} />
+  </SafeAreaProvider>
+);
 async function openViewer(storyIds: string[]): Promise<void> {
   api.getHighlightDetail.mockResolvedValue({ highlight: highlight(storyIds) } as never);
   await act(async () => {
-    tree = create(
-      <SafeAreaProvider initialMetrics={{ frame: { x: 0, y: 0, width: 390, height: 844 }, insets: { top: 0, left: 0, right: 0, bottom: 0 } }}>
-        <HighlightViewerScreen route={{ key: "v", name: "HighlightViewer", params: { highlightId: "h1", title: "Trips" } } as never} navigation={navigation as never} />
-      </SafeAreaProvider>,
-    );
+    tree = create(viewer());
   });
   await act(async () => { await Promise.resolve(); });
 }
@@ -146,4 +151,80 @@ test("a new Highlight gets the cover you chose, and a tidy name", async () => {
   await act(async () => create_.props.onPress());
   expect(api.createHighlight).toHaveBeenCalledWith({ title: "Summer trip", storyIds: ["s1", "s2"] }, "token");
   expect((api as unknown as { setHighlightCover: jest.Mock }).setHighlightCover).toHaveBeenCalledWith("h-new", "s2", "token");
+});
+
+test("a cover that fails to set doesn't keep the editor open, so Create can't make a second Highlight", async () => {
+  const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+  api.createHighlight.mockResolvedValue({ highlight: { ...highlight(["s1", "s2"]), id: "h-new" } } as never);
+  (api as unknown as { setHighlightCover: jest.Mock }).setHighlightCover.mockRejectedValueOnce(new Error("offline"));
+  await act(async () => {
+    tree = create(
+      <SafeAreaProvider initialMetrics={{ frame: { x: 0, y: 0, width: 390, height: 844 }, insets: { top: 0, left: 0, right: 0, bottom: 0 } }}>
+        <HighlightEditorScreen route={{ key: "e", name: "HighlightEditor", params: { initialStoryIds: ["s1", "s2"] } } as never} navigation={navigation as never} />
+      </SafeAreaProvider>,
+    );
+  });
+  await act(async () => { await Promise.resolve(); });
+  const { TextInput } = jest.requireActual("react-native");
+  await act(async () => tree.root.findByType(TextInput).props.onChangeText("Trip"));
+  await act(async () => byLabel("Change cover").props.onPress());
+  await act(async () => byLabel("Use as cover").props.onPress());
+  const create_ = () => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.findAll((c) => c.props.children === "Create").length > 0);
+  await act(async () => create_().props.onPress());
+  expect(api.createHighlight).toHaveBeenCalledTimes(1);
+  expect(alert).toHaveBeenCalledWith("Highlight created", expect.stringContaining("Couldn't set the cover"));
+  expect(navigation.goBack).toHaveBeenCalledTimes(1);
+  alert.mockRestore();
+});
+
+test("the archive grid's three columns always fit the screen", async () => {
+  await act(async () => {
+    tree = create(
+      <SafeAreaProvider initialMetrics={{ frame: { x: 0, y: 0, width: 320, height: 640 }, insets: { top: 0, left: 0, right: 0, bottom: 0 } }}>
+        <HighlightEditorScreen route={{ key: "e", name: "HighlightEditor", params: {} } as never} navigation={navigation as never} />
+      </SafeAreaProvider>,
+    );
+  });
+  await act(async () => { await Promise.resolve(); });
+  const { StyleSheet, Dimensions } = jest.requireActual("react-native");
+  const thumbs = tree.root.findAllByType(Image).map((i) => StyleSheet.flatten(i.props.style)).filter((st) => typeof st.width === "number");
+  expect(thumbs.length).toBeGreaterThan(0);
+  // Each cell: the thumb plus 2 on each side; the grid has 16 on each side.
+  const width = Dimensions.get("window").width;
+  for (const st of thumbs) expect(3 * (st.width + 4) + 32).toBeLessThanOrEqual(width);
+});
+
+test("with the editor pushed on top, the viewer pauses: its video stops, and its timer can't move on or close the editor", async () => {
+  jest.useFakeTimers();
+  timeNativeAnimations();
+  (AppState as { currentState: string }).currentState = "active";
+  mockFocused = true;
+  (mediaApi.getMedia as jest.Mock).mockResolvedValue({ kind: "video" });
+  try {
+    await openViewer(["s1"]);
+    for (let i = 0; i < 3; i++) await act(async () => { await Promise.resolve(); });
+    const video = () => tree.root.find((n: ReactTestInstance) => (n.type as unknown) === "Video");
+    expect(video().props.paused).toBe(false);
+    await act(async () => video().props.onLoad({ duration: 4 }));
+    await act(async () => { jest.advanceTimersByTime(2_000); });
+    // "Edit Highlight": the editor covers the viewer.
+    mockFocused = false;
+    await act(async () => tree.update(viewer()));
+    expect(video().props.paused).toBe(true);
+    await act(async () => { jest.advanceTimersByTime(10_000); });
+    expect(navigation.goBack).not.toHaveBeenCalled();
+    // Back on the viewer: it carries on from where it was (about 2 of 4 seconds left), then closes.
+    mockFocused = true;
+    await act(async () => tree.update(viewer()));
+    expect(video().props.paused).toBe(false);
+    await act(async () => { jest.advanceTimersByTime(1_500); });
+    expect(navigation.goBack).not.toHaveBeenCalled();
+    await act(async () => { jest.advanceTimersByTime(1_000); });
+    expect(navigation.goBack).toHaveBeenCalledTimes(1);
+  } finally {
+    (mediaApi.getMedia as jest.Mock).mockResolvedValue({ kind: "photo" });
+    mockFocused = true;
+    await act(async () => tree?.unmount());
+    jest.useRealTimers();
+  }
 });

@@ -12,6 +12,7 @@ import {
   type IncomingFollowRequest,
 } from "../../api/users";
 import { EmptyState } from "../../components/EmptyState";
+import { LoadFailed } from "../../components/LoadFailed";
 import { Avatar } from "../../components/Avatar";
 
 const PAGE_SIZE = 30;
@@ -29,10 +30,18 @@ export function FollowRequestsScreen(): React.JSX.Element {
   const [requests, setRequests] = useState<IncomingFollowRequest[] | null>(null);
   const [resolving, setResolving] = useState<Set<string>>(new Set());
 
+  const [loadFailed, setLoadFailed] = useState(false);
+
   const load = useCallback(async () => {
     if (!accessToken) return;
-    const { requests: fetched } = await listFollowRequests(accessToken, { limit: PAGE_SIZE });
-    setRequests(fetched);
+    setLoadFailed(false);
+    try {
+      const { requests: fetched } = await listFollowRequests(accessToken, { limit: PAGE_SIZE });
+      setRequests(fetched);
+    } catch {
+      // A list already on screen stays; with nothing to show, offer Try again instead of a spinner.
+      setLoadFailed(true);
+    }
   }, [accessToken]);
 
   useFocusEffect(
@@ -59,6 +68,7 @@ export function FollowRequestsScreen(): React.JSX.Element {
   };
 
   if (requests === null) {
+    if (loadFailed) return <LoadFailed message="Couldn't load your follow requests. Check your connection and try again." onRetry={() => void load()} />;
     return (
       <View style={styles.centered}>
         <ActivityIndicator color={colors.accent} />
@@ -82,7 +92,7 @@ export function FollowRequestsScreen(): React.JSX.Element {
             <Pressable
               accessibilityRole="button"
               style={styles.identity}
-              onPress={() => navigation.navigate("Main", { screen: "Search", params: { screen: "UserProfile", params: { username: item.username } } })}
+              onPress={() => navigation.navigate("Main", { screen: "Search", params: { screen: "UserProfile", initial: false, params: { username: item.username } } })}
             >
               <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} />
               <View style={styles.rowText}>

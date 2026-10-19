@@ -111,6 +111,34 @@ export class RealtimeClient {
     void this.open();
   }
 
+  /**
+   * Checks a connection that may have died unnoticed (the phone slept, the app was suspended):
+   * pings straight away and reconnects if no answer arrives within `timeoutMs`.
+   */
+  probe(timeoutMs = 5000): void {
+    const socket = this.socket;
+    if (!socket || this.currentStatus !== "open") return;
+    if (socket.readyState !== OPEN) {
+      this.abandon(socket);
+      return;
+    }
+    if (this.pingTimer !== null) this.timers.clearTimeout(this.pingTimer);
+    this.pingTimer = null;
+    if (this.pongTimer !== null) this.timers.clearTimeout(this.pongTimer);
+    try { socket.send('{"type":"ping"}'); } catch { /* the timeout below handles it */ }
+    this.pongTimer = this.timers.setTimeout(() => {
+      this.pongTimer = null;
+      if (socket === this.socket) this.abandon(socket);
+    }, timeoutMs);
+  }
+
+  /** Drops the current connection (alive or not) and connects again straight away. */
+  restart(): void {
+    this.stop();
+    this.attempt = 0;
+    this.start();
+  }
+
   /** Disconnects and stops reconnecting until start() is called again. */
   stop(): void {
     this.wanted = false;

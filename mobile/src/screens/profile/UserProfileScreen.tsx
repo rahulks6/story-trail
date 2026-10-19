@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { SearchStackParamList, RootStackParamList } from "../../navigation/types";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
-import { blockUser, followUser, getProfile, muteUser, unfollowUser, unmuteUser, type ProfileView } from "../../api/users";
+import { acceptFollowRequest, blockUser, declineFollowRequest, followUser, getProfile, listFollowRequests, muteUser, unfollowUser, unmuteUser, type ProfileView } from "../../api/users";
 import { track } from "../../analytics/analytics";
 import { ApiError } from "../../api/client";
 import { getUserActiveStories } from "../../api/stories";
@@ -20,6 +20,18 @@ import { profileButton } from "../../components/profile/profileButton";
 import { profileShareLink } from "../../navigation/profileLinks";
 
 type Props = NativeStackScreenProps<SearchStackParamList, "UserProfile">;
+
+/** The id of this person's pending request to follow you (the profile says one exists, not which). */
+async function findFollowRequestId(requesterId: string, accessToken: string): Promise<string | null> {
+  const limit = 50;
+  for (let offset = 0; offset < 500; offset += limit) {
+    const { requests } = await listFollowRequests(accessToken, { limit, offset });
+    const match = requests.find((r) => r.requesterId === requesterId);
+    if (match) return match.requestId;
+    if (requests.length < limit) return null;
+  }
+  return null;
+}
 
 /**
  * Someone's creator page (Phase 10), from Search, Activity or a shared link. Follow (with a
@@ -47,7 +59,12 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [refreshToken, setRefreshToken] = useState(0);
+  const [requestPending, setRequestPending] = useState(false);
   const countedProfile = useRef<string | null>(null);
+  const profileRef = useRef<ProfileView | null>(null);
+  profileRef.current = profile;
+  // One follow, mute or request answer at a time: a second tap mid-request is ignored.
+  const actionInFlight = useRef(false);
   const username = profile?.username ?? linkedUsername;
 
   const load = useCallback(async (quiet = false) => {
@@ -70,8 +87,14 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
         setHasActiveStory(false);
       }
     } catch (err) {
-      setProfile(null);
-      setError(err instanceof ApiError && err.status === 404 ? "This account isn't available." : "Couldn't load this profile.");
+      const gone = err instanceof ApiError && err.status === 404;
+      if (quiet && profileRef.current && !gone) {
+        // A background refresh (after Follow, Mute, pull-to-refresh) keeps what's on screen.
+        setNotice("Couldn't refresh this profile. Pull down to try again.");
+      } else {
+        setProfile(null);
+        setError(gone ? "This account isn't available." : "Couldn't load this profile.");
+      }
     } finally {
       setLoading(false);
     }
@@ -103,16 +126,20 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
   };
 
   const runFollowChange = async (change: () => Promise<unknown>) => {
+    if (actionInFlight.current) return;
+    actionInFlight.current = true;
     setActionPending(true);
     setNotice(null);
     try {
       await change();
-      await load(true);
     } catch {
       setNotice("That didn't go through. Try again.");
+      return;
     } finally {
+      actionInFlight.current = false;
       setActionPending(false);
     }
+    await load(true);
   };
 
   const onMessagePress = async () => {
@@ -166,7 +193,7 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
   const link = profileShareLink(profile.username, profile.id);
 
   const onFollowPress = () => {
-    if (!accessToken) return;
+    if (!accessToken || actionInFlight.current) return;
     if (!following && !requested) {
       void runFollowChange(() => followUser(username, accessToken));
       return;
@@ -190,19 +217,44 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
   };
 
   const onToggleMute = async () => {
-    if (!accessToken) return;
+    if (!accessToken || actionInFlight.current) return;
+    actionInFlight.current = true;
     const muting = !profile.viewer.isMutedByViewer;
     try {
       if (muting) await muteUser(username, accessToken);
       else await unmuteUser(username, accessToken);
-      await load(true);
-      Alert.alert(
-        muting ? `@${username} muted` : `@${username} unmuted`,
-        muting ? "You won't see their Stories on Home. They won't know." : "Their Stories can show on Home again.",
-      );
     } catch {
       Alert.alert("Couldn't update", "Try again.");
+      return;
+    } finally {
+      actionInFlight.current = false;
     }
+    // Show the new state straight away; the refresh below confirms it.
+    setProfile((current) => (current ? { ...current, viewer: { ...current.viewer, isMutedByViewer: muting } } : current));
+    Alert.alert(
+      muting ? `@${username} muted` : `@${username} unmuted`,
+      muting ? "You won't see their Stories on Home. They won't know." : "Their Stories can show on Home again.",
+    );
+    await load(true);
+  };
+
+  // They asked to follow you: answer here, as on the Follow requests page.
+  const onAnswerRequest = async (accept: boolean) => {
+    if (!accessToken || actionInFlight.current) return;
+    actionInFlight.current = true;
+    setRequestPending(true);
+    setNotice(null);
+    try {
+      const requestId = await findFollowRequestId(profile.id, accessToken);
+      if (requestId) await (accept ? acceptFollowRequest(requestId, accessToken) : declineFollowRequest(requestId, accessToken));
+    } catch {
+      setNotice("That didn't go through. Try again.");
+      return;
+    } finally {
+      actionInFlight.current = false;
+      setRequestPending(false);
+    }
+    await load(true);
   };
 
   const onBlock = () => {
@@ -218,7 +270,9 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
           onPress: async () => {
             try {
               await blockUser(username, accessToken);
-              navigation.goBack();
+              // Opened straight from a link, this profile is the only screen here: go to Search.
+              if (navigation.canGoBack()) navigation.goBack();
+              else navigation.navigate("SearchHome");
             } catch {
               Alert.alert("Couldn't block", "Try again.");
             }
@@ -277,6 +331,15 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
             </>
           )}
         </View>
+        {!profile.isSelf && profile.viewer.hasPendingRequestFromTarget ? (
+          <View style={styles.request}>
+            <Text style={styles.requestText}>@{profile.username} wants to follow you</Text>
+            <View style={styles.actions}>
+              {profileButton({ label: "Confirm", variant: "primary", busy: requestPending, accessibilityLabel: "Confirm follow request", onPress: () => void onAnswerRequest(true) })}
+              {profileButton({ label: "Delete", busy: requestPending, accessibilityLabel: "Delete follow request", onPress: () => void onAnswerRequest(false) })}
+            </View>
+          </View>
+        ) : null}
         {notice ? <Text style={styles.notice} accessibilityLiveRegion="polite">{notice}</Text> : null}
       </ProfileHeader>
 
@@ -334,6 +397,8 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.xxl, gap: spacing.md },
   actions: { flexDirection: "row", gap: spacing.sm },
   notice: { ...typography.caption, color: colors.danger },
+  request: { gap: spacing.sm, padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.surface },
+  requestText: { ...typography.bodyStrong },
   card: {
     alignItems: "center",
     gap: spacing.xs,

@@ -108,7 +108,7 @@ export function FollowListScreen({ route }: Props): React.JSX.Element {
         <Pressable
           accessibilityRole="button"
           style={styles.row}
-          onPress={() => navigation.navigate("Main", { screen: "Search", params: { screen: "UserProfile", params: { username: item.username } } })}
+          onPress={() => navigation.navigate("Main", { screen: "Search", params: { screen: "UserProfile", initial: false, params: { username: item.username } } })}
         >
           <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} />
           <View style={styles.rowText}>

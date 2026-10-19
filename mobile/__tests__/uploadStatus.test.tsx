@@ -4,6 +4,7 @@ import { Alert, Text } from "react-native";
 import * as storiesApi from "../src/api/stories";
 import { pillLabel, SHARED_NOTICE_MS, UploadStatusPill } from "../src/components/UploadStatusPill";
 import { UploadRunner } from "../src/state/UploadRunner";
+import { UploadQueueScreen } from "../src/screens/create/UploadQueueScreen";
 import * as queue from "../src/state/uploadQueue";
 import type { UploadJob } from "../src/state/uploadQueue";
 
@@ -93,5 +94,53 @@ describe("uploads in the background", () => {
     await act(async () => { tree = create(<UploadRunner />); });
     await flush();
     expect(run.mock.calls.map((c) => c[1])).toEqual(["story_processingprocess", "story_queuedqueuedqueued"]);
+  });
+
+  it("continues a Story stopped part-way (the app was closed mid-upload) without a Retry", async () => {
+    jest.spyOn(queue, "listUploads").mockResolvedValue([job("queued", "story_queuedqueuedqueued"), job("uploading", "story_interruptedinterr", "2026-10-15T05:00:00.000Z")]);
+    jest.spyOn(queue, "uploadRunning").mockReturnValue(false);
+    const run = jest.spyOn(queue, "runUpload").mockResolvedValue();
+    await act(async () => { tree = create(<UploadRunner />); });
+    await flush();
+    expect(run.mock.calls.map((c) => c[1])).toEqual(["story_interruptedinterr"]);
+  });
+
+  it("tries a Story that failed on the network again when its backoff is up", async () => {
+    const failed = { ...job("failed", "story_networkfailednet"), networkFailure: true, autoRetries: 0, failedAt: Date.now() - 60_000 } as UploadJob;
+    jest.spyOn(queue, "listUploads").mockResolvedValue([failed]);
+    jest.spyOn(queue, "uploadRunning").mockReturnValue(false);
+    const run = jest.spyOn(queue, "runUpload").mockResolvedValue();
+    await act(async () => { tree = create(<UploadRunner />); });
+    await flush();
+    expect(run.mock.calls.map((c) => c[1])).toEqual(["story_networkfailednet"]);
+  });
+});
+
+describe("more than one Story needing attention", () => {
+  it("the pill shows how many", async () => {
+    jest.spyOn(queue, "listUploads").mockResolvedValue([job("failed", "story_failedonefailedo"), job("failed", "story_failedtwofailedt", "2026-10-15T05:00:00.000Z")]);
+    jest.spyOn(queue, "uploadRunning").mockReturnValue(false);
+    await act(async () => { tree = create(<UploadStatusPill top={40} />); });
+    await flush();
+    expect(tree.root.findAll((n) => n.props.accessibilityLabel === "2 Stories need attention").length).toBeGreaterThan(0);
+  });
+});
+
+describe("removing a Story from the uploads page", () => {
+  it("cancels it on the server too, so it doesn't post anyway", async () => {
+    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+    jest.spyOn(queue, "listUploads").mockResolvedValue([job("failed", "story_failedremovefail")]);
+    jest.spyOn(queue, "uploadRunning").mockReturnValue(false);
+    const cancel = jest.spyOn(queue, "cancelUpload").mockResolvedValue(true);
+    const remove = jest.spyOn(queue, "removeUpload").mockResolvedValue();
+    await act(async () => { tree = create(<UploadQueueScreen />); });
+    await flush();
+    const button = tree.root.findAll((n) => typeof n.props.onPress === "function" && n.findAllByType(Text).some((t) => t.props.children === "Remove"))[0]!;
+    await act(async () => button.props.onPress());
+    const buttons = alert.mock.calls.at(-1)![2] as Array<{ text: string; onPress?: () => unknown }>;
+    await act(async () => { await buttons.find((b) => b.text === "Remove")!.onPress?.(); });
+    await flush();
+    expect(cancel).toHaveBeenCalledWith(owner, "story_failedremovefail", "token");
+    expect(remove).not.toHaveBeenCalled();
   });
 });

@@ -5,6 +5,7 @@ import { colors, radii, spacing, typography } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { listBlockedUsers, unblockUser, type BlockedUser } from "../../api/users";
 import { EmptyState } from "../../components/EmptyState";
+import { LoadFailed } from "../../components/LoadFailed";
 import { Avatar } from "../../components/Avatar";
 
 const PAGE_SIZE = 30;
@@ -21,10 +22,18 @@ export function BlockedAccountsScreen(): React.JSX.Element {
   const [blocked, setBlocked] = useState<BlockedUser[] | null>(null);
   const [resolving, setResolving] = useState<Set<string>>(new Set());
 
+  const [loadFailed, setLoadFailed] = useState(false);
+
   const load = useCallback(async () => {
     if (!accessToken) return;
-    const { blocked: fetched } = await listBlockedUsers(accessToken, { limit: PAGE_SIZE });
-    setBlocked(fetched);
+    setLoadFailed(false);
+    try {
+      const { blocked: fetched } = await listBlockedUsers(accessToken, { limit: PAGE_SIZE });
+      setBlocked(fetched);
+    } catch {
+      // A list already on screen stays; with nothing to show, offer Try again instead of a spinner.
+      setLoadFailed(true);
+    }
   }, [accessToken]);
 
   useFocusEffect(
@@ -51,6 +60,7 @@ export function BlockedAccountsScreen(): React.JSX.Element {
   };
 
   if (blocked === null) {
+    if (loadFailed) return <LoadFailed message="Couldn't load your blocked accounts. Check your connection and try again." onRetry={() => void load()} />;
     return (
       <View style={styles.centered}>
         <ActivityIndicator color={colors.accent} />
