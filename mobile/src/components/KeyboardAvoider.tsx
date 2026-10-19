@@ -1,5 +1,5 @@
-import React from "react";
-import { KeyboardAvoidingView, type StyleProp, type ViewProps, type ViewStyle } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Keyboard, KeyboardAvoidingView, StyleSheet, View, type StyleProp, type ViewProps, type ViewStyle } from "react-native";
 
 type Props = Pick<ViewProps, "pointerEvents"> & {
   /**
@@ -27,15 +27,37 @@ type Props = Pick<ViewProps, "pointerEvents"> & {
  * sliding with it.
  */
 export function KeyboardAvoider({ topOffset = 0, behavior = "padding", style, contentContainerStyle, pointerEvents, children }: Props): React.JSX.Element {
+  // KeyboardAvoidingView owns its own paddingBottom (it sets it to the keyboard's height, 0 when
+  // closed), which silently dropped a sheet's room for Android's navigation bar: the comment box
+  // sat under the navigation buttons. That room is kept on an inner view, while the keyboard is shut.
+  const { paddingBottom, ...rest } = StyleSheet.flatten(style) ?? {};
+  const keyboardOpen = useKeyboardOpen(paddingBottom !== undefined);
   return (
     <KeyboardAvoidingView
       behavior={behavior}
       keyboardVerticalOffset={topOffset}
-      style={style}
+      style={paddingBottom === undefined ? style : rest}
       contentContainerStyle={contentContainerStyle}
       pointerEvents={pointerEvents}
     >
-      {children}
+      {paddingBottom === undefined ? children : (
+        <View style={[styles.inner, { paddingBottom: keyboardOpen ? 0 : paddingBottom }]} pointerEvents="box-none">{children}</View>
+      )}
     </KeyboardAvoidingView>
   );
 }
+
+function useKeyboardOpen(enabled: boolean): boolean {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!enabled) return;
+    const shown = Keyboard.addListener("keyboardDidShow", () => setOpen(true));
+    const hidden = Keyboard.addListener("keyboardDidHide", () => setOpen(false));
+    return () => { shown.remove(); hidden.remove(); };
+  }, [enabled]);
+  return open;
+}
+
+const styles = StyleSheet.create({
+  inner: { flexGrow: 1, flexShrink: 1 },
+});

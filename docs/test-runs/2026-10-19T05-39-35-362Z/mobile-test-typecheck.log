@@ -1,0 +1,11 @@
+__tests__/comments.test.tsx(101,42): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(predicate: (value: unknown[], index: number, array: unknown[][]) => value is unknown[], thisArg?: any): unknown[][]', gave the following error.
+    Argument of type '([e]: [string]) => boolean' is not assignable to parameter of type '(value: unknown[], index: number, array: unknown[][]) => value is unknown[]'.
+      Types of parameters '__0' and 'value' are incompatible.
+        Type 'unknown[]' is not assignable to type '[string]'.
+          Target requires 1 element(s) but source may have fewer.
+  Overload 2 of 2, '(predicate: (value: unknown[], index: number, array: unknown[][]) => unknown, thisArg?: any): unknown[][]', gave the following error.
+    Argument of type '([e]: [string]) => boolean' is not assignable to parameter of type '(value: unknown[], index: number, array: unknown[][]) => unknown'.
+      Types of parameters '__0' and 'value' are incompatible.
+        Type 'unknown[]' is not assignable to type '[string]'.
+          Target requires 1 element(s) but source may have fewer.

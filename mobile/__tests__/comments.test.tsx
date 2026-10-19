@@ -83,3 +83,22 @@ test("explains when only followers can comment", async () => {
   expect(texts()).toContain("Only followers can comment on this Story.");
   expect(tree.root.findAllByType(TextInput)).toHaveLength(0);
 });
+
+test("the comment box sits above Android's navigation bar, and on the keyboard while typing", async () => {
+  jest.spyOn(engagement, "listComments").mockResolvedValue({ comments: [], limit: 50, offset: 0 });
+  const { Keyboard, StyleSheet } = require("react-native");
+  const listen = jest.spyOn(Keyboard, "addListener");
+  await act(async () => {
+    tree = create(
+      <SafeAreaProvider initialMetrics={{ ...metrics, insets: { top: 0, left: 0, right: 0, bottom: 48 } }}>
+        <CommentsSheet visible storyId="s1" storyOwnerId="owner" commentsDisabled={false} onClose={jest.fn()} onCommentCountChange={jest.fn()} />
+      </SafeAreaProvider>,
+    );
+  });
+  await flush();
+  const room = () => tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && StyleSheet.flatten(n.props.style)?.flexShrink === 1 && StyleSheet.flatten(n.props.style)?.paddingBottom !== undefined)[0]!;
+  expect(StyleSheet.flatten(room().props.style).paddingBottom).toBeGreaterThanOrEqual(48);
+  const shown = listen.mock.calls.filter((call: unknown[]) => call[0] === "keyboardDidShow").at(-1)![1] as () => void;
+  await act(async () => shown());
+  expect(StyleSheet.flatten(room().props.style).paddingBottom).toBe(0);
+});

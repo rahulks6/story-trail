@@ -166,3 +166,16 @@ describe("music", () => {
     expect(enqueue.mock.calls[0]![4]).toMatchObject({ music: { trackId: "t1", startMs: 15_000, durationMs: 15_000 } });
   });
 });
+
+describe("the text tool over the editor", () => {
+  it("hides the editor's buttons, caption and share buttons while you type", async () => {
+    await open();
+    const visible = (label: string) => tree.root.findAll((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === label).length > 0;
+    expect(visible("Close editor")).toBe(true);
+    await act(async () => canvas().props.onResponderGrant(touchEvent([[200, 300]], 1)));
+    await act(async () => canvas().props.onResponderRelease(touchEvent([[200, 300]], 2)));
+    expect(textModalOpen()).toBe(true);
+    expect(visible("Close editor")).toBe(false);
+    expect(visible("Share to Close Friends")).toBe(false);
+  });
+});

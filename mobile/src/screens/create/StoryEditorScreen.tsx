@@ -641,7 +641,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         </>
       ) : null}
 
-      {!drawMode && !cropMode && !isDraggingOverlay ? (
+      {!drawMode && !cropMode && !isDraggingOverlay && !textModalVisible ? (
         <View style={[styles.topBar, { top: insets.top + spacing.md }]}>
           <Pressable onPress={onClose} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel="Close editor">
             <Icon style={styles.topIcon} name={ICONS.close} />
@@ -692,7 +692,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         </View>
       ) : null}
 
-      {music && !drawMode && !cropMode && !isDraggingOverlay ? (
+      {music && !drawMode && !cropMode && !isDraggingOverlay && !textModalVisible ? (
         <View style={[styles.musicChipRow, { top: insets.top + spacing.md + 56 }]} pointerEvents="box-none">
           <Pressable style={styles.musicChip} onPress={() => setMusicSheetVisible(true)} accessibilityRole="button" accessibilityLabel={`${music.track.title} by ${music.track.artist}. Change the part that plays`}>
             <Icon name={ICONS.music} size={14} color="#FFFFFF" />
@@ -707,7 +707,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         <MusicPlayer url={music.track.url} accessToken={accessToken} startMs={music.startMs} durationMs={music.durationMs} paused={!focused || musicSheetVisible || uploadState !== "idle"} />
       ) : null}
 
-      {!drawMode && !cropMode && !isDraggingOverlay ? (
+      {!drawMode && !cropMode && !isDraggingOverlay && !textModalVisible ? (
         // Lifted above the keyboard while the caption is typed (the canvas behind stays put).
         <KeyboardAvoider
           behavior="position"

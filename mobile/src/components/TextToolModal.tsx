@@ -118,18 +118,21 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
             <View style={styles.sliderTrack} />
             <View style={[styles.sliderThumb, { top: (1 - sliderFraction) * (SLIDER_HEIGHT - 22) }]} />
           </View>
-          <View style={[styles.inputBox, hasBackground && { backgroundColor: color, borderRadius: previewSize * 0.3, paddingHorizontal: previewSize * 0.35 }, { alignSelf: align === "left" ? "flex-start" : align === "right" ? "flex-end" : "center" }]}>
+          <View style={[styles.inputBox, hasBackground && { backgroundColor: color, borderRadius: previewSize * 0.28, paddingHorizontal: previewSize * 0.35, paddingVertical: previewSize * 0.12 }, { alignSelf: align === "left" ? "flex-start" : align === "right" ? "flex-end" : "center" }]}>
             <TextInput
               autoFocus
               multiline
               // Previews the chosen style, colour and size as it will appear on the Story.
-              style={[styles.input, { fontSize: previewSize, lineHeight: undefined }, textStyleLook(style, textColor), { color: textColor, textAlign: align }]}
+              style={[styles.input, { fontSize: previewSize }, textStyleLook(style, textColor), { color: textColor, textAlign: align }]}
               placeholder="Type something…"
               placeholderTextColor="rgba(255,255,255,0.6)"
               value={text}
               onChangeText={setText}
-              cursorColor={colors.accent}
-              selectionColor={colors.accent}
+              // A see-through highlight, so selecting text never paints over a coloured label.
+              cursorColor={textColor}
+              selectionColor="rgba(255,255,255,0.35)"
+              textAlignVertical="center"
+              scrollEnabled={false}
             />
           </View>
         </View>
@@ -200,7 +203,8 @@ const styles = StyleSheet.create({
   sliderTrack: { position: "absolute", top: 8, bottom: 8, width: 4, borderRadius: 2, backgroundColor: "rgba(255,255,255,0.6)" },
   sliderThumb: { position: "absolute", width: 22, height: 22, borderRadius: 11, backgroundColor: "#FFFFFF", borderWidth: 1, borderColor: "rgba(0,0,0,0.2)" },
   inputBox: { maxWidth: "100%", paddingHorizontal: 6, paddingVertical: 2 },
-  input: { minWidth: 40, padding: 0 },
+  // Android pads text for accents above and below; without it the label hugs the words.
+  input: { minWidth: 40, padding: 0, includeFontPadding: false },
   // A horizontal list must not grow to fill the screen (it stretched the style buttons into tall ovals).
   row: { flexGrow: 0, flexShrink: 0 },
   rowContent: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.sm },
