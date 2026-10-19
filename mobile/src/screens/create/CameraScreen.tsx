@@ -131,8 +131,19 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // The torch is set only once the camera is running: a torch (or zoom) command sent before
+  // that is refused with "Camera is not active", which showed "Camera unavailable" every time.
+  const [cameraStarted, setCameraStarted] = useState(false);
+  const torchOn = isRecording && flash === "on" && !!device?.hasTorch;
+  useEffect(() => {
+    if (!cameraStarted) return;
+    void camera.current?.controller?.setTorchMode(torchOn ? "on" : "off").catch(() => undefined);
+  }, [cameraStarted, torchOn]);
+
   const onCameraError = useCallback((error: Error) => {
     if (!activeRef.current) return;
+    // A command that reached the camera while it was starting or stopping: harmless, not a failure.
+    if (/not active|OperationCanceled/i.test(error?.message ?? "")) return;
     const now = Date.now();
     cameraErrors.current = [...cameraErrors.current.filter((t) => now - t < 10_000), now];
     if (cameraErrors.current.length <= 2) {
@@ -469,7 +480,8 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
           device={device}
           isActive={focused&&foreground}
           outputs={outputs}
-          torchMode={isRecording && flash === "on" && device.hasTorch ? "on" : "off"}
+          onStarted={() => setCameraStarted(true)}
+          onStopped={() => setCameraStarted(false)}
           onError={onCameraError}
         />
       </View>

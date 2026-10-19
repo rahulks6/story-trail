@@ -129,3 +129,22 @@ describe("starting the camera on a fresh install", () => {
     alert.mockRestore();
   });
 });
+
+describe("the camera starting on a real phone", () => {
+  it("never sends the torch a command before the camera runs, and shrugs off 'Camera is not active'", async () => {
+    const { Alert } = require("react-native");
+    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+    await render();
+    const cam = () => tree.root.find((n: ReactTestInstance) => (n.type as unknown) === "Camera");
+    // Sent by the library as the camera object appears: this was the "Camera unavailable" every time.
+    expect(cam().props.torchMode).toBeUndefined();
+    const before = cam().instance ?? cam();
+    for (let i = 0; i < 5; i++) {
+      await act(async () => cam().props.onError(new Error("androidx.camera.core.CameraControl$OperationCanceledException: Camera is not active.")));
+    }
+    expect(alert).not.toHaveBeenCalled();
+    // Not restarted either.
+    expect(cam().instance ?? cam()).toBe(before);
+    alert.mockRestore();
+  });
+});
