@@ -136,9 +136,10 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [filterToastName, setFilterToastName] = useState<string | null>(null);
   // The photo as it will be published: the filter applied on the phone with the server's own
-  // arithmetic (utils/filterPhoto.ts). Until a preview is ready the previous one stays on screen.
-  const [photoPreviewUri, setPhotoPreviewUri] = useState(mediaUri);
-  const [photoPreviewFailed, setPhotoPreviewFailed] = useState(false);
+  // arithmetic (utils/filterPhoto.ts). It takes a moment per filter, so while it is worked out
+  // the photo shows the filter's light tint at once and the exact picture fades in over it.
+  const [processedPhoto, setProcessedPhoto] = useState<{ filter: string; uri: string } | null>(null);
+  const [shownProcessedFilter, setShownProcessedFilter] = useState<string | null>(null);
 
   const nextZIndex = useRef(1);
   const filterToastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -151,22 +152,27 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   }, []);
 
   useEffect(() => {
-    if (kind !== "photo") return;
+    if (kind !== "photo" || draft.filter === "Original") return;
     let cancelled = false;
-    filteredPhotoUri(mediaUri, filterKey(draft.filter) as FilterKey, PREVIEW_EDGE)
-      .then((uri) => {
-        if (cancelled) return;
-        setPhotoPreviewUri(uri);
-        setPhotoPreviewFailed(false);
-      })
-      .catch(() => {
-        if (cancelled) return;
-        // Couldn't process it on this phone: show the photo with the filter's tint instead.
-        setPhotoPreviewUri(mediaUri);
-        setPhotoPreviewFailed(true);
-      });
+    const filter = draft.filter;
+    const index = FILTER_PREVIEWS.findIndex((f) => f.name === filter);
+    const neighbour = (step: number) => FILTER_PREVIEWS[(index + step + FILTER_PREVIEWS.length) % FILTER_PREVIEWS.length]!.name;
+    // Wait for swiping to settle, then work out this filter and get the ones either side ready.
+    const timer = setTimeout(() => {
+      filteredPhotoUri(mediaUri, filterKey(filter) as FilterKey, PREVIEW_EDGE)
+        .then((uri) => {
+          if (cancelled) return;
+          setProcessedPhoto({ filter, uri });
+          for (const next of [neighbour(1), neighbour(-1)]) {
+            void filteredPhotoUri(mediaUri, filterKey(next) as FilterKey, PREVIEW_EDGE).catch(() => undefined);
+          }
+        })
+        // Couldn't process it on this phone: the tint stays on.
+        .catch(() => undefined);
+    }, 150);
     return () => {
       cancelled = true;
+      clearTimeout(timer);
     };
   }, [kind, mediaUri, draft.filter]);
 
@@ -507,11 +513,27 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
     <View style={styles.container}>
       <View style={styles.mediaContainer} onLayout={onContainerLayout}>
         {kind === "photo" ? (
-          <Image
-            source={{ uri: photoPreviewUri }}
-            style={[StyleSheet.absoluteFill, mediaTransformStyle(draft.crop, containerSize.width, containerSize.height)]}
-            resizeMode="cover"
-          />
+          <>
+            <Image
+              source={{ uri: mediaUri }}
+              style={[StyleSheet.absoluteFill, mediaTransformStyle(draft.crop, containerSize.width, containerSize.height)]}
+              resizeMode="cover"
+            />
+            {processedPhoto && processedPhoto.filter === draft.filter ? (
+              <Image
+                key={processedPhoto.uri}
+                source={{ uri: processedPhoto.uri }}
+                onLoad={() => setShownProcessedFilter(processedPhoto.filter)}
+                fadeDuration={0}
+                style={[
+                  StyleSheet.absoluteFill,
+                  mediaTransformStyle(draft.crop, containerSize.width, containerSize.height),
+                  shownProcessedFilter === processedPhoto.filter ? null : styles.hidden,
+                ]}
+                resizeMode="cover"
+              />
+            ) : null}
+          </>
         ) : (
           <Video
             source={{ uri: mediaUri }}
@@ -524,7 +546,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           />
         )}
 
-        {activeFilter.overlayOpacity > 0 && (kind === "video" || photoPreviewFailed) ? (
+        {activeFilter.overlayOpacity > 0 && (kind === "video" || shownProcessedFilter !== draft.filter) ? (
           <View
             pointerEvents="none"
             style={[StyleSheet.absoluteFill, { backgroundColor: activeFilter.overlayColor, opacity: activeFilter.overlayOpacity }]}
@@ -563,7 +585,8 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         ) : null}
 
         {containerSize.width > 0 && !drawMode && !cropMode
-          ? draft.overlays.map((overlay) => (
+          ? // The text being edited is shown only in the text tool, never twice.
+            draft.overlays.filter((o) => !(textModalVisible && o.id === editingOverlayId)).map((overlay) => (
               <DraggableCanvasObject
                 key={overlay.id}
                 overlay={overlay}
@@ -894,6 +917,7 @@ const styles = StyleSheet.create({
   guideHorizontal: { position: "absolute", left: 0, right: 0, top: "50%", height: 1, marginTop: -0.5, backgroundColor: "rgba(80,190,255,0.9)" },
   trashZoneActive: { backgroundColor: colors.danger, transform: [{ scale: 1.25 }] },
   trashIcon: { fontSize: 28, color: colors.textPrimary },
+  hidden: { opacity: 0 },
   filterToast: {
     position: "absolute",
     alignSelf: "center",

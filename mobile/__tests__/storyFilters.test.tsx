@@ -75,6 +75,30 @@ describe("filter maths", () => {
     expect([padded[3], padded[7]]).toEqual([9, 9]);
     expect([padded[4], padded[5], padded[6]]).toEqual(expected("vintage", [200, 120, 90]));
   });
+
+  it("matches the server's arithmetic exactly on every filter (the fast loop changes nothing)", () => {
+    // backend/src/modules/media/filters.ts applyToPixels, as written there.
+    const server = (pixels: Uint8Array, t: ReturnType<typeof colorTransform>) => {
+      const table = new Float32Array(9 * 256);
+      for (let k = 0; k < 9; k++) for (let v = 0; v < 256; v++) table[k * 256 + v] = ((t.matrix[k] ?? 0) * v) / 255;
+      for (let i = 0; i + 2 < pixels.length; i += 3) {
+        const r = pixels[i]!, gr = pixels[i + 1]!, b = pixels[i + 2]!;
+        for (let ch = 0; ch < 3; ch++) {
+          const v = table[ch * 768 + r]! + table[ch * 768 + 256 + gr]! + table[ch * 768 + 512 + b]! + (t.offset[ch] ?? 0);
+          pixels[i + ch] = v <= 0 ? 0 : v >= 1 ? 255 : Math.round(v * 255);
+        }
+      }
+    };
+    const source = Uint8Array.from({ length: 3 * 4096 }, (_, i) => (i * 97 + (i >> 3) * 31) % 256);
+    for (const key of Object.keys(RECIPES) as FilterKey[]) {
+      const t = colorTransform(RECIPES[key]);
+      const phone = source.slice();
+      const reference = source.slice();
+      applyToPixels(phone, 64, 64, "RGB", t);
+      server(reference, t);
+      expect(phone).toEqual(reference);
+    }
+  });
 });
 
 describe("photo orientation", () => {

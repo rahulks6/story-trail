@@ -3,7 +3,7 @@ import { Keyboard, Modal, PanResponder, Platform, Pressable, ScrollView, StyleSh
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { mediaColors as colors, radii, spacing, ICONS } from "../theme";
 import { Icon } from "./Icon";
-import { contrastOn, STYLE_LABELS, TEXT_STYLES, textStyleLook } from "./textLook";
+import { contrastOn, neonCore, neonRadius, STYLE_LABELS, TEXT_STYLES, textStyleLook } from "./textLook";
 import type { TextOverlayProperties, TextStyle } from "../models/storyDraft";
 import { tapFeedback } from "../utils/haptics";
 
@@ -13,6 +13,8 @@ const ALIGNS: TextOverlayProperties["align"][] = ["center", "left", "right"];
 const MIN_SIZE = 0.025;
 const MAX_SIZE = 0.1;
 const DEFAULT_SIZE = 0.045;
+/** The Neon chip glows pink whatever colour is chosen, so it always looks like neon. */
+const NEON_CHIP_GLOW = "#FF3EA5";
 const SLIDER_HEIGHT = 200;
 
 interface Props {
@@ -43,6 +45,8 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
   const insets = useSafeAreaInsets();
 
   const textColor = hasBackground ? contrastOn(color) : color;
+  // Neon glows only without a label; on a label it is plain text, as on the Story.
+  const neon = style === "Highlight" && !hasBackground;
   const done = () => {
     if (!text.trim()) {
       onCancel();
@@ -123,7 +127,15 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
               autoFocus
               multiline
               // Previews the chosen style, colour and size as it will appear on the Story.
-              style={[styles.input, { fontSize: previewSize }, textStyleLook(style, textColor), { color: textColor, textAlign: align }]}
+              style={[
+                styles.input,
+                { fontSize: previewSize },
+                textStyleLook(style, textColor, previewSize),
+                { color: neon ? neonCore(textColor) : textColor, textAlign: align },
+                // Room for the glow, which Android cuts off at the text's edges.
+                neon && { padding: neonRadius(previewSize) },
+                style === "Highlight" && !neon && { textShadowRadius: 0 },
+              ]}
               placeholder="Type something…"
               placeholderTextColor="rgba(255,255,255,0.6)"
               value={text}
@@ -149,7 +161,7 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
                 accessibilityState={{ selected: style === s }}
               >
                 {/* Each name is written in its own style, so you see the look before choosing. */}
-                <Text style={[styles.styleChipLabel, textStyleLook(s, style === s ? colors.background : colors.textPrimary), style === s && styles.styleChipLabelActive]} numberOfLines={1}>
+                <Text style={[styles.styleChipLabel, textStyleLook(s, s === "Highlight" ? NEON_CHIP_GLOW : style === s ? colors.background : colors.textPrimary, 15), s === "Highlight" && styles.neonChipLabel, style === s && styles.styleChipLabelActive]} numberOfLines={1}>
                   {STYLE_LABELS[s]}
                 </Text>
               </Pressable>
@@ -214,4 +226,5 @@ const styles = StyleSheet.create({
   styleChipActive: { backgroundColor: colors.textPrimary },
   styleChipLabel: { color: colors.textPrimary, fontSize: 15 },
   styleChipLabelActive: { color: colors.background },
+  neonChipLabel: { textShadowRadius: 6 },
 });

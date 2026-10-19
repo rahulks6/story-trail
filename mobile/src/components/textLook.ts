@@ -46,10 +46,28 @@ export function fontLook(style: TextStyle): RNTextStyle {
   return look;
 }
 
-/** Font plus effect, for text of `color`: Neon glows in its colour; Outline gets a hard shadow (the editor's preview; the Story draws a full outline). */
-export function textStyleLook(style: TextStyle, color = "#FFFFFF"): RNTextStyle {
+/** Neon's glow radius for text of `fontSize`: Android draws no blur wider than 25. */
+export function neonRadius(fontSize: number): number {
+  return Math.min(25, Math.max(6, fontSize * 0.4));
+}
+
+/** Neon's bright core: the glow colour washed towards white, like a lit tube. */
+export function neonCore(hex: string): string {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex);
+  if (!m) return "#FFFFFF";
+  const n = parseInt(m[1]!, 16);
+  const mix = (c: number) => Math.round(c + (255 - c) * 0.7).toString(16).padStart(2, "0");
+  return `#${mix((n >> 16) & 255)}${mix((n >> 8) & 255)}${mix(n & 255)}`.toUpperCase();
+}
+
+/**
+ * Font plus effect, for text of `color` at `fontSize`: Neon is a light core glowing in the colour
+ * (callers pad the text by neonRadius so the glow isn't cut off at its edges); Outline gets a hard
+ * shadow (the editor's preview; the Story draws a full outline). The text colour is the caller's.
+ */
+export function textStyleLook(style: TextStyle, color = "#FFFFFF", fontSize = 30): RNTextStyle {
   const look = fontLook(style);
-  if (style === "Highlight") Object.assign(look, { textShadowColor: color, textShadowRadius: 14, textShadowOffset: { width: 0, height: 0 } });
+  if (style === "Highlight") Object.assign(look, { textShadowColor: color, textShadowRadius: neonRadius(fontSize), textShadowOffset: { width: 0, height: 0 } });
   if (style === "Outline") Object.assign(look, { textShadowColor: contrastOn(color), textShadowRadius: 2, textShadowOffset: { width: 1.5, height: 1.5 } });
   return look;
 }

@@ -112,20 +112,19 @@ export function applyToPixels(bytes: Uint8Array, width: number, height: number, 
   const rowBytes = Math.floor(bytes.length / height);
   const table = new Float32Array(9 * 256);
   for (let k = 0; k < 9; k++) for (let v = 0; v < 256; v++) table[k * 256 + v] = (at(t.matrix, k) * v) / 255;
-  const offset = [at(t.offset, 0), at(t.offset, 1), at(t.offset, 2)];
-  const out = [0, 0, 0];
+  const o0 = at(t.offset, 0), o1 = at(t.offset, 1), o2 = at(t.offset, 2);
+  const { r: lr, g: lg, b: lb, size } = layout;
+  // Unrolled for speed on the phone (a 1080p photo is ~1.5M pixels); same sums, in the same order.
   for (let y = 0; y < height; y++) {
-    const row = y * rowBytes;
-    for (let x = 0; x < width; x++) {
-      const i = row + x * layout.size;
-      const r = bytes[i + layout.r] ?? 0, g = bytes[i + layout.g] ?? 0, b = bytes[i + layout.b] ?? 0;
-      for (let ch = 0; ch < 3; ch++) {
-        const v = (table[ch * 768 + r] ?? 0) + (table[ch * 768 + 256 + g] ?? 0) + (table[ch * 768 + 512 + b] ?? 0) + (offset[ch] ?? 0);
-        out[ch] = v <= 0 ? 0 : v >= 1 ? 255 : Math.round(v * 255);
-      }
-      bytes[i + layout.r] = out[0] ?? 0;
-      bytes[i + layout.g] = out[1] ?? 0;
-      bytes[i + layout.b] = out[2] ?? 0;
+    const end = y * rowBytes + width * size;
+    for (let i = y * rowBytes; i < end; i += size) {
+      const r = bytes[i + lr]!, g = bytes[i + lg]! + 256, b = bytes[i + lb]! + 512;
+      const v0 = table[r]! + table[g]! + table[b]! + o0;
+      const v1 = table[768 + r]! + table[768 + g]! + table[768 + b]! + o1;
+      const v2 = table[1536 + r]! + table[1536 + g]! + table[1536 + b]! + o2;
+      bytes[i + lr] = v0 <= 0 ? 0 : v0 >= 1 ? 255 : Math.round(v0 * 255);
+      bytes[i + lg] = v1 <= 0 ? 0 : v1 >= 1 ? 255 : Math.round(v1 * 255);
+      bytes[i + lb] = v2 <= 0 ? 0 : v2 >= 1 ? 255 : Math.round(v2 * 255);
     }
   }
 }

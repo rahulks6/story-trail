@@ -42,6 +42,18 @@ describe("the text tool", () => {
     expect(onDone.mock.calls[0]![1]).toMatchObject({ backgroundColor: "#F5B400", color: "#000000" });
   });
 
+  it("makes Neon a bright core glowing in the chosen colour, with room so the glow isn't cut off", () => {
+    press("Show colours");
+    press("Text colour #FF5DA2");
+    press("Show text styles");
+    press("Neon text style");
+    const style = inputStyle();
+    expect(style.textShadowColor).toBe("#FF5DA2");
+    expect(style.textShadowRadius).toBeGreaterThanOrEqual(6);
+    expect(style.color).not.toBe("#FF5DA2"); // the washed-out core
+    expect(style.padding).toBe(style.textShadowRadius);
+  });
+
   it("closes without adding anything when Done is tapped with no text", () => {
     const onCancel = jest.fn();
     const onDone = jest.fn();

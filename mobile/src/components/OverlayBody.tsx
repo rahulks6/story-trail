@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import type { Overlay } from "../models/storyDraft";
-import { contrastOn, textStyleLook } from "./textLook";
+import { contrastOn, neonCore, neonRadius, textStyleLook } from "./textLook";
 import { mediaColors as colors, radii } from "../theme";
 
 export /** Text wraps within this fraction of the container's own width (spec: "auto-wrap ... text") rather than growing indefinitely off-canvas. */
@@ -42,7 +42,17 @@ export function OverlayBody({
     case "text": {
       const { properties } = overlay;
       const fontSize = properties.fontSize * containerHeight;
-      const textStyle = [styles.text, { color: properties.color, fontSize, textAlign: properties.align }, textStyleLook(properties.style, properties.color)];
+      // Neon (stored as "Highlight") glows only without a label; on a label it is plain text.
+      const neon = properties.style === "Highlight" && properties.backgroundColor === null;
+      const glow = neonRadius(fontSize);
+      const textStyle = [
+        styles.text,
+        { color: neon ? neonCore(properties.color) : properties.color, fontSize, textAlign: properties.align },
+        textStyleLook(properties.style, properties.color, fontSize),
+        // Room for the glow, which Android cuts off at the text's edges.
+        neon && { padding: glow },
+        properties.style === "Highlight" && !neon && { textShadowRadius: 0 },
+      ];
       // A background is a solid label in the chosen colour (Instagram's "A" box).
       const backgroundStyle = properties.backgroundColor !== null
         ? { backgroundColor: properties.backgroundColor, paddingHorizontal: fontSize * 0.35, paddingVertical: fontSize * 0.12, borderRadius: fontSize * 0.3 }
@@ -52,7 +62,7 @@ export function OverlayBody({
       const outline = properties.style === "Outline" && properties.backgroundColor === null;
       const w = Math.max(1.5, fontSize * 0.07);
       return (
-        <View style={[{ maxWidth: containerWidth * TEXT_MAX_WIDTH_FRACTION }, backgroundStyle]}>
+        <View style={[{ maxWidth: containerWidth * TEXT_MAX_WIDTH_FRACTION + (neon ? glow * 2 : 0) }, backgroundStyle]}>
           {outline
             ? OUTLINE_OFFSETS.map(([dx, dy], i) => (
                 <Text key={i} style={[...textStyle, styles.outlineCopy, { color: contrastOn(properties.color), textShadowRadius: 0, transform: [{ translateX: dx * w }, { translateY: dy * w }] }]} accessible={false} importantForAccessibility="no">
@@ -60,7 +70,13 @@ export function OverlayBody({
                 </Text>
               ))
             : null}
-          <Text style={[...textStyle, outline && { textShadowRadius: 0 }]}>{properties.text}</Text>
+          {/* A second, wider glow behind the text, so the colour reads on any photo. */}
+          {neon ? (
+            <Text style={[...textStyle, styles.outlineCopy, { color: properties.color }]} accessible={false} importantForAccessibility="no">
+              {properties.text}
+            </Text>
+          ) : null}
+          <Text style={[...textStyle, outline && { textShadowRadius: 0 }, neon && { textShadowRadius: glow * 0.5 }]}>{properties.text}</Text>
         </View>
       );
     }
