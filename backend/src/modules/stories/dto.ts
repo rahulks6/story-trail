@@ -19,6 +19,20 @@ export interface PublishStoryInput {
   filter: string;
   audioMuted: boolean;
   crop: StoryCrop;
+  /** A song from the catalogue and the part of it that plays (checked against the track in stories.service). */
+  music?: { trackId: string; startMs: number; durationMs: number } | null;
+}
+
+function parseMusic(raw: unknown, errors: Record<string, string>): PublishStoryInput["music"] {
+  if (raw === undefined || raw === null) return null;
+  const m = raw as Record<string, unknown>;
+  if (typeof m !== "object" || typeof m.trackId !== "string" || !UUID.test(m.trackId)) {
+    errors.music = "music needs a trackId.";
+    return null;
+  }
+  const startMs = isFiniteNumber(m.startMs) ? Math.max(0, Math.round(m.startMs)) : 0;
+  const durationMs = isFiniteNumber(m.durationMs) ? Math.round(m.durationMs) : 15_000;
+  return { trackId: m.trackId, startMs, durationMs };
 }
 
 const DEFAULT_CROP: StoryCrop = { zoom: 1, offsetX: 0, offsetY: 0 };
@@ -190,6 +204,8 @@ export function parsePublishStoryInput(body: unknown): PublishStoryInput {
   const audioMuted = b.audioMuted === undefined ? false : b.audioMuted;
   if (typeof audioMuted !== "boolean") errors.audioMuted = "audioMuted must be a boolean.";
 
+  const music = parseMusic(b.music, errors);
+
   if (Object.keys(errors).length > 0) throw new ValidationError(errors);
   return {
     mediaId,
@@ -203,6 +219,7 @@ export function parsePublishStoryInput(body: unknown): PublishStoryInput {
     filter,
     audioMuted: audioMuted as boolean,
     crop: parseCrop(b.crop),
+    ...(music ? { music } : {}),
   };
 }
 

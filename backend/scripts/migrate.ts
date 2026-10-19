@@ -118,6 +118,7 @@ function main(): void {
   }
 
   console.log(ranAny ? "Migrations complete." : "Nothing to do — schema is up to date.");
+  syncMusicCatalogue();
 
   // Production (infra/): the API and worker connect as this role, not as the schema owner.
   const runtimeUser = process.env.DB_RUNTIME_USER;
@@ -125,6 +126,38 @@ function main(): void {
     grantRuntimeRole(runtimeUser, process.env.DB_RUNTIME_PASSWORD ?? "");
     console.log(`Runtime role ${runtimeUser}: login and grants applied.`);
   }
+}
+
+/**
+ * Katkee's songs (migrations/music/catalogue.json) are brought into music_tracks on every
+ * migrate: new ones added, changed ones updated, and ones taken out of the file hidden from the
+ * picker (Stories that already use them keep playing). The audio files are uploaded to the
+ * media bucket separately, at each track's storageKey.
+ */
+function syncMusicCatalogue(): void {
+  const file = path.join(MIGRATIONS_DIR, "music", "catalogue.json");
+  if (!fs.existsSync(file)) return;
+  const tracks = JSON.parse(fs.readFileSync(file, "utf8")) as unknown[];
+  if (!Array.isArray(tracks)) throw new Error("music/catalogue.json must be a list");
+  const json = JSON.stringify(tracks);
+  const tag = "catalogue_" + Math.random().toString(36).slice(2);
+  if (json.includes(tag)) throw new Error("Catalogue quoting clash");
+  psqlExec(`
+    WITH c AS (
+      SELECT * FROM jsonb_to_recordset($${tag}$${json}$${tag}$::jsonb)
+        AS x(id uuid, title text, artist text, mood text, "durationMs" integer, "storageKey" text, "mimeType" text, "byteSize" bigint,
+             license text, "licenseUrl" text, attribution text, "sourceUrl" text)),
+    up AS (
+      INSERT INTO music_tracks (id, title, artist, mood, duration_ms, storage_key, mime_type, byte_size, license, license_url, attribution, source_url, active)
+      SELECT id, title, artist, coalesce(mood, ''), "durationMs", "storageKey", coalesce("mimeType", 'audio/mpeg'), "byteSize", license, "licenseUrl",
+             attribution, coalesce("sourceUrl", ''), true FROM c
+      ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, artist = EXCLUDED.artist, mood = EXCLUDED.mood, duration_ms = EXCLUDED.duration_ms,
+        storage_key = EXCLUDED.storage_key, mime_type = EXCLUDED.mime_type, byte_size = EXCLUDED.byte_size, license = EXCLUDED.license,
+        license_url = EXCLUDED.license_url, attribution = EXCLUDED.attribution, source_url = EXCLUDED.source_url, active = true
+      RETURNING id)
+    UPDATE music_tracks SET active = false WHERE id NOT IN (SELECT id FROM c) AND active;
+  `);
+  console.log(`Music catalogue: ${tracks.length} tracks.`);
 }
 
 main();

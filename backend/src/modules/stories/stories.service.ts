@@ -18,6 +18,9 @@ import type { PublishStoryInput } from "./dto";
 import type { StoryOverlay, DrawStroke, FilterKey, StoryCrop } from "./overlays";
 import { deliveryFor, type MediaDelivery } from "../media/delivery";
 import type { MediaRecord } from "../media/media.repository";
+import * as musicRepo from "../music/music.repository";
+import { trackUrl, validateStoryMusic } from "../music/music.service";
+import type { MusicTrack } from "../music/music.repository";
 
 export interface PublicStory {
   id: string;
@@ -42,6 +45,28 @@ export interface PublicStory {
   crop: StoryCrop;
   /** Ready-to-use URLs for this viewer (thumbnail, full-screen image/poster, video renditions). */
   media: MediaDelivery | null;
+  /** The song that plays, which part, and the credit its licence asks for; null without one. */
+  music: StoryMusicView | null;
+}
+
+export interface StoryMusicView {
+  trackId: string;
+  title: string;
+  artist: string;
+  attribution: string;
+  license: string;
+  licenseUrl: string;
+  url: string;
+  startMs: number;
+  durationMs: number;
+}
+
+function musicView(story: StoryRecord, track: MusicTrack | null | undefined): StoryMusicView | null {
+  if (!story.music || !track) return null;
+  return {
+    trackId: track.id, title: track.title, artist: track.artist, attribution: track.attribution, license: track.license,
+    licenseUrl: track.licenseUrl, url: trackUrl(track), startMs: story.music.startMs, durationMs: story.music.durationMs,
+  };
 }
 
 /**
@@ -77,8 +102,9 @@ async function resolveOverlaysForViewer(overlays: StoryOverlay[], viewerId: stri
   return resolved;
 }
 
-async function toPublicStory(story: StoryRecord, viewerId: string, preloaded?: MediaRecord | null): Promise<PublicStory> {
+async function toPublicStory(story: StoryRecord, viewerId: string, preloaded?: MediaRecord | null, tracks?: Map<string, MusicTrack>): Promise<PublicStory> {
   const media = preloaded === undefined ? await mediaRepo.findMediaById(story.mediaId) : preloaded;
+  const track = story.music ? (tracks ?? (await musicRepo.findTracksByIds([story.music.trackId]))).get(story.music.trackId) : null;
   return {
     id: story.id,
     ownerId: story.ownerId,
@@ -97,13 +123,17 @@ async function toPublicStory(story: StoryRecord, viewerId: string, preloaded?: M
     audioMuted: story.audioMuted,
     crop: story.crop,
     media: media ? deliveryFor(media, story.ownerId === viewerId) : null,
+    music: musicView(story, track),
   };
 }
 
 /** Lists: one media query for every Story instead of one each. */
 async function toPublicStories(stories: StoryRecord[], viewerId: string): Promise<PublicStory[]> {
-  const media = await mediaRepo.findMediaByIds(stories.map((s) => s.mediaId));
-  return Promise.all(stories.map((s) => toPublicStory(s, viewerId, media.get(s.mediaId) ?? null)));
+  const [media, tracks] = await Promise.all([
+    mediaRepo.findMediaByIds(stories.map((s) => s.mediaId)),
+    musicRepo.findTracksByIds(stories.flatMap((s) => (s.music ? [s.music.trackId] : []))),
+  ]);
+  return Promise.all(stories.map((s) => toPublicStory(s, viewerId, media.get(s.mediaId) ?? null, tracks)));
 }
 
 function isActive(story: StoryRecord): boolean {
@@ -123,6 +153,8 @@ export async function publishStory(
 ): Promise<PublicStory> {
   await assertCanContribute(ownerId);
   await assertLinksAllowed(captionText(input), "caption", ownerId);
+  // The song must be in the catalogue; the part that plays is kept within it.
+  if (input.music) input = { ...input, music: await validateStoryMusic(input.music) };
   if(input.requestId){
     const result=await requestPublish(ownerId,input,options);
     if(result.state==='published')return result.story;
@@ -156,6 +188,7 @@ export async function publishStory(
     filter: input.filter as FilterKey,
     audioMuted: input.audioMuted,
     crop: input.crop,
+    music: input.music ?? null,
   });
   return toPublicStory(story, ownerId);
 }
@@ -179,6 +212,7 @@ export type PublishResult =
 export async function requestPublish(ownerId: string, input: PublishStoryInput, options: { ttlSecondsOverride?: number } = {}): Promise<PublishResult> {
   if (!input.requestId) return { state: "published", story: await publishStory(ownerId, input, options) };
   await assertCanContribute(ownerId);
+  if (input.music) input = { ...input, music: await validateStoryMusic(input.music) };
   const hash = createHash("sha256").update(JSON.stringify(input)).digest("hex");
   let outcome: storiesRepo.PublishRequestOutcome;
   try {
@@ -195,7 +229,7 @@ export async function requestPublish(ownerId: string, input: PublishStoryInput, 
     throw e;
   }
   if (outcome.state === "failed") throw new MediaFailedError(outcome.error ?? "This media couldn't be processed.", outcome.retryable === true);
-  if (outcome.state === "waiting") return { state: "processing", requestId: input.requestId, mediaId: input.mediaId };
+  if (outcome.state === "waiting") return { state: "processing", requestId: input.requestId!, mediaId: input.mediaId };
   const story = outcome.storyId ? await storiesRepo.findStoryById(outcome.storyId) : null;
   if (!story) throw new HttpError(404, "Story or media unavailable.");
   return { state: "published", story: await toPublicStory(story, ownerId) };

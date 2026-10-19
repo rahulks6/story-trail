@@ -7,7 +7,7 @@ export type Audience = "public" | "followers" | "close_friends";
 export type CommentSetting = "everyone" | "followers" | "disabled";
 
 const STORY_COLUMNS =
-  "id, owner_id, media_id, caption, audience, allow_comments, allow_sharing, created_at, expires_at, deleted_at, overlays, drawing, filter, audio_muted, crop";
+  "id, owner_id, media_id, caption, audience, allow_comments, allow_sharing, created_at, expires_at, deleted_at, overlays, drawing, filter, audio_muted, crop, music";
 
 const DEFAULT_CROP: StoryCrop = { zoom: 1, offsetX: 0, offsetY: 0 };
 
@@ -27,6 +27,8 @@ export interface StoryRecord {
   filter: FilterKey;
   audioMuted: boolean;
   crop: StoryCrop;
+  /** The song that plays with the Story, and which part of it. */
+  music: { trackId: string; startMs: number; durationMs: number } | null;
 }
 
 function parseJsonArray<T>(raw: string | null | undefined): T[] {
@@ -69,7 +71,18 @@ function mapRow(row: Row): StoryRecord {
     filter: (row.filter as FilterKey) ?? "original",
     audioMuted: row.audio_muted === "t",
     crop: parseCropJson(row.crop),
+    music: parseMusicJson(row.music),
   };
+}
+
+function parseMusicJson(raw: unknown): StoryRecord["music"] {
+  if (!raw) return null;
+  try {
+    const m = (typeof raw === "string" ? JSON.parse(raw) : raw) as { trackId?: unknown; startMs?: unknown; durationMs?: unknown };
+    return typeof m.trackId === "string" ? { trackId: m.trackId, startMs: Number(m.startMs) || 0, durationMs: Number(m.durationMs) || 15_000 } : null;
+  } catch {
+    return null;
+  }
 }
 
 export async function createStory(input: {
@@ -85,10 +98,12 @@ export async function createStory(input: {
   filter: FilterKey;
   audioMuted: boolean;
   crop: StoryCrop;
+  music?: { trackId: string; startMs: number; durationMs: number } | null;
 }): Promise<StoryRecord> {
   const row = await queryOne(
-    `INSERT INTO stories (owner_id, media_id, caption, audience, allow_comments, allow_sharing, expires_at, overlays, drawing, filter, audio_muted, crop)
-     VALUES (:'owner_id', :'media_id', :'caption', :'audience', :'allow_comments', :'allow_sharing', :'expires_at', :'overlays'::jsonb, :'drawing'::jsonb, :'filter', :'audio_muted', :'crop'::jsonb)
+    `INSERT INTO stories (owner_id, media_id, caption, audience, allow_comments, allow_sharing, expires_at, overlays, drawing, filter, audio_muted, crop, music)
+     VALUES (:'owner_id', :'media_id', :'caption', :'audience', :'allow_comments', :'allow_sharing', :'expires_at', :'overlays'::jsonb, :'drawing'::jsonb, :'filter', :'audio_muted', :'crop'::jsonb,
+             NULLIF(:'music', '')::jsonb)
      RETURNING ${STORY_COLUMNS}`,
     {
       owner_id: input.ownerId,
@@ -103,6 +118,7 @@ export async function createStory(input: {
       filter: input.filter,
       audio_muted: input.audioMuted,
       crop: JSON.stringify(input.crop),
+      music: input.music ? JSON.stringify(input.music) : "",
     },
   ).catch(error=>{if(error instanceof DatabaseError&&error.detail.includes('unique constraint'))throw new HttpError(409,'This media has already been published as a Story.');throw error;});
   if (!row) throw new Error("Insert did not return a row");

@@ -11,6 +11,7 @@ import { registerUserRoutes } from "./modules/users/users.routes";
 import { registerSocialRoutes } from "./modules/social/social.routes";
 import { registerSearchRoutes } from "./modules/search/search.routes";
 import { registerMediaRoutes } from "./modules/media/media.routes";
+import { registerMusicRoutes } from "./modules/music/music.routes";
 import { registerStoriesRoutes } from "./modules/stories/stories.routes";
 import { registerEngagementRoutes } from "./modules/stories/engagement.routes";
 import { registerEventsRoutes } from "./modules/recommendations/events.routes";
@@ -71,6 +72,7 @@ export function buildApp(providers?:ProviderGateway): KatkeeServer {
   registerSocialRoutes(router);
   registerSearchRoutes(router);
   registerMediaRoutes(router);
+  registerMusicRoutes(router);
   registerStoriesRoutes(router);
   registerEngagementRoutes(router);
   registerEventsRoutes(router);
