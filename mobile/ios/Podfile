@@ -12,6 +12,8 @@ prepare_react_native_project!
 # @react-native-firebase (push notifications) requires static frameworks; USE_FRAMEWORKS
 # can still override the linkage.
 $RNFirebaseAsStaticFramework = true
+# Firebase through CocoaPods, not Swift Package Manager: SPM's copies collide with static linkage.
+$RNFirebaseDisableSPM = true
 linkage = ENV['USE_FRAMEWORKS'] || 'static'
 Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
 use_frameworks! :linkage => linkage.to_sym

@@ -28,9 +28,9 @@ jobs:
       run:
         working-directory: mobile
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -106,7 +106,7 @@ jobs:
 
       - name: Build log
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: xcodebuild-log
           path: mobile/ios/xcodebuild.log
@@ -114,7 +114,7 @@ jobs:
 
       - name: Simulator app
         if: inputs.mode == 'simulator'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: KatkeeMobile-simulator
           path: KatkeeMobile-simulator.zip
