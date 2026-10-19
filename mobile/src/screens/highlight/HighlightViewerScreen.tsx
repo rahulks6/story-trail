@@ -11,6 +11,7 @@ import { getHighlightDetail, getHighlightItemDetail, type HighlightItem } from "
 import { track } from "../../analytics/analytics";
 import { getMedia } from "../../api/media";
 import { mediaFileUrl } from "../../api/stories";
+import { MusicPlayer } from "../../components/MusicPlayer";
 import { ApiError } from "../../api/client";
 import { EmptyState } from "../../components/EmptyState";
 import { StoryOverlayLayer, useContainerLayout } from "../../components/StoryOverlayLayer";
@@ -122,7 +123,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
   useEffect(() => {
     if (!currentItem || mediaKind === null) return;
     if (mediaKind === "video" && videoDurationMs === null) return;
-    const durationMs = mediaKind === "video" ? (videoDurationMs as number) : PHOTO_DURATION_MS;
+    const durationMs = mediaKind === "video" ? (videoDurationMs as number) : detail?.music?.durationMs ?? PHOTO_DURATION_MS;
 
     progress.setValue(0);
     animationRef.current = Animated.timing(progress, { toValue: 1, duration: durationMs, useNativeDriver: false });
@@ -130,7 +131,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
       if (finished) goNext();
     });
     return () => animationRef.current?.stop();
-  }, [currentItem, mediaKind, videoDurationMs, goNext, progress]);
+  }, [currentItem, mediaKind, videoDurationMs, goNext, progress, detail?.music?.durationMs]);
 
   if (items === null) {
     return (
@@ -152,6 +153,9 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
 
   return (
     <View style={styles.container} onLayout={onContainerLayout}>
+      {detail?.music && mediaKind !== null ? (
+        <MusicPlayer key={detail.id} url={detail.music.url} accessToken={accessToken} startMs={detail.music.startMs} durationMs={detail.music.durationMs} paused={false} />
+      ) : null}
       {mediaKind === "video" ? (
         <Video
           source={{ uri: mediaUrl, headers: authHeaders }}

@@ -216,7 +216,7 @@ Create
 • A full-screen camera for photos and video
 • Flash, timer, front and back camera
 • Add photos and videos from your gallery
-• Text, drawing and stickers. No music, just real moments
+• Text, drawing, stickers and music from a free library of songs
 
 Search, Activity and Messages
 • Find people by username or name, and follow them from your results

@@ -1,7 +1,7 @@
 import { Icon } from "../../components/Icon";
 import { StorySkeleton } from "../../components/Skeleton";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Animated, AppState, Dimensions, Image, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Animated, AppState, Dimensions, Image, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import Video, {type VideoRef} from "react-native-video";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
@@ -16,6 +16,7 @@ import { ShareSheet } from "../../components/ShareSheet";
 import { StoryMoreMenu } from "../../components/StoryMoreMenu";
 import { StoryInsightsSheet } from "../../components/StoryInsightsSheet";
 import { StoryOverlayLayer, useContainerLayout } from "../../components/StoryOverlayLayer";
+import { MusicPlayer } from "../../components/MusicPlayer";
 import { filterNameFromKey } from "../../models/filterPreviews";
 import { mediaTransformStyle } from "../../models/storyDraft";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
@@ -382,7 +383,8 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
     // Video progress and completion come from the player, avoiding two competing timers.
     if (mediaKind === "video") return;
 
-    const durationMs = PHOTO_DURATION_MS * (1 - progressValue.current);
+    // With a song, a photo stays up for the part of the song that plays (like Instagram).
+    const durationMs = (currentStory.music?.durationMs ?? PHOTO_DURATION_MS) * (1 - progressValue.current);
     animationRef.current?.stop();
     const anim = Animated.timing(progress, { toValue: 1, duration: durationMs, useNativeDriver: false });
     animationRef.current = anim;
@@ -743,7 +745,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       </View>
 
       <View style={[styles.actionRail, chrome, { bottom: BOTTOM_BAR_HEIGHT + spacing.xl * 2 + insets.bottom }]} pointerEvents={paused ? "none" : "auto"}>
-        {mediaKind === "video" && !creatorMuted ? (
+        {(mediaKind === "video" && !creatorMuted) || currentStory.music ? (
           <Pressable
             onPress={() => {
               viewerMuted = !muted;
@@ -804,6 +806,33 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           </Pressable>
         ) : null}
       </View>
+
+      {currentStory.music ? (
+        <>
+          <MusicPlayer
+            key={currentStory.id}
+            url={currentStory.music.url}
+            accessToken={accessToken}
+            startMs={currentStory.music.startMs}
+            durationMs={currentStory.music.durationMs}
+            paused={!playbackActive || !mediaReady}
+            muted={muted}
+          />
+          <View style={[styles.musicLine, chrome, { top: insets.top + spacing.lg + 40 }]} pointerEvents={paused ? "none" : "box-none"}>
+            <Pressable
+              style={styles.musicPill}
+              hitSlop={6}
+              onPress={() => Alert.alert(currentStory.music!.title, `${currentStory.music!.attribution}\n\nLicence: ${currentStory.music!.license}\n${currentStory.music!.licenseUrl}`)}
+              accessibilityRole="button"
+              accessibilityLabel={`Music: ${currentStory.music.title} by ${currentStory.music.artist}`}
+              accessibilityHint="Shows the song's credit"
+            >
+              <Icon name={ICONS.music} size={13} color="#FFFFFF" />
+              <Text style={styles.musicText} numberOfLines={1}>{currentStory.music.title} · {currentStory.music.artist}</Text>
+            </Pressable>
+          </View>
+        </>
+      ) : null}
 
       {currentStory.caption || currentStory.audience === "close_friends" ? (
         <View style={[styles.footer, chrome, { bottom: BOTTOM_BAR_HEIGHT + spacing.md + insets.bottom }]} pointerEvents="none">
@@ -920,6 +949,9 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
 }
 
 const styles = StyleSheet.create({
+  musicLine: { position: "absolute", left: spacing.md, right: spacing.md, flexDirection: "row" },
+  musicPill: { flexDirection: "row", alignItems: "center", gap: 5, maxWidth: "80%", paddingHorizontal: 10, height: 26, borderRadius: 13, backgroundColor: "rgba(0,0,0,0.35)" },
+  musicText: { color: "#FFFFFF", fontSize: 12, fontWeight: "600", flexShrink: 1 },
   loadingSpinner: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, alignItems: "center", justifyContent: "center" },
   container: { flex: 1, backgroundColor: "#000" },
   centered: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background },

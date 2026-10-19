@@ -211,7 +211,9 @@ test("text and stickers come with the photo, not after it, and the next person's
     return username === "alice" ? { stories: result.stories.map((st: object) => ({ ...st, overlays: [overlay] })) } : result;
   });
   // The detail request is slow: the edits must not wait for it.
-  (engagementApi.getStoryDetail as jest.Mock).mockImplementation(() => new Promise(() => undefined));
+  const detail = engagementApi.getStoryDetail as jest.Mock;
+  const originalDetail = detail.getMockImplementation()!;
+  detail.mockImplementation(() => new Promise(() => undefined));
   await act(async () => {
     tree = create(
       <SafeAreaProvider initialMetrics={metrics}>
@@ -227,5 +229,28 @@ test("text and stickers come with the photo, not after it, and the next person's
   expect(fades().length).toBeGreaterThan(0);
   expect(fades().every((n) => StyleSheet.flatten(n.props.style).opacity === 0)).toBe(true);
   expect(list).toHaveBeenCalledWith("bob", "token");
+  list.mockImplementation(original);
+  detail.mockImplementation(originalDetail);
+});
+
+test("a Story with a song plays that part of it, credits it, and keeps a photo up for the song's length", async () => {
+  const music = { trackId: "t1", title: "Sunny Walk", artist: "Artist", attribution: "Sunny Walk by Artist (CC BY 4.0)", license: "CC BY 4.0", licenseUrl: "https://creativecommons.org/licenses/by/4.0/", url: "https://cdn.test/m/t1/audio.mp3", startMs: 30_000, durationMs: 12_000 };
+  const list = (storiesApi.getUserActiveStories as jest.Mock);
+  const original = list.getMockImplementation()!;
+  list.mockImplementation(async (username: string) => {
+    const result = await original(username);
+    return username === "alice" ? { stories: result.stories.map((st: object) => ({ ...st, music })) } : result;
+  });
+  await renderFeed();
+  const player = tree.root.findAll((n) => (n.type as unknown) === "Video" && n.props.source?.uri === music.url);
+  expect(player).toHaveLength(1);
+  expect(player[0]!.props.paused).toBe(false);
+  expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Music: Sunny Walk by Artist" && typeof n.props.onPress === "function")).toHaveLength(1);
+  // Not moved on at the usual 5 seconds; moved on after the song's 12.
+  await act(async () => { jest.advanceTimersByTime(6_000); });
+  expect(sequence()).toBe("Story 1 of 2");
+  await act(async () => { jest.advanceTimersByTime(6_500); });
+  await settle();
+  expect(sequence()).toBe("Story 2 of 2");
   list.mockImplementation(original);
 });

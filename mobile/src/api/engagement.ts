@@ -1,5 +1,6 @@
 import { apiDelete, apiGet, apiPost } from "./client";
 import type { Overlay, DrawStroke, StoryCrop } from "../models/storyDraft";
+import type { StoryMusic } from "./stories";
 
 export interface StoryDetail {
   id: string;
@@ -24,6 +25,7 @@ export interface StoryDetail {
   filterApplied?: boolean;
   audioMuted: boolean;
   crop: StoryCrop;
+  music?: StoryMusic | null;
 }
 
 export interface Comment {

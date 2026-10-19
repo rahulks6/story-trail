@@ -26,6 +26,21 @@ export interface PublicStory {
   crop: StoryCrop;
   /** URLs for this viewer: thumbnail, full-screen image/poster, video renditions (null from older servers). */
   media?: MediaDelivery | null;
+  /** The song that plays with the Story, which part of it, and its credit. */
+  music?: StoryMusic | null;
+}
+
+export interface StoryMusic {
+  trackId: string;
+  title: string;
+  artist: string;
+  attribution: string;
+  license: string;
+  licenseUrl: string;
+  /** Relative: this API (send the sign-in header); absolute: a signed CDN link. */
+  url: string;
+  startMs: number;
+  durationMs: number;
 }
 
 export interface FeedEntry {
@@ -52,6 +67,8 @@ export interface PublishStoryInput {
   filter?: string;
   audioMuted?: boolean;
   crop?: StoryCrop;
+  /** A song from the catalogue and which part of it plays. */
+  music?: { trackId: string; startMs: number; durationMs: number } | null;
 }
 
 /**

@@ -9,7 +9,7 @@ import { StoryEditorScreen } from "../src/screens/create/StoryEditorScreen";
 import { FILTER_PREVIEWS } from "../src/models/filterPreviews";
 
 jest.mock("../src/state/AuthContext", () => ({ useAuth: () => ({ accessToken: "token", user: { id: "me", username: "rahul" } }) }));
-jest.mock("@react-navigation/native", () => ({ ...jest.requireActual("@react-navigation/native"), useNavigation: () => ({ reset: jest.fn(), navigate: jest.fn() }), useFocusEffect: (effect: () => () => void) => require("react").useEffect(effect, []) }));
+jest.mock("@react-navigation/native", () => ({ ...jest.requireActual("@react-navigation/native"), useNavigation: () => ({ reset: jest.fn(), navigate: jest.fn() }), useFocusEffect: (effect: () => () => void) => require("react").useEffect(effect, []), useIsFocused: () => true }));
 jest.mock("../src/analytics/analytics", () => ({ track: jest.fn() }));
 
 type Point = [number, number];
@@ -145,5 +145,24 @@ describe("discarding", () => {
     await act(async () => discard.onPress!());
     expect(navigation.reset).toHaveBeenCalledWith({ index: 0, routes: [{ name: "Camera" }] });
     expect(navigation.goBack).not.toHaveBeenCalled();
+  });
+});
+
+describe("music", () => {
+  beforeEach(() => jest.restoreAllMocks());
+  it("adds a song, plays it while editing, and shares it with the Story", async () => {
+    const musicApi = require("../src/api/music");
+    jest.spyOn(musicApi, "listMusic").mockResolvedValue({ tracks: [{ id: "t1", title: "Sunny Walk", artist: "Artist", mood: "", durationMs: 60_000, license: "CC BY 4.0", licenseUrl: "", attribution: "Sunny Walk by Artist", url: "/api/v1/music/t1/file" }] });
+    const enqueue = jest.spyOn(uploadQueue, "enqueueUpload").mockResolvedValue({} as never);
+    jest.spyOn(usersApi, "listCloseFriends").mockResolvedValue({ closeFriends: [], limit: 1, offset: 0 });
+    await open();
+    const press = (label: string) => act(async () => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === label).props.onPress());
+    await press("Add music");
+    await flush();
+    await press("Sunny Walk by Artist, 1:00");
+    await press("Add to Story");
+    expect(tree.root.findAll((n: ReactTestInstance) => n.props.accessibilityLabel === "Remove music" && typeof n.props.onPress === "function")).toHaveLength(1);
+    await press("Share to Your story, everyone");
+    expect(enqueue.mock.calls[0]![4]).toMatchObject({ music: { trackId: "t1", startMs: 15_000, durationMs: 15_000 } });
   });
 });

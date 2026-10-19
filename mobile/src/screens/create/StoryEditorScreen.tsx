@@ -18,7 +18,7 @@ import {
 } from "react-native";
 import Video from "react-native-video";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
 import type { CreateStackParamList, RootStackParamList } from "../../navigation/types";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
@@ -45,6 +45,8 @@ import { OverlayBody } from "../../components/OverlayBody";
 import { PlacedOverlay } from "../../components/PlacedOverlay";
 import { TextToolModal } from "../../components/TextToolModal";
 import { StickerSheet, type StickerAddPayload } from "../../components/StickerSheet";
+import { MusicSheet, type ChosenMusic } from "../../components/MusicSheet";
+import { MusicPlayer } from "../../components/MusicPlayer";
 import { DrawingCanvas } from "../../components/DrawingCanvas";
 import { OverlayAdjustSheet } from "../../components/OverlayAdjustSheet";
 import { CropGestureLayer } from "../../components/CropGestureLayer";
@@ -91,6 +93,10 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [textModalVisible, setTextModalVisible] = useState(false);
   const [stickerSheetVisible, setStickerSheetVisible] = useState(false);
+  // A song on the Story (like Instagram): it plays while you edit.
+  const [music, setMusic] = useState<ChosenMusic | null>(null);
+  const [musicSheetVisible, setMusicSheetVisible] = useState(false);
+  const focused = useIsFocused();
   const [drawMode, setDrawMode] = useState(false);
   const [cropMode, setCropMode] = useState(false);
   const [editingOverlayId, setEditingOverlayId] = useState<string | null>(null);
@@ -407,7 +413,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
 
   const confirmDiscard = useCallback(
     (onDiscard: () => void) => {
-      if (!hasMeaningfulEdits(draft)) {
+      if (!hasMeaningfulEdits(draft) && !music) {
         onDiscard();
         return;
       }
@@ -416,7 +422,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         { text: "Discard", style: "destructive", onPress: onDiscard },
       ]);
     },
-    [draft],
+    [draft, music],
   );
 
   // Discarding goes back to the camera (like Instagram). The camera was replaced by this
@@ -464,6 +470,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           filter: filterKey(draft.filter),
           audioMuted: draft.audioMuted,
           crop: draft.crop,
+          ...(music ? { music: { trackId: music.track.id, startMs: music.startMs, durationMs: music.durationMs } } : {}),
         },
         boomerang ? "boomerang" : undefined,
       );
@@ -657,6 +664,9 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             <Pressable onPress={() => setDrawMode(true)} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel="Draw">
               <Icon style={styles.topIcon} name={ICONS.draw} />
             </Pressable>
+            <Pressable onPress={() => setMusicSheetVisible(true)} hitSlop={8} style={[styles.toolButton, music && styles.toolButtonOn]} accessibilityRole="button" accessibilityLabel={music ? `Music: ${music.track.title}. Change` : "Add music"}>
+              <Icon style={[styles.topIcon, music && styles.topIconOn]} name={ICONS.music} />
+            </Pressable>
             {kind === "video" && !boomerang ? (
               <Pressable
                 onPress={() => setDraft((d) => ({ ...d, audioMuted: !d.audioMuted }))}
@@ -669,6 +679,21 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             ) : null}
           </View>
         </View>
+      ) : null}
+
+      {music && !drawMode && !cropMode && !isDraggingOverlay ? (
+        <View style={[styles.musicChipRow, { top: insets.top + spacing.md + 56 }]} pointerEvents="box-none">
+          <Pressable style={styles.musicChip} onPress={() => setMusicSheetVisible(true)} accessibilityRole="button" accessibilityLabel={`${music.track.title} by ${music.track.artist}. Change the part that plays`}>
+            <Icon name={ICONS.music} size={14} color="#FFFFFF" />
+            <Text style={styles.musicChipText} numberOfLines={1}>{music.track.title} · {music.track.artist}</Text>
+          </Pressable>
+          <Pressable style={styles.musicRemove} onPress={() => setMusic(null)} hitSlop={8} accessibilityRole="button" accessibilityLabel="Remove music">
+            <Icon name={ICONS.close} size={14} color="#FFFFFF" />
+          </Pressable>
+        </View>
+      ) : null}
+      {music ? (
+        <MusicPlayer url={music.track.url} accessToken={accessToken} startMs={music.startMs} durationMs={music.durationMs} paused={!focused || musicSheetVisible || uploadState !== "idle"} />
       ) : null}
 
       {!drawMode && !cropMode && !isDraggingOverlay ? (
@@ -786,6 +811,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         }}
         onDone={addOrUpdateText}
       />
+      <MusicSheet visible={musicSheetVisible} current={music} onClose={() => setMusicSheetVisible(false)} onChoose={setMusic} />
       <StickerSheet
         visible={stickerSheetVisible}
         onClose={() => {
@@ -825,6 +851,12 @@ const styles = StyleSheet.create({
   topRight: { flexDirection: "row", gap: spacing.sm },
   // Big, round and readable over any photo, like Instagram's editing tools.
   toolButton: { width: 42, height: 42, borderRadius: 21, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0,0,0,0.35)" },
+  toolButtonOn: { backgroundColor: "#FFFFFF" },
+  topIconOn: { color: "#000000" },
+  musicChipRow: { position: "absolute", left: 0, right: 0, flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 6 },
+  musicChip: { flexDirection: "row", alignItems: "center", gap: 6, maxWidth: "70%", paddingHorizontal: 12, height: 32, borderRadius: 16, backgroundColor: "rgba(0,0,0,0.5)" },
+  musicChipText: { color: "#FFFFFF", fontSize: 13, fontWeight: "600", flexShrink: 1 },
+  musicRemove: { width: 28, height: 28, borderRadius: 14, backgroundColor: "rgba(0,0,0,0.5)", alignItems: "center", justifyContent: "center" },
   topIcon: { color: colors.textPrimary, fontSize: 24, fontWeight: "600" },
   cropHint: { color: "rgba(255,255,255,0.85)", fontSize: 13 },
   cropDoneButton: { backgroundColor: colors.accent, borderRadius: radii.pill, paddingHorizontal: spacing.md, paddingVertical: 6 },
