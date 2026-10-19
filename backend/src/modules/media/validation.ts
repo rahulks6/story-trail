@@ -8,7 +8,7 @@
  */
 import { HttpError } from "../../http/errors";
 
-export type MediaKind = "photo" | "video";
+export type MediaKind = "photo" | "video" | "audio";
 
 export interface ValidatedMedia {
   mimeType: string;
@@ -19,6 +19,9 @@ export interface ValidatedMedia {
 
 export const MAX_PHOTO_BYTES = 25 * 1024 * 1024; // 25 MiB
 export const MAX_VIDEO_BYTES = 200 * 1024 * 1024; // 200 MiB
+/** Voice notes: AAC in an MP4 (.m4a) container, a few minutes at most. */
+export const MAX_AUDIO_BYTES = 15 * 1024 * 1024; // 15 MiB
+const AUDIO_UPLOAD_TYPES = ["audio/mp4", "audio/m4a", "audio/x-m4a", "audio/aac"];
 
 const JPEG_MAGIC = Buffer.from([0xff, 0xd8, 0xff]);
 const PNG_MAGIC = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
@@ -117,6 +120,16 @@ export function validateVideo(buf: Buffer, declaredContentType: string): Validat
   return { mimeType: declaredContentType, width: null, height: null, durationMs: null };
 }
 
+/** A voice note: AAC in an MP4 container (what phones record as .m4a). The worker decodes it fully. */
+export function validateAudio(buf: Buffer, declaredContentType: string): ValidatedMedia {
+  if (!AUDIO_UPLOAD_TYPES.includes(declaredContentType.split(";")[0]!.trim().toLowerCase())) {
+    throw new HttpError(415, "Voice notes must be M4A (AAC) audio.");
+  }
+  if (!isIsoBmff(buf)) throw new HttpError(415, "Voice notes must be M4A (AAC) audio.");
+  return { mimeType: "audio/mp4", width: null, height: null, durationMs: null };
+}
+
 export function validateMedia(kind: MediaKind, buf: Buffer, declaredContentType: string): ValidatedMedia {
+  if (kind === "audio") return validateAudio(buf, declaredContentType);
   return kind === "photo" ? validatePhoto(buf, declaredContentType) : validateVideo(buf, declaredContentType);
 }

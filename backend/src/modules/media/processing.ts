@@ -33,7 +33,7 @@ sharp.unblock({
   ],
 });
 
-export type VariantName = "display" | "thumbnail" | "poster" | "video_720" | "video_480";
+export type VariantName = "display" | "thumbnail" | "poster" | "video_720" | "video_480" | "audio";
 
 export interface ProducedVariant {
   name: VariantName;
@@ -47,8 +47,8 @@ export interface ProducedVariant {
 }
 
 export interface ProcessedMedia {
-  width: number;
-  height: number;
+  width: number | null;
+  height: number | null;
   durationMs: number | null;
   checksumSha256: string;
   variants: ProducedVariant[];
@@ -346,6 +346,46 @@ export async function processVideo(
   }
 
   return { width, height, durationMs: Math.round(seconds * 1000), checksumSha256: await sha256File(input), variants };
+}
+
+/** Longest voice note. */
+export const MAX_AUDIO_SECONDS = 300;
+
+/**
+ * A voice note: the first audio track, re-encoded to mono 64 kbps AAC (small, plays everywhere),
+ * with every tag and any picture dropped.
+ */
+export async function processAudio(input: string, workDir: string, tools: VideoTools): Promise<ProcessedMedia> {
+  const head = await readHead(input, 12);
+  if (head.length < 12 || head.subarray(4, 8).toString("latin1") !== "ftyp") throw new MediaRejectedError("Voice notes must be M4A (AAC) audio.");
+  let info: Probe;
+  try {
+    info = await probe(input, tools);
+  } catch (error) {
+    if (error instanceof ProcessFailure && error.killed) throw error;
+    throw new MediaRejectedError("We couldn't read this voice note.", error instanceof ProcessFailure ? error.stderr.trim().slice(-300) : String(error));
+  }
+  const audio = info.streams?.find((s) => s.codec_type === "audio");
+  if (!audio) throw new MediaRejectedError("This file has no sound.");
+  const seconds = Number(info.format?.duration ?? audio.duration);
+  if (!Number.isFinite(seconds) || seconds <= 0) throw new MediaRejectedError("We couldn't read this voice note's length.");
+  if (seconds > MAX_AUDIO_SECONDS + 0.5) throw new MediaRejectedError(`Voice notes can be up to ${MAX_AUDIO_SECONDS / 60} minutes.`);
+  const file = path.join(workDir, "audio.m4a");
+  try {
+    await run(tools.ffmpeg, [
+      "-hide_banner", "-nostdin", "-y", ...SAFE_INPUT, "-i", input, "-map", "0:a:0", "-vn", "-sn", "-dn",
+      "-map_metadata", "-1", "-map_chapters", "-1", "-c:a", "aac", "-b:a", "64k", "-ac", "1", "-ar", "44100",
+      "-movflags", "+faststart", "-t", String(MAX_AUDIO_SECONDS + 0.5), "-f", "mp4", file,
+    ], tools.deadline);
+  } catch (error) {
+    if (!(error instanceof ProcessFailure) || error.killed) throw error;
+    throw new MediaRejectedError("This voice note is damaged or uses a format we can't convert.", error.stderr.trim().slice(-300));
+  }
+  const stat = await fsp.stat(file);
+  return {
+    width: null, height: null, durationMs: Math.round(seconds * 1000), checksumSha256: await sha256File(input),
+    variants: [{ name: "audio", file, fileName: "audio.m4a", mimeType: "audio/mp4", width: 0, height: 0, byteSize: stat.size, bitrate: 64_000 }],
+  };
 }
 
 export { ProcessFailure };

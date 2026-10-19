@@ -8,8 +8,8 @@ import { config } from "../../config/env";
 import { openDedicatedConnection } from "../../db/psql";
 import type { ObjectStore } from "./storage";
 import { findMediaById } from "./media.repository";
-import { MAX_PHOTO_BYTES, MAX_VIDEO_BYTES } from "./validation";
-import { MediaRejectedError, processPhoto, processVideo } from "./processing";
+import { MAX_AUDIO_BYTES, MAX_PHOTO_BYTES, MAX_VIDEO_BYTES } from "./validation";
+import { MediaRejectedError, processAudio, processPhoto, processVideo } from "./processing";
 import { claimMediaJob, closeMediaJob, extendLease, failMediaJob, finishMediaJob, SqsJobSignal, jobSignal, type MediaJob } from "./jobs";
 
 /** Variants never change once written under a key, so caches may keep them. */
@@ -48,9 +48,17 @@ export async function processClaimedJob(job: MediaJob, store: ObjectStore, optio
   }, Math.max(5, options.leaseSeconds / 3) * 1000);
   try {
     const original = path.join(workDir, "original");
-    await store.downloadToFile(media.storageKey, original, media.kind === "photo" ? MAX_PHOTO_BYTES : MAX_VIDEO_BYTES);
+    await store.downloadToFile(media.storageKey, original, media.kind === "photo" ? MAX_PHOTO_BYTES : media.kind === "audio" ? MAX_AUDIO_BYTES : MAX_VIDEO_BYTES);
+    const tools = {
+      ffmpeg: config.media.ffmpegPath,
+      ffprobe: config.media.ffprobePath,
+      maxSeconds: config.media.maxVideoSeconds,
+      deadline: started + options.jobTimeoutSeconds * 1000,
+    };
     const result = media.kind === "photo"
       ? await processPhoto(original, workDir, media.mimeType, media.filter)
+      : media.kind === "audio"
+      ? await processAudio(original, workDir, tools)
       : await processVideo(original, workDir, media.mimeType, {
         ffmpeg: config.media.ffmpegPath,
         ffprobe: config.media.ffprobePath,

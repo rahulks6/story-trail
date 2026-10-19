@@ -76,3 +76,44 @@ describe("photos and videos in direct messages", () => {
     assert.equal(bad.status, 422);
   });
 });
+
+describe("voice notes", () => {
+  it("records as M4A, processes to small AAC, plays for both people, and is never a Story", async () => {
+    const { execFileSync } = await import("node:child_process");
+    const fs = await import("node:fs");
+    const os = await import("node:os");
+    const path = await import("node:path");
+    const { claimMediaJob } = await import("../src/modules/media/jobs");
+    const { processClaimedJob } = await import("../src/modules/media/worker");
+    const { mediaStorage } = await import("../src/modules/media/instance");
+    const a = await signupUser();
+    const b = await signupUser();
+    const chat = await openChat(a, b);
+    const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "voice-")), "note.m4a");
+    execFileSync("ffmpeg", ["-v", "error", "-y", "-f", "lavfi", "-i", "sine=frequency=330:duration=3", "-c:a", "aac", "-b:a", "96k", file]);
+    const up = await fetch(`${baseUrl}/api/v1/media/audio`, { method: "POST", headers: { "Content-Type": "audio/mp4", ...authHeader(a.token) }, body: fs.readFileSync(file) });
+    assert.equal(up.status, 201);
+    const mediaId = ((await up.json()) as { media: { id: string; kind: string } }).media.id;
+    // A picture isn't a voice note.
+    const bad = await fetch(`${baseUrl}/api/v1/media/audio`, { method: "POST", headers: { "Content-Type": "audio/mp4", ...authHeader(a.token) }, body: buildTestPng(4, 4) });
+    assert.equal(bad.status, 415);
+
+    const job = await claimMediaJob("voice-test", 60, mediaId);
+    if (job) assert.equal(await processClaimedJob(job, mediaStorage, { workerId: "voice-test", leaseSeconds: 60, jobTimeoutSeconds: 60 }), "done");
+    const ready = await client.get(`/api/v1/media/${mediaId}`, authHeader(a.token));
+    assert.equal(ready.body.media.status, "ready");
+    assert.ok(Math.abs(ready.body.media.durationMs - 3000) < 300);
+
+    const sent = await client.post(`/api/v1/conversations/${chat}/messages`, { mediaId }, authHeader(a.token));
+    assert.equal(sent.status, 201);
+    assert.equal(sent.body.message.media.kind, "audio");
+    const sound = await fetch(`${baseUrl}/api/v1/media/${mediaId}/file?variant=audio`, { headers: authHeader(b.token) });
+    assert.equal(sound.status, 200);
+    assert.equal(sound.headers.get("content-type"), "audio/mp4");
+    const inbox = await client.get(`/api/v1/conversations`, authHeader(b.token));
+    assert.equal(inbox.body.conversations[0].lastMessage.mediaKind, "audio");
+
+    const story = await client.post("/api/v1/stories", { mediaId, caption: "", audience: "public" }, authHeader(a.token));
+    assert.equal(story.status, 422);
+  });
+});

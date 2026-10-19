@@ -18,7 +18,7 @@ import { config } from "../../config/env";
 import { query } from "../../db/psql";
 import { HttpError } from "../../http/errors";
 import type { ObjectStore } from "./storage";
-import { MAX_PHOTO_BYTES, MAX_VIDEO_BYTES, validateMedia, type MediaKind } from "./validation";
+import { MAX_AUDIO_BYTES, MAX_PHOTO_BYTES, MAX_VIDEO_BYTES, validateMedia, type MediaKind } from "./validation";
 import * as mediaRepo from "./media.repository";
 import type { MediaRecord } from "./media.repository";
 import { claimInlineJob, enqueueMediaJob } from "./jobs";
@@ -97,7 +97,7 @@ export async function receiveUpload(
   const contentType = req.headers["content-type"];
   if (!contentType) throw new HttpError(400, "Content-Type header is required.");
 
-  const maxBytes = kind === "photo" ? MAX_PHOTO_BYTES : MAX_VIDEO_BYTES;
+  const maxBytes = kind === "photo" ? MAX_PHOTO_BYTES : kind === "audio" ? MAX_AUDIO_BYTES : MAX_VIDEO_BYTES;
   const workDir = await fsp.mkdtemp(path.join(os.tmpdir(), "katkee-upload-"));
   const tempPath = path.join(workDir, "upload");
   const limiter = new SizeLimitingHasher(maxBytes);

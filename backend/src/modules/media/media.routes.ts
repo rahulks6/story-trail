@@ -71,6 +71,17 @@ export function registerMediaRoutes(router: Router): void {
     { rawBody: true },
   );
 
+  // A voice note for a direct message (M4A/AAC); processed into a small AAC file.
+  router.post(
+    "/api/v1/media/audio",
+    async (req, res) => {
+      requireAuth(req);
+      const media = await mediaService.receiveUpload(req, req.userId as string, "audio", mediaStorage);
+      sendJson(res, 201, { media: toPublicMedia(media) });
+    },
+    { rawBody: true },
+  );
+
   // Resumable direct-to-storage uploads (see uploads.ts).
   router.post("/api/v1/media/uploads", async (req, res) => {
     requireAuth(req);

@@ -16,7 +16,7 @@ import type { MediaRecord, MediaStatus } from "./media.repository";
 import type { ObjectStore } from "./storage";
 import { streamObject } from "./stream";
 
-export const REQUESTABLE_VARIANTS = ["original", "display", "thumbnail", "poster", "video_720", "video_480"] as const;
+export const REQUESTABLE_VARIANTS = ["original", "display", "thumbnail", "poster", "video_720", "video_480", "audio"] as const;
 export type RequestedVariant = (typeof REQUESTABLE_VARIANTS)[number];
 
 export interface DeliverableObject {
@@ -62,10 +62,13 @@ export function chooseObject(media: MediaRecord, requested: RequestedVariant | n
   const unprocessed = media.processedAt === null && Object.keys(media.variants).length === 0;
   const best = () => media.kind === "photo"
     ? variant("display") ?? variant("thumbnail") ?? (unprocessed ? original : null)
+    : media.kind === "audio"
+    ? variant("audio")
     : variant("video_720") ?? variant("video_480") ?? (unprocessed ? original : null);
 
   if (requested === null) return isOwner && original ? original : best();
   if (requested === "original") return isOwner ? original ?? best() : null;
+  if (requested === "audio") return media.kind === "audio" ? variant("audio") : null;
   const imageChain = IMAGE_FALLBACKS[requested];
   if (imageChain) {
     for (const name of imageChain) {
@@ -115,6 +118,8 @@ export interface MediaDelivery {
   thumbnailUrl: string | null;
   /** Full-screen image: the photo itself, or a video's poster frame (show it while the video loads). */
   imageUrl: string | null;
+  /** A voice note's sound (kind "audio"); null otherwise. */
+  audioUrl?: string | null;
   /** Best first; pick a lower one on slow or metered connections. */
   videos: { variant: "video_720" | "video_480"; url: string; width: number; height: number; bitrate: number | null }[];
   /** Absolute URLs are signed CDN URLs valid until then; relative URLs are this API and need the bearer token. */
@@ -152,7 +157,8 @@ export function deliveryFor(media: MediaRecord, isOwner: boolean, nowMs = Date.n
   return {
     ...base,
     thumbnailUrl: urlFor("thumbnail"),
-    imageUrl: urlFor(media.kind === "photo" ? "display" : "poster"),
+    imageUrl: media.kind === "audio" ? null : urlFor(media.kind === "photo" ? "display" : "poster"),
+    ...(media.kind === "audio" ? { audioUrl: urlFor("audio") } : {}),
     videos,
     urlsExpireAt: expiresAt,
   };

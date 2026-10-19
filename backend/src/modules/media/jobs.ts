@@ -21,8 +21,9 @@ export interface MediaJob {
 }
 
 export interface ProcessingResult {
-  width: number;
-  height: number;
+  /** Null for sound (a voice note). */
+  width: number | null;
+  height: number | null;
   durationMs: number | null;
   checksumSha256: string;
   variants: Record<string, unknown>;

@@ -72,7 +72,7 @@ export interface MessageRow {
 export type StoryReplyKind = "reply" | "reaction";
 export interface MessageMedia {
   id: string;
-  kind: "photo" | "video";
+  kind: "photo" | "video" | "audio";
   width: number | null;
   height: number | null;
   durationMs: number | null;
@@ -288,7 +288,7 @@ export interface ConversationSummary {
     body: string | null;
     sharedStoryId: string | null;
     /** "photo" or "video" when the last message carried one (the inbox shows "Sent a photo"). */
-    mediaKind?: "photo" | "video" | null;
+    mediaKind?: "photo" | "video" | "audio" | null;
     createdAt: string;
   } | null;
   unread: boolean;
@@ -310,7 +310,7 @@ function mapConversationSummaryRow(row: Row): ConversationSummary {
           senderId: row.last_message_sender_id as string,
           body: (row.last_message_body as string | null) ?? null,
           sharedStoryId: (row.last_message_shared_story_id as string | null) ?? null,
-          mediaKind: (row.last_message_media_kind as "photo" | "video" | null) ?? null,
+          mediaKind: (row.last_message_media_kind as "photo" | "video" | "audio" | null) ?? null,
           createdAt: row.last_message_created_at as string,
         }
       : null,

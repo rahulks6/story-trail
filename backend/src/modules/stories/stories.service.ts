@@ -164,6 +164,7 @@ export async function publishStory(
   if (!media || media.ownerId !== ownerId) {
     throw new HttpError(404, "Media not found.");
   }
+  if (media.kind === "audio") throw new HttpError(422, "A voice note can't be posted as a Story.");
   if (media.status !== "ready") {
     throw new HttpError(409, "This media isn't ready to publish yet.");
   }
@@ -193,6 +194,12 @@ export async function publishStory(
   return toPublicStory(story, ownerId);
 }
 
+/** Voice notes are for messages only. */
+async function assertNotSound(mediaId: string): Promise<void> {
+  const media = await mediaRepo.findMediaById(mediaId);
+  if (media?.kind === "audio") throw new HttpError(422, "A voice note can't be posted as a Story.");
+}
+
 /** Uploaded media that can't be processed; `retryable` says whether "Retry" can help. */
 export class MediaFailedError extends Error {
   constructor(message: string, readonly retryable: boolean) {
@@ -212,6 +219,7 @@ export type PublishResult =
 export async function requestPublish(ownerId: string, input: PublishStoryInput, options: { ttlSecondsOverride?: number } = {}): Promise<PublishResult> {
   if (!input.requestId) return { state: "published", story: await publishStory(ownerId, input, options) };
   await assertCanContribute(ownerId);
+  await assertNotSound(input.mediaId);
   if (input.music) input = { ...input, music: await validateStoryMusic(input.music) };
   const hash = createHash("sha256").update(JSON.stringify(input)).digest("hex");
   let outcome: storiesRepo.PublishRequestOutcome;
