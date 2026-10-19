@@ -13,6 +13,8 @@ export interface ConversationSummary {
     senderId: string;
     body: string | null;
     sharedStoryId: string | null;
+    /** Set when the last message was a photo or video. */
+    mediaKind?: "photo" | "video" | null;
     createdAt: string;
   } | null;
   unread: boolean;
@@ -34,6 +36,8 @@ export interface Message {
   sharedStoryId: string | null;
   /** Set when the message answers a Story; `storyId` is null once that Story is deleted. */
   storyReply?: { storyId: string | null; kind: StoryReplyKind } | null;
+  /** A photo or video sent in the message (null once it's been removed). */
+  media?: { id: string; kind: "photo" | "video"; width: number | null; height: number | null; durationMs: number | null } | null;
   createdAt: string;
   /** Only present on messages the viewer themselves sent — see backend/src/modules/conversations/conversations.service.ts's listMessages. */
   status?: MessageDeliveryStatus;
@@ -105,7 +109,7 @@ export function newClientMessageId(): string {
  */
 export function sendMessage(
   conversationId: string,
-  input: { body?: string; storyId?: string; clientMessageId?: string },
+  input: { body?: string; storyId?: string; mediaId?: string; clientMessageId?: string },
   accessToken: string,
 ): Promise<{ message: Message }> {
   return apiPost(`/api/v1/conversations/${conversationId}/messages`, input, accessToken);

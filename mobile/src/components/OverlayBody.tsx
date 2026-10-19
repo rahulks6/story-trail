@@ -1,6 +1,7 @@
 import React from "react";
-import { Platform, StyleSheet, Text, View, type StyleProp, type TextStyle } from "react-native";
-import type { Overlay, TextOverlayProperties } from "../models/storyDraft";
+import { StyleSheet, Text, View } from "react-native";
+import type { Overlay } from "../models/storyDraft";
+import { contrastOn, textStyleLook } from "./textLook";
 import { colors, radii } from "../theme";
 
 export /** Text wraps within this fraction of the container's own width (spec: "auto-wrap ... text") rather than growing indefinitely off-canvas. */
@@ -40,21 +41,26 @@ export function OverlayBody({
   switch (overlay.type) {
     case "text": {
       const { properties } = overlay;
-      const backgroundStyle =
-        properties.backgroundColor !== null
-          ? { backgroundColor: "rgba(0,0,0,0.55)", paddingHorizontal: 10, paddingVertical: 4, borderRadius: radii.sm }
-          : null;
+      const fontSize = properties.fontSize * containerHeight;
+      const textStyle = [styles.text, { color: properties.color, fontSize, textAlign: properties.align }, textStyleLook(properties.style, properties.color)];
+      // A background is a solid label in the chosen colour (Instagram's "A" box).
+      const backgroundStyle = properties.backgroundColor !== null
+        ? { backgroundColor: properties.backgroundColor, paddingHorizontal: fontSize * 0.35, paddingVertical: fontSize * 0.12, borderRadius: fontSize * 0.3 }
+        : null;
+      // Android can't stroke text, so Outline is drawn as the text in the outline colour behind
+      // it, nudged in eight directions.
+      const outline = properties.style === "Outline" && properties.backgroundColor === null;
+      const w = Math.max(1.5, fontSize * 0.07);
       return (
         <View style={[{ maxWidth: containerWidth * TEXT_MAX_WIDTH_FRACTION }, backgroundStyle]}>
-          <Text
-            style={[
-              styles.text,
-              { color: properties.color, fontSize: properties.fontSize * containerHeight, textAlign: properties.align },
-              textStyleLook(properties.style),
-            ]}
-          >
-            {properties.text}
-          </Text>
+          {outline
+            ? OUTLINE_OFFSETS.map(([dx, dy], i) => (
+                <Text key={i} style={[...textStyle, styles.outlineCopy, { color: contrastOn(properties.color), textShadowRadius: 0, transform: [{ translateX: dx * w }, { translateY: dy * w }] }]} accessible={false} importantForAccessibility="no">
+                  {properties.text}
+                </Text>
+              ))
+            : null}
+          <Text style={[...textStyle, outline && { textShadowRadius: 0 }]}>{properties.text}</Text>
         </View>
       );
     }
@@ -80,32 +86,13 @@ export function OverlayBody({
   }
 }
 
-/** How a text style looks: on the Story, and in the text tool while writing. */
-export function textStyleLook(style: TextOverlayProperties["style"]): StyleProp<TextStyle> {
-  switch (style) {
-    case "Bold": return styles.bold;
-    case "Outline": return styles.outline;
-    case "Typewriter": return styles.typewriter;
-    case "Classic": return styles.classic;
-    case "Modern": return styles.modern;
-    case "Soft": return styles.soft;
-    case "Highlight": return [styles.highlight, { color: colors.background }];
-    default: return null;
-  }
-}
+export { textStyleLook };
+
+const OUTLINE_OFFSETS: Array<[number, number]> = [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]];
 
 const styles = StyleSheet.create({
   text: { fontWeight: "600", color: colors.textPrimary },
-  // Each style has its own font, one every phone has (Android's built-in families; iOS fonts),
-  // so all eight look clearly different. Android has no light or extra-bold weights for the
-  // default font, so weights alone made several styles look the same.
-  bold: { fontFamily: Platform.select({ ios: "AvenirNext-Heavy", default: "sans-serif-black" }), fontWeight: "normal", textTransform: "uppercase" },
-  outline: { fontWeight: "800", textShadowColor: "#000", textShadowRadius: 1, textShadowOffset: { width: 2, height: 2 } },
-  typewriter: { fontFamily: Platform.select({ ios: "Courier", default: "monospace" }), fontWeight: "normal" },
-  classic: { fontFamily: Platform.select({ ios: "Georgia", default: "serif" }), fontWeight: "normal", fontStyle: "italic" },
-  modern: { fontFamily: Platform.select({ ios: "AvenirNextCondensed-DemiBold", default: "sans-serif-condensed" }), fontWeight: "normal", textTransform: "uppercase", letterSpacing: 2 },
-  soft: { fontFamily: Platform.select({ ios: "SnellRoundhand-Bold", default: "cursive" }), fontWeight: "normal" },
-  highlight: { backgroundColor: colors.accent, paddingHorizontal: 6, borderRadius: radii.sm, overflow: "hidden" },
+  outlineCopy: { position: "absolute", left: 0, right: 0, top: 0, bottom: 0 },
   sticker: { color: colors.accent },
   chip: {
     color: colors.onAccent,

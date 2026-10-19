@@ -7,7 +7,11 @@ import {
   Alert,
   AppState,
   FlatList,
+  Image,
   Keyboard,
+  Modal,
+  PermissionsAndroid,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -40,6 +44,11 @@ import { getStoryOwnerUsername } from "../../api/stories";
 import { ReportSheet } from "../../components/ReportSheet";
 import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import { applyReceipt, mergeMessages, newestId, oldestId } from "./threadState";
+import { launchCamera, launchImageLibrary, type Asset } from "react-native-image-picker";
+import Video from "react-native-video";
+import { Avatar } from "../../components/Avatar";
+import { mediaFileUrl } from "../../api/stories";
+import { MAX_DM_VIDEO_BYTES, newPendingMedia, sendPendingMedia, type PendingMedia } from "./sendMedia";
 
 type Props = NativeStackScreenProps<DMStackParamList, "Conversation">;
 
@@ -50,10 +59,7 @@ const POLL_LIVE_MS = 30_000;
 /** Catching up after a long gap: past this many pages, reload the latest page instead. */
 const MAX_CATCH_UP_PAGES = 5;
 
-// A fixed, client-only emoji set — there's no attachment/media pipeline in
-// this DM module (see conversations/dto.ts's parseSendMessageInput, body
-// text or a shared Story only), so this inserts into the text composer
-// rather than sending as its own message kind.
+// A fixed emoji set; it inserts into the text composer.
 const EMOJIS = [
   "😀", "😂", "😍", "😊", "😉", "😢", "😮", "😡",
   "👍", "👎", "🙏", "👏", "🔥", "💯", "🎉", "❤️",
@@ -67,13 +73,20 @@ const EMOJIS = [
  * definitionally at least "sent" (Sent/Delivered/Read come from the server and
  * from realtime read receipts).
  */
-type ListRow = (OutboxMessage & { kind: "pending" }) | (Message & { kind: "sent" });
+type ListRow = (OutboxMessage & { kind: "pending" }) | (Message & { kind: "sent" }) | (PendingMedia & { kind: "media" });
 
 function rowKey(row: ListRow): string {
-  return row.kind === "pending" ? row.clientMessageId : row.id;
+  return row.kind === "sent" ? row.id : row.clientMessageId;
+}
+
+/** A photo or video bubble's size: its own shape, within a box. */
+function mediaBox(width: number | null | undefined, height: number | null | undefined): { width: number; height: number } {
+  const ratio = width && height ? Math.min(1.6, Math.max(0.56, width / height)) : 0.75;
+  return ratio >= 1 ? { width: 230, height: 230 / ratio } : { width: 300 * ratio, height: 300 };
 }
 
 function statusLabel(row: ListRow): string {
+  if (row.kind === "media") return row.status === "failed" ? `${row.error ?? "Not sent"} · Tap to retry` : "Sending…";
   if (row.kind === "pending") {
     if (row.status === "failed") return `${row.error ?? "Not sent"} · Tap to retry`;
     return row.status === "waiting" && row.attempts > 0 ? "Waiting for connection…" : "Sending…";
@@ -96,10 +109,10 @@ function statusLabel(row: ListRow): string {
  * pages use message-id cursors, which don't shift as new messages arrive.
  */
 export function ConversationScreen({ route }: Props): React.JSX.Element {
-  const { conversationId, otherUsername } = route.params;
+  const { conversationId, otherUsername, otherDisplayName, otherAvatarMediaId } = route.params;
   // The tab bar hides in a chat, so the message box keeps clear of Android's navigation bar and
   // the iPhone home indicator itself — except while the keyboard covers them.
-  const bottomInset = useSafeAreaInsets().bottom;
+  const { bottom: bottomInset, top: insetsTop } = useSafeAreaInsets();
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   useEffect(() => {
     const shown = Keyboard.addListener("keyboardDidShow", () => setKeyboardOpen(true));
@@ -125,6 +138,8 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   const [outbox, setOutbox] = useState<OutboxMessage[]>([]);
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
   const [reportingMessageId, setReportingMessageId] = useState<string | null>(null);
+  const [pendingMedia, setPendingMedia] = useState<PendingMedia[]>([]);
+  const [viewing, setViewing] = useState<{ id?: string; uri?: string; kind: "photo" | "video" } | null>(null);
   const focusedRef = useRef(true);
   const messagesRef = useRef<Message[] | null>(null);
   messagesRef.current = messages;
@@ -140,11 +155,38 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       .then(({ conversation }) => navigation.setParams({
         otherUsername: conversation.otherUser.username,
         otherDisplayName: conversation.otherUser.displayName,
+        otherAvatarMediaId: conversation.otherUser.avatarMediaId ?? null,
       }))
       .catch((error: unknown) => {
         if (error instanceof ApiError && error.status === 404) setLoadError("This conversation isn't available.");
       });
   }, [accessToken, conversationId, navigation, otherUsername]);
+
+  // The header: who you're talking to, with their photo; a tap opens their profile.
+  const openProfile = useCallback(() => {
+    if (otherUsername) rootNavigation.navigate("Main", { screen: "Search", params: { screen: "UserProfile", params: { username: otherUsername } } });
+  }, [otherUsername, rootNavigation]);
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => (
+        <Pressable
+          onPress={openProfile}
+          disabled={!otherUsername}
+          style={styles.header}
+          hitSlop={6}
+          accessibilityRole="button"
+          accessibilityLabel={otherUsername ? `${otherDisplayName ?? otherUsername}, @${otherUsername}` : "Conversation"}
+          accessibilityHint="Opens their profile"
+        >
+          {otherUsername ? <Avatar username={otherUsername} displayName={otherDisplayName ?? otherUsername} avatarMediaId={otherAvatarMediaId ?? null} size={34} /> : null}
+          <View style={styles.headerNames}>
+            <Text style={styles.headerName} numberOfLines={1}>{otherDisplayName ?? otherUsername ?? ""}</Text>
+            {otherUsername ? <Text style={styles.headerUsername} numberOfLines={1}>@{otherUsername}</Text> : null}
+          </View>
+        </Pressable>
+      ),
+    });
+  }, [navigation, openProfile, otherAvatarMediaId, otherDisplayName, otherUsername]);
 
   // Unsent messages for this thread, kept in sync with the persisted outbox.
   useEffect(() => {
@@ -280,6 +322,58 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     }
   };
 
+  const sendMedia = useCallback(async (item: PendingMedia) => {
+    setPendingMedia((list) => [...list.filter((m) => m.clientMessageId !== item.clientMessageId), { ...item, status: "sending", error: undefined }]);
+    try {
+      const message = await sendPendingMedia(conversationId, item, getToken);
+      setMessages((current) => mergeMessages(current ?? [], [message]));
+      setPendingMedia((list) => list.filter((m) => m.clientMessageId !== item.clientMessageId));
+    } catch (error) {
+      const text = error instanceof Error ? error.message : "Couldn't send.";
+      setPendingMedia((list) => list.map((m) => (m.clientMessageId === item.clientMessageId ? { ...m, status: "failed", error: text } : m)));
+    }
+  }, [conversationId, getToken]);
+
+  const onPickedAssets = (assets: Asset[] | undefined) => {
+    for (const asset of assets ?? []) {
+      if (!asset.uri) continue;
+      if (asset.type?.startsWith("video/") && (asset.fileSize ?? 0) > MAX_DM_VIDEO_BYTES) {
+        Alert.alert("Video too large", "Choose a video under 100 MB, or a shorter one.");
+        continue;
+      }
+      void sendMedia(newPendingMedia({ uri: asset.uri, type: asset.type, width: asset.width, height: asset.height }));
+    }
+  };
+  const onPickFromGallery = async () => {
+    setEmojiPickerOpen(false);
+    const result = await launchImageLibrary({ mediaType: "mixed", selectionLimit: 10, maxWidth: 2048, maxHeight: 2048, quality: 0.8, videoQuality: "medium", assetRepresentationMode: "compatible" });
+    if (result.errorCode) Alert.alert("Gallery unavailable", result.errorMessage ?? "Try again.");
+    else onPickedAssets(result.assets);
+  };
+  const onTakePhoto = async () => {
+    setEmojiPickerOpen(false);
+    // The app declares the camera permission, so Android needs it granted before the camera opens.
+    if (Platform.OS === "android") {
+      const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
+      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+        Alert.alert("Camera access needed", "Allow camera access in Settings to take a photo here.");
+        return;
+      }
+    }
+    const result = await launchCamera({ mediaType: "mixed", maxWidth: 2048, maxHeight: 2048, quality: 0.8, videoQuality: "medium", durationLimit: 60, saveToPhotos: false });
+    if (result.errorCode) Alert.alert("Camera unavailable", result.errorMessage ?? "Try again.");
+    else onPickedAssets(result.assets);
+  };
+
+  const onPendingMediaPress = (row: PendingMedia) => {
+    if (row.status !== "failed") return;
+    Alert.alert("Not sent", row.error ?? undefined, [
+      { text: "Try again", onPress: () => void sendMedia(row) },
+      { text: "Delete", style: "destructive", onPress: () => setPendingMedia((list) => list.filter((m) => m.clientMessageId !== row.clientMessageId)) },
+      { text: "Cancel", style: "cancel" },
+    ]);
+  };
+
   const onPendingPress = (row: OutboxMessage) => {
     if (!userId || row.status === "sending") return;
     Alert.alert(row.status === "failed" ? "Message not sent" : "Message waiting to send", row.error ?? undefined, [
@@ -320,14 +414,15 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     }
   };
 
-  const rows: ListRow[] = useMemo(() => {
+  const rows = useMemo((): ListRow[] => {
     const stored = messages ?? [];
     // An outbox entry the server already stored (seen via realtime before the send
     // response came back) is shown once, as the stored message.
     const storedIds = new Set(stored.flatMap((m) => (m.clientMessageId ? [m.clientMessageId] : [])));
     const pending = outbox.filter((m) => !storedIds.has(m.clientMessageId)).reverse().map((m) => ({ ...m, kind: "pending" as const }));
-    return [...pending, ...stored.map((m) => ({ ...m, kind: "sent" as const }))];
-  }, [outbox, messages]);
+    const media = pendingMedia.filter((m) => !storedIds.has(m.clientMessageId)).reverse().map((m) => ({ ...m, kind: "media" as const }));
+    return [...media, ...pending, ...stored.map((m) => ({ ...m, kind: "sent" as const }))];
+  }, [outbox, messages, pendingMedia]);
 
   // A status caption only ever makes sense under the single most recent
   // message *you* sent — same convention as iMessage/WhatsApp. If the
@@ -337,7 +432,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   const statusRowKey = useMemo(() => {
     const first = rows[0];
     if (!first) return null;
-    if (first.kind === "pending") return first.clientMessageId;
+    if (first.kind !== "sent") return first.clientMessageId;
     return first.senderId === userId ? first.id : null;
   }, [rows, userId]);
 
@@ -371,6 +466,49 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         onEndReachedThreshold={0.4}
         onEndReached={() => void loadOlder()}
         renderItem={({ item: row }) => {
+          if (row.kind === "media" || (row.kind === "sent" && row.media)) {
+            const mineMedia = row.kind === "media" || row.senderId === user?.id;
+            const kind = row.kind === "media" ? row.mediaKind : row.media!.kind;
+            const box = row.kind === "media" ? mediaBox(row.width, row.height) : mediaBox(row.media!.width, row.media!.height);
+            const source = row.kind === "media" ? { uri: row.uri } : { uri: mediaFileUrl(row.media!.id, kind === "video" ? "poster" : "display"), headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined };
+            const failedMedia = row.kind === "media" && row.status === "failed";
+            return (
+              <View style={[styles.bubbleRow, mineMedia ? styles.bubbleRowMine : styles.bubbleRowTheirs]}>
+                <View style={[styles.bubbleColumn, mineMedia ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={`${mineMedia ? "You" : otherUsername ? `@${otherUsername}` : "Them"}: ${kind === "video" ? "Video" : "Photo"}`}
+                    accessibilityHint={row.kind === "media" ? (failedMedia ? "Retry or delete" : undefined) : "Opens it full screen"}
+                    onPress={() => {
+                      if (row.kind === "media") onPendingMediaPress(row);
+                      else setViewing({ id: row.media!.id, kind });
+                    }}
+                    onLongPress={() => onMessageLongPress(row)}
+                    style={[styles.mediaBubble, box, failedMedia && styles.mediaFailed]}
+                  >
+                    {/* Video in a chat: a local video shows as its first frame while it uploads. */}
+                    {row.kind === "media" && kind === "video" ? (
+                      <Video source={{ uri: row.uri }} paused muted resizeMode="cover" style={StyleSheet.absoluteFill} />
+                    ) : (
+                      <Image source={source} style={StyleSheet.absoluteFill} resizeMode="cover" />
+                    )}
+                    {kind === "video" ? (
+                      <View style={styles.playBadge} pointerEvents="none"><Text style={styles.playGlyph}>▶</Text></View>
+                    ) : null}
+                    {row.kind === "media" && row.status === "sending" ? (
+                      <View style={styles.mediaSending} pointerEvents="none"><ActivityIndicator color="#FFFFFF" /></View>
+                    ) : null}
+                  </Pressable>
+                  {row.kind === "sent" && row.body ? (
+                    <View style={[styles.bubble, mineMedia ? styles.bubbleMine : styles.bubbleTheirs, styles.mediaCaption]}>
+                      <Text style={mineMedia ? styles.bubbleTextMine : styles.bubbleTextTheirs}>{row.body}</Text>
+                    </View>
+                  ) : null}
+                  {rowKey(row) === statusRowKey || failedMedia ? <Text style={styles.statusCaption}>{statusLabel(row)}</Text> : null}
+                </View>
+              </View>
+            );
+          }
           const mine = row.kind === "pending" || row.senderId === user?.id;
           const failed = row.kind === "pending" && row.status === "failed";
           const showStatus = rowKey(row) === statusRowKey;
@@ -446,6 +584,24 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           />
         </View>
       ) : null}
+      <Modal visible={viewing !== null} animationType="fade" transparent={false} statusBarTranslucent navigationBarTranslucent onRequestClose={() => setViewing(null)}>
+        <View style={styles.viewer}>
+          {viewing?.kind === "video" && viewing.id ? (
+            <Video
+              source={{ uri: mediaFileUrl(viewing.id, "video_720"), headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined }}
+              style={StyleSheet.absoluteFill}
+              resizeMode="contain"
+              controls
+              repeat
+            />
+          ) : viewing?.id ? (
+            <Image source={{ uri: mediaFileUrl(viewing.id, "display"), headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined }} style={StyleSheet.absoluteFill} resizeMode="contain" />
+          ) : null}
+          <Pressable style={[styles.viewerClose, { top: insetsTop + spacing.sm }]} onPress={() => setViewing(null)} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close">
+            <Icon name={ICONS.close} size={24} color="#FFFFFF" />
+          </Pressable>
+        </View>
+      </Modal>
       <ReportSheet
         visible={reportingMessageId !== null}
         targetType="message"
@@ -455,6 +611,12 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       />
       {composerError ? <Text style={styles.composerError}>{composerError}</Text> : null}
       <View style={[styles.composerRow, { paddingBottom: spacing.sm + (keyboardOpen ? 0 : bottomInset) }]}>
+        <Pressable style={styles.cameraButton} onPress={() => void onTakePhoto()} hitSlop={6} accessibilityRole="button" accessibilityLabel="Take a photo or video">
+          <Icon name={ICONS.capture} size={20} color={colors.onAccent} />
+        </Pressable>
+        <Pressable style={styles.attachButton} onPress={() => void onPickFromGallery()} hitSlop={6} accessibilityRole="button" accessibilityLabel="Send a photo or video from your gallery">
+          <Icon name={ICONS.gallery} size={24} color={colors.textPrimary} />
+        </Pressable>
         <Pressable
           style={styles.emojiToggle}
           onPress={toggleEmojiPicker}
@@ -490,6 +652,20 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
+  header: { flexDirection: "row", alignItems: "center", gap: spacing.sm, maxWidth: 260 },
+  headerNames: { flexShrink: 1 },
+  headerName: { color: colors.textPrimary, fontSize: 16, fontWeight: "700" },
+  headerUsername: { color: colors.textSecondary, fontSize: 12 },
+  mediaBubble: { borderRadius: radii.lg, overflow: "hidden", backgroundColor: colors.surfaceElevated },
+  mediaFailed: { borderWidth: 2, borderColor: colors.danger },
+  mediaCaption: { marginTop: 4 },
+  mediaSending: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.35)", alignItems: "center", justifyContent: "center" },
+  playBadge: { position: "absolute", top: "50%", left: "50%", width: 48, height: 48, marginLeft: -24, marginTop: -24, borderRadius: 24, backgroundColor: "rgba(0,0,0,0.5)", alignItems: "center", justifyContent: "center" },
+  playGlyph: { color: "#FFFFFF", fontSize: 20, marginLeft: 3 },
+  cameraButton: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.accent, alignItems: "center", justifyContent: "center", marginBottom: 3 },
+  attachButton: { width: 32, height: 36, alignItems: "center", justifyContent: "center", marginBottom: 3 },
+  viewer: { flex: 1, backgroundColor: "#000000" },
+  viewerClose: { position: "absolute", left: spacing.md, width: 44, height: 44, borderRadius: 22, backgroundColor: "rgba(0,0,0,0.5)", alignItems: "center", justifyContent: "center" },
   replyLabel: { fontSize: 12, opacity: 0.75, marginBottom: 2 },
   reactionGlyph: { fontSize: 34, lineHeight: 42 },
   container: { flex: 1, backgroundColor: colors.background },

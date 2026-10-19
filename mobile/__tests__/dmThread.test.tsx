@@ -7,7 +7,7 @@ import { ConversationScreen } from "../src/screens/dm/ConversationScreen";
 // Hooks return stable values, as the app's providers do (the thread's effects depend on them).
 const mockAuth = { accessToken: "token", user: { id: "u-me", username: "me" } };
 const mockDM = { refreshUnreadCount: jest.fn() };
-const mockNavigation = { navigate: jest.fn(), setParams: jest.fn() };
+const mockNavigation = { navigate: jest.fn(), setParams: jest.fn(), setOptions: jest.fn() };
 jest.mock("../src/state/AuthContext", () => ({ useAuth: () => mockAuth }));
 jest.mock("../src/state/DMContext", () => ({ useDM: () => mockDM }));
 jest.mock("../src/state/RealtimeContext", () => ({ useRealtime: () => ({ connected: true }), useRealtimeEvents: () => undefined }));
@@ -25,10 +25,12 @@ jest.mock("../src/api/conversations", () => ({
     messages: [
       { id: "m2", conversationId: "c1", senderId: "u-alice", body: "hello", sharedStoryId: null, createdAt: "2026-10-06 09:01:00+00" },
       { id: "m1", conversationId: "c1", senderId: "u-me", body: "hi", sharedStoryId: null, createdAt: "2026-10-06 09:00:00+00", status: "read" },
+      { id: "m0", conversationId: "c1", senderId: "u-alice", body: null, sharedStoryId: null, createdAt: "2026-10-06 08:59:00+00", media: { id: "md1", kind: "photo", width: 1080, height: 1350, durationMs: null } },
     ],
   })),
 }));
-jest.mock("../src/api/stories", () => ({ getStoryOwnerUsername: jest.fn() }));
+jest.mock("../src/api/stories", () => ({ getStoryOwnerUsername: jest.fn(), mediaFileUrl: (id: string, v: string) => `/media/${id}/${v}` }));
+jest.mock("../src/components/Avatar", () => ({ Avatar: (p: object) => require("react").createElement("Avatar", p) }));
 jest.mock("../src/components/ReportSheet", () => ({ ReportSheet: (p: object) => require("react").createElement("ReportSheet", p) }));
 jest.mock("@react-navigation/elements", () => ({ useHeaderHeight: () => 103 }));
 jest.mock("@react-navigation/native", () => ({
@@ -101,4 +103,25 @@ test("the emoji panel replaces the keyboard instead of stacking on it", async ()
   expect(toggle().props.accessibilityLabel).toBe("Hide emoji picker");
   await act(async () => toggle().props.onPress());
   expect(dismiss).toHaveBeenCalledTimes(1); // closing the panel leaves the keyboard alone
+});
+
+test("the header shows who you're chatting with, and opens their profile", async () => {
+  await render();
+  const options = mockNavigation.setOptions.mock.calls.at(-1)![0] as { headerTitle: () => React.ReactElement };
+  let header!: ReactTestRenderer;
+  act(() => { header = create(options.headerTitle()); });
+  expect(header.root.findAll((n) => (n.type as unknown) === "Avatar")[0]!.props.username).toBe("alice");
+  act(() => header.root.find((n) => n.props.accessibilityHint === "Opens their profile" && typeof n.props.onPress === "function").props.onPress());
+  expect(mockNavigation.navigate).toHaveBeenCalledWith("Main", { screen: "Search", params: { screen: "UserProfile", params: { username: "alice" } } });
+});
+
+test("photos in the thread open full screen, and there are buttons to send photos and videos", async () => {
+  await render();
+  const photo = tree.root.find((n) => n.props.accessibilityLabel === "@alice: Photo" && typeof n.props.onPress === "function");
+  expect(photo.findAll((n) => (n.type as unknown) === "Image" && n.props.source?.uri === "/media/md1/display")).not.toHaveLength(0);
+  await act(async () => photo.props.onPress());
+  const { Modal } = require("react-native");
+  expect(tree.root.findAllByType(Modal).some((m: ReactTestInstance) => m.props.visible)).toBe(true);
+  expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Send a photo or video from your gallery" && typeof n.props.onPress === "function")).toHaveLength(1);
+  expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Take a photo or video" && typeof n.props.onPress === "function")).toHaveLength(1);
 });

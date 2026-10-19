@@ -62,12 +62,27 @@ export interface MessageRow {
    * `storyId` becomes null once that Story is deleted; the message stays a reply.
    */
   storyReply: StoryReply | null;
+  /** A photo or video sent in the message; null once that media has been purged. */
+  media: MessageMedia | null;
   createdAt: string;
   /** The sender's device id for the message; only ever shown to the sender (see conversations.service.ts). */
   clientMessageId?: string;
 }
 
 export type StoryReplyKind = "reply" | "reaction";
+export interface MessageMedia {
+  id: string;
+  kind: "photo" | "video";
+  width: number | null;
+  height: number | null;
+  durationMs: number | null;
+}
+
+function parseMessageMedia(raw: unknown): MessageMedia | null {
+  if (!raw) return null;
+  const m = (typeof raw === "string" ? JSON.parse(raw) : raw) as Record<string, unknown>;
+  return { id: m.id as string, kind: m.kind as MessageMedia["kind"], width: (m.width as number | null) ?? null, height: (m.height as number | null) ?? null, durationMs: (m.durationMs as number | null) ?? null };
+}
 export interface StoryReply {
   storyId: string | null;
   kind: StoryReplyKind;
@@ -81,12 +96,16 @@ function mapMessageRow(row: Row): MessageRow {
     body: (row.body as string | null) ?? null,
     sharedStoryId: (row.shared_story_id as string | null) ?? null,
     storyReply: row.reply_kind ? { storyId: (row.reply_story_id as string | null) ?? null, kind: row.reply_kind as StoryReplyKind } : null,
+    media: parseMessageMedia(row.media_json),
     createdAt: row.created_at as string,
     ...(row.client_message_id ? { clientMessageId: row.client_message_id as string } : {}),
   };
 }
 
-const MESSAGE_COLUMNS = "id, conversation_id, sender_id, body, shared_story_id, created_at, client_message_id, reply_story_id, reply_kind";
+// The attached media's shape travels with the message, so a thread renders without a lookup per photo.
+const MESSAGE_COLUMNS = `id, conversation_id, sender_id, body, shared_story_id, created_at, client_message_id, reply_story_id, reply_kind, media_id,
+  (SELECT json_build_object('id', md.id, 'kind', md.kind, 'width', md.width, 'height', md.height, 'durationMs', md.duration_ms)
+     FROM media md WHERE md.id = messages.media_id AND md.purged_at IS NULL) AS media_json`;
 
 /**
  * Inserts a message, or — when `clientMessageId` was already used by this sender in
@@ -101,12 +120,13 @@ export async function createMessage(
   sharedStoryId: string | null,
   clientMessageId: string | null = null,
   storyReply: { storyId: string; kind: StoryReplyKind } | null = null,
+  mediaId: string | null = null,
 ): Promise<{ message: MessageRow; created: boolean }> {
   const row = await queryOne(
     `WITH m AS (
-       INSERT INTO messages (conversation_id, sender_id, body, shared_story_id, client_message_id, reply_story_id, reply_kind)
+       INSERT INTO messages (conversation_id, sender_id, body, shared_story_id, client_message_id, reply_story_id, reply_kind, media_id)
        VALUES (:'conversation_id', :'sender_id', ${nullable("body")}, ${nullable("shared_story_id", "uuid")}, ${nullable("client_message_id")},
-               ${nullable("reply_story_id", "uuid")}, ${nullable("reply_kind")})
+               ${nullable("reply_story_id", "uuid")}, ${nullable("reply_kind")}, ${nullable("media_id", "uuid")})
        ON CONFLICT (conversation_id, sender_id, client_message_id) WHERE client_message_id IS NOT NULL DO NOTHING
        RETURNING ${MESSAGE_COLUMNS}),
      c AS (SELECT CASE WHEN user_a_id = :'sender_id' THEN user_b_id ELSE user_a_id END AS recipient_id
@@ -121,7 +141,7 @@ export async function createMessage(
     {
       conversation_id: conversationId, sender_id: senderId, body: body ?? "",
       shared_story_id: sharedStoryId ?? "", client_message_id: clientMessageId ?? "",
-      reply_story_id: storyReply?.storyId ?? "", reply_kind: storyReply?.kind ?? "",
+      reply_story_id: storyReply?.storyId ?? "", reply_kind: storyReply?.kind ?? "", media_id: mediaId ?? "",
     },
   );
   if (row) {
@@ -131,6 +151,16 @@ export async function createMessage(
   const existing = clientMessageId ? await findMessageByClientId(conversationId, senderId, clientMessageId) : null;
   if (!existing) throw new Error("Message insert returned no row");
   return { message: existing, created: false };
+}
+
+/** Whether `viewerId` is in a conversation where this media was sent: they may see it. */
+export async function canAccessMediaViaMessage(mediaId: string, viewerId: string): Promise<boolean> {
+  const row = await queryOne(
+    `SELECT 1 AS ok FROM messages m JOIN conversations c ON c.id = m.conversation_id
+     WHERE m.media_id = :'media' AND (c.user_a_id = :'viewer' OR c.user_b_id = :'viewer') LIMIT 1`,
+    { media: mediaId, viewer: viewerId },
+  );
+  return !!row;
 }
 
 export async function findMessageByClientId(conversationId: string, senderId: string, clientMessageId: string): Promise<MessageRow | null> {
@@ -257,6 +287,8 @@ export interface ConversationSummary {
     senderId: string;
     body: string | null;
     sharedStoryId: string | null;
+    /** "photo" or "video" when the last message carried one (the inbox shows "Sent a photo"). */
+    mediaKind?: "photo" | "video" | null;
     createdAt: string;
   } | null;
   unread: boolean;
@@ -278,6 +310,7 @@ function mapConversationSummaryRow(row: Row): ConversationSummary {
           senderId: row.last_message_sender_id as string,
           body: (row.last_message_body as string | null) ?? null,
           sharedStoryId: (row.last_message_shared_story_id as string | null) ?? null,
+          mediaKind: (row.last_message_media_kind as "photo" | "video" | null) ?? null,
           createdAt: row.last_message_created_at as string,
         }
       : null,
@@ -292,12 +325,13 @@ export async function listConversationsForUser(userId: string, limit: number, of
        c.id, c.created_at,
        ou.id AS other_user_id, ou.username AS other_username, ou.display_name AS other_display_name, ou.avatar_media_id AS other_avatar_media_id,
        lm.id AS last_message_id, lm.sender_id AS last_message_sender_id, lm.body AS last_message_body,
-       lm.shared_story_id AS last_message_shared_story_id, lm.created_at AS last_message_created_at,
+       lm.shared_story_id AS last_message_shared_story_id, lm.created_at AS last_message_created_at, lm.media_kind AS last_message_media_kind,
        (lm.created_at IS NOT NULL AND lm.created_at > COALESCE(cr.last_read_at, 'epoch')) AS is_unread
      FROM conversations c
      JOIN users ou ON ou.id = (CASE WHEN c.user_a_id = :'user_id' THEN c.user_b_id ELSE c.user_a_id END)
      LEFT JOIN LATERAL (
-       SELECT id, sender_id, body, shared_story_id, created_at
+       SELECT id, sender_id, body, shared_story_id, created_at,
+              (SELECT md.kind FROM media md WHERE md.id = m.media_id) AS media_kind
        FROM messages m
        WHERE m.conversation_id = c.id
        ORDER BY m.created_at DESC

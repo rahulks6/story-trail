@@ -19,6 +19,7 @@ function previewText(conversation: ConversationSummary, myUserId: string | undef
   if (!lastMessage) return "Say hi 👋";
   const prefix = lastMessage.senderId === myUserId ? "You: " : "";
   if (lastMessage.sharedStoryId) return `${prefix}Shared a Story`;
+  if (lastMessage.mediaKind && !lastMessage.body) return `${prefix}Sent a ${lastMessage.mediaKind}`;
   return `${prefix}${lastMessage.body ?? ""}`;
 }
 
@@ -147,6 +148,7 @@ export function DMInboxScreen(): React.JSX.Element {
               conversationId: item.id,
               otherUsername: item.otherUser.username,
               otherDisplayName: item.otherUser.displayName,
+              otherAvatarMediaId: item.otherUser.avatarMediaId ?? null,
             })
           }
           accessibilityRole="button"

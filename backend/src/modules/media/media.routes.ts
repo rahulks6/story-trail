@@ -9,6 +9,7 @@ import type { MediaRecord } from "./media.repository";
 import { deliveryFor, parseVariant, sendMediaFile } from "./delivery";
 import * as uploads from "./uploads";
 import * as storiesService from "../stories/stories.service";
+import { canAccessMediaViaMessage } from "../conversations/conversations.repository";
 
 export function toPublicMedia(media: MediaRecord, isOwner = true) {
   return {
@@ -38,6 +39,8 @@ async function requireAccessibleMedia(id: string, viewerId: string): Promise<Med
   if (!media || media.purgedAt) throw new HttpError(404, "Media not found.");
   if (media.ownerId === viewerId) return media;
   if (media.status === "ready" && (await storiesService.canAccessMediaViaStory(id, viewerId))) return media;
+  // Sent to the viewer (or by them) in a direct message.
+  if (media.status === "ready" && (await canAccessMediaViaMessage(id, viewerId))) return media;
   throw new HttpError(404, "Media not found.");
 }
 

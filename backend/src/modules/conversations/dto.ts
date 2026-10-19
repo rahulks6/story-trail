@@ -32,8 +32,14 @@ export function parseSendMessageInput(body: unknown): SendMessageInput {
     }
   }
 
-  if (!messageBody && !storyId) {
-    errors.body = "A message needs text, a shared Story, or both.";
+  let mediaId: string | null = null;
+  if (b.mediaId !== undefined && b.mediaId !== null) {
+    if (typeof b.mediaId !== "string" || !UUID_RE.test(b.mediaId)) errors.mediaId = "mediaId must be a valid media id.";
+    else mediaId = b.mediaId;
+  }
+
+  if (!messageBody && !storyId && !mediaId && !errors.mediaId) {
+    errors.body = "A message needs text, a photo or video, or a shared Story.";
   }
 
   let clientMessageId: string | null = null;
@@ -46,7 +52,7 @@ export function parseSendMessageInput(body: unknown): SendMessageInput {
   }
 
   if (Object.keys(errors).length > 0) throw new ValidationError(errors);
-  return { body: messageBody, storyId, clientMessageId };
+  return { body: messageBody, storyId, clientMessageId, mediaId };
 }
 
 export interface ReportMessageInput {

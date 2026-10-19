@@ -8,6 +8,7 @@ import * as engagementService from "../stories/engagement.service";
 import * as conversationsRepo from "./conversations.repository";
 import type { ConversationRow, ConversationSummary, MessageRow, StoryReplyKind } from "./conversations.repository";
 import { getStoryForViewer } from "../stories/stories.service";
+import * as mediaRepo from "../media/media.repository";
 
 async function requireOtherUser(username: string, viewerId: string): Promise<usersRepo.UserRecord> {
   const target = await usersRepo.findUserByUsername(username);
@@ -84,6 +85,8 @@ export interface SendMessageInput {
   storyId: string | null;
   /** The device's id for this message: a retried send with the same id never duplicates it. */
   clientMessageId: string | null;
+  /** A photo or video the sender uploaded (POST /api/v1/media/photos or /videos) to send. */
+  mediaId?: string | null;
   /** Set by replyToStory only: the Story this message answers. */
   storyReply?: { storyId: string; kind: StoryReplyKind } | null;
 }
@@ -101,6 +104,14 @@ export async function sendMessage(viewerId: string, conversationId: string, inpu
   await enforceAction(viewerId, "message"); // retries above never count
   if (input.body) await assertLinksAllowed(input.body, "message", viewerId);
 
+  if (input.mediaId) {
+    // Only your own upload, and only once it's been received (it may still be processing).
+    const media = await mediaRepo.findMediaById(input.mediaId, true);
+    if (!media || media.ownerId !== viewerId || media.purgedAt || (media.status !== "ready" && media.status !== "processing")) {
+      throw new HttpError(422, "That photo or video can't be sent.", { mediaId: "Upload the photo or video first." });
+    }
+  }
+
   if (input.storyId) {
     // Reuses the exact same view-access + allowSharing rule and analytics
     // logging as the Share sheet's other two options (native share, copy
@@ -110,7 +121,7 @@ export async function sendMessage(viewerId: string, conversationId: string, inpu
     await engagementService.shareStory(viewerId, input.storyId);
   }
 
-  const result = await conversationsRepo.createMessage(conversationId, viewerId, input.body, input.storyId, input.clientMessageId, input.storyReply ?? null);
+  const result = await conversationsRepo.createMessage(conversationId, viewerId, input.body, input.storyId, input.clientMessageId, input.storyReply ?? null, input.mediaId ?? null);
   return result.created ? result : replayed(result.message, input);
 }
 
@@ -146,7 +157,7 @@ export async function replyToStory(viewerId: string, storyId: string, input: Sto
 
 function replayed(message: MessageRow, input: SendMessageInput): { message: MessageRow; created: boolean } {
   const reply = input.storyReply ?? null;
-  if (message.body !== input.body || message.sharedStoryId !== input.storyId ||
+  if (message.body !== input.body || message.sharedStoryId !== input.storyId || (message.media?.id ?? null) !== (input.mediaId ?? null) ||
       (message.storyReply?.kind ?? null) !== (reply?.kind ?? null) || (reply && message.storyReply?.storyId !== reply.storyId)) {
     throw new HttpError(409, "This message id was already used for a different message.");
   }

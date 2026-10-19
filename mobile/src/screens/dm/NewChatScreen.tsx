@@ -61,6 +61,7 @@ export function NewChatScreen({ navigation }: Props): React.JSX.Element {
         conversationId: conversation.id,
         otherUsername: conversation.otherUser.username,
         otherDisplayName: conversation.otherUser.displayName,
+        otherAvatarMediaId: conversation.otherUser.avatarMediaId ?? null,
       });
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Couldn't start that conversation — try again.");

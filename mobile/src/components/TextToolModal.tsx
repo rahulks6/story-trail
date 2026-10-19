@@ -1,15 +1,19 @@
-import React, { useState } from "react";
-import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Keyboard, Modal, PanResponder, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing, ICONS } from "../theme";
 import { Icon } from "./Icon";
-import { textStyleLook } from "./OverlayBody";
+import { contrastOn, STYLE_LABELS, TEXT_STYLES, textStyleLook } from "./textLook";
 import type { TextOverlayProperties, TextStyle } from "../models/storyDraft";
+import { tapFeedback } from "../utils/haptics";
 
-const STYLES: TextStyle[] = ["Clean", "Bold", "Classic", "Modern", "Typewriter", "Outline", "Soft", "Highlight"];
-const COLORS = ["#F5F3EF", "#000000", "#F5B400", "#FF8A00", "#E4483C", "#FF5DA2", "#A45CFF", "#3E7BFF", "#2EC4E6", "#3FBF7F", "#9A6B4F", "#8E8E93"];
-const ALIGNS: TextOverlayProperties["align"][] = ["left", "center", "right"];
-const FONT_SIZE_STEPS = [0.03, 0.04, 0.045, 0.055, 0.07, 0.09];
+const COLORS = ["#FFFFFF", "#000000", "#F5B400", "#FF8A00", "#E4483C", "#FF5DA2", "#A45CFF", "#3E7BFF", "#2EC4E6", "#3FBF7F", "#9A6B4F", "#8E8E93"];
+const ALIGNS: TextOverlayProperties["align"][] = ["center", "left", "right"];
+/** Text size on the Story, as a fraction of its height. */
+const MIN_SIZE = 0.025;
+const MAX_SIZE = 0.1;
+const DEFAULT_SIZE = 0.045;
+const SLIDER_HEIGHT = 200;
 
 interface Props {
   visible: boolean;
@@ -20,153 +24,190 @@ interface Props {
 }
 
 /**
- * Text composer (spec section 20), over the dimmed photo: the keyboard opens straight away, the
- * text previews in its colour, size, alignment and background, and Done places it as a movable
- * overlay. Done with nothing typed just closes.
+ * Instagram's text tool, over the dimmed photo: the keyboard opens straight away; the styles sit
+ * right above it (each name written in its own font); the colour button swaps them for colours;
+ * the slider on the left sets the size; "A" puts the text on a label in the chosen colour. Tapping
+ * anywhere outside the text, or Done, places it. Nothing typed just closes.
  */
 export function TextToolModal({ visible, initialText, initialProperties, onCancel, onDone }: Props): React.JSX.Element {
   const [text, setText] = useState(initialText ?? "");
   const [style, setStyle] = useState<TextStyle>(initialProperties?.style ?? "Clean");
-  const [color, setColor] = useState(initialProperties?.color ?? COLORS[0]);
-  const [hasBackground, setHasBackground] = useState(initialProperties?.backgroundColor !== null && initialProperties?.backgroundColor !== undefined);
+  const hadBackground = initialProperties?.backgroundColor != null;
+  // With a label, the chosen colour is the label's; the text is black or white on it.
+  const [color, setColor] = useState(hadBackground ? initialProperties!.backgroundColor! : initialProperties?.color ?? COLORS[0]!);
+  const [hasBackground, setHasBackground] = useState(hadBackground);
   const [align, setAlign] = useState<TextOverlayProperties["align"]>(initialProperties?.align ?? "center");
-  const [fontSizeIndex, setFontSizeIndex] = useState(() => {
-    const initial = initialProperties?.fontSize ?? FONT_SIZE_STEPS[2];
-    let closest = 0;
-    let closestDiff = Infinity;
-    FONT_SIZE_STEPS.forEach((v, i) => {
-      const diff = Math.abs(v - initial);
-      if (diff < closestDiff) {
-        closestDiff = diff;
-        closest = i;
-      }
-    });
-    return closest;
-  });
-
+  const [size, setSize] = useState(initialProperties?.fontSize ?? DEFAULT_SIZE);
+  const [picking, setPicking] = useState<"styles" | "colors">("styles");
+  const keyboard = useKeyboardHeight();
   const insets = useSafeAreaInsets();
-  const nextAlign = () => setAlign((a) => ALIGNS[(ALIGNS.indexOf(a) + 1) % ALIGNS.length]!);
-  const alignIcon = align === "left" ? ICONS.alignLeft : align === "right" ? ICONS.alignRight : ICONS.alignCenter;
+
+  const textColor = hasBackground ? contrastOn(color) : color;
   const done = () => {
     if (!text.trim()) {
       onCancel();
       return;
     }
-    onDone(text, { text, style, color, backgroundColor: hasBackground ? "#000000" : null, align, fontSize: FONT_SIZE_STEPS[fontSizeIndex] });
+    onDone(text, { text, style, color: textColor, backgroundColor: hasBackground ? color : null, align, fontSize: size });
   };
 
+  // The size slider: drag up for bigger, down for smaller.
+  const sizeRef = useRef(size);
+  sizeRef.current = size;
+  const slider = useMemo(() => {
+    let start = DEFAULT_SIZE;
+    return PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderTerminationRequest: () => false,
+      onPanResponderGrant: () => { start = sizeRef.current; },
+      onPanResponderMove: (_e, g) => {
+        const next = Math.min(MAX_SIZE, Math.max(MIN_SIZE, start - (g.dy / SLIDER_HEIGHT) * (MAX_SIZE - MIN_SIZE)));
+        setSize(next);
+      },
+    });
+  }, []);
+  const sliderFraction = (size - MIN_SIZE) / (MAX_SIZE - MIN_SIZE);
+
+  const nextAlign = () => setAlign((a) => ALIGNS[(ALIGNS.indexOf(a) + 1) % ALIGNS.length]!);
+  const alignIcon = align === "left" ? ICONS.alignLeft : align === "right" ? ICONS.alignRight : ICONS.alignCenter;
+  // The preview is the size it will be on a full-screen Story.
+  const previewSize = Math.round(size * 760);
+
   return (
-    // The photo stays visible, dimmed, behind the text being written (like Instagram).
-    <Modal visible={visible} animationType="fade" transparent statusBarTranslucent navigationBarTranslucent onRequestClose={onCancel}>
-      {/*
-        The keyboard opens straight away and every control sits above it, so it has to be
-        avoided: `padding` shrinks this view on iOS; `height` on Android.
-      */}
-      <KeyboardAvoidingView
-        style={[styles.container, { paddingTop: insets.top + spacing.sm, paddingBottom: insets.bottom + spacing.sm }]}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
+    <Modal visible={visible} animationType="fade" transparent statusBarTranslucent navigationBarTranslucent onRequestClose={done}>
+      <View style={[styles.container, { paddingTop: insets.top + spacing.sm, paddingBottom: Math.max(keyboard, insets.bottom) + spacing.xs }]}>
         <View style={styles.topBar}>
-          <Pressable accessibilityRole="button" onPress={onCancel} hitSlop={12}>
-            <Text style={styles.topAction}>Cancel</Text>
-          </Pressable>
           <View style={styles.topTools}>
-            <Pressable onPress={nextAlign} hitSlop={10} style={styles.toolButton} accessibilityRole="button" accessibilityLabel={`Alignment: ${align}`} accessibilityHint="Changes the text alignment">
-              <Icon name={alignIcon} size={22} color={colors.textPrimary} />
+            <Pressable onPress={nextAlign} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel={`Alignment: ${align}`} accessibilityHint="Changes the text alignment">
+              <Icon name={alignIcon} size={24} color={colors.textPrimary} />
+            </Pressable>
+            <Pressable
+              onPress={() => { setPicking((p) => (p === "colors" ? "styles" : "colors")); tapFeedback("select"); }}
+              hitSlop={8}
+              style={[styles.toolButton, picking === "colors" && styles.toolButtonOn]}
+              accessibilityRole="button"
+              accessibilityLabel={picking === "colors" ? "Show text styles" : "Show colours"}
+            >
+              <View style={[styles.colorDot, { backgroundColor: color }]} />
             </Pressable>
             <Pressable
               onPress={() => setHasBackground((v) => !v)}
-              hitSlop={10}
+              hitSlop={8}
               style={[styles.toolButton, hasBackground && styles.toolButtonOn]}
               accessibilityRole="switch"
               accessibilityLabel="Text background"
               accessibilityState={{ checked: hasBackground }}
             >
-              <Icon name={ICONS.textBackground} size={22} color={hasBackground ? colors.onAccent : colors.textPrimary} />
-            </Pressable>
-            <Pressable onPress={() => setFontSizeIndex((i) => Math.max(0, i - 1))} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel="Smaller text">
-              <Text style={styles.sizeSmall}>A</Text>
-            </Pressable>
-            <Pressable onPress={() => setFontSizeIndex((i) => Math.min(FONT_SIZE_STEPS.length - 1, i + 1))} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel="Larger text">
-              <Text style={styles.sizeLarge}>A</Text>
+              <Icon name={ICONS.textBackground} size={24} color={hasBackground ? colors.background : colors.textPrimary} />
             </Pressable>
           </View>
-          <Pressable accessibilityRole="button" onPress={done} hitSlop={12}>
-            <Text style={[styles.topAction, styles.doneAction]}>Done</Text>
+          <Pressable accessibilityRole="button" onPress={done} hitSlop={12} style={styles.doneButton}>
+            <Text style={styles.doneLabel}>Done</Text>
           </Pressable>
         </View>
 
-        <View style={styles.inputArea}>
-          <View style={[styles.inputBox, hasBackground && styles.inputBoxOn, { alignSelf: align === "left" ? "flex-start" : align === "right" ? "flex-end" : "center" }]}>
+        <View style={styles.middle}>
+          {/* Tapping the dimmed photo around the text places it, like Instagram. */}
+          <Pressable style={StyleSheet.absoluteFill} onPress={done} accessible={false} accessibilityRole="button" accessibilityLabel="Place the text" />
+          <View style={styles.slider} {...slider.panHandlers} accessible accessibilityRole="adjustable" accessibilityLabel="Text size"
+            accessibilityValue={{ min: 0, max: 100, now: Math.round(sliderFraction * 100) }}
+            accessibilityActions={[{ name: "increment" }, { name: "decrement" }]}
+            onAccessibilityAction={(e) => setSize((s) => Math.min(MAX_SIZE, Math.max(MIN_SIZE, s + (e.nativeEvent.actionName === "increment" ? 0.01 : -0.01))))}
+          >
+            <View style={styles.sliderTrack} />
+            <View style={[styles.sliderThumb, { top: (1 - sliderFraction) * (SLIDER_HEIGHT - 22) }]} />
+          </View>
+          <View style={[styles.inputBox, hasBackground && { backgroundColor: color, borderRadius: previewSize * 0.3, paddingHorizontal: previewSize * 0.35 }, { alignSelf: align === "left" ? "flex-start" : align === "right" ? "flex-end" : "center" }]}>
             <TextInput
               autoFocus
               multiline
               // Previews the chosen style, colour and size as it will appear on the Story.
-              style={[styles.input, textStyleLook(style), { color: style === "Highlight" ? colors.background : color, textAlign: align, fontSize: 18 + fontSizeIndex * 5 }]}
+              style={[styles.input, { fontSize: previewSize, lineHeight: undefined }, textStyleLook(style, textColor), { color: textColor, textAlign: align }]}
               placeholder="Type something…"
               placeholderTextColor="rgba(255,255,255,0.6)"
               value={text}
               onChangeText={setText}
+              cursorColor={colors.accent}
+              selectionColor={colors.accent}
             />
           </View>
         </View>
 
-        <ScrollView horizontal style={styles.row} showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="always" contentContainerStyle={styles.colorsRow}>
-          {COLORS.map((c) => (
-            <Pressable
-              key={c}
-              onPress={() => setColor(c)}
-              hitSlop={4}
-              style={[styles.colorSwatch, { backgroundColor: c }, color === c && styles.colorSwatchActive]}
-              accessibilityRole="button"
-              accessibilityLabel={`Text colour ${c}`}
-              accessibilityState={{ selected: color === c }}
-            />
-          ))}
-        </ScrollView>
-
-        <ScrollView horizontal style={styles.row} showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="always" contentContainerStyle={styles.stylesRow}>
-          {STYLES.map((s) => (
-            <Pressable
-              key={s}
-              onPress={() => setStyle(s)}
-              style={[styles.styleChip, style === s && styles.styleChipActive]}
-              accessibilityRole="button"
-              accessibilityLabel={`${s} text style`}
-              accessibilityState={{ selected: style === s }}
-            >
-              {/* Each name is written in its own style, so you see the look before choosing. */}
-              <Text style={[styles.styleChipLabel, textStyleLook(s), style === s && styles.styleChipLabelActive]} numberOfLines={1}>{s}</Text>
-            </Pressable>
-          ))}
-        </ScrollView>
-      </KeyboardAvoidingView>
+        {picking === "styles" ? (
+          <ScrollView key="styles" horizontal style={styles.row} showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="always" contentContainerStyle={styles.rowContent}>
+            {TEXT_STYLES.map((s) => (
+              <Pressable
+                key={s}
+                onPress={() => { setStyle(s); tapFeedback("select"); }}
+                style={[styles.styleChip, style === s && styles.styleChipActive]}
+                accessibilityRole="button"
+                accessibilityLabel={`${STYLE_LABELS[s]} text style`}
+                accessibilityState={{ selected: style === s }}
+              >
+                {/* Each name is written in its own style, so you see the look before choosing. */}
+                <Text style={[styles.styleChipLabel, textStyleLook(s, style === s ? colors.background : colors.textPrimary), style === s && styles.styleChipLabelActive]} numberOfLines={1}>
+                  {STYLE_LABELS[s]}
+                </Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+        ) : (
+          <ScrollView key="colors" horizontal style={styles.row} showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="always" contentContainerStyle={styles.rowContent}>
+            {COLORS.map((c) => (
+              <Pressable
+                key={c}
+                onPress={() => { setColor(c); tapFeedback("select"); }}
+                hitSlop={4}
+                style={[styles.colorSwatch, { backgroundColor: c }, color === c && styles.colorSwatchActive]}
+                accessibilityRole="button"
+                accessibilityLabel={`Text colour ${c}`}
+                accessibilityState={{ selected: color === c }}
+              />
+            ))}
+          </ScrollView>
+        )}
+      </View>
     </Modal>
   );
 }
 
+/**
+ * How far the keyboard covers the screen. The modal draws edge-to-edge on Android, where the
+ * window isn't resized for the keyboard, so the controls are lifted by hand to sit right on it.
+ */
+function useKeyboardHeight(): number {
+  const [height, setHeight] = useState(0);
+  useEffect(() => {
+    const show = Keyboard.addListener(Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow", (e) => setHeight(e.endCoordinates.height));
+    const hide = Keyboard.addListener(Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide", () => setHeight(0));
+    return () => { show.remove(); hide.remove(); };
+  }, []);
+  return height;
+}
+
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "rgba(0,0,0,0.62)", paddingHorizontal: spacing.md },
-  topBar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", minHeight: 44 },
-  topTools: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
-  toolButton: { width: 38, height: 38, borderRadius: 19, alignItems: "center", justifyContent: "center" },
+  container: { flex: 1, backgroundColor: "rgba(0,0,0,0.6)", paddingHorizontal: spacing.md },
+  topBar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", minHeight: 48 },
+  topTools: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
+  toolButton: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0,0,0,0.35)" },
   toolButtonOn: { backgroundColor: colors.textPrimary },
-  sizeSmall: { color: colors.textPrimary, fontSize: 14, fontWeight: "700" },
-  sizeLarge: { color: colors.textPrimary, fontSize: 22, fontWeight: "700" },
-  topAction: { color: colors.textPrimary, fontSize: 16, fontWeight: "600" },
-  doneAction: { color: colors.accent, fontWeight: "700" },
-  inputArea: { flex: 1, justifyContent: "center" },
-  inputBox: { maxWidth: "100%", paddingHorizontal: 10, paddingVertical: 4, borderRadius: radii.sm },
-  inputBoxOn: { backgroundColor: "rgba(0,0,0,0.55)" },
-  input: { fontWeight: "600", minWidth: 40 },
+  colorDot: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: "#FFFFFF" },
+  doneButton: { paddingHorizontal: spacing.md, height: 40, borderRadius: radii.pill, backgroundColor: colors.textPrimary, justifyContent: "center" },
+  doneLabel: { color: colors.background, fontSize: 16, fontWeight: "700" },
+  middle: { flex: 1, justifyContent: "center", paddingLeft: 36 },
+  slider: { position: "absolute", left: -4, top: "50%", marginTop: -SLIDER_HEIGHT / 2, width: 36, height: SLIDER_HEIGHT, alignItems: "center" },
+  sliderTrack: { position: "absolute", top: 8, bottom: 8, width: 4, borderRadius: 2, backgroundColor: "rgba(255,255,255,0.6)" },
+  sliderThumb: { position: "absolute", width: 22, height: 22, borderRadius: 11, backgroundColor: "#FFFFFF", borderWidth: 1, borderColor: "rgba(0,0,0,0.2)" },
+  inputBox: { maxWidth: "100%", paddingHorizontal: 6, paddingVertical: 2 },
+  input: { minWidth: 40, padding: 0 },
   // A horizontal list must not grow to fill the screen (it stretched the style buttons into tall ovals).
   row: { flexGrow: 0, flexShrink: 0 },
-  colorsRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.sm },
-  colorSwatch: { width: 30, height: 30, borderRadius: 15, borderWidth: 2, borderColor: "rgba(255,255,255,0.85)" },
+  rowContent: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.sm },
+  colorSwatch: { width: 32, height: 32, borderRadius: 16, borderWidth: 2, borderColor: "rgba(255,255,255,0.9)" },
   colorSwatchActive: { borderColor: colors.accent, borderWidth: 3, transform: [{ scale: 1.15 }] },
-  stylesRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs, paddingBottom: spacing.xs },
-  styleChip: { height: 36, justifyContent: "center", borderWidth: 1, borderColor: "rgba(255,255,255,0.35)", borderRadius: radii.pill, paddingHorizontal: spacing.md, backgroundColor: "rgba(0,0,0,0.3)" },
-  styleChipActive: { backgroundColor: colors.textPrimary, borderColor: colors.textPrimary },
-  styleChipLabel: { color: colors.textPrimary, fontSize: 13 },
-  styleChipLabelActive: { color: colors.background, fontWeight: "700" },
+  styleChip: { height: 38, justifyContent: "center", borderRadius: radii.pill, paddingHorizontal: spacing.md, backgroundColor: "rgba(0,0,0,0.45)" },
+  styleChipActive: { backgroundColor: colors.textPrimary },
+  styleChipLabel: { color: colors.textPrimary, fontSize: 15 },
+  styleChipLabelActive: { color: colors.background },
 });
