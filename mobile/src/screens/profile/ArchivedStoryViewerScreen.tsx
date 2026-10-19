@@ -5,7 +5,8 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Animated, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import Video from "react-native-video";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useAppForeground } from "../../hooks/useAppForeground";
 import type { RootStackParamList } from "../../navigation/types";
 import { mediaColors as colors, radii, spacing, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
@@ -51,6 +52,13 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
   const [containerSize, onContainerLayout] = useContainerLayout();
   const progress = useRef(new Animated.Value(0)).current;
   const animationRef = useRef<Animated.CompositeAnimation | null>(null);
+  // Where the bar had got to when playback paused (0-1), to carry on from there.
+  const resumeFrom = useRef(0);
+  const [attempt, setAttempt] = useState(0);
+  // Plays only while on screen, in the foreground, and not while choosing a Highlight.
+  const focused = useIsFocused();
+  const foreground = useAppForeground();
+  const active = focused && foreground && !addOpen;
 
   useEffect(() => {
     if (!accessToken) return;
@@ -69,27 +77,50 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
     return () => {
       cancelled = true;
     };
-  }, [storyId, accessToken]);
+  }, [storyId, accessToken, attempt]);
 
   const close = useCallback(() => navigation.goBack(), [navigation]);
 
   useEffect(() => {
     if (!detail || mediaKind === null) return;
     if (mediaKind === "video" && videoDurationMs === null) return;
+    const from = resumeFrom.current;
+    progress.setValue(from);
+    if (!active) return;
     const durationMs = mediaKind === "video" ? (videoDurationMs as number) : PHOTO_DURATION_MS;
-
-    progress.setValue(0);
-    animationRef.current = Animated.timing(progress, { toValue: 1, duration: durationMs, useNativeDriver: false });
-    animationRef.current.start(({ finished }) => {
-      if (finished) close();
+    const startedAt = Date.now();
+    let done = false;
+    const animation = Animated.timing(progress, { toValue: 1, duration: durationMs * (1 - from), useNativeDriver: true });
+    animationRef.current = animation;
+    animation.start(({ finished }) => {
+      if (!finished) return;
+      done = true;
+      close();
     });
-    return () => animationRef.current?.stop();
-  }, [detail, mediaKind, videoDurationMs, progress, close]);
+    return () => {
+      animation.stop();
+      // The bar runs on the native side: how far it got comes from the time it ran.
+      if (!done) resumeFrom.current = Math.min(1, from + (Date.now() - startedAt) / durationMs);
+    };
+  }, [detail, mediaKind, videoDurationMs, progress, close, active]);
+
+  // Fetch the Story and its media again, from the start.
+  const retry = () => {
+    resumeFrom.current = 0;
+    setError(null);
+    setDetail(null);
+    setMediaKind(null);
+    setVideoDurationMs(null);
+    setAttempt((n) => n + 1);
+  };
 
   if (error) {
     return (
       <View style={styles.centered}>
         <Text style={styles.errorText}>{error}</Text>
+        <Pressable style={styles.retryButton} onPress={retry} accessibilityRole="button">
+          <Text style={styles.retryLabel}>Try again</Text>
+        </Pressable>
         <Pressable style={[styles.closeButton, { top: insets.top + spacing.sm + 10 }]} onPress={close} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close">
           <Icon style={styles.closeIcon} name={ICONS.close} />
         </Pressable>
@@ -113,16 +144,20 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
     <View style={styles.container} onLayout={onContainerLayout}>
       {mediaKind === "video" ? (
         <Video
+          key={attempt}
           source={{ uri: mediaUrl, headers: authHeaders }}
           poster={{ source: { uri: mediaFileUrl(detail.mediaId, "poster"), headers: authHeaders }, resizeMode: "cover" }}
           style={[StyleSheet.absoluteFill, mediaTransformStyle(detail.crop, containerSize.width, containerSize.height)]}
           resizeMode="cover"
           onLoad={(meta) => setVideoDurationMs(Math.max(1000, meta.duration * 1000))}
-          paused={false}
+          paused={!active}
           muted={detail.audioMuted}
+          onError={() => setError("Couldn't play this Story.")}
         />
       ) : mediaKind === "photo" ? (
         <Image
+          key={attempt}
+          onError={() => setError("Couldn't load this photo.")}
           source={{ uri: mediaUrl, headers: authHeaders }}
           style={[StyleSheet.absoluteFill, mediaTransformStyle(detail.crop, containerSize.width, containerSize.height)]}
           resizeMode="cover"
@@ -140,14 +175,15 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
           containerWidth={containerSize.width}
           containerHeight={containerSize.height}
           onMentionPress={(username) =>
-            rootNavigation.navigate("Main", { screen: "Search", params: { screen: "UserProfile", params: { username } } })
+            rootNavigation.navigate("Main", { screen: "Search", params: { screen: "UserProfile", initial: false, params: { username } } })
           }
         />
       ) : null}
 
       <View style={[styles.progressTrack, { top: insets.top + spacing.sm }]}>
         <Animated.View
-          style={[styles.progressFill, { width: progress.interpolate({ inputRange: [0, 1], outputRange: ["0%", "100%"] }) }]}
+          // Scaled from the left on the native side, not a width laid out every frame.
+          style={[styles.progressFill, { transform: [{ scaleX: progress }] }]}
         />
       </View>
 
@@ -155,8 +191,7 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
 
       <Pressable
         onPress={() => {
-          // Stay on this Story while choosing.
-          animationRef.current?.stop();
+          // Stay on this Story while choosing (playback pauses while the sheet is open).
           setAddOpen(true);
         }}
         style={[styles.addButton, { bottom: spacing.md + insets.bottom }]}
@@ -190,7 +225,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.3)",
     overflow: "hidden",
   },
-  progressFill: { height: "100%", backgroundColor: "#fff" },
+  progressFill: { height: "100%", width: "100%", backgroundColor: "#fff", transformOrigin: "left" },
+  retryButton: { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radii.pill, borderWidth: 1, borderColor: "#fff" },
+  retryLabel: { color: "#fff", fontWeight: "700" },
   addButton: { position: "absolute", alignSelf: "center", flexDirection: "row", alignItems: "center", gap: spacing.xs, backgroundColor: colors.accent, borderRadius: radii.pill, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
   addLabel: { color: colors.onAccent, fontWeight: "700" },
   caption: {

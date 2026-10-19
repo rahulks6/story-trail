@@ -4,7 +4,8 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, Animated, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import Video from "react-native-video";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
+import { useAppForeground } from "../../hooks/useAppForeground";
 import type { RootStackParamList } from "../../navigation/types";
 import { mediaColors as colors, spacing, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
@@ -61,6 +62,11 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
   const countedView = useRef(false);
 
   const [optionsOpen, setOptionsOpen] = useState(false);
+  // Plays only while on screen: with the editor pushed on top, or the app in the background, the
+  // video and song pause and the timer stops (so it can't move on, or close the screen above it).
+  const focused = useIsFocused();
+  const foreground = useAppForeground();
+  const active = focused && foreground && !optionsOpen;
   const currentItem = items?.[index] ?? null;
   const showingRef = useRef<string | null>(null);
   showingRef.current = currentItem?.storyId ?? null;
@@ -97,11 +103,8 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
     }, [highlightId, accessToken]),
   );
 
-  // Where the progress bar stopped when the options sheet opened, to carry on from there.
-  const resumeFrom = useRef(0);
-  useEffect(() => {
-    if (optionsOpen) progress.stopAnimation((value) => { resumeFrom.current = value > 0 && value < 1 ? value : 0; });
-  }, [optionsOpen, progress]);
+  // Where the progress bar stopped when playback paused, to carry on from there for the same Story.
+  const resumeFrom = useRef<{ storyId: string; value: number } | null>(null);
 
   useEffect(() => {
     if (!currentItem || !accessToken) return;
@@ -127,7 +130,9 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
     return () => {
       cancelled = true;
     };
-  }, [currentItem, highlightId, accessToken]);
+    // The same Story (a fresh list on returning to this screen) keeps its media rather than reloading it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentItem?.storyId, currentItem?.mediaId, highlightId, accessToken]);
 
   const goNext = useCallback(() => {
     if (!items) return;
@@ -142,20 +147,33 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
     setIndex((i) => Math.max(0, i - 1));
   }, []);
 
+  const storyId = currentItem?.storyId ?? null;
   useEffect(() => {
-    if (!currentItem || mediaKind === null || optionsOpen) return;
+    if (!storyId || mediaKind === null) return;
     if (mediaKind === "video" && videoDurationMs === null) return;
-    const durationMs = mediaKind === "video" ? (videoDurationMs as number) : detail?.music?.durationMs ?? PHOTO_DURATION_MS;
-
-    const from = resumeFrom.current;
-    resumeFrom.current = 0;
+    const saved = resumeFrom.current;
+    const from = saved?.storyId === storyId ? saved.value : 0;
     progress.setValue(from);
-    animationRef.current = Animated.timing(progress, { toValue: 1, duration: durationMs * (1 - from), useNativeDriver: false });
-    animationRef.current.start(({ finished }) => {
-      if (finished) goNext();
+    if (!active) return;
+    const durationMs = mediaKind === "video" ? (videoDurationMs as number) : detail?.music?.durationMs ?? PHOTO_DURATION_MS;
+    const startedAt = Date.now();
+    let done = false;
+    const animation = Animated.timing(progress, { toValue: 1, duration: durationMs * (1 - from), useNativeDriver: true });
+    animationRef.current = animation;
+    animation.start(({ finished }) => {
+      if (!finished) return;
+      done = true;
+      resumeFrom.current = null;
+      goNext();
     });
-    return () => animationRef.current?.stop();
-  }, [currentItem, mediaKind, videoDurationMs, goNext, progress, detail?.music?.durationMs, optionsOpen]);
+    return () => {
+      animation.stop();
+      if (done) return;
+      // The bar runs on the native side: how far it got comes from the time it ran.
+      const value = Math.min(1, from + (Date.now() - startedAt) / durationMs);
+      resumeFrom.current = value < 1 ? { storyId, value } : null;
+    };
+  }, [storyId, mediaKind, videoDurationMs, goNext, progress, detail?.music?.durationMs, active]);
 
   const removeCurrent = () => {
     if (!accessToken || !items || !currentItem) return;
@@ -213,7 +231,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
   return (
     <View style={styles.container} onLayout={onContainerLayout}>
       {detail?.music && mediaKind !== null ? (
-        <MusicPlayer key={detail.id} url={detail.music.url} accessToken={accessToken} startMs={detail.music.startMs} durationMs={detail.music.durationMs} paused={false} />
+        <MusicPlayer key={detail.id} url={detail.music.url} accessToken={accessToken} startMs={detail.music.startMs} durationMs={detail.music.durationMs} paused={!active} />
       ) : null}
       {mediaKind === "video" ? (
         <Video
@@ -222,7 +240,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
           style={[StyleSheet.absoluteFill, mediaTransformStyle(detail?.crop ?? DEFAULT_CROP, containerSize.width, containerSize.height)]}
           resizeMode="cover"
           onLoad={(meta) => setVideoDurationMs(Math.max(1000, meta.duration * 1000))}
-          paused={false}
+          paused={!active}
           muted={detail?.audioMuted ?? false}
         />
       ) : mediaKind === "photo" ? (
@@ -243,14 +261,8 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
             <Animated.View
               style={[
                 styles.progressFill,
-                {
-                  width:
-                    i < index
-                      ? "100%"
-                      : i === index
-                        ? progress.interpolate({ inputRange: [0, 1], outputRange: ["0%", "100%"] })
-                        : "0%",
-                },
+                // Scaled from the left on the native side, not a width laid out every frame.
+                { transform: [{ scaleX: i < index ? 1 : i === index ? progress : 0 }] },
               ]}
             />
           </View>
@@ -295,7 +307,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
           containerWidth={containerSize.width}
           containerHeight={containerSize.height}
           onMentionPress={(username) =>
-            rootNavigation.navigate("Main", { screen: "Search", params: { screen: "UserProfile", params: { username } } })
+            rootNavigation.navigate("Main", { screen: "Search", params: { screen: "UserProfile", initial: false, params: { username } } })
           }
         />
       ) : null}
@@ -336,7 +348,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.3)",
     overflow: "hidden",
   },
-  progressFill: { height: "100%", backgroundColor: "#fff" },
+  progressFill: { height: "100%", width: "100%", backgroundColor: "#fff", transformOrigin: "left" },
   title: { position: "absolute", top: spacing.xl + 14, left: spacing.md, color: "#fff", fontWeight: "700" },
   // Above the tap zones and the Story's own text, which are drawn after them.
   closeButton: { position: "absolute", top: spacing.xl + 10, right: spacing.md, padding: spacing.xs, zIndex: 10, elevation: 10 },

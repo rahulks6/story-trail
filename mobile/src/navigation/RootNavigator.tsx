@@ -46,7 +46,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
  */
 function SignedInNavigator(): React.JSX.Element {
   return (
-    <Stack.Navigator initialRouteName="Main" screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName="Main" screenOptions={{ headerShown: false, freezeOnBlur: true }}>
       <Stack.Screen name="AccountSecurity" component={AccountSecurityScreen} options={{headerShown:true,title:"Account security",headerStyle:{backgroundColor:colors.background},headerTintColor:colors.textPrimary}}/>
       <Stack.Screen name="Main" component={MainTabs} />
       <Stack.Screen name="Activity" component={ActivityScreen} />
@@ -242,13 +242,15 @@ export function RootNavigator(): React.JSX.Element {
       const target = deepLinkTarget(path);
       if (target?.kind === "profile") {
         const params = target.userId ? { username: target.username, userId: target.userId } : { username: target.username };
-        return { routes: [{name: "Main", state: {routes: [{name: "Search", state: {routes: [{name: "UserProfile", params}]}}]}}] };
+        // Search's own first screen sits under the profile, so the Search tab still works afterwards.
+        return { routes: [{name: "Main", state: {routes: [{name: "Search", state: {index: 1, routes: [{name: "SearchHome"}, {name: "UserProfile", params}]}}]}}] };
       }
       if (target?.kind === "story") return { routes: [{ name: "Main" }, { name: "StoryLink", params: { storyId: target.storyId } }] };
       if (target?.kind === "conversation") {
         return { routes: [{ name: "Main", state: { routes: [{ name: "DM", state: { routes: [{ name: "DMInbox" }, { name: "Conversation", params: { conversationId: target.conversationId } }] } }] } }] };
       }
       if (target?.kind === "activity") return { routes: [{ name: "Main" }, { name: "Activity" }] };
+      if (target?.kind === "followRequests") return { routes: [{ name: "Main" }, { name: "FollowRequests" }] };
       return undefined;
     },
   }), []);

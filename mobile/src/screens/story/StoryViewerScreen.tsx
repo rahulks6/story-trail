@@ -32,9 +32,11 @@ export function StoryViewerScreen({ route, navigation }: Props): React.JSX.Eleme
       onOpenProfile={(username) => {
         navigation.navigate("Main", {
           screen: "Search",
-          params: { screen: "UserProfile", params: { username } },
+          // Not the Search stack's only screen: Search stays reachable from its tab.
+          params: { screen: "UserProfile", initial: false, params: { username } },
         });
       }}
+      onOpenArchived={(storyId) => navigation.replace("ArchivedStoryViewer", { storyId })}
     />
   );
 }

@@ -14,7 +14,8 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 export function MainTabs(): React.JSX.Element {
   return (
     <Tab.Navigator
-      screenOptions={{ headerShown: false }}
+      // Hidden tabs don't re-render on every context change (Home's Story feed pauses on blur first).
+      screenOptions={{ headerShown: false, freezeOnBlur: true }}
       tabBar={(props) => <BottomTabBar {...props} />}
     >
       <Tab.Screen name="Home" component={HomeScreen} />

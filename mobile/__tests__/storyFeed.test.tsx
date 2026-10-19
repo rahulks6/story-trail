@@ -6,6 +6,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StoryFeed } from "../src/screens/story/StoryFeed";
 import * as storiesApi from "../src/api/stories";
 import * as engagementApi from "../src/api/engagement";
+import { timeNativeAnimations } from "./helpers/nativeAnimations";
 
 // The feed as Home renders it, with the network replaced: two creators, the first with two Stories.
 const mockSession = { accessToken: "token", user: { id: "u-viewer", username: "viewer" } };
@@ -57,6 +58,7 @@ let tree: ReactTestRenderer;
 beforeEach(() => {
   jest.useFakeTimers();
   jest.clearAllMocks();
+  timeNativeAnimations();
   // The app is in the foreground (the feed loads and plays only then).
   (AppState as { currentState: string }).currentState = "active";
 });
@@ -260,4 +262,85 @@ test("a Story with a song plays that part of it, credits it, and keeps a photo u
   await settle();
   expect(sequence()).toBe("Story 2 of 2");
   list.mockImplementation(original);
+});
+
+const delivery = (url: string, urlsExpireAt: string) => ({ status: "ready", kind: "photo", width: 1080, height: 1920, durationMs: null, thumbnailUrl: null, imageUrl: url, videos: [], urlsExpireAt });
+const aliceCalls = () => (storiesApi.getUserActiveStories as jest.Mock).mock.calls.filter((c) => c[0] === "alice").length;
+
+test("Stories whose signed links have expired (back after hours away) are fetched again before showing", async () => {
+  const list = storiesApi.getUserActiveStories as jest.Mock;
+  const original = list.getMockImplementation()!;
+  const prefetch = jest.spyOn(Image, "prefetch").mockResolvedValue(true);
+  let fetches = 0;
+  list.mockImplementation(async (username: string) => {
+    const result = await original(username);
+    if (username !== "alice") return result;
+    fetches += 1;
+    const expired = fetches === 1;
+    return { stories: result.stories.map((st: { id: string }) => ({ ...st, media: delivery(`https://cdn.test/${st.id}?v=${fetches}`, new Date(Date.now() + (expired ? -60_000 : 3_600_000)).toISOString()) })) };
+  });
+  await renderFeed();
+  try {
+    expect(aliceCalls()).toBe(2);
+    expect(storyImage().props.source.uri).toBe("https://cdn.test/a1?v=2");
+    expect(sequence()).toBe("Story 1 of 2");
+  } finally {
+    list.mockImplementation(original);
+    prefetch.mockRestore();
+  }
+});
+
+test("a photo that won't load fetches fresh links once, then offers Try again, which fetches again", async () => {
+  await renderFeed();
+  expect(aliceCalls()).toBe(1);
+  await act(async () => storyImage().props.onError());
+  await settle();
+  // Fresh links, same Story, no error shown.
+  expect(aliceCalls()).toBe(2);
+  expect(texts()).toContain("Caption a1");
+  await act(async () => storyImage().props.onError());
+  await settle();
+  expect(texts()).toContain("Couldn't load this photo.");
+  const tryAgain = tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.findAll((c) => c.props.children === "Try again").length > 0);
+  await act(async () => tryAgain.props.onPress());
+  await settle();
+  expect(aliceCalls()).toBe(3);
+  expect(texts()).toContain("Caption a1");
+});
+
+test("Follow sends one request however fast it's tapped, and says Requested for a private account", async () => {
+  let resolve!: (v: unknown) => void;
+  const follow = jest.spyOn(usersApi, "followUser").mockImplementation(() => new Promise((r) => { resolve = r; }) as never);
+  mockSession.user.username = "viewer";
+  await act(async () => {
+    tree = create(
+      <SafeAreaProvider initialMetrics={metrics}>
+        <StoryFeed creators={["alice"]} following={{ alice: false }} startIndex={0} onOpenDM={jest.fn()} onOpenProfile={openProfile} />
+      </SafeAreaProvider>,
+    );
+  });
+  await settle();
+  const button = tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === "Follow @alice");
+  // Two taps before the screen has re-rendered.
+  await act(async () => { button.props.onPress(); button.props.onPress(); });
+  expect(follow).toHaveBeenCalledTimes(1);
+  await act(async () => resolve({ status: "requested" }));
+  await settle();
+  expect(texts()).toContain("Requested");
+  follow.mockRestore();
+});
+
+test("your own Story that's no longer active opens from your Archive", async () => {
+  const onOpenArchived = jest.fn();
+  mockSession.user.username = "alice";
+  (storiesApi.getMyActiveStories as jest.Mock).mockResolvedValueOnce({ stories: (await storiesApi.getUserActiveStories("alice", "t")).stories });
+  await act(async () => {
+    tree = create(
+      <SafeAreaProvider initialMetrics={metrics}>
+        <StoryFeed creators={["alice"]} startIndex={0} initialStoryId="a-expired" onClose={jest.fn()} onOpenArchived={onOpenArchived} onOpenDM={jest.fn()} onOpenProfile={openProfile} />
+      </SafeAreaProvider>,
+    );
+  });
+  await settle();
+  expect(onOpenArchived).toHaveBeenCalledWith("a-expired");
 });

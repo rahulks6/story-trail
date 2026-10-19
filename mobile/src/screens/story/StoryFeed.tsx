@@ -1,7 +1,7 @@
 import { Icon } from "../../components/Icon";
 import { StorySkeleton } from "../../components/Skeleton";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Animated, AppState, Dimensions, Image, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Animated, AppState, Dimensions, Image, PanResponder, Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import Video, {type VideoRef} from "react-native-video";
 import { mediaColors as colors, radii, spacing, mediaTypography as typography, ICONS } from "../../theme";
@@ -26,8 +26,9 @@ import type { SponsoredPlacement } from "../../api/ads";
 import { Avatar } from "../../components/Avatar";
 import { ReplySheet } from "../../components/ReplySheet";
 import { tapFeedback } from "../../utils/haptics";
-import { timeAgo } from "../../utils/serverTime";
+import { serverTimeMs, timeAgo } from "../../utils/serverTime";
 import { followUser } from "../../api/users";
+import { storyPublished } from "../../state/storyChanges";
 import { AddToHighlightSheet } from "../../components/AddToHighlightSheet";
 
 const PHOTO_DURATION_MS = 5000;
@@ -37,6 +38,16 @@ const TAP_MOVE_THRESHOLD = 10;
 const DOUBLE_TAP_WINDOW_MS = 250;
 const QUALIFIED_VIEW_MS = 2000; // spec section 13: "2-second view = tiny positive"
 const QUICK_SKIP_MS = 1500; // spec section 8: leaving a creator this fast is a real negative signal
+/** Signed CDN links this close to expiring are fetched afresh rather than tried. */
+const URL_EXPIRY_MARGIN_MS = 60_000;
+
+/** True when a Story's signed media links have expired (or are about to): a cached list can outlive them. */
+export function storyUrlsExpired(story: PublicStory | null | undefined, now = Date.now()): boolean {
+  const at = story?.media?.urlsExpireAt;
+  if (!at) return false;
+  const expiresAt = serverTimeMs(at);
+  return Number.isFinite(expiresAt) && expiresAt - now < URL_EXPIRY_MARGIN_MS;
+}
 
 export interface StoryFeedProps {
   creators: string[];
@@ -57,6 +68,11 @@ export interface StoryFeedProps {
   onOpenProfile: (username: string) => void;
   /** Home's feed knows whom you follow: creators you don't get a Follow button beside their name. */
   following?: Record<string, boolean>;
+  /**
+   * `initialStoryId` is one of your own Stories that's no longer active (a notification or link
+   * to it after its 24 hours): open it from your Archive instead of starting somewhere else.
+   */
+  onOpenArchived?: (storyId: string) => void;
 }
 
 /** Sound on or off for Stories with sound, kept while you watch (like Instagram). */
@@ -79,7 +95,7 @@ let viewerMuted = false;
 /** The comment box (or your Story's Activity button) along the bottom. */
 const BOTTOM_BAR_HEIGHT = 46;
 
-export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpenDM, onOpenProfile, onRefresh, onNeedMore, sponsored = [], following }: StoryFeedProps): React.JSX.Element {
+export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpenDM, onOpenProfile, onOpenArchived, onRefresh, onNeedMore, sponsored = [], following }: StoryFeedProps): React.JSX.Element {
   // Overlays clear the status bar / notch; the bottom ones also the home indicator when no tab bar is below.
   const insets = useScreenInsets();
   const { user: authUser, accessToken } = useAuth();
@@ -122,7 +138,11 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [commentFocus, setCommentFocus] = useState(false);
   const [muted, setMuted] = useState(viewerMuted);
-  const [followedNow, setFollowedNow] = useState<Record<string, boolean>>({});
+  const [followedNow, setFollowedNow] = useState<Record<string, "following" | "requested" | false>>({});
+  // Follow requests in flight, so a double tap sends one.
+  const followBusy = useRef(new Set<string>());
+  const [captionExpanded, setCaptionExpanded] = useState(false);
+  const { height: windowHeight, fontScale } = useWindowDimensions();
   // The Story follows a finger swiping up or down to the next creator.
   const dragY = useRef(new Animated.Value(0)).current;
   const [shareOpen, setShareOpen] = useState(false);
@@ -146,18 +166,23 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   const currentUsername = creators[creatorIndex];
   const currentStories = currentUsername ? storiesByCreator[currentUsername] : undefined;
   const currentStoryIndex = currentUsername ? (storyIndexByCreator[currentUsername] ?? 0) : 0;
-  const currentStory = currentStories?.[currentStoryIndex] ?? null;
+  const listedStory = currentStories?.[currentStoryIndex] ?? null;
+  // When each creator's list was last fetched again for expired links.
+  const expiryRefetchAt = useRef<Record<string, number>>({});
+  // A Story whose signed links have expired isn't tried (it would fail): its creator's list is fetched
+  // again first — unless that was just done, should the server ever hand back links already near expiry.
+  const staleStory = !!listedStory && !!currentUsername && storyUrlsExpired(listedStory) && Date.now() - (expiryRefetchAt.current[currentUsername] ?? 0) >= URL_EXPIRY_MARGIN_MS;
+  const currentStory = staleStory ? null : listedStory;
 
   const sheetOpen = commentsOpen || shareOpen || moreOpen || insightsOpen || replyOpen || highlightOpen;
   const playbackActive = focused && foreground && !paused && !sheetOpen && !caughtUp && !loadError && !currentAd;
+  // How far the current Story's bar has got (0-1). The bar animates on the native side, so this is
+  // kept from elapsed time (and the video's own progress), not read back every frame.
   const progressValue = useRef(0);
-  useEffect(() => {
-    const listener = progress.addListener(({ value }) => { progressValue.current = value; });
-    return () => progress.removeListener(listener);
-  }, [progress]);
   useEffect(() => {
     progressValue.current = 0;
     progress.setValue(0);
+    setCaptionExpanded(false);
   }, [currentStory?.id, progress]);
 
   // Every analytics call is fire-and-forget on purpose (spec section 12: real,
@@ -187,6 +212,28 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
     [onClose],
   );
 
+  // A creator whose cached list must be fetched again (its signed links expired or failed), keeping
+  // the Story that was showing; the media of a Story already re-fetched once that still fails is an error.
+  const keepStoryRef = useRef<{ username: string; storyId: string } | null>(null);
+  const mediaRefetchedRef = useRef<string | null>(null);
+  const initialHandledRef = useRef(false);
+  const refetchCreator = useCallback((username: string, storyId?: string) => {
+    keepStoryRef.current = storyId ? { username, storyId } : null;
+    setStoriesByCreator((prev) => {
+      if (!(username in prev)) return prev;
+      const { [username]: _dropped, ...rest } = prev;
+      return rest;
+    });
+    setRetry((value) => value + 1);
+  }, []);
+
+  // Back after a while (or reaching a creator fetched ahead long ago): fresh links before trying old ones.
+  useEffect(() => {
+    if (!focused || !foreground || !currentUsername || !listedStory || !staleStory) return;
+    expiryRefetchAt.current[currentUsername] = Date.now();
+    refetchCreator(currentUsername, listedStory.id);
+  }, [listedStory, staleStory, currentUsername, focused, foreground, refetchCreator]);
+
   // Fetch (and cache) a creator's active Stories the first time we reach them.
   useEffect(() => {
     if (!focused || !foreground || !currentUsername || !accessToken || storiesByCreator[currentUsername]) return;
@@ -199,16 +246,28 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           ? await getMyActiveStories(accessToken)
           : await getUserActiveStories(currentUsername, accessToken);
         if (cancelled) return;
+        const opening = !initialHandledRef.current && creatorIndex === startIndex && !!initialStoryId;
+        if (opening) initialHandledRef.current = true;
+        // Your own Story that's no longer active (opened from a notification or link): it's in your Archive.
+        if (opening && isSelf && onOpenArchived && !stories.some((s) => s.id === initialStoryId)) {
+          onOpenArchived(initialStoryId!);
+          return;
+        }
         if (stories.length === 0) {
           if (creatorIndex < creators.length - 1) setCreatorIndex((index) => index + 1);
           else leaveCurrentCreator("forward");
           return;
         }
         setStoriesByCreator((prev) => ({ ...prev, [currentUsername]: stories }));
-        if (creatorIndex === startIndex && initialStoryId) {
-          const idx = stories.findIndex((s) => s.id === initialStoryId);
-          if (idx >= 0) setStoryIndexByCreator((prev) => ({ ...prev, [currentUsername]: idx }));
-        }
+        const keep = keepStoryRef.current?.username === currentUsername ? keepStoryRef.current.storyId : null;
+        keepStoryRef.current = null;
+        const wanted = keep ?? (opening ? initialStoryId : null);
+        const idx = wanted ? stories.findIndex((s) => s.id === wanted) : -1;
+        // Stay on the same Story when it's still there; never point past the end of a shorter list.
+        setStoryIndexByCreator((prev) => {
+          const at = idx >= 0 ? idx : Math.min(prev[currentUsername] ?? 0, stories.length - 1);
+          return prev[currentUsername] === at ? prev : { ...prev, [currentUsername]: at };
+        });
       } catch {
         if (!cancelled) setLoadError("Couldn't load this Story.");
       }
@@ -388,17 +447,25 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
     if (mediaKind === "video") return;
 
     // With a song, a photo stays up for the part of the song that plays (like Instagram).
-    const durationMs = (currentStory.music?.durationMs ?? PHOTO_DURATION_MS) * (1 - progressValue.current);
+    const totalMs = currentStory.music?.durationMs ?? PHOTO_DURATION_MS;
+    const from = progressValue.current;
+    const startedAt = Date.now();
     animationRef.current?.stop();
-    const anim = Animated.timing(progress, { toValue: 1, duration: durationMs, useNativeDriver: false });
+    progress.setValue(from);
+    const anim = Animated.timing(progress, { toValue: 1, duration: totalMs * (1 - from), useNativeDriver: true });
     animationRef.current = anim;
     anim.start(({ finished }) => {
       if (finished) {
+        progressValue.current = 1;
         if (currentStory) emit("story_complete", { storyId: currentStory.id, creatorId: currentStory.ownerId });
         goNextStory();
       }
     });
-    return () => anim.stop();
+    return () => {
+      anim.stop();
+      // Paused (a hold, a sheet, another screen): carry on from here later.
+      if (progressValue.current < 1) progressValue.current = Math.min(1, from + (Date.now() - startedAt) / totalMs);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStory, playbackActive, mediaReady, mediaKind, goNextStory]);
 
@@ -576,7 +643,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   if (loadError) {
     return <View style={styles.centered}>
       <EmptyState title="Story unavailable" message={loadError} />
-      <Pressable onPress={() => { setLoadError(null); setRetry((value) => value + 1); }} accessibilityRole="button"><Text style={typography.body}>Try again</Text></Pressable>
+      <Pressable onPress={() => { setLoadError(null); if (currentUsername) refetchCreator(currentUsername, currentStory?.id); else setRetry((value) => value + 1); }} accessibilityRole="button"><Text style={typography.body}>Try again</Text></Pressable>
       <Pressable onPress={() => { setLoadError(null); goNextCreator(); }} accessibilityRole="button"><Text style={typography.body}>Skip Story</Text></Pressable>
       {onClose ? <Pressable onPress={onClose} accessibilityRole="button"><Text style={typography.body}>Close</Text></Pressable> : null}
     </View>;
@@ -598,17 +665,40 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
 
   const creatorMuted = detail?.audioMuted ?? currentStory.audioMuted;
   const showFollow = !isOwnStory && !!currentUsername && following?.[currentUsername] === false;
-  const followed = !!currentUsername && followedNow[currentUsername] === true;
+  const followState = currentUsername ? followedNow[currentUsername] ?? false : false;
+  const followed = followState !== false;
   const follow = async () => {
-    if (!accessToken || !currentUsername) return;
-    setFollowedNow((f) => ({ ...f, [currentUsername]: true }));
+    if (!accessToken || !currentUsername || followBusy.current.has(currentUsername)) return;
+    const username = currentUsername;
+    followBusy.current.add(username);
+    setFollowedNow((f) => ({ ...f, [username]: "following" }));
     tapFeedback("select");
     try {
-      await followUser(currentUsername, accessToken);
+      // A private account takes a request instead.
+      const result = await followUser(username, accessToken);
+      setFollowedNow((f) => ({ ...f, [username]: result?.status === "requested" ? "requested" : "following" }));
     } catch {
-      setFollowedNow((f) => ({ ...f, [currentUsername]: false }));
+      setFollowedNow((f) => ({ ...f, [username]: false }));
+    } finally {
+      followBusy.current.delete(username);
     }
   };
+  // Media that won't load is usually a signed link that's expired: fetch fresh links once, then say so.
+  const mediaFailed = (message: string) => {
+    if (currentUsername && mediaRefetchedRef.current !== currentStory.id) {
+      mediaRefetchedRef.current = currentStory.id;
+      videoResume.current = null;
+      refetchCreator(currentUsername, currentStory.id);
+      return;
+    }
+    setLoadError(message);
+  };
+  // The action column fits between the name at the top and the comment bar on short screens and with large text.
+  const railButtons = 4 + (isOwnStory ? 0 : 1) + ((mediaKind === "video" && !creatorMuted) || currentStory.music ? 1 : 0);
+  const railRoom = windowHeight - (insets.top + spacing.lg + 40 + (currentStory.music ? 34 : 0)) - (BOTTOM_BAR_HEIGHT + spacing.xl * 2 + insets.bottom);
+  const railContent = railButtons * 34 + (isOwnStory ? 2 : 3) * 20 * Math.min(fontScale, 1.3);
+  const railGap = Math.max(spacing.xs, Math.min(spacing.lg + 2, Math.floor((railRoom - railContent) / Math.max(1, railButtons - 1))));
+  const longCaption = currentStory.caption.length > 90 || currentStory.caption.split("\n").length > 3;
   // Holding to pause shows just the Story, like Instagram.
   const chrome = paused ? styles.chromeHidden : null;
 
@@ -625,8 +715,8 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           muted={creatorMuted || muted}
           paused={!playbackActive}
           onLoad={(meta) => { setVideoDurationMs(Math.max(meta.duration * 1000, 1000)); if(videoResume.current?.id===currentStory.id&&videoResume.current.seconds>0)videoRef.current?.seek(Math.min(videoResume.current.seconds,Math.max(0,meta.duration-0.1))); setMediaReady(true); }}
-          onProgress={({ currentTime }) => { videoResume.current={id:currentStory.id,seconds:currentTime}; if (videoDurationMs) progress.setValue(Math.min(1, currentTime * 1000 / videoDurationMs)); }}
-          onError={() => setLoadError("Couldn't play this Story.")}
+          onProgress={({ currentTime }) => { videoResume.current={id:currentStory.id,seconds:currentTime}; if (videoDurationMs) { progressValue.current = Math.min(1, currentTime * 1000 / videoDurationMs); progress.setValue(progressValue.current); } }}
+          onError={() => mediaFailed("Couldn't play this Story.")}
           onEnd={() => {
             if (!playbackActive) return;
             videoResume.current=null;
@@ -637,7 +727,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       ) : mediaKind === "photo" ? (
         <Image
           onLoad={() => setMediaReady(true)}
-          onError={() => setLoadError("Couldn't load this photo.")}
+          onError={() => mediaFailed("Couldn't load this photo.")}
           source={imageSource}
           style={[StyleSheet.absoluteFill, mediaTransformStyle(detail?.crop ?? currentStory.crop, containerSize.width, containerSize.height)]}
           resizeMode="cover"
@@ -732,24 +822,18 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       >
         {currentStories?.map((s, i) => (
           <View key={s.id} style={styles.progressTrack}>
+            {/* Scaled from the left on the native side, not a width laid out every frame. */}
             <Animated.View
               style={[
                 styles.progressFill,
-                {
-                  width:
-                    i < currentStoryIndex
-                      ? "100%"
-                      : i > currentStoryIndex
-                        ? "0%"
-                        : progress.interpolate({ inputRange: [0, 1], outputRange: ["0%", "100%"] }),
-                },
+                { transform: [{ scaleX: i < currentStoryIndex ? 1 : i > currentStoryIndex ? 0 : progress }] },
               ]}
             />
           </View>
         ))}
       </View>
 
-      <View style={[styles.actionRail, chrome, { bottom: BOTTOM_BAR_HEIGHT + spacing.xl * 2 + insets.bottom }]} pointerEvents={paused ? "none" : "auto"}>
+      <View style={[styles.actionRail, chrome, { bottom: BOTTOM_BAR_HEIGHT + spacing.xl * 2 + insets.bottom, gap: railGap, maxHeight: Math.max(0, railRoom) }]} pointerEvents={paused ? "none" : "auto"}>
         {(mediaKind === "video" && !creatorMuted) || currentStory.music ? (
           <Pressable
             onPress={() => {
@@ -766,7 +850,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         ) : null}
         <Pressable onPress={toggleLike} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel={detail?.viewerHasLiked ? "Unlike" : "Like"}>
           <Icon style={[styles.actionIcon, detail?.viewerHasLiked && styles.actionIconLiked]} name={detail?.viewerHasLiked ? ICONS.liked : ICONS.like} />
-          <Text style={styles.actionCount}>{detail?.likeCount ?? "—"}</Text>
+          <Text style={styles.actionCount} maxFontSizeMultiplier={1.3}>{detail?.likeCount ?? "—"}</Text>
         </Pressable>
         <Pressable
           onPress={() => {
@@ -779,13 +863,13 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           accessibilityLabel="Comments"
         >
           <Icon style={styles.actionIcon} name={ICONS.comment} />
-          <Text style={styles.actionCount}>{detail?.commentCount ?? "—"}</Text>
+          <Text style={styles.actionCount} maxFontSizeMultiplier={1.3}>{detail?.commentCount ?? "—"}</Text>
         </Pressable>
         {!isOwnStory ? (
           // How many have seen it; who they are is the owner's to see (StoryInsightsSheet).
           <View style={styles.actionButton} accessible accessibilityLabel={`${viewCount ?? 0} views`}>
             <Icon style={styles.actionIcon} name={ICONS.viewers} />
-            <Text style={styles.actionCount}>{viewCount ?? "—"}</Text>
+            <Text style={styles.actionCount} maxFontSizeMultiplier={1.3}>{viewCount ?? "—"}</Text>
           </View>
         ) : null}
         <Pressable onPress={() => setShareOpen(true)} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel="Share">
@@ -806,8 +890,8 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           <Text style={styles.postedAgo}>{timeAgo(currentStory.createdAt).replace(" ago", "")}</Text>
         </Pressable>
         {showFollow ? (
-          <Pressable onPress={followed ? undefined : () => void follow()} disabled={followed} hitSlop={8} style={[styles.followButton, followed && styles.followingButton]} accessibilityRole="button" accessibilityLabel={followed ? `Following @${currentUsername}` : `Follow @${currentUsername}`}>
-            <Text style={styles.followLabel}>{followed ? "Following" : "Follow"}</Text>
+          <Pressable onPress={followed ? undefined : () => void follow()} disabled={followed} hitSlop={8} style={[styles.followButton, followed && styles.followingButton]} accessibilityRole="button" accessibilityLabel={followState === "requested" ? `Requested to follow @${currentUsername}` : followed ? `Following @${currentUsername}` : `Follow @${currentUsername}`}>
+            <Text style={styles.followLabel}>{followState === "requested" ? "Requested" : followed ? "Following" : "Follow"}</Text>
           </Pressable>
         ) : null}
       </View>
@@ -833,21 +917,30 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
               accessibilityHint="Shows the song's credit"
             >
               <Icon name={ICONS.music} size={13} color="#FFFFFF" />
-              <Text style={styles.musicText} numberOfLines={1}>{currentStory.music.title} · {currentStory.music.artist}</Text>
+              <Text style={styles.musicText} numberOfLines={1} maxFontSizeMultiplier={1.3}>{currentStory.music.title} · {currentStory.music.artist}</Text>
             </Pressable>
           </View>
         </>
       ) : null}
 
       {currentStory.caption || currentStory.audience === "close_friends" ? (
-        <View style={[styles.footer, chrome, { bottom: BOTTOM_BAR_HEIGHT + spacing.md + insets.bottom }]} pointerEvents="none">
+        <View style={[styles.footer, chrome, { bottom: BOTTOM_BAR_HEIGHT + spacing.md + insets.bottom }]} pointerEvents={longCaption && !paused ? "box-none" : "none"}>
           {currentStory.audience === "close_friends" ? (
             <View style={styles.closeFriendsBadge} accessible accessibilityLabel="Shared with Close Friends">
               <Icon name={ICONS.starFilled} size={11} color={colors.onAccent} />
               <Text style={styles.closeFriendsBadgeText}>Close Friends</Text>
             </View>
           ) : null}
-          {currentStory.caption ? <Text style={styles.caption}>{currentStory.caption}</Text> : null}
+          {currentStory.caption ? (
+            longCaption ? (
+              // Three lines, then tap to read the rest.
+              <Pressable onPress={() => setCaptionExpanded((open) => !open)} accessibilityRole="button" accessibilityHint={captionExpanded ? "Shows less of the caption" : "Shows the whole caption"}>
+                <Text style={styles.caption} numberOfLines={captionExpanded ? undefined : 3}>{currentStory.caption}</Text>
+              </Pressable>
+            ) : (
+              <Text style={styles.caption} numberOfLines={3}>{currentStory.caption}</Text>
+            )
+          ) : null}
         </View>
       ) : null}
 
@@ -950,7 +1043,18 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         onClose={() => setMoreOpen(false)}
         onDeleted={() => {
           setMoreOpen(false);
-          goNextCreator();
+          const deletedId = currentStory.id;
+          const remaining = (currentStories ?? []).filter((s) => s.id !== deletedId);
+          // Home (and anywhere else showing your Stories) reloads.
+          storyPublished();
+          if (!currentUsername || remaining.length === 0) {
+            if (currentUsername) setStoriesByCreator(({ [currentUsername]: _deleted, ...rest }) => rest);
+            goNextCreator();
+            return;
+          }
+          // Stay with this creator: the next Story, or the one before if that was the last.
+          setStoriesByCreator((prev) => ({ ...prev, [currentUsername]: remaining }));
+          setStoryIndexByCreator((prev) => ({ ...prev, [currentUsername]: Math.min(currentStoryIndex, remaining.length - 1) }));
         }}
       />
       {isOwnStory ? (
@@ -970,7 +1074,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
 
 const styles = StyleSheet.create({
   musicLine: { position: "absolute", left: spacing.md, right: spacing.md, flexDirection: "row" },
-  musicPill: { flexDirection: "row", alignItems: "center", gap: 5, maxWidth: "80%", paddingHorizontal: 10, height: 26, borderRadius: 13, backgroundColor: "rgba(0,0,0,0.35)" },
+  musicPill: { flexDirection: "row", alignItems: "center", gap: 5, maxWidth: "80%", paddingHorizontal: 10, paddingVertical: 3, minHeight: 26, borderRadius: 13, backgroundColor: "rgba(0,0,0,0.35)" },
   musicText: { color: "#FFFFFF", fontSize: 12, fontWeight: "600", flexShrink: 1 },
   loadingSpinner: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, alignItems: "center", justifyContent: "center" },
   container: { flex: 1, backgroundColor: "#000" },
@@ -992,7 +1096,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.3)",
     overflow: "hidden",
   },
-  progressFill: { height: "100%", backgroundColor: colors.textPrimary },
+  progressFill: { height: "100%", width: "100%", backgroundColor: colors.textPrimary, transformOrigin: "left" },
   bottomBar: { position: "absolute", left: spacing.md, right: spacing.md, height: BOTTOM_BAR_HEIGHT, flexDirection: "row", alignItems: "center" },
   commentBar: {
     flex: 1,
