@@ -189,3 +189,22 @@ describe("sharing", () => {
     assert.equal(res.status, 403);
   });
 });
+
+describe("comments and blocks", () => {
+  it("hides comments from someone the viewer blocked, and from someone who blocked the viewer", async () => {
+    const owner = await signupUser();
+    const viewer = await signupUser();
+    const troll = await signupUser();
+    const storyId = await publishStory(owner.accessToken);
+    assert.equal((await client.post(`/api/v1/stories/${storyId}/comments`, { body: "nice" }, authHeader(troll.accessToken))).status, 201);
+    assert.equal((await client.post(`/api/v1/stories/${storyId}/comments`, { body: "love it" }, authHeader(owner.accessToken))).status, 201);
+    const bodies = async (token: string) => ((await client.get(`/api/v1/stories/${storyId}/comments`, authHeader(token))).body.comments as { body: string }[]).map((c) => c.body);
+    assert.deepEqual(await bodies(viewer.accessToken), ["nice", "love it"]);
+    await client.post(`/api/v1/users/${troll.input.username}/block`, undefined, authHeader(viewer.accessToken));
+    assert.deepEqual(await bodies(viewer.accessToken), ["love it"]);
+    // The other direction: the commenter blocked the viewer.
+    const other = await signupUser();
+    await client.post(`/api/v1/users/${other.input.username}/block`, undefined, authHeader(troll.accessToken));
+    assert.deepEqual(await bodies(other.accessToken), ["love it"]);
+  });
+});

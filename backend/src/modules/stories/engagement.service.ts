@@ -75,7 +75,7 @@ export async function listComments(
   offset: number,
 ): Promise<CommentRecord[]> {
   await getStoryForViewer(storyId, viewerId); // reading comments only needs Story view access, not comment-post permission
-  return commentsRepo.listComments(storyId, limit, offset);
+  return commentsRepo.listComments(storyId, limit, offset, viewerId);
 }
 
 export async function deleteComment(viewerId: string, commentId: string): Promise<void> {

@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { bayesianSmooth, creatorAffinity, explorationMultiplier, freshness, storyQuality } from "../src/modules/recommendations/scoring";
+import { bayesianSmooth, creatorAffinity, explorationMultiplier, freshness, interestBoost, storyQuality } from "../src/modules/recommendations/scoring";
 
 describe("bayesianSmooth", () => {
   it("pulls a small sample toward the prior", () => {
@@ -116,5 +116,13 @@ describe("storyQuality", () => {
     const huge = storyQuality({ likeCount: 100000, commentCount: 100000, shareCount: 100000, viewCount: 1 });
     assert.ok(zero >= 0.05 && zero <= 1);
     assert.ok(huge >= 0.05 && huge <= 1);
+  });
+});
+
+describe("interestBoost", () => {
+  it("raises a new person who shares interests, a little more for each, up to four", () => {
+    assert.equal(interestBoost(0), 1);
+    assert.ok(interestBoost(1) > 1 && interestBoost(2) > interestBoost(1));
+    assert.equal(interestBoost(9), interestBoost(4));
   });
 });

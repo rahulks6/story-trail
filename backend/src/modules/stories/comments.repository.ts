@@ -40,15 +40,18 @@ export async function createComment(storyId: string, userId: string, body: strin
   return mapRow(row);
 }
 
-export async function listComments(storyId: string, limit: number, offset: number): Promise<CommentRecord[]> {
+/** Oldest first. Never comments from someone the viewer blocked or who blocked them, or from a suspended account. */
+export async function listComments(storyId: string, limit: number, offset: number, viewerId = ""): Promise<CommentRecord[]> {
   const rows = await query(
     `SELECT c.id, c.story_id, c.user_id, c.body, c.created_at, u.username, u.display_name, u.avatar_media_id
      FROM story_comments c
      JOIN users u ON u.id = c.user_id
-     WHERE c.story_id = :'story_id' AND c.deleted_at IS NULL AND u.deleted_at IS NULL
-     ORDER BY c.created_at ASC
+     WHERE c.story_id = :'story_id' AND c.deleted_at IS NULL AND u.deleted_at IS NULL AND u.is_active
+       AND (:'viewer' = '' OR NOT EXISTS (SELECT 1 FROM blocks b WHERE (b.blocker_id::text = :'viewer' AND b.blocked_id = c.user_id)
+                                                                 OR (b.blocker_id = c.user_id AND b.blocked_id::text = :'viewer')))
+     ORDER BY c.created_at ASC, c.id ASC
      LIMIT :'limit' OFFSET :'offset'`,
-    { story_id: storyId, limit, offset },
+    { story_id: storyId, limit, offset, viewer: viewerId },
   );
   return rows.map(mapRow);
 }

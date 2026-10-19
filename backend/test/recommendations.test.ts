@@ -256,3 +256,19 @@ describe("home feed", () => {
     assert.ok(followedIndex < notFollowedIndex, "the followed creator should rank above the unfollowed one");
   });
 });
+
+describe("interests", () => {
+  it("counts the interests a new person shares with the viewer, case aside, and keeps it off the response", async () => {
+    const { feedFeatures } = await import("../src/modules/recommendations/feed-features.repository");
+    const viewer = await signupUser();
+    const creator = await signupUser();
+    await client.patch("/api/v1/users/me", { interests: ["Travel", "Cooking", "Music"] }, authHeader(viewer.accessToken));
+    await client.patch("/api/v1/users/me", { interests: ["cooking", "Travel", "Gardening"] }, authHeader(creator.accessToken));
+    await publishStory(creator.accessToken);
+    const [features] = await feedFeatures(viewer.id, [creator.id]);
+    assert.equal(features!.sharedInterests, 2);
+    const feed = await client.get("/api/v1/stories/feed/home", authHeader(viewer.accessToken));
+    assert.equal(feed.status, 200);
+    for (const entry of feed.body.feed) assert.equal("sharedInterests" in entry, false);
+  });
+});

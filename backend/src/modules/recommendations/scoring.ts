@@ -44,6 +44,15 @@ const FRESHNESS_FLOOR = 0.3;
  * track record, converging to no boost (1.0) rather than ever penalizing
  * established creators.
  */
+/**
+ * People who chose the same interests on their profiles: each shared interest raises a new
+ * person's place on Home, up to four (2.2x), so Home leans towards what the viewer likes
+ * without filling up with one topic.
+ */
+export function interestBoost(sharedInterests: number): number {
+  return 1 + 0.3 * Math.min(Math.max(sharedInterests, 0), 4);
+}
+
 export function explorationMultiplier(lifetimeImpressions: number): number {
   if (lifetimeImpressions < 20) return 3.0;
   if (lifetimeImpressions < 100) return 2.0;

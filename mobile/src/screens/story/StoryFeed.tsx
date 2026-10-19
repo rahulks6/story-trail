@@ -880,6 +880,8 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         storyId={currentStory.id}
         storyOwnerId={currentStory.ownerId}
         commentsDisabled={currentStory.allowComments === "disabled"}
+        followersOnly={currentStory.allowComments === "followers" && !isOwnStory && following?.[currentUsername ?? ""] === false && !followed}
+        onOpenProfile={onOpenProfile}
         autoFocus={commentFocus}
         onClose={() => {
           setCommentsOpen(false);
