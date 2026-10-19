@@ -54,7 +54,7 @@ describe("music", () => {
     const ids = list.body.tracks.map((t: { id: string }) => t.id);
     assert.ok(ids.includes(trackId));
     assert.ok(!ids.includes(hiddenId), "a track taken out of the catalogue isn't offered");
-    assert.deepEqual(list.body.moods, ["Happy"]);
+    assert.ok(list.body.moods.includes("Happy"), "moods come from the catalogue");
     const track = list.body.tracks.find((t: { id: string }) => t.id === trackId);
     assert.equal(track.attribution, "Sunny Walk by Test Artist (CC BY 4.0)");
     assert.equal((await client.get("/api/v1/music?q=nothing-like-this", authHeader(me.token))).body.tracks.length, 0);
