@@ -303,6 +303,13 @@ describe("another person's account", () => {
   });
 });
 
+describe("music", () => {
+  it("plays songs only for someone signed in, and only songs in the catalogue", async () => {
+    refused(await attempt("GET /api/v1/music/:id/file", `/api/v1/music/${ids.story}/file`, null), "song without sign-in", [401]);
+    refused(await attempt("GET /api/v1/music/:id/file", `/api/v1/music/${ids.story}/file`, stranger), "an id that isn't a song", [404]);
+  });
+});
+
 describe("the Admin API", () => {
   it("answers no consumer token, on any route", async () => {
     const admin = server.routes().filter((r) => r.path.startsWith("/api/v1/admin"));

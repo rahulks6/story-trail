@@ -69,7 +69,7 @@ describe("backup and restore drill", () => {
     assert.equal(report.ok, true);
     assert.deepEqual(report.differences, []);
     assert.equal(report.source, source);
-    assert.equal(report.migrations, "Nothing to do — schema is up to date.");
+    assert.match(report.migrations ?? "", /^Nothing to do — schema is up to date\.( Music catalogue: \d+ tracks\.)?$/);
     assert.match(report.dump!.sha256, /^[0-9a-f]{64}$/);
     assert.ok(report.verify!.tables >= 60, `${report.verify!.tables} tables`);
     assert.equal(report.kept, true);
