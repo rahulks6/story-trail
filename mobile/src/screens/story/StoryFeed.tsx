@@ -1,7 +1,7 @@
 import { Icon } from "../../components/Icon";
 import { StorySkeleton } from "../../components/Skeleton";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Animated, AppState, Dimensions, Image, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Animated, AppState, Dimensions, Image, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import Video, {type VideoRef} from "react-native-video";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
@@ -109,6 +109,11 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   const videoRef = useRef<VideoRef>(null);
   const videoResume = useRef<{id:string;seconds:number}|null>(null);
   const [mediaReady, setMediaReady] = useState(false);
+  // The photo and its text and stickers appear together, with a short fade, once the photo has
+  // loaded (never the photo first and the edits a moment later). A spinner shows only if that
+  // takes a while; the next Stories are fetched ahead, so it usually doesn't.
+  const reveal = useRef(new Animated.Value(0)).current;
+  const [slowLoad, setSlowLoad] = useState(false);
   const [paused, setPaused] = useState(false);
   const [heartPulse] = useState(() => new Animated.Value(0));
 
@@ -222,6 +227,42 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStories]);
+
+  useEffect(() => {
+    if (mediaReady) {
+      setSlowLoad(false);
+      Animated.timing(reveal, { toValue: 1, duration: 120, useNativeDriver: true }).start();
+      return;
+    }
+    reveal.setValue(0);
+    const t = setTimeout(() => setSlowLoad(true), 350);
+    return () => clearTimeout(t);
+  }, [mediaReady, reveal]);
+
+  // Fetch ahead: the next Stories' photos, and the next person's Stories and first photo, so
+  // moving on is instant. Signed CDN links only (the image cache can't send the sign-in header).
+  useEffect(() => {
+    if (!focused || !accessToken || !currentStories) return;
+    const prefetch = (story: PublicStory | undefined) => {
+      const url = story?.media?.imageUrl;
+      if (url && !url.startsWith("/")) void Image.prefetch(url).catch(() => undefined);
+    };
+    currentStories.slice(currentStoryIndex + 1, currentStoryIndex + 3).forEach(prefetch);
+    const next = creators[creatorIndex + 1];
+    if (!next || storiesByCreator[next]) return;
+    let cancelled = false;
+    const isSelf = authUser?.username === next;
+    (isSelf ? getMyActiveStories(accessToken) : getUserActiveStories(next, accessToken))
+      .then(({ stories }) => {
+        // An empty list is left for the normal load, which skips that person.
+        if (cancelled || stories.length === 0) return;
+        setStoriesByCreator((prev) => (prev[next] ? prev : { ...prev, [next]: stories }));
+        prefetch(stories[0]);
+      })
+      .catch(() => undefined);
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStories, currentStoryIndex, creatorIndex, creators, focused, accessToken]);
 
   // Fetch full engagement detail + media kind for whichever story is now current, and record the view.
   useEffect(() => {
@@ -566,6 +607,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
 
   return (
     <Animated.View style={[styles.container, { transform: [{ translateY: dragY }] }]} onLayout={onContainerLayout}>
+      <Animated.View style={[StyleSheet.absoluteFill, { opacity: reveal }]} pointerEvents="none">
       {mediaKind === "video" ? (
         <Video
           ref={videoRef}
@@ -594,6 +636,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           resizeMode="cover"
         />
       ) : null}
+      </Animated.View>
 
       {/*
         The tap/double-tap/hold/swipe recognizer, as its own layer rather
@@ -647,16 +690,24 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         }}
       />
 
-      {detail && containerSize.width > 0 ? (
-        <StoryOverlayLayer
-          overlays={detail.overlays}
-          drawing={detail.drawing}
-          filter={filterNameFromKey(detail.filter)}
-          filterApplied={detail.filterApplied === true}
-          containerWidth={containerSize.width}
-          containerHeight={containerSize.height}
-          onMentionPress={onOpenProfile}
-        />
+      {/* The list already carries the text, stickers, drawing and filter: no wait for the detail. */}
+      {containerSize.width > 0 ? (
+        <Animated.View style={[StyleSheet.absoluteFill, { opacity: reveal }]} pointerEvents="box-none">
+          <StoryOverlayLayer
+            overlays={(detail ?? currentStory).overlays}
+            drawing={(detail ?? currentStory).drawing}
+            filter={filterNameFromKey((detail ?? currentStory).filter)}
+            filterApplied={(detail ?? currentStory).filterApplied === true}
+            containerWidth={containerSize.width}
+            containerHeight={containerSize.height}
+            onMentionPress={onOpenProfile}
+          />
+        </Animated.View>
+      ) : null}
+      {slowLoad && !mediaReady && !loadError ? (
+        <View style={styles.loadingSpinner} pointerEvents="none">
+          <ActivityIndicator color="#FFFFFF" size="large" />
+        </View>
       ) : null}
 
       <Animated.View
@@ -867,6 +918,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
 }
 
 const styles = StyleSheet.create({
+  loadingSpinner: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, alignItems: "center", justifyContent: "center" },
   container: { flex: 1, backgroundColor: "#000" },
   centered: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background },
   heartBurst: { ...StyleSheet.absoluteFill, alignItems: "center", justifyContent: "center" },

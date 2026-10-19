@@ -46,5 +46,5 @@ test('the upload carries the chosen filter, and viewers skip the tint once it is
  assert.match(read('backend/src/modules/media/worker.ts'),/processPhoto\(original, workDir, media\.mimeType, media\.filter\)/);
  assert.match(read('backend/src/modules/media/worker.ts'),/\}, media\.filter[,)]/);
  for(const screen of ['mobile/src/screens/story/StoryFeed.tsx','mobile/src/screens/profile/ArchivedStoryViewerScreen.tsx','mobile/src/screens/highlight/HighlightViewerScreen.tsx'])
-  assert.match(read(screen),/filterApplied=\{detail\.filterApplied === true\}/,screen);
+  assert.match(read(screen),/filterApplied=\{\(?detail(?: \?\? currentStory\))?\.filterApplied === true\}/,screen);
 });

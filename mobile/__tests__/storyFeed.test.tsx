@@ -13,7 +13,7 @@ jest.mock("../src/state/AuthContext", () => ({ useAuth: () => mockSession }));
 jest.mock("@react-navigation/native", () => ({ ...jest.requireActual("@react-navigation/native"), useIsFocused: () => true }));
 jest.mock("../src/hooks/useReducedMotion", () => ({ useReducedMotion: () => true }));
 jest.mock("../src/components/StoryOverlayLayer", () => ({
-  StoryOverlayLayer: () => null,
+  StoryOverlayLayer: (p: object) => require("react").createElement("StoryOverlayLayer", p),
   useContainerLayout: () => [{ width: 390, height: 844 }, () => undefined],
 }));
 jest.mock("../src/components/CommentsSheet", () => ({ CommentsSheet: (p: object) => require("react").createElement("CommentsSheet", p) }));
@@ -200,4 +200,32 @@ test("holding a Story clears the screen to just the Story", async () => {
   expect(StyleSheet.flatten(rail().props.style).opacity).toBe(0);
   await act(async () => surface().props.onResponderRelease(touch(300, 400)));
   expect(StyleSheet.flatten(rail().props.style).opacity ?? 1).toBe(1);
+});
+
+test("text and stickers come with the photo, not after it, and the next person's Stories load ahead", async () => {
+  const overlay = { id: "o1", type: "text", x: 0.5, y: 0.5, scale: 1, rotation: 0, zIndex: 1, properties: { text: "Hi" } };
+  const list = (storiesApi.getUserActiveStories as jest.Mock);
+  const original = list.getMockImplementation()!;
+  list.mockImplementation(async (username: string) => {
+    const result = await original(username);
+    return username === "alice" ? { stories: result.stories.map((st: object) => ({ ...st, overlays: [overlay] })) } : result;
+  });
+  // The detail request is slow: the edits must not wait for it.
+  (engagementApi.getStoryDetail as jest.Mock).mockImplementation(() => new Promise(() => undefined));
+  await act(async () => {
+    tree = create(
+      <SafeAreaProvider initialMetrics={metrics}>
+        <StoryFeed creators={["alice", "bob"]} startIndex={0} onOpenDM={jest.fn()} onOpenProfile={openProfile} />
+      </SafeAreaProvider>,
+    );
+  });
+  await settle();
+  const layer = tree.root.find((n) => (n.type as unknown) === "StoryOverlayLayer");
+  expect(layer.props.overlays).toEqual([overlay]);
+  // Hidden together until the photo has loaded, then shown together.
+  const fades = () => tree.root.findAll((n) => typeof n.type === "string" && StyleSheet.flatten(n.props.style)?.opacity !== undefined && n.findAll((c) => c.type === Image || (c.type as unknown) === "StoryOverlayLayer").length > 0);
+  expect(fades().length).toBeGreaterThan(0);
+  expect(fades().every((n) => StyleSheet.flatten(n.props.style).opacity === 0)).toBe(true);
+  expect(list).toHaveBeenCalledWith("bob", "token");
+  list.mockImplementation(original);
 });
