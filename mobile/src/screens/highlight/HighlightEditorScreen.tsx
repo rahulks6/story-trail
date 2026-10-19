@@ -1,13 +1,13 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "../../components/Icon";
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, FlatList, Image, Pressable, StyleSheet, Text, TextInput, View, useWindowDimensions } from "react-native";
+import { ActivityIndicator, Alert, FlatList, Image, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../navigation/types";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { getMyArchivedStories, mediaFileUrl, type PublicStory } from "../../api/stories";
-import { createHighlight, deleteHighlight, getHighlightDetail, updateHighlight } from "../../api/highlights";
+import { createHighlight, deleteHighlight, getHighlightDetail, setHighlightCover, updateHighlight } from "../../api/highlights";
 import { ApiError } from "../../api/client";
 import { DraggableGrid } from "../../components/DraggableGrid";
 
@@ -27,7 +27,7 @@ const ARCHIVE_PAGE_SIZE = 50;
 export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.Element {
   // The Save button stays above Android's navigation bar and the iPhone home indicator.
   const bottomInset = useSafeAreaInsets().bottom;
-  const { highlightId, initialStoryIds } = route.params;
+  const { highlightId, initialStoryIds, chooseCover } = route.params;
   const isEditing = highlightId !== undefined;
   const { accessToken } = useAuth();
   const { width: screenWidth } = useWindowDimensions();
@@ -46,6 +46,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
   const [archiveLoadingMore, setArchiveLoadingMore] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [coverPickerOpen, setCoverPickerOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -72,7 +73,11 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
       } catch {
         if (!cancelled) setError("Couldn't load your Stories — try again.");
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+          // "Change cover" from the profile opens straight on the choice.
+          if (chooseCover) setCoverPickerOpen(true);
+        }
       }
     })();
     return () => {
@@ -119,7 +124,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
 
   const onSave = async () => {
     if (!accessToken || saving) return;
-    const trimmedTitle = title.trim();
+    const trimmedTitle = cleanTitle(title);
     if (!trimmedTitle || selected.length === 0) return;
     setSaving(true);
     setError(null);
@@ -132,7 +137,9 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
           accessToken,
         );
       } else {
-        await createHighlight({ title: trimmedTitle, storyIds: selected }, accessToken);
+        const { highlight } = await createHighlight({ title: trimmedTitle, storyIds: selected }, accessToken);
+        // A new Highlight can't be given a cover in the same request; set it straight after.
+        if (coverStoryId) await setHighlightCover(highlight.id, coverStoryId, accessToken);
       }
       navigation.goBack();
     } catch (err) {
@@ -173,20 +180,53 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
     );
   }
 
-  const canSave = title.trim().length > 0 && selected.length > 0 && !saving;
+  const canSave = cleanTitle(title).length > 0 && selected.length > 0 && !saving;
   const selectedThumbSize =
     (screenWidth - spacing.md * 2 - SELECTED_STRIP_GAP * (SELECTED_STRIP_COLUMNS - 1)) / SELECTED_STRIP_COLUMNS;
 
+  const authHeaders = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
+  const coverStory = selectedStories.find((st) => st.id === coverStoryId) ?? selectedStories[0];
+
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.titleInput}
-        placeholder="Highlight name"
-        placeholderTextColor={colors.textDisabled}
-        value={title}
-        onChangeText={setTitle}
-        maxLength={MAX_TITLE_LENGTH}
-      />
+      <View style={styles.header}>
+        {/* The cover, as it shows on your profile: tap to choose which Story it is. */}
+        <Pressable
+          onPress={() => setCoverPickerOpen(true)}
+          disabled={selectedStories.length === 0}
+          style={styles.coverPreview}
+          accessibilityRole="button"
+          accessibilityLabel="Change cover"
+        >
+          {coverStory ? (
+            <Image source={{ uri: mediaFileUrl(coverStory.mediaId, "thumbnail"), headers: authHeaders }} style={styles.coverPreviewImage} resizeMode="cover" />
+          ) : (
+            <View style={styles.coverPreviewEmpty}>
+              <Text style={styles.coverPreviewInitial}>{cleanTitle(title).charAt(0).toUpperCase() || "?"}</Text>
+            </View>
+          )}
+          {selectedStories.length > 0 ? (
+            <View style={styles.coverPreviewBadge}>
+              <Text style={styles.coverPreviewBadgeText}>Change cover</Text>
+            </View>
+          ) : null}
+        </Pressable>
+        <View style={styles.headerFields}>
+          <Text style={styles.fieldLabel}>Name</Text>
+          <TextInput
+            style={styles.titleInput}
+            placeholder="e.g. Travel"
+            placeholderTextColor={colors.textDisabled}
+            value={title}
+            onChangeText={setTitle}
+            onBlur={() => setTitle((t) => cleanTitle(t))}
+            maxLength={MAX_TITLE_LENGTH}
+            autoCapitalize="words"
+            returnKeyType="done"
+          />
+          <Text style={styles.counter}>{cleanTitle(title).length}/{MAX_TITLE_LENGTH} · shown under the cover on your profile</Text>
+        </View>
+      </View>
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
       {selectedStories.length > 0 ? (
@@ -261,6 +301,34 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
         }}
       />
 
+      <Modal visible={coverPickerOpen} transparent animationType="slide" onRequestClose={() => setCoverPickerOpen(false)}>
+        <Pressable style={styles.pickerBackdrop} onPress={() => setCoverPickerOpen(false)} accessibilityRole="button" accessibilityLabel="Close" />
+        <View style={[styles.picker, { paddingBottom: spacing.lg + bottomInset }]}>
+          <Text style={styles.pickerTitle} accessibilityRole="header">Choose a cover</Text>
+          <Text style={styles.sectionHint}>Any Story in this Highlight can be its cover.</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.pickerRow}>
+            {selectedStories.map((story) => {
+              const chosen = coverStory?.id === story.id;
+              return (
+                <Pressable
+                  key={story.id}
+                  onPress={() => {
+                    setCoverStoryId(story.id);
+                    setCoverPickerOpen(false);
+                  }}
+                  accessibilityRole="button"
+                  accessibilityLabel={chosen ? "Current cover" : "Use as cover"}
+                  accessibilityState={{ selected: chosen }}
+                >
+                  <Image source={{ uri: mediaFileUrl(story.mediaId, "thumbnail"), headers: authHeaders }} style={[styles.pickerThumb, chosen && styles.pickerThumbChosen]} resizeMode="cover" />
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+          {isEditing ? <Text style={styles.sectionHint}>Tap Save to keep the new cover.</Text> : null}
+        </View>
+      </Modal>
+
       <View style={[styles.footer, { paddingBottom: spacing.md + bottomInset }]}>
         {isEditing ? (
           <Pressable accessibilityRole="button" style={styles.deleteButton} onPress={onDelete}>
@@ -279,11 +347,31 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
 
 const THUMB_SIZE = 104;
 
+/** A tidy name: no spaces at the ends, none doubled. */
+function cleanTitle(value: string): string {
+  return value.replace(/\s+/g, " ").trim();
+}
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background, paddingTop: spacing.md },
   centered: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background },
+  header: { flexDirection: "row", gap: spacing.md, marginHorizontal: spacing.md, alignItems: "flex-start" },
+  coverPreview: { width: 84, height: 113, borderRadius: radii.md, overflow: "hidden", backgroundColor: colors.surfaceElevated },
+  coverPreviewImage: { width: "100%", height: "100%" },
+  coverPreviewEmpty: { flex: 1, alignItems: "center", justifyContent: "center" },
+  coverPreviewInitial: { color: colors.textSecondary, fontSize: 28, fontWeight: "700" },
+  coverPreviewBadge: { position: "absolute", left: 0, right: 0, bottom: 0, paddingVertical: 4, backgroundColor: "rgba(0,0,0,0.6)" },
+  coverPreviewBadgeText: { color: "#FFFFFF", fontSize: 11, fontWeight: "700", textAlign: "center" },
+  headerFields: { flex: 1 },
+  fieldLabel: { ...typography.label, marginBottom: spacing.xs },
+  counter: { ...typography.caption, marginTop: spacing.xs },
+  pickerBackdrop: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
+  picker: { backgroundColor: colors.surface, borderTopLeftRadius: radii.lg, borderTopRightRadius: radii.lg, paddingTop: spacing.lg },
+  pickerTitle: { ...typography.title, fontSize: 18, marginHorizontal: spacing.md, marginBottom: spacing.xs },
+  pickerRow: { paddingHorizontal: spacing.md, paddingVertical: spacing.sm, gap: spacing.sm },
+  pickerThumb: { width: 90, height: 121, borderRadius: radii.md, borderWidth: 3, borderColor: "transparent", backgroundColor: colors.surfaceElevated },
+  pickerThumbChosen: { borderColor: colors.accent },
   titleInput: {
-    marginHorizontal: spacing.md,
     backgroundColor: colors.surface,
     borderRadius: radii.md,
     borderWidth: 1,
@@ -292,6 +380,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     color: colors.textPrimary,
     fontSize: 16,
+    fontWeight: "600",
   },
   error: { color: colors.danger, marginHorizontal: spacing.md, marginTop: spacing.xs },
   sectionLabel: { ...typography.label, marginHorizontal: spacing.md, marginTop: spacing.md, marginBottom: spacing.xs },

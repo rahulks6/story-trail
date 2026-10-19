@@ -72,7 +72,7 @@ export type RootStackParamList = {
    * when it's given. Always the caller's own Highlight. `initialStoryIds`
    * (create only) preselects Stories chosen via multi-select in Archive.
    */
-  HighlightEditor: { highlightId?: string; initialStoryIds?: string[] };
+  HighlightEditor: { highlightId?: string; initialStoryIds?: string[]; /** Opens straight on choosing the cover. */ chooseCover?: boolean };
   /** Every Story you've ever published, expired or not — private, owner-only, grouped by month (spec: a dedicated Archive, not just the Highlight picker). */
   Archive: undefined;
   /** Single, view-only playback of one of your own Stories from Archive, active or long expired — always your own (owners bypass the normal 24h expiry check, see stories.service.ts). */

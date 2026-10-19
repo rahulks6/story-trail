@@ -36,6 +36,8 @@ const GAP = spacing.sm;
 // its cards need to size against the space that padding actually leaves.
 const CONTAINER_PADDING = spacing.lg;
 const CARD_ASPECT_RATIO = 1.35; // portrait, not circular — spec section 62
+/** The name sits under each cover, never on the photo, so it reads on any picture and in light or dark. */
+const LABEL_HEIGHT = 22;
 
 /**
  * The Highlights grid under a profile's bio (spec section 62): EXACTLY 3
@@ -133,7 +135,8 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
 
   const authHeaders = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
   const cardWidth = (screenWidth - CONTAINER_PADDING * 2 - GAP * (COLUMNS - 1)) / COLUMNS;
-  const cardHeight = cardWidth * CARD_ASPECT_RATIO;
+  const coverHeight = cardWidth * CARD_ASPECT_RATIO;
+  const cardHeight = coverHeight + LABEL_HEIGHT;
 
   return (
     <View style={styles.wrapper}>
@@ -169,34 +172,36 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
         leadingChildren={
           isOwner ? (
             <Pressable
-              style={[styles.card, styles.newCard, { width: cardWidth, height: cardHeight, left: 0, top: 0 }]}
+              style={[styles.newSlot, { width: cardWidth, height: cardHeight, left: 0, top: 0 }]}
               onPress={() => navigation.navigate("HighlightEditor", {})}
               accessibilityRole="button"
               accessibilityLabel="New Highlight"
             >
-              <Icon style={styles.newGlyph} name={ICONS.add} />
-              <Text style={styles.newLabel}>New</Text>
+              <View style={[styles.newCard, { height: coverHeight }]}>
+                <Icon style={styles.newGlyph} name={ICONS.add} />
+              </View>
+              <Text style={styles.label} numberOfLines={1}>New</Text>
             </Pressable>
           ) : null
         }
         renderItem={(highlight) => (
-          <View style={styles.card}>
-            {highlight.coverMediaId ? (
-              <Image
-                source={{ uri: mediaFileUrl(highlight.coverMediaId, "thumbnail"), headers: authHeaders }}
-                style={styles.coverImage}
-                resizeMode="cover"
-              />
-            ) : (
-              <View style={styles.coverFallback}>
-                <Text style={styles.coverFallbackInitial}>{highlight.title.charAt(0).toUpperCase()}</Text>
-              </View>
-            )}
-            <View style={styles.labelScrim}>
-              <Text style={styles.label} numberOfLines={2}>
-                {highlight.title}
-              </Text>
+          <View style={styles.slot}>
+            <View style={[styles.card, { height: coverHeight }]}>
+              {highlight.coverMediaId ? (
+                <Image
+                  source={{ uri: mediaFileUrl(highlight.coverMediaId, "thumbnail"), headers: authHeaders }}
+                  style={styles.coverImage}
+                  resizeMode="cover"
+                />
+              ) : (
+                <View style={styles.coverFallback}>
+                  <Text style={styles.coverFallbackInitial}>{highlight.title.charAt(0).toUpperCase()}</Text>
+                </View>
+              )}
             </View>
+            <Text style={styles.label} numberOfLines={1}>
+              {highlight.title}
+            </Text>
           </View>
         )}
       />
@@ -209,6 +214,7 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
         groups={[
           [
             { label: "Edit Highlight", onPress: () => options && navigation.navigate("HighlightEditor", { highlightId: options.id }) },
+            { label: "Change cover", onPress: () => options && navigation.navigate("HighlightEditor", { highlightId: options.id, chooseCover: true }) },
             { label: "Delete Highlight", destructive: true, onPress: () => options && confirmDelete(options) },
           ],
         ]}
@@ -224,8 +230,9 @@ const styles = StyleSheet.create({
   sectionTitle: { ...typography.bodyStrong, fontSize: 16 },
   reorderToggle: { paddingVertical: spacing.xs },
   reorderToggleLabel: { ...typography.caption, color: colors.accent, fontWeight: "700" },
+  slot: { flex: 1 },
   card: {
-    flex: 1,
+    width: "100%",
     borderRadius: radii.md,
     overflow: "hidden",
     backgroundColor: colors.surface,
@@ -233,29 +240,19 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   coverImage: { width: "100%", height: "100%" },
-  coverFallback: { flex: 1, alignItems: "center", justifyContent: "center" },
+  coverFallback: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.surfaceElevated },
   coverFallbackInitial: { color: colors.textPrimary, fontWeight: "700", fontSize: 28 },
-  labelScrim: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    paddingHorizontal: spacing.xs,
-    paddingVertical: spacing.xs,
-    backgroundColor: "rgba(0,0,0,0.55)",
-  },
-  label: { ...typography.caption, color: colors.textPrimary, fontSize: 11, fontWeight: "700" },
+  label: { ...typography.bodyStrong, fontSize: 13, lineHeight: 18, height: LABEL_HEIGHT, paddingTop: 4, textAlign: "center" },
+  newSlot: { position: "absolute" },
   newCard: {
-    position: "absolute",
+    width: "100%",
     borderStyle: "dashed",
-    borderWidth: 2,
-    borderColor: colors.border,
+    borderWidth: 1.5,
+    borderColor: colors.textDisabled,
     borderRadius: radii.md,
     alignItems: "center",
     justifyContent: "center",
-    gap: spacing.xs,
   },
   newGlyph: { color: colors.accent, fontSize: 28, fontWeight: "700" },
-  newLabel: { ...typography.caption, fontSize: 11 },
   hint: { ...typography.caption, marginTop: spacing.xs },
 });

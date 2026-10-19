@@ -35,6 +35,7 @@ jest.mock("../src/api/highlights", () => ({
   updateHighlight: jest.fn(),
   deleteHighlight: jest.fn(async () => undefined),
   createHighlight: jest.fn(),
+  setHighlightCover: jest.fn(async () => ({})),
 }));
 const api = highlightsApi as jest.Mocked<typeof highlightsApi>;
 
@@ -103,4 +104,46 @@ test("the editor shows and keeps a Highlight's Stories from further back in the 
   const save = tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.findAll((c) => c.props.children === "Save").length > 0);
   await act(async () => save.props.onPress());
   expect(api.updateHighlight).toHaveBeenCalledWith("h1", expect.objectContaining({ storyIds: ["s-old", "s1"] }), "token");
+});
+
+test("the editor shows the cover and lets you pick any of the Highlight's Stories as it", async () => {
+  api.getHighlightDetail.mockResolvedValue({ highlight: highlight(["s1", "s2"]) } as never);
+  api.updateHighlight.mockResolvedValue({ highlight: highlight(["s1", "s2"]) } as never);
+  await act(async () => {
+    tree = create(
+      <SafeAreaProvider initialMetrics={{ frame: { x: 0, y: 0, width: 390, height: 844 }, insets: { top: 0, left: 0, right: 0, bottom: 0 } }}>
+        <HighlightEditorScreen route={{ key: "e", name: "HighlightEditor", params: { highlightId: "h1", chooseCover: true } } as never} navigation={navigation as never} />
+      </SafeAreaProvider>,
+    );
+  });
+  await act(async () => { await Promise.resolve(); });
+  // Opened from "Change cover": the choice is already up.
+  const picker = tree.root.findAllByType(Modal).find((m) => m.props.visible && m.findAll((n) => n.props.children === "Choose a cover").length > 0);
+  expect(picker).toBeDefined();
+  const options = picker!.findAll((n: ReactTestInstance) => typeof n.props.onPress === "function" && /cover/.test(n.props.accessibilityLabel ?? ""));
+  expect(options.map((o) => o.props.accessibilityLabel)).toEqual(["Current cover", "Use as cover"]);
+  await act(async () => options[1]!.props.onPress());
+  const save = tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.findAll((c) => c.props.children === "Save").length > 0);
+  await act(async () => save.props.onPress());
+  expect(api.updateHighlight).toHaveBeenCalledWith("h1", expect.objectContaining({ coverStoryId: "s2" }), "token");
+});
+
+test("a new Highlight gets the cover you chose, and a tidy name", async () => {
+  api.createHighlight.mockResolvedValue({ highlight: { ...highlight(["s1", "s2"]), id: "h-new" } } as never);
+  await act(async () => {
+    tree = create(
+      <SafeAreaProvider initialMetrics={{ frame: { x: 0, y: 0, width: 390, height: 844 }, insets: { top: 0, left: 0, right: 0, bottom: 0 } }}>
+        <HighlightEditorScreen route={{ key: "e", name: "HighlightEditor", params: { initialStoryIds: ["s1", "s2"] } } as never} navigation={navigation as never} />
+      </SafeAreaProvider>,
+    );
+  });
+  await act(async () => { await Promise.resolve(); });
+  const { TextInput } = jest.requireActual("react-native");
+  await act(async () => tree.root.findByType(TextInput).props.onChangeText("  Summer   trip "));
+  await act(async () => byLabel("Change cover").props.onPress());
+  await act(async () => byLabel("Use as cover").props.onPress());
+  const create_ = tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.findAll((c) => c.props.children === "Create").length > 0);
+  await act(async () => create_.props.onPress());
+  expect(api.createHighlight).toHaveBeenCalledWith({ title: "Summer trip", storyIds: ["s1", "s2"] }, "token");
+  expect((api as unknown as { setHighlightCover: jest.Mock }).setHighlightCover).toHaveBeenCalledWith("h-new", "s2", "token");
 });
