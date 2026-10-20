@@ -2,11 +2,11 @@
   "command" : {
     "defineVariablesCommand" : {
       "env" : {
-        "USERNAME" : "e2e_and_026203_tablet",
-        "EMAIL" : "support+e2e-and-026203-tablet@katkee.com",
-        "PASSWORD" : "E2e-97fe8ef4d27ed696",
-        "OIDC_URL" : "https://run-actions-3-azure-eastus.actions.githubusercontent.com/240//idtoken/4c0ae1a1-9cd1-4ada-9985-23e184f18202/4f702427-ca3a-59ee-8b53-cc1c58d6151e?api-version=2.0",
-        "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6M31dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTI1MDQ2NzIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5MjUwMDQ3MiwiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6IjRmNzAyNDI3LWNhM2EtNTllZS04YjUzLWNjMWM1OGQ2MTUxZSIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhIiwiam9iX3dvcmtmbG93X3NoYSI6ImI2MmM2N2ZjMTA4NDljOGM5NmE2MmI0OTQzZTI4ZjBkMjY2MDE5OGYiLCJuYW1laWQiOiJkZGRkZGRkZC1kZGRkLWRkZGQtZGRkZC1kZGRkZGRkZGRkZGQiLCJuYmYiOjE3OTI1MDAxNzIsIm9pZGNfZXh0cmEiOiJ7XCJhY3RvclwiOlwicmFodWxrczZcIixcImFjdG9yX2lkXCI6XCIxOTc1NDA5MjRcIixcImJhc2VfcmVmXCI6XCJcIixcImNoZWNrX3J1bl9pZFwiOlwiMTE4NjM1NDQyMTYwXCIsXCJldmVudF9uYW1lXCI6XCJ3b3JrZmxvd19kaXNwYXRjaFwiLFwiaGVhZF9yZWZcIjpcIlwiLFwiam9iX3dvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvYW5kcm9pZC1lMmUueW1sQHJlZnMvaGVhZHMvY2xhdWRlL2thdGtlZS1wcm9kdWN0aW9uLWF1ZGl0LWt1ZXhyYVwiLFwiam9iX3dvcmtmbG93X3NoYVwiOlwiYjYyYzY3ZmMxMDg0OWM4Yzk2YTYyYjQ5NDNlMjhmMGQyNjYwMTk4ZlwiLFwicmVmXCI6XCJyZWZzL2hlYWRzL2NsYXVkZS9rYXRrZWUtcHJvZHVjdGlvbi1hdWRpdC1rdWV4cmFcIixcInJlZl9wcm90ZWN0ZWRcIjpcImZhbHNlXCIsXCJyZWZfdHlwZVwiOlwiYnJhbmNoXCIsXCJyZXBvc2l0b3J5XCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbFwiLFwicmVwb3NpdG9yeV9pZFwiOlwiMTM3NjkxNTQ5MVwiLFwicmVwb3NpdG9yeV9vd25lclwiOlwicmFodWxrczZcIixcInJlcG9zaXRvcnlfb3duZXJfaWRcIjpcIjE5NzU0MDkyNFwiLFwicmVwb3NpdG9yeV92aXNpYmlsaXR5XCI6XCJwdWJsaWNcIixcInJ1bl9hdHRlbXB0XCI6XCIxXCIsXCJydW5faWRcIjpcIjM5NDIzMDI2MjAzXCIsXCJydW5fbnVtYmVyXCI6XCI2XCIsXCJydW5uZXJfZW52aXJvbm1lbnRcIjpcImdpdGh1Yi1ob3N0ZWRcIixcInNoYVwiOlwiYjYyYzY3ZmMxMDg0OWM4Yzk2YTYyYjQ5NDNlMjhmMGQyNjYwMTk4ZlwiLFwid29ya2Zsb3dcIjpcIkFuZHJvaWQgZW11bGF0b3IgdGVzdFwiLFwid29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJ3b3JrZmxvd19zaGFcIjpcImI2MmM2N2ZjMTA4NDljOGM5NmE2MmI0OTQzZTI4ZjBkMjY2MDE5OGZcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2thdGtlZS1wcm9kdWN0aW9uLWF1ZGl0LWt1ZXhyYSIsIm9yY2hfaWQiOiI0YzBhZTFhMS05Y2QxLTRhZGEtOTk4NS0yM2UxODRmMTgyMDIud2Fsa3Rocm91Z2gudGFibGV0Iiwib3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJwbGFuX2lkIjoiNGMwYWUxYTEtOWNkMS00YWRhLTk5ODUtMjNlMTg0ZjE4MjAyIiwicmVwb3NpdG9yeV9pZCI6IjEzNzY5MTU0OTEiLCJyZXBvc2l0b3J5X293bmVyX2lkIjoiMTk3NTQwOTI0IiwicmVwb3NpdG9yeV92aXNpYmlsaXR5IjoicHVibGljIiwicnVuX2lkIjoiMzk0MjMwMjYyMDMiLCJydW5fbnVtYmVyIjoiNiIsInJ1bl90eXBlIjoiZnVsbCIsInJ1bm5lcl9pZCI6IjEwMDAwMDAwNTkiLCJydW5uZXJfdHlwZSI6Imhvc3RlZCIsInNjcCI6IkFjdGlvbnMuUmVzdWx0czo0YzBhZTFhMS05Y2QxLTRhZGEtOTk4NS0yM2UxODRmMTgyMDI6NGY3MDI0MjctY2EzYS01OWVlLThiNTMtY2MxYzU4ZDYxNTFlIEFjdGlvbnMuUnVubmVyOjRjMGFlMWExLTljZDEtNGFkYS05OTg1LTIzZTE4NGYxODIwMjo0ZjcwMjQyNy1jYTNhLTU5ZWUtOGI1My1jYzFjNThkNjE1MWUgQWN0aW9ucy5VcGxvYWRBcnRpZmFjdHM6NGMwYWUxYTEtOWNkMS00YWRhLTk5ODUtMjNlMTg0ZjE4MjAyOjRmNzAyNDI3LWNhM2EtNTllZS04YjUzLWNjMWM1OGQ2MTUxZSBnZW5lcmF0ZV9pZF90b2tlbjo0YzBhZTFhMS05Y2QxLTRhZGEtOTk4NS0yM2UxODRmMTgyMDI6NGY3MDI0MjctY2EzYS01OWVlLThiNTMtY2MxYzU4ZDYxNTFlIEFjdGlvbnMuR2VuZXJpY1JlYWQ6MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIiwic2hhIjoiYjYyYzY3ZmMxMDg0OWM4Yzk2YTYyYjQ5NDNlMjhmMGQyNjYwMTk4ZiIsInRydXN0X3RpZXIiOiIyIn0.Op3HM5HYW0uhGQ91MtBTyP_rZcD42KEhoFfotCb76bfdNMWXQwNAVUKNMVFH-UBqifdpURkYNOlqiP1FVmK5o562y7HeWbqHlMD7_dFTSK17eJLYeTKjYdTwHe7EJ_mccgO3Ub85IfExODKgLs1uEZVL3ehcewy9JpNead42vLsAfxIrlK87ndY9CR5rVsgd8oZ1PYDNs6CPLdjI1INANxevhk08lQ_fJLAYpoFWKd5ydgA6qa0l0tGXa3f4z8rrTZS83cGDbw9b50IFlQo51WQ7VgKduORXTesNCJXJqmB7G4ow6ocXv2A1rsMCjrFlHaTTFNlU3rHRI5KIQAxoAQ",
+        "USERNAME" : "e2e_and_534707_tablet",
+        "EMAIL" : "support+e2e-and-534707-tablet@katkee.com",
+        "PASSWORD" : "E2e-377406a6a36a80eb",
+        "OIDC_URL" : "https://run-actions-2-azure-eastus.actions.githubusercontent.com/149//idtoken/e09918ef-1df7-4b01-ad45-d1e072ef5e0b/ecd142ef-2615-553f-9e82-b6c477ea08a5?api-version=2.0",
+        "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6M31dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTI1MDcxMjIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5MjUwMjkyMiwiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6ImVjZDE0MmVmLTI2MTUtNTUzZi05ZTgyLWI2YzQ3N2VhMDhhNSIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhIiwiam9iX3dvcmtmbG93X3NoYSI6IjM0N2E2YzE4MWEwM2Q4NzhmZmI0Zjc0YmUzNjQ1YjVkNjI0YmZjMTIiLCJuYW1laWQiOiJkZGRkZGRkZC1kZGRkLWRkZGQtZGRkZC1kZGRkZGRkZGRkZGQiLCJuYmYiOjE3OTI1MDI2MjIsIm9pZGNfZXh0cmEiOiJ7XCJhY3RvclwiOlwicmFodWxrczZcIixcImFjdG9yX2lkXCI6XCIxOTc1NDA5MjRcIixcImJhc2VfcmVmXCI6XCJcIixcImNoZWNrX3J1bl9pZFwiOlwiMTE4NjU0NzI2ODMxXCIsXCJldmVudF9uYW1lXCI6XCJ3b3JrZmxvd19kaXNwYXRjaFwiLFwiaGVhZF9yZWZcIjpcIlwiLFwiam9iX3dvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvYW5kcm9pZC1lMmUueW1sQHJlZnMvaGVhZHMvY2xhdWRlL2thdGtlZS1wcm9kdWN0aW9uLWF1ZGl0LWt1ZXhyYVwiLFwiam9iX3dvcmtmbG93X3NoYVwiOlwiMzQ3YTZjMTgxYTAzZDg3OGZmYjRmNzRiZTM2NDViNWQ2MjRiZmMxMlwiLFwicmVmXCI6XCJyZWZzL2hlYWRzL2NsYXVkZS9rYXRrZWUtcHJvZHVjdGlvbi1hdWRpdC1rdWV4cmFcIixcInJlZl9wcm90ZWN0ZWRcIjpcImZhbHNlXCIsXCJyZWZfdHlwZVwiOlwiYnJhbmNoXCIsXCJyZXBvc2l0b3J5XCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbFwiLFwicmVwb3NpdG9yeV9pZFwiOlwiMTM3NjkxNTQ5MVwiLFwicmVwb3NpdG9yeV9vd25lclwiOlwicmFodWxrczZcIixcInJlcG9zaXRvcnlfb3duZXJfaWRcIjpcIjE5NzU0MDkyNFwiLFwicmVwb3NpdG9yeV92aXNpYmlsaXR5XCI6XCJwdWJsaWNcIixcInJ1bl9hdHRlbXB0XCI6XCIxXCIsXCJydW5faWRcIjpcIjM5NDI4NTM0NzA3XCIsXCJydW5fbnVtYmVyXCI6XCI3XCIsXCJydW5uZXJfZW52aXJvbm1lbnRcIjpcImdpdGh1Yi1ob3N0ZWRcIixcInNoYVwiOlwiMzQ3YTZjMTgxYTAzZDg3OGZmYjRmNzRiZTM2NDViNWQ2MjRiZmMxMlwiLFwid29ya2Zsb3dcIjpcIkFuZHJvaWQgZW11bGF0b3IgdGVzdFwiLFwid29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJ3b3JrZmxvd19zaGFcIjpcIjM0N2E2YzE4MWEwM2Q4NzhmZmI0Zjc0YmUzNjQ1YjVkNjI0YmZjMTJcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2thdGtlZS1wcm9kdWN0aW9uLWF1ZGl0LWt1ZXhyYSIsIm9yY2hfaWQiOiJlMDk5MThlZi0xZGY3LTRiMDEtYWQ0NS1kMWUwNzJlZjVlMGIud2Fsa3Rocm91Z2gudGFibGV0Iiwib3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJwbGFuX2lkIjoiZTA5OTE4ZWYtMWRmNy00YjAxLWFkNDUtZDFlMDcyZWY1ZTBiIiwicmVwb3NpdG9yeV9pZCI6IjEzNzY5MTU0OTEiLCJyZXBvc2l0b3J5X293bmVyX2lkIjoiMTk3NTQwOTI0IiwicmVwb3NpdG9yeV92aXNpYmlsaXR5IjoicHVibGljIiwicnVuX2lkIjoiMzk0Mjg1MzQ3MDciLCJydW5fbnVtYmVyIjoiNyIsInJ1bl90eXBlIjoiZnVsbCIsInJ1bm5lcl9pZCI6IjEwMDAwMDAwNjQiLCJydW5uZXJfdHlwZSI6Imhvc3RlZCIsInNjcCI6IkFjdGlvbnMuUmVzdWx0czplMDk5MThlZi0xZGY3LTRiMDEtYWQ0NS1kMWUwNzJlZjVlMGI6ZWNkMTQyZWYtMjYxNS01NTNmLTllODItYjZjNDc3ZWEwOGE1IEFjdGlvbnMuUnVubmVyOmUwOTkxOGVmLTFkZjctNGIwMS1hZDQ1LWQxZTA3MmVmNWUwYjplY2QxNDJlZi0yNjE1LTU1M2YtOWU4Mi1iNmM0NzdlYTA4YTUgQWN0aW9ucy5VcGxvYWRBcnRpZmFjdHM6ZTA5OTE4ZWYtMWRmNy00YjAxLWFkNDUtZDFlMDcyZWY1ZTBiOmVjZDE0MmVmLTI2MTUtNTUzZi05ZTgyLWI2YzQ3N2VhMDhhNSBnZW5lcmF0ZV9pZF90b2tlbjplMDk5MThlZi0xZGY3LTRiMDEtYWQ0NS1kMWUwNzJlZjVlMGI6ZWNkMTQyZWYtMjYxNS01NTNmLTllODItYjZjNDc3ZWEwOGE1IEFjdGlvbnMuR2VuZXJpY1JlYWQ6MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIiwic2hhIjoiMzQ3YTZjMTgxYTAzZDg3OGZmYjRmNzRiZTM2NDViNWQ2MjRiZmMxMiIsInRydXN0X3RpZXIiOiIyIn0.zQ3u7avHfJfGvs8DCOD1cNsWChBsWX0snuoJ6UzVFNgPgM8VP-BFMP8YKaPNDkKIGGyYZmveX82S5HXBIsurM6tNONzOrzX8LyYHFteFJfFHWJbK0N058Qz0ZhvbHUrNPYA_R1FqrvKQ9Gue_xFIdNZMlRictcJG8BhJ-MZ9XoPzbdat4g-KfdKdB180SIr6MvuKrAAHknuoGd1I-MGemKN5EQvWb3MOnOTWFtTwiGGxvXex2GM-WGqs0aC4iDzOzq2P1iPoxIfv8l928yJotbk_EMAKUG3iQqW5X6T2xDtTEdi-mcoF1G8reju3BiW8yQG6z_vPF2isbrBNt4SjtA",
         "MAESTRO_CLI_NO_ANALYTICS" : "1",
         "MAESTRO_FILENAME" : "smoke",
         "MAESTRO_DEVICE_UDID" : "emulator-5554",
@@ -18,18 +18,18 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500609472,
-    "duration" : 8,
+    "timestamp" : 1792503061050,
+    "duration" : 12,
     "sequenceNumber" : 0,
     "depth" : 0,
     "evaluatedCommand" : {
       "defineVariablesCommand" : {
         "env" : {
-          "USERNAME" : "e2e_and_026203_tablet",
-          "EMAIL" : "support+e2e-and-026203-tablet@katkee.com",
-          "PASSWORD" : "E2e-97fe8ef4d27ed696",
-          "OIDC_URL" : "https://run-actions-3-azure-eastus.actions.githubusercontent.com/240//idtoken/4c0ae1a1-9cd1-4ada-9985-23e184f18202/4f702427-ca3a-59ee-8b53-cc1c58d6151e?api-version=2.0",
-          "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6M31dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTI1MDQ2NzIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5MjUwMDQ3MiwiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6IjRmNzAyNDI3LWNhM2EtNTllZS04YjUzLWNjMWM1OGQ2MTUxZSIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhIiwiam9iX3dvcmtmbG93X3NoYSI6ImI2MmM2N2ZjMTA4NDljOGM5NmE2MmI0OTQzZTI4ZjBkMjY2MDE5OGYiLCJuYW1laWQiOiJkZGRkZGRkZC1kZGRkLWRkZGQtZGRkZC1kZGRkZGRkZGRkZGQiLCJuYmYiOjE3OTI1MDAxNzIsIm9pZGNfZXh0cmEiOiJ7XCJhY3RvclwiOlwicmFodWxrczZcIixcImFjdG9yX2lkXCI6XCIxOTc1NDA5MjRcIixcImJhc2VfcmVmXCI6XCJcIixcImNoZWNrX3J1bl9pZFwiOlwiMTE4NjM1NDQyMTYwXCIsXCJldmVudF9uYW1lXCI6XCJ3b3JrZmxvd19kaXNwYXRjaFwiLFwiaGVhZF9yZWZcIjpcIlwiLFwiam9iX3dvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvYW5kcm9pZC1lMmUueW1sQHJlZnMvaGVhZHMvY2xhdWRlL2thdGtlZS1wcm9kdWN0aW9uLWF1ZGl0LWt1ZXhyYVwiLFwiam9iX3dvcmtmbG93X3NoYVwiOlwiYjYyYzY3ZmMxMDg0OWM4Yzk2YTYyYjQ5NDNlMjhmMGQyNjYwMTk4ZlwiLFwicmVmXCI6XCJyZWZzL2hlYWRzL2NsYXVkZS9rYXRrZWUtcHJvZHVjdGlvbi1hdWRpdC1rdWV4cmFcIixcInJlZl9wcm90ZWN0ZWRcIjpcImZhbHNlXCIsXCJyZWZfdHlwZVwiOlwiYnJhbmNoXCIsXCJyZXBvc2l0b3J5XCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbFwiLFwicmVwb3NpdG9yeV9pZFwiOlwiMTM3NjkxNTQ5MVwiLFwicmVwb3NpdG9yeV9vd25lclwiOlwicmFodWxrczZcIixcInJlcG9zaXRvcnlfb3duZXJfaWRcIjpcIjE5NzU0MDkyNFwiLFwicmVwb3NpdG9yeV92aXNpYmlsaXR5XCI6XCJwdWJsaWNcIixcInJ1bl9hdHRlbXB0XCI6XCIxXCIsXCJydW5faWRcIjpcIjM5NDIzMDI2MjAzXCIsXCJydW5fbnVtYmVyXCI6XCI2XCIsXCJydW5uZXJfZW52aXJvbm1lbnRcIjpcImdpdGh1Yi1ob3N0ZWRcIixcInNoYVwiOlwiYjYyYzY3ZmMxMDg0OWM4Yzk2YTYyYjQ5NDNlMjhmMGQyNjYwMTk4ZlwiLFwid29ya2Zsb3dcIjpcIkFuZHJvaWQgZW11bGF0b3IgdGVzdFwiLFwid29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJ3b3JrZmxvd19zaGFcIjpcImI2MmM2N2ZjMTA4NDljOGM5NmE2MmI0OTQzZTI4ZjBkMjY2MDE5OGZcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2thdGtlZS1wcm9kdWN0aW9uLWF1ZGl0LWt1ZXhyYSIsIm9yY2hfaWQiOiI0YzBhZTFhMS05Y2QxLTRhZGEtOTk4NS0yM2UxODRmMTgyMDIud2Fsa3Rocm91Z2gudGFibGV0Iiwib3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJwbGFuX2lkIjoiNGMwYWUxYTEtOWNkMS00YWRhLTk5ODUtMjNlMTg0ZjE4MjAyIiwicmVwb3NpdG9yeV9pZCI6IjEzNzY5MTU0OTEiLCJyZXBvc2l0b3J5X293bmVyX2lkIjoiMTk3NTQwOTI0IiwicmVwb3NpdG9yeV92aXNpYmlsaXR5IjoicHVibGljIiwicnVuX2lkIjoiMzk0MjMwMjYyMDMiLCJydW5fbnVtYmVyIjoiNiIsInJ1bl90eXBlIjoiZnVsbCIsInJ1bm5lcl9pZCI6IjEwMDAwMDAwNTkiLCJydW5uZXJfdHlwZSI6Imhvc3RlZCIsInNjcCI6IkFjdGlvbnMuUmVzdWx0czo0YzBhZTFhMS05Y2QxLTRhZGEtOTk4NS0yM2UxODRmMTgyMDI6NGY3MDI0MjctY2EzYS01OWVlLThiNTMtY2MxYzU4ZDYxNTFlIEFjdGlvbnMuUnVubmVyOjRjMGFlMWExLTljZDEtNGFkYS05OTg1LTIzZTE4NGYxODIwMjo0ZjcwMjQyNy1jYTNhLTU5ZWUtOGI1My1jYzFjNThkNjE1MWUgQWN0aW9ucy5VcGxvYWRBcnRpZmFjdHM6NGMwYWUxYTEtOWNkMS00YWRhLTk5ODUtMjNlMTg0ZjE4MjAyOjRmNzAyNDI3LWNhM2EtNTllZS04YjUzLWNjMWM1OGQ2MTUxZSBnZW5lcmF0ZV9pZF90b2tlbjo0YzBhZTFhMS05Y2QxLTRhZGEtOTk4NS0yM2UxODRmMTgyMDI6NGY3MDI0MjctY2EzYS01OWVlLThiNTMtY2MxYzU4ZDYxNTFlIEFjdGlvbnMuR2VuZXJpY1JlYWQ6MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIiwic2hhIjoiYjYyYzY3ZmMxMDg0OWM4Yzk2YTYyYjQ5NDNlMjhmMGQyNjYwMTk4ZiIsInRydXN0X3RpZXIiOiIyIn0.Op3HM5HYW0uhGQ91MtBTyP_rZcD42KEhoFfotCb76bfdNMWXQwNAVUKNMVFH-UBqifdpURkYNOlqiP1FVmK5o562y7HeWbqHlMD7_dFTSK17eJLYeTKjYdTwHe7EJ_mccgO3Ub85IfExODKgLs1uEZVL3ehcewy9JpNead42vLsAfxIrlK87ndY9CR5rVsgd8oZ1PYDNs6CPLdjI1INANxevhk08lQ_fJLAYpoFWKd5ydgA6qa0l0tGXa3f4z8rrTZS83cGDbw9b50IFlQo51WQ7VgKduORXTesNCJXJqmB7G4ow6ocXv2A1rsMCjrFlHaTTFNlU3rHRI5KIQAxoAQ",
+          "USERNAME" : "e2e_and_534707_tablet",
+          "EMAIL" : "support+e2e-and-534707-tablet@katkee.com",
+          "PASSWORD" : "E2e-377406a6a36a80eb",
+          "OIDC_URL" : "https://run-actions-2-azure-eastus.actions.githubusercontent.com/149//idtoken/e09918ef-1df7-4b01-ad45-d1e072ef5e0b/ecd142ef-2615-553f-9e82-b6c477ea08a5?api-version=2.0",
+          "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6M31dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTI1MDcxMjIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5MjUwMjkyMiwiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6ImVjZDE0MmVmLTI2MTUtNTUzZi05ZTgyLWI2YzQ3N2VhMDhhNSIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhIiwiam9iX3dvcmtmbG93X3NoYSI6IjM0N2E2YzE4MWEwM2Q4NzhmZmI0Zjc0YmUzNjQ1YjVkNjI0YmZjMTIiLCJuYW1laWQiOiJkZGRkZGRkZC1kZGRkLWRkZGQtZGRkZC1kZGRkZGRkZGRkZGQiLCJuYmYiOjE3OTI1MDI2MjIsIm9pZGNfZXh0cmEiOiJ7XCJhY3RvclwiOlwicmFodWxrczZcIixcImFjdG9yX2lkXCI6XCIxOTc1NDA5MjRcIixcImJhc2VfcmVmXCI6XCJcIixcImNoZWNrX3J1bl9pZFwiOlwiMTE4NjU0NzI2ODMxXCIsXCJldmVudF9uYW1lXCI6XCJ3b3JrZmxvd19kaXNwYXRjaFwiLFwiaGVhZF9yZWZcIjpcIlwiLFwiam9iX3dvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvYW5kcm9pZC1lMmUueW1sQHJlZnMvaGVhZHMvY2xhdWRlL2thdGtlZS1wcm9kdWN0aW9uLWF1ZGl0LWt1ZXhyYVwiLFwiam9iX3dvcmtmbG93X3NoYVwiOlwiMzQ3YTZjMTgxYTAzZDg3OGZmYjRmNzRiZTM2NDViNWQ2MjRiZmMxMlwiLFwicmVmXCI6XCJyZWZzL2hlYWRzL2NsYXVkZS9rYXRrZWUtcHJvZHVjdGlvbi1hdWRpdC1rdWV4cmFcIixcInJlZl9wcm90ZWN0ZWRcIjpcImZhbHNlXCIsXCJyZWZfdHlwZVwiOlwiYnJhbmNoXCIsXCJyZXBvc2l0b3J5XCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbFwiLFwicmVwb3NpdG9yeV9pZFwiOlwiMTM3NjkxNTQ5MVwiLFwicmVwb3NpdG9yeV9vd25lclwiOlwicmFodWxrczZcIixcInJlcG9zaXRvcnlfb3duZXJfaWRcIjpcIjE5NzU0MDkyNFwiLFwicmVwb3NpdG9yeV92aXNpYmlsaXR5XCI6XCJwdWJsaWNcIixcInJ1bl9hdHRlbXB0XCI6XCIxXCIsXCJydW5faWRcIjpcIjM5NDI4NTM0NzA3XCIsXCJydW5fbnVtYmVyXCI6XCI3XCIsXCJydW5uZXJfZW52aXJvbm1lbnRcIjpcImdpdGh1Yi1ob3N0ZWRcIixcInNoYVwiOlwiMzQ3YTZjMTgxYTAzZDg3OGZmYjRmNzRiZTM2NDViNWQ2MjRiZmMxMlwiLFwid29ya2Zsb3dcIjpcIkFuZHJvaWQgZW11bGF0b3IgdGVzdFwiLFwid29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJ3b3JrZmxvd19zaGFcIjpcIjM0N2E2YzE4MWEwM2Q4NzhmZmI0Zjc0YmUzNjQ1YjVkNjI0YmZjMTJcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2thdGtlZS1wcm9kdWN0aW9uLWF1ZGl0LWt1ZXhyYSIsIm9yY2hfaWQiOiJlMDk5MThlZi0xZGY3LTRiMDEtYWQ0NS1kMWUwNzJlZjVlMGIud2Fsa3Rocm91Z2gudGFibGV0Iiwib3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJwbGFuX2lkIjoiZTA5OTE4ZWYtMWRmNy00YjAxLWFkNDUtZDFlMDcyZWY1ZTBiIiwicmVwb3NpdG9yeV9pZCI6IjEzNzY5MTU0OTEiLCJyZXBvc2l0b3J5X293bmVyX2lkIjoiMTk3NTQwOTI0IiwicmVwb3NpdG9yeV92aXNpYmlsaXR5IjoicHVibGljIiwicnVuX2lkIjoiMzk0Mjg1MzQ3MDciLCJydW5fbnVtYmVyIjoiNyIsInJ1bl90eXBlIjoiZnVsbCIsInJ1bm5lcl9pZCI6IjEwMDAwMDAwNjQiLCJydW5uZXJfdHlwZSI6Imhvc3RlZCIsInNjcCI6IkFjdGlvbnMuUmVzdWx0czplMDk5MThlZi0xZGY3LTRiMDEtYWQ0NS1kMWUwNzJlZjVlMGI6ZWNkMTQyZWYtMjYxNS01NTNmLTllODItYjZjNDc3ZWEwOGE1IEFjdGlvbnMuUnVubmVyOmUwOTkxOGVmLTFkZjctNGIwMS1hZDQ1LWQxZTA3MmVmNWUwYjplY2QxNDJlZi0yNjE1LTU1M2YtOWU4Mi1iNmM0NzdlYTA4YTUgQWN0aW9ucy5VcGxvYWRBcnRpZmFjdHM6ZTA5OTE4ZWYtMWRmNy00YjAxLWFkNDUtZDFlMDcyZWY1ZTBiOmVjZDE0MmVmLTI2MTUtNTUzZi05ZTgyLWI2YzQ3N2VhMDhhNSBnZW5lcmF0ZV9pZF90b2tlbjplMDk5MThlZi0xZGY3LTRiMDEtYWQ0NS1kMWUwNzJlZjVlMGI6ZWNkMTQyZWYtMjYxNS01NTNmLTllODItYjZjNDc3ZWEwOGE1IEFjdGlvbnMuR2VuZXJpY1JlYWQ6MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIiwic2hhIjoiMzQ3YTZjMTgxYTAzZDg3OGZmYjRmNzRiZTM2NDViNWQ2MjRiZmMxMiIsInRydXN0X3RpZXIiOiIyIn0.zQ3u7avHfJfGvs8DCOD1cNsWChBsWX0snuoJ6UzVFNgPgM8VP-BFMP8YKaPNDkKIGGyYZmveX82S5HXBIsurM6tNONzOrzX8LyYHFteFJfFHWJbK0N058Qz0ZhvbHUrNPYA_R1FqrvKQ9Gue_xFIdNZMlRictcJG8BhJ-MZ9XoPzbdat4g-KfdKdB180SIr6MvuKrAAHknuoGd1I-MGemKN5EQvWb3MOnOTWFtTwiGGxvXex2GM-WGqs0aC4iDzOzq2P1iPoxIfv8l928yJotbk_EMAKUG3iQqW5X6T2xDtTEdi-mcoF1G8reju3BiW8yQG6z_vPF2isbrBNt4SjtA",
           "MAESTRO_CLI_NO_ANALYTICS" : "1",
           "MAESTRO_FILENAME" : "smoke",
           "MAESTRO_DEVICE_UDID" : "emulator-5554",
@@ -51,8 +51,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500609484,
-    "duration" : 0,
+    "timestamp" : 1792503061070,
+    "duration" : 1,
     "sequenceNumber" : 1,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -77,8 +77,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500609484,
-    "duration" : 3877,
+    "timestamp" : 1792503061071,
+    "duration" : 2164,
     "sequenceNumber" : 2,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -107,8 +107,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500613361,
-    "duration" : 6721,
+    "timestamp" : 1792503063236,
+    "duration" : 6740,
     "sequenceNumber" : 3,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -133,8 +133,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500620084,
-    "duration" : 3788,
+    "timestamp" : 1792503069976,
+    "duration" : 3525,
     "sequenceNumber" : 4,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -163,8 +163,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500623873,
-    "duration" : 5036,
+    "timestamp" : 1792503073501,
+    "duration" : 5701,
     "sequenceNumber" : 5,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -195,8 +195,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500628909,
-    "duration" : 554,
+    "timestamp" : 1792503079203,
+    "duration" : 360,
     "sequenceNumber" : 6,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -221,8 +221,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500629464,
-    "duration" : 999,
+    "timestamp" : 1792503079564,
+    "duration" : 593,
     "sequenceNumber" : 7,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -251,8 +251,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500630464,
-    "duration" : 3841,
+    "timestamp" : 1792503080159,
+    "duration" : 6757,
     "sequenceNumber" : 8,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -277,8 +277,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500634306,
-    "duration" : 13293,
+    "timestamp" : 1792503086916,
+    "duration" : 12318,
     "sequenceNumber" : 9,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -292,13 +292,6 @@
   "command" : {
     "runFlowCommand" : {
       "commands" : [ {
-        "defineVariablesCommand" : {
-          "env" : {
-            "TITLE" : "Create your account"
-          },
-          "optional" : false
-        }
-      }, {
         "applyConfigurationCommand" : {
           "config" : {
             "appId" : "com.katkee.app"
@@ -320,15 +313,11 @@
       }, {
         "runFlowCommand" : {
           "commands" : [ {
-            "tapOnElement" : {
-              "selector" : {
-                "textRegex" : "${TITLE}",
-                "optional" : true
-              },
-              "retryIfNoChange" : false,
-              "waitUntilVisible" : false,
-              "longPress" : false,
-              "optional" : true
+            "swipeCommand" : {
+              "startRelative" : "50%, 25%",
+              "endRelative" : "50%, 40%",
+              "duration" : 300,
+              "optional" : false
             }
           } ],
           "condition" : {
@@ -346,20 +335,13 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500647599,
-    "duration" : 2582,
+    "timestamp" : 1792503099234,
+    "duration" : 1648,
     "sequenceNumber" : 10,
     "depth" : 0,
     "evaluatedCommand" : {
       "runFlowCommand" : {
         "commands" : [ {
-          "defineVariablesCommand" : {
-            "env" : {
-              "TITLE" : "Create your account"
-            },
-            "optional" : false
-          }
-        }, {
           "applyConfigurationCommand" : {
             "config" : {
               "appId" : "com.katkee.app"
@@ -381,15 +363,11 @@
         }, {
           "runFlowCommand" : {
             "commands" : [ {
-              "tapOnElement" : {
-                "selector" : {
-                  "textRegex" : "${TITLE}",
-                  "optional" : true
-                },
-                "retryIfNoChange" : false,
-                "waitUntilVisible" : false,
-                "longPress" : false,
-                "optional" : true
+              "swipeCommand" : {
+                "startRelative" : "50%, 25%",
+                "endRelative" : "50%, 40%",
+                "duration" : 300,
+                "optional" : false
               }
             } ],
             "condition" : {
@@ -408,30 +386,6 @@
   }
 }, {
   "command" : {
-    "defineVariablesCommand" : {
-      "env" : {
-        "TITLE" : "Create your account"
-      },
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1792500647601,
-    "duration" : 0,
-    "sequenceNumber" : 11,
-    "depth" : 0,
-    "evaluatedCommand" : {
-      "defineVariablesCommand" : {
-        "env" : {
-          "TITLE" : "Create your account"
-        },
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
     "applyConfigurationCommand" : {
       "config" : {
         "appId" : "com.katkee.app"
@@ -441,9 +395,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500647602,
-    "duration" : 0,
-    "sequenceNumber" : 12,
+    "timestamp" : 1792503099235,
+    "duration" : 1,
+    "sequenceNumber" : 11,
     "depth" : 1,
     "evaluatedCommand" : {
       "applyConfigurationCommand" : {
@@ -470,9 +424,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500647602,
-    "duration" : 2578,
-    "sequenceNumber" : 13,
+    "timestamp" : 1792503099236,
+    "duration" : 1643,
+    "sequenceNumber" : 12,
     "depth" : 1,
     "evaluatedCommand" : {
       "runFlowCommand" : {
@@ -496,9 +450,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500647603,
-    "duration" : 2575,
-    "sequenceNumber" : 14,
+    "timestamp" : 1792503099237,
+    "duration" : 1642,
+    "sequenceNumber" : 13,
     "depth" : 2,
     "evaluatedCommand" : {
       "hideKeyboardCommand" : {
@@ -510,15 +464,11 @@
   "command" : {
     "runFlowCommand" : {
       "commands" : [ {
-        "tapOnElement" : {
-          "selector" : {
-            "textRegex" : "${TITLE}",
-            "optional" : true
-          },
-          "retryIfNoChange" : false,
-          "waitUntilVisible" : false,
-          "longPress" : false,
-          "optional" : true
+        "swipeCommand" : {
+          "startRelative" : "50%, 25%",
+          "endRelative" : "50%, 40%",
+          "duration" : 300,
+          "optional" : false
         }
       } ],
       "condition" : {
@@ -529,22 +479,18 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1792500650180,
+    "timestamp" : 1792503100880,
     "duration" : 1,
-    "sequenceNumber" : 15,
+    "sequenceNumber" : 14,
     "depth" : 1,
     "evaluatedCommand" : {
       "runFlowCommand" : {
         "commands" : [ {
-          "tapOnElement" : {
-            "selector" : {
-              "textRegex" : "${TITLE}",
-              "optional" : true
-            },
-            "retryIfNoChange" : false,
-            "waitUntilVisible" : false,
-            "longPress" : false,
-            "optional" : true
+          "swipeCommand" : {
+            "startRelative" : "50%, 25%",
+            "endRelative" : "50%, 40%",
+            "duration" : 300,
+            "optional" : false
           }
         } ],
         "condition" : {
@@ -569,9 +515,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500650182,
-    "duration" : 4445,
-    "sequenceNumber" : 16,
+    "timestamp" : 1792503100882,
+    "duration" : 3455,
+    "sequenceNumber" : 15,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -595,13 +541,13 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500654627,
-    "duration" : 12053,
-    "sequenceNumber" : 17,
+    "timestamp" : 1792503104338,
+    "duration" : 16838,
+    "sequenceNumber" : 16,
     "depth" : 0,
     "evaluatedCommand" : {
       "inputTextCommand" : {
-        "text" : "e2e_and_026203_tablet",
+        "text" : "e2e_and_534707_tablet",
         "optional" : false
       }
     }
@@ -610,13 +556,6 @@
   "command" : {
     "runFlowCommand" : {
       "commands" : [ {
-        "defineVariablesCommand" : {
-          "env" : {
-            "TITLE" : "Create your account"
-          },
-          "optional" : false
-        }
-      }, {
         "applyConfigurationCommand" : {
           "config" : {
             "appId" : "com.katkee.app"
@@ -638,15 +577,11 @@
       }, {
         "runFlowCommand" : {
           "commands" : [ {
-            "tapOnElement" : {
-              "selector" : {
-                "textRegex" : "${TITLE}",
-                "optional" : true
-              },
-              "retryIfNoChange" : false,
-              "waitUntilVisible" : false,
-              "longPress" : false,
-              "optional" : true
+            "swipeCommand" : {
+              "startRelative" : "50%, 25%",
+              "endRelative" : "50%, 40%",
+              "duration" : 300,
+              "optional" : false
             }
           } ],
           "condition" : {
@@ -664,20 +599,13 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500666683,
-    "duration" : 1413,
-    "sequenceNumber" : 18,
+    "timestamp" : 1792503121177,
+    "duration" : 2082,
+    "sequenceNumber" : 17,
     "depth" : 0,
     "evaluatedCommand" : {
       "runFlowCommand" : {
         "commands" : [ {
-          "defineVariablesCommand" : {
-            "env" : {
-              "TITLE" : "Create your account"
-            },
-            "optional" : false
-          }
-        }, {
           "applyConfigurationCommand" : {
             "config" : {
               "appId" : "com.katkee.app"
@@ -699,15 +627,11 @@
         }, {
           "runFlowCommand" : {
             "commands" : [ {
-              "tapOnElement" : {
-                "selector" : {
-                  "textRegex" : "${TITLE}",
-                  "optional" : true
-                },
-                "retryIfNoChange" : false,
-                "waitUntilVisible" : false,
-                "longPress" : false,
-                "optional" : true
+              "swipeCommand" : {
+                "startRelative" : "50%, 25%",
+                "endRelative" : "50%, 40%",
+                "duration" : 300,
+                "optional" : false
               }
             } ],
             "condition" : {
@@ -726,30 +650,6 @@
   }
 }, {
   "command" : {
-    "defineVariablesCommand" : {
-      "env" : {
-        "TITLE" : "Create your account"
-      },
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1792500666685,
-    "duration" : 0,
-    "sequenceNumber" : 19,
-    "depth" : 0,
-    "evaluatedCommand" : {
-      "defineVariablesCommand" : {
-        "env" : {
-          "TITLE" : "Create your account"
-        },
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
     "applyConfigurationCommand" : {
       "config" : {
         "appId" : "com.katkee.app"
@@ -759,9 +659,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500666685,
-    "duration" : 1,
-    "sequenceNumber" : 20,
+    "timestamp" : 1792503121177,
+    "duration" : 0,
+    "sequenceNumber" : 18,
     "depth" : 1,
     "evaluatedCommand" : {
       "applyConfigurationCommand" : {
@@ -788,9 +688,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500666687,
-    "duration" : 1408,
-    "sequenceNumber" : 21,
+    "timestamp" : 1792503121177,
+    "duration" : 2082,
+    "sequenceNumber" : 19,
     "depth" : 1,
     "evaluatedCommand" : {
       "runFlowCommand" : {
@@ -814,9 +714,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500666687,
-    "duration" : 1408,
-    "sequenceNumber" : 22,
+    "timestamp" : 1792503121177,
+    "duration" : 2081,
+    "sequenceNumber" : 20,
     "depth" : 2,
     "evaluatedCommand" : {
       "hideKeyboardCommand" : {
@@ -828,15 +728,11 @@
   "command" : {
     "runFlowCommand" : {
       "commands" : [ {
-        "tapOnElement" : {
-          "selector" : {
-            "textRegex" : "${TITLE}",
-            "optional" : true
-          },
-          "retryIfNoChange" : false,
-          "waitUntilVisible" : false,
-          "longPress" : false,
-          "optional" : true
+        "swipeCommand" : {
+          "startRelative" : "50%, 25%",
+          "endRelative" : "50%, 40%",
+          "duration" : 300,
+          "optional" : false
         }
       } ],
       "condition" : {
@@ -847,22 +743,18 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1792500668096,
+    "timestamp" : 1792503123259,
     "duration" : 0,
-    "sequenceNumber" : 23,
+    "sequenceNumber" : 21,
     "depth" : 1,
     "evaluatedCommand" : {
       "runFlowCommand" : {
         "commands" : [ {
-          "tapOnElement" : {
-            "selector" : {
-              "textRegex" : "${TITLE}",
-              "optional" : true
-            },
-            "retryIfNoChange" : false,
-            "waitUntilVisible" : false,
-            "longPress" : false,
-            "optional" : true
+          "swipeCommand" : {
+            "startRelative" : "50%, 25%",
+            "endRelative" : "50%, 40%",
+            "duration" : 300,
+            "optional" : false
           }
         } ],
         "condition" : {
@@ -887,9 +779,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500668097,
-    "duration" : 9860,
-    "sequenceNumber" : 24,
+    "timestamp" : 1792503123259,
+    "duration" : 5004,
+    "sequenceNumber" : 22,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -913,13 +805,13 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500677957,
-    "duration" : 19486,
-    "sequenceNumber" : 25,
+    "timestamp" : 1792503128264,
+    "duration" : 19614,
+    "sequenceNumber" : 23,
     "depth" : 0,
     "evaluatedCommand" : {
       "inputTextCommand" : {
-        "text" : "support+e2e-and-026203-tablet@katkee.com",
+        "text" : "support+e2e-and-534707-tablet@katkee.com",
         "optional" : false
       }
     }
@@ -928,13 +820,6 @@
   "command" : {
     "runFlowCommand" : {
       "commands" : [ {
-        "defineVariablesCommand" : {
-          "env" : {
-            "TITLE" : "Create your account"
-          },
-          "optional" : false
-        }
-      }, {
         "applyConfigurationCommand" : {
           "config" : {
             "appId" : "com.katkee.app"
@@ -956,15 +841,11 @@
       }, {
         "runFlowCommand" : {
           "commands" : [ {
-            "tapOnElement" : {
-              "selector" : {
-                "textRegex" : "${TITLE}",
-                "optional" : true
-              },
-              "retryIfNoChange" : false,
-              "waitUntilVisible" : false,
-              "longPress" : false,
-              "optional" : true
+            "swipeCommand" : {
+              "startRelative" : "50%, 25%",
+              "endRelative" : "50%, 40%",
+              "duration" : 300,
+              "optional" : false
             }
           } ],
           "condition" : {
@@ -982,20 +863,13 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500697443,
-    "duration" : 1522,
-    "sequenceNumber" : 26,
+    "timestamp" : 1792503147881,
+    "duration" : 1528,
+    "sequenceNumber" : 24,
     "depth" : 0,
     "evaluatedCommand" : {
       "runFlowCommand" : {
         "commands" : [ {
-          "defineVariablesCommand" : {
-            "env" : {
-              "TITLE" : "Create your account"
-            },
-            "optional" : false
-          }
-        }, {
           "applyConfigurationCommand" : {
             "config" : {
               "appId" : "com.katkee.app"
@@ -1017,15 +891,11 @@
         }, {
           "runFlowCommand" : {
             "commands" : [ {
-              "tapOnElement" : {
-                "selector" : {
-                  "textRegex" : "${TITLE}",
-                  "optional" : true
-                },
-                "retryIfNoChange" : false,
-                "waitUntilVisible" : false,
-                "longPress" : false,
-                "optional" : true
+              "swipeCommand" : {
+                "startRelative" : "50%, 25%",
+                "endRelative" : "50%, 40%",
+                "duration" : 300,
+                "optional" : false
               }
             } ],
             "condition" : {
@@ -1044,30 +914,6 @@
   }
 }, {
   "command" : {
-    "defineVariablesCommand" : {
-      "env" : {
-        "TITLE" : "Create your account"
-      },
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1792500697444,
-    "duration" : 1,
-    "sequenceNumber" : 27,
-    "depth" : 0,
-    "evaluatedCommand" : {
-      "defineVariablesCommand" : {
-        "env" : {
-          "TITLE" : "Create your account"
-        },
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
     "applyConfigurationCommand" : {
       "config" : {
         "appId" : "com.katkee.app"
@@ -1077,9 +923,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500697445,
-    "duration" : 0,
-    "sequenceNumber" : 28,
+    "timestamp" : 1792503147881,
+    "duration" : 1,
+    "sequenceNumber" : 25,
     "depth" : 1,
     "evaluatedCommand" : {
       "applyConfigurationCommand" : {
@@ -1106,9 +952,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500697445,
-    "duration" : 1519,
-    "sequenceNumber" : 29,
+    "timestamp" : 1792503147882,
+    "duration" : 1526,
+    "sequenceNumber" : 26,
     "depth" : 1,
     "evaluatedCommand" : {
       "runFlowCommand" : {
@@ -1132,9 +978,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500697446,
-    "duration" : 1518,
-    "sequenceNumber" : 30,
+    "timestamp" : 1792503147882,
+    "duration" : 1526,
+    "sequenceNumber" : 27,
     "depth" : 2,
     "evaluatedCommand" : {
       "hideKeyboardCommand" : {
@@ -1146,15 +992,11 @@
   "command" : {
     "runFlowCommand" : {
       "commands" : [ {
-        "tapOnElement" : {
-          "selector" : {
-            "textRegex" : "${TITLE}",
-            "optional" : true
-          },
-          "retryIfNoChange" : false,
-          "waitUntilVisible" : false,
-          "longPress" : false,
-          "optional" : true
+        "swipeCommand" : {
+          "startRelative" : "50%, 25%",
+          "endRelative" : "50%, 40%",
+          "duration" : 300,
+          "optional" : false
         }
       } ],
       "condition" : {
@@ -1165,22 +1007,18 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1792500698964,
+    "timestamp" : 1792503149408,
     "duration" : 1,
-    "sequenceNumber" : 31,
+    "sequenceNumber" : 28,
     "depth" : 1,
     "evaluatedCommand" : {
       "runFlowCommand" : {
         "commands" : [ {
-          "tapOnElement" : {
-            "selector" : {
-              "textRegex" : "${TITLE}",
-              "optional" : true
-            },
-            "retryIfNoChange" : false,
-            "waitUntilVisible" : false,
-            "longPress" : false,
-            "optional" : true
+          "swipeCommand" : {
+            "startRelative" : "50%, 25%",
+            "endRelative" : "50%, 40%",
+            "duration" : 300,
+            "optional" : false
           }
         } ],
         "condition" : {
@@ -1205,9 +1043,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500698965,
-    "duration" : 5514,
-    "sequenceNumber" : 32,
+    "timestamp" : 1792503149409,
+    "duration" : 4147,
+    "sequenceNumber" : 29,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -1231,9 +1069,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500704479,
-    "duration" : 3991,
-    "sequenceNumber" : 33,
+    "timestamp" : 1792503153557,
+    "duration" : 3474,
+    "sequenceNumber" : 30,
     "depth" : 0,
     "evaluatedCommand" : {
       "inputTextCommand" : {
@@ -1246,13 +1084,6 @@
   "command" : {
     "runFlowCommand" : {
       "commands" : [ {
-        "defineVariablesCommand" : {
-          "env" : {
-            "TITLE" : "Create your account"
-          },
-          "optional" : false
-        }
-      }, {
         "applyConfigurationCommand" : {
           "config" : {
             "appId" : "com.katkee.app"
@@ -1274,15 +1105,11 @@
       }, {
         "runFlowCommand" : {
           "commands" : [ {
-            "tapOnElement" : {
-              "selector" : {
-                "textRegex" : "${TITLE}",
-                "optional" : true
-              },
-              "retryIfNoChange" : false,
-              "waitUntilVisible" : false,
-              "longPress" : false,
-              "optional" : true
+            "swipeCommand" : {
+              "startRelative" : "50%, 25%",
+              "endRelative" : "50%, 40%",
+              "duration" : 300,
+              "optional" : false
             }
           } ],
           "condition" : {
@@ -1300,20 +1127,13 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500708470,
-    "duration" : 862,
-    "sequenceNumber" : 34,
+    "timestamp" : 1792503157031,
+    "duration" : 1003,
+    "sequenceNumber" : 31,
     "depth" : 0,
     "evaluatedCommand" : {
       "runFlowCommand" : {
         "commands" : [ {
-          "defineVariablesCommand" : {
-            "env" : {
-              "TITLE" : "Create your account"
-            },
-            "optional" : false
-          }
-        }, {
           "applyConfigurationCommand" : {
             "config" : {
               "appId" : "com.katkee.app"
@@ -1335,15 +1155,11 @@
         }, {
           "runFlowCommand" : {
             "commands" : [ {
-              "tapOnElement" : {
-                "selector" : {
-                  "textRegex" : "${TITLE}",
-                  "optional" : true
-                },
-                "retryIfNoChange" : false,
-                "waitUntilVisible" : false,
-                "longPress" : false,
-                "optional" : true
+              "swipeCommand" : {
+                "startRelative" : "50%, 25%",
+                "endRelative" : "50%, 40%",
+                "duration" : 300,
+                "optional" : false
               }
             } ],
             "condition" : {
@@ -1362,30 +1178,6 @@
   }
 }, {
   "command" : {
-    "defineVariablesCommand" : {
-      "env" : {
-        "TITLE" : "Create your account"
-      },
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1792500708472,
-    "duration" : 0,
-    "sequenceNumber" : 35,
-    "depth" : 0,
-    "evaluatedCommand" : {
-      "defineVariablesCommand" : {
-        "env" : {
-          "TITLE" : "Create your account"
-        },
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
     "applyConfigurationCommand" : {
       "config" : {
         "appId" : "com.katkee.app"
@@ -1395,9 +1187,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500708472,
+    "timestamp" : 1792503157032,
     "duration" : 0,
-    "sequenceNumber" : 36,
+    "sequenceNumber" : 32,
     "depth" : 1,
     "evaluatedCommand" : {
       "applyConfigurationCommand" : {
@@ -1424,9 +1216,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500708472,
-    "duration" : 859,
-    "sequenceNumber" : 37,
+    "timestamp" : 1792503157032,
+    "duration" : 1001,
+    "sequenceNumber" : 33,
     "depth" : 1,
     "evaluatedCommand" : {
       "runFlowCommand" : {
@@ -1450,9 +1242,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500708473,
-    "duration" : 858,
-    "sequenceNumber" : 38,
+    "timestamp" : 1792503157033,
+    "duration" : 999,
+    "sequenceNumber" : 34,
     "depth" : 2,
     "evaluatedCommand" : {
       "hideKeyboardCommand" : {
@@ -1464,15 +1256,11 @@
   "command" : {
     "runFlowCommand" : {
       "commands" : [ {
-        "tapOnElement" : {
-          "selector" : {
-            "textRegex" : "${TITLE}",
-            "optional" : true
-          },
-          "retryIfNoChange" : false,
-          "waitUntilVisible" : false,
-          "longPress" : false,
-          "optional" : true
+        "swipeCommand" : {
+          "startRelative" : "50%, 25%",
+          "endRelative" : "50%, 40%",
+          "duration" : 300,
+          "optional" : false
         }
       } ],
       "condition" : {
@@ -1483,22 +1271,18 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1792500709332,
+    "timestamp" : 1792503158033,
     "duration" : 0,
-    "sequenceNumber" : 39,
+    "sequenceNumber" : 35,
     "depth" : 1,
     "evaluatedCommand" : {
       "runFlowCommand" : {
         "commands" : [ {
-          "tapOnElement" : {
-            "selector" : {
-              "textRegex" : "${TITLE}",
-              "optional" : true
-            },
-            "retryIfNoChange" : false,
-            "waitUntilVisible" : false,
-            "longPress" : false,
-            "optional" : true
+          "swipeCommand" : {
+            "startRelative" : "50%, 25%",
+            "endRelative" : "50%, 40%",
+            "duration" : 300,
+            "optional" : false
           }
         } ],
         "condition" : {
@@ -1523,9 +1307,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500709332,
-    "duration" : 7939,
-    "sequenceNumber" : 40,
+    "timestamp" : 1792503158035,
+    "duration" : 5737,
+    "sequenceNumber" : 36,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -1549,13 +1333,13 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500717273,
-    "duration" : 7370,
-    "sequenceNumber" : 41,
+    "timestamp" : 1792503163772,
+    "duration" : 6296,
+    "sequenceNumber" : 37,
     "depth" : 0,
     "evaluatedCommand" : {
       "inputTextCommand" : {
-        "text" : "E2e-97fe8ef4d27ed696",
+        "text" : "E2e-377406a6a36a80eb",
         "optional" : false
       }
     }
@@ -1564,13 +1348,6 @@
   "command" : {
     "runFlowCommand" : {
       "commands" : [ {
-        "defineVariablesCommand" : {
-          "env" : {
-            "TITLE" : "Create your account"
-          },
-          "optional" : false
-        }
-      }, {
         "applyConfigurationCommand" : {
           "config" : {
             "appId" : "com.katkee.app"
@@ -1592,15 +1369,11 @@
       }, {
         "runFlowCommand" : {
           "commands" : [ {
-            "tapOnElement" : {
-              "selector" : {
-                "textRegex" : "${TITLE}",
-                "optional" : true
-              },
-              "retryIfNoChange" : false,
-              "waitUntilVisible" : false,
-              "longPress" : false,
-              "optional" : true
+            "swipeCommand" : {
+              "startRelative" : "50%, 25%",
+              "endRelative" : "50%, 40%",
+              "duration" : 300,
+              "optional" : false
             }
           } ],
           "condition" : {
@@ -1618,20 +1391,13 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500724646,
-    "duration" : 1847,
-    "sequenceNumber" : 42,
+    "timestamp" : 1792503170069,
+    "duration" : 1544,
+    "sequenceNumber" : 38,
     "depth" : 0,
     "evaluatedCommand" : {
       "runFlowCommand" : {
         "commands" : [ {
-          "defineVariablesCommand" : {
-            "env" : {
-              "TITLE" : "Create your account"
-            },
-            "optional" : false
-          }
-        }, {
           "applyConfigurationCommand" : {
             "config" : {
               "appId" : "com.katkee.app"
@@ -1653,15 +1419,11 @@
         }, {
           "runFlowCommand" : {
             "commands" : [ {
-              "tapOnElement" : {
-                "selector" : {
-                  "textRegex" : "${TITLE}",
-                  "optional" : true
-                },
-                "retryIfNoChange" : false,
-                "waitUntilVisible" : false,
-                "longPress" : false,
-                "optional" : true
+              "swipeCommand" : {
+                "startRelative" : "50%, 25%",
+                "endRelative" : "50%, 40%",
+                "duration" : 300,
+                "optional" : false
               }
             } ],
             "condition" : {
@@ -1680,30 +1442,6 @@
   }
 }, {
   "command" : {
-    "defineVariablesCommand" : {
-      "env" : {
-        "TITLE" : "Create your account"
-      },
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1792500724649,
-    "duration" : 0,
-    "sequenceNumber" : 43,
-    "depth" : 0,
-    "evaluatedCommand" : {
-      "defineVariablesCommand" : {
-        "env" : {
-          "TITLE" : "Create your account"
-        },
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
     "applyConfigurationCommand" : {
       "config" : {
         "appId" : "com.katkee.app"
@@ -1713,9 +1451,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500724649,
-    "duration" : 1,
-    "sequenceNumber" : 44,
+    "timestamp" : 1792503170069,
+    "duration" : 0,
+    "sequenceNumber" : 39,
     "depth" : 1,
     "evaluatedCommand" : {
       "applyConfigurationCommand" : {
@@ -1742,9 +1480,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500724650,
-    "duration" : 1842,
-    "sequenceNumber" : 45,
+    "timestamp" : 1792503170069,
+    "duration" : 1544,
+    "sequenceNumber" : 40,
     "depth" : 1,
     "evaluatedCommand" : {
       "runFlowCommand" : {
@@ -1768,9 +1506,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500724651,
-    "duration" : 1841,
-    "sequenceNumber" : 46,
+    "timestamp" : 1792503170069,
+    "duration" : 1543,
+    "sequenceNumber" : 41,
     "depth" : 2,
     "evaluatedCommand" : {
       "hideKeyboardCommand" : {
@@ -1782,15 +1520,11 @@
   "command" : {
     "runFlowCommand" : {
       "commands" : [ {
-        "tapOnElement" : {
-          "selector" : {
-            "textRegex" : "${TITLE}",
-            "optional" : true
-          },
-          "retryIfNoChange" : false,
-          "waitUntilVisible" : false,
-          "longPress" : false,
-          "optional" : true
+        "swipeCommand" : {
+          "startRelative" : "50%, 25%",
+          "endRelative" : "50%, 40%",
+          "duration" : 300,
+          "optional" : false
         }
       } ],
       "condition" : {
@@ -1801,22 +1535,18 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1792500726493,
+    "timestamp" : 1792503171613,
     "duration" : 0,
-    "sequenceNumber" : 47,
+    "sequenceNumber" : 42,
     "depth" : 1,
     "evaluatedCommand" : {
       "runFlowCommand" : {
         "commands" : [ {
-          "tapOnElement" : {
-            "selector" : {
-              "textRegex" : "${TITLE}",
-              "optional" : true
-            },
-            "retryIfNoChange" : false,
-            "waitUntilVisible" : false,
-            "longPress" : false,
-            "optional" : true
+          "swipeCommand" : {
+            "startRelative" : "50%, 25%",
+            "endRelative" : "50%, 40%",
+            "duration" : 300,
+            "optional" : false
           }
         } ],
         "condition" : {
@@ -1835,9 +1565,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500726493,
-    "duration" : 1028,
-    "sequenceNumber" : 48,
+    "timestamp" : 1792503171613,
+    "duration" : 332,
+    "sequenceNumber" : 43,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -1869,9 +1599,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500727521,
-    "duration" : 444,
-    "sequenceNumber" : 49,
+    "timestamp" : 1792503171945,
+    "duration" : 165,
+    "sequenceNumber" : 44,
     "depth" : 0,
     "evaluatedCommand" : {
       "scrollUntilVisible" : {
@@ -1905,9 +1635,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500727966,
-    "duration" : 8454,
-    "sequenceNumber" : 50,
+    "timestamp" : 1792503172110,
+    "duration" : 6232,
+    "sequenceNumber" : 45,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -1937,9 +1667,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500736421,
-    "duration" : 629,
-    "sequenceNumber" : 51,
+    "timestamp" : 1792503178342,
+    "duration" : 766,
+    "sequenceNumber" : 46,
     "depth" : 0,
     "evaluatedCommand" : {
       "assertConditionCommand" : {
@@ -1963,9 +1693,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500737051,
-    "duration" : 554,
-    "sequenceNumber" : 52,
+    "timestamp" : 1792503179109,
+    "duration" : 332,
+    "sequenceNumber" : 47,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -1993,9 +1723,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500737605,
-    "duration" : 4643,
-    "sequenceNumber" : 53,
+    "timestamp" : 1792503179442,
+    "duration" : 3962,
+    "sequenceNumber" : 48,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2024,9 +1754,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500742249,
-    "duration" : 143,
-    "sequenceNumber" : 54,
+    "timestamp" : 1792503183404,
+    "duration" : 42,
+    "sequenceNumber" : 49,
     "depth" : 0,
     "evaluatedCommand" : {
       "assertConditionCommand" : {
@@ -2054,9 +1784,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500742393,
-    "duration" : 850,
-    "sequenceNumber" : 55,
+    "timestamp" : 1792503183446,
+    "duration" : 777,
+    "sequenceNumber" : 50,
     "depth" : 0,
     "evaluatedCommand" : {
       "assertConditionCommand" : {
@@ -2085,9 +1815,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500743244,
-    "duration" : 2279,
-    "sequenceNumber" : 56,
+    "timestamp" : 1792503184224,
+    "duration" : 2136,
+    "sequenceNumber" : 51,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2111,9 +1841,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500745523,
-    "duration" : 296,
-    "sequenceNumber" : 57,
+    "timestamp" : 1792503186360,
+    "duration" : 219,
+    "sequenceNumber" : 52,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -2141,9 +1871,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500745819,
-    "duration" : 1780,
-    "sequenceNumber" : 58,
+    "timestamp" : 1792503186579,
+    "duration" : 1652,
+    "sequenceNumber" : 53,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2173,9 +1903,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500747600,
-    "duration" : 2762,
-    "sequenceNumber" : 59,
+    "timestamp" : 1792503188232,
+    "duration" : 2195,
+    "sequenceNumber" : 54,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2201,9 +1931,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500750362,
-    "duration" : 1673,
-    "sequenceNumber" : 60,
+    "timestamp" : 1792503190428,
+    "duration" : 1730,
+    "sequenceNumber" : 55,
     "depth" : 0,
     "evaluatedCommand" : {
       "runScriptCommand" : {
@@ -2223,9 +1953,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500752035,
-    "duration" : 91,
-    "sequenceNumber" : 61,
+    "timestamp" : 1792503192158,
+    "duration" : 48,
+    "sequenceNumber" : 56,
     "depth" : 0,
     "evaluatedCommand" : {
       "stopAppCommand" : {
@@ -2243,9 +1973,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500752127,
-    "duration" : 1932,
-    "sequenceNumber" : 62,
+    "timestamp" : 1792503192207,
+    "duration" : 3056,
+    "sequenceNumber" : 57,
     "depth" : 0,
     "evaluatedCommand" : {
       "launchAppCommand" : {
@@ -2269,9 +1999,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500754059,
-    "duration" : 5201,
-    "sequenceNumber" : 63,
+    "timestamp" : 1792503195264,
+    "duration" : 5941,
+    "sequenceNumber" : 58,
     "depth" : 0,
     "evaluatedCommand" : {
       "assertConditionCommand" : {
@@ -2301,9 +2031,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500759260,
-    "duration" : 5838,
-    "sequenceNumber" : 64,
+    "timestamp" : 1792503201206,
+    "duration" : 5742,
+    "sequenceNumber" : 59,
     "depth" : 0,
     "evaluatedCommand" : {
       "assertConditionCommand" : {
@@ -2333,9 +2063,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500765098,
-    "duration" : 2117,
-    "sequenceNumber" : 65,
+    "timestamp" : 1792503206948,
+    "duration" : 2763,
+    "sequenceNumber" : 60,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2359,9 +2089,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500767215,
-    "duration" : 1610,
-    "sequenceNumber" : 66,
+    "timestamp" : 1792503209711,
+    "duration" : 1294,
+    "sequenceNumber" : 61,
     "depth" : 0,
     "evaluatedCommand" : {
       "waitForAnimationToEndCommand" : {
@@ -2379,9 +2109,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500768825,
-    "duration" : 251,
-    "sequenceNumber" : 67,
+    "timestamp" : 1792503211005,
+    "duration" : 212,
+    "sequenceNumber" : 62,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -2409,9 +2139,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500769077,
-    "duration" : 2724,
-    "sequenceNumber" : 68,
+    "timestamp" : 1792503211217,
+    "duration" : 2858,
+    "sequenceNumber" : 63,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2435,9 +2165,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500771801,
-    "duration" : 1352,
-    "sequenceNumber" : 69,
+    "timestamp" : 1792503214075,
+    "duration" : 877,
+    "sequenceNumber" : 64,
     "depth" : 0,
     "evaluatedCommand" : {
       "waitForAnimationToEndCommand" : {
@@ -2455,9 +2185,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500773154,
-    "duration" : 254,
-    "sequenceNumber" : 70,
+    "timestamp" : 1792503214952,
+    "duration" : 396,
+    "sequenceNumber" : 65,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -2485,9 +2215,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500773408,
-    "duration" : 2815,
-    "sequenceNumber" : 71,
+    "timestamp" : 1792503215349,
+    "duration" : 2787,
+    "sequenceNumber" : 66,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2511,9 +2241,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500776224,
-    "duration" : 846,
-    "sequenceNumber" : 72,
+    "timestamp" : 1792503218136,
+    "duration" : 647,
+    "sequenceNumber" : 67,
     "depth" : 0,
     "evaluatedCommand" : {
       "waitForAnimationToEndCommand" : {
@@ -2531,9 +2261,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500777070,
-    "duration" : 227,
-    "sequenceNumber" : 73,
+    "timestamp" : 1792503218783,
+    "duration" : 173,
+    "sequenceNumber" : 68,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -2561,9 +2291,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500777297,
-    "duration" : 2941,
-    "sequenceNumber" : 74,
+    "timestamp" : 1792503218957,
+    "duration" : 2227,
+    "sequenceNumber" : 69,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2587,9 +2317,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500780239,
-    "duration" : 861,
-    "sequenceNumber" : 75,
+    "timestamp" : 1792503221184,
+    "duration" : 632,
+    "sequenceNumber" : 70,
     "depth" : 0,
     "evaluatedCommand" : {
       "waitForAnimationToEndCommand" : {
@@ -2607,9 +2337,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792500781100,
-    "duration" : 199,
-    "sequenceNumber" : 76,
+    "timestamp" : 1792503221816,
+    "duration" : 174,
+    "sequenceNumber" : 71,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -2626,40 +2356,33 @@
   "command" : {
     "tapOnElement" : {
       "selector" : {
-        "textRegex" : "Close",
-        "optional" : true
+        "textRegex" : "Close camera",
+        "optional" : false
       },
       "retryIfNoChange" : false,
       "waitUntilVisible" : false,
       "longPress" : false,
-      "optional" : true
+      "optional" : false
     }
   },
   "metadata" : {
-    "status" : "WARNED",
-    "timestamp" : 1792500781299,
-    "duration" : 7295,
-    "sequenceNumber" : 77,
+    "status" : "COMPLETED",
+    "timestamp" : 1792503221990,
+    "duration" : 2196,
+    "sequenceNumber" : 72,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
         "selector" : {
-          "textRegex" : "Close",
-          "optional" : true
+          "textRegex" : "Close camera",
+          "optional" : false
         },
         "retryIfNoChange" : false,
         "waitUntilVisible" : false,
         "longPress" : false,
-        "optional" : true
+        "optional" : false
       }
-    },
-    "artifacts" : [ {
-      "type" : "SCREEN_HIERARCHY",
-      "path" : "screen-hierarchy/step-078-tapOnElement-Close.json"
-    }, {
-      "type" : "SCREENSHOT",
-      "path" : "screenshots/step-078-tapOnElement-Close.png"
-    } ]
+    }
   }
 }, {
   "command" : {
@@ -2675,14 +2398,10 @@
     }
   },
   "metadata" : {
-    "status" : "FAILED",
-    "timestamp" : 1792500790718,
-    "duration" : 7926,
-    "error" : {
-      "message" : "Element not found: Text matching regex: Profile",
-      "debugMessage" : "Element with Text matching regex: Profile not found. Check the UI hierarchy in debug artifacts to verify if the element exists.\n\nPossible causes:\n- Element selector may be incorrect - check if there are similar elements with slightly different names/properties.\n- Element may be temporarily unavailable due to loading state.\n- This could be a real regression that needs to be addressed."
-    },
-    "sequenceNumber" : 78,
+    "status" : "COMPLETED",
+    "timestamp" : 1792503224186,
+    "duration" : 2931,
+    "sequenceNumber" : 73,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2695,13 +2414,289 @@
         "longPress" : false,
         "optional" : false
       }
+    }
+  }
+}, {
+  "command" : {
+    "waitForAnimationToEndCommand" : {
+      "timeout" : "5000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792503227117,
+    "duration" : 1122,
+    "sequenceNumber" : 74,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "waitForAnimationToEndCommand" : {
+        "timeout" : "5000",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "takeScreenshotCommand" : {
+      "path" : "09-profile",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792503228240,
+    "duration" : 187,
+    "sequenceNumber" : 75,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "takeScreenshotCommand" : {
+        "path" : "09-profile",
+        "optional" : false
+      }
+    },
+    "artifacts" : [ {
+      "type" : "TAKE_SCREENSHOT",
+      "path" : "takeScreenshot/09-profile.png"
+    } ]
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Settings",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792503228427,
+    "duration" : 2994,
+    "sequenceNumber" : 76,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Settings",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "waitForAnimationToEndCommand" : {
+      "timeout" : "5000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792503231422,
+    "duration" : 1146,
+    "sequenceNumber" : 77,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "waitForAnimationToEndCommand" : {
+        "timeout" : "5000",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "takeScreenshotCommand" : {
+      "path" : "11-settings",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792503232569,
+    "duration" : 178,
+    "sequenceNumber" : 78,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "takeScreenshotCommand" : {
+        "path" : "11-settings",
+        "optional" : false
+      }
+    },
+    "artifacts" : [ {
+      "type" : "TAKE_SCREENSHOT",
+      "path" : "takeScreenshot/11-settings.png"
+    } ]
+  }
+}, {
+  "command" : {
+    "scrollUntilVisible" : {
+      "selector" : {
+        "textRegex" : "Appearance",
+        "optional" : false
+      },
+      "direction" : "DOWN",
+      "scrollDuration" : "40",
+      "visibilityPercentage" : 100,
+      "timeout" : "20000",
+      "centerElement" : false,
+      "originalSpeedValue" : "40",
+      "optional" : true,
+      "visibilityPercentageNormalized" : 1.0
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792503232747,
+    "duration" : 120,
+    "sequenceNumber" : 79,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "scrollUntilVisible" : {
+        "selector" : {
+          "textRegex" : "Appearance",
+          "optional" : false
+        },
+        "direction" : "DOWN",
+        "scrollDuration" : "601",
+        "visibilityPercentage" : 100,
+        "timeout" : "20000",
+        "centerElement" : false,
+        "originalSpeedValue" : "40",
+        "optional" : true,
+        "visibilityPercentageNormalized" : 1.0
+      }
+    }
+  }
+}, {
+  "command" : {
+    "takeScreenshotCommand" : {
+      "path" : "12-settings-lower",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792503232867,
+    "duration" : 214,
+    "sequenceNumber" : 80,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "takeScreenshotCommand" : {
+        "path" : "12-settings-lower",
+        "optional" : false
+      }
+    },
+    "artifacts" : [ {
+      "type" : "TAKE_SCREENSHOT",
+      "path" : "takeScreenshot/12-settings-lower.png"
+    } ]
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Appearance",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792503233081,
+    "duration" : 1697,
+    "sequenceNumber" : 81,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Appearance",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "takeScreenshotCommand" : {
+      "path" : "13-appearance-sheet",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792503234778,
+    "duration" : 217,
+    "sequenceNumber" : 82,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "takeScreenshotCommand" : {
+        "path" : "13-appearance-sheet",
+        "optional" : false
+      }
+    },
+    "artifacts" : [ {
+      "type" : "TAKE_SCREENSHOT",
+      "path" : "takeScreenshot/13-appearance-sheet.png"
+    } ]
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Light",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "FAILED",
+    "timestamp" : 1792503234995,
+    "duration" : 16970,
+    "error" : {
+      "message" : "Element not found: Text matching regex: Light",
+      "debugMessage" : "Element with Text matching regex: Light not found. Check the UI hierarchy in debug artifacts to verify if the element exists.\n\nPossible causes:\n- Element selector may be incorrect - check if there are similar elements with slightly different names/properties.\n- Element may be temporarily unavailable due to loading state.\n- This could be a real regression that needs to be addressed."
+    },
+    "sequenceNumber" : 83,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Light",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
     },
     "artifacts" : [ {
       "type" : "SCREEN_HIERARCHY",
-      "path" : "screen-hierarchy/step-079-tapOnElement-Profile.json"
+      "path" : "screen-hierarchy/step-084-tapOnElement-Light.json"
     }, {
       "type" : "SCREENSHOT",
-      "path" : "screenshots/step-079-tapOnElement-Profile.png"
+      "path" : "screenshots/step-084-tapOnElement-Light.png"
     } ]
   }
 } ]
