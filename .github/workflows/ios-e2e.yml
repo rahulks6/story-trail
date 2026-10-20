@@ -1,0 +1,132 @@
+name: iOS virtual iPhone test
+
+# Builds the iPhone app for the iOS Simulator (no Apple account needed), saves it as an artifact
+# you can upload to appetize.io to try it in a browser, and walks through the app on a small and
+# a large virtual iPhone with Maestro (mobile/.maestro/ios-smoke.yaml), saving screenshots and a
+# video of each. The walk-through signs up a throwaway account against the live API and the last
+# step deletes it again.
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ios-e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  simulator:
+    runs-on: macos-26
+    timeout-minutes: 120
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+          working-directory: mobile
+
+      - name: Xcode
+        run: |
+          sudo xcode-select -s "$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)"
+          xcodebuild -version
+
+      - name: JavaScript dependencies
+        run: npm ci
+
+      - name: CocoaPods
+        run: cd ios && bundle exec pod install
+
+      - name: Simulator build
+        run: |
+          cd ios
+          set -o pipefail
+          xcodebuild -workspace KatkeeMobile.xcworkspace -scheme KatkeeMobile -configuration Release \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO build | tee xcodebuild.log | grep -E "error:|\*\* BUILD" || true
+          test -d build/Build/Products/Release-iphonesimulator/KatkeeMobile.app
+          cd build/Build/Products/Release-iphonesimulator && zip -qr "$GITHUB_WORKSPACE/KatkeeMobile-simulator.zip" KatkeeMobile.app
+
+      - name: Simulator app (for appetize.io)
+        uses: actions/upload-artifact@v5
+        with:
+          name: KatkeeMobile-simulator
+          path: KatkeeMobile-simulator.zip
+
+      - name: Maestro
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Walk through the app on virtual iPhones
+        run: |
+          set -u
+          APP="$PWD/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app"
+          FLOW="$PWD/.maestro/ios-smoke.yaml"
+          OUT="$GITHUB_WORKSPACE/ios-e2e"
+          mkdir -p "$OUT"
+          RUNTIME=$(xcrun simctl list runtimes -j | jq -r '[.runtimes[] | select(.platform == "iOS" and .isAvailable)] | last | .identifier')
+          echo "iOS runtime: $RUNTIME"
+          type_for() {
+            for name in "$@"; do
+              id=$(xcrun simctl list devicetypes -j | jq -r --arg n "$name" '.devicetypes[] | select(.name == $n) | .identifier' | head -1)
+              if [ -n "$id" ]; then echo "$id"; return; fi
+            done
+          }
+          RUN="${GITHUB_RUN_ID: -6}"
+          echo "$RUN" > "$OUT/run-id"
+          status=0
+          for size in small large; do
+            if [ "$size" = small ]; then TYPE=$(type_for "iPhone SE (3rd generation)" "iPhone 16e" "iPhone 13 mini"); else TYPE=$(type_for "iPhone 17 Pro Max" "iPhone 16 Pro Max" "iPhone 15 Pro Max"); fi
+            echo "== $size: $TYPE"
+            UDID=$(xcrun simctl create "katkee-$size" "$TYPE" "$RUNTIME")
+            xcrun simctl boot "$UDID"
+            xcrun simctl bootstatus "$UDID" -b
+            xcrun simctl install "$UDID" "$APP"
+            mkdir -p "$OUT/$size"
+            echo "$TYPE" > "$OUT/$size/device.txt"
+            xcrun simctl io "$UDID" recordVideo --codec=h264 --force "$OUT/$size/walkthrough.mp4" &
+            REC=$!
+            PASSWORD="E2e-$(openssl rand -hex 8)"
+            USERNAME="e2e_ios_${RUN}_${size}"
+            echo "$USERNAME support+e2e-${RUN}-${size}@katkee.com $PASSWORD" >> "$RUNNER_TEMP/accounts"
+            ( cd "$OUT/$size" && maestro --device "$UDID" test "$FLOW" \
+                -e USERNAME="$USERNAME" -e EMAIL="support+e2e-${RUN}-${size}@katkee.com" -e PASSWORD="$PASSWORD" \
+                --format junit --output "$OUT/$size/report.xml" --test-output-dir "$OUT/$size/maestro" ) || status=1
+            kill -INT "$REC" || true
+            sleep 3
+            xcrun simctl spawn "$UDID" log show --last 15m --predicate 'process == "KatkeeMobile"' --style compact > "$OUT/$size/app-log.txt" 2>/dev/null || true
+            xcrun simctl shutdown "$UDID" || true
+          done
+          exit $status
+
+      - name: Delete the test accounts
+        if: always()
+        run: |
+          [ -f "$RUNNER_TEMP/accounts" ] || exit 0
+          while read -r USERNAME EMAIL PASSWORD; do
+            TOKEN=$(curl -s -X POST https://api.katkee.com/api/v1/auth/login -H 'Content-Type: application/json' \
+              -d "{\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\"}" | jq -r '.tokens.accessToken // empty')
+            if [ -n "$TOKEN" ]; then
+              curl -s -o /dev/null -w "$USERNAME deleted: %{http_code}\n" -X DELETE https://api.katkee.com/api/v1/users/me \
+                -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d "{\"password\":\"$PASSWORD\"}"
+            else
+              echo "$USERNAME: no account to delete"
+            fi
+          done < "$RUNNER_TEMP/accounts"
+
+      - name: Screenshots, videos and logs
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: ios-e2e-results
+          path: ios-e2e
+          if-no-files-found: warn

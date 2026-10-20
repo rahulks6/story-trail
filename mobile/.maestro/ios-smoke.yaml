@@ -1,0 +1,113 @@
+# The iPhone walk-through run by .github/workflows/ios-e2e.yml on virtual iPhones: sign up a
+# throwaway account (deleted again by the workflow), skip email verification, then visit every
+# main screen in dark and light mode, taking a screenshot at each step. Steps marked optional
+# record what's there without stopping the run, so one surprise doesn't hide the other screens.
+appId: com.katkee.app
+---
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- extendedWaitUntil:
+    visible: "Log in"
+    timeout: 60000
+- takeScreenshot: 01-login
+
+- tapOn: ".*Sign up.*"
+- extendedWaitUntil:
+    visible: "Create your account"
+    timeout: 15000
+- takeScreenshot: 02-signup
+- tapOn: "Display name"
+- inputText: "Katkee iPhone Test"
+- tapOn: "Username"
+- inputText: ${USERNAME}
+- tapOn: "Email"
+- inputText: ${EMAIL}
+- tapOn: "Date of birth"
+- inputText: "01011995"
+- tapOn: "Password"
+- inputText: ${PASSWORD}
+- hideKeyboard:
+    optional: true
+- takeScreenshot: 03-signup-filled
+- scrollUntilVisible:
+    element: "Sign up"
+    optional: true
+- tapOn: "Sign up"
+
+- extendedWaitUntil:
+    visible: "Verify your email"
+    timeout: 45000
+- takeScreenshot: 04-verify-email
+- tapOn: "Later"
+- tapOn:
+    text: "Not now"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 05-home
+
+- tapOn: "Search"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 06-search
+
+- tapOn: "DM"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 07-messages
+
+- tapOn: "Create a Story"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 08-create
+- tapOn:
+    text: "Close"
+    optional: true
+
+- tapOn: "Profile"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 09-profile
+- tapOn:
+    text: "Verify your email"
+    optional: true
+- takeScreenshot: 10-verify-from-profile
+- tapOn:
+    text: "Later"
+    optional: true
+
+- tapOn: "Settings"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 11-settings
+- scrollUntilVisible:
+    element: "Appearance"
+    optional: true
+- takeScreenshot: 12-settings-lower
+- tapOn: "Appearance"
+- takeScreenshot: 13-appearance-sheet
+- tapOn: "Light"
+- tapOn:
+    text: "OK"
+    optional: true
+
+# iPhone apps can't restart themselves: reopen Katkee to see light mode.
+- stopApp
+- launchApp
+- waitForAnimationToEnd:
+    timeout: 10000
+- takeScreenshot: 14-home-light
+- tapOn: "Profile"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 15-profile-light
+- tapOn: "DM"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 16-messages-light
+- tapOn: "Search"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 17-search-light
