@@ -2,11 +2,11 @@
   "command" : {
     "defineVariablesCommand" : {
       "env" : {
-        "USERNAME" : "e2e_and_054064_tablet",
-        "EMAIL" : "support+e2e-and-054064-tablet@katkee.com",
-        "PASSWORD" : "E2e-6ecc458b800745e2",
-        "OIDC_URL" : "https://run-actions-2-azure-eastus.actions.githubusercontent.com/81//idtoken/afdc433c-1275-478b-b7e2-92c586cddd30/e83c8ce5-a304-51a7-a43a-79a68a3d9c4a?api-version=2.0",
-        "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6M31dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTI1MDg2NTQsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5MjUwNDQ1NCwiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6ImU4M2M4Y2U1LWEzMDQtNTFhNy1hNDNhLTc5YTY4YTNkOWM0YSIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhIiwiam9iX3dvcmtmbG93X3NoYSI6IjUxYjgyYTNjZmQ5MDg3ZDgyM2ZlOTA0NzFjNGRiMGUzNjE2ZjM1Y2EiLCJuYW1laWQiOiJkZGRkZGRkZC1kZGRkLWRkZGQtZGRkZC1kZGRkZGRkZGRkZGQiLCJuYmYiOjE3OTI1MDQxNTQsIm9pZGNfZXh0cmEiOiJ7XCJhY3RvclwiOlwicmFodWxrczZcIixcImFjdG9yX2lkXCI6XCIxOTc1NDA5MjRcIixcImJhc2VfcmVmXCI6XCJcIixcImNoZWNrX3J1bl9pZFwiOlwiMTE4NjY3NjA2MzI1XCIsXCJldmVudF9uYW1lXCI6XCJ3b3JrZmxvd19kaXNwYXRjaFwiLFwiaGVhZF9yZWZcIjpcIlwiLFwiam9iX3dvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvYW5kcm9pZC1lMmUueW1sQHJlZnMvaGVhZHMvY2xhdWRlL2thdGtlZS1wcm9kdWN0aW9uLWF1ZGl0LWt1ZXhyYVwiLFwiam9iX3dvcmtmbG93X3NoYVwiOlwiNTFiODJhM2NmZDkwODdkODIzZmU5MDQ3MWM0ZGIwZTM2MTZmMzVjYVwiLFwicmVmXCI6XCJyZWZzL2hlYWRzL2NsYXVkZS9rYXRrZWUtcHJvZHVjdGlvbi1hdWRpdC1rdWV4cmFcIixcInJlZl9wcm90ZWN0ZWRcIjpcImZhbHNlXCIsXCJyZWZfdHlwZVwiOlwiYnJhbmNoXCIsXCJyZXBvc2l0b3J5XCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbFwiLFwicmVwb3NpdG9yeV9pZFwiOlwiMTM3NjkxNTQ5MVwiLFwicmVwb3NpdG9yeV9vd25lclwiOlwicmFodWxrczZcIixcInJlcG9zaXRvcnlfb3duZXJfaWRcIjpcIjE5NzU0MDkyNFwiLFwicmVwb3NpdG9yeV92aXNpYmlsaXR5XCI6XCJwdWJsaWNcIixcInJ1bl9hdHRlbXB0XCI6XCIxXCIsXCJydW5faWRcIjpcIjM5NDMyMDU0MDY0XCIsXCJydW5fbnVtYmVyXCI6XCI4XCIsXCJydW5uZXJfZW52aXJvbm1lbnRcIjpcImdpdGh1Yi1ob3N0ZWRcIixcInNoYVwiOlwiNTFiODJhM2NmZDkwODdkODIzZmU5MDQ3MWM0ZGIwZTM2MTZmMzVjYVwiLFwid29ya2Zsb3dcIjpcIkFuZHJvaWQgZW11bGF0b3IgdGVzdFwiLFwid29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJ3b3JrZmxvd19zaGFcIjpcIjUxYjgyYTNjZmQ5MDg3ZDgyM2ZlOTA0NzFjNGRiMGUzNjE2ZjM1Y2FcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2thdGtlZS1wcm9kdWN0aW9uLWF1ZGl0LWt1ZXhyYSIsIm9yY2hfaWQiOiJhZmRjNDMzYy0xMjc1LTQ3OGItYjdlMi05MmM1ODZjZGRkMzAud2Fsa3Rocm91Z2gudGFibGV0Iiwib3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJwbGFuX2lkIjoiYWZkYzQzM2MtMTI3NS00NzhiLWI3ZTItOTJjNTg2Y2RkZDMwIiwicmVwb3NpdG9yeV9pZCI6IjEzNzY5MTU0OTEiLCJyZXBvc2l0b3J5X293bmVyX2lkIjoiMTk3NTQwOTI0IiwicmVwb3NpdG9yeV92aXNpYmlsaXR5IjoicHVibGljIiwicnVuX2lkIjoiMzk0MzIwNTQwNjQiLCJydW5fbnVtYmVyIjoiOCIsInJ1bl90eXBlIjoiZnVsbCIsInJ1bm5lcl9pZCI6IjEwMDAwMDAwNjciLCJydW5uZXJfdHlwZSI6Imhvc3RlZCIsInNjcCI6IkFjdGlvbnMuUmVzdWx0czphZmRjNDMzYy0xMjc1LTQ3OGItYjdlMi05MmM1ODZjZGRkMzA6ZTgzYzhjZTUtYTMwNC01MWE3LWE0M2EtNzlhNjhhM2Q5YzRhIEFjdGlvbnMuUnVubmVyOmFmZGM0MzNjLTEyNzUtNDc4Yi1iN2UyLTkyYzU4NmNkZGQzMDplODNjOGNlNS1hMzA0LTUxYTctYTQzYS03OWE2OGEzZDljNGEgQWN0aW9ucy5VcGxvYWRBcnRpZmFjdHM6YWZkYzQzM2MtMTI3NS00NzhiLWI3ZTItOTJjNTg2Y2RkZDMwOmU4M2M4Y2U1LWEzMDQtNTFhNy1hNDNhLTc5YTY4YTNkOWM0YSBnZW5lcmF0ZV9pZF90b2tlbjphZmRjNDMzYy0xMjc1LTQ3OGItYjdlMi05MmM1ODZjZGRkMzA6ZTgzYzhjZTUtYTMwNC01MWE3LWE0M2EtNzlhNjhhM2Q5YzRhIEFjdGlvbnMuR2VuZXJpY1JlYWQ6MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIiwic2hhIjoiNTFiODJhM2NmZDkwODdkODIzZmU5MDQ3MWM0ZGIwZTM2MTZmMzVjYSIsInRydXN0X3RpZXIiOiIyIn0.xEjKajKdTWqzCMbaUcL6GfjbFmMm9DdIy49tMRLhjTFuXHFonjCc01BQa6qFby692WB9BuIm3FyCAgGIyq_K9dVKYwgQhOC9Gcr0QwzUPdYz9s_oBxIT43C5Im8tJDZBme1WdEPu3ncWdEqrIa6DhEby1DMrDb4y1XW9zDXp2Hsdp2TAKOPolE2RdT8eINq_p-_GpGKPmn2PiwAv9Uri11Zyw1PzjZ5RG8UaDzTRcZ1ocy52DYE1iYBBo5tMGj4-YHSf8f8rlpxoi32UJD7BQXWJkc9xGJKe7hGPfEqSwMqf1WUTKvuLtlAYq9ghMci2nD8m5kqHAQ_OxE6Dnm0Rxg",
+        "USERNAME" : "e2e_and_345646_tablet",
+        "EMAIL" : "support+e2e-and-345646-tablet@katkee.com",
+        "PASSWORD" : "E2e-85646dae4d94a3a0",
+        "OIDC_URL" : "https://run-actions-1-azure-eastus.actions.githubusercontent.com/270//idtoken/42924498-f6de-4622-a07b-14bd83f64c56/6a063d13-40dc-5435-9e13-33f31936e422?api-version=2.0",
+        "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6M31dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTI1MTA4MjYsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5MjUwNjYyNiwiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6IjZhMDYzZDEzLTQwZGMtNTQzNS05ZTEzLTMzZjMxOTM2ZTQyMiIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhIiwiam9iX3dvcmtmbG93X3NoYSI6Ijc4N2NmNzE3NWY0ZGIxMTZhOWY0MGQ2MTY4NzhjNzdlM2ZlNmNmYWMiLCJuYW1laWQiOiJkZGRkZGRkZC1kZGRkLWRkZGQtZGRkZC1kZGRkZGRkZGRkZGQiLCJuYmYiOjE3OTI1MDYzMjYsIm9pZGNfZXh0cmEiOiJ7XCJhY3RvclwiOlwicmFodWxrczZcIixcImFjdG9yX2lkXCI6XCIxOTc1NDA5MjRcIixcImJhc2VfcmVmXCI6XCJcIixcImNoZWNrX3J1bl9pZFwiOlwiMTE4Njg2NDE5NTI3XCIsXCJldmVudF9uYW1lXCI6XCJ3b3JrZmxvd19kaXNwYXRjaFwiLFwiaGVhZF9yZWZcIjpcIlwiLFwiam9iX3dvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvYW5kcm9pZC1lMmUueW1sQHJlZnMvaGVhZHMvY2xhdWRlL2thdGtlZS1wcm9kdWN0aW9uLWF1ZGl0LWt1ZXhyYVwiLFwiam9iX3dvcmtmbG93X3NoYVwiOlwiNzg3Y2Y3MTc1ZjRkYjExNmE5ZjQwZDYxNjg3OGM3N2UzZmU2Y2ZhY1wiLFwicmVmXCI6XCJyZWZzL2hlYWRzL2NsYXVkZS9rYXRrZWUtcHJvZHVjdGlvbi1hdWRpdC1rdWV4cmFcIixcInJlZl9wcm90ZWN0ZWRcIjpcImZhbHNlXCIsXCJyZWZfdHlwZVwiOlwiYnJhbmNoXCIsXCJyZXBvc2l0b3J5XCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbFwiLFwicmVwb3NpdG9yeV9pZFwiOlwiMTM3NjkxNTQ5MVwiLFwicmVwb3NpdG9yeV9vd25lclwiOlwicmFodWxrczZcIixcInJlcG9zaXRvcnlfb3duZXJfaWRcIjpcIjE5NzU0MDkyNFwiLFwicmVwb3NpdG9yeV92aXNpYmlsaXR5XCI6XCJwdWJsaWNcIixcInJ1bl9hdHRlbXB0XCI6XCIxXCIsXCJydW5faWRcIjpcIjM5NDM3MzQ1NjQ2XCIsXCJydW5fbnVtYmVyXCI6XCI5XCIsXCJydW5uZXJfZW52aXJvbm1lbnRcIjpcImdpdGh1Yi1ob3N0ZWRcIixcInNoYVwiOlwiNzg3Y2Y3MTc1ZjRkYjExNmE5ZjQwZDYxNjg3OGM3N2UzZmU2Y2ZhY1wiLFwid29ya2Zsb3dcIjpcIkFuZHJvaWQgZW11bGF0b3IgdGVzdFwiLFwid29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJ3b3JrZmxvd19zaGFcIjpcIjc4N2NmNzE3NWY0ZGIxMTZhOWY0MGQ2MTY4NzhjNzdlM2ZlNmNmYWNcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2thdGtlZS1wcm9kdWN0aW9uLWF1ZGl0LWt1ZXhyYSIsIm9yY2hfaWQiOiI0MjkyNDQ5OC1mNmRlLTQ2MjItYTA3Yi0xNGJkODNmNjRjNTYud2Fsa3Rocm91Z2gudGFibGV0Iiwib3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJwbGFuX2lkIjoiNDI5MjQ0OTgtZjZkZS00NjIyLWEwN2ItMTRiZDgzZjY0YzU2IiwicmVwb3NpdG9yeV9pZCI6IjEzNzY5MTU0OTEiLCJyZXBvc2l0b3J5X293bmVyX2lkIjoiMTk3NTQwOTI0IiwicmVwb3NpdG9yeV92aXNpYmlsaXR5IjoicHVibGljIiwicnVuX2lkIjoiMzk0MzczNDU2NDYiLCJydW5fbnVtYmVyIjoiOSIsInJ1bl90eXBlIjoiZnVsbCIsInJ1bm5lcl9pZCI6IjEwMDAwMDAwNzEiLCJydW5uZXJfdHlwZSI6Imhvc3RlZCIsInNjcCI6IkFjdGlvbnMuUmVzdWx0czo0MjkyNDQ5OC1mNmRlLTQ2MjItYTA3Yi0xNGJkODNmNjRjNTY6NmEwNjNkMTMtNDBkYy01NDM1LTllMTMtMzNmMzE5MzZlNDIyIEFjdGlvbnMuUnVubmVyOjQyOTI0NDk4LWY2ZGUtNDYyMi1hMDdiLTE0YmQ4M2Y2NGM1Njo2YTA2M2QxMy00MGRjLTU0MzUtOWUxMy0zM2YzMTkzNmU0MjIgQWN0aW9ucy5VcGxvYWRBcnRpZmFjdHM6NDI5MjQ0OTgtZjZkZS00NjIyLWEwN2ItMTRiZDgzZjY0YzU2OjZhMDYzZDEzLTQwZGMtNTQzNS05ZTEzLTMzZjMxOTM2ZTQyMiBnZW5lcmF0ZV9pZF90b2tlbjo0MjkyNDQ5OC1mNmRlLTQ2MjItYTA3Yi0xNGJkODNmNjRjNTY6NmEwNjNkMTMtNDBkYy01NDM1LTllMTMtMzNmMzE5MzZlNDIyIEFjdGlvbnMuR2VuZXJpY1JlYWQ6MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIiwic2hhIjoiNzg3Y2Y3MTc1ZjRkYjExNmE5ZjQwZDYxNjg3OGM3N2UzZmU2Y2ZhYyIsInRydXN0X3RpZXIiOiIyIn0.O3iHnUzEngxVFSEldqNVazMmNiRoZcO-2rVOKn4E6TZYz_HAUdLzExZ73FK_AgAy_QrHI0pbO95F_ZDmcc3wB861q8qYmJF0Q7q1i9QinnBrkbhdkWAALS0FHADV8DK59VAErru30zuEvLCozYE9x-J1fbljOAeWL2vFX1Jtubvuv0hmQNIOE007KYiONxVY8KFwJ_ht9emUPejoHjRsQPCDwwoAADpweMBKR1O2wiaAwR5XAKrP3jxQs5Uri9IBY-yQIzLba7_t1TVQzVNvFJEl7GAUbOmmuSUZS2uSpeFFF-uAk-gyYQCsiAY2IMOchoyGvtyv_JPRUCvyw9TIHg",
         "MAESTRO_CLI_NO_ANALYTICS" : "1",
         "MAESTRO_FILENAME" : "smoke",
         "MAESTRO_DEVICE_UDID" : "emulator-5554",
@@ -18,18 +18,18 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504600024,
+    "timestamp" : 1792506762231,
     "duration" : 11,
     "sequenceNumber" : 0,
     "depth" : 0,
     "evaluatedCommand" : {
       "defineVariablesCommand" : {
         "env" : {
-          "USERNAME" : "e2e_and_054064_tablet",
-          "EMAIL" : "support+e2e-and-054064-tablet@katkee.com",
-          "PASSWORD" : "E2e-6ecc458b800745e2",
-          "OIDC_URL" : "https://run-actions-2-azure-eastus.actions.githubusercontent.com/81//idtoken/afdc433c-1275-478b-b7e2-92c586cddd30/e83c8ce5-a304-51a7-a43a-79a68a3d9c4a?api-version=2.0",
-          "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6M31dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTI1MDg2NTQsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5MjUwNDQ1NCwiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6ImU4M2M4Y2U1LWEzMDQtNTFhNy1hNDNhLTc5YTY4YTNkOWM0YSIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhIiwiam9iX3dvcmtmbG93X3NoYSI6IjUxYjgyYTNjZmQ5MDg3ZDgyM2ZlOTA0NzFjNGRiMGUzNjE2ZjM1Y2EiLCJuYW1laWQiOiJkZGRkZGRkZC1kZGRkLWRkZGQtZGRkZC1kZGRkZGRkZGRkZGQiLCJuYmYiOjE3OTI1MDQxNTQsIm9pZGNfZXh0cmEiOiJ7XCJhY3RvclwiOlwicmFodWxrczZcIixcImFjdG9yX2lkXCI6XCIxOTc1NDA5MjRcIixcImJhc2VfcmVmXCI6XCJcIixcImNoZWNrX3J1bl9pZFwiOlwiMTE4NjY3NjA2MzI1XCIsXCJldmVudF9uYW1lXCI6XCJ3b3JrZmxvd19kaXNwYXRjaFwiLFwiaGVhZF9yZWZcIjpcIlwiLFwiam9iX3dvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvYW5kcm9pZC1lMmUueW1sQHJlZnMvaGVhZHMvY2xhdWRlL2thdGtlZS1wcm9kdWN0aW9uLWF1ZGl0LWt1ZXhyYVwiLFwiam9iX3dvcmtmbG93X3NoYVwiOlwiNTFiODJhM2NmZDkwODdkODIzZmU5MDQ3MWM0ZGIwZTM2MTZmMzVjYVwiLFwicmVmXCI6XCJyZWZzL2hlYWRzL2NsYXVkZS9rYXRrZWUtcHJvZHVjdGlvbi1hdWRpdC1rdWV4cmFcIixcInJlZl9wcm90ZWN0ZWRcIjpcImZhbHNlXCIsXCJyZWZfdHlwZVwiOlwiYnJhbmNoXCIsXCJyZXBvc2l0b3J5XCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbFwiLFwicmVwb3NpdG9yeV9pZFwiOlwiMTM3NjkxNTQ5MVwiLFwicmVwb3NpdG9yeV9vd25lclwiOlwicmFodWxrczZcIixcInJlcG9zaXRvcnlfb3duZXJfaWRcIjpcIjE5NzU0MDkyNFwiLFwicmVwb3NpdG9yeV92aXNpYmlsaXR5XCI6XCJwdWJsaWNcIixcInJ1bl9hdHRlbXB0XCI6XCIxXCIsXCJydW5faWRcIjpcIjM5NDMyMDU0MDY0XCIsXCJydW5fbnVtYmVyXCI6XCI4XCIsXCJydW5uZXJfZW52aXJvbm1lbnRcIjpcImdpdGh1Yi1ob3N0ZWRcIixcInNoYVwiOlwiNTFiODJhM2NmZDkwODdkODIzZmU5MDQ3MWM0ZGIwZTM2MTZmMzVjYVwiLFwid29ya2Zsb3dcIjpcIkFuZHJvaWQgZW11bGF0b3IgdGVzdFwiLFwid29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJ3b3JrZmxvd19zaGFcIjpcIjUxYjgyYTNjZmQ5MDg3ZDgyM2ZlOTA0NzFjNGRiMGUzNjE2ZjM1Y2FcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2thdGtlZS1wcm9kdWN0aW9uLWF1ZGl0LWt1ZXhyYSIsIm9yY2hfaWQiOiJhZmRjNDMzYy0xMjc1LTQ3OGItYjdlMi05MmM1ODZjZGRkMzAud2Fsa3Rocm91Z2gudGFibGV0Iiwib3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJwbGFuX2lkIjoiYWZkYzQzM2MtMTI3NS00NzhiLWI3ZTItOTJjNTg2Y2RkZDMwIiwicmVwb3NpdG9yeV9pZCI6IjEzNzY5MTU0OTEiLCJyZXBvc2l0b3J5X293bmVyX2lkIjoiMTk3NTQwOTI0IiwicmVwb3NpdG9yeV92aXNpYmlsaXR5IjoicHVibGljIiwicnVuX2lkIjoiMzk0MzIwNTQwNjQiLCJydW5fbnVtYmVyIjoiOCIsInJ1bl90eXBlIjoiZnVsbCIsInJ1bm5lcl9pZCI6IjEwMDAwMDAwNjciLCJydW5uZXJfdHlwZSI6Imhvc3RlZCIsInNjcCI6IkFjdGlvbnMuUmVzdWx0czphZmRjNDMzYy0xMjc1LTQ3OGItYjdlMi05MmM1ODZjZGRkMzA6ZTgzYzhjZTUtYTMwNC01MWE3LWE0M2EtNzlhNjhhM2Q5YzRhIEFjdGlvbnMuUnVubmVyOmFmZGM0MzNjLTEyNzUtNDc4Yi1iN2UyLTkyYzU4NmNkZGQzMDplODNjOGNlNS1hMzA0LTUxYTctYTQzYS03OWE2OGEzZDljNGEgQWN0aW9ucy5VcGxvYWRBcnRpZmFjdHM6YWZkYzQzM2MtMTI3NS00NzhiLWI3ZTItOTJjNTg2Y2RkZDMwOmU4M2M4Y2U1LWEzMDQtNTFhNy1hNDNhLTc5YTY4YTNkOWM0YSBnZW5lcmF0ZV9pZF90b2tlbjphZmRjNDMzYy0xMjc1LTQ3OGItYjdlMi05MmM1ODZjZGRkMzA6ZTgzYzhjZTUtYTMwNC01MWE3LWE0M2EtNzlhNjhhM2Q5YzRhIEFjdGlvbnMuR2VuZXJpY1JlYWQ6MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIiwic2hhIjoiNTFiODJhM2NmZDkwODdkODIzZmU5MDQ3MWM0ZGIwZTM2MTZmMzVjYSIsInRydXN0X3RpZXIiOiIyIn0.xEjKajKdTWqzCMbaUcL6GfjbFmMm9DdIy49tMRLhjTFuXHFonjCc01BQa6qFby692WB9BuIm3FyCAgGIyq_K9dVKYwgQhOC9Gcr0QwzUPdYz9s_oBxIT43C5Im8tJDZBme1WdEPu3ncWdEqrIa6DhEby1DMrDb4y1XW9zDXp2Hsdp2TAKOPolE2RdT8eINq_p-_GpGKPmn2PiwAv9Uri11Zyw1PzjZ5RG8UaDzTRcZ1ocy52DYE1iYBBo5tMGj4-YHSf8f8rlpxoi32UJD7BQXWJkc9xGJKe7hGPfEqSwMqf1WUTKvuLtlAYq9ghMci2nD8m5kqHAQ_OxE6Dnm0Rxg",
+          "USERNAME" : "e2e_and_345646_tablet",
+          "EMAIL" : "support+e2e-and-345646-tablet@katkee.com",
+          "PASSWORD" : "E2e-85646dae4d94a3a0",
+          "OIDC_URL" : "https://run-actions-1-azure-eastus.actions.githubusercontent.com/270//idtoken/42924498-f6de-4622-a07b-14bd83f64c56/6a063d13-40dc-5435-9e13-33f31936e422?api-version=2.0",
+          "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6M31dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTI1MTA4MjYsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5MjUwNjYyNiwiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6IjZhMDYzZDEzLTQwZGMtNTQzNS05ZTEzLTMzZjMxOTM2ZTQyMiIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhIiwiam9iX3dvcmtmbG93X3NoYSI6Ijc4N2NmNzE3NWY0ZGIxMTZhOWY0MGQ2MTY4NzhjNzdlM2ZlNmNmYWMiLCJuYW1laWQiOiJkZGRkZGRkZC1kZGRkLWRkZGQtZGRkZC1kZGRkZGRkZGRkZGQiLCJuYmYiOjE3OTI1MDYzMjYsIm9pZGNfZXh0cmEiOiJ7XCJhY3RvclwiOlwicmFodWxrczZcIixcImFjdG9yX2lkXCI6XCIxOTc1NDA5MjRcIixcImJhc2VfcmVmXCI6XCJcIixcImNoZWNrX3J1bl9pZFwiOlwiMTE4Njg2NDE5NTI3XCIsXCJldmVudF9uYW1lXCI6XCJ3b3JrZmxvd19kaXNwYXRjaFwiLFwiaGVhZF9yZWZcIjpcIlwiLFwiam9iX3dvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvYW5kcm9pZC1lMmUueW1sQHJlZnMvaGVhZHMvY2xhdWRlL2thdGtlZS1wcm9kdWN0aW9uLWF1ZGl0LWt1ZXhyYVwiLFwiam9iX3dvcmtmbG93X3NoYVwiOlwiNzg3Y2Y3MTc1ZjRkYjExNmE5ZjQwZDYxNjg3OGM3N2UzZmU2Y2ZhY1wiLFwicmVmXCI6XCJyZWZzL2hlYWRzL2NsYXVkZS9rYXRrZWUtcHJvZHVjdGlvbi1hdWRpdC1rdWV4cmFcIixcInJlZl9wcm90ZWN0ZWRcIjpcImZhbHNlXCIsXCJyZWZfdHlwZVwiOlwiYnJhbmNoXCIsXCJyZXBvc2l0b3J5XCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbFwiLFwicmVwb3NpdG9yeV9pZFwiOlwiMTM3NjkxNTQ5MVwiLFwicmVwb3NpdG9yeV9vd25lclwiOlwicmFodWxrczZcIixcInJlcG9zaXRvcnlfb3duZXJfaWRcIjpcIjE5NzU0MDkyNFwiLFwicmVwb3NpdG9yeV92aXNpYmlsaXR5XCI6XCJwdWJsaWNcIixcInJ1bl9hdHRlbXB0XCI6XCIxXCIsXCJydW5faWRcIjpcIjM5NDM3MzQ1NjQ2XCIsXCJydW5fbnVtYmVyXCI6XCI5XCIsXCJydW5uZXJfZW52aXJvbm1lbnRcIjpcImdpdGh1Yi1ob3N0ZWRcIixcInNoYVwiOlwiNzg3Y2Y3MTc1ZjRkYjExNmE5ZjQwZDYxNjg3OGM3N2UzZmU2Y2ZhY1wiLFwid29ya2Zsb3dcIjpcIkFuZHJvaWQgZW11bGF0b3IgdGVzdFwiLFwid29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJ3b3JrZmxvd19zaGFcIjpcIjc4N2NmNzE3NWY0ZGIxMTZhOWY0MGQ2MTY4NzhjNzdlM2ZlNmNmYWNcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2thdGtlZS1wcm9kdWN0aW9uLWF1ZGl0LWt1ZXhyYSIsIm9yY2hfaWQiOiI0MjkyNDQ5OC1mNmRlLTQ2MjItYTA3Yi0xNGJkODNmNjRjNTYud2Fsa3Rocm91Z2gudGFibGV0Iiwib3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJwbGFuX2lkIjoiNDI5MjQ0OTgtZjZkZS00NjIyLWEwN2ItMTRiZDgzZjY0YzU2IiwicmVwb3NpdG9yeV9pZCI6IjEzNzY5MTU0OTEiLCJyZXBvc2l0b3J5X293bmVyX2lkIjoiMTk3NTQwOTI0IiwicmVwb3NpdG9yeV92aXNpYmlsaXR5IjoicHVibGljIiwicnVuX2lkIjoiMzk0MzczNDU2NDYiLCJydW5fbnVtYmVyIjoiOSIsInJ1bl90eXBlIjoiZnVsbCIsInJ1bm5lcl9pZCI6IjEwMDAwMDAwNzEiLCJydW5uZXJfdHlwZSI6Imhvc3RlZCIsInNjcCI6IkFjdGlvbnMuUmVzdWx0czo0MjkyNDQ5OC1mNmRlLTQ2MjItYTA3Yi0xNGJkODNmNjRjNTY6NmEwNjNkMTMtNDBkYy01NDM1LTllMTMtMzNmMzE5MzZlNDIyIEFjdGlvbnMuUnVubmVyOjQyOTI0NDk4LWY2ZGUtNDYyMi1hMDdiLTE0YmQ4M2Y2NGM1Njo2YTA2M2QxMy00MGRjLTU0MzUtOWUxMy0zM2YzMTkzNmU0MjIgQWN0aW9ucy5VcGxvYWRBcnRpZmFjdHM6NDI5MjQ0OTgtZjZkZS00NjIyLWEwN2ItMTRiZDgzZjY0YzU2OjZhMDYzZDEzLTQwZGMtNTQzNS05ZTEzLTMzZjMxOTM2ZTQyMiBnZW5lcmF0ZV9pZF90b2tlbjo0MjkyNDQ5OC1mNmRlLTQ2MjItYTA3Yi0xNGJkODNmNjRjNTY6NmEwNjNkMTMtNDBkYy01NDM1LTllMTMtMzNmMzE5MzZlNDIyIEFjdGlvbnMuR2VuZXJpY1JlYWQ6MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIiwic2hhIjoiNzg3Y2Y3MTc1ZjRkYjExNmE5ZjQwZDYxNjg3OGM3N2UzZmU2Y2ZhYyIsInRydXN0X3RpZXIiOiIyIn0.O3iHnUzEngxVFSEldqNVazMmNiRoZcO-2rVOKn4E6TZYz_HAUdLzExZ73FK_AgAy_QrHI0pbO95F_ZDmcc3wB861q8qYmJF0Q7q1i9QinnBrkbhdkWAALS0FHADV8DK59VAErru30zuEvLCozYE9x-J1fbljOAeWL2vFX1Jtubvuv0hmQNIOE007KYiONxVY8KFwJ_ht9emUPejoHjRsQPCDwwoAADpweMBKR1O2wiaAwR5XAKrP3jxQs5Uri9IBY-yQIzLba7_t1TVQzVNvFJEl7GAUbOmmuSUZS2uSpeFFF-uAk-gyYQCsiAY2IMOchoyGvtyv_JPRUCvyw9TIHg",
           "MAESTRO_CLI_NO_ANALYTICS" : "1",
           "MAESTRO_FILENAME" : "smoke",
           "MAESTRO_DEVICE_UDID" : "emulator-5554",
@@ -51,8 +51,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504600038,
-    "duration" : 1,
+    "timestamp" : 1792506762244,
+    "duration" : 0,
     "sequenceNumber" : 1,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -77,8 +77,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504600040,
-    "duration" : 2380,
+    "timestamp" : 1792506762244,
+    "duration" : 1339,
     "sequenceNumber" : 2,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -91,6 +91,45 @@
         "optional" : false
       }
     }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Wait",
+        "optional" : true
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : true
+    }
+  },
+  "metadata" : {
+    "status" : "WARNED",
+    "timestamp" : 1792506763584,
+    "duration" : 7279,
+    "sequenceNumber" : 3,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Wait",
+          "optional" : true
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : true
+      }
+    },
+    "artifacts" : [ {
+      "type" : "SCREEN_HIERARCHY",
+      "path" : "screen-hierarchy/step-004-tapOnElement-Wait.json"
+    }, {
+      "type" : "SCREENSHOT",
+      "path" : "screenshots/step-004-tapOnElement-Wait.png"
+    } ]
   }
 }, {
   "command" : {
@@ -107,9 +146,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504602421,
-    "duration" : 8130,
-    "sequenceNumber" : 3,
+    "timestamp" : 1792506771745,
+    "duration" : 127,
+    "sequenceNumber" : 4,
     "depth" : 0,
     "evaluatedCommand" : {
       "assertConditionCommand" : {
@@ -133,9 +172,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504610553,
-    "duration" : 2744,
-    "sequenceNumber" : 4,
+    "timestamp" : 1792506771872,
+    "duration" : 301,
+    "sequenceNumber" : 5,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -163,9 +202,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504613298,
-    "duration" : 6673,
-    "sequenceNumber" : 5,
+    "timestamp" : 1792506772174,
+    "duration" : 3259,
+    "sequenceNumber" : 6,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -195,9 +234,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504619971,
-    "duration" : 532,
-    "sequenceNumber" : 6,
+    "timestamp" : 1792506775433,
+    "duration" : 286,
+    "sequenceNumber" : 7,
     "depth" : 0,
     "evaluatedCommand" : {
       "assertConditionCommand" : {
@@ -221,9 +260,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504620505,
-    "duration" : 1569,
-    "sequenceNumber" : 7,
+    "timestamp" : 1792506775719,
+    "duration" : 971,
+    "sequenceNumber" : 8,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -251,9 +290,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504622074,
-    "duration" : 8570,
-    "sequenceNumber" : 8,
+    "timestamp" : 1792506776691,
+    "duration" : 3843,
+    "sequenceNumber" : 9,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -277,9 +316,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504630644,
-    "duration" : 12589,
-    "sequenceNumber" : 9,
+    "timestamp" : 1792506780535,
+    "duration" : 11578,
+    "sequenceNumber" : 10,
     "depth" : 0,
     "evaluatedCommand" : {
       "inputTextCommand" : {
@@ -335,9 +374,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504643233,
-    "duration" : 2029,
-    "sequenceNumber" : 10,
+    "timestamp" : 1792506792113,
+    "duration" : 1682,
+    "sequenceNumber" : 11,
     "depth" : 0,
     "evaluatedCommand" : {
       "runFlowCommand" : {
@@ -395,9 +434,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504643235,
+    "timestamp" : 1792506792115,
     "duration" : 0,
-    "sequenceNumber" : 11,
+    "sequenceNumber" : 12,
     "depth" : 1,
     "evaluatedCommand" : {
       "applyConfigurationCommand" : {
@@ -424,9 +463,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504643236,
-    "duration" : 2025,
-    "sequenceNumber" : 12,
+    "timestamp" : 1792506792115,
+    "duration" : 1679,
+    "sequenceNumber" : 13,
     "depth" : 1,
     "evaluatedCommand" : {
       "runFlowCommand" : {
@@ -450,9 +489,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504643236,
-    "duration" : 2024,
-    "sequenceNumber" : 13,
+    "timestamp" : 1792506792117,
+    "duration" : 1676,
+    "sequenceNumber" : 14,
     "depth" : 2,
     "evaluatedCommand" : {
       "hideKeyboardCommand" : {
@@ -479,9 +518,9 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1792504645261,
+    "timestamp" : 1792506793794,
     "duration" : 0,
-    "sequenceNumber" : 14,
+    "sequenceNumber" : 15,
     "depth" : 1,
     "evaluatedCommand" : {
       "runFlowCommand" : {
@@ -515,9 +554,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504645262,
-    "duration" : 5125,
-    "sequenceNumber" : 15,
+    "timestamp" : 1792506793795,
+    "duration" : 3519,
+    "sequenceNumber" : 16,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -541,13 +580,13 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504650387,
-    "duration" : 11814,
-    "sequenceNumber" : 16,
+    "timestamp" : 1792506797314,
+    "duration" : 8632,
+    "sequenceNumber" : 17,
     "depth" : 0,
     "evaluatedCommand" : {
       "inputTextCommand" : {
-        "text" : "e2e_and_054064_tablet",
+        "text" : "e2e_and_345646_tablet",
         "optional" : false
       }
     }
@@ -599,9 +638,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504662202,
-    "duration" : 1539,
-    "sequenceNumber" : 17,
+    "timestamp" : 1792506805946,
+    "duration" : 1182,
+    "sequenceNumber" : 18,
     "depth" : 0,
     "evaluatedCommand" : {
       "runFlowCommand" : {
@@ -659,9 +698,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504662203,
-    "duration" : 0,
-    "sequenceNumber" : 18,
+    "timestamp" : 1792506805946,
+    "duration" : 1,
+    "sequenceNumber" : 19,
     "depth" : 1,
     "evaluatedCommand" : {
       "applyConfigurationCommand" : {
@@ -688,9 +727,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504662203,
-    "duration" : 1537,
-    "sequenceNumber" : 19,
+    "timestamp" : 1792506805947,
+    "duration" : 1181,
+    "sequenceNumber" : 20,
     "depth" : 1,
     "evaluatedCommand" : {
       "runFlowCommand" : {
@@ -714,9 +753,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504662203,
-    "duration" : 1534,
-    "sequenceNumber" : 20,
+    "timestamp" : 1792506805947,
+    "duration" : 1180,
+    "sequenceNumber" : 21,
     "depth" : 2,
     "evaluatedCommand" : {
       "hideKeyboardCommand" : {
@@ -743,9 +782,9 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1792504663740,
-    "duration" : 1,
-    "sequenceNumber" : 21,
+    "timestamp" : 1792506807128,
+    "duration" : 0,
+    "sequenceNumber" : 22,
     "depth" : 1,
     "evaluatedCommand" : {
       "runFlowCommand" : {
@@ -779,9 +818,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504663741,
-    "duration" : 3745,
-    "sequenceNumber" : 22,
+    "timestamp" : 1792506807128,
+    "duration" : 4864,
+    "sequenceNumber" : 23,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -805,13 +844,13 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504667486,
-    "duration" : 20594,
-    "sequenceNumber" : 23,
+    "timestamp" : 1792506811992,
+    "duration" : 13472,
+    "sequenceNumber" : 24,
     "depth" : 0,
     "evaluatedCommand" : {
       "inputTextCommand" : {
-        "text" : "support+e2e-and-054064-tablet@katkee.com",
+        "text" : "support+e2e-and-345646-tablet@katkee.com",
         "optional" : false
       }
     }
@@ -863,9 +902,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504688082,
-    "duration" : 1519,
-    "sequenceNumber" : 24,
+    "timestamp" : 1792506825464,
+    "duration" : 1196,
+    "sequenceNumber" : 25,
     "depth" : 0,
     "evaluatedCommand" : {
       "runFlowCommand" : {
@@ -923,9 +962,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504688082,
-    "duration" : 0,
-    "sequenceNumber" : 25,
+    "timestamp" : 1792506825465,
+    "duration" : 1,
+    "sequenceNumber" : 26,
     "depth" : 1,
     "evaluatedCommand" : {
       "applyConfigurationCommand" : {
@@ -952,9 +991,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504688083,
-    "duration" : 1516,
-    "sequenceNumber" : 26,
+    "timestamp" : 1792506825466,
+    "duration" : 1193,
+    "sequenceNumber" : 27,
     "depth" : 1,
     "evaluatedCommand" : {
       "runFlowCommand" : {
@@ -978,9 +1017,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504688083,
-    "duration" : 1515,
-    "sequenceNumber" : 27,
+    "timestamp" : 1792506825467,
+    "duration" : 1191,
+    "sequenceNumber" : 28,
     "depth" : 2,
     "evaluatedCommand" : {
       "hideKeyboardCommand" : {
@@ -1007,9 +1046,9 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1792504689600,
-    "duration" : 1,
-    "sequenceNumber" : 28,
+    "timestamp" : 1792506826660,
+    "duration" : 0,
+    "sequenceNumber" : 29,
     "depth" : 1,
     "evaluatedCommand" : {
       "runFlowCommand" : {
@@ -1043,9 +1082,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504689601,
-    "duration" : 4715,
-    "sequenceNumber" : 29,
+    "timestamp" : 1792506826660,
+    "duration" : 3356,
+    "sequenceNumber" : 30,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -1069,9 +1108,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504694316,
-    "duration" : 4805,
-    "sequenceNumber" : 30,
+    "timestamp" : 1792506830016,
+    "duration" : 2524,
+    "sequenceNumber" : 31,
     "depth" : 0,
     "evaluatedCommand" : {
       "inputTextCommand" : {
@@ -1127,9 +1166,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504699121,
-    "duration" : 2227,
-    "sequenceNumber" : 31,
+    "timestamp" : 1792506832540,
+    "duration" : 1031,
+    "sequenceNumber" : 32,
     "depth" : 0,
     "evaluatedCommand" : {
       "runFlowCommand" : {
@@ -1187,9 +1226,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504699122,
+    "timestamp" : 1792506832541,
     "duration" : 0,
-    "sequenceNumber" : 32,
+    "sequenceNumber" : 33,
     "depth" : 1,
     "evaluatedCommand" : {
       "applyConfigurationCommand" : {
@@ -1216,9 +1255,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504699122,
-    "duration" : 2225,
-    "sequenceNumber" : 33,
+    "timestamp" : 1792506832541,
+    "duration" : 1029,
+    "sequenceNumber" : 34,
     "depth" : 1,
     "evaluatedCommand" : {
       "runFlowCommand" : {
@@ -1242,9 +1281,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504699123,
-    "duration" : 2224,
-    "sequenceNumber" : 34,
+    "timestamp" : 1792506832541,
+    "duration" : 1028,
+    "sequenceNumber" : 35,
     "depth" : 2,
     "evaluatedCommand" : {
       "hideKeyboardCommand" : {
@@ -1271,9 +1310,9 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1792504701347,
+    "timestamp" : 1792506833570,
     "duration" : 1,
-    "sequenceNumber" : 35,
+    "sequenceNumber" : 36,
     "depth" : 1,
     "evaluatedCommand" : {
       "runFlowCommand" : {
@@ -1307,9 +1346,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504701348,
-    "duration" : 7129,
-    "sequenceNumber" : 36,
+    "timestamp" : 1792506833571,
+    "duration" : 4717,
+    "sequenceNumber" : 37,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -1333,13 +1372,13 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504708478,
-    "duration" : 6726,
-    "sequenceNumber" : 37,
+    "timestamp" : 1792506838288,
+    "duration" : 4777,
+    "sequenceNumber" : 38,
     "depth" : 0,
     "evaluatedCommand" : {
       "inputTextCommand" : {
-        "text" : "E2e-6ecc458b800745e2",
+        "text" : "E2e-85646dae4d94a3a0",
         "optional" : false
       }
     }
@@ -1391,9 +1430,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504715204,
-    "duration" : 2537,
-    "sequenceNumber" : 38,
+    "timestamp" : 1792506843066,
+    "duration" : 1379,
+    "sequenceNumber" : 39,
     "depth" : 0,
     "evaluatedCommand" : {
       "runFlowCommand" : {
@@ -1451,9 +1490,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504715205,
+    "timestamp" : 1792506843067,
     "duration" : 0,
-    "sequenceNumber" : 39,
+    "sequenceNumber" : 40,
     "depth" : 1,
     "evaluatedCommand" : {
       "applyConfigurationCommand" : {
@@ -1480,9 +1519,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504715205,
-    "duration" : 2535,
-    "sequenceNumber" : 40,
+    "timestamp" : 1792506843067,
+    "duration" : 1378,
+    "sequenceNumber" : 41,
     "depth" : 1,
     "evaluatedCommand" : {
       "runFlowCommand" : {
@@ -1506,9 +1545,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504715205,
-    "duration" : 2534,
-    "sequenceNumber" : 41,
+    "timestamp" : 1792506843067,
+    "duration" : 1377,
+    "sequenceNumber" : 42,
     "depth" : 2,
     "evaluatedCommand" : {
       "hideKeyboardCommand" : {
@@ -1535,9 +1574,9 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1792504717740,
-    "duration" : 1,
-    "sequenceNumber" : 42,
+    "timestamp" : 1792506844445,
+    "duration" : 0,
+    "sequenceNumber" : 43,
     "depth" : 1,
     "evaluatedCommand" : {
       "runFlowCommand" : {
@@ -1565,9 +1604,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504717741,
-    "duration" : 518,
-    "sequenceNumber" : 43,
+    "timestamp" : 1792506844445,
+    "duration" : 213,
+    "sequenceNumber" : 44,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -1599,9 +1638,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504718260,
-    "duration" : 175,
-    "sequenceNumber" : 44,
+    "timestamp" : 1792506844658,
+    "duration" : 75,
+    "sequenceNumber" : 45,
     "depth" : 0,
     "evaluatedCommand" : {
       "scrollUntilVisible" : {
@@ -1635,9 +1674,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504718435,
-    "duration" : 14935,
-    "sequenceNumber" : 45,
+    "timestamp" : 1792506844733,
+    "duration" : 4757,
+    "sequenceNumber" : 46,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -1667,9 +1706,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504733370,
-    "duration" : 1444,
-    "sequenceNumber" : 46,
+    "timestamp" : 1792506849490,
+    "duration" : 107,
+    "sequenceNumber" : 47,
     "depth" : 0,
     "evaluatedCommand" : {
       "assertConditionCommand" : {
@@ -1693,9 +1732,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504734817,
-    "duration" : 1949,
-    "sequenceNumber" : 47,
+    "timestamp" : 1792506849597,
+    "duration" : 343,
+    "sequenceNumber" : 48,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -1723,9 +1762,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504736767,
-    "duration" : 3515,
-    "sequenceNumber" : 48,
+    "timestamp" : 1792506849940,
+    "duration" : 2908,
+    "sequenceNumber" : 49,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -1754,9 +1793,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504740282,
-    "duration" : 101,
-    "sequenceNumber" : 49,
+    "timestamp" : 1792506852848,
+    "duration" : 589,
+    "sequenceNumber" : 50,
     "depth" : 0,
     "evaluatedCommand" : {
       "assertConditionCommand" : {
@@ -1784,9 +1823,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504740383,
-    "duration" : 1027,
-    "sequenceNumber" : 50,
+    "timestamp" : 1792506853437,
+    "duration" : 1075,
+    "sequenceNumber" : 51,
     "depth" : 0,
     "evaluatedCommand" : {
       "assertConditionCommand" : {
@@ -1815,9 +1854,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504741410,
-    "duration" : 2103,
-    "sequenceNumber" : 51,
+    "timestamp" : 1792506854512,
+    "duration" : 2040,
+    "sequenceNumber" : 52,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -1841,9 +1880,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504743513,
-    "duration" : 223,
-    "sequenceNumber" : 52,
+    "timestamp" : 1792506856552,
+    "duration" : 132,
+    "sequenceNumber" : 53,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -1871,9 +1910,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504743737,
-    "duration" : 1576,
-    "sequenceNumber" : 53,
+    "timestamp" : 1792506856684,
+    "duration" : 1528,
+    "sequenceNumber" : 54,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -1903,9 +1942,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504745313,
-    "duration" : 2169,
-    "sequenceNumber" : 54,
+    "timestamp" : 1792506858212,
+    "duration" : 2404,
+    "sequenceNumber" : 55,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -1931,9 +1970,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504747482,
-    "duration" : 1510,
-    "sequenceNumber" : 55,
+    "timestamp" : 1792506860616,
+    "duration" : 2321,
+    "sequenceNumber" : 56,
     "depth" : 0,
     "evaluatedCommand" : {
       "runScriptCommand" : {
@@ -1953,9 +1992,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504748992,
-    "duration" : 33,
-    "sequenceNumber" : 56,
+    "timestamp" : 1792506862937,
+    "duration" : 91,
+    "sequenceNumber" : 57,
     "depth" : 0,
     "evaluatedCommand" : {
       "stopAppCommand" : {
@@ -1973,9 +2012,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504749026,
-    "duration" : 2881,
-    "sequenceNumber" : 57,
+    "timestamp" : 1792506863029,
+    "duration" : 3116,
+    "sequenceNumber" : 58,
     "depth" : 0,
     "evaluatedCommand" : {
       "launchAppCommand" : {
@@ -1999,9 +2038,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504751907,
-    "duration" : 4932,
-    "sequenceNumber" : 58,
+    "timestamp" : 1792506866147,
+    "duration" : 5227,
+    "sequenceNumber" : 59,
     "depth" : 0,
     "evaluatedCommand" : {
       "assertConditionCommand" : {
@@ -2031,9 +2070,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504756839,
-    "duration" : 6186,
-    "sequenceNumber" : 59,
+    "timestamp" : 1792506871375,
+    "duration" : 5842,
+    "sequenceNumber" : 60,
     "depth" : 0,
     "evaluatedCommand" : {
       "assertConditionCommand" : {
@@ -2063,9 +2102,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504763026,
-    "duration" : 2141,
-    "sequenceNumber" : 60,
+    "timestamp" : 1792506877217,
+    "duration" : 2328,
+    "sequenceNumber" : 61,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2089,9 +2128,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504765167,
-    "duration" : 1484,
-    "sequenceNumber" : 61,
+    "timestamp" : 1792506879545,
+    "duration" : 1085,
+    "sequenceNumber" : 62,
     "depth" : 0,
     "evaluatedCommand" : {
       "waitForAnimationToEndCommand" : {
@@ -2109,9 +2148,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504766651,
-    "duration" : 229,
-    "sequenceNumber" : 62,
+    "timestamp" : 1792506880630,
+    "duration" : 173,
+    "sequenceNumber" : 63,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -2139,9 +2178,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504766881,
-    "duration" : 3530,
-    "sequenceNumber" : 63,
+    "timestamp" : 1792506880803,
+    "duration" : 2792,
+    "sequenceNumber" : 64,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2165,9 +2204,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504770411,
-    "duration" : 1268,
-    "sequenceNumber" : 64,
+    "timestamp" : 1792506883595,
+    "duration" : 755,
+    "sequenceNumber" : 65,
     "depth" : 0,
     "evaluatedCommand" : {
       "waitForAnimationToEndCommand" : {
@@ -2185,9 +2224,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504771679,
-    "duration" : 203,
-    "sequenceNumber" : 65,
+    "timestamp" : 1792506884350,
+    "duration" : 532,
+    "sequenceNumber" : 66,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -2215,9 +2254,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504771882,
-    "duration" : 2500,
-    "sequenceNumber" : 66,
+    "timestamp" : 1792506884883,
+    "duration" : 2678,
+    "sequenceNumber" : 67,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2241,9 +2280,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504774383,
-    "duration" : 826,
-    "sequenceNumber" : 67,
+    "timestamp" : 1792506887561,
+    "duration" : 537,
+    "sequenceNumber" : 68,
     "depth" : 0,
     "evaluatedCommand" : {
       "waitForAnimationToEndCommand" : {
@@ -2261,9 +2300,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504775210,
-    "duration" : 193,
-    "sequenceNumber" : 68,
+    "timestamp" : 1792506888098,
+    "duration" : 140,
+    "sequenceNumber" : 69,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -2291,9 +2330,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504775403,
-    "duration" : 2527,
-    "sequenceNumber" : 69,
+    "timestamp" : 1792506888239,
+    "duration" : 2509,
+    "sequenceNumber" : 70,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2317,9 +2356,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504777930,
-    "duration" : 833,
-    "sequenceNumber" : 70,
+    "timestamp" : 1792506890748,
+    "duration" : 507,
+    "sequenceNumber" : 71,
     "depth" : 0,
     "evaluatedCommand" : {
       "waitForAnimationToEndCommand" : {
@@ -2337,9 +2376,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504778763,
-    "duration" : 204,
-    "sequenceNumber" : 71,
+    "timestamp" : 1792506891256,
+    "duration" : 149,
+    "sequenceNumber" : 72,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -2367,9 +2406,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504778967,
-    "duration" : 2912,
-    "sequenceNumber" : 72,
+    "timestamp" : 1792506891406,
+    "duration" : 2072,
+    "sequenceNumber" : 73,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2399,9 +2438,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504781879,
-    "duration" : 2904,
-    "sequenceNumber" : 73,
+    "timestamp" : 1792506893478,
+    "duration" : 2962,
+    "sequenceNumber" : 74,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2425,9 +2464,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504784784,
-    "duration" : 1352,
-    "sequenceNumber" : 74,
+    "timestamp" : 1792506896440,
+    "duration" : 934,
+    "sequenceNumber" : 75,
     "depth" : 0,
     "evaluatedCommand" : {
       "waitForAnimationToEndCommand" : {
@@ -2445,9 +2484,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504786136,
-    "duration" : 189,
-    "sequenceNumber" : 75,
+    "timestamp" : 1792506897375,
+    "duration" : 190,
+    "sequenceNumber" : 76,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -2475,9 +2514,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504786325,
-    "duration" : 3177,
-    "sequenceNumber" : 76,
+    "timestamp" : 1792506897566,
+    "duration" : 3047,
+    "sequenceNumber" : 77,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2501,9 +2540,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504789502,
-    "duration" : 2682,
-    "sequenceNumber" : 77,
+    "timestamp" : 1792506900614,
+    "duration" : 2196,
+    "sequenceNumber" : 78,
     "depth" : 0,
     "evaluatedCommand" : {
       "waitForAnimationToEndCommand" : {
@@ -2521,9 +2560,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504792184,
-    "duration" : 189,
-    "sequenceNumber" : 78,
+    "timestamp" : 1792506902810,
+    "duration" : 171,
+    "sequenceNumber" : 79,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -2555,9 +2594,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504792373,
-    "duration" : 73,
-    "sequenceNumber" : 79,
+    "timestamp" : 1792506902981,
+    "duration" : 106,
+    "sequenceNumber" : 80,
     "depth" : 0,
     "evaluatedCommand" : {
       "scrollUntilVisible" : {
@@ -2585,9 +2624,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504792447,
-    "duration" : 227,
-    "sequenceNumber" : 80,
+    "timestamp" : 1792506903087,
+    "duration" : 166,
+    "sequenceNumber" : 81,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -2615,9 +2654,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504792674,
-    "duration" : 3548,
-    "sequenceNumber" : 81,
+    "timestamp" : 1792506903254,
+    "duration" : 4293,
+    "sequenceNumber" : 82,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2641,9 +2680,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504796222,
-    "duration" : 208,
-    "sequenceNumber" : 82,
+    "timestamp" : 1792506907547,
+    "duration" : 212,
+    "sequenceNumber" : 83,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -2671,9 +2710,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504796431,
-    "duration" : 2896,
-    "sequenceNumber" : 83,
+    "timestamp" : 1792506907760,
+    "duration" : 2886,
+    "sequenceNumber" : 84,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2703,9 +2742,9 @@
   },
   "metadata" : {
     "status" : "WARNED",
-    "timestamp" : 1792504799327,
-    "duration" : 7209,
-    "sequenceNumber" : 84,
+    "timestamp" : 1792506910647,
+    "duration" : 7063,
+    "sequenceNumber" : 85,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2721,10 +2760,10 @@
     },
     "artifacts" : [ {
       "type" : "SCREEN_HIERARCHY",
-      "path" : "screen-hierarchy/step-085-tapOnElement-OK.json"
+      "path" : "screen-hierarchy/step-086-tapOnElement-OK.json"
     }, {
       "type" : "SCREENSHOT",
-      "path" : "screenshots/step-085-tapOnElement-OK.png"
+      "path" : "screenshots/step-086-tapOnElement-OK.png"
     } ]
   }
 }, {
@@ -2736,9 +2775,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504806876,
-    "duration" : 79,
-    "sequenceNumber" : 85,
+    "timestamp" : 1792506917905,
+    "duration" : 83,
+    "sequenceNumber" : 86,
     "depth" : 0,
     "evaluatedCommand" : {
       "stopAppCommand" : {
@@ -2756,9 +2795,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504806955,
-    "duration" : 1849,
-    "sequenceNumber" : 86,
+    "timestamp" : 1792506917988,
+    "duration" : 2600,
+    "sequenceNumber" : 87,
     "depth" : 0,
     "evaluatedCommand" : {
       "launchAppCommand" : {
@@ -2776,9 +2815,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504808804,
-    "duration" : 7786,
-    "sequenceNumber" : 87,
+    "timestamp" : 1792506920588,
+    "duration" : 3902,
+    "sequenceNumber" : 88,
     "depth" : 0,
     "evaluatedCommand" : {
       "waitForAnimationToEndCommand" : {
@@ -2796,9 +2835,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504816591,
-    "duration" : 234,
-    "sequenceNumber" : 88,
+    "timestamp" : 1792506924491,
+    "duration" : 475,
+    "sequenceNumber" : 89,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -2826,9 +2865,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504816825,
-    "duration" : 2702,
-    "sequenceNumber" : 89,
+    "timestamp" : 1792506924967,
+    "duration" : 3381,
+    "sequenceNumber" : 90,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2852,9 +2891,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504819527,
-    "duration" : 1306,
-    "sequenceNumber" : 90,
+    "timestamp" : 1792506928348,
+    "duration" : 943,
+    "sequenceNumber" : 91,
     "depth" : 0,
     "evaluatedCommand" : {
       "waitForAnimationToEndCommand" : {
@@ -2872,9 +2911,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504820834,
-    "duration" : 238,
-    "sequenceNumber" : 91,
+    "timestamp" : 1792506929292,
+    "duration" : 127,
+    "sequenceNumber" : 92,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -2902,9 +2941,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504821072,
-    "duration" : 2500,
-    "sequenceNumber" : 92,
+    "timestamp" : 1792506929419,
+    "duration" : 2756,
+    "sequenceNumber" : 93,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -2928,9 +2967,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504823572,
-    "duration" : 812,
-    "sequenceNumber" : 93,
+    "timestamp" : 1792506932175,
+    "duration" : 762,
+    "sequenceNumber" : 94,
     "depth" : 0,
     "evaluatedCommand" : {
       "waitForAnimationToEndCommand" : {
@@ -2948,9 +2987,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504824384,
-    "duration" : 195,
-    "sequenceNumber" : 94,
+    "timestamp" : 1792506932937,
+    "duration" : 123,
+    "sequenceNumber" : 95,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {
@@ -2978,9 +3017,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504824579,
-    "duration" : 2481,
-    "sequenceNumber" : 95,
+    "timestamp" : 1792506933061,
+    "duration" : 2770,
+    "sequenceNumber" : 96,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -3004,9 +3043,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504827060,
-    "duration" : 792,
-    "sequenceNumber" : 96,
+    "timestamp" : 1792506935831,
+    "duration" : 615,
+    "sequenceNumber" : 97,
     "depth" : 0,
     "evaluatedCommand" : {
       "waitForAnimationToEndCommand" : {
@@ -3024,9 +3063,9 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1792504827852,
-    "duration" : 578,
-    "sequenceNumber" : 97,
+    "timestamp" : 1792506936446,
+    "duration" : 454,
+    "sequenceNumber" : 98,
     "depth" : 0,
     "evaluatedCommand" : {
       "takeScreenshotCommand" : {

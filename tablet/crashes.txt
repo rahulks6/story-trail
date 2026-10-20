@@ -1,98 +1,97 @@
-10-20 13:56:29.790 D/AndroidRuntime( 2888): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-20 13:56:29.791 D/PackageManager(  554): Clear ephemeral installer activity
-10-20 13:56:29.797 I/AndroidRuntime( 2888): Using default boot image
-10-20 13:56:29.798 I/AndroidRuntime( 2888): Leaving lock profiling enabled
-10-20 13:56:29.800 I/app_process( 2888): Core platform API reporting enabled, enforcing=false
-10-20 13:56:29.802 I/app_process( 2888): Using CollectorTypeCMC GC.
-10-20 13:56:29.986 I/init    (    0): starting service 'idmap2d'...
-10-20 13:56:29.844 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
-10-20 13:56:29.844 D/PackageManager(  554): Clear ephemeral installer activity
-10-20 13:56:29.844 D/CompatChangeReporter( 1086): Compat change id reported: 311402873; UID 1000; state: ENABLED
-10-20 13:56:29.844 D/CompatChangeReporter( 1086): Compat change id reported: 323349338; UID 1000; state: ENABLED
-10-20 13:56:29.845 I/AppWidgetServiceImpl(  554): Received broadcast: android.intent.action.PACKAGE_CHANGED on user 0
-10-20 13:56:29.850 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
-10-20 13:56:29.850 D/PackageManager(  554): Clear ephemeral installer activity
-10-20 13:56:29.851 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
-10-20 13:56:29.851 D/PackageManager(  554): Clear ephemeral installer activity
-10-20 13:56:29.852 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
-10-20 13:56:29.852 D/PackageManager(  554): Clear ephemeral installer activity
-10-20 13:56:29.853 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
-10-20 13:56:29.853 D/PackageManager(  554): Clear ephemeral installer activity
-10-20 13:56:29.853 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
-10-20 13:56:29.853 D/PackageManager(  554): Clear ephemeral installer activity
-10-20 13:56:29.853 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
-10-20 13:56:29.853 D/PackageManager(  554): Clear ephemeral installer activity
-10-20 13:56:29.854 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
-10-20 13:56:29.854 D/PackageManager(  554): Clear ephemeral installer activity
-10-20 13:56:29.854 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
-10-20 13:56:29.854 D/PackageManager(  554): Clear ephemeral installer activity
-10-20 13:56:29.854 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
-10-20 13:56:29.854 D/PackageManager(  554): Clear ephemeral installer activity
-10-20 13:56:29.855 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
-10-20 13:56:29.855 D/PackageManager(  554): Clear ephemeral installer activity
-10-20 13:56:29.855 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
-10-20 13:56:29.855 D/PackageManager(  554): Clear ephemeral installer activity
+10-20 14:32:38.387 D/AndroidRuntime( 3888): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-20 14:32:38.390 I/AndroidRuntime( 3888): Using default boot image
+10-20 14:32:38.390 I/AndroidRuntime( 3888): Leaving lock profiling enabled
+10-20 14:32:38.390 I/AiAiEcho( 1540): AppFetcherImplV2 updateApps package:[dev.mobile.maestro.test], userId:[0], reason:[package is added.].
+10-20 14:32:38.396 I/app_process( 3888): Core platform API reporting enabled, enforcing=false
+10-20 14:32:38.396 I/app_process( 3888): Using CollectorTypeCMC GC.
+10-20 14:32:38.397 I/Icing   ( 1308): Indexing com.google.android.gms-internal.3p:MobileApplication from com.google.android.gms
+10-20 14:32:38.397 D/ShortcutService(  556): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=null
+10-20 14:32:38.402 I/resolv  (  358): GetAddrInfoHandler::run: {100 786532 100 983140 10143 0}
+10-20 14:32:38.403 I/resolv  (  358): res_nmkquery: (QUERY, IN, AAAA)
+10-20 14:32:38.403 I/resolv  (  358): resolv_cache_lookup: FOUND IN CACHE entry=0x73d6c98a5d10
+10-20 14:32:38.403 I/resolv  (  358): doQuery: rcode=0, ancount=8, return value=264
+10-20 14:32:38.403 I/resolv  (  358): res_nmkquery: (QUERY, IN, A)
+10-20 14:32:38.403 I/resolv  (  358): resolv_cache_lookup: FOUND IN CACHE entry=0x73d7098a3690
+10-20 14:32:38.403 I/resolv  (  358): doQuery: rcode=0, ancount=8, return value=168
+10-20 14:32:38.417 I/Icing   ( 1308): Indexing done com.google.android.gms-internal.3p:MobileApplication
+10-20 14:32:38.424 I/AppWidgetServiceImpl(  556): getInstalledProvidersForProfiles() 0
+10-20 14:32:38.427 W/ParceledListSlice(  556): Element #25 is 19828 bytes.
+10-20 14:32:38.428 W/ParceledListSlice(  556): Element #26 is 19864 bytes.
+10-20 14:32:38.431 W/ParceledListSlice(  556): Element #27 is 19708 bytes.
+10-20 14:32:38.432 W/ParceledListSlice(  556): Element #28 is 19616 bytes.
+10-20 14:32:38.432 W/ParceledListSlice(  556): Element #29 is 19728 bytes.
+10-20 14:32:38.432 W/PackageManager( 1540): Failure retrieving text 0x7f130786 in package com.android.systemui
+10-20 14:32:38.432 W/PackageManager( 1540): android.content.res.Resources$NotFoundException: String resource ID #0x7f130786
+10-20 14:32:38.432 W/PackageManager( 1540): 	at android.content.res.Resources.getText(Resources.java:466)
+10-20 14:32:38.432 W/PackageManager( 1540): 	at android.app.ApplicationPackageManager.getText(ApplicationPackageManager.java:2405)
+10-20 14:32:38.432 W/PackageManager( 1540): 	at android.appwidget.AppWidgetProviderInfo.loadDescription(AppWidgetProviderInfo.java:484)
+10-20 14:32:38.432 W/PackageManager( 1540): 	at kml.a(PG:341)
+10-20 14:32:38.432 W/PackageManager( 1540): 	at kmg.b(PG:39)
+10-20 14:32:38.432 W/PackageManager( 1540): 	at aaer.g(PG:13)
+10-20 14:32:38.432 W/PackageManager( 1540): 	at kotlinx.coroutines.DispatchedTask.run(PG:114)
+10-20 14:32:38.432 W/PackageManager( 1540): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
+10-20 14:32:38.432 W/PackageManager( 1540): 	at wqm.a(PG:3)
 --
-10-20 13:56:29.983 D/AndroidRuntime( 2888): Calling main entry com.android.commands.am.Am
-10-20 13:56:29.984 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
-10-20 13:56:29.985 D/PackageManager(  554): Clear ephemeral installer activity
-10-20 13:56:29.988 W/Role    (  554): Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58
-10-20 13:56:29.991 D/UiAutomationConnection( 2888): Created on user UserHandle{0}
-10-20 13:56:29.996 E/AppOps  (  554): attributionTag VCN not declared in manifest of android
-10-20 13:56:29.996 D/CellBroadcastConfigTracker-0( 1081): GsmConfiguringState message:2
-10-20 13:56:29.996 D/CellBroadcastConfigTracker-0( 1081): GsmConfiguringState handle EVENT_CONFIGURATION_DONE with request:Request[mCbRangesRequest3gpp = [CellBroadcastIdRange[4352, 4354, 1, true], CellBroadcastIdRange[4355, 4355, 1, false], CellBroadcastIdRange[4356, 4356, 1, true], CellBroadcastIdRange[4370, 4379, 1, true], CellBroadcastIdRange[4380, 4382, 1, false], CellBroadcastIdRange[4383, 4392, 1, true], CellBroadcastIdRange[4393, 4395, 1, false], CellBroadcastIdRange[4396, 4397, 1, true], CellBroadcastIdRange[4398, 4399, 1, false], CellBroadcastIdRange[4400, 4400, 1, true]], mCbRangesRequest3gpp2 = [CellBroadcastIdRange[4096, 4099, 2, true], CellBroadcastIdRange[4100, 4100, 2, false]]]
-10-20 13:56:29.996 D/CellBroadcastConfigTracker-0( 1081): Failed to set gsm config
-10-20 13:56:29.997 E/CellBroadcastConfigService( 1620): fails to setCellBroadcastRanges, result = 2
-10-20 13:56:30.000 I/VcnManagementService(  554): new snapshot: TelephonySubscriptionSnapshot{ mActiveDataSubId=1, mSubIdToInfoMap={}, mSubIdToCarrierConfigMap={1=PersistableBundle[{carrier_config_applied_bool=true, carrier_config_version_string=}]}, mPrivilegedPackages={} }
-10-20 13:56:30.001 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
-10-20 13:56:30.001 D/PackageManager(  554): Clear ephemeral installer activity
-10-20 13:56:30.005 I/NearbySharing( 1189): NearbySharingService created [CONTEXT service_id=194 ]
-10-20 13:56:30.012 I/PermissionControllerServiceImpl(  916): Updating user sensitive for uid 1000
-10-20 13:56:30.013 I/SafetyLabelChangedBroadcastReceiver(  916): received broadcast packageName: dev.mobile.maestro.test, current user: UserHandle{0}, packageChangeEvent: NEW_INSTALL, intent user: UserHandle{0}
-10-20 13:56:30.022 D/ControlsListingControllerImpl(  911): ServiceConfig reloaded, count: 0
-10-20 13:56:30.029 I/SdkSandboxManager(  554): No SDKs used. Skipping SDK data reconcilation for CallingInfo{mUid=10211, mPackageName='dev.mobile.maestro.test, mAppProcessToken='null'}
-10-20 13:56:30.043 D/ActivityTaskManager(  554): Remove task fragment: deleteTaskFragment
-10-20 13:56:30.046 W/Looper  (  554): Slow delivery took 200ms main h=android.os.Handler c=com.android.internal.content.PackageMonitor$$ExternalSyntheticLambda0@6d9e633 m=0
-10-20 13:56:30.106 I/A       ( 1628): (REDACTED) Loaded SODA %s native library: %s
-10-20 13:56:30.112 I/native  ( 1628): I0000 00:00:1792504590.111939    2036 enrollment_manager_impl.cc:444] UpdateConfigRequest with timeout: 0
-10-20 13:56:30.112 I/AiAiEcho( 1487): Settings changed for uri: content://settings/secure/nearby_sharing_component
-10-20 13:56:30.113 W/Looper  (  911): Slow delivery took 68ms wmshell.main h=android.os.Handler c=null m=19
-10-20 13:56:30.113 I/AiAiEcho( 1487): Predicting[0]:  [CONTEXT sampling_count=5 ]
-10-20 13:56:30.113 I/AiAiEcho( 1487): EchoTargets: 
-10-20 13:56:30.113 I/AiAiEcho( 1487): Filtered by AiAi flag check: 
-10-20 13:56:30.113 I/AiAiEcho( 1487): [CONTEXT ratelimit_period="10 SECONDS" ]
-10-20 13:56:30.113 I/AiAiEcho( 1487): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
-10-20 13:56:30.114 I/AiAiEcho( 1487): #remoteViewsTwiddler: feature disabled.
-10-20 13:56:30.114 I/AiAiEcho( 1487): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-20 14:32:38.522 D/AndroidRuntime( 3888): Calling main entry com.android.commands.am.Am
+10-20 14:32:38.527 D/UiAutomationConnection( 3888): Created on user UserHandle{0}
+10-20 14:32:38.530 I/ActivityManager(  556): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+10-20 14:32:38.531 E/SmsApplication( 1048): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
+10-20 14:32:38.534 W/AppOpService(  556): Ignored setUidMode call for runtime permission app op: uid = 10138, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+10-20 14:32:38.538 E/CellBroadcastUtils( 1048): getDefaultCellBroadcastReceiverPackageName: no package found
+10-20 14:32:38.539 W/AppOpService(  556): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_SMS, mode = allow, callingUid = 1001, oldMode = allow
+10-20 14:32:38.539 I/.gms.persistent( 1175): Background concurrent mark compact GC freed 15MB AllocSpace bytes, 22(11MB) LOS objects, 50% free, 15MB/30MB, paused 33.295ms,19.369ms total 595.622ms
+10-20 14:32:38.540 I/Fitness ( 1175): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+10-20 14:32:38.540 W/AppOpService(  556): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_SMS, mode = allow, callingUid = 1001, oldMode = allow
+10-20 14:32:38.540 W/AppOpService(  556): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_WAP_PUSH, mode = allow, callingUid = 1001, oldMode = allow
+10-20 14:32:38.541 W/AppOpService(  556): Ignored setUidMode call for runtime permission app op: uid = 1001, code = SEND_SMS, mode = allow, callingUid = 1001, oldMode = allow
+10-20 14:32:38.541 W/AppOpService(  556): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+10-20 14:32:38.543 V/GrammaticalInflectionUtils(  556): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@9500a5b, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+10-20 14:32:38.553 I/AppsFilter(  556): interaction: PackageSetting{322d258 com.android.microdroid.empty_payload/10198} -> PackageSetting{cfc7f56 dev.mobile.maestro/10210} BLOCKED
+10-20 14:32:38.554 D/ImsResolver( 1048): maybeAddedImsService, packageName: dev.mobile.maestro.test
+10-20 14:32:38.557 W/.gms.persistent( 1175): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/Velvet/Velvet.apk' with 1 weak references
+10-20 14:32:38.560 I/gle.android.gms( 1308): Background concurrent mark compact GC freed 9570KB AllocSpace bytes, 83(3256KB) LOS objects, 49% free, 12MB/25MB, paused 267us,637us total 192.729ms
+10-20 14:32:38.561 D/TrafficStats( 1308): tagSocket(185) with statsTag=0x30000408, statsUid=-1
+10-20 14:32:38.565 D/Zygote  (  364): Forked child process 3903
+10-20 14:32:38.566 W/.gms.persistent( 1175): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/PartnerSetupPrebuilt/PartnerSetupPrebuilt.apk' with 1 weak references
+10-20 14:32:38.573 I/GsaVoiceInteractionSrv( 1585): (REDACTED) O received %s
+10-20 14:32:38.574 I/AppWidgetServiceImpl(  556): Received broadcast: android.intent.action.PACKAGE_UNSTOPPED on user 0
+10-20 14:32:38.574 I/AppWidgetServiceImpl(  556): Updating package stopped masked state for uid 10210 package dev.mobile.maestro isStopped false
+10-20 14:32:38.575 I/GsaVoiceInteractionSrv( 1585): (REDACTED) O received %s
+10-20 14:32:38.575 D/ControlsListingControllerImpl(  906): ServiceConfig reloaded, count: 0
+10-20 14:32:38.581 I/ActivityManager(  556): Start proc 3903:dev.mobile.maestro/u0a210 for added application dev.mobile.maestro
+10-20 14:32:38.581 I/netd    (  358): tetherGetStats() -> {[]} <0.25ms>
+10-20 14:32:38.591 W/SearchServiceCore( 1671): Abort, client detached.
+10-20 14:32:38.591 W/SearchServiceCore( 1671): Abort, client detached.
+10-20 14:32:38.591 W/SearchServiceCore( 1671): Abort, client detached.
 --
-10-20 14:00:28.567 I/AndroidRuntime( 2888): VM exiting with result code 0.
-10-20 14:00:28.578 I/netd    (  355): tetherGetStats() -> {[]} <2.99ms>
-10-20 14:00:28.711 I/servicemanager(    0): Caller(pid=554,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
-10-20 14:00:28.725 I/init    (    0): starting service 'artd'...
-10-20 14:00:28.581 V/ActivityManager(  554): Got obituary of 2917:dev.mobile.maestro
-10-20 14:00:28.581 I/adbd    (  435): Remote process closed the socket (on MSG_PEEK)
-10-20 14:00:28.582 I/Zygote  (  356): Process 2917 exited due to signal 9 (Killed)
-10-20 14:00:28.582 W/ActivityManager(  554): pid 554 system sent binder code 1 with flags 1 to frozen apps and got error -32
-10-20 14:00:28.583 I/libprocessgroup(  554): Removed cgroup /sys/fs/cgroup/uid_10210/pid_2917
-10-20 14:00:28.586 I/AiAiEcho( 1487): Settings changed for uri: content://settings/secure/accessibility_enabled
-10-20 14:00:28.586 I/AiAiEcho( 1487): Predicting[0]:  [CONTEXT sampling_count=5 ]
-10-20 14:00:28.587 I/AiAiEcho( 1487): EchoTargets: 
-10-20 14:00:28.587 I/AiAiEcho( 1487): Filtered by AiAi flag check: 
-10-20 14:00:28.587 I/AiAiEcho( 1487): [CONTEXT ratelimit_period="10 SECONDS" ]
-10-20 14:00:28.587 I/AiAiEcho( 1487): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
-10-20 14:00:28.588 I/AiAiEcho( 1487): #remoteViewsTwiddler: feature disabled.
-10-20 14:00:28.589 I/AiAiEcho( 1487): Predicting[0]:  [CONTEXT sampling_count=5 ]
-10-20 14:00:28.589 I/AiAiEcho( 1487): EchoTargets: 
-10-20 14:00:28.589 I/AiAiEcho( 1487): Filtered by AiAi flag check: 
-10-20 14:00:28.589 I/AiAiEcho( 1487): [CONTEXT ratelimit_period="10 SECONDS" ]
-10-20 14:00:28.589 W/MagnificationConnectionManager(  554): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-20 14:00:28.590 I/AiAiEcho( 1487): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
-10-20 14:00:28.591 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-10-20 14:00:28.591 I/AiAiEcho( 1487): #remoteViewsTwiddler: feature disabled.
-10-20 14:00:28.591 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-10-20 14:00:28.595 I/AiAiEcho( 1487): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
-10-20 14:00:28.596 I/AiAiEcho( 1487): Settings changed for uri: content://settings/secure/accessibility_enabled
-10-20 14:00:28.596 W/MagnificationConnectionManager(  554): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-20 14:00:28.597 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-10-20 14:00:28.597 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-10-20 14:00:28.597 I/AiAiEcho( 1487): #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+10-20 14:35:36.799 I/AndroidRuntime( 3888): VM exiting with result code 0.
+10-20 14:35:36.949 I/servicemanager(    0): Caller(pid=556,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+10-20 14:35:36.961 I/init    (    0): starting service 'artd'...
+10-20 14:35:36.963 I/binder  (    0): undelivered transaction 470687, process died.
+10-20 14:35:36.808 I/netd    (  358): tetherGetStats() -> {[]} <1.29ms>
+10-20 14:35:36.808 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-20 14:35:36.810 W/MagnificationConnectionManager(  556): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-20 14:35:36.810 V/UiAutomationManager(  556): UiAutomation service owner died
+10-20 14:35:36.810 I/AiAiEcho( 1540): Settings changed for uri: content://settings/secure/accessibility_enabled
+10-20 14:35:36.811 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-20 14:35:36.811 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-20 14:35:36.811 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-20 14:35:36.811 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-20 14:35:36.811 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-20 14:35:36.811 I/AiAiEcho( 1540): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-20 14:35:36.811 I/AiAiEcho( 1540): EchoTargets: 
+10-20 14:35:36.811 I/AiAiEcho( 1540): Filtered by AiAi flag check: 
+10-20 14:35:36.811 I/AiAiEcho( 1540): [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 14:35:36.811 I/AiAiEcho( 1540): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 14:35:36.811 I/AiAiEcho( 1540): #remoteViewsTwiddler: feature disabled.
+10-20 14:35:36.811 I/AiAiEcho( 1540): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-20 14:35:36.811 I/AiAiEcho( 1540): EchoTargets: 
+10-20 14:35:36.811 I/AiAiEcho( 1540): Filtered by AiAi flag check: 
+10-20 14:35:36.811 I/AiAiEcho( 1540): [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 14:35:36.811 I/AiAiEcho( 1540): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 14:35:36.811 I/AiAiEcho( 1540): #remoteViewsTwiddler: feature disabled.
+10-20 14:35:36.812 I/AiAiEcho( 1540): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+10-20 14:35:36.812 I/AiAiEcho( 1540): #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+10-20 14:35:36.812 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-20 14:35:36.812 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-20 14:35:36.812 W/IPCThreadState(  556): Sending oneway calls to frozen process.
