@@ -25,6 +25,7 @@ import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-n
 import { useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
 import type { CreateStackParamList, RootStackParamList } from "../../navigation/types";
 import { mediaColors as colors, radii, spacing, mediaTypography as typography, ICONS } from "../../theme";
+import { useFestival } from "../../hooks/useFestival";
 import { useAuth } from "../../state/AuthContext";
 import {enqueueUpload} from '../../state/uploadQueue';
 import { track } from "../../analytics/analytics";
@@ -335,6 +336,10 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
     setTextModalVisible(false);
   };
 
+  // Today's festival: a greeting in the sticker sheet, and public Stories can join its ring.
+  const festival = useFestival().current?.festival ?? null;
+  const [joinFestival, setJoinFestival] = useState(true);
+
   const addSticker = useCallback((payload: StickerAddPayload) => {
     const overlay = {
       id: `${payload.type}-${Date.now()}`,
@@ -606,6 +611,8 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           audioMuted: draft.audioMuted,
           crop: draft.crop,
           ...(music ? { music: { trackId: music.track.id, startMs: music.startMs, durationMs: music.durationMs } } : {}),
+          // Public festival Stories join the festival's ring on Home.
+          ...(festival && joinFestival && target === "public" ? { festival: festival.slug } : {}),
         },
         boomerang ? "boomerang" : undefined,
       );
@@ -895,6 +902,21 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             </View>
           ) : null}
 
+          {festival && storyAudience === "public" ? (
+            <Pressable
+              style={[styles.festivalToggle, joinFestival && styles.festivalToggleOn]}
+              onPress={() => setJoinFestival((v) => !v)}
+              accessibilityRole="switch"
+              accessibilityState={{ checked: joinFestival }}
+              accessibilityLabel={`Add to ${festival.name} Stories`}
+            >
+              <Text style={styles.festivalToggleLabel} numberOfLines={1}>
+                {festival.emoji} Add to {festival.name} Stories
+              </Text>
+              <Icon name={joinFestival ? ICONS.check : ICONS.add} size={16} color={colors.textPrimary} />
+            </Pressable>
+          ) : null}
+
           {/* Like Instagram: one tap shares to Your story or to Close Friends. */}
           <View style={styles.shareRow}>
             <Pressable
@@ -967,6 +989,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           setEditingStickerOverlayId(null);
         }}
         onAdd={addSticker}
+        festival={festival}
         editingOverlay={editingStickerOverlay}
         onEditDone={updateOverlayContent}
       />
@@ -1057,6 +1080,9 @@ const styles = StyleSheet.create({
   visibility: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: spacing.sm, paddingVertical: 4, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.35)" },
   visibilityLabel: { color: colors.textPrimary, fontSize: 13, fontWeight: "600" },
   shareRow: { flexDirection: "row", gap: spacing.sm },
+  festivalToggle: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.sm, minHeight: 40, paddingHorizontal: spacing.md, borderRadius: radii.pill, borderWidth: 1, borderColor: "rgba(255,255,255,0.35)" },
+  festivalToggleOn: { backgroundColor: "rgba(255,255,255,0.14)", borderColor: colors.textPrimary },
+  festivalToggleLabel: { ...typography.body, color: colors.textPrimary, fontWeight: "600", flexShrink: 1 },
   shareButton: { flex: 1, minHeight: 48, paddingVertical: spacing.sm, paddingHorizontal: spacing.sm, borderRadius: radii.pill, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm },
   shareYourStory: { backgroundColor: colors.textPrimary },
   shareYourStoryLabel: { color: colors.background, fontWeight: "700", fontSize: 15, flexShrink: 1 },

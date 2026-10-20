@@ -189,6 +189,11 @@ export const config = {
     // Raw events and per-person activity days are deleted after this; daily totals are kept.
     rawRetentionDays: optionalInt("ANALYTICS_RAW_RETENTION_DAYS", 90),
   },
+  returnReasons: {
+    // Milestone, festival, streak and nudge pushes (src/modules/reminders/return-reasons.ts).
+    enabled: process.env.RETURN_REASONS_ENABLED !== "false",
+    everyMinutes: optionalInt("RETURN_REASONS_EVERY_MINUTES", 5),
+  },
   reach: {
     // How far public Stories reach beyond followers (src/modules/recommendations/reach.ts).
     // JSON overrides of the tuning constants, e.g. {"caps":[50,300,2000],"patienceMinutes":120}.

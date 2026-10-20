@@ -16,6 +16,7 @@ import {getRankedHomeFeed,type RankedFeedEntry} from '../../api/stories';
 import {EmptyState} from '../../components/EmptyState';
 import {StoryFeed} from '../story/StoryFeed';
 import {getAdPlacements,type SponsoredPlacement} from '../../api/ads';
+import {useFestival} from '../../hooks/useFestival';
 import type {MainTabParamList,RootStackParamList} from '../../navigation/types';
 /** Away from Home (another tab, a screen on top, the app in the background) this long: the feed is reloaded on return. */
 export const HOME_STALE_MS=3*60*1000;
@@ -29,9 +30,15 @@ export function HomeScreen():React.JSX.Element {
   <Icon name={ICONS.activity} size={26} color={colors.textPrimary}/>{unreadCount>0?<View style={styles.activityDot}/>:null}
  </Pressable>;
  const uploads=<UploadStatusPill top={insets.top+spacing.xl+spacing.sm}/>;
+ // On a festival day: its Stories from everyone (top left, opposite Activity), or an invitation to post one.
+ const {current:festivalInfo,reload:reloadFestival}=useFestival();const festival=festivalInfo?.festival??null;const festivalCreators=festivalInfo?.creators??[];
+ const openFestival=useCallback(()=>{if(festivalCreators.length)navigation.navigate('StoryViewer',{creators:festivalCreators,startIndex:0});else navigation.navigate('Create');},[festivalCreators,navigation]);
+ const festivalButton=festival?<Pressable onPress={openFestival} hitSlop={8} style={[styles.festival,{top:insets.top+spacing.lg}]} accessibilityRole="button" accessibilityLabel={festivalCreators.length?`${festival.name} Stories, ${festivalInfo?.storyCount??0}`:`Post your ${festival.name} Story`}>
+  <Text style={styles.festivalEmoji}>{festival.emoji}</Text><Text style={styles.festivalLabel} numberOfLines={1}>{festival.name}</Text>{festivalCreators.length?<View style={styles.festivalCount}><Text style={styles.festivalCountLabel}>{festivalInfo!.storyCount>99?'99+':festivalInfo!.storyCount}</Text></View>:null}
+ </Pressable>:null;
  const [feed,setFeed]=useState<RankedFeedEntry[]|null>(null),[retry,setRetry]=useState(0),[error,setError]=useState(''),[cursor,setCursor]=useState<string|null>(null),[sponsored,setSponsored]=useState<SponsoredPlacement[]>([]);
  const token=useRef(accessToken);token.current=accessToken;const request=useRef(0),loadingMore=useRef(false);
- useEffect(()=>onStoryPublished(()=>setRetry(n=>n+1)),[]);
+ useEffect(()=>onStoryPublished(()=>{setRetry(n=>n+1);reloadFestival();}),[reloadFestival]);
  // Your own Story's name and photo come from the feed: reload after an Edit Profile save.
  useEffect(()=>onProfileChanged(()=>setRetry(n=>n+1)),[]);
  // Returning from Profile/DM/overlays does not remount the viewer or restart its playback.
@@ -64,20 +71,26 @@ export function HomeScreen():React.JSX.Element {
  // initial:false keeps Search's own first screen under the profile, so the Search tab still works after.
  const openDM=useCallback(({storyId,ownerUsername}:{storyId:string;ownerUsername:string})=>navigation.navigate('DM',{screen:'SendStory',initial:false,params:{storyId,ownerUsername}}),[navigation]);
  const openProfile=useCallback((username:string)=>navigation.navigate('Search',{screen:'UserProfile',initial:false,params:{username}}),[navigation]);
- if(feed===null&&!error)return <View style={styles.root}><StorySkeleton/>{activityButton}{uploads}</View>;
- if(feed===null)return <View style={styles.empty}>{activityButton}<Text style={typography.body}>{error||'Loading Stories…'}</Text>{error&&<Pressable onPress={refresh} accessibilityRole="button"><Text style={typography.body}>Try again</Text></Pressable>}</View>;
+ if(feed===null&&!error)return <View style={styles.root}><StorySkeleton/>{festivalButton}{activityButton}{uploads}</View>;
+ if(feed===null)return <View style={styles.empty}>{festivalButton}{activityButton}<Text style={typography.body}>{error||'Loading Stories…'}</Text>{error&&<Pressable onPress={refresh} accessibilityRole="button"><Text style={typography.body}>Try again</Text></Pressable>}</View>;
  // Pull down (or tap Refresh) to look again; Find people for someone to follow.
  if(!feed.length)return <View style={styles.root}><ScrollView contentContainerStyle={styles.emptyScroll} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={reloadQuietly} tintColor={colors.textPrimary} colors={[colors.accent]}/>}>
+  {festival?<View style={styles.festivalCard}>
+   <Text style={styles.festivalCardEmoji}>{festival.emoji}</Text>
+   <Text style={styles.festivalCardTitle}>{festival.greeting}!</Text>
+   {festivalCreators.length?<Pressable onPress={openFestival} style={styles.festivalCardButton} accessibilityRole="button"><Text style={styles.festivalCardButtonLabel}>See {festivalInfo?.storyCount} {festival.name} {festivalInfo?.storyCount===1?'Story':'Stories'}</Text></Pressable>:null}
+   <Pressable onPress={()=>navigation.navigate('Create')} style={styles.emptyButton} accessibilityRole="button"><Text style={styles.emptyButtonLabel}>Post your {festival.name} Story</Text></Pressable>
+  </View>:null}
   <EmptyState variant="media" title="No active Stories yet" message="Stories from people you follow and eligible new creators will appear here."/>
   <View style={styles.emptyActions}>
    <Pressable onPress={()=>navigation.navigate('Search',{screen:'SearchHome'})} style={styles.emptyButton} accessibilityRole="button"><Text style={styles.emptyButtonLabel}>Find people</Text></Pressable>
    <Pressable onPress={reloadQuietly} disabled={refreshing} style={styles.emptyButton} accessibilityRole="button" accessibilityLabel="Refresh Stories"><Text style={styles.emptyButtonLabel}>{refreshing?'Refreshing…':'Refresh'}</Text></Pressable>
   </View>
- </ScrollView>{activityButton}{uploads}</View>;
+ </ScrollView>{festivalButton}{activityButton}{uploads}</View>;
  return <View style={styles.root}><StoryFeed key={`${user?.id}:${retry}:${version}`} creators={creators} following={following} startIndex={0} sponsored={sponsored} onNeedMore={more} onRefresh={refresh}
   onOpenDM={openDM} onOpenProfile={openProfile}/>
   {!!error&&<View style={[styles.error,{top:insets.top+spacing.xl+40}]}><Text style={typography.caption}>{error}</Text><Pressable onPress={more} accessibilityRole="button"><Text style={typography.body}>Retry</Text></Pressable><Pressable onPress={refresh} accessibilityRole="button"><Text style={typography.body}>Refresh</Text></Pressable></View>}
-  {activityButton}{uploads}
+  {festivalButton}{activityButton}{uploads}
  </View>;
 }
-const styles=StyleSheet.create({root:{flex:1,backgroundColor:colors.background},activity:{position:'absolute',right:spacing.md,padding:spacing.xs,borderRadius:20,backgroundColor:'rgba(0,0,0,0.25)'},activityDot:{position:'absolute',top:4,right:4,width:9,height:9,borderRadius:5,backgroundColor:colors.accent,borderWidth:1.5,borderColor:colors.background},empty:{flex:1,backgroundColor:colors.background,alignItems:'center',justifyContent:'center'},error:{position:'absolute',left:16,right:16,padding:12,gap:8,backgroundColor:colors.surfaceElevated},emptyScroll:{flexGrow:1},emptyActions:{flexDirection:'row',justifyContent:'center',gap:spacing.md,paddingBottom:spacing.xxl*2},emptyButton:{paddingHorizontal:spacing.lg,paddingVertical:spacing.sm,borderRadius:20,borderWidth:1,borderColor:colors.textPrimary},emptyButtonLabel:{...typography.body,fontWeight:'700'}});
+const styles=StyleSheet.create({root:{flex:1,backgroundColor:colors.background},festival:{position:'absolute',left:spacing.md,flexDirection:'row',alignItems:'center',gap:6,maxWidth:'60%',paddingLeft:10,paddingRight:12,height:36,borderRadius:18,backgroundColor:'rgba(0,0,0,0.35)',borderWidth:1,borderColor:'rgba(255,255,255,0.35)'},festivalEmoji:{fontSize:18},festivalLabel:{...typography.body,fontWeight:'700',flexShrink:1},festivalCount:{minWidth:20,height:20,borderRadius:10,paddingHorizontal:5,alignItems:'center',justifyContent:'center',backgroundColor:colors.accent},festivalCountLabel:{fontSize:11,fontWeight:'800',color:colors.onAccent},festivalCard:{alignItems:'center',gap:spacing.md,paddingTop:spacing.xxl*2,paddingHorizontal:spacing.xl},festivalCardEmoji:{fontSize:56},festivalCardTitle:{...typography.title,textAlign:'center'},festivalCardButton:{paddingHorizontal:spacing.lg,paddingVertical:spacing.sm,borderRadius:20,backgroundColor:colors.accent},festivalCardButtonLabel:{...typography.body,fontWeight:'700',color:colors.onAccent},activity:{position:'absolute',right:spacing.md,padding:spacing.xs,borderRadius:20,backgroundColor:'rgba(0,0,0,0.25)'},activityDot:{position:'absolute',top:4,right:4,width:9,height:9,borderRadius:5,backgroundColor:colors.accent,borderWidth:1.5,borderColor:colors.background},empty:{flex:1,backgroundColor:colors.background,alignItems:'center',justifyContent:'center'},error:{position:'absolute',left:16,right:16,padding:12,gap:8,backgroundColor:colors.surfaceElevated},emptyScroll:{flexGrow:1},emptyActions:{flexDirection:'row',justifyContent:'center',gap:spacing.md,paddingBottom:spacing.xxl*2},emptyButton:{paddingHorizontal:spacing.lg,paddingVertical:spacing.sm,borderRadius:20,borderWidth:1,borderColor:colors.textPrimary},emptyButtonLabel:{...typography.body,fontWeight:'700'}});

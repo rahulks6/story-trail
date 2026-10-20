@@ -282,6 +282,9 @@ describe("notifications — preferences", () => {
       // Phase 3 (push): also on by default.
       messagesEnabled: true,
       pushEnabled: true,
+      storiesEnabled: true,
+      milestonesEnabled: true,
+      remindersEnabled: true,
     });
   });
 

@@ -3,6 +3,8 @@ import { audienceAllows, isCloseFriendOf } from "./audience";
 import { assertLinksAllowed } from "../safety/links";
 import { config } from "../../config/env";
 import {createHash} from 'node:crypto';
+import { taggableFestival } from "../festivals/festivals";
+import { queueNewStoryPushes } from "../reminders/return-reasons";
 import {DatabaseError} from '../../db/psql';
 import { assertCanContribute } from "../admin/account-policy";
 import { HttpError } from "../../http/errors";
@@ -191,17 +193,24 @@ export async function publishStory(
     audioMuted: input.audioMuted,
     crop: input.crop,
     music: input.music ?? null,
+    festival: (await taggableFestival(input.festival)) ?? null,
   });
   await notifyMentionsQuietly(story.id);
   return toPublicStory(story, ownerId);
 }
 
 /** Mention notifications never stand in the way of the Story itself. */
+/** After every publish (now, or when processed media finishes): mentions, then followers' pushes. */
 export async function notifyMentionsQuietly(storyId: string): Promise<void> {
   try {
     await notificationsService.notifyStoryMentions(storyId);
   } catch (err) {
     console.error("story mention notifications failed", storyId, err);
+  }
+  try {
+    await queueNewStoryPushes(storyId);
+  } catch (err) {
+    console.error("new story pushes failed", storyId, err);
   }
 }
 
@@ -232,10 +241,14 @@ export async function requestPublish(ownerId: string, input: PublishStoryInput, 
   await assertCanContribute(ownerId);
   await assertNotSound(input.mediaId);
   if (input.music) input = { ...input, music: await validateStoryMusic(input.music) };
+  // The hash is of what the app sent, so a retry after a festival ends still matches its request.
   const hash = createHash("sha256").update(JSON.stringify(input)).digest("hex");
+  const festival = await taggableFestival(input.festival);
+  const { festival: _sent, ...rest } = input;
+  const payload: PublishStoryInput = festival ? { ...rest, festival } : rest;
   let outcome: storiesRepo.PublishRequestOutcome;
   try {
-    outcome = await storiesRepo.requestStoryPublish(ownerId, input, hash, options.ttlSecondsOverride ?? config.stories.ttlSeconds);
+    outcome = await storiesRepo.requestStoryPublish(ownerId, payload, hash, options.ttlSecondsOverride ?? config.stories.ttlSeconds);
   } catch (e) {
     if (e instanceof DatabaseError) {
       if (/REQUEST_CONFLICT/.test(e.detail)) throw new HttpError(409, "This upload was already submitted with different content.");

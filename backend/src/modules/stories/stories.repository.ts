@@ -99,11 +99,12 @@ export async function createStory(input: {
   audioMuted: boolean;
   crop: StoryCrop;
   music?: { trackId: string; startMs: number; durationMs: number } | null;
+  festival?: string | null;
 }): Promise<StoryRecord> {
   const row = await queryOne(
-    `INSERT INTO stories (owner_id, media_id, caption, audience, allow_comments, allow_sharing, expires_at, overlays, drawing, filter, audio_muted, crop, music)
+    `INSERT INTO stories (owner_id, media_id, caption, audience, allow_comments, allow_sharing, expires_at, overlays, drawing, filter, audio_muted, crop, music, festival)
      VALUES (:'owner_id', :'media_id', :'caption', :'audience', :'allow_comments', :'allow_sharing', :'expires_at', :'overlays'::jsonb, :'drawing'::jsonb, :'filter', :'audio_muted', :'crop'::jsonb,
-             NULLIF(:'music', '')::jsonb)
+             NULLIF(:'music', '')::jsonb, NULLIF(:'festival', ''))
      RETURNING ${STORY_COLUMNS}`,
     {
       owner_id: input.ownerId,
@@ -119,6 +120,7 @@ export async function createStory(input: {
       audio_muted: input.audioMuted,
       crop: JSON.stringify(input.crop),
       music: input.music ? JSON.stringify(input.music) : "",
+      festival: input.festival ?? "",
     },
   ).catch(error=>{if(error instanceof DatabaseError&&error.detail.includes('unique constraint'))throw new HttpError(409,'This media has already been published as a Story.');throw error;});
   if (!row) throw new Error("Insert did not return a row");

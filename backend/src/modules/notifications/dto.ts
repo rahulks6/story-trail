@@ -9,6 +9,9 @@ export interface UpdateNotificationPreferencesInput {
   messagesEnabled?: boolean;
   /** Master switch for push on this account (Activity in the app is unaffected). */
   pushEnabled?: boolean;
+  storiesEnabled?: boolean;
+  milestonesEnabled?: boolean;
+  remindersEnabled?: boolean;
 }
 
 export function parseUpdateNotificationPreferencesInput(body: unknown): UpdateNotificationPreferencesInput {
@@ -23,6 +26,9 @@ export function parseUpdateNotificationPreferencesInput(body: unknown): UpdateNo
     ["mentionsEnabled", "mentionsEnabled"],
     ["messagesEnabled", "messagesEnabled"],
     ["pushEnabled", "pushEnabled"],
+    ["storiesEnabled", "storiesEnabled"],
+    ["milestonesEnabled", "milestonesEnabled"],
+    ["remindersEnabled", "remindersEnabled"],
   ];
 
   for (const [key, bodyKey] of fields) {

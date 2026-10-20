@@ -19,6 +19,7 @@ import { runRetentionIfDue } from "./modules/media/retention";
 import { PushWorker } from "./modules/push/push-worker";
 import { providersFromConfig } from "./modules/push/dispatcher";
 import { ReachWorker } from "./modules/recommendations/reach-worker";
+import { ReturnReasonsWorker } from "./modules/reminders/return-reasons";
 import { reachSettings } from "./modules/recommendations/reach";
 
 export function createReachWorker(): ReachWorker {
@@ -68,7 +69,10 @@ if (require.main === module) {
   const worker = createMediaWorker();
   const push = createPushWorker();
   const reach = config.reach.enabled ? createReachWorker() : null;
-  Promise.all([worker.start(), push.start(), reach?.start()])
+  const reasons = config.returnReasons.enabled
+    ? new ReturnReasonsWorker({ everyMs: config.returnReasons.everyMinutes * 60_000, log: (e) => console.info(JSON.stringify(e)) })
+    : null;
+  Promise.all([worker.start(), push.start(), reach?.start(), reasons?.start()])
     .then(() => console.log(JSON.stringify({
       ts: new Date().toISOString(), event: "worker_started", store: mediaStorage.kind, queue: config.media.queue.driver,
       pushProviders: [...providersFromConfig().keys()],
@@ -79,7 +83,7 @@ if (require.main === module) {
     });
   const shutdown = () => {
     // Finishes the job in hand; an interrupted job is retried after its lease expires.
-    void Promise.all([worker.stop(), push.stop(), reach?.stop()]).then(closeDatabase).finally(() => process.exit(0));
+    void Promise.all([worker.stop(), push.stop(), reach?.stop(), reasons?.stop()]).then(closeDatabase).finally(() => process.exit(0));
   };
   process.on("SIGTERM", shutdown);
   process.on("SIGINT", shutdown);

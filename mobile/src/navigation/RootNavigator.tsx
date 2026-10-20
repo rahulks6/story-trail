@@ -286,6 +286,7 @@ export function RootNavigator(): React.JSX.Element {
         return { routes: [{ name: "Main", state: { routes: [{ name: "DM", state: { routes: [{ name: "DMInbox" }, { name: "Conversation", params: { conversationId: target.conversationId } }] } }] } }] };
       }
       if (target?.kind === "activity") return { routes: [{ name: "Main" }, { name: "Activity" }] };
+      if (target?.kind === "home") return { routes: [{ name: "Main", state: { routes: [{ name: "Home" }] } }] };
       if (target?.kind === "followRequests") return { routes: [{ name: "Main" }, { name: "FollowRequests" }] };
       return undefined;
     },

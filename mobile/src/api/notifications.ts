@@ -50,6 +50,12 @@ export interface NotificationPreferences {
   messagesEnabled: boolean;
   /** Push notifications at all, on every device signed in to this account. */
   pushEnabled: boolean;
+  /** When someone you follow posts a Story (at most once a day per person). */
+  storiesEnabled?: boolean;
+  /** When your Story reaches 10, 25, 50, 100… views. */
+  milestonesEnabled?: boolean;
+  /** Festival greetings, your posting streak, and a nudge after a few quiet days. */
+  remindersEnabled?: boolean;
 }
 
 export function getNotificationPreferences(accessToken: string): Promise<{ preferences: NotificationPreferences }> {

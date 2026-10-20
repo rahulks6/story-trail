@@ -4,6 +4,9 @@ import { AppState, RefreshControl } from "react-native";
 import { HOME_STALE_MS, HomeScreen } from "../src/screens/home/HomeScreen";
 import { profileChanged, storyPublished } from "../src/state/storyChanges";
 import * as storiesApi from "../src/api/stories";
+import * as festivalsApi from "../src/api/festivals";
+import { resetFestivalCache } from "../src/hooks/useFestival";
+import { Text } from "react-native";
 
 // Home reloads when something it shows has changed elsewhere in the app.
 jest.mock("../src/state/NotificationsContext", () => ({ useNotifications: () => ({ unreadCount: 0 }) }));
@@ -16,6 +19,12 @@ jest.mock("../src/api/ads", () => ({ getAdPlacements: jest.fn(async () => ({ pla
 jest.mock("../src/api/stories", () => ({
   getRankedHomeFeed: jest.fn(async () => ({ feed: [{ owner: { id: "u-me", username: "me" }, isFollowing: false, stories: [], score: 1 }], nextCursor: null })),
 }));
+
+jest.mock("../src/api/festivals", () => ({
+  getCurrentFestival: jest.fn(async () => ({ festival: null, next: null, creators: [], storyCount: 0 })),
+}));
+const festivals = festivalsApi as jest.Mocked<typeof festivalsApi>;
+beforeEach(() => resetFestivalCache());
 
 const stories = storiesApi as jest.Mocked<typeof storiesApi>;
 let tree: ReactTestRenderer;
@@ -127,5 +136,38 @@ test("with no active Stories, Home can be pulled to refresh, and offers Find peo
   const find = tree.root.find((n) => typeof n.props.onPress === "function" && n.findAll((c) => c.props.children === "Find people").length > 0);
   await act(async () => find.props.onPress());
   expect(mockNavigation.navigate).toHaveBeenCalledWith("Search", { screen: "SearchHome" });
+  await act(async () => tree.unmount());
+});
+
+const diwali = { slug: "diwali-2026", name: "Diwali", emoji: "🪔", greeting: "Happy Diwali", startsOn: "2026-11-06", endsOn: "2026-11-11" };
+const pressByLabel = (label: string) => tree.root.find((n) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === label);
+
+test("on a festival day, Home shows its Stories from everyone, top left", async () => {
+  mockNavigation.navigate.mockClear();
+  festivals.getCurrentFestival.mockResolvedValueOnce({ festival: diwali, next: null, creators: ["asha", "dev"], storyCount: 5 });
+  await act(async () => { tree = create(<HomeScreen />); });
+  await flush();
+  await act(async () => pressByLabel("Diwali Stories, 5").props.onPress());
+  expect(mockNavigation.navigate).toHaveBeenCalledWith("StoryViewer", { creators: ["asha", "dev"], startIndex: 0 });
+  await act(async () => tree.unmount());
+});
+
+test("with no festival Stories yet, the festival button invites you to post one; an empty Home greets you", async () => {
+  mockNavigation.navigate.mockClear();
+  stories.getRankedHomeFeed.mockResolvedValueOnce({ feed: [], nextCursor: null } as never);
+  festivals.getCurrentFestival.mockResolvedValueOnce({ festival: diwali, next: null, creators: [], storyCount: 0 });
+  await act(async () => { tree = create(<HomeScreen />); });
+  await flush();
+  const texts = tree.root.findAllByType(Text).map((t) => [t.props.children].flat().join(""));
+  expect(texts).toEqual(expect.arrayContaining(["Happy Diwali!", "Post your Diwali Story"]));
+  await act(async () => pressByLabel("Post your Diwali Story").props.onPress());
+  expect(mockNavigation.navigate).toHaveBeenCalledWith("Create");
+  await act(async () => tree.unmount());
+});
+
+test("no festival today: no festival button", async () => {
+  await act(async () => { tree = create(<HomeScreen />); });
+  await flush();
+  expect(tree.root.findAll((n) => typeof n.props.accessibilityLabel === "string" && /Stories, \d|Post your/.test(n.props.accessibilityLabel))).toHaveLength(0);
   await act(async () => tree.unmount());
 });

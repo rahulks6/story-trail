@@ -51,6 +51,12 @@ export interface NotificationPreferences {
   mentionsEnabled: boolean;
   messagesEnabled: boolean;
   pushEnabled: boolean;
+  /** Push when someone you follow posts a Story (at most once a day per person). */
+  storiesEnabled: boolean;
+  /** Push when your Story reaches 10, 25, 50, 100… views. */
+  milestonesEnabled: boolean;
+  /** Festival greetings, your posting streak, and a nudge after a few quiet days. */
+  remindersEnabled: boolean;
 }
 
 const DEFAULT_PREFERENCES: NotificationPreferences = {
@@ -60,12 +66,16 @@ const DEFAULT_PREFERENCES: NotificationPreferences = {
   mentionsEnabled: true,
   messagesEnabled: true,
   pushEnabled: true,
+  storiesEnabled: true,
+  milestonesEnabled: true,
+  remindersEnabled: true,
 };
 
 /** No row yet means the recipient never touched their preferences — everything defaults to on. */
 export async function getPreferences(userId: string): Promise<NotificationPreferences> {
   const row = await queryOne(
-    `SELECT likes_enabled, comments_enabled, follows_enabled, mentions_enabled, messages_enabled, push_enabled
+    `SELECT likes_enabled, comments_enabled, follows_enabled, mentions_enabled, messages_enabled, push_enabled,
+            stories_enabled, milestones_enabled, reminders_enabled
      FROM notification_preferences WHERE user_id = :'user_id'`,
     { user_id: userId },
   );
@@ -77,6 +87,9 @@ export async function getPreferences(userId: string): Promise<NotificationPrefer
     mentionsEnabled: row.mentions_enabled === "t",
     messagesEnabled: row.messages_enabled === "t",
     pushEnabled: row.push_enabled === "t",
+    storiesEnabled: row.stories_enabled === "t",
+    milestonesEnabled: row.milestones_enabled === "t",
+    remindersEnabled: row.reminders_enabled === "t",
   };
 }
 
@@ -84,8 +97,10 @@ export async function upsertPreferences(userId: string, patch: Partial<Notificat
   const current = await getPreferences(userId);
   const next: NotificationPreferences = { ...current, ...patch };
   await query(
-    `INSERT INTO notification_preferences (user_id, likes_enabled, comments_enabled, follows_enabled, mentions_enabled, messages_enabled, push_enabled, updated_at)
-     VALUES (:'user_id', :'likes_enabled', :'comments_enabled', :'follows_enabled', :'mentions_enabled', :'messages_enabled', :'push_enabled', now())
+    `INSERT INTO notification_preferences (user_id, likes_enabled, comments_enabled, follows_enabled, mentions_enabled, messages_enabled, push_enabled,
+                                           stories_enabled, milestones_enabled, reminders_enabled, updated_at)
+     VALUES (:'user_id', :'likes_enabled', :'comments_enabled', :'follows_enabled', :'mentions_enabled', :'messages_enabled', :'push_enabled',
+             :'stories_enabled', :'milestones_enabled', :'reminders_enabled', now())
      ON CONFLICT (user_id) DO UPDATE SET
        likes_enabled = EXCLUDED.likes_enabled,
        comments_enabled = EXCLUDED.comments_enabled,
@@ -93,6 +108,9 @@ export async function upsertPreferences(userId: string, patch: Partial<Notificat
        mentions_enabled = EXCLUDED.mentions_enabled,
        messages_enabled = EXCLUDED.messages_enabled,
        push_enabled = EXCLUDED.push_enabled,
+       stories_enabled = EXCLUDED.stories_enabled,
+       milestones_enabled = EXCLUDED.milestones_enabled,
+       reminders_enabled = EXCLUDED.reminders_enabled,
        updated_at = now()`,
     {
       user_id: userId,
@@ -102,6 +120,9 @@ export async function upsertPreferences(userId: string, patch: Partial<Notificat
       mentions_enabled: next.mentionsEnabled,
       messages_enabled: next.messagesEnabled,
       push_enabled: next.pushEnabled,
+      stories_enabled: next.storiesEnabled,
+      milestones_enabled: next.milestonesEnabled,
+      reminders_enabled: next.remindersEnabled,
     },
   );
   return next;

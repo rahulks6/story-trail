@@ -21,6 +21,8 @@ export interface PublishStoryInput {
   crop: StoryCrop;
   /** A song from the catalogue and the part of it that plays (checked against the track in stories.service). */
   music?: { trackId: string; startMs: number; durationMs: number } | null;
+  /** A current festival's slug (festivals table): adds the Story to that festival's ring. */
+  festival?: string;
 }
 
 function parseMusic(raw: unknown, errors: Record<string, string>): PublishStoryInput["music"] {
@@ -205,6 +207,11 @@ export function parsePublishStoryInput(body: unknown): PublishStoryInput {
   if (typeof audioMuted !== "boolean") errors.audioMuted = "audioMuted must be a boolean.";
 
   const music = parseMusic(b.music, errors);
+  let festival: string | undefined;
+  if (b.festival !== undefined && b.festival !== null) {
+    if (typeof b.festival !== "string" || !/^[a-z0-9-]{3,60}$/.test(b.festival)) errors.festival = "festival must be a festival id.";
+    else festival = b.festival;
+  }
 
   if (Object.keys(errors).length > 0) throw new ValidationError(errors);
   return {
@@ -220,6 +227,7 @@ export function parsePublishStoryInput(body: unknown): PublishStoryInput {
     audioMuted: audioMuted as boolean,
     crop: parseCrop(b.crop),
     ...(music ? { music } : {}),
+    ...(festival ? { festival } : {}),
   };
 }
 

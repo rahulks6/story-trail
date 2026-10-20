@@ -13,9 +13,9 @@ import { tapFeedback } from "../../utils/haptics";
 
 /** What people can pick from; the same words appear on profiles and in "Also into …". */
 export const INTEREST_CHOICES = [
-  "Travel", "Food", "Music", "Fashion", "Fitness", "Movies", "Cricket", "Football",
-  "Gaming", "Art", "Photography", "Tech", "Books", "Dance", "Comedy", "Nature",
-  "Cars", "Pets", "Festivals", "Startups",
+  "Festivals", "Food", "Travel", "Music", "Bollywood", "Cricket", "Fashion", "Dance",
+  "Devotional", "Fitness", "Movies", "Photography", "Art", "Comedy", "Gaming", "Tech",
+  "Books", "Nature", "Football", "Cars", "Pets", "Startups",
 ];
 export const MAX_INTERESTS = 5;
 

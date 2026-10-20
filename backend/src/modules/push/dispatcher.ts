@@ -29,6 +29,9 @@ interface OutboxItem {
   actorId: string | null;
   refId: string | null;
   attempts: number;
+  /** Push-only kinds (milestones, festivals, reminders) carry their text and link. */
+  body?: string | null;
+  link?: string | null;
 }
 
 const TEXT: Record<string, (actor: string) => string> = {
@@ -40,6 +43,16 @@ const TEXT: Record<string, (actor: string) => string> = {
   follow_accepted: (a) => `@${a} accepted your follow request`,
   // Never the message itself: lock screens and notification logs are not private.
   message: (a) => `@${a} sent you a message`,
+  new_story: (a) => `@${a} posted a new Story`,
+};
+
+/** Which preference switch (migration 0051) silences each newer kind. */
+const SWITCH: Record<string, "stories_enabled" | "milestones_enabled" | "reminders_enabled"> = {
+  new_story: "stories_enabled",
+  story_milestone: "milestones_enabled",
+  festival: "reminders_enabled",
+  streak: "reminders_enabled",
+  nudge: "reminders_enabled",
 };
 
 type Rendered = { message: PushMessage } | { skip: string };
@@ -50,6 +63,9 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
     `SELECT (u.is_active AND u.deleted_at IS NULL) AS recipient_ok,
             coalesce(p.push_enabled, true) AS push_enabled,
             coalesce(p.messages_enabled, true) AS messages_enabled,
+            coalesce(p.stories_enabled, true) AS stories_enabled,
+            coalesce(p.milestones_enabled, true) AS milestones_enabled,
+            coalesce(p.reminders_enabled, true) AS reminders_enabled,
             a.username AS actor_username,
             (a.id IS NOT NULL AND a.is_active AND a.deleted_at IS NULL) AS actor_ok,
             EXISTS (SELECT 1 FROM blocks b WHERE (b.blocker_id = u.id AND b.blocked_id = a.id)
@@ -72,6 +88,26 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
     return { message: { title: "", body: "", data: { kind: "badge" }, collapseKey: "badge", badge, badgeOnly: true } };
   }
   if (item.kind === "message" && row.messages_enabled !== "t") return { skip: "message pushes turned off" };
+  const toggle = SWITCH[item.kind];
+  if (toggle && row[toggle] !== "t") return { skip: `${item.kind} pushes turned off` };
+  if (item.kind === "new_story" && item.refId) {
+    // The Story may have been deleted, or have expired, while the push waited.
+    const live = await queryOne(`SELECT 1 AS ok FROM stories WHERE id = :'id' AND deleted_at IS NULL AND moderation_removed_at IS NULL AND expires_at > now()`, { id: item.refId });
+    if (!live) return { skip: "story gone" };
+  }
+  if (item.body) {
+    return {
+      message: {
+        title: "Katkee",
+        body: item.body,
+        data: { kind: item.kind, url: item.link ?? "katkee://home", ...(item.refId ? { storyId: item.refId } : {}) },
+        collapseKey: item.refId ? `${item.kind}-${item.refId}` : item.kind,
+        threadId: "activity",
+        badge,
+        channel: "activity",
+      },
+    };
+  }
   if (item.actorId && (row.actor_ok !== "t" || row.blocked === "t")) return { skip: "actor unavailable" };
   const actor = (row.actor_username as string | null) ?? "someone";
   const text = TEXT[item.kind];
@@ -106,9 +142,9 @@ async function finish(item: OutboxItem, status: "sent" | "failed" | "skipped", d
 
 /** Claims and sends one batch. Returns how many outbox items were handled. */
 export async function dispatchPushBatch(providers: ProviderMap, options: { maxAttempts: number; batchSize?: number; log?: (e: Record<string, unknown>) => void }): Promise<number> {
-  const rows = await query(`SELECT id, user_id, kind, actor_id, ref_id, attempts FROM claim_push_batch(:'limit', 60)`, { limit: options.batchSize ?? 25 });
+  const rows = await query(`SELECT id, user_id, kind, actor_id, ref_id, attempts, body, link FROM claim_push_batch(:'limit', 60)`, { limit: options.batchSize ?? 25 });
   for (const r of rows) {
-    const item: OutboxItem = { id: r.id as string, userId: r.user_id as string, kind: r.kind as string, actorId: r.actor_id ?? null, refId: r.ref_id ?? null, attempts: Number(r.attempts) };
+    const item: OutboxItem = { id: r.id as string, userId: r.user_id as string, kind: r.kind as string, actorId: r.actor_id ?? null, refId: r.ref_id ?? null, attempts: Number(r.attempts), body: r.body ?? null, link: r.link ?? null };
     const rendered = await renderPush(item);
     if ("skip" in rendered) {
       await finish(item, "skipped", rendered.skip);

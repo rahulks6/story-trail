@@ -257,6 +257,8 @@ export async function expiredRecords(): Promise<number> {
   total += await deleteWhere("realtime_tickets", "expires_at < now() - interval '1 hour'");
   total += await deleteWhere("push_outbox", "status IN ('sent', 'failed', 'skipped') AND finished_at < now() - interval '30 days'");
   total += await deleteWhere("push_devices", "disabled_at < now() - interval '90 days'");
+  // What was sent (return-reasons.ts) is only needed while it limits the next push.
+  total += await deleteWhere("push_sent", "sent_at < now() - interval '30 days'");
   return total;
 }
 

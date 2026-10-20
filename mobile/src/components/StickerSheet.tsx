@@ -17,6 +17,7 @@ import {
   type LocationOverlayProperties,
   type DateTimeOverlayProperties,
   type StickerOverlayProperties,
+  type TextOverlayProperties,
 } from "../models/storyDraft";
 
 /** Location was turned off for Katkee for good: only Settings can turn it back on. */
@@ -51,6 +52,7 @@ const STICKER_NAMES: Record<string, string> = {
 const EMOJI_SET = ["😀", "😂", "🤣", "😊", "😍", "🥰", "😘", "😎", "🤩", "🥳", "😇", "🙂", "😉", "😋", "😜", "🤪", "🤗", "🤔", "😏", "😴", "😮", "😱", "😢", "😭", "😅", "😬", "🙄", "😤", "😡", "🤯", "🥺", "😈", "👀", "👍", "👎", "👏", "🙌", "🙏", "💪", "🤝", "✌️", "🤞", "👋", "💯", "🔥", "✨", "⭐", "🌟", "🎉", "🎂", "🎁", "❤️", "🧡", "💛", "💚", "💙", "💜", "🖤", "💔", "💕", "☀️", "🌙", "🌈", "🌸", "🌹", "🍕", "☕", "🍫", "⚽", "🏏", "🎵", "📸", "✈️", "🏖️", "🚗", "🏠", "💼", "📚", "🎓", "💡"];
 
 export type StickerAddPayload =
+  | { type: "text"; properties: TextOverlayProperties }
   | { type: "emoji"; properties: EmojiOverlayProperties }
   | { type: "mention"; properties: MentionOverlayProperties }
   | { type: "location"; properties: LocationOverlayProperties }
@@ -61,6 +63,8 @@ interface Props {
   visible: boolean;
   onClose: () => void;
   onAdd: (payload: StickerAddPayload) => void;
+  /** Today's festival: its greeting and emoji lead the Emoji tab. */
+  festival?: { name: string; emoji: string; greeting: string } | null;
   /**
    * When set, opening the sheet edits this overlay's content in place
    * (its existing position/scale/rotation untouched) instead of adding a
@@ -81,7 +85,7 @@ interface Props {
  * `onAdd` → DraggableCanvasObject path text already uses; this sheet only
  * ever hands back type-specific `properties`, never geometry.
  */
-export function StickerSheet({ visible, onClose, onAdd, editingOverlay, onEditDone }: Props): React.JSX.Element {
+export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay, onEditDone }: Props): React.JSX.Element {
   // Clears Android's navigation bar and the iPhone home indicator.
   const bottomInset = useSafeAreaInsets().bottom;
   const { accessToken } = useAuth();
@@ -268,6 +272,24 @@ export function StickerSheet({ visible, onClose, onAdd, editingOverlay, onEditDo
         )}
 
         <View style={styles.body}>
+          {tab === "emoji" && festival ? (
+            <View style={styles.festivalRow}>
+              <Pressable
+                style={styles.festivalGreeting}
+                onPress={() => {
+                  onAdd({ type: "text", properties: { text: `${festival.emoji} ${festival.greeting}`, style: "Bold", color: "#FFFFFF", backgroundColor: null, align: "center", fontSize: 0.055 } });
+                  close();
+                }}
+                accessibilityRole="button"
+                accessibilityLabel={`Add ${festival.greeting}`}
+              >
+                <Text style={styles.festivalGreetingLabel} numberOfLines={1}>{festival.emoji} {festival.greeting}</Text>
+              </Pressable>
+              <Pressable style={styles.festivalEmoji} onPress={() => addEmoji(festival.emoji)} accessibilityRole="button" accessibilityLabel={`Add ${festival.name} emoji`}>
+                <Text style={styles.emojiGlyph}>{festival.emoji}</Text>
+              </Pressable>
+            </View>
+          ) : null}
           {tab === "emoji" ? (
             <FlatList
               data={EMOJI_SET}
@@ -424,6 +446,10 @@ const styles = StyleSheet.create({
   tabLabel: { color: colors.textSecondary, fontSize: 12 },
   tabLabelActive: { color: colors.onAccent, fontWeight: "700" },
   body: { minHeight: 220 },
+  festivalRow: { flexDirection: "row", gap: spacing.sm, marginBottom: spacing.sm },
+  festivalGreeting: { flex: 1, minHeight: 48, borderRadius: radii.md, backgroundColor: colors.accent, alignItems: "center", justifyContent: "center", paddingHorizontal: spacing.md },
+  festivalGreetingLabel: { ...typography.body, color: colors.onAccent, fontWeight: "700" },
+  festivalEmoji: { width: 48, height: 48, borderRadius: radii.md, backgroundColor: colors.surface, alignItems: "center", justifyContent: "center" },
   emojiCell: { flex: 1 / 6, aspectRatio: 1, alignItems: "center", justifyContent: "center" },
   emojiGlyph: { fontSize: 26 },
   stickerCell: { flex: 1 / 4, aspectRatio: 1, alignItems: "center", justifyContent: "center" },

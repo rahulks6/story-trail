@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, AppState, Linking, Pressable, StyleSheet, Switch, Text, View } from "react-native";
+import { ActivityIndicator, AppState, Linking, Pressable, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
 import { colors, radii, spacing, typography } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import {
@@ -24,8 +24,15 @@ const ACTIVITY_ROWS: Row[] = [
   { key: "mentionsEnabled", label: "Mentions" },
 ];
 
+const STORY_ROWS: Row[] = [
+  { key: "storiesEnabled", label: "New Stories from people you follow" },
+  { key: "milestonesEnabled", label: "Views on your Stories" },
+  { key: "remindersEnabled", label: "Festivals, streaks and reminders" },
+];
+
 const DEFAULTS: NotificationPreferences = {
   likesEnabled: true, commentsEnabled: true, followsEnabled: true, mentionsEnabled: true, messagesEnabled: true, pushEnabled: true,
+  storiesEnabled: true, milestonesEnabled: true, remindersEnabled: true,
 };
 
 /**
@@ -131,7 +138,7 @@ export function NotificationSettingsScreen(): React.JSX.Element {
     ));
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.scroll} contentContainerStyle={styles.container}>
       <Text style={styles.sectionTitle}>Push notifications</Text>
       {permission === "denied" && prefs.pushEnabled ? (
         <View style={styles.notice}>
@@ -152,15 +159,20 @@ export function NotificationSettingsScreen(): React.JSX.Element {
       </View>
       <Text style={styles.hint}>Message notifications say who wrote to you, never what they wrote.</Text>
 
+      <Text style={styles.sectionTitle}>Stories</Text>
+      <View style={styles.card}>{renderRows(STORY_ROWS, !prefs.pushEnabled)}</View>
+      <Text style={styles.hint}>At most one notification a day for each person you follow, and never more than five a day in all.</Text>
+
       <Text style={styles.sectionTitle}>Activity</Text>
       <Text style={styles.hint}>Choose which activity on your Stories and comments notifies you.</Text>
       <View style={styles.card}>{renderRows(ACTIVITY_ROWS)}</View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, padding: spacing.md },
+  scroll: { flex: 1, backgroundColor: colors.background },
+  container: { padding: spacing.md, paddingBottom: spacing.xl },
   centered: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background },
   hint: { ...typography.caption, color: colors.textSecondary, marginBottom: spacing.md, marginTop: spacing.xs },
   sectionTitle: { ...typography.bodyStrong, marginBottom: spacing.sm, marginTop: spacing.md },
