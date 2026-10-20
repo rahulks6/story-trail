@@ -1,97 +1,97 @@
-10-20 20:07:16.732 D/AndroidRuntime( 4280): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-20 20:07:16.734 I/AndroidRuntime( 4280): Using default boot image
-10-20 20:07:16.734 I/AndroidRuntime( 4280): Leaving lock profiling enabled
-10-20 20:07:16.740 I/app_process( 4280): Core platform API reporting enabled, enforcing=false
-10-20 20:07:16.740 I/app_process( 4280): Using CollectorTypeCMC GC.
-10-20 20:07:16.750 I/MediaProvider( 1509): Changed PhotoPickerActivity component state to STATE_ENABLED ( 1 )
-10-20 20:07:16.750 I/MediaProvider( 1509): Changed PhotoPickerGetContentActivity component state to STATE_ENABLED ( 1 )
-10-20 20:07:16.750 I/MediaProvider( 1509): Changed PhotoPickerUserSelectActivity component state to STATE_ENABLED ( 1 )
-10-20 20:07:16.750 I/TranscodeHelper( 1509): Empty transcode compat stale
-10-20 20:07:16.750 I/TranscodeHelper( 1509): Parsed 0 packages from resource
-10-20 20:07:16.750 I/TranscodeHelper( 1509): Parsed 8 packages from device config
-10-20 20:07:16.777 I/.apps.messaging( 3545): Background concurrent mark compact GC freed 1607KB AllocSpace bytes, 251(12MB) LOS objects, 49% free, 13MB/27MB, paused 164us,1.781ms total 103.928ms
-10-20 20:07:16.783 D/PhFileGroupPop( 3545): Added file groups birthday_grammars
-10-20 20:07:16.784 D/BufferPoolAccessor2.0(  500): bufferpool2 0x7039936517e8 : 2(7776000 size) total buffers - 0(0 size) used buffers - 12/14 (recycle/alloc) - 2/14 (fetch/transfer)
-10-20 20:07:16.784 D/BufferPoolAccessor2.0(  500): evictor expired: 1, evicted: 1
-10-20 20:07:16.791 I/Icing   ( 1295): IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=null serviceId=30
-10-20 20:07:16.797 I/RescueParty(  557): Starting to observe: [com.google.android.providers.media.module], updated namespace: mediaprovider
-10-20 20:07:16.797 E/RoleControllerServiceImpl(  557): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.WALLET
-10-20 20:07:16.802 I/AppsFilter(  557): interaction: PackageSetting{28063dd com.android.microdroid.empty_payload/10203} -> PackageSetting{9060b52 dev.mobile.maestro.test/10211} BLOCKED
-10-20 20:07:16.802 W/Looper  (  557): Slow dispatch took 144ms main h=android.app.ActivityThread$H c=android.app.LoadedApk$ReceiverDispatcher$Args$$ExternalSyntheticLambda0@d96cb64 m=0
-10-20 20:07:16.803 I/AppWidgetServiceImpl(  557): getInstalledProvidersForProfiles() 0
-10-20 20:07:16.803 D/ShortcutService(  557): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=null
-10-20 20:07:16.803 D/PackageManager(  557): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
-10-20 20:07:16.803 D/PackageManager(  557): Clear ephemeral installer activity
-10-20 20:07:16.807 I/netd    (  359): tetherGetStats() -> {[]} <4.15ms>
-10-20 20:07:16.817 E/RoleControllerServiceImpl(  557): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.devicelockcontroller, role: android.app.role.SYSTEM_FINANCED_DEVICE_CONTROLLER
-10-20 20:07:16.839 D/nativeloader( 4280): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
-10-20 20:07:16.840 D/BaseIconCache( 3972): Default icon returned for dev.mobile.maestro.test
-10-20 20:07:16.845 D/CarrierSvcBindHelper( 1033): onPackageModified: dev.mobile.maestro.test
-10-20 20:07:16.845 D/CarrierSvcBindHelper( 1033): No carrier app for: 0
-10-20 20:07:16.851 I/PermissionControllerServiceImpl(  902): Updating user sensitive for uid 10211
-10-20 20:07:16.857 I/MediaApplication( 1509): PhotoPickerSettingsActivity is now enabled
-10-20 20:07:16.861 D/nativeloader( 4280): Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+10-20 21:57:17.552 D/AndroidRuntime( 3976): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-20 21:57:17.560 I/AndroidRuntime( 3976): Using default boot image
+10-20 21:57:17.560 I/AndroidRuntime( 3976): Leaving lock profiling enabled
+10-20 21:57:17.565 I/app_process( 3976): Core platform API reporting enabled, enforcing=false
+10-20 21:57:17.566 I/app_process( 3976): Using CollectorTypeCMC GC.
+10-20 21:57:17.568 D/ShortcutService(  555): Saving package item com.google.android.googlequicksearchbox to /data/system_ce/0/shortcut_service/packages/com.google.android.googlequicksearchbox.xml
+10-20 21:57:17.576 D/BaseIconCache( 3565): Default icon returned for dev.mobile.maestro
+10-20 21:57:17.591 D/PackageManager(  555): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 21:57:17.591 D/PackageManager(  555): Clear ephemeral installer activity
+10-20 21:57:17.594 I/AppWidgetServiceImpl(  555): Received broadcast: android.intent.action.PACKAGE_ADDED on user 0
+10-20 21:57:17.606 D/TransparencyService(  555): Not an update. Skipping...
+10-20 21:57:17.610 E/AppOps  (  555): attributionTag VCN not declared in manifest of android
+10-20 21:57:17.611 I/PermissionControllerServiceImpl(  914): Updating user sensitive for uid 10211
+10-20 21:57:17.614 I/SdkSandboxManager(  555): No SDKs used. Skipping SDK data reconcilation for CallingInfo{mUid=10211, mPackageName='dev.mobile.maestro.test, mAppProcessToken='null'}
+10-20 21:57:17.616 I/netd    (  359): tetherGetStats() -> {[]} <0.24ms>
+10-20 21:57:17.620 D/PackageManager(  555): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 21:57:17.620 D/PackageManager(  555): Clear ephemeral installer activity
+10-20 21:57:17.635 D/PackageManager(  555): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 21:57:17.638 D/PackageManager(  555): Clear ephemeral installer activity
+10-20 21:57:17.645 W/Role    (  555): Default holder doesn't have required signing certificate: com.google.android.retaildemo:6547c73dee150c103980bfdffe55cc9a011d785dd694a5f99afd8205bcaf1f80
+10-20 21:57:17.681 I/A       ( 1443): (REDACTED) #handleFlagsUpdate: changed %s
+10-20 21:57:17.681 I/A       ( 1443): #handleFlagsUpdate: listeners notified
+10-20 21:57:17.700 I/OpaEligibilityChecker( 1508): send OpaEligibilityChange broadcast to CommonBroadcastReceiver
+10-20 21:57:17.729 D/FileUtils(  555): Rounded bytes from 2593198080 to 4000000000
+10-20 21:57:17.743 D/PackageManager(  555): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 21:57:17.744 D/PackageManager(  555): Clear ephemeral installer activity
+10-20 21:57:17.753 W/system_server(  555): Long monitor contention with owner NetworkStats (821) at void android.net.connectivity.com.android.server.net.NetworkStatsService.performPoll(int, android.net.connectivity.com.android.server.net.NetworkStatsEventLogger$PollEvent)(NetworkStatsService.java:2590) waiters=0 in android.net.NetworkStatsHistory android.net.connectivity.com.android.server.net.NetworkStatsService.internalGetHistoryForNetwork(android.net.NetworkTemplate, int, int, int, int, long, long) for 258ms
+10-20 21:57:17.756 I/Thunderbird( 1189): starting outgoing sms listener [CONTEXT service_id=226 ]
+10-20 21:57:17.771 D/nativeloader( 3976): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+10-20 21:57:17.776 V/BackupManagerConstants(  555): getFullBackupIntervalMilliseconds(...) returns 86400000
+10-20 21:57:17.784 V/BackupManagerConstants(  555): getFullBackupRequiredNetworkType(...) returns 2
+10-20 21:57:17.787 V/BackupManagerConstants(  555): getFullBackupRequireCharging(...) returns true
+10-20 21:57:17.789 I/BugleDataModel( 3258): ActionExecutorImpl: ACTION_EXECUTE_QUEUED_GenericWorkerQueueAction
 --
-10-20 20:07:16.918 D/AndroidRuntime( 4280): Calling main entry com.android.commands.am.Am
-10-20 20:07:16.919 I/SyncWorkManager( 1509): Scheduling periodic proactive syncs
-10-20 20:07:16.921 D/UiAutomationConnection( 4280): Created on user UserHandle{0}
-10-20 20:07:16.927 I/PhenotypeBackgroundRecv( 1560): Skipping com.google.android.apps.search.policy#com.google.android.googlequicksearchbox which doesn't use ProcessStable flags.
-10-20 20:07:16.940 D/WM-SystemJobScheduler( 1509): Scheduling work ID 1d01c325-4bc8-4ceb-a738-5f6f14ba551dJob ID 2
-10-20 20:07:16.942 W/ParceledListSlice(  557): Element #25 is 19764 bytes.
-10-20 20:07:16.944 W/ParceledListSlice(  557): Element #26 is 19800 bytes.
-10-20 20:07:16.945 D/ImsResolver( 1033): maybeAddedImsService, packageName: dev.mobile.maestro.test
-10-20 20:07:16.946 I/ActivityManager(  557): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-10-20 20:07:16.949 W/ParceledListSlice(  557): Element #27 is 19644 bytes.
-10-20 20:07:16.951 W/ParceledListSlice(  557): Element #28 is 19552 bytes.
-10-20 20:07:16.951 W/ParceledListSlice(  557): Element #29 is 19664 bytes.
-10-20 20:07:16.960 W/PackageManager( 1487): Failure retrieving text 0x7f130786 in package com.android.systemui
-10-20 20:07:16.960 W/PackageManager( 1487): android.content.res.Resources$NotFoundException: String resource ID #0x7f130786
-10-20 20:07:16.960 W/PackageManager( 1487): 	at android.content.res.Resources.getText(Resources.java:466)
-10-20 20:07:16.960 W/PackageManager( 1487): 	at android.app.ApplicationPackageManager.getText(ApplicationPackageManager.java:2405)
-10-20 20:07:16.960 W/PackageManager( 1487): 	at android.appwidget.AppWidgetProviderInfo.loadDescription(AppWidgetProviderInfo.java:484)
-10-20 20:07:16.960 W/PackageManager( 1487): 	at kml.a(PG:341)
-10-20 20:07:16.960 W/PackageManager( 1487): 	at kmg.b(PG:39)
-10-20 20:07:16.960 W/PackageManager( 1487): 	at aaer.g(PG:13)
-10-20 20:07:16.960 W/PackageManager( 1487): 	at kotlinx.coroutines.DispatchedTask.run(PG:114)
-10-20 20:07:16.960 W/PackageManager( 1487): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
-10-20 20:07:16.960 W/PackageManager( 1487): 	at wqm.a(PG:3)
-10-20 20:07:16.960 W/PackageManager( 1487): 	at wpo.run(PG:21)
-10-20 20:07:16.960 W/PackageManager( 1487): 	at wqn.run(PG:5)
-10-20 20:07:16.960 W/PackageManager( 1487): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
-10-20 20:07:16.960 W/PackageManager( 1487): 	at java.util.concurrent.FutureTask.run(FutureTask.java:264)
-10-20 20:07:16.960 W/PackageManager( 1487): 	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:307)
-10-20 20:07:16.960 W/PackageManager( 1487): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
-10-20 20:07:16.960 W/PackageManager( 1487): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
-10-20 20:07:16.960 W/PackageManager( 1487): 	at hqv.run(PG:221)
+10-20 21:57:17.916 D/AndroidRuntime( 3976): Calling main entry com.android.commands.am.Am
+10-20 21:57:17.924 D/UiAutomationConnection( 3976): Created on user UserHandle{0}
+10-20 21:57:17.927 I/netd    (  359): setProcSysNet(4, 2, wlan0, ucast_solicit, 10) <0.03ms>
+10-20 21:57:17.928 I/netd    (  359): setProcSysNet(6, 2, wlan0, retrans_time_ms, 750) <0.03ms>
+10-20 21:57:17.928 I/netd    (  359): setProcSysNet(6, 2, wlan0, ucast_solicit, 10) <0.21ms>
+10-20 21:57:17.933 W/Looper  (  555): Slow dispatch took 247ms main h=android.app.ActivityThread$H c=android.app.LoadedApk$ReceiverDispatcher$Args$$ExternalSyntheticLambda0@dcea4ab m=0
+10-20 21:57:17.934 D/PackageManager(  555): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 21:57:17.934 D/PackageManager(  555): Clear ephemeral installer activity
+10-20 21:57:17.935 I/ebvk$a  ( 1427): Unable to retrieve flag snapshot for com.google.android.gms.trustagent.activeunlock.primary#com.google.android.gms, using defaults.
+10-20 21:57:17.940 W/Looper  (  555): Slow delivery took 329ms main h=com.android.server.alarm.AlarmManagerService$AlarmHandler c=null m=11
+10-20 21:57:17.949 W/SystemServiceRegistry( 2139): No service published for: persistent_data_block
+10-20 21:57:17.964 I/AiAiEcho( 1440): EchoSearch: WidgetFetcherImpl is initialized with [33] widgets [reason=package added for userId: 0]
+10-20 21:57:17.967 I/Bugle   ( 3258): BroadcastReceiverAsyncWorkTracker: Acknowledging broadcast of buoi@20a45dc
+10-20 21:57:17.969 D/PackageManager(  555): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 21:57:17.971 D/PackageManager(  555): Clear ephemeral installer activity
+10-20 21:57:17.972 W/Role    (  555): Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58
+10-20 21:57:17.975 D/PackageManager(  555): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 21:57:17.977 D/PackageManager(  555): Clear ephemeral installer activity
+10-20 21:57:17.979 I/AiAiEcho( 1440): Settings changed for uri: content://settings/secure/active_unlock_provider
+10-20 21:57:17.984 W/Looper  (  555): Drained
+10-20 21:57:17.987 D/PackageManager(  555): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 21:57:17.990 D/PackageManager(  555): Clear ephemeral installer activity
+10-20 21:57:17.997 D/PackageManager(  555): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 21:57:18.000 D/CarrierSvcBindHelper( 1077): onPackageModified: com.google.android.gms
+10-20 21:57:18.002 D/PackageManager(  555): Clear ephemeral installer activity
+10-20 21:57:18.009 D/EGL_emulation(  913): app_time_stats: avg=17890.70ms min=17890.70ms max=17890.70ms count=1
+10-20 21:57:18.012 W/SearchServiceCore( 1508): Abort, client detached.
+10-20 21:57:18.014 W/SearchServiceCore( 1508): Abort, client detached.
+10-20 21:57:18.014 I/PeopleGalProvider( 1427): Gal directories started.
+10-20 21:57:18.016 W/SearchServiceCore( 1508): Abort, client detached.
+10-20 21:57:18.019 W/SearchServiceCore( 1508): Abort, client detached.
 --
-10-20 20:07:19.822 I/AndroidRuntime( 4280): VM exiting with result code 0.
-10-20 20:07:19.893 I/logd    (    0): logdr: UID=2000 GID=2000 PID=4334 n tail=0 logMask=99 pid=0 start=1792526838956000000ns deadline=0ns
-10-20 20:07:19.933 W/binder_debug(    0): 4 callbacks suppressed
-10-20 20:07:19.933 I/binder  (    0): undelivered TRANSACTION_COMPLETE
-10-20 20:07:19.935 I/binder  (    0): undelivered transaction 273160, process died.
-10-20 20:07:19.823 W/ActivityManager(  557): pid 557 system sent binder code 1 with flags 1 to frozen apps and got error -32
-10-20 20:07:19.823 I/keystore2(  173): system/security/keystore2/src/maintenance.rs:341 - clearNamespace(r#APP, nspace=10210)
-10-20 20:07:19.826 I/Zygote  (  360): Process 4292 exited due to signal 9 (Killed)
-10-20 20:07:19.959 I/init    (    0): Untracked pid 4280 exited with status 0
-10-20 20:07:19.960 I/init    (    0): Untracked pid 4280 did not have an associated service entry and will not be reaped
-10-20 20:07:19.859 I/libprocessgroup(  557): Removed cgroup /sys/fs/cgroup/uid_10210/pid_4292
-10-20 20:07:19.949 I/.apps.messaging( 3545): Background concurrent mark compact GC freed 5846KB AllocSpace bytes, 305(12MB) LOS objects, 49% free, 18MB/37MB, paused 24.164ms,4.747ms total 253.262ms
-10-20 20:07:20.085 I/logd    (    0): start watching /data/system/packages.list ...
-10-20 20:07:20.087 I/logd    (    0): ReadPackageList, total packages: 218
-10-20 20:07:19.984 W/system_server(  557): Long monitor contention with owner PackageManager (611) at void com.android.server.pm.RemovePackageHelper.removePackageDataLIF(com.android.server.pm.PackageSetting, int, int[], com.android.server.pm.PackageRemovedInfo, int, boolean)(RemovePackageHelper.java:467) waiters=0 in com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer(boolean) for 154ms
-10-20 20:07:19.987 D/PackageManager(  557): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
-10-20 20:07:19.987 D/PackageManager(  557): Clear ephemeral installer activity
-10-20 20:07:19.991 I/RescueParty(  557): Starting to observe: [android, com.google.android.healthconnect.controller], updated namespace: health_fitness
-10-20 20:07:19.992 I/PackageWatchdog(  557): Syncing state, reason: observing new packages
-10-20 20:07:19.992 D/PackageWatchdog(  557): rescue-party-observer added the following packages to monitor [android, com.google.android.healthconnect.controller]
-10-20 20:07:19.992 I/PackageWatchdog(  557): Syncing health check requests for packages: {com.google.android.healthconnect.controller}
-10-20 20:07:19.992 I/ExplicitHealthCheckController(  557): Service not ready to get health check supported packages. Binding...
-10-20 20:07:19.995 I/PackageWatchdog(  557): Syncing state, reason: updated observers
-10-20 20:07:19.995 I/PackageWatchdog(  557): Saving observer state to file
-10-20 20:07:20.005 W/MagnificationConnectionManager(  557): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-20 20:07:20.007 W/MagnificationConnectionManager(  557): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-20 20:07:20.010 W/system_server(  557): Long monitor contention with owner ActivityManager (587) at void com.android.server.am.ActivityManagerService$MainHandler.handleMessage(android.os.Message)(ActivityManagerService.java:1924) waiters=0 in void com.android.server.am.ContentProviderHelper.removeContentProvider(android.os.IBinder, boolean) for 230ms
-10-20 20:07:20.010 V/ActivityManager(  557): Got obituary of 4292:dev.mobile.maestro
-10-20 20:07:20.126 I/binder  (    0): 587:557 cannot find target node
-10-20 20:07:20.127 I/binder  (    0): 557:587 transaction async to 0:0 failed 273272/29189/-22, size 88-0 line 3344
-10-20 20:07:20.014 E/IPCThreadState(  557): Binder transaction failure. id: 273272, BR_*: 29189, error: -22 (Invalid argument)
+10-20 22:00:50.667 I/AndroidRuntime( 3976): VM exiting with result code 0.
+10-20 22:00:50.824 I/servicemanager(    0): Caller(pid=555,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+10-20 22:00:50.843 I/init    (    0): starting service 'artd'...
+10-20 22:00:50.680 I/netd    (  359): tetherGetStats() -> {[]} <0.28ms>
+10-20 22:00:50.681 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.682 W/MagnificationConnectionManager(  555): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-20 22:00:50.683 V/UiAutomationManager(  555): UiAutomation service owner died
+10-20 22:00:50.683 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.683 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.683 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.684 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.684 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.684 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.684 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.684 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.685 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.685 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.685 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.686 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.686 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.688 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.688 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.691 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.691 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.691 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.691 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.691 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.691 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.691 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.691 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-20 22:00:50.691 W/IPCThreadState(  555): Sending oneway calls to frozen process.
