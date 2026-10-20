@@ -92,7 +92,7 @@ export function NewChatScreen({ navigation }: Props): React.JSX.Element {
       {loading ? <ActivityIndicator color={colors.accent} style={styles.spinner} /> : null}
 
       {!loading && debouncedQuery && results.length === 0 ? (
-        <EmptyState title="No one found" message={`No people match "${debouncedQuery}".`} />
+        <EmptyState icon="search" title="No one found" message={`No people match "${debouncedQuery}".`} />
       ) : (
         <FlatList
           data={results}

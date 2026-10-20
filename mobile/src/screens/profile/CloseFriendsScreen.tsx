@@ -175,9 +175,9 @@ export function CloseFriendsScreen(): React.JSX.Element {
         }}
         ListEmptyComponent={
           searching ? (
-            results === null ? undefined : <EmptyState title="No one found" message="Try a different name or username." />
+            results === null ? undefined : <EmptyState icon="search" title="No one found" message="Try a different name or username." />
           ) : (
-            <EmptyState title="No Close Friends yet" message="Search for people to add. Stories you share with Close Friends go only to them." />
+            <EmptyState icon="starFilled" title="No Close Friends yet" message="Search for people to add. Stories you share with Close Friends go only to them." />
           )
         }
       />

@@ -176,7 +176,7 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
   return (
     <View style={styles.container}>
       {stories.length === 0 ? (
-        <EmptyState title="Your Archive is empty" message="Every Story you publish stays here, even after it expires." />
+        <EmptyState icon="archive" title="Your Archive is empty" message="Every Story you publish stays here, even after it expires." />
       ) : (
         <SectionList
           sections={sections}

@@ -268,7 +268,7 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
         suggestions === null ? (
           <ListSkeleton rows={6} label="Loading suggestions" />
         ) : suggestions.length === 0 ? (
-          <EmptyState title="Find people" message="Search by name, username or interest." />
+          <EmptyState icon="search" title="Find people" message="Search by name, username or interest." />
         ) : (
           <FlatList
             data={suggestions as Person[]}

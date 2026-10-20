@@ -77,7 +77,7 @@ export function FollowRequestsScreen(): React.JSX.Element {
   }
 
   if (requests.length === 0) {
-    return <EmptyState title="No pending requests" message="Follow requests waiting on your approval will show up here." />;
+    return <EmptyState icon="following" title="No pending requests" message="Follow requests waiting on your approval will show up here." />;
   }
 
   return (

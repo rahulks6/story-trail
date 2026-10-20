@@ -69,7 +69,7 @@ export function MutedAccountsScreen(): React.JSX.Element {
   }
 
   if (muted.length === 0) {
-    return <EmptyState title="No muted accounts" message="Accounts you mute will show up here so you can unmute them later." />;
+    return <EmptyState icon="audioMuted" title="No muted accounts" message="Accounts you mute will show up here so you can unmute them later." />;
   }
 
   return (

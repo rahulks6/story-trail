@@ -17,16 +17,16 @@ interface Props {
 export function ListRow({ label, icon, detail, destructive, disabled, onPress }: Props): React.JSX.Element {
   return (
     <Pressable
-      style={[styles.row, disabled && styles.rowDisabled]}
+      style={({ pressed }) => [styles.row, pressed && !disabled && styles.rowPressed, disabled && styles.rowDisabled]}
       onPress={onPress}
       disabled={disabled}
       accessibilityRole="button"
       accessibilityLabel={label}
     >
-      {icon ? <Icon style={styles.icon} name={icon}/> : null}
+      {icon ? <Icon style={[styles.icon, destructive && styles.destructiveIcon]} name={icon} size={22}/> : null}
       <Text style={[typography.body, styles.label, destructive && styles.destructiveLabel]}>{label}</Text>
       {detail ? <Text style={styles.detail}>{detail}</Text> : null}
-      {!destructive ? <Text style={styles.chevron}>›</Text> : null}
+      {!destructive ? <Icon name="chevron" size={16} color={colors.textDisabled} /> : null}
     </Pressable>
   );
 }
@@ -40,10 +40,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.border,
   },
+  rowPressed: { backgroundColor: colors.surfaceElevated },
   rowDisabled: { opacity: 0.5 },
-  icon: { width: 24, textAlign: "center", marginRight: spacing.sm, color: colors.textSecondary },
+  icon: { width: 24, textAlign: "center", marginRight: spacing.md, color: colors.textPrimary },
+  destructiveIcon: { color: colors.danger },
   label: { flex: 1 },
   destructiveLabel: { color: colors.danger },
-  detail: { ...typography.caption, color: colors.textDisabled, marginRight: spacing.xs },
-  chevron: { color: colors.textDisabled, fontSize: 18 },
+  detail: { ...typography.caption, color: colors.textSecondary, marginRight: spacing.xs },
 });

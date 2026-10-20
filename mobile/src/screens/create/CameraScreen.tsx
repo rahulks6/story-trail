@@ -477,13 +477,13 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
     </Pressable>
   );
   if (!hasCameraPermission) {
-    return <View style={styles.container}>{closeButton}<EmptyState variant="media" title="Camera access needed" message="Enable camera access in Settings, or choose media from your gallery."/><Pressable accessibilityRole="button" style={styles.sideButton} onPress={()=>void Linking.openSettings().catch(()=>undefined)}><Text style={{color:colors.textPrimary}}>Open Settings</Text></Pressable><Pressable accessibilityRole="button" style={styles.sideButton} onPress={()=>void openGallery()}><Text style={{color:colors.textPrimary}}>Choose from gallery</Text></Pressable></View>;
+    return <View style={styles.container}>{closeButton}<EmptyState variant="media" icon="camera" title="Camera access needed" message="Enable camera access in Settings, or choose media from your gallery."/><Pressable accessibilityRole="button" style={styles.sideButton} onPress={()=>void Linking.openSettings().catch(()=>undefined)}><Text style={{color:colors.textPrimary}}>Open Settings</Text></Pressable><Pressable accessibilityRole="button" style={styles.sideButton} onPress={()=>void openGallery()}><Text style={{color:colors.textPrimary}}>Choose from gallery</Text></Pressable></View>;
   }
   if (!device) {
     return (
       <View style={styles.container}>
         {cameraSearchOver ? (
-          <EmptyState variant="media" title="No camera available" message="This device doesn't have a usable camera." />
+          <EmptyState variant="media" icon="camera" title="No camera available" message="This device doesn't have a usable camera." />
         ) : (
           <ActivityIndicator style={styles.cameraLoading} color={colors.textPrimary} accessibilityLabel="Starting camera" />
         )}

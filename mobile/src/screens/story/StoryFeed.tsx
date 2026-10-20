@@ -636,7 +636,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
 
   if (caughtUp) {
     return <View style={styles.centered}>
-      <EmptyState variant="media" title="You're all caught up" message="No more Stories right now — check back soon.">
+      <EmptyState variant="media" icon="check" title="You're all caught up" message="No more Stories right now — check back soon.">
         {onRefresh ? <Pressable onPress={onRefresh} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>Check for new Stories</Text></Pressable> : null}
       </EmptyState>
     </View>;

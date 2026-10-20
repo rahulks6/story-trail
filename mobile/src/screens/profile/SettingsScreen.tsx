@@ -134,9 +134,11 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.card}><ListRow label="Account and sign-in methods" onPress={()=>navigation.navigate("AccountSecurity")}/></View>
-      <View style={styles.card}><ListRow label="Story uploads" onPress={()=>navigation.navigate('UploadQueue')}/></View>
-      <View style={styles.card}><ListRow label="Account notices and appeals" onPress={()=>navigation.navigate('Appeals')}/></View>
+      <View style={styles.card}>
+        <ListRow label="Account and sign-in methods" icon={ICONS.profile} onPress={()=>navigation.navigate("AccountSecurity")}/>
+        <ListRow label="Story uploads" icon={ICONS.create} onPress={()=>navigation.navigate('UploadQueue')}/>
+        <ListRow label="Account notices and appeals" icon={ICONS.about} onPress={()=>navigation.navigate('Appeals')}/>
+      </View>
       <Text style={styles.sectionHeader}>Privacy</Text>
       <View style={styles.card}>
         <View style={styles.switchRow}>
@@ -161,17 +163,18 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
         </View>
         <ListRow
           label="Follow requests"
+          icon={ICONS.following}
           detail={pendingRequestCount ? (pendingRequestCount >= REQUEST_COUNT_CAP ? `${REQUEST_COUNT_CAP}+` : String(pendingRequestCount)) : undefined}
           onPress={() => navigation.navigate("FollowRequests")}
         />
-        <ListRow label="Close Friends" onPress={() => navigation.navigate("CloseFriends")} />
-        <ListRow label="Blocked accounts" onPress={() => navigation.navigate("BlockedAccounts")} />
-        <ListRow label="Muted accounts" onPress={() => navigation.navigate("MutedAccounts")} />
+        <ListRow label="Close Friends" icon={ICONS.starFilled} onPress={() => navigation.navigate("CloseFriends")} />
+        <ListRow label="Blocked accounts" icon={ICONS.privacy} onPress={() => navigation.navigate("BlockedAccounts")} />
+        <ListRow label="Muted accounts" icon={ICONS.audioMuted} onPress={() => navigation.navigate("MutedAccounts")} />
       </View>
 
       <Text style={styles.sectionHeader}>Appearance</Text>
       <View style={styles.card}>
-        <ListRow label="Appearance" detail={APPEARANCE_LABELS[appearanceChoice()]} onPress={() => setAppearanceOpen(true)} />
+        <ListRow label="Appearance" icon={ICONS.settings} detail={APPEARANCE_LABELS[appearanceChoice()]} onPress={() => setAppearanceOpen(true)} />
       </View>
       <ActionSheet
         visible={appearanceOpen}
@@ -201,14 +204,14 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
 
       <Text style={styles.sectionHeader}>Support</Text>
       <View style={styles.card}>
-        <ListRow label="Help" onPress={() => navigation.navigate("Help")} />
-        <ListRow label="About" onPress={() => navigation.navigate("About")} />
+        <ListRow label="Help" icon={ICONS.help} onPress={() => navigation.navigate("Help")} />
+        <ListRow label="About" icon={ICONS.about} onPress={() => navigation.navigate("About")} />
       </View>
 
       <View style={styles.card}>
-        <ListRow label="Log out" destructive onPress={onLogOut} />
+        <ListRow label="Log out" icon={ICONS.logout} destructive onPress={onLogOut} />
         {/* One path for every account: it verifies with a password or Google/phone, so accounts without a password can delete too. */}
-        <ListRow label="Delete account" destructive onPress={() => navigation.navigate("AccountSecurity")} />
+        <ListRow label="Delete account" icon={ICONS.trash} destructive onPress={() => navigation.navigate("AccountSecurity")} />
       </View>
 
     </ScrollView>

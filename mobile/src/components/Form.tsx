@@ -127,7 +127,8 @@ const styles = StyleSheet.create({
   button: { minHeight: 48, borderRadius: radii.md, alignItems: "center", justifyContent: "center", paddingHorizontal: spacing.lg },
   primary: { backgroundColor: colors.accent },
   secondary: { backgroundColor: colors.surfaceElevated, borderWidth: 1, borderColor: colors.border },
-  pressed: { opacity: 0.85 },
+  // A slight press-in, so taps feel physical.
+  pressed: { opacity: 0.85, transform: [{ scale: 0.98 }] },
   disabled: { opacity: 0.5 },
   buttonLabel: { fontSize: 16, fontWeight: "700" },
   primaryLabel: { color: colors.onAccent },

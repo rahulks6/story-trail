@@ -394,7 +394,7 @@ export function ActivityScreen(): React.JSX.Element {
     return (
       <View style={styles.container}>
         {header}
-        <EmptyState title="No activity yet" message="Likes, comments, and follows will show up here." />
+        <EmptyState icon="activity" title="No activity yet" message="Likes, comments, and follows will show up here." />
       </View>
     );
   }

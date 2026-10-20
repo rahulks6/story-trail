@@ -12,6 +12,7 @@ import { askForPushOnce } from "../../push/usePushRegistration";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { listConversations, type ConversationSummary } from "../../api/conversations";
 import { EmptyState } from "../../components/EmptyState";
+import { Button } from "../../components/Form";
 import { Avatar } from "../../components/Avatar";
 
 /** The server's largest page; older conversations load as the list scrolls. */
@@ -162,7 +163,13 @@ export function DMInboxScreen(): React.JSX.Element {
   }
 
   if (conversations.length === 0 && !search) {
-    return <EmptyState title="No messages yet" message="Conversations with people you message will appear here." />;
+    return (
+      <EmptyState icon="dm" title="No messages yet" message="Conversations with people you message will appear here.">
+        <View style={styles.emptyAction}>
+          <Button label="New message" onPress={() => navigation.navigate("NewChat")} />
+        </View>
+      </EmptyState>
+    );
   }
 
   return (
@@ -205,6 +212,7 @@ export function DMInboxScreen(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
+  emptyAction: { marginTop: spacing.md, minWidth: 200 },
   container: { flex: 1, backgroundColor: colors.background },
   searchRow: { paddingHorizontal: spacing.md, paddingTop: spacing.sm, paddingBottom: spacing.xs },
   searchInput: {

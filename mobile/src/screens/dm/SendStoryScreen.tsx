@@ -98,7 +98,7 @@ export function SendStoryScreen({ route, navigation }: Props): React.JSX.Element
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
       {!loading && debouncedQuery && results.length === 0 ? (
-        <EmptyState title="No one found" message={`No people match "${debouncedQuery}".`} />
+        <EmptyState icon="search" title="No one found" message={`No people match "${debouncedQuery}".`} />
       ) : (
         <FlatList
           data={results}

@@ -2,8 +2,9 @@ import { colors, mediaColors, type Palette } from "./colors";
 
 function typographyFor(p: Palette) {
   return {
-    displayLarge: { fontSize: 28, fontWeight: "700" as const, color: p.textPrimary },
-    title: { fontSize: 20, fontWeight: "700" as const, color: p.textPrimary },
+    // Large bold headings read better a touch tighter.
+    displayLarge: { fontSize: 28, fontWeight: "700" as const, letterSpacing: -0.4, color: p.textPrimary },
+    title: { fontSize: 20, fontWeight: "700" as const, letterSpacing: -0.2, color: p.textPrimary },
     body: { fontSize: 15, fontWeight: "400" as const, color: p.textPrimary },
     bodyStrong: { fontSize: 15, fontWeight: "600" as const, color: p.textPrimary },
     caption: { fontSize: 13, fontWeight: "400" as const, color: p.textSecondary },

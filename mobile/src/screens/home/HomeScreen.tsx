@@ -81,7 +81,7 @@ export function HomeScreen():React.JSX.Element {
    {festivalCreators.length?<Pressable onPress={openFestival} style={styles.festivalCardButton} accessibilityRole="button"><Text style={styles.festivalCardButtonLabel}>See {festivalInfo?.storyCount} {festival.name} {festivalInfo?.storyCount===1?'Story':'Stories'}</Text></Pressable>:null}
    <Pressable onPress={()=>navigation.navigate('Create')} style={styles.emptyButton} accessibilityRole="button"><Text style={styles.emptyButtonLabel}>Post your {festival.name} Story</Text></Pressable>
   </View>:null}
-  <EmptyState variant="media" title="No active Stories yet" message="Stories from people you follow and eligible new creators will appear here."/>
+  <EmptyState variant="media" icon="create" title="No active Stories yet" message="Stories from people you follow and eligible new creators will appear here."/>
   <View style={styles.emptyActions}>
    <Pressable onPress={()=>navigation.navigate('Search',{screen:'SearchHome'})} style={styles.emptyButton} accessibilityRole="button"><Text style={styles.emptyButtonLabel}>Find people</Text></Pressable>
    <Pressable onPress={reloadQuietly} disabled={refreshing} style={styles.emptyButton} accessibilityRole="button" accessibilityLabel="Refresh Stories"><Text style={styles.emptyButtonLabel}>{refreshing?'Refreshing…':'Refresh'}</Text></Pressable>

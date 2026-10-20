@@ -69,7 +69,7 @@ export function BlockedAccountsScreen(): React.JSX.Element {
   }
 
   if (blocked.length === 0) {
-    return <EmptyState title="No blocked accounts" message="Accounts you block will show up here so you can unblock them later." />;
+    return <EmptyState icon="privacy" title="No blocked accounts" message="Accounts you block will show up here so you can unblock them later." />;
   }
 
   return (
