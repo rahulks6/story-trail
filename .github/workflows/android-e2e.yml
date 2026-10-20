@@ -39,7 +39,13 @@ jobs:
           java-version: 17
 
       - name: Android SDK
-        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.0" "build-tools;37.0.0" "ndk;27.1.12297006" > /dev/null
+        # A download can arrive corrupt ("unknown archive"): try again before failing.
+        run: |
+          for attempt in 1 2 3; do
+            yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.0" "build-tools;37.0.0" "ndk;27.1.12297006" > /dev/null && exit 0
+            echo "SDK download failed (attempt $attempt), retrying"; sleep 10
+          done
+          exit 1
 
       - name: JavaScript dependencies
         run: npm ci
