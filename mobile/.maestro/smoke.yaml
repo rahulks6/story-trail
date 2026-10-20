@@ -62,18 +62,14 @@ appId: com.katkee.app
     timeout: 45000
 - takeScreenshot: 04-verify-email
 # A new account can't skip this: no "Later", only a way to fix the email or log out.
-- runFlow:
-    file: close-keyboard.yaml
-    env:
-      TITLE: "Verify your email"
+# Tapping the title closes the keyboard (Android's "hide keyboard" acts as Back when it's already closed).
+- tapOn: "Verify your email"
 - assertVisible: "Wrong email? Change it"
 - assertNotVisible: "Later"
 - tapOn: "Wrong email? Change it"
 - takeScreenshot: 04b-change-email
-- runFlow:
-    file: close-keyboard.yaml
-    env:
-      TITLE: "Change your email"
+# Tapping the title closes the keyboard (Android's "hide keyboard" acts as Back when it's already closed).
+- tapOn: "Change your email"
 - tapOn: "Cancel"
 # Verified out of band (ci-verify.js), then reopened: the app now opens on Home.
 - runScript: ci-verify.js
