@@ -111,7 +111,7 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
   if (editingEmail) {
     return (
       <KeyboardAvoider style={styles.root}>
-        <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.xl }]} keyboardShouldPersistTaps="handled">
+        <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.xl }]} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
           <Text style={typography.displayLarge} accessibilityRole="header">Change your email</Text>
           <Text style={styles.body}>We'll send a new code to this address.</Text>
           {error ? <Banner text={error} /> : null}
@@ -137,7 +137,7 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
 
   return (
     <KeyboardAvoider style={styles.root}>
-      <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.xl }]} keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.xl }]} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
         <Text style={typography.displayLarge} accessibilityRole="header">Verify your email</Text>
         <Text style={styles.body}>
           We sent a 6-digit code to <Text style={styles.email}>{user?.email ?? "your email"}</Text>. {required ? "Enter it to finish creating your account." : "It keeps your account secure and lets you reset your password if you ever forget it."}

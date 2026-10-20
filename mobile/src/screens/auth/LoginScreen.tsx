@@ -39,6 +39,7 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
       <ScrollView
         contentContainerStyle={[styles.container, { paddingTop: insets.top + spacing.lg, paddingBottom: insets.bottom + spacing.lg }]}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
       >
         {/* Simple, like Instagram: the logo, two fields, Log in; everything else is small, below. */}
         <View style={styles.top}>

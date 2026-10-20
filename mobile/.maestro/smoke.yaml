@@ -23,34 +23,19 @@ appId: com.katkee.app
 # fields below it on a small screen).
 - tapOn: "Display name"
 - inputText: "Katkee iPhone Test"
-- runFlow:
-    file: close-keyboard.yaml
-    env:
-      TITLE: "Create your account"
+- runFlow: close-keyboard.yaml
 - tapOn: "Username"
 - inputText: ${USERNAME}
-- runFlow:
-    file: close-keyboard.yaml
-    env:
-      TITLE: "Create your account"
+- runFlow: close-keyboard.yaml
 - tapOn: "Email"
 - inputText: ${EMAIL}
-- runFlow:
-    file: close-keyboard.yaml
-    env:
-      TITLE: "Create your account"
+- runFlow: close-keyboard.yaml
 - tapOn: "Date of birth"
 - inputText: "01011995"
-- runFlow:
-    file: close-keyboard.yaml
-    env:
-      TITLE: "Create your account"
+- runFlow: close-keyboard.yaml
 - tapOn: "Password"
 - inputText: ${PASSWORD}
-- runFlow:
-    file: close-keyboard.yaml
-    env:
-      TITLE: "Create your account"
+- runFlow: close-keyboard.yaml
 - takeScreenshot: 03-signup-filled
 - scrollUntilVisible:
     element: "Sign up"
@@ -104,9 +89,7 @@ appId: com.katkee.app
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: 08-create
-- tapOn:
-    text: "Close"
-    optional: true
+- tapOn: "Close camera"
 
 - tapOn: "Profile"
 - waitForAnimationToEnd:

@@ -81,7 +81,7 @@ export function ResetPasswordScreen({ navigation, route }: Props): React.JSX.Ele
   return (
     <KeyboardAvoider style={styles.root}>
       {/* The header is see-through: keep the content clear of it and of the bottom inset. */}
-      <ScrollView contentContainerStyle={[styles.content, { paddingTop: headerHeight + spacing.md, paddingBottom: insets.bottom + spacing.xl }]} keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={[styles.content, { paddingTop: headerHeight + spacing.md, paddingBottom: insets.bottom + spacing.xl }]} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
         <Text style={typography.displayLarge} accessibilityRole="header">
           Enter your code
         </Text>

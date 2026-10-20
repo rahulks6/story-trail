@@ -148,3 +148,20 @@ describe("the camera starting on a real phone", () => {
     alert.mockRestore();
   });
 });
+
+describe("while the camera list loads", () => {
+  afterEach(() => { g.__camera.device = { id: "back", position: "back" }; });
+
+  it("shows a spinner, not 'No camera available', and can always be closed", async () => {
+    g.__camera.device = undefined;
+    await render();
+    const texts = () => tree.root.findAll((n: ReactTestInstance) => typeof n.props.children === "string").map((n) => n.props.children);
+    expect(byLabel("Starting camera")).toBeTruthy();
+    expect(texts()).not.toContain("No camera available");
+    await act(async () => { jest.advanceTimersByTime(3000); });
+    expect(texts()).toContain("No camera available");
+    navigation.goBack.mockClear();
+    await choose("Close camera");
+    expect(navigation.goBack).toHaveBeenCalled();
+  });
+});

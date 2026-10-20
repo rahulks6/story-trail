@@ -3,7 +3,7 @@ import Svg, { Circle } from "react-native-svg";
 import { Icon } from "../../components/Icon";
 import { tapFeedback } from '../../utils/haptics';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {Alert,AppState,Linking, PanResponder, Pressable, ScrollView, StyleSheet, Text, View, type GestureResponderEvent } from "react-native";
+import {ActivityIndicator,Alert,AppState,Linking, PanResponder, Pressable, ScrollView, StyleSheet, Text, View, type GestureResponderEvent } from "react-native";
 import {useIsFocused} from '@react-navigation/native';
 import {
   Camera,
@@ -93,6 +93,13 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   const boomerangTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const device = useCameraDevice(position);
+  // Cameras are listed a moment after the screen opens: wait before saying there's none.
+  const [cameraSearchOver, setCameraSearchOver] = useState(false);
+  useEffect(() => {
+    if (device) return;
+    const timer = setTimeout(() => setCameraSearchOver(true), 3000);
+    return () => clearTimeout(timer);
+  }, [device]);
   const camera = useRef<CameraRef>(null);
   const photoOutput = usePhotoOutput({ containerFormat: "jpeg", quality: 0.9 });
   // Sound is decided once both permission questions are answered, so the camera isn't rebuilt
@@ -464,11 +471,25 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const closeButton = (
+    <Pressable onPress={() => navigation.goBack()} hitSlop={8} style={[styles.toolButton, styles.closeCorner, { top: insets.top + spacing.md }]} accessibilityRole="button" accessibilityLabel="Close camera">
+      <Icon style={styles.topIcon} name={ICONS.close} />
+    </Pressable>
+  );
   if (!hasCameraPermission) {
-    return <View style={styles.container}><EmptyState title="Camera access needed" message="Enable camera access in Settings, or choose media from your gallery."/><Pressable accessibilityRole="button" style={styles.sideButton} onPress={()=>void Linking.openSettings().catch(()=>undefined)}><Text style={{color:colors.textPrimary}}>Open Settings</Text></Pressable><Pressable accessibilityRole="button" style={styles.sideButton} onPress={()=>void openGallery()}><Text style={{color:colors.textPrimary}}>Choose from gallery</Text></Pressable></View>;
+    return <View style={styles.container}>{closeButton}<EmptyState title="Camera access needed" message="Enable camera access in Settings, or choose media from your gallery."/><Pressable accessibilityRole="button" style={styles.sideButton} onPress={()=>void Linking.openSettings().catch(()=>undefined)}><Text style={{color:colors.textPrimary}}>Open Settings</Text></Pressable><Pressable accessibilityRole="button" style={styles.sideButton} onPress={()=>void openGallery()}><Text style={{color:colors.textPrimary}}>Choose from gallery</Text></Pressable></View>;
   }
   if (!device) {
-    return <EmptyState title="No camera available" message="This device doesn't have a usable camera." />;
+    return (
+      <View style={styles.container}>
+        {cameraSearchOver ? (
+          <EmptyState variant="media" title="No camera available" message="This device doesn't have a usable camera." />
+        ) : (
+          <ActivityIndicator style={styles.cameraLoading} color={colors.textPrimary} accessibilityLabel="Starting camera" />
+        )}
+        {closeButton}
+      </View>
+    );
   }
   if (!permissionsSettled) {
     return <View style={styles.container} />;
@@ -672,6 +693,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   topRight: { flexDirection: "row", gap: spacing.lg },
+  closeCorner: { position: "absolute", left: spacing.md, zIndex: 1 },
+  cameraLoading: { flex: 1 },
   topIcon: { color: colors.textPrimary, fontSize: 24, fontWeight: "600" },
   toolDisabled: { opacity: 0.4 },
   timerLabel: { color: colors.accent, fontSize: 14, fontWeight: "700" },

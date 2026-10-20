@@ -59,6 +59,7 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
       <ScrollView
         contentContainerStyle={[styles.container, { paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.xl }]}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
       >
         <Text style={[typography.title, styles.title]} accessibilityRole="header">Create your account</Text>
         {error ? <Banner text={error} /> : null}
