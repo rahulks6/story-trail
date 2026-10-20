@@ -1,0 +1,3 @@
+Physical size: 2560x1600
+Physical density: 320
+landscape
