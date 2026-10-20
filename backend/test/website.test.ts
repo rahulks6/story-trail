@@ -65,7 +65,7 @@ after(async () => {
 
 describe("the website's pages", () => {
   it("serves the landing page, Help Center, policy, terms and deletion page the app and stores link to", async () => {
-    assert.deepEqual(Object.keys(manifest.pages).sort(), ["/", "/delete-account", "/privacy", "/support", "/terms"]);
+    assert.deepEqual(Object.keys(manifest.pages).sort(), ["/", "/child-safety", "/delete-account", "/privacy", "/support", "/terms"]);
     for (const [route, name] of Object.entries(manifest.pages)) {
       const reply = await get(route);
       assert.equal(reply.status, 200, route);
@@ -79,6 +79,7 @@ describe("the website's pages", () => {
     assert.match(terms, /<h1>Terms of Service<\/h1>/);
     assert.match(terms, /zero tolerance for objectionable content/);
     assert.match((await get("/delete-account")).body.toString(), /Settings<\/strong>[\s\S]*Delete account/);
+    assert.match((await get("/child-safety")).body.toString(), /Child Safety Standards[\s\S]*child sexual abuse and exploitation/);
     // What a store reviewer opens must be the finished text, not the drafting notes.
     for (const route of Object.keys(manifest.pages)) {
       const html = (await get(route)).body.toString();
