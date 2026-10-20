@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <testsuites>
-  <testsuite name="Test Suite" device="test" tests="1" failures="1" time="143.468" timestamp="2026-10-20T10:55:16">
-    <testcase id="smoke" name="smoke" classname="smoke" file="/home/runner/work/story-trail/story-trail/mobile/.maestro/smoke.yaml" time="143.432" timestamp="2026-10-20T10:55:16" status="ERROR">
-      <failure>Element not found: Text matching regex: Create your account</failure>
+  <testsuite name="Test Suite" device="test" tests="1" failures="1" time="159.278" timestamp="2026-10-20T12:04:29">
+    <testcase id="smoke" name="smoke" classname="smoke" file="/home/runner/work/story-trail/story-trail/mobile/.maestro/smoke.yaml" time="159.215" timestamp="2026-10-20T12:04:29" status="ERROR">
+      <failure>Element not found: Text matching regex: Cancel</failure>
     </testcase>
   </testsuite>
 </testsuites>
