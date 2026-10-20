@@ -7,7 +7,8 @@ import { clientIp } from "../../http/rateLimiter";
 import { enforceSharedLimit } from "../../shared/sharedRateLimit";
 import { ipHash } from "../../shared/crypto";
 import { verifyAccessToken } from "./tokens";
-import { sendEmailVerificationCode, verifyEmailCode } from "./account-security";
+import { changeUnverifiedEmail, sendEmailVerificationCode, verifyEmailCode } from "./account-security";
+import { verifyCiAccount } from "./ci-verify";
 import { config } from "../../config/env";
 import {
   parseChangePasswordInput,
@@ -90,6 +91,26 @@ export function registerAuthRoutes(router: Router): void {
     await enforceSharedLimit(`verify-check:${req.userId}`, 20, 3600, "Too many attempts.");
     const { code } = parseVerifyEmailInput(req.body);
     await verifyEmailCode(req.userId as string, code);
+    const user = await authService.getPublicUserById(req.userId as string);
+    sendJson(res, 200, { user });
+  });
+
+  // A mistyped email can be fixed until one is verified; a new code goes to the new address.
+  router.post("/api/v1/auth/email/change", async (req: KatkeeRequest, res) => {
+    requireAuth(req);
+    await enforceSharedLimit(`email-change:${req.userId}`, 5, 3600, "Too many changes.");
+    const { email } = parseForgotPasswordInput(req.body);
+    await changeUnverifiedEmail(req.userId as string, email);
+    const user = await authService.getPublicUserById(req.userId as string);
+    sendJson(res, 200, { user });
+  });
+
+  // Automated device walk-throughs only (ci-verify.ts): needs a GitHub Actions OIDC token.
+  router.post("/api/v1/auth/email/ci-verify", async (req: KatkeeRequest, res) => {
+    requireAuth(req);
+    const token = (req.body as { token?: unknown } | undefined)?.token;
+    if (typeof token !== "string" || token.length > 4096) throw new HttpError(403, "Not allowed.");
+    await verifyCiAccount(req.userId as string, token);
     const user = await authService.getPublicUserById(req.userId as string);
     sendJson(res, 200, { user });
   });

@@ -47,7 +47,15 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
  */
 function SignedInNavigator(): React.JSX.Element {
   const { user, justSignedUp } = useAuth();
-  // Right after sign-up the app opens on "Verify your email"; "Later" goes on to Home.
+  // A new account sees only "Verify your email" until the code is entered; once it is, the
+  // full app replaces it. (Older accounts can verify later, from their profile.)
+  if (user?.emailVerificationRequired) {
+    return (
+      <Stack.Navigator key="verify-email" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
+      </Stack.Navigator>
+    );
+  }
   const verifyFirst = justSignedUp && !!user?.email && user.emailVerified === false;
   return (
     <Stack.Navigator initialRouteName={verifyFirst ? "VerifyEmail" : "Main"} screenOptions={{ headerShown: false, freezeOnBlur: true }}>

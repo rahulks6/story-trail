@@ -14,6 +14,8 @@ concurrency:
 
 permissions:
   contents: write
+  # A GitHub OIDC token verifies the throwaway account's email (mobile/.maestro/ci-verify.js).
+  id-token: write
 
 jobs:
   build:

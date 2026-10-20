@@ -41,6 +41,8 @@ export interface PublicUser {
   isPrivate: boolean;
   /** False until the email is proved with a code; phone-only accounts have no email. */
   emailVerified: boolean;
+  /** A new account whose email isn't verified yet: the app shows only the code screen. */
+  emailVerificationRequired: boolean;
 }
 
 function toPublicUser(user: usersRepo.UserRecord): PublicUser {
@@ -54,6 +56,7 @@ function toPublicUser(user: usersRepo.UserRecord): PublicUser {
     interests: user.interests,
     isPrivate: user.isPrivate,
     emailVerified: user.emailVerified,
+    emailVerificationRequired: user.emailVerificationRequired && !!user.email && !user.emailVerified,
   };
 }
 

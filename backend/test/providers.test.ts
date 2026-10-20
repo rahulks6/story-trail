@@ -9,7 +9,7 @@ import {HttpError} from '../src/http/errors';
 import {liveProviders} from '../src/modules/auth/providers';
 let sends=0;const tag=randomUUID().slice(0,8);
 // Only the remote gateway is a test double. All HTTP, SQL, uniqueness, and session behavior is real.
-const server=buildApp({async google(token){if(!token.startsWith('verified-'))throw new HttpError(401,'Invalid test assertion');return {subject:token+'-'+tag,email:token==='verified-collision'?`collision-${tag}@example.com`:null,displayName:'Provider test'};},async sendPhone(){sends++;return 'VE'+'3'.repeat(32);},async checkPhone(_sid,code){return code==='246810';}});
+const server=buildApp({async google(token){if(!token.startsWith('verified-'))throw new HttpError(401,'Invalid test assertion');return {subject:token+'-'+tag,email:token==='verified-collision'?`collision-${tag}@example.com`:token==='verified-email'?`google-${tag}@example.com`:null,displayName:'Provider test'};},async sendPhone(){sends++;return 'VE'+'3'.repeat(32);},async checkPhone(_sid,code){return code==='246810';}});
 let base:string;
 before(async()=>{await new Promise<void>(r=>server.listen(0,r));base=`http://127.0.0.1:${(server.address() as AddressInfo).port}`;});after(()=>new Promise<void>(r=>server.close(()=>r())));
 async function req(path:string,data?:unknown,token?:string,method='POST'){const r=await fetch(base+'/api/v1/auth/'+path,{method,headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},...(data===undefined?{}:{body:JSON.stringify(data)})});return {status:r.status,body:r.status===204?null:await r.json() as any};}
@@ -27,6 +27,12 @@ it('Google creates one canonical user, safely rejects collisions/replay, and enf
  const existing=await req('signup',{email:`collision-${tag}@example.com`,username:'collision_'+tag,password:'correcthorsebattery',displayName:'Existing',birthDate:'1995-05-15'});assert.equal(existing.status,201);
  const collision=await req('google',{idToken:'verified-collision'});const complete=await req('provider/complete',{proof:collision.body.proof,username:'collision2_'+tag,birthDate:'1995-05-15'});assert.equal(complete.status,409);
  const row=await queryOne(`SELECT count(*) AS n FROM users WHERE email=:'email'`,{email:`collision-${tag}@example.com`});assert.equal(row?.n,'1');
+});
+it('A Google sign-up uses the email Google verified, so it needs no code',async()=>{
+ const pending=await req('google',{idToken:'verified-email'});
+ const created=await req('provider/complete',{proof:pending.body.proof,username:'gmail_'+tag,birthDate:'1995-05-15'});assert.equal(created.status,200,JSON.stringify(created.body));
+ assert.equal(created.body.user.email,`google-${tag}@example.com`);
+ assert.equal(created.body.user.emailVerified,true);assert.equal(created.body.user.emailVerificationRequired,false);
 });
 it('Phone verification enforces cooldown, attempts, single-use challenges, and private identities',async()=>{
  const sent=await req('phone/request',{phone:'2025550123',country:'US'});assert.equal(sent.status,200,JSON.stringify(sent.body));assert.equal(sends,1);assert.equal(sent.body.maskedDestination,'•••• 0123');

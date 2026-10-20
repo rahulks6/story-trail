@@ -27,6 +27,7 @@ echo "$USERNAME $EMAIL $PASSWORD" >> "$RUNNER_TEMP/accounts"
 status=0
 ( cd "$OUT" && maestro test "$GITHUB_WORKSPACE/mobile/.maestro/smoke.yaml" \
     -e USERNAME="$USERNAME" -e EMAIL="$EMAIL" -e PASSWORD="$PASSWORD" \
+    -e OIDC_URL="$ACTIONS_ID_TOKEN_REQUEST_URL" -e OIDC_TOKEN="$ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
     --format junit --output "$OUT/report.xml" --test-output-dir "$OUT/maestro" ) || status=1
 
 kill -INT "$REC" 2>/dev/null; sleep 3

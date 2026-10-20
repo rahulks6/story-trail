@@ -93,6 +93,11 @@ export const config = {
     from: process.env.EMAIL_FROM ?? "",
     awsRegion: process.env.AWS_REGION ?? "ap-south-1",
   },
+  // Device walk-throughs on GitHub Actions verify their throwaway accounts with a GitHub OIDC
+  // token for this repository (modules/auth/ci-verify.ts). Empty turns that off.
+  ciVerify: {
+    repository: (process.env.CI_VERIFY_REPOSITORY ?? "rahulks6/story-trail").trim(),
+  },
   appLinks: {
     // Deep link the reset email opens; the code is appended as a query parameter.
     passwordReset: process.env.PASSWORD_RESET_LINK ?? "katkee://reset-password",

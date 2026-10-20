@@ -1,4 +1,4 @@
-import { query, queryOne } from "../../db/psql";
+import { DatabaseError, query, queryOne } from "../../db/psql";
 import { config } from "../../config/env";
 import { codeHash, deviceHash, numericCode, safeEqualHex } from "../../shared/crypto";
 import { hitSharedLimit } from "../../shared/sharedRateLimit";
@@ -278,4 +278,30 @@ export async function verifyEmailCode(userId: string, code: string): Promise<voi
 /** A password reset code reached this inbox, so the email is proved too. */
 export async function markEmailVerified(userId: string): Promise<void> {
   await query(`UPDATE users SET email_verified_at = coalesce(email_verified_at, now()) WHERE id = :'id' AND email IS NOT NULL`, { id: userId });
+}
+
+/**
+ * Fixes a mistyped email on an account that hasn't verified one yet, then emails a code to the
+ * new address. A verified email is changed elsewhere, with the password.
+ */
+export async function changeUnverifiedEmail(userId: string, email: string): Promise<void> {
+  const user = await queryOne(
+    `SELECT email, email_verified_at IS NOT NULL AS verified FROM users WHERE id = :'id' AND deleted_at IS NULL AND is_active`,
+    { id: userId },
+  );
+  if (!user) throw new HttpError(404, "User not found.");
+  if (user.verified === "t") throw new HttpError(409, "Your email is already verified.");
+  if (user.email === email) {
+    await sendEmailVerificationCode(userId);
+    return;
+  }
+  const taken = await queryOne(`SELECT 1 AS taken FROM users WHERE email = :'email' AND id <> :'id'`, { email, id: userId });
+  if (taken) throw new HttpError(409, "That email is already used by another account.");
+  try {
+    await query(`UPDATE users SET email = :'email' WHERE id = :'id' AND email_verified_at IS NULL`, { email, id: userId });
+  } catch (error) {
+    if (error instanceof DatabaseError && /users_email_unique/.test(error.detail)) throw new HttpError(409, "That email is already used by another account.");
+    throw error;
+  }
+  await sendEmailVerificationCode(userId);
 }

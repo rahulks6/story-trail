@@ -21,6 +21,8 @@ export interface PublicUser {
   isPrivate: boolean;
   /** False until the email is confirmed with a code (absent from older servers and caches). */
   emailVerified?: boolean;
+  /** A new account whose email isn't verified yet: only the code screen is shown until it is. */
+  emailVerificationRequired?: boolean;
 }
 
 export interface TokenPair {

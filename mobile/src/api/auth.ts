@@ -45,6 +45,11 @@ export function verifyEmail(code: string, accessToken: string): Promise<{ user: 
   return apiPost<{ user: PublicUser }>("/api/v1/auth/email/verify", { code }, accessToken);
 }
 
+/** Fixes a mistyped email before it's verified; a new code goes to the new address. */
+export function changeEmail(email: string, accessToken: string): Promise<{ user: PublicUser }> {
+  return apiPost<{ user: PublicUser }>("/api/v1/auth/email/change", { email }, accessToken);
+}
+
 export function fetchMe(accessToken: string): Promise<{ user: PublicUser }> {
   return apiGet<{ user: PublicUser }>("/api/v1/auth/me", accessToken);
 }

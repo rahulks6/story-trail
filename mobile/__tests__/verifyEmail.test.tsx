@@ -6,9 +6,14 @@ import { VerifyEmailScreen } from "../src/screens/auth/VerifyEmailScreen";
 import * as authApi from "../src/api/auth";
 import { ApiError } from "../src/api/client";
 
-const mockAuth = { accessToken: "token", user: { id: "u-me", email: "me@example.com", emailVerified: false }, applyProfile: jest.fn() };
+const mockAuth = {
+  accessToken: "token",
+  user: { id: "u-me", email: "me@example.com", emailVerified: false, emailVerificationRequired: false },
+  applyProfile: jest.fn(),
+  logout: jest.fn(async () => undefined),
+};
 jest.mock("../src/state/AuthContext", () => ({ useAuth: () => mockAuth }));
-jest.mock("../src/api/auth", () => ({ sendEmailCode: jest.fn(async () => undefined), verifyEmail: jest.fn() }));
+jest.mock("../src/api/auth", () => ({ sendEmailCode: jest.fn(async () => undefined), verifyEmail: jest.fn(), changeEmail: jest.fn() }));
 const api = authApi as jest.Mocked<typeof authApi>;
 
 const navigation = { goBack: jest.fn(), replace: jest.fn(), canGoBack: jest.fn(() => false) };
@@ -17,9 +22,7 @@ const texts = () => tree.root.findAllByType(Text).map((t) => [t.props.children].
 const button = (label: string) => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === label);
 const settle = async () => { for (let i = 0; i < 3; i++) await act(async () => { await Promise.resolve(); }); };
 
-beforeEach(async () => {
-  jest.useFakeTimers();
-  jest.clearAllMocks();
+async function render() {
   await act(async () => {
     tree = create(
       <SafeAreaProvider initialMetrics={{ frame: { x: 0, y: 0, width: 390, height: 844 }, insets: { top: 0, left: 0, right: 0, bottom: 0 } }}>
@@ -27,6 +30,12 @@ beforeEach(async () => {
       </SafeAreaProvider>,
     );
   });
+}
+beforeEach(async () => {
+  jest.useFakeTimers();
+  jest.clearAllMocks();
+  mockAuth.user = { ...mockAuth.user, email: "me@example.com", emailVerificationRequired: false };
+  await render();
 });
 afterEach(async () => {
   await act(async () => tree.unmount());
@@ -65,4 +74,48 @@ test("a new code can be sent after a short wait; Later skips for now", async () 
   expect(texts()).toContain("We sent a new code to me@example.com.");
   await act(async () => button("Later").props.onPress());
   expect(navigation.replace).toHaveBeenCalledWith("Main", { screen: "Home" });
+});
+
+describe("a new account, which must verify", () => {
+  beforeEach(async () => {
+    await act(async () => tree.unmount());
+    mockAuth.user = { ...mockAuth.user, emailVerificationRequired: true };
+    await render();
+  });
+
+  test("has no Later; the right code lifts the gate without navigating", async () => {
+    expect(texts().join(" ")).toContain("Enter it to finish creating your account.");
+    expect(texts()).not.toContain("Later");
+    api.verifyEmail.mockResolvedValueOnce({ user: { ...mockAuth.user, emailVerified: true, emailVerificationRequired: false } } as never);
+    await act(async () => tree.root.findByType(TextInput).props.onChangeText("123456"));
+    await act(async () => button("Verify").props.onPress());
+    await settle();
+    expect(mockAuth.applyProfile).toHaveBeenCalled();
+    expect(navigation.replace).not.toHaveBeenCalled();
+    expect(navigation.goBack).not.toHaveBeenCalled();
+  });
+
+  test("a mistyped email can be fixed, and a new code goes there", async () => {
+    await act(async () => button("Wrong email? Change it").props.onPress());
+    expect(tree.root.findByType(TextInput).props.value).toBe("me@example.com");
+    api.changeEmail.mockResolvedValueOnce({ user: { ...mockAuth.user, email: "fixed@example.com" } } as never);
+    await act(async () => tree.root.findByType(TextInput).props.onChangeText(" Fixed@Example.com "));
+    await act(async () => button("Send code").props.onPress());
+    await settle();
+    expect(api.changeEmail).toHaveBeenCalledWith("fixed@example.com", "token");
+    expect(texts()).toContain("We sent a new code to fixed@example.com.");
+    expect(button("Send a new code (30s)")).toBeTruthy();
+  });
+
+  test("a rejected email shows the server's message; Log out signs out", async () => {
+    await act(async () => button("Wrong email? Change it").props.onPress());
+    api.changeEmail.mockRejectedValueOnce(new ApiError(409, "That email is already used by another account."));
+    await act(async () => tree.root.findByType(TextInput).props.onChangeText("taken@example.com"));
+    await act(async () => button("Send code").props.onPress());
+    await settle();
+    expect(texts()).toContain("That email is already used by another account.");
+    await act(async () => button("Cancel").props.onPress());
+    await act(async () => button("Log out").props.onPress());
+    expect(mockAuth.logout).toHaveBeenCalled();
+  });
 });

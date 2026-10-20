@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../../navigation/types";
 import { colors, spacing, typography } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
-import { sendEmailCode, verifyEmail } from "../../api/auth";
+import { changeEmail, sendEmailCode, verifyEmail } from "../../api/auth";
 import { ApiError } from "../../api/client";
 import { Banner, Button, TextField } from "../../components/Form";
 import { KeyboardAvoider } from "../../components/KeyboardAvoider";
@@ -18,11 +18,15 @@ const RESEND_SECONDS = 30;
 
 /**
  * "Verify your email": the 6-digit code emailed at sign-up (or on request) confirms the account's
- * email address. Opens first after sign-up, and from the Profile banner until it's done. Nothing
- * is blocked meanwhile: "Later" carries on into the app.
+ * email address. A new account sees only this screen until the code is entered (RootNavigator),
+ * with a way to fix a mistyped email or log out. Older accounts open it from the Profile banner,
+ * and "Later" carries on into the app.
  */
 export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
-  const { user, accessToken, applyProfile } = useAuth();
+  const { user, accessToken, applyProfile, logout } = useAuth();
+  const required = !!user?.emailVerificationRequired;
+  const [editingEmail, setEditingEmail] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
   const insets = useSafeAreaInsets();
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
@@ -54,7 +58,8 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
       const { user: updated } = await verifyEmail(code, accessToken);
       applyProfile(updated);
       tapFeedback("success");
-      leave();
+      // A required verification lifts the gate: the navigator swaps this screen for the app.
+      if (!required) leave();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Couldn't check the code. Check your connection and try again.");
     } finally {
@@ -79,12 +84,63 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
     }
   };
 
+  const saveEmail = async () => {
+    if (!accessToken || busy) return;
+    const email = newEmail.trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      setError("Enter a valid email address.");
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    setNotice(null);
+    try {
+      const { user: updated } = await changeEmail(email, accessToken);
+      applyProfile(updated);
+      setEditingEmail(false);
+      setCode("");
+      setNotice(`We sent a new code to ${updated.email ?? email}.`);
+      setCooldown(RESEND_SECONDS);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Couldn't change your email. Check your connection and try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (editingEmail) {
+    return (
+      <KeyboardAvoider style={styles.root}>
+        <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.xl }]} keyboardShouldPersistTaps="handled">
+          <Text style={typography.displayLarge} accessibilityRole="header">Change your email</Text>
+          <Text style={styles.body}>We'll send a new code to this address.</Text>
+          {error ? <Banner text={error} /> : null}
+          <TextField
+            label="Email"
+            value={newEmail}
+            onChangeText={setNewEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+            autoComplete="email"
+            textContentType="emailAddress"
+            autoFocus
+            returnKeyType="done"
+            onSubmitEditing={() => void saveEmail()}
+          />
+          <Button label="Send code" onPress={() => void saveEmail()} busy={busy} disabled={!newEmail.trim()} />
+          <Button label="Cancel" onPress={() => { setEditingEmail(false); setError(null); }} variant="secondary" />
+        </ScrollView>
+      </KeyboardAvoider>
+    );
+  }
+
   return (
     <KeyboardAvoider style={styles.root}>
       <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.xl }]} keyboardShouldPersistTaps="handled">
         <Text style={typography.displayLarge} accessibilityRole="header">Verify your email</Text>
         <Text style={styles.body}>
-          We sent a 6-digit code to <Text style={styles.email}>{user?.email ?? "your email"}</Text>. It keeps your account secure and lets you reset your password if you ever forget it.
+          We sent a 6-digit code to <Text style={styles.email}>{user?.email ?? "your email"}</Text>. {required ? "Enter it to finish creating your account." : "It keeps your account secure and lets you reset your password if you ever forget it."}
         </Text>
         {error ? <Banner text={error} /> : notice ? <Banner text={notice} tone="success" /> : null}
         <TextField
@@ -109,7 +165,14 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
           />
         </View>
         <Text style={styles.hint}>Can't find it? Check your spam or promotions folder.</Text>
-        <Button label="Later" onPress={leave} variant="secondary" accessibilityHint="Verify from your profile any time" />
+        {required ? (
+          <>
+            <Button label="Wrong email? Change it" onPress={() => { setNewEmail(user?.email ?? ""); setError(null); setNotice(null); setEditingEmail(true); }} variant="secondary" />
+            <Button label="Log out" onPress={() => void logout()} variant="secondary" />
+          </>
+        ) : (
+          <Button label="Later" onPress={leave} variant="secondary" accessibilityHint="Verify from your profile any time" />
+        )}
       </ScrollView>
     </KeyboardAvoider>
   );

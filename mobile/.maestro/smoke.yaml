@@ -1,7 +1,7 @@
 # The walk-through run on virtual iPhones by .github/workflows/ios-e2e.yml and on Android
-# emulators by .github/workflows/android-e2e.yml: sign up a
-# throwaway account (deleted again by the workflow), skip email verification, then visit every
-# main screen in dark and light mode, taking a screenshot at each step. Steps marked optional
+# emulators by .github/workflows/android-e2e.yml: sign up a throwaway account (deleted again by
+# the workflow), check the required "Verify your email" screen, verify the account with
+# ci-verify.js, then visit every main screen in dark and light mode, taking a screenshot at each step. Steps marked optional
 # record what's there without stopping the run, so one surprise doesn't hide the other screens.
 appId: com.katkee.app
 ---
@@ -41,7 +41,19 @@ appId: com.katkee.app
     visible: "Verify your email"
     timeout: 45000
 - takeScreenshot: 04-verify-email
-- tapOn: "Later"
+# A new account can't skip this: no "Later", only a way to fix the email or log out.
+- assertVisible: "Wrong email? Change it"
+- assertNotVisible: "Later"
+- tapOn: "Wrong email? Change it"
+- takeScreenshot: 04b-change-email
+- tapOn: "Cancel"
+# Verified out of band (ci-verify.js), then reopened: the app now opens on Home.
+- runScript: ci-verify.js
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "Home"
+    timeout: 30000
 - tapOn:
     text: "Not now"
     optional: true
@@ -71,13 +83,6 @@ appId: com.katkee.app
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: 09-profile
-- tapOn:
-    text: "Verify your email"
-    optional: true
-- takeScreenshot: 10-verify-from-profile
-- tapOn:
-    text: "Later"
-    optional: true
 
 - tapOn: "Settings"
 - waitForAnimationToEnd:

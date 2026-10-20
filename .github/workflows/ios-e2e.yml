@@ -14,6 +14,8 @@ concurrency:
 
 permissions:
   contents: write
+  # A GitHub OIDC token verifies the throwaway account's email (mobile/.maestro/ci-verify.js).
+  id-token: write
 
 jobs:
   simulator:
@@ -113,6 +115,7 @@ jobs:
             echo "$USERNAME support+e2e-${RUN}-${size}@katkee.com $PASSWORD" >> "$RUNNER_TEMP/accounts"
             ( cd "$OUT/$size" && maestro --device "$UDID" test "$FLOW" \
                 -e USERNAME="$USERNAME" -e EMAIL="support+e2e-${RUN}-${size}@katkee.com" -e PASSWORD="$PASSWORD" \
+                -e OIDC_URL="$ACTIONS_ID_TOKEN_REQUEST_URL" -e OIDC_TOKEN="$ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
                 --format junit --output "$OUT/$size/report.xml" --test-output-dir "$OUT/$size/maestro" ) || status=1
             kill -INT "$REC" || true
             sleep 3

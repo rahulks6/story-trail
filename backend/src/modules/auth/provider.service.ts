@@ -43,6 +43,8 @@ export async function complete(proof:string,username:unknown,name:unknown,birthD
  try{
   const row=await queryOne(`SELECT complete_provider_proof(:'hash',:'username',:'name',${nullable('birth','date')}) AS id`,{hash:proofToken(proof),username:typeof username==='string'?username:'',name:typeof name==='string'?name:'',birth:typeof birthDate==='string'?birthDate:null});
   if(!row?.id)throw new HttpError(401,'Verification expired.');
+  // Google only hands over an email it has verified, so an account using that email needs no code.
+  await query(`UPDATE users u SET email_verified_at=coalesce(u.email_verified_at,now()) FROM auth_provider_proofs p WHERE p.token_hash=:'hash' AND p.provider='GOOGLE' AND u.id=:'id' AND u.email=p.verified_email`,{hash:proofToken(proof),id:row.id});
   const user=await getPublicUserById(row.id);const tokens=await issueTokenPair(row.id,client.userAgent);await recordLoginSuccess(row.id,(await findUserById(row.id))?.email??null,client);console.info(JSON.stringify({event:'provider_login_succeeded'}));return {user,tokens};
  }catch(e){identityError(e);}
 }
