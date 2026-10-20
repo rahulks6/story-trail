@@ -156,7 +156,7 @@ jobs:
           [ -d ios-e2e ] || exit 0
           R="$RUNNER_TEMP/results"
           mkdir -p "$R"
-          (cd ios-e2e && find . -type f \( -name '*.png' -o -name '*.txt' -o -name '*.xml' -o -name '*.json' -o -name '*.log' \) -exec rsync -R {} "$R/" \;)
+          (cd ios-e2e && find . -type f \( -name '*.png' -o -name '*.txt' -o -name '*.xml' -o -name '*.json' -o -name '*.log' \) -size -20M -exec rsync -R {} "$R/" \;)
           cd "$R"
           git init -q -b ci/ios-e2e-results
           git config user.name "github-actions"

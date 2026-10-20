@@ -5,7 +5,7 @@ import { ScrollView, StyleSheet, Text, type TextInput } from "react-native";
 import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "../../navigation/types";
-import { colors, spacing, typography } from "../../theme";
+import { colors, spacing, typography, FORM_MAX_WIDTH } from "../../theme";
 import { forgotPassword } from "../../api/auth";
 import { ApiError } from "../../api/client";
 import { useAuth } from "../../state/AuthContext";
@@ -131,6 +131,6 @@ export function ResetPasswordScreen({ navigation, route }: Props): React.JSX.Ele
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.background },
-  content: { flexGrow: 1, justifyContent: "center", padding: spacing.xl, gap: spacing.md },
+  content: { flexGrow: 1, justifyContent: "center", padding: spacing.xl, gap: spacing.md, width: "100%", maxWidth: FORM_MAX_WIDTH, alignSelf: "center" },
   body: { ...typography.body, color: colors.textSecondary },
 });

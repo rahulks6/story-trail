@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../../navigation/types";
-import { colors, spacing, typography } from "../../theme";
+import { colors, spacing, typography, FORM_MAX_WIDTH } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { changeEmail, sendEmailCode, verifyEmail } from "../../api/auth";
 import { ApiError } from "../../api/client";
@@ -180,7 +180,7 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.background },
-  content: { flexGrow: 1, paddingHorizontal: spacing.xl, gap: spacing.md },
+  content: { flexGrow: 1, paddingHorizontal: spacing.xl, gap: spacing.md, width: "100%", maxWidth: FORM_MAX_WIDTH, alignSelf: "center" },
   body: { ...typography.body, color: colors.textSecondary },
   email: { color: colors.textPrimary, fontWeight: "700" },
   row: { gap: spacing.sm },

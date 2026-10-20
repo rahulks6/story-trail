@@ -6,7 +6,7 @@ import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import { Banner, Button, TextField } from "../../components/Form";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "../../navigation/types";
-import { colors, spacing } from "../../theme";
+import { colors, spacing, FORM_MAX_WIDTH } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
 
@@ -121,7 +121,7 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
-  container: { flexGrow: 1, justifyContent: "space-between", paddingHorizontal: spacing.xl, backgroundColor: colors.background },
+  container: { flexGrow: 1, justifyContent: "space-between", paddingHorizontal: spacing.xl, backgroundColor: colors.background, width: "100%", maxWidth: FORM_MAX_WIDTH, alignSelf: "center" },
   top: { flexGrow: 1, justifyContent: "center", gap: spacing.md },
   mark: { alignItems: "center" },
   // The system's own font at ordinary weights: easy to read, nothing decorative.

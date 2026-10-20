@@ -6,7 +6,7 @@ import * as Keychain from 'react-native-keychain';
 import * as api from '../../api/providers';
 import {providerBuild} from '../../config/providers';
 import {useAuth} from '../../state/AuthContext';
-import {colors} from '../../theme';
+import {colors,FORM_MAX_WIDTH} from '../../theme';
 import {KeyboardAvoider} from '../../components/KeyboardAvoider';
 import {usernameCheckText,usernameRefused,useUsernameAvailability} from '../../hooks/useUsernameAvailability';
 import {TermsNotice} from '../../components/TermsNotice';
@@ -62,4 +62,4 @@ export function ProviderEntry({onProof}:{onProof?:(proof:string)=>Promise<void>}
   </Modal>
  </View>;
 }
-const styles=StyleSheet.create({fill:{flex:1},google:{width:'100%',height:48},button:{minHeight:48,padding:14,borderRadius:10,backgroundColor:colors.surfaceElevated,marginVertical:5,alignItems:'center'},buttonText:{color:colors.textPrimary,fontWeight:'600'},modal:{flexGrow:1,padding:24,paddingTop:60,backgroundColor:colors.background,gap:16},heading:{color:colors.textPrimary,fontSize:26,fontWeight:'700'},label:{color:colors.textSecondary},input:{minHeight:48,borderWidth:1,borderColor:colors.border,padding:14,color:colors.textPrimary,borderRadius:8},inputError:{borderColor:colors.danger},error:{color:colors.danger,paddingVertical:8},available:{color:colors.success},countries:{flexDirection:'row',flexWrap:'wrap',gap:8},country:{padding:14,borderWidth:1,borderColor:colors.border,borderRadius:8},selected:{borderColor:colors.accent}});
+const styles=StyleSheet.create({fill:{flex:1,backgroundColor:colors.background},google:{width:'100%',height:48},button:{minHeight:48,padding:14,borderRadius:10,backgroundColor:colors.surfaceElevated,marginVertical:5,alignItems:'center'},buttonText:{color:colors.textPrimary,fontWeight:'600'},modal:{flexGrow:1,padding:24,paddingTop:60,backgroundColor:colors.background,gap:16,width:'100%',maxWidth:FORM_MAX_WIDTH,alignSelf:'center'},heading:{color:colors.textPrimary,fontSize:26,fontWeight:'700'},label:{color:colors.textSecondary},input:{minHeight:48,borderWidth:1,borderColor:colors.border,padding:14,color:colors.textPrimary,borderRadius:8},inputError:{borderColor:colors.danger},error:{color:colors.danger,paddingVertical:8},available:{color:colors.success},countries:{flexDirection:'row',flexWrap:'wrap',gap:8},country:{padding:14,borderWidth:1,borderColor:colors.border,borderRadius:8},selected:{borderColor:colors.accent}});

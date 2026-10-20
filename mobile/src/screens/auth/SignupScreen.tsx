@@ -7,7 +7,7 @@ import { birthDateFieldProblem, birthDateProblem, birthDateToIso, formatBirthDat
 import { useScreenInsets } from "../../hooks/useScreenInsets";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "../../navigation/types";
-import { colors, spacing, typography } from "../../theme";
+import { colors, spacing, typography, FORM_MAX_WIDTH } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { usernameCheckText, usernameRefused, useUsernameAvailability } from "../../hooks/useUsernameAvailability";
 import { TermsNotice } from "../../components/TermsNotice";
@@ -157,6 +157,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
     backgroundColor: colors.background,
     gap: spacing.sm,
+    width: "100%", maxWidth: FORM_MAX_WIDTH, alignSelf: "center",
   },
   title: { textAlign: "center", marginBottom: spacing.md },
   linkButton: { marginTop: spacing.lg, alignItems: "center", minHeight: 44, justifyContent: "center" },

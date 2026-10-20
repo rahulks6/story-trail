@@ -287,7 +287,7 @@ export function RootNavigator(): React.JSX.Element {
   }
 
   if (status === "signedIn") {
-    return <NavigationContainer key={user?.id ?? "signedIn"} linking={linking} theme={navigationTheme()}><SignedInNavigator /><NearbyPrompt /><UploadRunner /></NavigationContainer>;
+    return <NavigationContainer key={user?.id ?? "signedIn"} linking={linking} theme={navigationTheme()}><SignedInNavigator />{user?.emailVerificationRequired ? null : <NearbyPrompt />}<UploadRunner /></NavigationContainer>;
   }
   return <NavigationContainer key="signedOut" linking={signedOutLinking} theme={navigationTheme()}><AuthNavigator /></NavigationContainer>;
 }

@@ -1,0 +1,16 @@
+# Closes the on-screen keyboard. Android has a reliable "hide keyboard"; an iPhone number pad has
+# no Return key, so there it taps the screen's title (TITLE), which also closes the keyboard.
+appId: com.katkee.app
+---
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - hideKeyboard
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          text: ${TITLE}
+          optional: true
