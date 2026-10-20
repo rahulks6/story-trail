@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <testsuites>
-  <testsuite name="Test Suite" device="test" tests="1" failures="1" time="175.168" timestamp="2026-10-20T13:30:51">
-    <testcase id="smoke" name="smoke" classname="smoke" file="/home/runner/work/story-trail/story-trail/mobile/.maestro/smoke.yaml" time="175.115" timestamp="2026-10-20T13:30:51" status="ERROR">
-      <failure>Element not found: Text matching regex: Light</failure>
+  <testsuite name="Test Suite" device="test" tests="1" failures="1" time="63.921" timestamp="2026-10-20T13:56:27">
+    <testcase id="smoke" name="smoke" classname="smoke" file="/home/runner/work/story-trail/story-trail/mobile/.maestro/smoke.yaml" time="63.872" timestamp="2026-10-20T13:56:27" status="ERROR">
+      <failure>Assertion is false: "Log in" is visible</failure>
     </testcase>
   </testsuite>
 </testsuites>
