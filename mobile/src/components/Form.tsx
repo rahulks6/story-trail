@@ -19,7 +19,10 @@ export const TextField = forwardRef<React.ComponentRef<typeof TextInput>, TextFi
   const [revealed, setRevealed] = useState(false);
   return (
     <View style={styles.field}>
-      <Text style={styles.label}>{label}</Text>
+      {/* The input carries the label for screen readers, so the visible copy is hidden from them. */}
+      <Text style={styles.label} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+        {label}
+      </Text>
       <View style={[styles.inputRow, error ? styles.inputRowError : null]}>
         <TextInput
           ref={ref}
