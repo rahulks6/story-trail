@@ -1,0 +1,99 @@
+10-20 10:27:52.526 D/AndroidRuntime( 3196): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-20 10:27:52.532 W/JobInfo (  560): Job 'com.google.android.googlequicksearchbox/com.google.android.apps.gsa.tasks.BackgroundTasksJobService#-237' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+10-20 10:27:52.535 I/AndroidRuntime( 3196): Using default boot image
+10-20 10:27:52.536 I/BgTaskExecutorImpl( 1567): (REDACTED) Starting %s background task %s.
+10-20 10:27:52.537 I/AndroidRuntime( 3196): Leaving lock profiling enabled
+10-20 10:27:52.540 I/DevicePolicyEngine(  560): Couldn't find any receivers that handle ACTION_DEVICE_POLICY_SET_RESULT in package com.google.android.devicelockcontroller
+10-20 10:27:52.548 I/app_process( 3196): Core platform API reporting enabled, enforcing=false
+10-20 10:27:52.548 I/app_process( 3196): Using CollectorTypeCMC GC.
+10-20 10:27:52.556 D/DevicePolicyEngine(  560): Writing device policies to file.
+10-20 10:27:52.557 D/DevicePolicyEngine(  560): Writing to /data/system/device_policy_state.xml
+10-20 10:27:52.566 W/ContextImpl(  560): Calling a method in the system process without a qualified user: android.app.ContextImpl.sendBroadcastMultiplePermissions:1332 com.android.server.TelephonyRegistry.broadcastServiceStateChanged:3702 com.android.server.TelephonyRegistry.notifyServiceStateForPhoneId:1759 com.android.internal.telephony.ITelephonyRegistry$Stub.onTransact:546 android.os.Binder.execTransactInternal:1500 
+10-20 10:27:52.571 I/AiAiEcho( 1450): EchoSearch: WidgetFetcherImpl is initialized with [33] widgets [reason=package added for userId: 0]
+10-20 10:27:52.579 I/Telecom (  560): PhoneAccountRegistrar: getSimCallManager: SimCallManager for subId 1 queried, returning: null: TSI.gSCMFU(a)@AKM🔒
+10-20 10:27:52.581 W/gle.android.gms( 1500): Long monitor contention with owner highpool[3] (2092) at void bfwl.d()(:com.google.android.gms@242335041@24.23.35 (190800-646585959):37) waiters=3 in void bfwl.f(bfwn, long) for 319ms
+10-20 10:27:52.584 I/Icing   ( 1500): IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=null serviceId=36
+10-20 10:27:52.591 E/A       ( 1567): (REDACTED) Failed to register for %s
+10-20 10:27:52.591 E/A       ( 1567): com.google.common.util.concurrent.dq: Timed out (timeout delayed by 41 ms after scheduled time): cf@8fe35c8[status=PENDING, info=[delegate=[a@9500661[status=PENDING, info=[inputFuture=[com.google.android.libraries.x.e@90a7586[status=PENDING, info=[com.google.android.gms.r.ai@4e70e47]]], exceptionType=[class com.google.android.gms.common.api.l], fallback=[com.google.android.libraries.phenotype.client.a.j@ea4e674]]]]]]
+10-20 10:27:52.591 E/A       ( 1567): 	at tk_trace.PhenotypeApi.getConfigurationSnapshot(Unknown Source:0)
+10-20 10:27:52.591 E/A       ( 1567): 	at tk_trace.Fetching experiments for device(Unknown Source:0)
+10-20 10:27:52.591 E/A       ( 1567): 	at tk_trace.Registering packages with phenotype(Unknown Source:0)
+10-20 10:27:52.591 E/A       ( 1567): 	at tk_trace.StartupAfterPackageReplaced(Unknown Source:0)
+10-20 10:27:52.591 E/A       ( 1567): 	at tk_trace.AfterPackageReplaced(Unknown Source:0)
+10-20 10:27:52.591 E/A       ( 1567): 	at tk_trace.Startup Listeners(Unknown Source:0)
+10-20 10:27:52.591 E/A       ( 1567): 	at tk_trace.Application.onCreate(Unknown Source:0)
+10-20 10:27:52.591 E/A       ( 1567): 	at tk_trace.Application creation(Unknown Source:0)
+10-20 10:27:52.591 E/A       ( 1567): 	Suppressed: com.google.apps.tiktok.tracing.gb: 
+10-20 10:27:52.591 E/A       ( 1567): 		at tk_trace.PhenotypeApi.getConfigurationSnapshot(unfinished)(Unknown Source:0)
+10-20 10:27:52.593 W/ContextImpl(  560): Calling a method in the system process without a qualified user: android.app.ContextImpl.sendBroadcastMultiplePermissions:1332 com.android.server.TelephonyRegistry.broadcastServiceStateChanged:3711 com.android.server.TelephonyRegistry.notifyServiceStateForPhoneId:1759 com.android.internal.telephony.ITelephonyRegistry$Stub.onTransact:546 android.os.Binder.execTransactInternal:1500 
+10-20 10:27:52.614 W/ContextImpl(  560): Calling a method in the system process without a qualified user: android.app.ContextImpl.sendBroadcastMultiplePermissions:1332 com.android.server.TelephonyRegistry.broadcastServiceStateChanged:3717 com.android.server.TelephonyRegistry.notifyServiceStateForPhoneId:1759 com.android.internal.telephony.ITelephonyRegistry$Stub.onTransact:546 android.os.Binder.execTransactInternal:1500 
+10-20 10:27:52.619 D/ServiceStateProvider( 1091): subId=1
+10-20 10:27:52.630 D/nativeloader( 3191): Configuring clns-shared-7 for other apk /system/priv-app/Shell/Shell.apk. target_sdk_version=35, uses_libraries=, library_path=/system/priv-app/Shell/lib/x86_64:/system/lib64:/system_ext/lib64, permitted_path=/data:/mnt/expand:/data/user_de/0/com.android.shell:/system/priv-app/Shell:/system/lib64:/system_ext/lib64
+10-20 10:27:52.634 D/MultiSimSettingController( 1091): onDefaultDataSettingChanged
+10-20 10:27:52.635 D/MultiSimSettingController( 1091): isReadyToReevaluate: subInfoInitialized=true, carrierConfigsLoaded=true, satelliteEnabledOrBeingEnabled=false
+10-20 10:27:52.636 D/CarrierKeyDownloadManager [0]( 1091): Carrier not enabled or invalid values. mKeyAvailability=0 mURL=null
+10-20 10:27:52.636 D/CarrierKeyDownloadManager [0]( 1091): Cleaning up existing renewal alarms
+--
+10-20 10:27:52.901 D/AndroidRuntime( 3196): Calling main entry com.android.commands.am.Am
+10-20 10:27:52.904 D/UiAutomationConnection( 3196): Created on user UserHandle{0}
+10-20 10:27:52.906 E/A       ( 1567): (REDACTED) Failed to register for %s
+10-20 10:27:52.906 E/A       ( 1567): com.google.common.util.concurrent.dq: Timed out (timeout delayed by 286 ms after scheduled time): cf@c12af91[status=PENDING, info=[delegate=[a@991ef6[status=PENDING, info=[inputFuture=[com.google.android.libraries.x.e@e552f7[status=PENDING, info=[com.google.android.gms.r.ai@2f5c564]]], exceptionType=[class com.google.android.gms.common.api.l], fallback=[com.google.android.libraries.phenotype.client.a.j@421b3cd]]]]]]
+10-20 10:27:52.906 E/A       ( 1567): 	at tk_trace.PhenotypeApi.getConfigurationSnapshot(Unknown Source:0)
+10-20 10:27:52.906 E/A       ( 1567): 	at tk_trace.Fetching experiments for device(Unknown Source:0)
+10-20 10:27:52.906 E/A       ( 1567): 	at tk_trace.Registering packages with phenotype(Unknown Source:0)
+10-20 10:27:52.906 E/A       ( 1567): 	at tk_trace.StartupAfterPackageReplaced(Unknown Source:0)
+10-20 10:27:52.906 E/A       ( 1567): 	at tk_trace.AfterPackageReplaced(Unknown Source:0)
+10-20 10:27:52.906 E/A       ( 1567): 	at tk_trace.Startup Listeners(Unknown Source:0)
+10-20 10:27:52.906 E/A       ( 1567): 	at tk_trace.Application.onCreate(Unknown Source:0)
+10-20 10:27:52.906 E/A       ( 1567): 	at tk_trace.Application creation(Unknown Source:0)
+10-20 10:27:52.906 E/A       ( 1567): 	Suppressed: com.google.apps.tiktok.tracing.gb: 
+10-20 10:27:52.906 E/A       ( 1567): 		at tk_trace.PhenotypeApi.getConfigurationSnapshot(unfinished)(Unknown Source:0)
+10-20 10:27:52.928 W/system_server(  560): Long monitor contention with owner PackageManager (618) at int com.android.server.am.ActivityManagerService$LocalService.broadcastIntent(android.content.Intent, android.content.IIntentReceiver, java.lang.String[], boolean, int, int[], java.util.function.BiFunction, android.os.Bundle)(ActivityManagerService.java:19191) waiters=1 in void com.android.server.am.ActivityManagerService.finishReceiver(android.os.IBinder, int, java.lang.String, android.os.Bundle, boolean, int) for 157ms
+10-20 10:27:52.929 W/ActivityManager(  560): finishReceiver: no app for android.os.BinderProxy@be19162
+10-20 10:27:52.930 V/ActivityManager(  560): Got obituary of 2656:com.google.android.settings.intelligence
+10-20 10:27:52.929 D/TelephonyProvider( 1091): No MVNO, MNO and no MCC/MNC match, but we have match/matches with the same carrier id, count: 0
+10-20 10:27:52.930 D/TelephonyProvider( 1091): match carrier id APN: 2
+10-20 10:27:52.935 E/A       ( 1567): (REDACTED) Failed to register for %s
+10-20 10:27:52.935 E/A       ( 1567): com.google.common.util.concurrent.dq: Timed out (timeout delayed by 266 ms after scheduled time): cf@bc972d2[status=PENDING, info=[delegate=[a@62e0fa3[status=PENDING, info=[inputFuture=[com.google.android.libraries.x.e@57282a0[status=PENDING, info=[com.google.android.gms.r.ai@d4e8e59]]], exceptionType=[class com.google.android.gms.common.api.l], fallback=[com.google.android.libraries.phenotype.client.a.j@ba7ea1e]]]]]]
+10-20 10:27:52.935 E/A       ( 1567): 	at tk_trace.PhenotypeApi.getConfigurationSnapshot(Unknown Source:0)
+10-20 10:27:52.935 E/A       ( 1567): 	at tk_trace.Fetching experiments for device(Unknown Source:0)
+10-20 10:27:52.935 E/A       ( 1567): 	at tk_trace.Registering packages with phenotype(Unknown Source:0)
+10-20 10:27:52.935 E/A       ( 1567): 	at tk_trace.StartupAfterPackageReplaced(Unknown Source:0)
+10-20 10:27:52.935 E/A       ( 1567): 	at tk_trace.AfterPackageReplaced(Unknown Source:0)
+10-20 10:27:52.935 E/A       ( 1567): 	at tk_trace.Startup Listeners(Unknown Source:0)
+10-20 10:27:52.935 E/A       ( 1567): 	at tk_trace.Application.onCreate(Unknown Source:0)
+10-20 10:27:52.935 E/A       ( 1567): 	at tk_trace.Application creation(Unknown Source:0)
+10-20 10:27:52.935 E/A       ( 1567): 	Suppressed: com.google.apps.tiktok.tracing.gb: 
+10-20 10:27:52.935 E/A       ( 1567): 		at tk_trace.PhenotypeApi.getConfigurationSnapshot(unfinished)(Unknown Source:0)
+--
+10-20 10:30:05.020 I/AndroidRuntime( 3196): VM exiting with result code 0.
+10-20 10:30:05.025 I/netd    (  363): tetherGetStats() -> {[]} <0.32ms>
+10-20 10:30:05.182 I/servicemanager(    0): Caller(pid=560,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+10-20 10:30:05.200 I/init    (    0): starting service 'artd'...
+10-20 10:30:05.042 V/ActivityManager(  560): Got obituary of 3224:dev.mobile.maestro
+10-20 10:30:05.045 W/ActivityManager(  560): pid 560 system sent binder code 1 with flags 1 to frozen apps and got error -32
+10-20 10:30:05.047 I/Zygote  (  364): Process 3224 exited due to signal 9 (Killed)
+10-20 10:30:05.047 I/adbd    (  442): Remote process closed the socket (on MSG_PEEK)
+10-20 10:30:05.049 W/MagnificationConnectionManager(  560): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-20 10:30:05.049 W/MagnificationConnectionManager(  560): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-20 10:30:05.221 I/init    (    0): ... started service 'artd' has pid 5136
+10-20 10:30:05.222 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 152 (/system/bin/servicemanager)
+10-20 10:30:05.054 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:30:05.054 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:30:05.054 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:30:05.054 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:30:05.054 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:30:05.055 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:30:05.056 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:30:05.056 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:30:05.056 I/AiAiEcho( 1450): Settings changed for uri: content://settings/secure/accessibility_enabled
+10-20 10:30:05.056 I/AiAiEcho( 1450): Settings changed for uri: content://settings/secure/accessibility_enabled
+10-20 10:30:05.059 I/AiAiEcho( 1450): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-20 10:30:05.059 I/AiAiEcho( 1450): EchoTargets: 
+10-20 10:30:05.059 I/AiAiEcho( 1450): Filtered by AiAi flag check: 
+10-20 10:30:05.059 I/AiAiEcho( 1450): [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 10:30:05.060 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:30:05.060 I/AiAiEcho( 1450): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 10:30:05.062 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:30:05.062 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:30:05.062 W/IPCThreadState(  560): Sending oneway calls to frozen process.
