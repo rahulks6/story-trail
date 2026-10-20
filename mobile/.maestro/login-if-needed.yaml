@@ -1,0 +1,14 @@
+# After the app is reopened: an unsigned simulator build can't keep the session in the Keychain,
+# so on a test iPhone Katkee opens on Log in again. Signs back in when that happens.
+appId: com.katkee.app
+---
+- runFlow:
+    when:
+      visible: "Forgot password?"
+    commands:
+      - tapOn: "Email"
+      - inputText: ${EMAIL}
+      - tapOn: "Password"
+      - inputText: ${PASSWORD}
+      - runFlow: close-keyboard.yaml
+      - tapOn: "Log in"

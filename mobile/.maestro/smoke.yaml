@@ -65,6 +65,10 @@ appId: com.katkee.app
 - stopApp
 - launchApp
 - extendedWaitUntil:
+    visible: "(Home|Forgot password\\?)"
+    timeout: 30000
+- runFlow: login-if-needed.yaml
+- extendedWaitUntil:
     visible: "Home"
     timeout: 30000
 # A new account is offered Nearby Stories a few seconds after Home first opens.
@@ -119,8 +123,13 @@ appId: com.katkee.app
 # Reopen Katkee to see light mode (an iPhone app can't restart itself).
 - stopApp
 - launchApp
-- waitForAnimationToEnd:
-    timeout: 10000
+- extendedWaitUntil:
+    visible: "(Home|Forgot password\\?)"
+    timeout: 30000
+- runFlow: login-if-needed.yaml
+- extendedWaitUntil:
+    visible: "Home"
+    timeout: 30000
 - takeScreenshot: 14-home-light
 - tapOn: "Profile"
 - waitForAnimationToEnd:
