@@ -58,7 +58,7 @@ function SignedInNavigator(): React.JSX.Element {
   }
   const verifyFirst = justSignedUp && !!user?.email && user.emailVerified === false;
   return (
-    <Stack.Navigator initialRouteName={verifyFirst ? "VerifyEmail" : "Main"} screenOptions={{ headerShown: false, freezeOnBlur: true }}>
+    <Stack.Navigator initialRouteName={verifyFirst ? "VerifyEmail" : "Main"} screenOptions={{ headerShown: false, freezeOnBlur: true, headerBackButtonDisplayMode: "minimal" }}>
       <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
       <Stack.Screen name="AccountSecurity" component={AccountSecurityScreen} options={{headerShown:true,title:"Account security",headerStyle:{backgroundColor:colors.background},headerTintColor:colors.textPrimary}}/>
       <Stack.Screen name="Main" component={MainTabs} />

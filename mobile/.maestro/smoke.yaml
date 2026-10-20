@@ -112,8 +112,10 @@ appId: com.katkee.app
     element: "Appearance"
     optional: true
 - takeScreenshot: 12-settings-lower
-# The row shows the current choice; the "Appearance" heading above it isn't tappable.
-- tapOn: "Automatic.*"
+# The second "Appearance" is the row (the first is the section heading above it).
+- tapOn:
+    text: "Appearance"
+    index: 1
 - takeScreenshot: 13-appearance-sheet
 - tapOn: "Light"
 - tapOn:

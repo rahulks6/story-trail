@@ -14,6 +14,7 @@ export function SearchStack(): React.JSX.Element {
         headerStyle: { backgroundColor: colors.background },
         headerTintColor: colors.textPrimary,
         headerShadowVisible: false,
+        headerBackButtonDisplayMode: "minimal",
       }}
     >
       <Stack.Screen name="SearchHome" component={SearchScreen} options={{ title: "Search" }} />

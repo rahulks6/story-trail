@@ -636,16 +636,20 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
 
   if (caughtUp) {
     return <View style={styles.centered}>
-      <EmptyState title="You're all caught up" message="No more Stories right now — check back soon." />
-      {onRefresh ? <Pressable onPress={onRefresh} accessibilityRole="button"><Text style={typography.body}>Check for new Stories</Text></Pressable> : null}
+      <EmptyState variant="media" title="You're all caught up" message="No more Stories right now — check back soon.">
+        {onRefresh ? <Pressable onPress={onRefresh} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>Check for new Stories</Text></Pressable> : null}
+      </EmptyState>
     </View>;
   }
   if (loadError) {
     return <View style={styles.centered}>
-      <EmptyState title="Story unavailable" message={loadError} />
-      <Pressable onPress={() => { setLoadError(null); if (currentUsername) refetchCreator(currentUsername, currentStory?.id); else setRetry((value) => value + 1); }} accessibilityRole="button"><Text style={typography.body}>Try again</Text></Pressable>
-      <Pressable onPress={() => { setLoadError(null); goNextCreator(); }} accessibilityRole="button"><Text style={typography.body}>Skip Story</Text></Pressable>
-      {onClose ? <Pressable onPress={onClose} accessibilityRole="button"><Text style={typography.body}>Close</Text></Pressable> : null}
+      <EmptyState variant="media" title="Story unavailable" message={loadError}>
+        <View style={styles.endActions}>
+          <Pressable onPress={() => { setLoadError(null); if (currentUsername) refetchCreator(currentUsername, currentStory?.id); else setRetry((value) => value + 1); }} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>Try again</Text></Pressable>
+          <Pressable onPress={() => { setLoadError(null); goNextCreator(); }} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>Skip Story</Text></Pressable>
+          {onClose ? <Pressable onPress={onClose} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>Close</Text></Pressable> : null}
+        </View>
+      </EmptyState>
     </View>;
   }
   if (!currentStory) {
@@ -1079,6 +1083,10 @@ const styles = StyleSheet.create({
   loadingSpinner: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, alignItems: "center", justifyContent: "center" },
   container: { flex: 1, backgroundColor: "#000" },
   centered: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background },
+  // The end-of-feed and error actions: outlined pills, as on Home's empty screen.
+  endActions: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: spacing.md },
+  endButton: { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, minHeight: 44, justifyContent: "center", borderRadius: 22, borderWidth: 1, borderColor: colors.textPrimary },
+  endButtonLabel: { ...typography.body, fontWeight: "700" },
   heartBurst: { ...StyleSheet.absoluteFill, alignItems: "center", justifyContent: "center" },
   heartBurstIcon: { fontSize: 96, color: colors.textPrimary },
   progressRow: {
