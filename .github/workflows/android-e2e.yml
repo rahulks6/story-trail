@@ -1,0 +1,146 @@
+name: Android emulator test
+
+# Builds the release APK exactly as Play gets it (R8 shrinking included, so a missing keep rule
+# shows up here), signed with a throwaway key made for this run, and walks through the app with
+# Maestro (mobile/.maestro/smoke.yaml) on a phone and on a tablet held sideways, saving screenshots
+# and a video of each. The walk-through signs up a throwaway account against the live API and the
+# last step deletes it again.
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: android-e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Android SDK
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37" "build-tools;37.0.0" "ndk;27.1.12297006" > /dev/null
+
+      - name: JavaScript dependencies
+        run: npm ci
+
+      - name: Release APK
+        run: |
+          KEY="$RUNNER_TEMP/throwaway.p12"
+          PASS=$(openssl rand -hex 16)
+          keytool -genkeypair -keystore "$KEY" -storetype PKCS12 -storepass "$PASS" -keypass "$PASS" \
+            -alias throwaway -keyalg RSA -keysize 2048 -validity 2 -dname "CN=Katkee CI" > /dev/null
+          cd android
+          KATKEE_UPLOAD_STORE_FILE="$KEY" KATKEE_UPLOAD_STORE_PASSWORD="$PASS" \
+          KATKEE_UPLOAD_KEY_ALIAS=throwaway KATKEE_UPLOAD_KEY_PASSWORD="$PASS" \
+            ./gradlew :app:assembleRelease -PreactNativeArchitectures=x86_64 --no-daemon --console=plain
+          cp app/build/outputs/apk/release/app-release.apk "$GITHUB_WORKSPACE/katkee-release.apk"
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: katkee-release-apk
+          path: katkee-release.apk
+
+  walkthrough:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        size: [phone, tablet]
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/download-artifact@v5
+        with:
+          name: katkee-release-apk
+
+      - name: KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Maestro
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Walk through the app on the emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          MAESTRO_CLI_NO_ANALYTICS: "1"
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: ${{ matrix.size == 'phone' && 'pixel_7' || 'pixel_tablet' }}
+          disable-animations: true
+          emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          script: bash .github/scripts/android-walkthrough.sh ${{ matrix.size }}
+
+      - name: Delete the test account
+        if: always()
+        run: |
+          [ -f "$RUNNER_TEMP/accounts" ] || exit 0
+          while read -r USERNAME EMAIL PASSWORD; do
+            TOKEN=$(curl -s -X POST https://api.katkee.com/api/v1/auth/login -H 'Content-Type: application/json' \
+              -d "{\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\"}" | jq -r '.tokens.accessToken // empty')
+            if [ -n "$TOKEN" ]; then
+              curl -s -o /dev/null -w "$USERNAME deleted: %{http_code}\n" -X DELETE https://api.katkee.com/api/v1/users/me \
+                -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d "{\"password\":\"$PASSWORD\"}"
+            else
+              echo "$USERNAME: no account to delete"
+            fi
+          done < "$RUNNER_TEMP/accounts"
+
+      - name: Screenshots, video and logs
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: android-e2e-${{ matrix.size }}
+          path: android-e2e
+          if-no-files-found: warn
+
+      # Screenshots and logs (not videos) also go to the ci/android-e2e-results branch, one folder
+      # per device, so they can be read with git where artifact downloads aren't reachable.
+      - name: Results to the ci/android-e2e-results branch
+        if: always()
+        run: |
+          [ -d android-e2e ] || exit 0
+          R="$RUNNER_TEMP/results"
+          git clone -q --depth 1 -b ci/android-e2e-results \
+            "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" "$R" 2>/dev/null \
+            || { mkdir -p "$R" && git -C "$R" init -q -b ci/android-e2e-results; }
+          rm -rf "$R/${{ matrix.size }}"
+          (cd android-e2e && find . -type f \( -name '*.png' -o -name '*.txt' -o -name '*.xml' -o -name '*.json' -o -name '*.log' \) -exec rsync -R {} "$R/" \;)
+          cd "$R"
+          echo "Run ${{ github.run_id }} on ${{ github.sha }}" > "RUN-${{ matrix.size }}.txt"
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -A
+          git commit -qm "Android emulator results (${{ matrix.size }}), run ${{ github.run_id }}" || exit 0
+          for i in 1 2 3; do
+            git push -q "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" HEAD:ci/android-e2e-results && exit 0
+            git pull -q --rebase "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ci/android-e2e-results || true
+          done
+          exit 1

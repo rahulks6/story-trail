@@ -24,10 +24,11 @@ react {
 }
 
 /**
- * R8 shrinking stays off until a release build has been exercised on a device:
- * an over-eager keep rule failure only shows up at runtime.
+ * R8 shrinks and obfuscates release code (Play flags unoptimized DEX). A missing keep rule only
+ * shows up at runtime, so .github/workflows/android-e2e.yml walks through a release build on
+ * Android emulators.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC), used only when Hermes is disabled.
@@ -101,6 +102,8 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+    // enableEdgeToEdge() in MainActivity; the same version React Native already brings in.
+    implementation("androidx.activity:activity:1.9.3")
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")

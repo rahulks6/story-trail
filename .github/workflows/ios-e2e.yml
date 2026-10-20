@@ -2,7 +2,7 @@ name: iOS virtual iPhone test
 
 # Builds the iPhone app for the iOS Simulator (no Apple account needed), saves it as an artifact
 # you can upload to appetize.io to try it in a browser, and walks through the app on a small and
-# a large virtual iPhone with Maestro (mobile/.maestro/ios-smoke.yaml), saving screenshots and a
+# a large virtual iPhone with Maestro (mobile/.maestro/smoke.yaml), saving screenshots and a
 # video of each. The walk-through signs up a throwaway account against the live API and the last
 # step deletes it again.
 on:
@@ -77,7 +77,7 @@ jobs:
         run: |
           set -u
           APP="$PWD/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app"
-          FLOW="$PWD/.maestro/ios-smoke.yaml"
+          FLOW="$PWD/.maestro/smoke.yaml"
           OUT="$GITHUB_WORKSPACE/ios-e2e"
           mkdir -p "$OUT"
           RUNTIME=$(xcrun simctl list runtimes -j | jq -r '[.runtimes[] | select(.platform == "iOS" and .isAvailable)] | last | .identifier')

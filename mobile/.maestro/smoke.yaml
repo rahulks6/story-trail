@@ -1,4 +1,5 @@
-# The iPhone walk-through run by .github/workflows/ios-e2e.yml on virtual iPhones: sign up a
+# The walk-through run on virtual iPhones by .github/workflows/ios-e2e.yml and on Android
+# emulators by .github/workflows/android-e2e.yml: sign up a
 # throwaway account (deleted again by the workflow), skip email verification, then visit every
 # main screen in dark and light mode, taking a screenshot at each step. Steps marked optional
 # record what's there without stopping the run, so one surprise doesn't hide the other screens.
@@ -93,7 +94,7 @@ appId: com.katkee.app
     text: "OK"
     optional: true
 
-# iPhone apps can't restart themselves: reopen Katkee to see light mode.
+# Reopen Katkee to see light mode (an iPhone app can't restart itself).
 - stopApp
 - launchApp
 - waitForAnimationToEnd:
