@@ -1,103 +1,97 @@
-10-20 12:04:20.531 D/AndroidRuntime( 3260): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-20 12:04:20.534 W/ActivityManager(  561): Slow operation: 82ms so far, now at startProcess: done creating new process record
-10-20 12:04:20.535 D/ColorDisplayService(  561): GlobalSaturationTintController Animation cancelled: false to matrix: 
-10-20 12:04:20.535 D/ColorDisplayService(  561):        1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 min matrix coefficients: 
-10-20 12:04:20.535 D/ColorDisplayService(  561):        1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 max matrix coefficients: 
-10-20 12:04:20.535 D/ColorDisplayService(  561):        1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000
-10-20 12:04:20.536 W/ActivityManager(  561): Slow operation: 84ms so far, now at startProcess: stepping in to startProcess
-10-20 12:04:20.539 I/AndroidRuntime( 3260): Using default boot image
-10-20 12:04:20.539 I/AndroidRuntime( 3260): Leaving lock profiling enabled
-10-20 12:04:20.545 I/app_process( 3260): Core platform API reporting enabled, enforcing=false
-10-20 12:04:20.545 W/ActivityManager(  561): Slow operation: 93ms so far, now at startProcess: done starting proc!
-10-20 12:04:20.546 I/app_process( 3260): Using CollectorTypeCMC GC.
-10-20 12:04:20.557 V/BackupManagerConstants(  561): getFullBackupIntervalMilliseconds(...) returns 86400000
-10-20 12:04:20.561 V/BackupManagerConstants(  561): getFullBackupRequiredNetworkType(...) returns 2
-10-20 12:04:20.565 V/BackupManagerConstants(  561): getFullBackupRequireCharging(...) returns true
-10-20 12:04:20.577 D/CompatChangeReporter(  561): Compat change id reported: 311402873; UID 1000; state: ENABLED
-10-20 12:04:20.578 D/CompatChangeReporter(  561): Compat change id reported: 323349338; UID 1000; state: ENABLED
-10-20 12:04:20.586 I/A       ( 1530): FetchScheduledBubbles work and all existing ScheduledBubbles cancelled.
-10-20 12:04:20.613 I/RoleService(  561): Granting default roles...
-10-20 12:04:20.618 D/nativeloader( 3260): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
-10-20 12:04:20.632 D/nativeloader( 3260): Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
-10-20 12:04:20.632 D/app_process( 3260): u_setTimeZoneFilesDirectory("/apex/com.android.tzdata/etc/tz/versioned/8/icu") succeeded. 
-10-20 12:04:20.635 D/app_process( 3260): I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt75l.dat
-10-20 12:04:20.636 D/nativeloader( 3260): Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
-10-20 12:04:20.637 D/nativeloader( 3260): Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
-10-20 12:04:20.639 W/app_process( 3260): Unexpected CPU variant for x86: x86_64.
-10-20 12:04:20.639 W/app_process( 3260): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
-10-20 12:04:20.655 W/AiAiAutofill( 1416): Failed to set whitelist for augmented autofill service.
-10-20 12:04:20.655 W/AiAiAutofill( 1416): java.lang.SecurityException: caller is not user's Augmented Autofill Service
-10-20 12:04:20.655 W/AiAiAutofill( 1416): 	at android.view.autofill.AutofillManager.setAugmentedAutofillWhitelist(AutofillManager.java:2858)
-10-20 12:04:20.655 W/AiAiAutofill( 1416): 	at ema.c(PG:66)
-10-20 12:04:20.655 W/AiAiAutofill( 1416): 	at emw.h(PG:81)
-10-20 12:04:20.655 W/AiAiAutofill( 1416): 	at emw.j(PG:4)
-10-20 12:04:20.655 W/AiAiAutofill( 1416): 	at emw.i(PG:35)
-10-20 12:04:20.655 W/AiAiAutofill( 1416): 	at emy.a(PG:3)
-10-20 12:04:20.655 W/AiAiAutofill( 1416): 	at icx.run(PG:61)
-10-20 12:04:20.655 W/AiAiAutofill( 1416): 	at hqv.run(PG:11)
-10-20 12:04:20.655 W/AiAiAutofill( 1416): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
-10-20 12:04:20.655 W/AiAiAutofill( 1416): 	at wqm.a(PG:3)
+10-20 12:27:17.991 D/AndroidRuntime( 3737): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-20 12:27:17.996 I/AndroidRuntime( 3737): Using default boot image
+10-20 12:27:17.996 I/AndroidRuntime( 3737): Leaving lock profiling enabled
+10-20 12:27:17.997 W/GetConfigSnapshotOp( 1203): Succeeded but not registered: com.google.android.apps.search.transcription.uidevice#com.google.android.tts [CONTEXT service_id=51 ]
+10-20 12:27:18.000 I/app_process( 3737): Core platform API reporting enabled, enforcing=false
+10-20 12:27:18.000 I/app_process( 3737): Using CollectorTypeCMC GC.
+10-20 12:27:18.008 I/GmsApplication( 3590): [gms_startup_benchmark] Static start time (ms): 50029, Startup latency (ms): 410, Is system user: true
+10-20 12:27:18.009 W/ebcf    ( 3590): Primes not initialized, returning default (no-op) Primes instance which will ignore all calls. Please call Primes.initialize(...) before using any Primes API.
+10-20 12:27:18.009 I/BugleNotifications( 3588): Foreground service channel created
+10-20 12:27:18.016 W/MagnificationConnectionManager(  549): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-20 12:27:18.016 D/EGL_emulation( 1156): app_time_stats: avg=803.43ms min=604.13ms max=1002.74ms count=2
+10-20 12:27:18.017 W/IPCThreadState(  549): Sending oneway calls to frozen process.
+10-20 12:27:18.017 D/ShortcutService(  549): Getting shortcuts for launcher= com.android.systemuiuser=0 pkg=com.google.android.apps.messaging
+10-20 12:27:18.017 D/ShortcutService(  549): Getting shortcuts for launcher= com.google.android.apps.nexuslauncheruser=0 pkg=com.google.android.apps.messaging
+10-20 12:27:18.017 D/ShortcutService(  549): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=com.google.android.apps.messaging
+10-20 12:27:18.019 I/Icing   ( 1488): Indexing done com.google.android.gms-internal.3p:MobileApplication
+10-20 12:27:18.021 I/GmsAccounts( 3588): GMSCore Auth returned 0 accounts.
+10-20 12:27:18.021 I/GmsAccounts( 3588): GoogleOwnersProvider returned 0 accounts.
+10-20 12:27:18.022 D/BaseIconCache( 1156): Default icon returned for dev.mobile.maestro.test
+10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): Error getting setting item searchables
+10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): java.util.concurrent.ExecutionException: java.lang.IllegalStateException: No account, cannot provide search indexables
+10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at npw.r(PG:4)
+10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at npw.get(PG:11)
+10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at ifl.a(PG:18)
+10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at com.google.android.apps.safetyhub.platformsettings.search.EmergencySearchIndexablesProvider.a(PG:9)
+10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at com.google.android.apps.safetyhub.platformsettings.search.EmergencySearchIndexablesProvider.queryRawData(PG:2)
+10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at android.provider.SearchIndexablesProvider.query(SearchIndexablesProvider.java:125)
+10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at android.content.ContentProvider.query(ContentProvider.java:1620)
+10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at android.content.ContentProvider.query(ContentProvider.java:1716)
+10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at android.content.ContentProvider$Transport.query(ContentProvider.java:295)
+10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at android.content.ContentProviderNative.onTransact(ContentProviderNative.java:107)
+10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at android.os.Binder.execTransactInternal(Binder.java:1500)
+10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at android.os.Binder.execTransact(Binder.java:1444)
 --
-10-20 12:04:20.684 D/AndroidRuntime( 3260): Calling main entry com.android.commands.am.Am
-10-20 12:04:20.689 D/UiAutomationConnection( 3260): Created on user UserHandle{0}
-10-20 12:04:20.695 I/Telephony( 1083): reRegisterPstnPhoneAccount: subId: 1 - no change
-10-20 12:04:20.698 I/ImsResolver( 1083): Received BOOT_COMPLETED
-10-20 12:04:20.707 I/HeadsetPhoneState( 1061): stopListenForPhoneState(), no listener indicates nothing is listening
-10-20 12:04:20.707 W/HeadsetPhoneState( 1061): startListenForPhoneState, no event to listen
-10-20 12:04:20.707 D/ImsResolver( 1083): maybeAddedImsService, packageName: null
-10-20 12:04:20.708 V/SimultaneousCallingTracker( 1083): Received EVENT 101
-10-20 12:04:20.708 D/SimultaneousCallingTracker( 1083): Ignoring updatePhoneMapAndSimultaneousCallSupportMap since device is not DSDA capable.
-10-20 12:04:20.720 E/RoleControllerServiceImpl(  561): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION
-10-20 12:04:20.733 D/ShortcutService(  561): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=null
-10-20 12:04:20.733 D/CompatChangeReporter(  561): Compat change id reported: 297989574; UID 1002; state: ENABLED
-10-20 12:04:20.734 W/ActivityManager(  561): Slow operation: 265ms so far, now at startProcess: done updating battery stats
-10-20 12:04:20.734 W/ActivityManager(  561): Slow operation: 324ms so far, now at startProcess: building log message
-10-20 12:04:20.737 I/ActivityManager(  561): Start proc 3261:com.android.dynsystem:dynsystem/1000 for service {com.android.dynsystem/com.android.dynsystem.DynamicSystemInstallationService}
-10-20 12:04:20.737 W/ActivityManager(  561): Slow operation: 327ms so far, now at startProcess: starting to update pids map
-10-20 12:04:20.738 W/ActivityManager(  561): Slow operation: 328ms so far, now at startProcess: done updating pids map
-10-20 12:04:20.738 W/ActivityManager(  561): Slow operation: 201ms so far, now at startProcess: asking zygote to start proc
-10-20 12:04:20.738 W/Looper  (  561): Slow dispatch took 287ms android.ui h=com.android.server.am.ActivityManagerService$UiHandler c=null m=68
-10-20 12:04:20.740 W/Looper  (  561): Slow dispatch took 223ms android.fg h=android.os.Handler c=com.android.server.om.OverlayManagerService$$ExternalSyntheticLambda1@e9b98eb m=0
-10-20 12:04:20.754 I/ActivityManager(  561): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-10-20 12:04:20.754 D/Zygote  (  361): Forked child process 3296
-10-20 12:04:20.761 W/ActivityManager(  561): Slow operation: 224ms so far, now at startProcess: returned from zygote!
-10-20 12:04:20.774 D/ShortcutService(  561): Getting shortcuts for launcher= com.google.android.apps.nexuslauncheruser=0 pkg=com.google.android.as
-10-20 12:04:20.777 D/ShortcutService(  561): received package broadcast intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package: flg=0x4000010 (has extras) }
-10-20 12:04:20.777 D/ShortcutService(  561): adding package: dev.mobile.maestro.test userId0
-10-20 12:04:20.777 D/ShortcutService(  561): handlePackageAdded: dev.mobile.maestro.test user=0
-10-20 12:04:20.777 D/ShortcutService(  561): rescanPackageIfNeeded 0@dev.mobile.maestro.test, forceRescan=true , isNewApp=true
-10-20 12:04:20.777 D/ShortcutService(  561): Package dev.mobile.maestro.test has 0 manifest shortcut(s), and 0 share target(s)
-10-20 12:04:20.780 I/com.android.nfc( 3296): Using CollectorTypeCMC GC.
-10-20 12:04:20.782 W/com.android.nfc( 3296): Unexpected CPU variant for x86: x86_64.
+10-20 12:27:18.352 D/AndroidRuntime( 3737): Calling main entry com.android.commands.am.Am
+10-20 12:27:18.354 W/MetricsFeatureProvider( 3437): Disabled westworld logs writing!!!
+10-20 12:27:18.355 D/UiAutomationConnection( 3737): Created on user UserHandle{0}
+10-20 12:27:18.357 W/ForegroundServiceTypeLoggerModule(  549): Foreground service start for UID: 10135 does not have any types
+10-20 12:27:18.358 I/HeterodyneSyncScheduler( 1203): Scheduling Phenotype for a PhenotypeSyncImmediately(6, com.google.android.libraries.search.audio.device#com.google.android.tts) one off with window [1, 2] in seconds [CONTEXT service_id=51 ]
+10-20 12:27:18.359 I/ebvk$a  ( 1203): Unable to retrieve flag snapshot for com.google.android.gms.presencemanager, using defaults.
+10-20 12:27:18.361 W/ChimeraUtils( 1203): Module com.google.android.gms.backup_base missing resource null(0)
+10-20 12:27:18.361 V/Backup  ( 1203): [BackupAccountNotifier] Handling new intent. Show notification: true
+10-20 12:27:18.363 I/HeterodyneSyncScheduler( 1203): Scheduling Phenotype for a PhenotypeSyncImmediately(6, com.google.android.libraries.search.device#com.google.android.tts) one off with window [1, 2] in seconds [CONTEXT service_id=51 ]
+10-20 12:27:18.368 I/Icing   ( 1488): Indexing com.google.android.gms-apps from com.google.android.gms
+10-20 12:27:18.369 I/AiAiTextClassifier( 1399): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
+10-20 12:27:18.373 I/AiAiTextClassifier( 1399): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
+10-20 12:27:18.374 I/AiAiTextClassifier( 1399): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
+10-20 12:27:18.383 I/netd    (  354): bandwidthSetGlobalAlert(2097152) <0.12ms>
+10-20 12:27:18.409 W/ActivityManager(  549): Slow operation: 85ms so far, now at finishAttachApplicationInner: after mServices.attachApplicationLocked
+10-20 12:27:18.409 I/.android.as.oss( 1813): Background concurrent mark compact GC freed 13MB AllocSpace bytes, 0(0B) LOS objects, 49% free, 13MB/26MB, paused 233us,340us total 642.510ms
+10-20 12:27:18.410 W/gle.android.gms( 1488): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~jvo29DthqGu9d0580Q8ZZQ==/com.katkee.app-rS4VktKEtUhwlz6q7KZX2A==/base.apk' with 1 weak references
+10-20 12:27:18.411 W/gle.android.gms( 1488): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/YouTube/YouTube.apk' with 1 weak references
+10-20 12:27:18.411 I/NetworkScheduler.Stats( 1203): Task com.google.android.gms/com.google.android.gms.ads.social.GcmSchedulerWakeupService finished executing. cause:1 result: 1 elapsed_millis: 1018 uptime_millis: 1018 exec_start_elapsed_seconds: 49 [CONTEXT service_id=218 ]
+10-20 12:27:18.411 W/gle.android.gms( 1488): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/Maps/Maps.apk' with 1 weak references
+10-20 12:27:18.412 W/.apps.safetyhub( 3582): Long monitor contention with owner main (3582) at java.lang.Object ozr.c()(PG:2) waiters=0 in java.lang.Object ozr.c() for 107ms
+10-20 12:27:18.413 W/ActivityManager(  549): Slow operation: 89ms so far, now at finishAttachApplicationInner: after dispatching broadcasts
+10-20 12:27:18.430 W/ActivityManager(  549): Slow operation: 106ms so far, now at finishAttachApplicationInner: after updateOomAdjLocked
+10-20 12:27:18.434 I/FontLog ( 1203): Download finished for https://fonts.gstatic.com/s/a/directory025.pb; checking size and hash [CONTEXT service_id=132 ]
+10-20 12:27:18.442 I/ActivityManager(  549): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+10-20 12:27:18.444 V/GrammaticalInflectionUtils(  549): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@727c571, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+10-20 12:27:18.445 I/AppsFilter(  549): interaction: PackageSetting{c5d181c com.android.microdroid.empty_payload/10191} -> PackageSetting{2a3fc25 dev.mobile.maestro/10210} BLOCKED
+10-20 12:27:18.445 D/CompatChangeReporter(  549): Compat change id reported: 229362273; UID 10143; state: ENABLED
+10-20 12:27:18.446 I/ebvk$a  ( 3590): Unable to retrieve flag snapshot for com.google.android.gms.adsidentity, using defaults.
+10-20 12:27:18.446 I/ebvk$a  ( 3590): Unable to retrieve flag snapshot for com.google.android.gms.family, using defaults.
+10-20 12:27:18.446 I/ebvk$a  ( 3590): Unable to retrieve flag snapshot for com.google.android.gms.auth.api.credentials, using defaults.
 --
-10-20 12:07:07.591 I/AndroidRuntime( 3260): VM exiting with result code 0.
-10-20 12:07:07.592 D/DisplayManagerService(  561): Drop pending events for gone uid 10210
-10-20 12:07:07.593 D/InetDiagMessage(  561): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
-10-20 12:07:07.594 D/InetDiagMessage(  561): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
-10-20 12:07:07.594 D/InetDiagMessage(  561): Destroyed live tcp sockets for uids={10210} in 1ms
-10-20 12:07:07.595 D/InetDiagMessage(  561): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
-10-20 12:07:07.595 D/InetDiagMessage(  561): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
-10-20 12:07:07.595 D/InetDiagMessage(  561): Destroyed live tcp sockets for uids={20210} in 1ms
-10-20 12:07:07.598 I/netd    (  360): tetherGetStats() -> {[]} <0.93ms>
-10-20 12:07:07.792 I/servicemanager(    0): Caller(pid=561,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
-10-20 12:07:07.805 I/init    (    0): starting service 'artd'...
-10-20 12:07:07.609 V/ActivityManager(  561): Got obituary of 3316:dev.mobile.maestro
-10-20 12:07:07.610 W/ActivityManager(  561): pid 561 system sent binder code 1 with flags 1 to frozen apps and got error -32
-10-20 12:07:07.611 I/adbd    (  441): Remote process closed the socket (on MSG_PEEK)
-10-20 12:07:07.612 W/MagnificationConnectionManager(  561): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-20 12:07:07.612 W/MagnificationConnectionManager(  561): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-20 12:07:07.612 V/UiAutomationManager(  561): UiAutomation service owner died
-10-20 12:07:07.814 I/binder  (    0): undelivered transaction 407895, process died.
-10-20 12:07:07.816 I/init    (    0): ... started service 'artd' has pid 5404
-10-20 12:07:07.817 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 148 (/system/bin/servicemanager)
-10-20 12:07:07.614 W/MagnificationConnectionManager(  561): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-20 12:07:07.615 W/IPCThreadState(  561): Sending oneway calls to frozen process.
-10-20 12:07:07.615 W/IPCThreadState(  561): Sending oneway calls to frozen process.
-10-20 12:07:07.615 W/IPCThreadState(  561): Sending oneway calls to frozen process.
-10-20 12:07:07.615 W/IPCThreadState(  561): Sending oneway calls to frozen process.
-10-20 12:07:07.615 W/IPCThreadState(  561): Sending oneway calls to frozen process.
-10-20 12:07:07.615 W/IPCThreadState(  561): Sending oneway calls to frozen process.
-10-20 12:07:07.615 W/IPCThreadState(  561): Sending oneway calls to frozen process.
-10-20 12:07:07.615 W/IPCThreadState(  561): Sending oneway calls to frozen process.
-10-20 12:07:07.615 W/IPCThreadState(  561): Sending oneway calls to frozen process.
-10-20 12:07:07.615 W/IPCThreadState(  561): Sending oneway calls to frozen process.
+10-20 12:29:30.099 I/AndroidRuntime( 3737): VM exiting with result code 0.
+10-20 12:29:30.105 W/IPCThreadState(  549): Sending oneway calls to frozen process.
+10-20 12:29:30.105 W/MagnificationConnectionManager(  549): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-20 12:29:30.105 V/UiAutomationManager(  549): UiAutomation service owner died
+10-20 12:29:30.106 W/IPCThreadState(  549): Sending oneway calls to frozen process.
+10-20 12:29:30.106 W/IPCThreadState(  549): Sending oneway calls to frozen process.
+10-20 12:29:30.226 I/init    (    0): ... started service 'artd' has pid 5572
+10-20 12:29:30.229 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 139 (/system/bin/servicemanager)
+10-20 12:29:30.109 W/IPCThreadState(  549): Sending oneway calls to frozen process.
+10-20 12:29:30.109 I/AiAiEcho( 1399): Settings changed for uri: content://settings/secure/accessibility_enabled
+10-20 12:29:30.109 W/IPCThreadState(  549): Sending oneway calls to frozen process.
+10-20 12:29:30.109 W/IPCThreadState(  549): Sending oneway calls to frozen process.
+10-20 12:29:30.109 W/IPCThreadState(  549): Sending oneway calls to frozen process.
+10-20 12:29:30.109 W/IPCThreadState(  549): Sending oneway calls to frozen process.
+10-20 12:29:30.110 W/IPCThreadState(  549): Sending oneway calls to frozen process.
+10-20 12:29:30.110 W/IPCThreadState(  549): Sending oneway calls to frozen process.
+10-20 12:29:30.233 I/init    (    0): Untracked pid 3737 exited with status 0
+10-20 12:29:30.110 W/IPCThreadState(  549): Sending oneway calls to frozen process.
+10-20 12:29:30.112 I/AiAiEcho( 1399): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-20 12:29:30.112 I/AiAiEcho( 1399): EchoTargets: 
+10-20 12:29:30.112 I/AiAiEcho( 1399): Filtered by AiAi flag check: 
+10-20 12:29:30.112 I/AiAiEcho( 1399): [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 12:29:30.112 I/AiAiEcho( 1399): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 12:29:30.112 I/AiAiEcho( 1399): #remoteViewsTwiddler: feature disabled.
+10-20 12:29:30.112 I/AiAiEcho( 1399): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-20 12:29:30.112 I/AiAiEcho( 1399): EchoTargets: 
+10-20 12:29:30.112 I/AiAiEcho( 1399): Filtered by AiAi flag check: 
+10-20 12:29:30.112 I/AiAiEcho( 1399): [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 12:29:30.112 I/AiAiEcho( 1399): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 12:29:30.112 I/AiAiEcho( 1399): #remoteViewsTwiddler: feature disabled.
+10-20 12:29:30.112 I/AiAiEcho( 1399): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
