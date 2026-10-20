@@ -1,100 +1,103 @@
-10-20 10:54:54.936 D/AndroidRuntime( 3502): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-20 10:54:54.940 W/Role    (  567): Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58
-10-20 10:54:54.941 W/DynamiteModule( 3369): Local module descriptor class for com.google.android.gms.providerinstaller.dynamite not found.
-10-20 10:54:55.059 I/init    (    0): starting service 'idmap2d'...
-10-20 10:54:54.953 I/AndroidRuntime( 3502): Using default boot image
-10-20 10:54:54.953 I/AndroidRuntime( 3502): Leaving lock profiling enabled
-10-20 10:54:54.957 W/ParceledListSlice(  567): Element #25 is 19764 bytes.
-10-20 10:54:54.957 W/ParceledListSlice(  567): Element #26 is 19800 bytes.
-10-20 10:54:54.959 I/app_process( 3502): Core platform API reporting enabled, enforcing=false
-10-20 10:54:55.077 I/init    (    0): ... started service 'idmap2d' has pid 3513
-10-20 10:54:55.083 I/init    (    0): Control message: Processed ctl.start for 'idmap2d' from pid: 567 (system_server)
-10-20 10:54:54.959 I/app_process( 3502): Using CollectorTypeCMC GC.
-10-20 10:54:54.961 D/ProfileInstaller( 3077): Installing profile for com.google.android.configupdater
-10-20 10:54:54.936 D/PrimesLoggerHolder( 3364): Primes instant initialization
-10-20 10:54:54.974 W/ParceledListSlice(  567): Element #27 is 19644 bytes.
-10-20 10:54:54.974 W/ParceledListSlice(  567): Element #28 is 19552 bytes.
-10-20 10:54:54.974 W/ParceledListSlice(  567): Element #29 is 19664 bytes.
-10-20 10:54:54.996 W/PackageManager( 1386): Failure retrieving text 0x7f130786 in package com.android.systemui
-10-20 10:54:54.996 W/PackageManager( 1386): android.content.res.Resources$NotFoundException: String resource ID #0x7f130786
-10-20 10:54:54.996 W/PackageManager( 1386): 	at android.content.res.Resources.getText(Resources.java:466)
-10-20 10:54:54.996 W/PackageManager( 1386): 	at android.app.ApplicationPackageManager.getText(ApplicationPackageManager.java:2405)
-10-20 10:54:54.996 W/PackageManager( 1386): 	at android.appwidget.AppWidgetProviderInfo.loadDescription(AppWidgetProviderInfo.java:484)
-10-20 10:54:54.996 W/PackageManager( 1386): 	at kml.a(PG:341)
-10-20 10:54:54.996 W/PackageManager( 1386): 	at kmg.b(PG:39)
-10-20 10:54:54.996 W/PackageManager( 1386): 	at aaer.g(PG:13)
-10-20 10:54:54.996 W/PackageManager( 1386): 	at kotlinx.coroutines.DispatchedTask.run(PG:114)
-10-20 10:54:54.996 W/PackageManager( 1386): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
-10-20 10:54:54.996 W/PackageManager( 1386): 	at wqm.a(PG:3)
-10-20 10:54:54.996 W/PackageManager( 1386): 	at wpo.run(PG:21)
-10-20 10:54:54.996 W/PackageManager( 1386): 	at wqn.run(PG:5)
-10-20 10:54:54.996 W/PackageManager( 1386): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
-10-20 10:54:54.996 W/PackageManager( 1386): 	at java.util.concurrent.FutureTask.run(FutureTask.java:264)
-10-20 10:54:54.996 W/PackageManager( 1386): 	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:307)
-10-20 10:54:54.996 W/PackageManager( 1386): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
-10-20 10:54:54.996 W/PackageManager( 1386): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
-10-20 10:54:54.996 W/PackageManager( 1386): 	at hqv.run(PG:221)
+10-20 12:03:55.139 D/AndroidRuntime( 2827): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-20 12:03:55.153 I/A       ( 1541): (REDACTED) Found SodaVmmmClassicWriter. Preparing to propagate model update for status: %s
+10-20 12:03:55.153 I/A       ( 1541): Skipping model update propagation to SodaVmmmClassicWriter since speaker model did not change.
+10-20 12:03:55.153 I/A       ( 1541): #handleModelUpdate
+10-20 12:03:55.156 I/A       ( 1541): (REDACTED) # of TDSID models received: %s
+10-20 12:03:55.156 I/A       ( 1541): (REDACTED) Size of TI-SID model bytestring received: %s
+10-20 12:03:55.156 I/A       ( 1541): (REDACTED) # of Server TI-SID voiceprints received: %s
+10-20 12:03:55.165 I/AndroidRuntime( 2827): Using default boot image
+10-20 12:03:55.167 I/AndroidRuntime( 2827): Leaving lock profiling enabled
+10-20 12:03:55.174 I/app_process( 2827): Core platform API reporting enabled, enforcing=false
+10-20 12:03:55.175 I/app_process( 2827): Using CollectorTypeCMC GC.
+10-20 12:03:55.201 I/SodaEnrollmentClient( 1541): #getSpeakerIdModel
+10-20 12:03:55.208 I/SodaEnrollmentClient( 1541): #initialize
+10-20 12:03:55.279 W/system_server(  558): Weak pointer dereference blocked for 21 milliseconds.
+10-20 12:03:55.279 W/system_server(  558): Weak pointer dereference blocked for 18 milliseconds.
+10-20 12:03:55.282 W/Looper  (  558): Slow delivery took 418ms main h=android.app.PropertyInvalidatedCache$AutoCorker$1 c=null m=0
+10-20 12:03:55.282 W/Looper  (  558): Drained
+10-20 12:03:55.284 W/system_server(  558): Long monitor contention with owner binder:558_4 (638) at com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer(boolean)(PackageManagerService.java:1222) waiters=0 in com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer(boolean) for 445ms
+10-20 12:03:55.285 W/system_server(  558): Long monitor contention with owner binder:558_4 (638) at com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer(boolean)(PackageManagerService.java:1222) waiters=1 in com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer(boolean) for 469ms
+10-20 12:03:55.286 W/system_server(  558): Long monitor contention with owner RoleControllerService (1032) at boolean android.os.MessageQueue.enqueueMessage(android.os.Message, long)(MessageQueue.java:695) waiters=0 in android.os.Message android.os.MessageQueue.next() for 506ms
+10-20 12:03:55.297 W/system_server(  558): Long monitor contention with owner binder:558_4 (638) at com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer(boolean)(PackageManagerService.java:1222) waiters=2 in com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer(boolean) for 480ms
+10-20 12:03:55.297 D/ActivityManager(  558): freezing 2089 com.android.carrierconfig
+10-20 12:03:55.303 D/InetDiagMessage(  558): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+10-20 12:03:55.332 I/AppWidgetServiceImpl(  558): getAppWidgetIds() 0
+10-20 12:03:55.332 D/InetDiagMessage(  558): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+10-20 12:03:55.384 D/nativeloader( 2827): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+10-20 12:03:55.392 D/InetDiagMessage(  558): Destroyed live tcp sockets for uids={10179} in 89ms
+10-20 12:03:55.392 W/system_server(  558): Long monitor contention with owner android.fg (578) at int com.android.server.am.ActivityManagerService.bindServiceInstance(android.app.IApplicationThread, android.os.IBinder, android.content.Intent, java.lang.String, android.app.IServiceConnection, long, java.lang.String, boolean, int, java.lang.String, android.app.IApplicationThread, java.lang.String, int)(ActivityManagerService.java:14231) waiters=3 in boolean com.android.server.am.ActivityManagerService.unbindService(android.app.IServiceConnection) for 554ms
+10-20 12:03:55.401 W/Looper  (  558): Slow delivery took 263ms android.fg h=android.os.Handler c=com.android.server.servicewatcher.ServiceWatcherImpl$$ExternalSyntheticLambda0@867258d m=0
+10-20 12:03:55.401 W/Looper  (  558): Slow dispatch took 523ms android.fg h=android.os.Handler c=com.android.server.servicewatcher.ServiceWatcherImpl$$ExternalSyntheticLambda0@867258d m=0
+10-20 12:03:55.433 W/d.process.acore( 1695): ApkAssets: Deleting an ApkAssets object '/data/resource-cache/com.android.systemui-neutral-TkAx.frro' with 4 weak references
+10-20 12:03:55.433 W/d.process.acore( 1695): ApkAssets: Deleting an ApkAssets object '/data/resource-cache/com.android.systemui-accent-ZPsF.frro' with 4 weak references
+10-20 12:03:55.433 W/d.process.acore( 1695): ApkAssets: Deleting an ApkAssets object '/data/resource-cache/com.android.systemui-dynamic-5KQR.frro' with 4 weak references
+10-20 12:03:55.449 D/ShortcutService(  558): Saving package item com.google.android.gm to /data/system_ce/0/shortcut_service/packages/com.google.android.gm.xml
+10-20 12:03:55.458 D/nativeloader( 2827): Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+10-20 12:03:55.458 D/app_process( 2827): u_setTimeZoneFilesDirectory("/apex/com.android.tzdata/etc/tz/versioned/8/icu") succeeded. 
+10-20 12:03:55.458 D/app_process( 2827): I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt75l.dat
+10-20 12:03:55.462 I/.gms.persistent( 1213): Background concurrent mark compact GC freed 7614KB AllocSpace bytes, 17(788KB) LOS objects, 49% free, 11MB/22MB, paused 187us,73.527ms total 373.799ms
+10-20 12:03:55.471 D/nativeloader( 2827): Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
 --
-10-20 10:54:55.194 D/AndroidRuntime( 3502): Calling main entry com.android.commands.am.Am
-10-20 10:54:55.198 W/ProviderHelper( 1223): Unknown dynamite feature providerinstaller.dynamite
-10-20 10:54:55.199 I/Bugle   ( 3364): MessagesSearchIndexablesProvider: Querying NonIndexableKeys.
-10-20 10:54:55.202 D/UiAutomationConnection( 3502): Created on user UserHandle{0}
-10-20 10:54:55.207 E/SmsApplication( 1065): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
-10-20 10:54:55.207 W/AppOpService(  567): Ignored setUidMode call for runtime permission app op: uid = 10135, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
-10-20 10:54:55.208 I/ActivityManager(  567): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-10-20 10:54:55.211 I/PermissionControllerServiceImpl(  922): Updating user sensitive for uid 10211
-10-20 10:54:55.212 W/ParceledListSlice(  567): Element #25 is 19764 bytes.
-10-20 10:54:55.212 W/ParceledListSlice(  567): Element #26 is 19800 bytes.
-10-20 10:54:55.212 W/ParceledListSlice(  567): Element #27 is 19644 bytes.
-10-20 10:54:55.212 W/ParceledListSlice(  567): Element #28 is 19552 bytes.
-10-20 10:54:55.212 W/ParceledListSlice(  567): Element #29 is 19664 bytes.
-10-20 10:54:55.214 W/ProviderInstaller( 3369): Failed to load providerinstaller module: No acceptable module com.google.android.gms.providerinstaller.dynamite found. Local version is 0 and remote version is 0.
-10-20 10:54:55.217 D/ConnectivityService(  567): NetReassign [97 : null → 100] [c 0] [a 1] [i 11]
-10-20 10:54:55.220 W/PackageManager( 1159): Failure retrieving text 0x7f130786 in package com.android.systemui
-10-20 10:54:55.220 W/PackageManager( 1159): android.content.res.Resources$NotFoundException: String resource ID #0x7f130786
-10-20 10:54:55.220 W/PackageManager( 1159): 	at android.content.res.Resources.getText(Resources.java:466)
-10-20 10:54:55.220 W/PackageManager( 1159): 	at android.app.ApplicationPackageManager.getText(ApplicationPackageManager.java:2405)
-10-20 10:54:55.220 W/PackageManager( 1159): 	at android.appwidget.AppWidgetProviderInfo.loadDescription(AppWidgetProviderInfo.java:484)
-10-20 10:54:55.220 W/PackageManager( 1159): 	at com.android.launcher3.model.WidgetItem.<init>(go/retraceme 31f9979659277bb965985aff1272c33e3c3c9e755b77166d20a2465454178f2c:4)
-10-20 10:54:55.220 W/PackageManager( 1159): 	at com.android.launcher3.model.WidgetsModel.update(go/retraceme 31f9979659277bb965985aff1272c33e3c3c9e755b77166d20a2465454178f2c:72)
-10-20 10:54:55.220 W/PackageManager( 1159): 	at com.android.launcher3.p0.execute(go/retraceme 31f9979659277bb965985aff1272c33e3c3c9e755b77166d20a2465454178f2c:16)
-10-20 10:54:55.220 W/PackageManager( 1159): 	at com.android.launcher3.LauncherModel.a(go/retraceme 31f9979659277bb965985aff1272c33e3c3c9e755b77166d20a2465454178f2c:27)
-10-20 10:54:55.220 W/PackageManager( 1159): 	at com.android.launcher3.t0.run(go/retraceme 31f9979659277bb965985aff1272c33e3c3c9e755b77166d20a2465454178f2c:12)
-10-20 10:54:55.220 W/PackageManager( 1159): 	at android.os.Handler.handleCallback(Handler.java:959)
-10-20 10:54:55.220 W/PackageManager( 1159): 	at android.os.Handler.dispatchMessage(Handler.java:100)
-10-20 10:54:55.220 W/PackageManager( 1159): 	at android.os.Looper.loopOnce(Looper.java:232)
-10-20 10:54:55.220 W/PackageManager( 1159): 	at android.os.Looper.loop(Looper.java:317)
-10-20 10:54:55.220 W/PackageManager( 1159): 	at android.os.HandlerThread.run(HandlerThread.java:85)
-10-20 10:54:55.220 W/system_server(  567): Long monitor contention with owner android.bg (599) at void android.app.ResourcesManager.registerAllResourcesReference(android.content.res.Resources)(ResourcesManager.java:1965) waiters=0 in android.content.res.Resources android.app.ResourcesManager.createResources(android.content.res.ResourcesKey, java.lang.ClassLoader, android.app.ResourcesManager$ApkAssetsSupplier) for 155ms
+10-20 12:03:55.510 D/AndroidRuntime( 2827): Calling main entry com.android.commands.am.Am
+10-20 12:03:55.513 D/UiAutomationConnection( 2827): Created on user UserHandle{0}
+10-20 12:03:55.516 W/id.gms.unstable( 2453): Long monitor contention with owner GoogleApiHandler (2566) at boolean amqj.d(amqi, android.content.ServiceConnection, java.lang.String, java.util.concurrent.Executor)(:com.google.android.gms@242335041@24.23.35 (190800-646585959):80) waiters=0 in void amqk.onServiceConnected(android.content.ComponentName, android.os.IBinder) for 818ms
+10-20 12:03:55.526 W/chromium( 1541): [1020/120355.483454:WARNING:url_request_context_config.cc(716)] Unrecognized Cronet experimental option "enable_telemetry" with params "false
+10-20 12:03:55.526 W/chromium( 1541): 
+10-20 12:03:55.529 W/A       ( 1541): No system LP found. Offline SODA ASR is unavailable and SODA init may fail.
+10-20 12:03:55.535 W/system_server(  558): Long monitor contention with owner binder:558_11 (1714) at void com.android.server.content.ContentService.registerContentObserver(android.net.Uri, boolean, android.database.IContentObserver, int, int)(ContentService.java:396) waiters=0 in void com.android.server.content.ContentService.unregisterContentObserver(android.database.IContentObserver) for 234ms
+10-20 12:03:55.540 W/JobInfo (  558): Job 'com.google.android.googlequicksearchbox/com.google.android.apps.gsa.tasks.BackgroundTasksJobService#-353' has a deadline with functional constraints and an extremely short time window of 0 ms (delay=15000, deadline=15000). The functional constraints are not likely to be satisfied when the job runs.
+10-20 12:03:55.553 I/A       ( 1541): (REDACTED) Resolved SODA resource dir for %s: %s
+10-20 12:03:55.553 I/A       ( 1541): #scheduledRefresh: enable_prod_refresh is true but we have no valid refresh schedule
+10-20 12:03:55.553 I/A       ( 1541): (REDACTED) #watchdogConfig, scheduledOffset %s
+10-20 12:03:55.554 I/A       ( 1541): Completed sync. Scheduling next wakeup
+10-20 12:03:55.554 I/A       ( 1541): Scheduling next onetime WorkManager workers
+10-20 12:03:55.555 E/MicroModelsUtil( 1541): (REDACTED) Hotword file group is null with group name: %s, locale: %s
+10-20 12:03:55.555 E/A       ( 1541): mobstoreUri is null!
+10-20 12:03:55.558 W/ForegroundServiceTypeLoggerModule(  558): FGS stop call for: 10152 has no types!
+10-20 12:03:55.559 D/Telephony( 1078): isEmergencyPreferredAccount: subId=1, activeData=-1
+10-20 12:03:55.559 D/Telephony( 1078): isEmergencyPreferredAccount: Device does not require preference.
+10-20 12:03:55.559 I/Telephony( 1078): isRttCurrentlySupported -- regular acct, hasVoiceAvailability: false
+10-20 12:03:55.559 I/Telephony( 1078):  isRttSupported: false
+10-20 12:03:55.559 I/Telephony( 1078):  alwaysAllowWhileRoaming: false
+10-20 12:03:55.559 I/Telephony( 1078):  isRoaming: false
+10-20 12:03:55.559 I/Telephony( 1078):  isOnWfc: false
+10-20 12:03:55.552 W/com.google.android.googlequicksearchbox:search( 1541): type=1400 audit(0.0:33): avc:  denied  { read } for  comm=424720546872656164202331 name="/" dev="vdd1" ino=2 scontext=u:r:priv_app:s0:c512,c768 tcontext=u:object_r:metadata_file:s0 tclass=dir permissive=0 app=com.google.android.googlequicksearchbox
+10-20 12:03:55.607 D/PackageManager(  558): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 12:03:55.615 D/PackageManager(  558): Clear ephemeral installer activity
+10-20 12:03:55.622 W/Looper  (  558): Slow dispatch took 305ms main h=android.app.ActivityThread$H c=android.app.LoadedApk$ServiceDispatcher$RunConnection@3d77f38 m=0
+10-20 12:03:55.625 W/Looper  (  558): Slow delivery took 312ms main h=com.android.server.alarm.AlarmManagerService$AlarmHandler c=null m=7
+10-20 12:03:55.625 W/system_server(  558): Long monitor contention with owner binder:558_1C (2013) at android.util.Pair com.android.server.am.ProcessList.getNumForegroundServices()(ProcessList.java:5630) waiters=2 in void com.android.server.am.ContentProviderHelper.removeContentProvider(android.os.IBinder, boolean) for 122ms
+10-20 12:03:55.625 W/Looper  (  558): Drained
+10-20 12:03:55.626 I/SP      ( 1304): Download stopped: delight:main_en_us_2024051500_1, succeeded foreground, size: 7317032
 --
-10-20 10:56:37.745 I/AndroidRuntime( 3502): VM exiting with result code 0.
-10-20 10:56:37.755 I/netd    (  368): tetherGetStats() -> {[]} <1.92ms>
-10-20 10:56:37.771 D/BoundBrokerSvc( 1223): onUnbind: Intent { act=com.google.android.gms.clearcut.service.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentDirectBootAwareApiService }
-10-20 10:56:37.777 V/ActivityManager(  567): Got obituary of 3536:dev.mobile.maestro
-10-20 10:56:37.777 I/libprocessgroup(  567): Removed cgroup /sys/fs/cgroup/uid_10210/pid_3536
-10-20 10:56:37.778 I/Zygote  (  374): Process 3536 exited due to signal 9 (Killed)
-10-20 10:56:37.781 W/ActivityManager(  567): pid 567 system sent binder code 1 with flags 1 to frozen apps and got error -32
-10-20 10:56:37.844 I/servicemanager(    0): Caller(pid=567,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
-10-20 10:56:37.857 I/init    (    0): starting service 'artd'...
-10-20 10:56:37.878 W/binder_debug(    0): 19 callbacks suppressed
-10-20 10:56:37.878 I/binder  (    0): undelivered transaction 388330, process died.
-10-20 10:56:37.882 I/init    (    0): ... started service 'artd' has pid 5043
-10-20 10:56:37.883 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 150 (/system/bin/servicemanager)
-10-20 10:56:37.893 I/init    (    0): Untracked pid 3502 exited with status 0
-10-20 10:56:37.782 W/MagnificationConnectionManager(  567): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-20 10:56:37.783 I/AiAiEcho( 1386): Settings changed for uri: content://settings/secure/accessibility_enabled
-10-20 10:56:37.784 I/adbd    (  449): Remote process closed the socket (on MSG_PEEK)
-10-20 10:56:37.787 W/MagnificationConnectionManager(  567): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-20 10:56:37.787 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 10:56:37.787 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 10:56:37.787 V/UiAutomationManager(  567): UiAutomation service owner died
-10-20 10:56:37.788 I/AiAiEcho( 1386): Predicting[0]:  [CONTEXT sampling_count=5 ]
-10-20 10:56:37.788 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 10:56:37.788 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 10:56:37.788 I/AiAiEcho( 1386): EchoTargets: 
-10-20 10:56:37.788 I/AiAiEcho( 1386): Filtered by AiAi flag check: 
-10-20 10:56:37.788 I/AiAiEcho( 1386): [CONTEXT ratelimit_period="10 SECONDS" ]
-10-20 10:56:37.788 I/AiAiEcho( 1386): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
-10-20 10:56:37.788 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 10:56:37.788 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 10:56:37.788 W/IPCThreadState(  567): Sending oneway calls to frozen process.
+10-20 12:05:56.232 I/AndroidRuntime( 2827): VM exiting with result code 0.
+10-20 12:05:56.234 W/ProcessStats(  558): Tracking association SourceState{41408ed com.google.android.apps.nexuslauncher/10178 BTop #5681} whose proc state 2 is better than process ProcessState{2a5f481 com.google.android.googlequicksearchbox:search/10144 pkg=com.google.android.googlequicksearchbox} proc state 14 (13 skipped)
+10-20 12:05:56.234 D/OomAdjuster(  558): Not killing cached processes
+10-20 12:05:56.236 I/netd    (  359): tetherGetStats() -> {[]} <0.36ms>
+10-20 12:05:56.388 W/binder_debug(    0): 19 callbacks suppressed
+10-20 12:05:56.388 I/binder  (    0): undelivered transaction 393961, process died.
+10-20 12:05:56.259 V/ActivityManager(  558): Got obituary of 2857:dev.mobile.maestro
+10-20 12:05:56.263 I/Zygote  (  360): Process 2857 exited due to signal 9 (Killed)
+10-20 12:05:56.399 I/binder_alloc(    0): 2857: binder_alloc_buf, no vma
+10-20 12:05:56.400 I/binder  (    0): cannot allocate buffer: vma cleared, target dead or dying
+10-20 12:05:56.400 I/binder  (    0): 558:1127 transaction async to 2857:0 failed 393973/29189/-3, size 192-0 line 3544
+10-20 12:05:56.264 E/IPCThreadState(  558): Binder transaction failure. id: 393973, BR_*: 29189, error: -3 (No such process)
+10-20 12:05:56.264 W/ActivityManager(  558): pid 558 system sent binder code 1 with flags 1 to frozen apps and got error -32
+10-20 12:05:56.265 W/MagnificationConnectionManager(  558): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-20 12:05:56.266 I/libprocessgroup(  558): Removed cgroup /sys/fs/cgroup/uid_10210/pid_2857
+10-20 12:05:56.266 V/UiAutomationManager(  558): UiAutomation service owner died
+10-20 12:05:56.406 I/init    (    0): ... started service 'artd' has pid 5207
+10-20 12:05:56.408 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 144 (/system/bin/servicemanager)
+10-20 12:05:56.274 W/MagnificationConnectionManager(  558): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-20 12:05:56.276 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-20 12:05:56.276 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-20 12:05:56.276 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-20 12:05:56.276 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-20 12:05:56.276 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-20 12:05:56.277 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-20 12:05:56.277 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-20 12:05:56.277 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-20 12:05:56.277 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-20 12:05:56.277 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-20 12:05:56.277 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-20 12:05:56.277 W/IPCThreadState(  558): Sending oneway calls to frozen process.
