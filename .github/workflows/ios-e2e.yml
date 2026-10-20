@@ -67,6 +67,10 @@ jobs:
           echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
 
       - name: Walk through the app on virtual iPhones
+        env:
+          # Fresh virtual iPhones on CI take minutes to settle; give Maestro's driver time.
+          MAESTRO_DRIVER_STARTUP_TIMEOUT: "300000"
+          MAESTRO_CLI_NO_ANALYTICS: "1"
         run: |
           set -u
           APP="$PWD/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app"
@@ -92,6 +96,12 @@ jobs:
             xcrun simctl bootstatus "$UDID" -b
             xcrun simctl install "$UDID" "$APP"
             mkdir -p "$OUT/$size"
+            # A first look that doesn't depend on Maestro: launch Katkee and screenshot it.
+            sleep 30
+            xcrun simctl launch "$UDID" com.katkee.app || true
+            sleep 25
+            xcrun simctl io "$UDID" screenshot "$OUT/$size/00-first-launch.png" || true
+            xcrun simctl terminate "$UDID" com.katkee.app || true
             echo "$TYPE" > "$OUT/$size/device.txt"
             xcrun simctl io "$UDID" recordVideo --codec=h264 --force "$OUT/$size/walkthrough.mp4" &
             REC=$!
