@@ -172,7 +172,7 @@ async function analyticsPage(c) {
         [...data.retention].reverse().map(x => [x.cohortDay, count(x.cohortSize), retained(x.d1, x.d1Rate), retained(x.d7, x.d7Rate), retained(x.d30, x.d30Rate)]))
         : el('p', 'No signups in this period yet.', 'muted'));
 }
-const sections = [['Dashboard', 'reports.read'], ['Analytics', 'analytics.read'], ['Reports', 'reports.read'], ['Moderation', 'moderation.history.read'], ['Users', 'users.view'], ['Ads', 'ads.analytics.read'], ['Appeals', 'reports.review'], ['Admins', 'admins.read'], ['Audit Logs', 'audit.read'], ['Security', 'security.alerts.read'], ['Link safety', 'safety.settings.manage'], ['Settings', 'ads.analytics.read']];
+const sections = [['Dashboard', 'reports.read'], ['Analytics', 'analytics.read'], ['Reports', 'reports.read'], ['Moderation', 'moderation.history.read'], ['Users', 'users.view'], ['Ads', 'ads.analytics.read'], ['Appeals', 'reports.review'], ['Admins', 'admins.read'], ['Audit Logs', 'audit.read'], ['Security', 'security.alerts.read'], ['Link safety', 'safety.settings.manage'], ['Festivals', 'safety.settings.manage'], ['Settings', 'ads.analytics.read']];
 async function render() { const version = ++renderVersion; for (const url of objectUrls)
     URL.revokeObjectURL(url); objectUrls = []; $('title').textContent = page; const c = $('content'); c.replaceChildren(el('p', 'Loading…', 'muted')); for (const n of $('navigation').children)
     n.setAttribute('aria-current', n.textContent === page ? 'page' : 'false'); try {
@@ -222,6 +222,30 @@ async function render() { const version = ++renderVersion; for (const url of obj
             const box = card(d.domain);
             fields(box, { Reason: d.reason, 'Blocked by': d.by ? '@' + d.by : '—', When: new Date(d.createdAt).toLocaleString() });
             actions(box).append(button('Unblock', () => mutate('safety/blocked-domains/remove', { domain: d.domain }, 'Allow links to ' + d.domain + ' again?'), true));
+            c.append(box);
+        }
+        return;
+    }
+    if (page === 'Festivals') {
+        const data = await api('festivals');
+        c.replaceChildren();
+        const f = el('form', undefined, 'card');
+        f.append(el('h2', 'Add or correct a festival'), el('p', 'Days are India time. Lunar festivals can move by a day: use the same id to correct one. Public Stories tagged with a festival make its ring on Home, and everyone gets one greeting on its first morning. Changes are recorded in the audit log.', 'muted'));
+        field(f, 'slug', 'Id (e.g. holi-2027)');
+        field(f, 'name', 'Name (e.g. Holi)');
+        field(f, 'emoji', 'Emoji (e.g. 🎨)');
+        field(f, 'greeting', 'Greeting (e.g. Happy Holi)');
+        field(f, 'startsOn', 'First day', 'date');
+        field(f, 'endsOn', 'Last day', 'date');
+        f.append(button('Save festival', () => { const v = values(f); return mutate('festivals', v, 'Save ' + (v.name || v.slug) + ' (' + v.startsOn + ' to ' + v.endsOn + ')?'); }));
+        c.append(f, el('h2', 'Upcoming and recent festivals'));
+        if (!data.items.length) c.append(el('p', 'No festivals in the calendar.', 'muted'));
+        for (const x of data.items) {
+            const box = card(x.emoji + ' ' + x.name);
+            fields(box, { Id: x.slug, Days: x.startsOn === x.endsOn ? x.startsOn : x.startsOn + ' to ' + x.endsOn, Greeting: x.greeting, Stories: x.stories });
+            actions(box).append(
+                button('Edit', () => { for (const [k, v] of Object.entries({ slug: x.slug, name: x.name, emoji: x.emoji, greeting: x.greeting, startsOn: x.startsOn, endsOn: x.endsOn })) { const input = f.querySelector('[name="' + k + '"]'); if (input) input.value = v; } f.scrollIntoView(); }, true),
+                button('Remove', () => mutate('festivals/remove', { slug: x.slug }, 'Remove ' + x.name + ' from the calendar? Its Stories stay, untagged.'), true));
             c.append(box);
         }
         return;
