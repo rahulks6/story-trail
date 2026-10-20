@@ -78,6 +78,11 @@ appId: com.katkee.app
 - extendedWaitUntil:
     visible: "Home"
     timeout: 30000
+# A new account is offered Nearby Stories a few seconds after Home first opens.
+- extendedWaitUntil:
+    visible: "Not now"
+    timeout: 15000
+    optional: true
 - tapOn:
     text: "Not now"
     optional: true
