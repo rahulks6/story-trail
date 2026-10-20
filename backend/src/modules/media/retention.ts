@@ -191,6 +191,7 @@ export async function deletedAccounts(store: ObjectStore, batch: number, days: n
        t AS (DELETE FROM refresh_tokens WHERE user_id IN (SELECT id FROM u)),
        e AS (DELETE FROM auth_security_events WHERE user_id IN (SELECT id FROM u)),
        p AS (DELETE FROM password_reset_requests WHERE user_id IN (SELECT id FROM u)),
+       ev AS (DELETE FROM email_verification_requests WHERE user_id IN (SELECT id FROM u)),
        -- Per-person analytics go too; the daily totals already computed identify nobody.
        ae AS (DELETE FROM analytics_events WHERE user_id IN (SELECT id FROM u)),
        ad AS (DELETE FROM analytics_active_days WHERE user_id IN (SELECT id FROM u))
@@ -236,6 +237,7 @@ export async function expiredRecords(): Promise<number> {
   // Access tokens from these sessions have long expired by then.
   total += await deleteWhere("revoked_sessions", "revoked_at < now() - make_interval(secs => :'ttl'::integer)", { ttl: accessTtl });
   total += await deleteWhere("password_reset_requests", "expires_at < now() - interval '1 day'");
+  total += await deleteWhere("email_verification_requests", "expires_at < now() - interval '1 day'");
   total += await deleteWhere("admin_login_challenges", "expires_at < now() - interval '1 day'");
   total += await deleteWhere("auth_provider_proofs", "expires_at < now() - interval '1 day'");
   total += await deleteWhere("auth_reauth_tickets", "expires_at < now() - interval '1 day'");

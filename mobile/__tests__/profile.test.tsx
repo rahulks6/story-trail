@@ -286,6 +286,21 @@ describe("your own page", () => {
     ]);
   });
 
+  test("until the email is verified, a banner asks for it and opens Verify your email", async () => {
+    api.getProfile.mockResolvedValue({ profile: profile({ username: "me_now", isSelf: true }) });
+    (mockAuth.user as { emailVerified?: boolean }).emailVerified = false;
+    await render(<ProfileScreen />);
+    expect(texts()).toContain("Verify your email");
+    await press("Verify your email");
+    expect(mockRootNavigation.navigate).toHaveBeenLastCalledWith("VerifyEmail");
+
+    await act(async () => tree.unmount());
+    (mockAuth.user as { emailVerified?: boolean }).emailVerified = true;
+    await render(<ProfileScreen />);
+    expect(texts()).not.toContain("Verify your email");
+    delete (mockAuth.user as { emailVerified?: boolean }).emailVerified;
+  });
+
   test("no active Story: the photo offers to add one; with one, the ring opens it", async () => {
     api.getProfile.mockResolvedValue({ profile: profile({ username: "me_now", isSelf: true }) });
     await render(<ProfileScreen />);

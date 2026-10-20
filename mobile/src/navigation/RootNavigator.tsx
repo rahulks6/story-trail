@@ -30,6 +30,7 @@ import { NotificationSettingsScreen } from "../screens/profile/NotificationSetti
 import { HelpScreen } from "../screens/profile/HelpScreen";
 import { AboutScreen } from "../screens/profile/AboutScreen";
 import { FollowRequestsScreen } from "../screens/profile/FollowRequestsScreen";
+import { VerifyEmailScreen } from "../screens/auth/VerifyEmailScreen";
 import { BlockedAccountsScreen } from "../screens/profile/BlockedAccountsScreen";
 import { MutedAccountsScreen } from "../screens/profile/MutedAccountsScreen";
 import { CloseFriendsScreen } from "../screens/profile/CloseFriendsScreen";
@@ -45,8 +46,12 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
  * regardless of which tab's stack it was tapped from.
  */
 function SignedInNavigator(): React.JSX.Element {
+  const { user, justSignedUp } = useAuth();
+  // Right after sign-up the app opens on "Verify your email"; "Later" goes on to Home.
+  const verifyFirst = justSignedUp && !!user?.email && user.emailVerified === false;
   return (
-    <Stack.Navigator initialRouteName="Main" screenOptions={{ headerShown: false, freezeOnBlur: true }}>
+    <Stack.Navigator initialRouteName={verifyFirst ? "VerifyEmail" : "Main"} screenOptions={{ headerShown: false, freezeOnBlur: true }}>
+      <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
       <Stack.Screen name="AccountSecurity" component={AccountSecurityScreen} options={{headerShown:true,title:"Account security",headerStyle:{backgroundColor:colors.background},headerTintColor:colors.textPrimary}}/>
       <Stack.Screen name="Main" component={MainTabs} />
       <Stack.Screen name="Activity" component={ActivityScreen} />

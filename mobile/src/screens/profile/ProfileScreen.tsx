@@ -103,6 +103,22 @@ export function ProfileScreen(): React.JSX.Element {
         scrollEnabled={scrollEnabled}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} tintColor={colors.accent} />}
       >
+        {user.email && user.emailVerified === false ? (
+          // Until the email is confirmed: a gentle reminder, never a block.
+          <Pressable
+            style={({ pressed }) => [styles.verify, pressed && styles.dashboardPressed]}
+            onPress={() => navigation.navigate("VerifyEmail")}
+            accessibilityRole="button"
+            accessibilityLabel="Verify your email"
+            accessibilityHint={`Enter the code we sent to ${user.email}`}
+          >
+            <View style={styles.verifyText}>
+              <Text style={styles.verifyTitle}>Verify your email</Text>
+              <Text style={styles.verifyBody} numberOfLines={2}>Confirm {user.email} so you can always get back into your account.</Text>
+            </View>
+            <Text style={styles.verifyAction}>Verify</Text>
+          </Pressable>
+        ) : null}
         <ProfileHeader
           username={user.username}
           displayName={user.displayName}
@@ -189,6 +205,21 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm + 4,
   },
   dashboardPressed: { backgroundColor: colors.surfaceElevated },
+  verify: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+    backgroundColor: colors.surface,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.accent,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm + 4,
+  },
+  verifyText: { flex: 1, gap: 2 },
+  verifyTitle: { ...typography.bodyStrong },
+  verifyBody: { ...typography.caption },
+  verifyAction: { color: colors.accent, fontWeight: "700", fontSize: 15 },
   dashboardIcon: {
     width: 36,
     height: 36,

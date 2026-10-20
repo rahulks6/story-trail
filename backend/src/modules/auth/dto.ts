@@ -144,3 +144,10 @@ export function parseChangePasswordInput(body: unknown): { currentPassword: stri
   if (Object.keys(errors).length > 0) throw new ValidationError(errors);
   return { currentPassword, newPassword };
 }
+
+export function parseVerifyEmailInput(body: unknown): { code: string } {
+  const b = bodyObject(body);
+  const code = typeof b.code === "string" ? b.code.trim() : "";
+  if (!/^\d{6}$/.test(code)) throw new ValidationError({ code: "Enter the 6-digit code from the email." });
+  return { code };
+}

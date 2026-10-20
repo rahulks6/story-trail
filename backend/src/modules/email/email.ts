@@ -6,7 +6,7 @@ export interface EmailMessage {
   subject: string;
   text: string;
   /** Correlates delivery logs without logging the recipient or body. */
-  kind: "password_reset" | "new_device_login" | "admin_security_alert";
+  kind: "password_reset" | "email_verification" | "new_device_login" | "admin_security_alert";
 }
 
 export interface EmailProvider {

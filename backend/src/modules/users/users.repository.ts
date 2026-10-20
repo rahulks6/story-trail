@@ -13,10 +13,12 @@ export interface UserRecord {
   isPrivate: boolean;
   isActive: boolean;
   isModerator: boolean;
+  /** The email has been proved with a code (signup verification or a password reset). */
+  emailVerified: boolean;
   createdAt: string;
 }
 
-const SELECT_COLUMNS = "id, username, email, password_hash, display_name, bio, avatar_media_id, interests_json, is_private, is_active, is_moderator, created_at";
+const SELECT_COLUMNS = "id, username, email, password_hash, display_name, bio, avatar_media_id, interests_json, is_private, is_active, is_moderator, email_verified_at IS NOT NULL AS email_verified, created_at";
 
 function parseInterests(json: string | null | undefined): string[] {
   try {
@@ -40,6 +42,7 @@ function mapRow(row: Record<string, string | null>): UserRecord {
     isPrivate: row.is_private === "t",
     isActive: row.is_active === "t",
     isModerator: row.is_moderator === "t",
+    emailVerified: row.email_verified === "t",
     createdAt: row.created_at as string,
   };
 }

@@ -59,6 +59,8 @@ interface AuthState {
 interface AuthContextValue extends AuthState {
   acceptSession: (session:{user:PublicUser;tokens:StoredTokens})=>Promise<void>;
   signup: (input: authApi.SignupPayload) => Promise<void>;
+  /** Set by sign-up in this app session: the app opens on "Verify your email" first. */
+  justSignedUp: boolean;
   login: (input: authApi.LoginPayload) => Promise<void>;
   /** Emailed-code reset; signs this device in on success. */
   resetPassword: (email: string, code: string, newPassword: string) => Promise<void>;
@@ -240,7 +242,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
     }
   }, []);
   const acceptSession = useCallback((session:{user:PublicUser;tokens:StoredTokens}) => runAuthAction(async()=>session), [runAuthAction]);
-  const signup = useCallback((input: authApi.SignupPayload) => runAuthAction(() => authApi.signup(input)), [runAuthAction]);
+  const [justSignedUp, setJustSignedUp] = useState(false);
+  const signup = useCallback(async (input: authApi.SignupPayload) => {
+    // Set before the session lands, so the signed-in screens open on email verification.
+    setJustSignedUp(true);
+    try {
+      await runAuthAction(() => authApi.signup(input));
+    } catch (err) {
+      setJustSignedUp(false);
+      throw err;
+    }
+  }, [runAuthAction]);
   const login = useCallback((input: authApi.LoginPayload) => runAuthAction(() => authApi.login(input)), [runAuthAction]);
   const resetPassword = useCallback(
     (email: string, code: string, newPassword: string) => runAuthAction(() => authApi.resetPassword(email, code, newPassword)),
@@ -296,8 +308,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
   const retryConnection = useCallback(() => verifyNow.current(), []);
   const clearError = useCallback(() => { setError(null); setFieldErrors(undefined); }, []);
   const value = useMemo<AuthContextValue>(
-    () => ({ ...state, acceptSession, signup, login, resetPassword, adoptTokens, logout, deleteAccount, refreshUser, applyProfile, error, fieldErrors, clearError, connectionError, retryConnection }),
-    [state, acceptSession, signup, login, resetPassword, adoptTokens, logout, deleteAccount, refreshUser, applyProfile, error, fieldErrors, clearError, connectionError, retryConnection],
+    () => ({ ...state, justSignedUp, acceptSession, signup, login, resetPassword, adoptTokens, logout, deleteAccount, refreshUser, applyProfile, error, fieldErrors, clearError, connectionError, retryConnection }),
+    [state, justSignedUp, acceptSession, signup, login, resetPassword, adoptTokens, logout, deleteAccount, refreshUser, applyProfile, error, fieldErrors, clearError, connectionError, retryConnection],
   );
   return (
     <AuthContext.Provider value={value}>

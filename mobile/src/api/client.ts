@@ -19,6 +19,8 @@ export interface PublicUser {
   avatarMediaId: string | null;
   interests: string[];
   isPrivate: boolean;
+  /** False until the email is confirmed with a code (absent from older servers and caches). */
+  emailVerified?: boolean;
 }
 
 export interface TokenPair {

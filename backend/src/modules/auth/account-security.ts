@@ -201,3 +201,81 @@ export async function listSecurityEvents(userId: string): Promise<SecurityEventV
   );
   return rows.map((r) => ({ kind: r.kind as SecurityEventKind, userAgent: r.user_agent ?? null, createdAt: r.created_at as string }));
 }
+
+export const VERIFY_CODE_DIGITS = 6;
+export const VERIFY_MAX_ATTEMPTS = 5;
+
+/**
+ * Emails a 6-digit code that proves the account's email address. Only the newest code works.
+ * At most 5 emails per account per hour. Does nothing for an account with no email or one
+ * already verified.
+ */
+export async function sendEmailVerificationCode(userId: string): Promise<void> {
+  const user = await queryOne(
+    `SELECT id, email FROM users WHERE id = :'id' AND deleted_at IS NULL AND is_active AND email IS NOT NULL AND email_verified_at IS NULL`,
+    { id: userId },
+  );
+  if (!user) return;
+  const wait = await hitSharedLimit(`verify-send:${userId}`, 5, 3600);
+  if (wait > 0) {
+    const minutes = Math.ceil(wait / 60);
+    throw new HttpError(429, `We've sent several codes already. Try again in ${minutes} minute${minutes === 1 ? "" : "s"}.`);
+  }
+  const code = numericCode(VERIFY_CODE_DIGITS);
+  await query(
+    `WITH superseded AS (
+       UPDATE email_verification_requests SET consumed_at = now() WHERE user_id = :'user_id' AND consumed_at IS NULL
+     )
+     INSERT INTO email_verification_requests (user_id, email, code_hash) VALUES (:'user_id', :'email', :'hash')`,
+    { user_id: userId, email: user.email as string, hash: codeHash(`verify:${userId}`, code) },
+  );
+  await sendEmailSafely({
+    kind: "email_verification",
+    to: user.email as string,
+    subject: `${code} is your Katkee verification code`,
+    text:
+      `Your Katkee verification code is ${code}. It expires in 30 minutes.\n\n` +
+      "Enter it in the Katkee app to confirm this is your email address.\n\n" +
+      "If you didn't create a Katkee account, you can ignore this email.",
+  });
+}
+
+/**
+ * Checks the newest code for the account and, when it's right, marks the email verified.
+ * Wrong codes count against the request; after 5, a new code is needed. A code sent to an
+ * address the account no longer uses doesn't verify the new one.
+ */
+export async function verifyEmailCode(userId: string, code: string): Promise<void> {
+  const invalid = new HttpError(400, "That code is incorrect or has expired. Send a new code and try again.");
+  const request = await queryOne(
+    `SELECT r.id, r.code_hash, r.attempts
+     FROM email_verification_requests r JOIN users u ON u.id = r.user_id
+     WHERE r.user_id = :'user_id' AND u.email = r.email AND u.deleted_at IS NULL AND u.is_active
+       AND r.consumed_at IS NULL AND r.expires_at > now()
+     ORDER BY r.created_at DESC LIMIT 1`,
+    { user_id: userId },
+  );
+  if (!request || Number(request.attempts) >= VERIFY_MAX_ATTEMPTS) throw invalid;
+  if (!safeEqualHex(codeHash(`verify:${userId}`, code), request.code_hash as string)) {
+    await query(
+      `UPDATE email_verification_requests SET attempts = attempts + 1,
+         consumed_at = CASE WHEN attempts + 1 >= :'max' THEN now() ELSE consumed_at END
+       WHERE id = :'id'`,
+      { id: request.id as string, max: VERIFY_MAX_ATTEMPTS },
+    );
+    throw invalid;
+  }
+  await query(
+    `WITH used AS (
+       UPDATE email_verification_requests SET consumed_at = now() WHERE id = :'id' AND consumed_at IS NULL RETURNING user_id, email
+     )
+     UPDATE users u SET email_verified_at = coalesce(u.email_verified_at, now())
+     FROM used WHERE u.id = used.user_id AND u.email = used.email`,
+    { id: request.id as string },
+  );
+}
+
+/** A password reset code reached this inbox, so the email is proved too. */
+export async function markEmailVerified(userId: string): Promise<void> {
+  await query(`UPDATE users SET email_verified_at = coalesce(email_verified_at, now()) WHERE id = :'id' AND email IS NOT NULL`, { id: userId });
+}

@@ -7,6 +7,7 @@ import { clientIp } from "../../http/rateLimiter";
 import { enforceSharedLimit } from "../../shared/sharedRateLimit";
 import { ipHash } from "../../shared/crypto";
 import { verifyAccessToken } from "./tokens";
+import { sendEmailVerificationCode, verifyEmailCode } from "./account-security";
 import { config } from "../../config/env";
 import {
   parseChangePasswordInput,
@@ -15,6 +16,7 @@ import {
   parseRefreshInput,
   parseResetPasswordInput,
   parseSignupInput,
+  parseVerifyEmailInput,
 } from "./dto";
 import * as authService from "./auth.service";
 import * as refreshTokensRepo from "./refresh-tokens.repository";
@@ -72,6 +74,23 @@ export function registerAuthRoutes(router: Router): void {
     requireAuth(req);
     const user = await authService.getPublicUserById(req.userId as string);
     if (!user) throw new HttpError(404, "User not found.");
+    sendJson(res, 200, { user });
+  });
+
+  // Email verification: send (or resend) the code, then check it. Both are for the signed-in
+  // account only, and limited per account in account-security.ts.
+  router.post("/api/v1/auth/email/send-code", async (req: KatkeeRequest, res) => {
+    requireAuth(req);
+    await sendEmailVerificationCode(req.userId as string);
+    sendJson(res, 204, undefined);
+  });
+
+  router.post("/api/v1/auth/email/verify", async (req: KatkeeRequest, res) => {
+    requireAuth(req);
+    await enforceSharedLimit(`verify-check:${req.userId}`, 20, 3600, "Too many attempts.");
+    const { code } = parseVerifyEmailInput(req.body);
+    await verifyEmailCode(req.userId as string, code);
+    const user = await authService.getPublicUserById(req.userId as string);
     sendJson(res, 200, { user });
   });
 

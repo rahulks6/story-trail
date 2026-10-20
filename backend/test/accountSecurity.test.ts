@@ -48,14 +48,15 @@ function lastCodeFor(email: string): string {
 
 describe("password reset", () => {
   it("never reveals whether an account exists", async () => {
-    const before = outbox.length;
+    const resets = () => outbox.filter((m) => m.kind === "password_reset").length;
+    const before = resets();
     const unknown = await call("POST", "/api/v1/auth/password/forgot", { email: "nobody-here@example.com" });
     const user = await signup();
     const known = await call("POST", "/api/v1/auth/password/forgot", { email: user.input.email });
     assert.equal(unknown.status, 202);
     assert.equal(known.status, 202);
     assert.deepEqual(unknown.body, known.body);
-    assert.equal(outbox.length, before + 1, "only the real account received an email");
+    assert.equal(resets(), before + 1, "only the real account received an email");
   });
 
   it("resets with the emailed code, ends every old session and signs this device in", async () => {

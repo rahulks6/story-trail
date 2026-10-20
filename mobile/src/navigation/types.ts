@@ -84,6 +84,8 @@ export type RootStackParamList = {
   /** Privacy, Notifications, Data & Storage, Help, About, Log Out, Delete account — the settings hub the icon reference calls for. */
   Settings: undefined;
   AccountSecurity: undefined;
+  /** Enter the 6-digit code that confirms the account's email (after sign-up, or from Profile). */
+  VerifyEmail: undefined;
   UploadQueue: undefined;
   Appeals: undefined;
   /** Per-type (like/comment/follow/mention) notification toggles, backed by migration 0018's real preferences table. */

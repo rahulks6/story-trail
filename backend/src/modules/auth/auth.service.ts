@@ -13,6 +13,8 @@ import {
   requestPasswordReset,
   setPasswordAndRevokeSessions,
   type ClientContext,
+  markEmailVerified,
+  sendEmailVerificationCode,
 } from "./account-security";
 import { HttpError } from "../../http/errors";
 import { DatabaseError } from "../../db/psql";
@@ -37,6 +39,8 @@ export interface PublicUser {
   avatarMediaId: string | null;
   interests: string[];
   isPrivate: boolean;
+  /** False until the email is proved with a code; phone-only accounts have no email. */
+  emailVerified: boolean;
 }
 
 function toPublicUser(user: usersRepo.UserRecord): PublicUser {
@@ -49,6 +53,7 @@ function toPublicUser(user: usersRepo.UserRecord): PublicUser {
     avatarMediaId: user.avatarMediaId,
     interests: user.interests,
     isPrivate: user.isPrivate,
+    emailVerified: user.emailVerified,
   };
 }
 
@@ -99,6 +104,8 @@ export async function signup(
   const tokens = await issueTokenPair(user.id, client.userAgent);
   // The sign-up device becomes the account's first known device.
   await recordSecurityEvent(user.id, "login_succeeded", client);
+  // The first verification code goes out with the welcome; the app asks for it next.
+  await sendEmailVerificationCode(user.id).catch(() => undefined);
   return { user: toPublicUser(user), tokens };
 }
 
@@ -190,6 +197,7 @@ export async function resetPassword(
 ): Promise<{ user: PublicUser; tokens: TokenPair }> {
   const userId = await consumePasswordResetCode(email, code);
   await setPasswordAndRevokeSessions(userId, await hashPassword(newPassword));
+  await markEmailVerified(userId);
   await recordSecurityEvent(userId, "password_reset_completed", client);
   const user = await usersRepo.findUserById(userId);
   if (!user || !user.isActive) throw new HttpError(403, "Account unavailable.");

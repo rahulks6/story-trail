@@ -35,6 +35,16 @@ export function logout(refreshToken: string): Promise<void> {
   return apiPost<void>("/api/v1/auth/logout", { refreshToken });
 }
 
+/** Emails a new 6-digit verification code to the signed-in account (the newest code replaces older ones). */
+export function sendEmailCode(accessToken: string): Promise<void> {
+  return apiPost<void>("/api/v1/auth/email/send-code", {}, accessToken);
+}
+
+/** Confirms the account's email with the emailed code; returns the updated account. */
+export function verifyEmail(code: string, accessToken: string): Promise<{ user: PublicUser }> {
+  return apiPost<{ user: PublicUser }>("/api/v1/auth/email/verify", { code }, accessToken);
+}
+
 export function fetchMe(accessToken: string): Promise<{ user: PublicUser }> {
   return apiGet<{ user: PublicUser }>("/api/v1/auth/me", accessToken);
 }
