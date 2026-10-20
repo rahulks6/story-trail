@@ -1,97 +1,97 @@
-10-20 18:35:44.968 D/AndroidRuntime( 3725): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-20 18:35:44.975 I/AndroidRuntime( 3725): Using default boot image
-10-20 18:35:44.976 I/AndroidRuntime( 3725): Leaving lock profiling enabled
-10-20 18:35:44.977 E/RoleControllerServiceImpl(  562): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.devicelockcontroller, role: android.app.role.SYSTEM_FINANCED_DEVICE_CONTROLLER
-10-20 18:35:44.979 D/FileUtils(  562): Rounded bytes from 2593198080 to 4000000000
-10-20 18:35:44.980 E/PhenotypeRegOp( 1397): Attempting to overwrite config package for com.google.android.finder_shared#com.google.android.gms [CONTEXT service_id=231 ]
-10-20 18:35:44.980 E/PhenotypeRegOp( 1397): Attempting to overwrite config package for com.google.android.gms.games [CONTEXT service_id=231 ]
-10-20 18:35:44.983 E/PhenotypeRegOp( 1397): Attempting to overwrite config package for com.google.android.gms.maps#com.google.android.gms [CONTEXT service_id=231 ]
-10-20 18:35:44.983 E/PhenotypeRegOp( 1397): Attempting to overwrite config package for com.google.android.gms.mobile_data_plan [CONTEXT service_id=231 ]
-10-20 18:35:44.984 E/PhenotypeRegOp( 1397): Attempting to overwrite config package for com.google.android.libraries.spot#com.google.android.gms [CONTEXT service_id=231 ]
-10-20 18:35:44.984 E/PhenotypeRegOp( 1397): Attempting to overwrite config package for com.google.android.gms.udc [CONTEXT service_id=231 ]
-10-20 18:35:44.992 I/app_process( 3725): Core platform API reporting enabled, enforcing=false
-10-20 18:35:44.993 I/app_process( 3725): Using CollectorTypeCMC GC.
-10-20 18:35:44.999 W/FileUtils(  562): Failed to chmod(/data/misc/apexdata/com.android.wifi/WifiConfigStoreSoftAp.xml, 384): 
-10-20 18:35:44.999 W/FileUtils(  562): android.system.ErrnoException: chmod failed: ENOENT (No such file or directory)
-10-20 18:35:44.999 W/FileUtils(  562): 	at libcore.io.Linux.chmod(Native Method)
-10-20 18:35:44.999 W/FileUtils(  562): 	at libcore.io.ForwardingOs.chmod(ForwardingOs.java:165)
-10-20 18:35:44.999 W/FileUtils(  562): 	at libcore.io.BlockGuardOs.chmod(BlockGuardOs.java:83)
-10-20 18:35:44.999 W/FileUtils(  562): 	at android.system.Os.chmod(Os.java:119)
-10-20 18:35:44.999 W/FileUtils(  562): 	at com.android.server.wifi.util.FileUtils.chmod(FileUtils.java:44)
-10-20 18:35:44.999 W/FileUtils(  562): 	at com.android.server.wifi.WifiConfigStore$StoreFile.writeBufferedRawData(WifiConfigStore.java:864)
-10-20 18:35:44.999 W/FileUtils(  562): 	at com.android.server.wifi.WifiConfigStore.writeBufferedData(WifiConfigStore.java:431)
-10-20 18:35:44.999 W/FileUtils(  562): 	at com.android.server.wifi.WifiConfigStore.write(WifiConfigStore.java:386)
-10-20 18:35:44.999 W/FileUtils(  562): 	at com.android.server.wifi.WifiConfigManager.writeBufferedData(WifiConfigManager.java:3866)
-10-20 18:35:44.999 W/FileUtils(  562): 	at com.android.server.wifi.WifiConfigManager.-$$Nest$mwriteBufferedData(WifiConfigManager.java:0)
-10-20 18:35:44.999 W/FileUtils(  562): 	at com.android.server.wifi.WifiConfigManager$1.onAlarm(WifiConfigManager.java:136)
-10-20 18:35:44.999 W/FileUtils(  562): 	at android.app.AlarmManager$ListenerWrapper.run(AlarmManager.java:375)
-10-20 18:35:44.999 W/FileUtils(  562): 	at android.os.Handler.handleCallback(Handler.java:959)
-10-20 18:35:44.999 W/FileUtils(  562): 	at android.os.Handler.dispatchMessage(Handler.java:100)
-10-20 18:35:44.999 W/FileUtils(  562): 	at com.android.server.wifi.RunnerHandler.dispatchMessage(RunnerHandler.java:124)
-10-20 18:35:44.999 W/FileUtils(  562): 	at android.os.Looper.loopOnce(Looper.java:232)
-10-20 18:35:44.999 W/FileUtils(  562): 	at android.os.Looper.loop(Looper.java:317)
-10-20 18:35:44.999 W/FileUtils(  562): 	at android.os.HandlerThread.run(HandlerThread.java:85)
+10-20 20:07:16.732 D/AndroidRuntime( 4280): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-20 20:07:16.734 I/AndroidRuntime( 4280): Using default boot image
+10-20 20:07:16.734 I/AndroidRuntime( 4280): Leaving lock profiling enabled
+10-20 20:07:16.740 I/app_process( 4280): Core platform API reporting enabled, enforcing=false
+10-20 20:07:16.740 I/app_process( 4280): Using CollectorTypeCMC GC.
+10-20 20:07:16.750 I/MediaProvider( 1509): Changed PhotoPickerActivity component state to STATE_ENABLED ( 1 )
+10-20 20:07:16.750 I/MediaProvider( 1509): Changed PhotoPickerGetContentActivity component state to STATE_ENABLED ( 1 )
+10-20 20:07:16.750 I/MediaProvider( 1509): Changed PhotoPickerUserSelectActivity component state to STATE_ENABLED ( 1 )
+10-20 20:07:16.750 I/TranscodeHelper( 1509): Empty transcode compat stale
+10-20 20:07:16.750 I/TranscodeHelper( 1509): Parsed 0 packages from resource
+10-20 20:07:16.750 I/TranscodeHelper( 1509): Parsed 8 packages from device config
+10-20 20:07:16.777 I/.apps.messaging( 3545): Background concurrent mark compact GC freed 1607KB AllocSpace bytes, 251(12MB) LOS objects, 49% free, 13MB/27MB, paused 164us,1.781ms total 103.928ms
+10-20 20:07:16.783 D/PhFileGroupPop( 3545): Added file groups birthday_grammars
+10-20 20:07:16.784 D/BufferPoolAccessor2.0(  500): bufferpool2 0x7039936517e8 : 2(7776000 size) total buffers - 0(0 size) used buffers - 12/14 (recycle/alloc) - 2/14 (fetch/transfer)
+10-20 20:07:16.784 D/BufferPoolAccessor2.0(  500): evictor expired: 1, evicted: 1
+10-20 20:07:16.791 I/Icing   ( 1295): IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=null serviceId=30
+10-20 20:07:16.797 I/RescueParty(  557): Starting to observe: [com.google.android.providers.media.module], updated namespace: mediaprovider
+10-20 20:07:16.797 E/RoleControllerServiceImpl(  557): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.WALLET
+10-20 20:07:16.802 I/AppsFilter(  557): interaction: PackageSetting{28063dd com.android.microdroid.empty_payload/10203} -> PackageSetting{9060b52 dev.mobile.maestro.test/10211} BLOCKED
+10-20 20:07:16.802 W/Looper  (  557): Slow dispatch took 144ms main h=android.app.ActivityThread$H c=android.app.LoadedApk$ReceiverDispatcher$Args$$ExternalSyntheticLambda0@d96cb64 m=0
+10-20 20:07:16.803 I/AppWidgetServiceImpl(  557): getInstalledProvidersForProfiles() 0
+10-20 20:07:16.803 D/ShortcutService(  557): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=null
+10-20 20:07:16.803 D/PackageManager(  557): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 20:07:16.803 D/PackageManager(  557): Clear ephemeral installer activity
+10-20 20:07:16.807 I/netd    (  359): tetherGetStats() -> {[]} <4.15ms>
+10-20 20:07:16.817 E/RoleControllerServiceImpl(  557): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.devicelockcontroller, role: android.app.role.SYSTEM_FINANCED_DEVICE_CONTROLLER
+10-20 20:07:16.839 D/nativeloader( 4280): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+10-20 20:07:16.840 D/BaseIconCache( 3972): Default icon returned for dev.mobile.maestro.test
+10-20 20:07:16.845 D/CarrierSvcBindHelper( 1033): onPackageModified: dev.mobile.maestro.test
+10-20 20:07:16.845 D/CarrierSvcBindHelper( 1033): No carrier app for: 0
+10-20 20:07:16.851 I/PermissionControllerServiceImpl(  902): Updating user sensitive for uid 10211
+10-20 20:07:16.857 I/MediaApplication( 1509): PhotoPickerSettingsActivity is now enabled
+10-20 20:07:16.861 D/nativeloader( 4280): Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
 --
-10-20 18:35:45.583 D/AndroidRuntime( 3725): Calling main entry com.android.commands.am.Am
-10-20 18:35:45.590 V/Backup  ( 1397): [PhotosPackagedAddedIO] Flag is disabled.
-10-20 18:35:45.590 D/UiAutomationConnection( 3725): Created on user UserHandle{0}
-10-20 18:35:45.606 W/JobInfo (  562): Job 'com.google.android.googlequicksearchbox/com.google.android.apps.gsa.tasks.BackgroundTasksJobService#-353' has a deadline with functional constraints and an extremely short time window of 0 ms (delay=30000, deadline=30000). The functional constraints are not likely to be satisfied when the job runs.
-10-20 18:35:45.624 I/Blockstore( 1397): [DataStoreImpl] Clearing Blockstore Data for package dev.mobile.maestro.test [CONTEXT service_id=258 ]
-10-20 18:35:45.628 I/Auth    ( 1397): [SupervisedAccountIntentOperation] onHandleIntent(): android.intent.action.PACKAGE_ADDED
-10-20 18:35:45.628 I/Auth    ( 1397): [SupervisedAccountIntentOperation] This operation is disabled
-10-20 18:35:45.628 I/Dck     ( 1397): disableDckSupport: false [CONTEXT service_id=289 ]
-10-20 18:35:45.640 I/Dck     ( 1397): doesDeviceHaveSupportedWirelessCapabilities: wccSysProp:0, wccMendel:3, deviceWccOverride:false [CONTEXT service_id=289 ]
-10-20 18:35:45.646 W/GCM     ( 1225): Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package: flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
-10-20 18:35:45.652 W/NetworkScheduler( 1225): Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package: flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
-10-20 18:35:45.653 I/CertBlacklister(  562): Certificate blacklist changed, updating...
-10-20 18:35:45.655 I/Blockstore( 1397): [DataStoreImpl] Keyless data not found or its IsLastInstallationData = false. [CONTEXT service_id=258 ]
-10-20 18:35:45.661 I/CertBlacklister(  562): Certificate blacklist updated
-10-20 18:35:45.666 I/Dck     ( 1397): Dck module condition - hasWccSupport: false [CONTEXT service_id=289 ]
-10-20 18:35:45.666 I/Dck     ( 1397): Dck module condition - downloadAllowed: false [CONTEXT service_id=289 ]
-10-20 18:35:45.666 W/Dck     ( 1397): Dck module not eligible for asynchronous downloading [CONTEXT service_id=289 ]
-10-20 18:35:45.669 I/ActivityManager(  562): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-10-20 18:35:45.707 V/GrammaticalInflectionUtils(  562): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@cb9d260, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
-10-20 18:35:45.715 D/InetDiagMessage(  562): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
-10-20 18:35:45.716 I/AppsFilter(  562): interaction: PackageSetting{37d42ac com.android.microdroid.empty_payload/10204} -> PackageSetting{d013057 dev.mobile.maestro/10210} BLOCKED
-10-20 18:35:45.721 D/InetDiagMessage(  562): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
-10-20 18:35:45.721 D/InetDiagMessage(  562): Destroyed live tcp sockets for uids={10166} in 8ms
-10-20 18:35:45.727 W/JobScheduler(  562): Job didn't exist in JobStore: 92fc26f #u0a144/-353 com.google.android.googlequicksearchbox/com.google.android.apps.gsa.tasks.BackgroundTasksJobService
-10-20 18:35:45.727 D/CompatChangeReporter( 3002): Compat change id reported: 150939131; UID 10135; state: ENABLED
-10-20 18:35:45.727 D/BoundBrokerSvc( 1225): onUnbind: Intent { act=com.google.android.gms.presencemanager.service.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentApiService }
-10-20 18:35:45.736 W/SearchServiceCore( 1544): Abort, client detached.
-10-20 18:35:45.736 W/SearchServiceCore( 1544): Abort, client detached.
-10-20 18:35:45.738 I/GservicesProvider( 1225): main update completed
-10-20 18:35:45.738 D/BoundBrokerSvc( 1225): onUnbind: Intent { act=com.google.android.gms.presencemanager.service.INTERNAL_IDENTITY dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentApiService }
-10-20 18:35:45.739 W/.gms.persistent( 1225): Long monitor contention with owner netscheduler-queue-handler (2425) at void dbyt.o(int)(:com.google.android.gms@242335041@24.23.35 (190800-646585959):27) waiters=0 in int dbyt.r(dbus) for 491ms
+10-20 20:07:16.918 D/AndroidRuntime( 4280): Calling main entry com.android.commands.am.Am
+10-20 20:07:16.919 I/SyncWorkManager( 1509): Scheduling periodic proactive syncs
+10-20 20:07:16.921 D/UiAutomationConnection( 4280): Created on user UserHandle{0}
+10-20 20:07:16.927 I/PhenotypeBackgroundRecv( 1560): Skipping com.google.android.apps.search.policy#com.google.android.googlequicksearchbox which doesn't use ProcessStable flags.
+10-20 20:07:16.940 D/WM-SystemJobScheduler( 1509): Scheduling work ID 1d01c325-4bc8-4ceb-a738-5f6f14ba551dJob ID 2
+10-20 20:07:16.942 W/ParceledListSlice(  557): Element #25 is 19764 bytes.
+10-20 20:07:16.944 W/ParceledListSlice(  557): Element #26 is 19800 bytes.
+10-20 20:07:16.945 D/ImsResolver( 1033): maybeAddedImsService, packageName: dev.mobile.maestro.test
+10-20 20:07:16.946 I/ActivityManager(  557): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+10-20 20:07:16.949 W/ParceledListSlice(  557): Element #27 is 19644 bytes.
+10-20 20:07:16.951 W/ParceledListSlice(  557): Element #28 is 19552 bytes.
+10-20 20:07:16.951 W/ParceledListSlice(  557): Element #29 is 19664 bytes.
+10-20 20:07:16.960 W/PackageManager( 1487): Failure retrieving text 0x7f130786 in package com.android.systemui
+10-20 20:07:16.960 W/PackageManager( 1487): android.content.res.Resources$NotFoundException: String resource ID #0x7f130786
+10-20 20:07:16.960 W/PackageManager( 1487): 	at android.content.res.Resources.getText(Resources.java:466)
+10-20 20:07:16.960 W/PackageManager( 1487): 	at android.app.ApplicationPackageManager.getText(ApplicationPackageManager.java:2405)
+10-20 20:07:16.960 W/PackageManager( 1487): 	at android.appwidget.AppWidgetProviderInfo.loadDescription(AppWidgetProviderInfo.java:484)
+10-20 20:07:16.960 W/PackageManager( 1487): 	at kml.a(PG:341)
+10-20 20:07:16.960 W/PackageManager( 1487): 	at kmg.b(PG:39)
+10-20 20:07:16.960 W/PackageManager( 1487): 	at aaer.g(PG:13)
+10-20 20:07:16.960 W/PackageManager( 1487): 	at kotlinx.coroutines.DispatchedTask.run(PG:114)
+10-20 20:07:16.960 W/PackageManager( 1487): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
+10-20 20:07:16.960 W/PackageManager( 1487): 	at wqm.a(PG:3)
+10-20 20:07:16.960 W/PackageManager( 1487): 	at wpo.run(PG:21)
+10-20 20:07:16.960 W/PackageManager( 1487): 	at wqn.run(PG:5)
+10-20 20:07:16.960 W/PackageManager( 1487): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
+10-20 20:07:16.960 W/PackageManager( 1487): 	at java.util.concurrent.FutureTask.run(FutureTask.java:264)
+10-20 20:07:16.960 W/PackageManager( 1487): 	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:307)
+10-20 20:07:16.960 W/PackageManager( 1487): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+10-20 20:07:16.960 W/PackageManager( 1487): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+10-20 20:07:16.960 W/PackageManager( 1487): 	at hqv.run(PG:221)
 --
-10-20 18:38:28.535 I/AndroidRuntime( 3725): VM exiting with result code 0.
-10-20 18:38:28.638 I/servicemanager(    0): Caller(pid=562,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
-10-20 18:38:28.656 I/init    (    0): starting service 'artd'...
-10-20 18:38:28.555 V/ActivityManager(  562): Got obituary of 3772:dev.mobile.maestro
-10-20 18:38:28.556 I/Zygote  (  361): Process 3772 exited due to signal 9 (Killed)
-10-20 18:38:28.673 I/binder  (    0): 1857:562 cannot find target node
-10-20 18:38:28.675 I/binder  (    0): 562:1857 transaction async to 0:0 failed 450098/29189/-22, size 192-0 line 3344
-10-20 18:38:28.559 E/IPCThreadState(  562): Binder transaction failure. id: 450098, BR_*: 29189, error: -22 (Invalid argument)
-10-20 18:38:28.560 W/ActivityManager(  562): pid 562 system sent binder code 1 with flags 1 to frozen apps and got error -32
-10-20 18:38:28.563 W/MagnificationConnectionManager(  562): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-20 18:38:28.563 V/UiAutomationManager(  562): UiAutomation service owner died
-10-20 18:38:28.564 I/AiAiEcho( 1424): Settings changed for uri: content://settings/secure/accessibility_enabled
-10-20 18:38:28.565 W/MagnificationConnectionManager(  562): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-20 18:38:28.565 I/libprocessgroup(  562): Removed cgroup /sys/fs/cgroup/uid_10210/pid_3772
-10-20 18:38:28.566 W/IPCThreadState(  562): Sending oneway calls to frozen process.
-10-20 18:38:28.566 W/IPCThreadState(  562): Sending oneway calls to frozen process.
-10-20 18:38:28.566 W/IPCThreadState(  562): Sending oneway calls to frozen process.
-10-20 18:38:28.566 W/IPCThreadState(  562): Sending oneway calls to frozen process.
-10-20 18:38:28.566 W/IPCThreadState(  562): Sending oneway calls to frozen process.
-10-20 18:38:28.566 W/IPCThreadState(  562): Sending oneway calls to frozen process.
-10-20 18:38:28.566 W/IPCThreadState(  562): Sending oneway calls to frozen process.
-10-20 18:38:28.566 W/IPCThreadState(  562): Sending oneway calls to frozen process.
-10-20 18:38:28.566 W/IPCThreadState(  562): Sending oneway calls to frozen process.
-10-20 18:38:28.566 W/IPCThreadState(  562): Sending oneway calls to frozen process.
-10-20 18:38:28.567 W/IPCThreadState(  562): Sending oneway calls to frozen process.
-10-20 18:38:28.569 W/IPCThreadState(  562): Sending oneway calls to frozen process.
-10-20 18:38:28.569 I/AiAiEcho( 1424): Predicting[0]:  [CONTEXT sampling_count=5 ]
-10-20 18:38:28.569 I/AiAiEcho( 1424): EchoTargets: 
-10-20 18:38:28.569 I/AiAiEcho( 1424): Filtered by AiAi flag check: 
-10-20 18:38:28.569 I/AiAiEcho( 1424): [CONTEXT ratelimit_period="10 SECONDS" ]
-10-20 18:38:28.569 I/AiAiEcho( 1424): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 20:07:19.822 I/AndroidRuntime( 4280): VM exiting with result code 0.
+10-20 20:07:19.893 I/logd    (    0): logdr: UID=2000 GID=2000 PID=4334 n tail=0 logMask=99 pid=0 start=1792526838956000000ns deadline=0ns
+10-20 20:07:19.933 W/binder_debug(    0): 4 callbacks suppressed
+10-20 20:07:19.933 I/binder  (    0): undelivered TRANSACTION_COMPLETE
+10-20 20:07:19.935 I/binder  (    0): undelivered transaction 273160, process died.
+10-20 20:07:19.823 W/ActivityManager(  557): pid 557 system sent binder code 1 with flags 1 to frozen apps and got error -32
+10-20 20:07:19.823 I/keystore2(  173): system/security/keystore2/src/maintenance.rs:341 - clearNamespace(r#APP, nspace=10210)
+10-20 20:07:19.826 I/Zygote  (  360): Process 4292 exited due to signal 9 (Killed)
+10-20 20:07:19.959 I/init    (    0): Untracked pid 4280 exited with status 0
+10-20 20:07:19.960 I/init    (    0): Untracked pid 4280 did not have an associated service entry and will not be reaped
+10-20 20:07:19.859 I/libprocessgroup(  557): Removed cgroup /sys/fs/cgroup/uid_10210/pid_4292
+10-20 20:07:19.949 I/.apps.messaging( 3545): Background concurrent mark compact GC freed 5846KB AllocSpace bytes, 305(12MB) LOS objects, 49% free, 18MB/37MB, paused 24.164ms,4.747ms total 253.262ms
+10-20 20:07:20.085 I/logd    (    0): start watching /data/system/packages.list ...
+10-20 20:07:20.087 I/logd    (    0): ReadPackageList, total packages: 218
+10-20 20:07:19.984 W/system_server(  557): Long monitor contention with owner PackageManager (611) at void com.android.server.pm.RemovePackageHelper.removePackageDataLIF(com.android.server.pm.PackageSetting, int, int[], com.android.server.pm.PackageRemovedInfo, int, boolean)(RemovePackageHelper.java:467) waiters=0 in com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer(boolean) for 154ms
+10-20 20:07:19.987 D/PackageManager(  557): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 20:07:19.987 D/PackageManager(  557): Clear ephemeral installer activity
+10-20 20:07:19.991 I/RescueParty(  557): Starting to observe: [android, com.google.android.healthconnect.controller], updated namespace: health_fitness
+10-20 20:07:19.992 I/PackageWatchdog(  557): Syncing state, reason: observing new packages
+10-20 20:07:19.992 D/PackageWatchdog(  557): rescue-party-observer added the following packages to monitor [android, com.google.android.healthconnect.controller]
+10-20 20:07:19.992 I/PackageWatchdog(  557): Syncing health check requests for packages: {com.google.android.healthconnect.controller}
+10-20 20:07:19.992 I/ExplicitHealthCheckController(  557): Service not ready to get health check supported packages. Binding...
+10-20 20:07:19.995 I/PackageWatchdog(  557): Syncing state, reason: updated observers
+10-20 20:07:19.995 I/PackageWatchdog(  557): Saving observer state to file
+10-20 20:07:20.005 W/MagnificationConnectionManager(  557): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-20 20:07:20.007 W/MagnificationConnectionManager(  557): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-20 20:07:20.010 W/system_server(  557): Long monitor contention with owner ActivityManager (587) at void com.android.server.am.ActivityManagerService$MainHandler.handleMessage(android.os.Message)(ActivityManagerService.java:1924) waiters=0 in void com.android.server.am.ContentProviderHelper.removeContentProvider(android.os.IBinder, boolean) for 230ms
+10-20 20:07:20.010 V/ActivityManager(  557): Got obituary of 4292:dev.mobile.maestro
+10-20 20:07:20.126 I/binder  (    0): 587:557 cannot find target node
+10-20 20:07:20.127 I/binder  (    0): 557:587 transaction async to 0:0 failed 273272/29189/-22, size 88-0 line 3344
+10-20 20:07:20.014 E/IPCThreadState(  557): Binder transaction failure. id: 273272, BR_*: 29189, error: -22 (Invalid argument)
