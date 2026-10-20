@@ -65,9 +65,25 @@ appId: com.katkee.app
 - stopApp
 - launchApp
 - extendedWaitUntil:
-    visible: "(Home|Forgot password\\?)"
+    visible: "(What are you into\\?|Forgot password\\?)"
     timeout: 30000
 - runFlow: login-if-needed.yaml
+# First run: pick interests, then people to follow.
+- extendedWaitUntil:
+    visible: "What are you into?"
+    timeout: 30000
+- tapOn: "Travel"
+- tapOn: "Food"
+- tapOn: "Music"
+- takeScreenshot: 05a-onboarding-interests
+- tapOn: "Next.*"
+- extendedWaitUntil:
+    visible: "People to follow"
+    timeout: 20000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 05b-onboarding-people
+- tapOn: "(Done|Start using Katkee)"
 - extendedWaitUntil:
     visible: "Home"
     timeout: 30000

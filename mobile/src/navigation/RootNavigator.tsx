@@ -1,7 +1,7 @@
 import {AccountSecurityScreen} from "../screens/profile/AccountSecurityScreen";
 import {UploadQueueScreen} from '../screens/create/UploadQueueScreen';
 import {AppealsScreen} from '../screens/profile/AppealsScreen';
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Linking, View } from "react-native";
 import { DarkTheme, DefaultTheme, NavigationContainer, type LinkingOptions, type Theme } from "@react-navigation/native";
 import { colorScheme } from "../theme/colors";
@@ -31,6 +31,8 @@ import { HelpScreen } from "../screens/profile/HelpScreen";
 import { AboutScreen } from "../screens/profile/AboutScreen";
 import { FollowRequestsScreen } from "../screens/profile/FollowRequestsScreen";
 import { VerifyEmailScreen } from "../screens/auth/VerifyEmailScreen";
+import { OnboardingScreen } from "../screens/onboarding/OnboardingScreen";
+import { needsOnboarding, OnboardingProvider } from "../state/onboarding";
 import { BlockedAccountsScreen } from "../screens/profile/BlockedAccountsScreen";
 import { MutedAccountsScreen } from "../screens/profile/MutedAccountsScreen";
 import { CloseFriendsScreen } from "../screens/profile/CloseFriendsScreen";
@@ -45,7 +47,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
  * Search results, later Home's story tray) can open it the same way,
  * regardless of which tab's stack it was tapped from.
  */
-function SignedInNavigator(): React.JSX.Element {
+function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.Element {
   const { user, justSignedUp } = useAuth();
   // A new account sees only "Verify your email" until the code is entered; once it is, the
   // full app replaces it. (Older accounts can verify later, from their profile.)
@@ -53,6 +55,14 @@ function SignedInNavigator(): React.JSX.Element {
     return (
       <Stack.Navigator key="verify-email" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
+      </Stack.Navigator>
+    );
+  }
+  // First run, once verified: interests and people to follow (OnboardingScreen) before Home.
+  if (onboarding) {
+    return (
+      <Stack.Navigator key="onboarding" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
       </Stack.Navigator>
     );
   }
@@ -222,6 +232,19 @@ function SignedInNavigator(): React.JSX.Element {
 
 export function RootNavigator(): React.JSX.Element {
   const { status, user } = useAuth();
+  // null while checking; asked again for each account that signs in.
+  const [onboarding, setOnboarding] = useState<boolean | null>(null);
+  const userId = status === "signedIn" ? user?.id ?? null : null;
+  useEffect(() => {
+    setOnboarding(null);
+    if (!userId || !user) return;
+    let alive = true;
+    void needsOnboarding(user).then((needed) => { if (alive) setOnboarding(needed); });
+    return () => { alive = false; };
+    // Checked once per account; finishing onboarding or a profile edit doesn't re-ask.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
+  const onboardingControl = useMemo(() => ({ finish: () => setOnboarding(false) }), []);
   usePushRegistration();
   useAreaSync();
   useAnalytics();
@@ -287,7 +310,18 @@ export function RootNavigator(): React.JSX.Element {
   }
 
   if (status === "signedIn") {
-    return <NavigationContainer key={user?.id ?? "signedIn"} linking={linking} theme={navigationTheme()}><SignedInNavigator />{user?.emailVerificationRequired ? null : <NearbyPrompt />}<UploadRunner /></NavigationContainer>;
+    // Waits for the onboarding check, so Home doesn't flash before the first-run screens.
+    if (user && !user.emailVerificationRequired && onboarding === null) return <View style={{ flex: 1, backgroundColor: colors.background }} />;
+    const inApp = !user?.emailVerificationRequired && !onboarding;
+    return (
+      <OnboardingProvider value={onboardingControl}>
+        <NavigationContainer key={user?.id ?? "signedIn"} linking={linking} theme={navigationTheme()}>
+          <SignedInNavigator onboarding={!!onboarding && !user?.emailVerificationRequired} />
+          {inApp ? <NearbyPrompt /> : null}
+          <UploadRunner />
+        </NavigationContainer>
+      </OnboardingProvider>
+    );
   }
   return <NavigationContainer key="signedOut" linking={signedOutLinking} theme={navigationTheme()}><AuthNavigator /></NavigationContainer>;
 }

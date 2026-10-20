@@ -86,6 +86,7 @@ export type RootStackParamList = {
   AccountSecurity: undefined;
   /** Enter the 6-digit code that confirms the account's email (after sign-up, or from Profile). */
   VerifyEmail: undefined;
+  Onboarding: undefined;
   UploadQueue: undefined;
   Appeals: undefined;
   /** Per-type (like/comment/follow/mention) notification toggles, backed by migration 0018's real preferences table. */
