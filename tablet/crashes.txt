@@ -1,101 +1,98 @@
-10-20 10:27:30.307 D/AndroidRuntime( 3222): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-20 10:27:30.307 W/IPCThreadState( 1207): Sending oneway calls to frozen process.
-10-20 10:27:30.307 D/NetworkMonitor/101(  989): PROBE_HTTPS https://www.google.com/generate_204 time=113ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Alt-Svc=[h3=":443"; ma=2592000,h3-29=":443"; ma=2592000], Connection=[close], Content-Length=[0], Cross-Origin-Resource-Policy=[cross-origin], Date=[Tue, 20 Oct 2026 10:27:30 GMT], X-Android-Received-Millis=[1792492050307], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1792492050254]}
-10-20 10:27:30.308 D/PackageManager(  552): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
-10-20 10:27:30.308 D/PackageManager(  552): Clear ephemeral installer activity
-10-20 10:27:30.310 I/AndroidRuntime( 3222): Using default boot image
-10-20 10:27:30.310 I/AndroidRuntime( 3222): Leaving lock profiling enabled
-10-20 10:27:30.311 D/NetworkMonitor/101(  989): isCaptivePortal: isSuccessful()=true isPortal()=false RedirectUrl=null isPartialConnectivity()=false Time=156ms
-10-20 10:27:30.313 I/ConnectivityService(  552): Update score for net 101 : +EVER_EVALUATED
-10-20 10:27:30.313 D/ConnectivityService(  552): [101 CELLULAR] validation passed
-10-20 10:27:30.313 I/ConnectivityService(  552): Update capabilities for net 101 : +VALIDATED
-10-20 10:27:30.313 I/ConnectivityService(  552): Update score for net 101 : +EVER_VALIDATED+IS_VALIDATED
-10-20 10:27:30.314 I/app_process( 3222): Core platform API reporting enabled, enforcing=false
-10-20 10:27:30.314 I/app_process( 3222): Using CollectorTypeCMC GC.
-10-20 10:27:30.318 E/RoleControllerServiceImpl(  552): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.WALLET
-10-20 10:27:30.327 D/WM-PackageManagerHelper( 2507): androidx.work.impl.background.systemjob.SystemJobService enabled
-10-20 10:27:30.327 D/WM-Schedulers( 2507): Created SystemJobScheduler and enabled SystemJobService
-10-20 10:27:30.327 D/com.android.ons.ONSProfileActivator( 1078): Internet connection available
-10-20 10:27:30.329 D/ConnectivityService(  552): NetReassign [no changes] [c 13] [a 2] [i 0]
-10-20 10:27:30.336 I/netd    (  353): tetherGetStats() -> {[]} <0.49ms>
-10-20 10:27:30.337 I/GnssNetworkConnectivityHandler(  552): updateNetworkState, state=CLOSED, connected=true, network=101, capabilityFlags=2, availableNetworkCount: 2
-10-20 10:27:30.347 D/WM-ForceStopRunnable( 2507): The default process name was not specified.
-10-20 10:27:30.347 D/WM-ForceStopRunnable( 2507): Performing cleanup operations.
-10-20 10:27:30.348 D/CompatChangeReporter( 2507): Compat change id reported: 312399441; UID 10189; state: ENABLED
-10-20 10:27:30.348 D/ConnectivityService(  552): Setting DNS servers for network 101 to [/10.0.2.3]
-10-20 10:27:30.348 D/DnsManager(  552): sendDnsConfigurationForNetwork(101, [10.0.2.3], [], 1800, 25, 8, 64, 0, 0, , [10.0.2.3], [0], true, [eth0])
-10-20 10:27:30.349 I/resolv  (  353): setDoh: No suitable DoH server found
-10-20 10:27:30.349 I/netd    (  353): setResolverConfiguration(ResolverParamsParcel{netId: 101, sampleValiditySeconds: 1800, successThreshold: 25, minSamples: 8, maxSamples: 64, baseTimeoutMsec: 0, retryCount: 0, servers: [10.0.2.3], domains: [], tlsName: , tlsServers: [10.0.2.3], tlsFingerprints: [], caCertificate: , tlsConnectTimeoutMs: 0, resolverOptions: (null), transportTypes: [0], meteredNetwork: true, dohParams: (null), interfaceNames: [eth0]}) <0.17ms>
-10-20 10:27:30.351 W/resolv  (  353): Validating DnsTlsServer {10.0.2.3/} with mark 0xf0065
-10-20 10:27:30.351 I/resolv  (  353): Connecting to {10.0.2.3/} with mark 0xf0065
-10-20 10:27:30.351 I/resolv  (  353):  SSL_connect returned -1 with mark 0xf0065
-10-20 10:27:30.351 I/resolv  (  353):  SSL_connect returned -1 with mark 0xf0065
-10-20 10:27:30.351 W/resolv  (  353): SSL_connect ssl error =5, mark 0xf0065: Connection refused
-10-20 10:27:30.351 W/resolv  (  353): TLS Handshake failed
-10-20 10:27:30.351 W/resolv  (  353): query failed
-10-20 10:27:30.351 W/resolv  (  353): validateDnsTlsServer returned 0 for {10.0.2.3/}
-10-20 10:27:30.351 W/resolv  (  353): Validation failed
+10-20 10:55:07.840 D/AndroidRuntime( 3081): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-20 10:55:07.844 I/NearbySharing( 1245): Not qualified for default opt-in. Multiple accounts are found. [CONTEXT service_id=194 ]
+10-20 10:55:07.844 I/AndroidRuntime( 3081): Using default boot image
+10-20 10:55:07.844 I/AndroidRuntime( 3081): Leaving lock profiling enabled
+10-20 10:55:07.845 D/ZenModeController(  920): Removed callback class com.android.systemui.qs.tiles.DndTile$3
+10-20 10:55:07.846 D/TrafficStats( 1245): tagSocket(143) with statsTag=0x1203, statsUid=10144
+10-20 10:55:07.847 I/app_process( 3081): Core platform API reporting enabled, enforcing=false
+10-20 10:55:07.848 I/app_process( 3081): Using CollectorTypeCMC GC.
+10-20 10:55:07.849 I/Icing   ( 1430): IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=null serviceId=30
+10-20 10:55:08.038 W/healthd (    0): battery l=100 v=5000 t=25.0 h=2 st=2 c=900000 fc=3000000 cc=10 chg=a
+10-20 10:55:07.860 I/SdkSandboxManager(  560): No SDKs used. Skipping SDK data reconcilation for CallingInfo{mUid=10211, mPackageName='dev.mobile.maestro.test, mAppProcessToken='null'}
+10-20 10:55:07.870 D/TrafficStats( 1245): tagSocket(143) with statsTag=0x1203, statsUid=10144
+10-20 10:55:07.880 I/Ma-Entry-Triggering( 1492): (REDACTED) starting updateConfig, reason: %s
+10-20 10:55:07.882 E/AppOps  (  560): attributionTag VCN not declared in manifest of android
+10-20 10:55:07.884 I/PermissionControllerServiceImpl(  935): Updating user sensitive for uid 10211
+10-20 10:55:07.885 I/SafetyLabelChangedBroadcastReceiver(  935): received broadcast packageName: dev.mobile.maestro.test, current user: UserHandle{0}, packageChangeEvent: NEW_INSTALL, intent user: UserHandle{0}
+10-20 10:55:07.896 D/TransparencyService(  560): Not an update. Skipping...
+10-20 10:55:07.896 W/gle.android.gms( 1430): Long monitor contention with owner binder:1430_6 (1933) at void bfwl.d()(:com.google.android.gms@242335041@24.23.35 (190800-646585959):37) waiters=3 in void bfwl.f(bfwn, long) for 380ms
+10-20 10:55:07.902 I/Ma-fcf-headphone-integration( 1492): Headphone voice queries disabled: HEADPHONE_VOICE_QUERIES flag not enabled
+10-20 10:55:07.902 W/JobInfo (  560): Job 'com.google.android.settings.intelligence/.modules.routines.impl.RoutinesJobIntentService#1728' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+10-20 10:55:07.903 D/PackageManager(  560): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 10:55:07.903 D/PackageManager(  560): Clear ephemeral installer activity
+10-20 10:55:07.910 I/Ma-fcf-headphone-integration( 1492): Headphone notification anouncement disabled: ENABLE_NOTIFICATION_ANNOUNCEMENT flag not enabled
+10-20 10:55:07.910 I/Ma-Entry-Triggering-Earcon( 1492): #getEarcons
+10-20 10:55:07.916 I/Ma-Entry-Triggering-Earcon( 1492): #getEarcons - Headset earcon flag disabled.
+10-20 10:55:07.918 I/Ma-fcf-RobinStatus( 1492): (REDACTED) Robin eligibility : optedIn %s
+10-20 10:55:07.927 V/BackupManagerConstants(  560): getFullBackupIntervalMilliseconds(...) returns 86400000
+10-20 10:55:07.927 V/BackupManagerConstants(  560): getFullBackupRequiredNetworkType(...) returns 2
+10-20 10:55:07.927 V/BackupManagerConstants(  560): getFullBackupRequireCharging(...) returns true
+10-20 10:55:07.929 W/JobInfo (  560): Job 'com.google.android.settings.intelligence/.modules.routines.impl.RoutinesJobIntentService#1728' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+10-20 10:55:07.929 D/nativeloader( 3081): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+10-20 10:55:07.939 D/ActivityManager(  560): freezing 2549 com.android.imsserviceentitlement
+10-20 10:55:07.940 D/nativeloader( 3081): Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+10-20 10:55:07.940 D/app_process( 3081): u_setTimeZoneFilesDirectory("/apex/com.android.tzdata/etc/tz/versioned/8/icu") succeeded. 
 --
-10-20 10:27:30.405 D/AndroidRuntime( 3222): Calling main entry com.android.commands.am.Am
-10-20 10:27:30.406 D/UiAutomationConnection( 3222): Created on user UserHandle{0}
-10-20 10:27:30.406 E/ConfigUpdater( 3167): ignoring update request
-10-20 10:27:30.407 E/ConfigUpdater( 3167): ignoring update request
-10-20 10:27:30.407 E/ConfigUpdater( 3167): ignoring update request
-10-20 10:27:30.408 I/ActivityManager(  552): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-10-20 10:27:30.410 I/Telephony( 1078): Carrier-config changed, checking for phone account updates.
-10-20 10:27:30.410 D/Telephony( 1078): TelecomAccountRegistry: handleCarrierConfigChange: subId=1, accountSubId=1
-10-20 10:27:30.413 D/CompatChangeReporter( 2507): Compat change id reported: 311402873; UID 10189; state: ENABLED
-10-20 10:27:30.413 D/CompatChangeReporter( 2507): Compat change id reported: 323349338; UID 10189; state: ENABLED
-10-20 10:27:30.413 D/WM-SystemJobScheduler( 2507): Scheduling work ID c3e077e2-4868-44b7-b131-ff51da57a8e6Job ID 0
-10-20 10:27:30.413 D/CompatChangeReporter(  552): Compat change id reported: 311402873; UID 10189; state: ENABLED
-10-20 10:27:30.413 E/ConfigUpdater( 3167): ignoring update request
-10-20 10:27:30.413 D/CompatChangeReporter(  552): Compat change id reported: 323349338; UID 10189; state: ENABLED
-10-20 10:27:30.424 W/Conscrypt( 1207): Could not set socket write timeout: java.net.SocketException: Socket closed
-10-20 10:27:30.424 W/Conscrypt( 1207): 	at com.google.android.gms.org.conscrypt.Platform.setSocketWriteTimeout(:com.google.android.gms@242335041@24.23.35 (190800-646585959):204)
-10-20 10:27:30.424 W/Conscrypt( 1207): 	at com.google.android.gms.org.conscrypt.ConscryptFileDescriptorSocket.setSoWriteTimeout(:com.google.android.gms@242335041@24.23.35 (190800-646585959):4)
-10-20 10:27:30.431 D/Telephony( 1078): isEmergencyPreferredAccount: subId=1, activeData=1
-10-20 10:27:30.431 D/Telephony( 1078): isEmergencyPreferredAccount: Device does not require preference.
-10-20 10:27:30.431 I/Icing   ( 1445): Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
-10-20 10:27:30.431 W/Telephony( 1078): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-10-20 10:27:30.431 I/Telephony( 1078): isRttCurrentlySupported -- regular acct, hasVoiceAvailability: false
-10-20 10:27:30.431 I/Telephony( 1078):  isRttSupported: false
-10-20 10:27:30.431 I/Telephony( 1078):  alwaysAllowWhileRoaming: false
-10-20 10:27:30.431 I/Telephony( 1078):  isRoaming: false
-10-20 10:27:30.431 I/Telephony( 1078):  isOnWfc: false
-10-20 10:27:30.432 V/GrammaticalInflectionUtils(  552): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@612a808, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
-10-20 10:27:30.443 I/AppsFilter(  552): interaction: PackageSetting{30a6a48 com.android.microdroid.empty_payload/10206} -> PackageSetting{38160e1 dev.mobile.maestro/10210} BLOCKED
-10-20 10:27:30.443 W/System.err( 1833): Seeding context with ref: 139106233
-10-20 10:27:30.444 I/HttpGrpcBindableService( 1833): Downloading requested for URL 'https://storage.googleapis.com/captions/sound_recognition_v1.zip'
-10-20 10:27:30.448 D/ConnectivityService(  552): requestNetwork for uid/pid:1000/552 asUid: 10189 activeRequest: null callbackRequest: 86 [NetworkRequest [ REQUEST id=87, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10189 RequestorUid: 1000 RequestorPkg: android UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647 isUidTracked: false
+10-20 10:55:07.976 D/AndroidRuntime( 3081): Calling main entry com.android.commands.am.Am
+10-20 10:55:07.977 D/ShortcutService(  560): rescanPackageIfNeeded 0@dev.mobile.maestro, forceRescan=true , isNewApp=true
+10-20 10:55:07.977 D/ShortcutService(  560): Package dev.mobile.maestro has 0 manifest shortcut(s), and 0 share target(s)
+10-20 10:55:07.977 D/ShortcutService(  560): received package broadcast intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 (has extras) }
+10-20 10:55:07.977 D/ShortcutService(  560): changing package: dev.mobile.maestro userId0
+10-20 10:55:07.977 D/ShortcutService(  560): handlePackageChanged: dev.mobile.maestro user=0
+10-20 10:55:07.977 D/ShortcutService(  560): rescanPackageIfNeeded 0@dev.mobile.maestro, forceRescan=true , isNewApp=true
+10-20 10:55:07.977 D/ShortcutService(  560): Package dev.mobile.maestro has 0 manifest shortcut(s), and 0 share target(s)
+10-20 10:55:07.977 I/Ma-fcf-RobinStatus( 1492): Robin eligibility: Robin experiment flag is disabled.
+10-20 10:55:07.978 I/Ma-fcf-RobinStatus( 1492): (REDACTED) Robin eligibility #evaluate: isEnabled = %s failure reasons: %s
+10-20 10:55:07.978 D/UiAutomationConnection( 3081): Created on user UserHandle{0}
+10-20 10:55:07.979 I/netd    (  362): tetherGetStats() -> {[]} <0.26ms>
+10-20 10:55:07.981 I/A       ( 1550): (REDACTED) Found SodaVmmmClassicWriter. Preparing to propagate model update for status: %s
+10-20 10:55:07.983 I/RoleService(  560): Granting default roles...
+10-20 10:55:07.984 I/Ma-fcf  ( 1492): (REDACTED) #FCF: Assistant primary locale : %s
+10-20 10:55:07.984 I/Ma-fcf  ( 1492): (REDACTED) #FCF: Assistant Primary locale check status : %s
+10-20 10:55:07.985 I/A       ( 1550): Skipping model update propagation to SodaVmmmClassicWriter since speaker model did not change.
+10-20 10:55:07.986 I/A       ( 1550): #handleModelUpdate
+10-20 10:55:07.986 I/A       ( 1550): (REDACTED) # of TDSID models received: %s
+10-20 10:55:07.986 I/A       ( 1550): (REDACTED) Size of TI-SID model bytestring received: %s
+10-20 10:55:07.987 W/ActivityManager(  560): Slow operation: 53ms so far, now at finishAttachApplicationInner: after dispatching broadcasts
+10-20 10:55:07.989 D/InetDiagMessage(  560): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+10-20 10:55:07.989 D/InetDiagMessage(  560): Destroyed live tcp sockets for uids={10137} in 32ms
+10-20 10:55:07.990 I/Ma-fcf  ( 1492): (REDACTED) FCF System FeatureName to check: %s
+10-20 10:55:07.990 I/A       ( 1550): (REDACTED) # of Server TI-SID voiceprints received: %s
+10-20 10:55:07.991 D/PackageManager(  560): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 10:55:07.993 E/DeviceChannelFetcher( 1550): fetch grpc failed
+10-20 10:55:07.993 E/DeviceChannelFetcher( 1550): java.util.NoSuchElementException: No value present
+10-20 10:55:07.993 E/DeviceChannelFetcher( 1550): 	at j$.util.Optional.orElseThrow(SourceFile:1)
+10-20 10:55:07.993 E/DeviceChannelFetcher( 1550): 	at com.google.android.apps.search.googleapp.notifications.settings.a.e.a(PG:198)
+10-20 10:55:07.993 E/DeviceChannelFetcher( 1550): 	at com.google.android.apps.search.googleapp.notifications.settings.a.c.jd(PG:12)
 --
-10-20 10:29:27.527 I/AndroidRuntime( 3222): VM exiting with result code 0.
-10-20 10:29:27.682 I/servicemanager(    0): Caller(pid=552,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
-10-20 10:29:27.535 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/YouTube/YouTube.apk' with 1 weak references
-10-20 10:29:27.535 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /product/overlay/DisplayCutoutEmulationCorner/DisplayCutoutEmulationCornerOverlay.apk' with 1 weak references
-10-20 10:29:27.535 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.extservices/priv-app/GoogleExtServices@350820300/GoogleExtServices.apk' with 1 weak references
-10-20 10:29:27.536 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /product/overlay/DisplayCutoutEmulationDouble/DisplayCutoutEmulationDoubleOverlay.apk' with 1 weak references
-10-20 10:29:27.536 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/TelephonyProvider/TelephonyProvider.apk' with 1 weak references
-10-20 10:29:27.536 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '/product/overlay/TelephonyProvider__sdk_gphone64_x86_64__auto_generated_rro_product.apk' with 1 weak references
-10-20 10:29:27.536 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/DynamicSystemInstallationService/DynamicSystemInstallationService.apk' with 1 weak references
-10-20 10:29:27.536 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/Velvet/Velvet.apk' with 1 weak references
-10-20 10:29:27.536 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/CalendarProvider/CalendarProvider.apk' with 1 weak references
-10-20 10:29:27.536 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/GoogleOneTimeInitializer/GoogleOneTimeInitializer.apk' with 1 weak references
-10-20 10:29:27.536 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/GoogleExtShared/GoogleExtShared.apk' with 1 weak references
-10-20 10:29:27.536 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/ExternalStorageProvider/ExternalStorageProvider.apk' with 1 weak references
-10-20 10:29:27.536 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/HTMLViewer/HTMLViewer.apk' with 1 weak references
-10-20 10:29:27.536 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/CompanionDeviceManager/CompanionDeviceManager.apk' with 1 weak references
-10-20 10:29:27.536 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/DownloadProvider/DownloadProvider.apk' with 1 weak references
-10-20 10:29:27.536 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/PrebuiltBugle/PrebuiltBugle.apk' with 1 weak references
-10-20 10:29:27.536 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/SoundPickerPrebuilt/SoundPickerPrebuilt.apk' with 1 weak references
-10-20 10:29:27.536 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.mediaprovider/priv-app/MediaProviderGoogle@350820300/MediaProviderGoogle.apk' with 1 weak references
-10-20 10:29:27.536 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/SafetyHubPrebuilt/SafetyHubPrebuilt.apk' with 1 weak references
-10-20 10:29:27.536 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/DownloadProviderUi/DownloadProviderUi.apk' with 1 weak references
-10-20 10:29:27.536 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.wifi/app/OsuLoginGoogle@350820300/OsuLoginGoogle.apk' with 1 weak references
-10-20 10:29:27.537 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/PacProcessor/PacProcessor.apk' with 1 weak references
-10-20 10:29:27.537 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/SimAppDialog/SimAppDialog.apk' with 1 weak references
-10-20 10:29:27.537 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '/product/overlay/SimAppDialog__sdk_gphone64_x86_64__auto_generated_rro_product.apk' with 1 weak references
-10-20 10:29:27.537 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.adservices/priv-app/AdServicesApkGoogle@350820260/AdServicesApkGoogle.apk' with 1 weak references
-10-20 10:29:27.537 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /product/overlay/DisplayCutoutEmulationHole/DisplayCutoutEmulationHoleOverlay.apk' with 1 weak references
-10-20 10:29:27.537 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /product/overlay/DisplayCutoutEmulationTall/DisplayCutoutEmulationTallOverlay.apk' with 1 weak references
-10-20 10:29:27.537 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/CertInstaller/CertInstaller.apk' with 1 weak references
-10-20 10:29:27.537 W/.apps.wellbeing( 1361): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/talkback/talkback.apk' with 1 weak references
+10-20 10:57:39.535 I/AndroidRuntime( 3081): VM exiting with result code 0.
+10-20 10:57:39.544 V/ActivityManager(  560): Got obituary of 3095:dev.mobile.maestro
+10-20 10:57:39.544 I/adbd    (  442): Remote process closed the socket (on MSG_PEEK)
+10-20 10:57:39.544 W/ActivityManager(  560): pid 560 system sent binder code 1 with flags 1 to frozen apps and got error -32
+10-20 10:57:39.544 W/MagnificationConnectionManager(  560): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-20 10:57:39.545 W/MagnificationConnectionManager(  560): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-20 10:57:39.553 D/BufferPoolAccessor2.0(  504): bufferpool2 0x73ddf3f34a68 : 2(12288000 size) total buffers - 1(6144000 size) used buffers - 508/510 (recycle/alloc) - 6/510 (fetch/transfer)
+10-20 10:57:39.554 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.554 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.554 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.554 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.554 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.554 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.554 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.554 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.554 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.554 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.554 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.554 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.554 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.554 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.554 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.554 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.554 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.554 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.555 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.555 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.555 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-20 10:57:39.743 I/init    (    0): Untracked pid 3081 exited with status 0
+10-20 10:57:39.744 I/init    (    0): Untracked pid 3081 did not have an associated service entry and will not be reaped
+10-20 10:57:39.744 W/binder_debug(    0): 5 callbacks suppressed

@@ -1,0 +1,101 @@
+10:55:17.511 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Define variables RUNNING
+10:55:17.517 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Define variables COMPLETED
+10:55:17.518 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+10:55:17.518 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+10:55:17.519 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Launch app "com.katkee.app" with clear state RUNNING
+10:55:17.520 [ INFO] maestro.Maestro.clearAppState$lambda$8: Clearing app state com.katkee.app
+10:55:19.358 [ INFO] maestro.Maestro.launchApp$lambda$5: Launching app com.katkee.app
+10:55:19.359 [ INFO] maestro.Maestro.launchApp$lambda$5: Stopping com.katkee.app app during launch
+10:55:21.767 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Launch app "com.katkee.app" with clear state COMPLETED
+10:55:21.768 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Log in" is visible RUNNING
+10:55:27.629 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Log in" is visible COMPLETED
+10:55:27.632 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 01-login RUNNING
+10:55:27.638 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+10:55:27.644 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+10:55:30.384 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 01-login COMPLETED
+10:55:30.385 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on ".*Sign up.*" RUNNING
+10:55:31.150 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=Don't have an account? Sign up, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1072,1343][1488,1384], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=1072, y=1343, width=416, height=41))
+10:55:33.229 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+10:55:33.237 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 1363) using hierarchy based logic for wait
+10:55:36.518 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+10:55:36.519 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on ".*Sign up.*" COMPLETED
+10:55:36.519 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Create your account" is visible RUNNING
+10:55:37.169 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Create your account" is visible COMPLETED
+10:55:37.172 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 02-signup RUNNING
+10:55:37.172 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+10:55:37.173 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+10:55:37.860 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 02-signup COMPLETED
+10:55:37.860 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Display name" RUNNING
+10:55:38.023 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=Display name, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=true, bounds=[98,291][2462,366], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.EditText, important-for-accessibility=true, error=}, children=[], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=98, y=291, width=2364, height=75))
+10:55:39.651 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+10:55:39.653 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 328) using hierarchy based logic for wait
+10:55:41.502 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+10:55:41.503 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Display name" COMPLETED
+10:55:41.503 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text Katkee iPhone Test RUNNING
+10:55:41.504 [ INFO] maestro.Maestro.inputText: Inputting text: Katkee iPhone Test
+10:55:54.394 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text Katkee iPhone Test COMPLETED
+10:55:54.395 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Create your account" RUNNING
+10:55:55.268 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=Create your account, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[64,112][2496,166], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.view.View, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=64, y=112, width=2432, height=54))
+10:55:59.342 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+10:55:59.345 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 139) using hierarchy based logic for wait
+10:56:01.154 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+10:56:01.155 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Create your account" COMPLETED
+10:56:01.156 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Username" RUNNING
+10:56:01.243 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=Username, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=true, bounds=[98,447][2462,522], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.EditText, important-for-accessibility=true, error=}, children=[], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=98, y=447, width=2364, height=75))
+10:56:02.629 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+10:56:02.630 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 484) using hierarchy based logic for wait
+10:56:04.875 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+10:56:04.875 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Username" COMPLETED
+10:56:04.876 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text ${USERNAME} RUNNING
+10:56:06.441 [ INFO] maestro.Maestro.inputText: Inputting text: e2e_and_752789_tablet
+10:56:17.074 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text ${USERNAME} COMPLETED
+10:56:17.074 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Create your account" RUNNING
+10:56:17.514 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=Create your account, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[64,112][2496,166], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.view.View, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=64, y=112, width=2432, height=54))
+10:56:19.742 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+10:56:19.743 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 139) using hierarchy based logic for wait
+10:56:21.437 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+10:56:21.437 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Create your account" COMPLETED
+10:56:21.438 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Email" RUNNING
+10:56:21.499 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=Email, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=true, bounds=[98,647][2462,722], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.EditText, important-for-accessibility=true, error=}, children=[], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=98, y=647, width=2364, height=75))
+10:56:23.150 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+10:56:23.151 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 684) using hierarchy based logic for wait
+10:56:29.376 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+10:56:29.376 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Email" COMPLETED
+10:56:29.376 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text ${EMAIL} RUNNING
+10:56:29.394 [ INFO] maestro.Maestro.inputText: Inputting text: support+e2e-and-752789-tablet@katkee.com
+10:56:49.823 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text ${EMAIL} COMPLETED
+10:56:49.824 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Create your account" RUNNING
+10:56:50.583 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=Create your account, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[64,112][2496,166], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.view.View, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=64, y=112, width=2432, height=54))
+10:56:52.262 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+10:56:52.265 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 139) using hierarchy based logic for wait
+10:56:55.841 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+10:56:55.841 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Create your account" COMPLETED
+10:56:55.842 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Date of birth" RUNNING
+10:56:56.240 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=Date of birth, hintText=DD/MM/YYYY, ignoreBoundsFiltering=false, resource-id=, clickable=true, bounds=[98,803][2462,878], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.EditText, important-for-accessibility=true, error=}, children=[], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=98, y=803, width=2364, height=75))
+10:56:57.661 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+10:56:57.663 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 840) using hierarchy based logic for wait
+10:57:00.548 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+10:57:00.549 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Date of birth" COMPLETED
+10:57:00.550 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text 01011995 RUNNING
+10:57:00.550 [ INFO] maestro.Maestro.inputText: Inputting text: 01011995
+10:57:04.870 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text 01011995 COMPLETED
+10:57:04.870 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Create your account" RUNNING
+10:57:05.167 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=Create your account, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[64,112][2496,166], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.view.View, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=64, y=112, width=2432, height=54))
+10:57:06.685 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+10:57:06.687 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 139) using hierarchy based logic for wait
+10:57:09.110 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+10:57:09.110 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Create your account" COMPLETED
+10:57:09.111 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Password" RUNNING
+10:57:09.302 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=Password, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=true, bounds=[98,1003][2376,1078], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.EditText, important-for-accessibility=true, error=}, children=[], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=98, y=1003, width=2278, height=75))
+10:57:10.577 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+10:57:10.579 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1237, 1040) using hierarchy based logic for wait
+10:57:14.380 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+10:57:14.380 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Password" COMPLETED
+10:57:14.380 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text ${PASSWORD} RUNNING
+10:57:14.393 [ INFO] maestro.Maestro.inputText: Inputting text: E2e-7a4d7111a9dfdd84
+10:57:20.714 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text ${PASSWORD} COMPLETED
+10:57:20.714 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Create your account" RUNNING
+10:57:37.993 [ERROR] maestro.orchestra.Orchestra.executeCommands: [Command execution] CommandFailed: Element not found: Text matching regex: Create your account
+10:57:38.368 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+10:57:38.368 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+10:57:38.688 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Create your account" FAILED
