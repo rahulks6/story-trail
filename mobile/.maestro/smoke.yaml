@@ -84,8 +84,9 @@ appId: com.katkee.app
     timeout: 5000
 - takeScreenshot: 05b-onboarding-people
 - tapOn: "(Done|Start using Katkee)"
+# Home, or the Nearby Stories offer already on top of it.
 - extendedWaitUntil:
-    visible: "Home"
+    visible: "(Home|Not now)"
     timeout: 30000
 # A new account is offered Nearby Stories a few seconds after Home first opens.
 - extendedWaitUntil:
