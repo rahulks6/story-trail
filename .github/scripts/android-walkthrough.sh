@@ -10,7 +10,8 @@ adb shell wm size > "$OUT/device.txt"
 adb shell wm density >> "$OUT/device.txt"
 if [ "$SIZE" = tablet ]; then
   adb shell settings put system accelerometer_rotation 0
-  adb shell settings put system user_rotation 1
+  # A Pixel Tablet's natural position is already landscape (rotation 0).
+  adb shell settings put system user_rotation 0
   echo "landscape" >> "$OUT/device.txt"
 fi
 adb logcat -c

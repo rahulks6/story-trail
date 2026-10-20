@@ -19,18 +19,23 @@ appId: com.katkee.app
     visible: "Create your account"
     timeout: 15000
 - takeScreenshot: 02-signup
+# Tapping the title closes the keyboard after each field (an iPhone number pad has no Return key
+# and covers the fields below it on a small screen).
 - tapOn: "Display name"
 - inputText: "Katkee iPhone Test"
+- tapOn: "Create your account"
 - tapOn: "Username"
 - inputText: ${USERNAME}
+- tapOn: "Create your account"
 - tapOn: "Email"
 - inputText: ${EMAIL}
+- tapOn: "Create your account"
 - tapOn: "Date of birth"
 - inputText: "01011995"
+- tapOn: "Create your account"
 - tapOn: "Password"
 - inputText: ${PASSWORD}
-- hideKeyboard:
-    optional: true
+- tapOn: "Create your account"
 - takeScreenshot: 03-signup-filled
 - scrollUntilVisible:
     element: "Sign up"
@@ -42,10 +47,12 @@ appId: com.katkee.app
     timeout: 45000
 - takeScreenshot: 04-verify-email
 # A new account can't skip this: no "Later", only a way to fix the email or log out.
+- tapOn: "Verify your email"
 - assertVisible: "Wrong email? Change it"
 - assertNotVisible: "Later"
 - tapOn: "Wrong email? Change it"
 - takeScreenshot: 04b-change-email
+- tapOn: "Change your email"
 - tapOn: "Cancel"
 # Verified out of band (ci-verify.js), then reopened: the app now opens on Home.
 - runScript: ci-verify.js

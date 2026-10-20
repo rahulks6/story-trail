@@ -231,7 +231,7 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
           placeholderTextColor={colors.textDisabled}
           autoCapitalize="none"
           autoCorrect={false}
-          autoFocus
+          // Not focused on open: the keyboard would cover the tab bar until dismissed.
           returnKeyType="search"
           accessibilityLabel="Search people"
           value={query}

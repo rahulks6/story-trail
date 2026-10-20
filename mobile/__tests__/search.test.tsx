@@ -79,7 +79,7 @@ const pressable = (label: string) => tree.root.find((n: ReactTestInstance) => ty
 const press = async (label: string) => { await act(async () => pressable(label).props.onPress()); await flush(); };
 const list = () => tree.root.findByType(FlatList);
 
-test("before typing: the box is focused and people are suggested with the reason, each followable in place", async () => {
+test("before typing: the keyboard stays down (the tab bar stays usable) and people are suggested with the reason, each followable in place", async () => {
   api.getSuggestions.mockResolvedValue({ suggestions: [
     suggestion("fan", { kind: "follows_you" }, { viewer: relation({ isFollowedBy: true }) }),
     suggestion("pal", { kind: "followed_by", username: "alice", others: 2 }, { isPrivate: true }),
@@ -87,7 +87,7 @@ test("before typing: the box is focused and people are suggested with the reason
     suggestion("nova", { kind: "new" }),
   ] });
   await renderSearch();
-  expect(tree.root.findByType(TextInput).props.autoFocus).toBe(true);
+  expect(tree.root.findByType(TextInput).props.autoFocus).toBeFalsy();
   expect(texts()).toEqual(expect.arrayContaining(["Suggested for you", "Follows you", "Followed by @alice + 2 more", "Also into Chess", "New to Katkee"]));
   expect(api.searchUsers).not.toHaveBeenCalled();
 
