@@ -1,6 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <testsuites>
-  <testsuite name="Test Suite" device="test" tests="1" failures="0" time="181.351" timestamp="2026-10-20T14:32:53">
-    <testcase id="smoke" name="smoke" classname="smoke" file="/home/runner/work/story-trail/story-trail/mobile/.maestro/smoke.yaml" time="181.265" timestamp="2026-10-20T14:32:53" status="SUCCESS"/>
+  <testsuite name="Test Suite" device="test" tests="1" failures="1" time="160.938" timestamp="2026-10-20T18:35:48">
+    <testcase id="smoke" name="smoke" classname="smoke" file="/home/runner/work/story-trail/story-trail/mobile/.maestro/smoke.yaml" time="160.877" timestamp="2026-10-20T18:35:48" status="ERROR">
+      <failure>Assertion is false: "Home" is visible</failure>
+    </testcase>
   </testsuite>
 </testsuites>
