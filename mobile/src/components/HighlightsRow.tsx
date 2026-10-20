@@ -30,6 +30,8 @@ interface Props {
 }
 
 const COLUMNS = 3;
+/** On a tablet more Highlights fit in a row instead of each growing past this width. */
+const MAX_CARD_WIDTH = 150;
 const GAP = spacing.sm;
 // Matches the horizontal padding both ProfileScreen and UserProfileScreen
 // already apply to their container — this grid has none of its own, so
@@ -134,7 +136,8 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
   if (highlights.length === 0 && !isOwner) return null;
 
   const authHeaders = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
-  const cardWidth = (screenWidth - CONTAINER_PADDING * 2 - GAP * (COLUMNS - 1)) / COLUMNS;
+  const columns = Math.max(COLUMNS, Math.ceil((screenWidth - CONTAINER_PADDING * 2 + GAP) / (MAX_CARD_WIDTH + GAP)));
+  const cardWidth = (screenWidth - CONTAINER_PADDING * 2 - GAP * (columns - 1)) / columns;
   const coverHeight = cardWidth * CARD_ASPECT_RATIO;
   const cardHeight = coverHeight + LABEL_HEIGHT;
 
@@ -157,7 +160,7 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
       <DraggableGrid
         data={highlights}
         keyExtractor={(h) => h.id}
-        columns={COLUMNS}
+        columns={columns}
         itemWidth={cardWidth}
         itemHeight={cardHeight}
         gap={GAP}

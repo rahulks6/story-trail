@@ -1,6 +1,6 @@
 import React from "react";
 import { act, create, type ReactTestInstance, type ReactTestRenderer } from "react-test-renderer";
-import { Alert, Modal, StyleSheet, useWindowDimensions } from "react-native";
+import { Alert, Dimensions, Modal, StyleSheet, useWindowDimensions } from "react-native";
 import { HighlightsRow } from "../src/components/HighlightsRow";
 
 const mockNavigate = jest.fn();
@@ -39,8 +39,28 @@ function Width(): React.JSX.Element {
   return <></>;
 }
 let widthSeen = 0;
+const original = Dimensions.get("window");
+const setWindowWidth = (width: number) => Dimensions.set({ window: { ...original, width }, screen: { ...original, width } });
+afterEach(() => setWindowWidth(original.width));
+function cardBoxes() {
+  return buttons().filter((l) => l.endsWith(", Highlight")).map((label) => {
+    const card = tree.root.find((n: ReactTestInstance) => typeof n.type === "string" && n.props.accessibilityLabel === label);
+    let slot: ReactTestInstance | null = card.parent;
+    while (slot && !(typeof slot.type === "string" && StyleSheet.flatten(slot.props.style)?.position === "absolute")) slot = slot.parent;
+    return StyleSheet.flatten(slot!.props.style);
+  });
+}
 
-test("Highlights are permanent portrait cards, exactly three per row", async () => {
+test("on a tablet more Highlights fit in a row instead of each growing", async () => {
+  setWindowWidth(1280);
+  await render(false);
+  const cards = cardBoxes();
+  expect(cards.every((c) => c.width <= 150)).toBe(true);
+  expect(new Set(cards.map((c) => Math.round(c.top))).size).toBe(1); // all four in one row
+});
+
+test("Highlights are permanent portrait cards, exactly three per row on a phone", async () => {
+  setWindowWidth(390);
   let probe!: ReactTestRenderer;
   await act(async () => { probe = create(<Width />); });
   await act(async () => probe.unmount());
