@@ -5,6 +5,7 @@
     "/": "index.html",
     "/support": "support.html",
     "/delete-account": "delete-account.html",
+    "/child-safety": "child-safety.html",
     "/privacy": "privacy.html",
     "/terms": "terms.html"
   },
