@@ -1,97 +1,97 @@
-10-20 18:37:16.778 D/AndroidRuntime( 3822): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-20 18:37:16.782 I/AndroidRuntime( 3822): Using default boot image
-10-20 18:37:16.782 I/AndroidRuntime( 3822): Leaving lock profiling enabled
-10-20 18:37:16.785 I/app_process( 3822): Core platform API reporting enabled, enforcing=false
-10-20 18:37:16.785 I/app_process( 3822): Using CollectorTypeCMC GC.
-10-20 18:37:16.801 I/AppWidgetServiceImpl(  567): getInstalledProvidersForProfiles() 0
-10-20 18:37:16.803 W/ParceledListSlice(  567): Element #25 is 19828 bytes.
-10-20 18:37:16.803 W/ParceledListSlice(  567): Element #26 is 19864 bytes.
-10-20 18:37:16.804 W/ParceledListSlice(  567): Element #27 is 19708 bytes.
-10-20 18:37:16.804 W/ParceledListSlice(  567): Element #28 is 19616 bytes.
-10-20 18:37:16.804 W/ParceledListSlice(  567): Element #29 is 19728 bytes.
-10-20 18:37:16.807 D/FileUtils(  567): Rounded bytes from 4110737408 to 8000000000
-10-20 18:37:16.810 W/PackageManager( 1471): Failure retrieving text 0x7f130786 in package com.android.systemui
-10-20 18:37:16.810 W/PackageManager( 1471): android.content.res.Resources$NotFoundException: String resource ID #0x7f130786
-10-20 18:37:16.810 W/PackageManager( 1471): 	at android.content.res.Resources.getText(Resources.java:466)
-10-20 18:37:16.810 W/PackageManager( 1471): 	at android.app.ApplicationPackageManager.getText(ApplicationPackageManager.java:2405)
-10-20 18:37:16.810 W/PackageManager( 1471): 	at android.appwidget.AppWidgetProviderInfo.loadDescription(AppWidgetProviderInfo.java:484)
-10-20 18:37:16.810 W/PackageManager( 1471): 	at kml.a(PG:341)
-10-20 18:37:16.810 W/PackageManager( 1471): 	at kmg.b(PG:39)
-10-20 18:37:16.810 W/PackageManager( 1471): 	at aaer.g(PG:13)
-10-20 18:37:16.810 W/PackageManager( 1471): 	at kotlinx.coroutines.DispatchedTask.run(PG:114)
-10-20 18:37:16.810 W/PackageManager( 1471): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
-10-20 18:37:16.810 W/PackageManager( 1471): 	at wqm.a(PG:3)
-10-20 18:37:16.810 W/PackageManager( 1471): 	at wpo.run(PG:21)
-10-20 18:37:16.810 W/PackageManager( 1471): 	at wqn.run(PG:5)
-10-20 18:37:16.810 W/PackageManager( 1471): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
-10-20 18:37:16.810 W/PackageManager( 1471): 	at java.util.concurrent.FutureTask.run(FutureTask.java:264)
-10-20 18:37:16.810 W/PackageManager( 1471): 	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:307)
-10-20 18:37:16.810 W/PackageManager( 1471): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
-10-20 18:37:16.810 W/PackageManager( 1471): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
-10-20 18:37:16.810 W/PackageManager( 1471): 	at hqv.run(PG:221)
-10-20 18:37:16.810 W/PackageManager( 1471): 	at java.lang.Thread.run(Thread.java:1012)
-10-20 18:37:16.814 W/PackageManager(  567): Failed registering loading progress callback. Package is fully loaded.
+10-20 20:07:18.833 D/AndroidRuntime( 3736): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-20 20:07:18.838 I/AndroidRuntime( 3736): Using default boot image
+10-20 20:07:18.838 I/AndroidRuntime( 3736): Leaving lock profiling enabled
+10-20 20:07:18.840 I/app_process( 3736): Core platform API reporting enabled, enforcing=false
+10-20 20:07:18.844 I/app_process( 3736): Using CollectorTypeCMC GC.
+10-20 20:07:18.857 W/earchbox:search( 1640): Long monitor contention with owner BG Thread #0 (1821) at android.content.IContentProvider android.app.ActivityThread.acquireProvider(android.content.Context, java.lang.String, int, boolean)(ActivityThread.java:7861) waiters=0 in android.content.IContentProvider android.app.ActivityThread.acquireProvider(android.content.Context, java.lang.String, int, boolean) for 208ms
+10-20 20:07:18.859 I/ContentCaptureHelper( 1640): Setting logging level to DEBUG
+10-20 20:07:18.859 D/ContentCaptureManager( 1640): setFlushViewTreeAppearingEventDisabled(): setting to false
+10-20 20:07:18.860 W/system_server(  551): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/GoogleTTS/GoogleTTS.apk' with 1 weak references
+10-20 20:07:18.862 W/system_server(  551): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/LicenseChecker/LicenseChecker.apk' with 1 weak references
+10-20 20:07:18.865 D/CarrierSvcBindHelper( 1083): onPackageAdded: dev.mobile.maestro.test
+10-20 20:07:18.866 D/CarrierSvcBindHelper( 1083): No carrier app for: 0
+10-20 20:07:18.873 W/system_server(  551): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.permission/priv-app/GooglePermissionController@350820360/GooglePermissionController.apk' with 1 weak references
+10-20 20:07:18.875 W/system_server(  551): ApkAssets: Deleting an ApkAssets object '/product/overlay/GooglePermissionControllerOverlay.apk' with 1 weak references
+10-20 20:07:18.878 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:18.878 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:18.878 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:18.878 W/IndexDataConverter( 3341): Skipping index for null-key item IndexData.Builder {title: Lock screen,package: com.android.settings}
+10-20 20:07:18.878 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:18.878 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:18.878 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:18.878 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:18.878 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:18.879 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:18.879 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:18.879 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:18.879 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:18.879 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:18.879 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:18.879 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:18.879 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:18.879 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:18.879 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
 --
-10-20 18:37:16.895 D/AndroidRuntime( 3822): Calling main entry com.android.commands.am.Am
-10-20 18:37:16.896 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 18:37:16.901 D/InetDiagMessage(  567): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
-10-20 18:37:16.901 D/InetDiagMessage(  567): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
-10-20 18:37:16.901 D/InetDiagMessage(  567): Destroyed live tcp sockets for uids={10165} in 1ms
-10-20 18:37:16.901 D/UiAutomationConnection( 3822): Created on user UserHandle{0}
-10-20 18:37:16.901 D/InetDiagMessage(  567): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
-10-20 18:37:16.902 D/InetDiagMessage(  567): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
-10-20 18:37:16.902 D/InetDiagMessage(  567): Destroyed live tcp sockets for uids={20165} in 0ms
-10-20 18:37:16.902 I/RcsClientLib( 3424): com.google.android.rcs.client.lifecycle.RcsEngineLifecycleService connected
-10-20 18:37:16.904 D/CompatChangeReporter(  567): Compat change id reported: 297989574; UID 10134; state: ENABLED
-10-20 18:37:16.906 I/ActivityManager(  567): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-10-20 18:37:16.907 W/RcsClientLib( 3424): Error while stopping RCS engine.
-10-20 18:37:16.907 W/RcsClientLib( 3424): java.lang.IllegalStateException: JibeService Not Initialized
-10-20 18:37:16.907 W/RcsClientLib( 3424): 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3250)
-10-20 18:37:16.907 W/RcsClientLib( 3424): 	at android.os.Parcel.createException(Parcel.java:3226)
-10-20 18:37:16.907 W/RcsClientLib( 3424): 	at android.os.Parcel.readException(Parcel.java:3209)
-10-20 18:37:16.907 W/RcsClientLib( 3424): 	at android.os.Parcel.readException(Parcel.java:3151)
-10-20 18:37:16.907 W/RcsClientLib( 3424): 	at com.google.android.aidl.BaseProxy.transactAndReadExceptionReturnVoid(PG:11)
-10-20 18:37:16.907 W/RcsClientLib( 3424): 	at com.google.android.ims.rcs.engine.IRcsEngineTemporaryController$Stub$Proxy.triggerStopRcsStack(PG:9)
-10-20 18:37:16.907 W/RcsClientLib( 3424): 	at com.google.android.rcs.client.lifecycle.RcsEngineLifecycleService.triggerStopRcsStack(PG:10)
-10-20 18:37:16.907 W/RcsClientLib( 3424): 	at blzw.call(PG:5)
-10-20 18:37:16.907 W/RcsClientLib( 3424): 	at dksu.a(PG:3)
-10-20 18:37:16.907 W/RcsClientLib( 3424): 	at dkqd.a(PG:13)
-10-20 18:37:16.907 W/RcsClientLib( 3424): 	at dqsx.a(PG:3)
-10-20 18:37:16.907 W/RcsClientLib( 3424): 	at dqrv.run(PG:21)
-10-20 18:37:16.907 W/RcsClientLib( 3424): 	at dqsz.run(PG:5)
-10-20 18:37:16.907 W/RcsClientLib( 3424): 	at crzm.run(PG:3)
-10-20 18:37:16.907 W/RcsClientLib( 3424): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
-10-20 18:37:16.907 W/RcsClientLib( 3424): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
-10-20 18:37:16.907 W/RcsClientLib( 3424): 	at cryq.run(PG:6)
+10-20 20:07:19.234 D/AndroidRuntime( 3736): Calling main entry com.android.commands.am.Am
+10-20 20:07:19.237 I/Icing   ( 1358): Removing corpus key com.google.android.deskclock-internal.3p:Stopwatch_cross_device for package com.google.android.deskclock
+10-20 20:07:19.241 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.241 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.241 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.242 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.242 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.242 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.242 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.242 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.242 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.242 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.242 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.242 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.242 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.242 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.243 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.243 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.243 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.243 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.243 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.243 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.243 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.243 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.243 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.243 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.243 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.243 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.243 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.243 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
+10-20 20:07:19.243 E/gs.intelligence( 3341): No package ID ff found for resource ID 0xffffffff.
 --
-10-20 18:40:57.556 I/AndroidRuntime( 3822): VM exiting with result code 0.
-10-20 18:40:57.557 D/InetDiagMessage(  567): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
-10-20 18:40:57.557 D/InetDiagMessage(  567): Destroyed live tcp sockets for uids={10210} in 4ms
-10-20 18:40:57.557 D/InetDiagMessage(  567): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
-10-20 18:40:57.558 D/InetDiagMessage(  567): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
-10-20 18:40:57.558 D/InetDiagMessage(  567): Destroyed live tcp sockets for uids={20210} in 0ms
-10-20 18:40:57.685 I/servicemanager(    0): Caller(pid=567,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
-10-20 18:40:57.693 I/init    (    0): starting service 'artd'...
-10-20 18:40:57.564 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 18:40:57.566 W/MagnificationConnectionManager(  567): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-20 18:40:57.566 V/UiAutomationManager(  567): UiAutomation service owner died
-10-20 18:40:57.566 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 18:40:57.567 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 18:40:57.567 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 18:40:57.567 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 18:40:57.567 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 18:40:57.567 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 18:40:57.567 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 18:40:57.567 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 18:40:57.567 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 18:40:57.567 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 18:40:57.567 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 18:40:57.567 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 18:40:57.567 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 18:40:57.567 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 18:40:57.567 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 18:40:57.567 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 18:40:57.567 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 18:40:57.567 I/netd    (  370): tetherGetStats() -> {[]} <1.18ms>
-10-20 18:40:57.568 W/IPCThreadState(  567): Sending oneway calls to frozen process.
-10-20 18:40:57.568 W/IPCThreadState(  567): Sending oneway calls to frozen process.
+10-20 20:11:49.254 I/AndroidRuntime( 3736): VM exiting with result code 0.
+10-20 20:11:49.255 I/netd    (  354): tetherGetStats() -> {[]} <1.20ms>
+10-20 20:11:49.256 D/OomAdjuster(  551): Not killing cached processes
+10-20 20:11:49.257 D/InetDiagMessage(  551): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+10-20 20:11:49.257 D/InetDiagMessage(  551): Destroyed live tcp sockets for uids={10210} in 10ms
+10-20 20:11:49.257 D/InetDiagMessage(  551): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+10-20 20:11:49.257 D/InetDiagMessage(  551): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+10-20 20:11:49.258 D/InetDiagMessage(  551): Destroyed live tcp sockets for uids={20210} in 0ms
+10-20 20:11:49.471 I/init    (    0): ... started service 'artd' has pid 6071
+10-20 20:11:49.473 I/binder_alloc(    0): 3759: binder_alloc_buf, no vma
+10-20 20:11:49.475 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 147 (/system/bin/servicemanager)
+10-20 20:11:49.475 I/binder  (    0): cannot allocate buffer: vma cleared, target dead or dying
+10-20 20:11:49.477 I/binder  (    0): 551:640 transaction async to 3759:0 failed 482473/29189/-3, size 192-0 line 3544
+10-20 20:11:49.279 E/IPCThreadState(  551): Binder transaction failure. id: 482473, BR_*: 29189, error: -3 (No such process)
+10-20 20:11:49.279 W/ActivityManager(  551): pid 551 system sent binder code 1 with flags 1 to frozen apps and got error -32
+10-20 20:11:49.280 W/MagnificationConnectionManager(  551): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-20 20:11:49.280 V/UiAutomationManager(  551): UiAutomation service owner died
+10-20 20:11:49.281 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+10-20 20:11:49.281 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+10-20 20:11:49.281 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+10-20 20:11:49.281 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+10-20 20:11:49.281 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+10-20 20:11:49.281 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+10-20 20:11:49.282 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+10-20 20:11:49.282 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+10-20 20:11:49.282 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+10-20 20:11:49.282 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+10-20 20:11:49.282 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+10-20 20:11:49.282 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+10-20 20:11:49.282 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+10-20 20:11:49.282 W/IPCThreadState(  551): Sending oneway calls to frozen process.
