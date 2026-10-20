@@ -37,7 +37,7 @@ jobs:
           java-version: 17
 
       - name: Android SDK
-        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37" "build-tools;37.0.0" "ndk;27.1.12297006" > /dev/null
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.0" "build-tools;37.0.0" "ndk;27.1.12297006" > /dev/null
 
       - name: JavaScript dependencies
         run: npm ci
