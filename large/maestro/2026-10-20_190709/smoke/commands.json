@@ -1,0 +1,2552 @@
+[ {
+  "command" : {
+    "defineVariablesCommand" : {
+      "env" : {
+        "USERNAME" : "e2e_ios_371340_large",
+        "EMAIL" : "support+e2e-371340-large@katkee.com",
+        "PASSWORD" : "E2e-96776f60b926e2a5",
+        "OIDC_URL" : "https://run-actions-1-azure-eastus.actions.githubusercontent.com/219//idtoken/37eec9bf-c2dd-4128-880e-dc0462c0cd6d/86812bc0-267e-5f61-a237-84fce7ebb70e?api-version=2.0",
+        "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6M31dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTI1MzEzMzYsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5MjUyMDUzNiwiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6Ijg2ODEyYmMwLTI2N2UtNWY2MS1hMjM3LTg0ZmNlN2ViYjcwZSIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9pb3MtZTJlLnltbEByZWZzL2hlYWRzL2NsYXVkZS9rYXRrZWUtcHJvZHVjdGlvbi1hdWRpdC1rdWV4cmEiLCJqb2Jfd29ya2Zsb3dfc2hhIjoiYWRiNTlhYjYzNmMxNGRiZTNkOWY5NjIxOThjZjFkMzU0YzUxNjFlMyIsIm5hbWVpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsIm5iZiI6MTc5MjUyMDIzNiwib2lkY19leHRyYSI6IntcImFjdG9yXCI6XCJyYWh1bGtzNlwiLFwiYWN0b3JfaWRcIjpcIjE5NzU0MDkyNFwiLFwiYmFzZV9yZWZcIjpcIlwiLFwiY2hlY2tfcnVuX2lkXCI6XCIxMTg4MDI5NjM2MjlcIixcImV2ZW50X25hbWVcIjpcIndvcmtmbG93X2Rpc3BhdGNoXCIsXCJoZWFkX3JlZlwiOlwiXCIsXCJqb2Jfd29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9pb3MtZTJlLnltbEByZWZzL2hlYWRzL2NsYXVkZS9rYXRrZWUtcHJvZHVjdGlvbi1hdWRpdC1rdWV4cmFcIixcImpvYl93b3JrZmxvd19zaGFcIjpcImFkYjU5YWI2MzZjMTRkYmUzZDlmOTYyMTk4Y2YxZDM1NGM1MTYxZTNcIixcInJlZlwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJyZWZfcHJvdGVjdGVkXCI6XCJmYWxzZVwiLFwicmVmX3R5cGVcIjpcImJyYW5jaFwiLFwicmVwb3NpdG9yeVwiOlwicmFodWxrczYvc3RvcnktdHJhaWxcIixcInJlcG9zaXRvcnlfaWRcIjpcIjEzNzY5MTU0OTFcIixcInJlcG9zaXRvcnlfb3duZXJcIjpcInJhaHVsa3M2XCIsXCJyZXBvc2l0b3J5X293bmVyX2lkXCI6XCIxOTc1NDA5MjRcIixcInJlcG9zaXRvcnlfdmlzaWJpbGl0eVwiOlwicHVibGljXCIsXCJydW5fYXR0ZW1wdFwiOlwiMVwiLFwicnVuX2lkXCI6XCIzOTQ3MzM3MTM0MFwiLFwicnVuX251bWJlclwiOlwiMTFcIixcInJ1bm5lcl9lbnZpcm9ubWVudFwiOlwiZ2l0aHViLWhvc3RlZFwiLFwic2hhXCI6XCJhZGI1OWFiNjM2YzE0ZGJlM2Q5Zjk2MjE5OGNmMWQzNTRjNTE2MWUzXCIsXCJ3b3JrZmxvd1wiOlwiaU9TIHZpcnR1YWwgaVBob25lIHRlc3RcIixcIndvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvaW9zLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJ3b3JrZmxvd19zaGFcIjpcImFkYjU5YWI2MzZjMTRkYmUzZDlmOTYyMTk4Y2YxZDM1NGM1MTYxZTNcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2thdGtlZS1wcm9kdWN0aW9uLWF1ZGl0LWt1ZXhyYSIsIm9yY2hfaWQiOiIzN2VlYzliZi1jMmRkLTQxMjgtODgwZS1kYzA0NjJjMGNkNmQuc2ltdWxhdG9yLl9fZGVmYXVsdCIsIm93bmVyX2lkIjoiVV9rZ0RPQzhZOFBBIiwicGxhbl9pZCI6IjM3ZWVjOWJmLWMyZGQtNDEyOC04ODBlLWRjMDQ2MmMwY2Q2ZCIsInJlcG9zaXRvcnlfaWQiOiIxMzc2OTE1NDkxIiwicmVwb3NpdG9yeV9vd25lcl9pZCI6IjE5NzU0MDkyNCIsInJlcG9zaXRvcnlfdmlzaWJpbGl0eSI6InB1YmxpYyIsInJ1bl9pZCI6IjM5NDczMzcxMzQwIiwicnVuX251bWJlciI6IjExIiwicnVuX3R5cGUiOiJmdWxsIiwicnVubmVyX2lkIjoiMTAwMDAwMDA3NiIsInJ1bm5lcl90eXBlIjoiaG9zdGVkIiwic2NwIjoiQWN0aW9ucy5SZXN1bHRzOjM3ZWVjOWJmLWMyZGQtNDEyOC04ODBlLWRjMDQ2MmMwY2Q2ZDo4NjgxMmJjMC0yNjdlLTVmNjEtYTIzNy04NGZjZTdlYmI3MGUgQWN0aW9ucy5SdW5uZXI6MzdlZWM5YmYtYzJkZC00MTI4LTg4MGUtZGMwNDYyYzBjZDZkOjg2ODEyYmMwLTI2N2UtNWY2MS1hMjM3LTg0ZmNlN2ViYjcwZSBBY3Rpb25zLlVwbG9hZEFydGlmYWN0czozN2VlYzliZi1jMmRkLTQxMjgtODgwZS1kYzA0NjJjMGNkNmQ6ODY4MTJiYzAtMjY3ZS01ZjYxLWEyMzctODRmY2U3ZWJiNzBlIGdlbmVyYXRlX2lkX3Rva2VuOjM3ZWVjOWJmLWMyZGQtNDEyOC04ODBlLWRjMDQ2MmMwY2Q2ZDo4NjgxMmJjMC0yNjdlLTVmNjEtYTIzNy04NGZjZTdlYmI3MGUgQWN0aW9ucy5HZW5lcmljUmVhZDowMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJzaGEiOiJhZGI1OWFiNjM2YzE0ZGJlM2Q5Zjk2MjE5OGNmMWQzNTRjNTE2MWUzIiwidHJ1c3RfdGllciI6IjIifQ.W3ModJQ-sP3n1-e5LvgIoZTUe5PnrkB76dXvLNc5gn3D9RRiZtVbM3JmWihN9_0j8tjDAQ_nyE83X9EGIWRs_hde3-a8InqQRRbfxRDD0gQuPijgygXQ_22mN0jk8INGCino7cYeLjL1b7LdvG3z7v66wfecqOXw7vCYr2CZfLlD2q60D7NQ-nOEDZCtCl1E1tOrBufFs0PHAIe0nYRU-UJ31zHlOzVotSepmE13QiA4uqyIpe88Ih6GqyIZ1WzKP4Y66FaUttzcG0g9gsMpncKTm3kp3uXLpYnS07ONXOrh8oU135fdDYhU1u_sfJc31HsF-oysrHZkSGEap01r-Q",
+        "MAESTRO_CLI_NO_ANALYTICS" : "1",
+        "MAESTRO_DRIVER_STARTUP_TIMEOUT" : "300000",
+        "MAESTRO_FILENAME" : "smoke",
+        "MAESTRO_DEVICE_UDID" : "A9DE8FB5-A558-4A88-B46D-1435315876D7",
+        "MAESTRO_SHARD_ID" : "1",
+        "MAESTRO_SHARD_INDEX" : "0"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523293802,
+    "duration" : 46,
+    "sequenceNumber" : 0,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "defineVariablesCommand" : {
+        "env" : {
+          "USERNAME" : "e2e_ios_371340_large",
+          "EMAIL" : "support+e2e-371340-large@katkee.com",
+          "PASSWORD" : "E2e-96776f60b926e2a5",
+          "OIDC_URL" : "https://run-actions-1-azure-eastus.actions.githubusercontent.com/219//idtoken/37eec9bf-c2dd-4128-880e-dc0462c0cd6d/86812bc0-267e-5f61-a237-84fce7ebb70e?api-version=2.0",
+          "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6M31dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTI1MzEzMzYsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5MjUyMDUzNiwiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6Ijg2ODEyYmMwLTI2N2UtNWY2MS1hMjM3LTg0ZmNlN2ViYjcwZSIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9pb3MtZTJlLnltbEByZWZzL2hlYWRzL2NsYXVkZS9rYXRrZWUtcHJvZHVjdGlvbi1hdWRpdC1rdWV4cmEiLCJqb2Jfd29ya2Zsb3dfc2hhIjoiYWRiNTlhYjYzNmMxNGRiZTNkOWY5NjIxOThjZjFkMzU0YzUxNjFlMyIsIm5hbWVpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsIm5iZiI6MTc5MjUyMDIzNiwib2lkY19leHRyYSI6IntcImFjdG9yXCI6XCJyYWh1bGtzNlwiLFwiYWN0b3JfaWRcIjpcIjE5NzU0MDkyNFwiLFwiYmFzZV9yZWZcIjpcIlwiLFwiY2hlY2tfcnVuX2lkXCI6XCIxMTg4MDI5NjM2MjlcIixcImV2ZW50X25hbWVcIjpcIndvcmtmbG93X2Rpc3BhdGNoXCIsXCJoZWFkX3JlZlwiOlwiXCIsXCJqb2Jfd29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9pb3MtZTJlLnltbEByZWZzL2hlYWRzL2NsYXVkZS9rYXRrZWUtcHJvZHVjdGlvbi1hdWRpdC1rdWV4cmFcIixcImpvYl93b3JrZmxvd19zaGFcIjpcImFkYjU5YWI2MzZjMTRkYmUzZDlmOTYyMTk4Y2YxZDM1NGM1MTYxZTNcIixcInJlZlwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJyZWZfcHJvdGVjdGVkXCI6XCJmYWxzZVwiLFwicmVmX3R5cGVcIjpcImJyYW5jaFwiLFwicmVwb3NpdG9yeVwiOlwicmFodWxrczYvc3RvcnktdHJhaWxcIixcInJlcG9zaXRvcnlfaWRcIjpcIjEzNzY5MTU0OTFcIixcInJlcG9zaXRvcnlfb3duZXJcIjpcInJhaHVsa3M2XCIsXCJyZXBvc2l0b3J5X293bmVyX2lkXCI6XCIxOTc1NDA5MjRcIixcInJlcG9zaXRvcnlfdmlzaWJpbGl0eVwiOlwicHVibGljXCIsXCJydW5fYXR0ZW1wdFwiOlwiMVwiLFwicnVuX2lkXCI6XCIzOTQ3MzM3MTM0MFwiLFwicnVuX251bWJlclwiOlwiMTFcIixcInJ1bm5lcl9lbnZpcm9ubWVudFwiOlwiZ2l0aHViLWhvc3RlZFwiLFwic2hhXCI6XCJhZGI1OWFiNjM2YzE0ZGJlM2Q5Zjk2MjE5OGNmMWQzNTRjNTE2MWUzXCIsXCJ3b3JrZmxvd1wiOlwiaU9TIHZpcnR1YWwgaVBob25lIHRlc3RcIixcIndvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvaW9zLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJ3b3JrZmxvd19zaGFcIjpcImFkYjU5YWI2MzZjMTRkYmUzZDlmOTYyMTk4Y2YxZDM1NGM1MTYxZTNcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2thdGtlZS1wcm9kdWN0aW9uLWF1ZGl0LWt1ZXhyYSIsIm9yY2hfaWQiOiIzN2VlYzliZi1jMmRkLTQxMjgtODgwZS1kYzA0NjJjMGNkNmQuc2ltdWxhdG9yLl9fZGVmYXVsdCIsIm93bmVyX2lkIjoiVV9rZ0RPQzhZOFBBIiwicGxhbl9pZCI6IjM3ZWVjOWJmLWMyZGQtNDEyOC04ODBlLWRjMDQ2MmMwY2Q2ZCIsInJlcG9zaXRvcnlfaWQiOiIxMzc2OTE1NDkxIiwicmVwb3NpdG9yeV9vd25lcl9pZCI6IjE5NzU0MDkyNCIsInJlcG9zaXRvcnlfdmlzaWJpbGl0eSI6InB1YmxpYyIsInJ1bl9pZCI6IjM5NDczMzcxMzQwIiwicnVuX251bWJlciI6IjExIiwicnVuX3R5cGUiOiJmdWxsIiwicnVubmVyX2lkIjoiMTAwMDAwMDA3NiIsInJ1bm5lcl90eXBlIjoiaG9zdGVkIiwic2NwIjoiQWN0aW9ucy5SZXN1bHRzOjM3ZWVjOWJmLWMyZGQtNDEyOC04ODBlLWRjMDQ2MmMwY2Q2ZDo4NjgxMmJjMC0yNjdlLTVmNjEtYTIzNy04NGZjZTdlYmI3MGUgQWN0aW9ucy5SdW5uZXI6MzdlZWM5YmYtYzJkZC00MTI4LTg4MGUtZGMwNDYyYzBjZDZkOjg2ODEyYmMwLTI2N2UtNWY2MS1hMjM3LTg0ZmNlN2ViYjcwZSBBY3Rpb25zLlVwbG9hZEFydGlmYWN0czozN2VlYzliZi1jMmRkLTQxMjgtODgwZS1kYzA0NjJjMGNkNmQ6ODY4MTJiYzAtMjY3ZS01ZjYxLWEyMzctODRmY2U3ZWJiNzBlIGdlbmVyYXRlX2lkX3Rva2VuOjM3ZWVjOWJmLWMyZGQtNDEyOC04ODBlLWRjMDQ2MmMwY2Q2ZDo4NjgxMmJjMC0yNjdlLTVmNjEtYTIzNy04NGZjZTdlYmI3MGUgQWN0aW9ucy5HZW5lcmljUmVhZDowMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJzaGEiOiJhZGI1OWFiNjM2YzE0ZGJlM2Q5Zjk2MjE5OGNmMWQzNTRjNTE2MWUzIiwidHJ1c3RfdGllciI6IjIifQ.W3ModJQ-sP3n1-e5LvgIoZTUe5PnrkB76dXvLNc5gn3D9RRiZtVbM3JmWihN9_0j8tjDAQ_nyE83X9EGIWRs_hde3-a8InqQRRbfxRDD0gQuPijgygXQ_22mN0jk8INGCino7cYeLjL1b7LdvG3z7v66wfecqOXw7vCYr2CZfLlD2q60D7NQ-nOEDZCtCl1E1tOrBufFs0PHAIe0nYRU-UJ31zHlOzVotSepmE13QiA4uqyIpe88Ih6GqyIZ1WzKP4Y66FaUttzcG0g9gsMpncKTm3kp3uXLpYnS07ONXOrh8oU135fdDYhU1u_sfJc31HsF-oysrHZkSGEap01r-Q",
+          "MAESTRO_CLI_NO_ANALYTICS" : "1",
+          "MAESTRO_DRIVER_STARTUP_TIMEOUT" : "300000",
+          "MAESTRO_FILENAME" : "smoke",
+          "MAESTRO_DEVICE_UDID" : "A9DE8FB5-A558-4A88-B46D-1435315876D7",
+          "MAESTRO_SHARD_ID" : "1",
+          "MAESTRO_SHARD_INDEX" : "0"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "applyConfigurationCommand" : {
+      "config" : {
+        "appId" : "com.katkee.app"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523293864,
+    "duration" : 2,
+    "sequenceNumber" : 1,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "applyConfigurationCommand" : {
+        "config" : {
+          "appId" : "com.katkee.app"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "launchAppCommand" : {
+      "appId" : "com.katkee.app",
+      "clearState" : true,
+      "permissions" : {
+        "all" : "allow"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523293866,
+    "duration" : 34399,
+    "sequenceNumber" : 2,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "launchAppCommand" : {
+        "appId" : "com.katkee.app",
+        "clearState" : true,
+        "permissions" : {
+          "all" : "allow"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Wait",
+        "optional" : true
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : true
+    }
+  },
+  "metadata" : {
+    "status" : "WARNED",
+    "timestamp" : 1792523328273,
+    "duration" : 7766,
+    "sequenceNumber" : 3,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Wait",
+          "optional" : true
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : true
+      }
+    },
+    "artifacts" : [ {
+      "type" : "SCREEN_HIERARCHY",
+      "path" : "screen-hierarchy/step-004-tapOnElement-Wait.json"
+    }, {
+      "type" : "SCREENSHOT",
+      "path" : "screenshots/step-004-tapOnElement-Wait.png"
+    } ]
+  }
+}, {
+  "command" : {
+    "assertConditionCommand" : {
+      "condition" : {
+        "visible" : {
+          "textRegex" : "Log in",
+          "optional" : false
+        }
+      },
+      "timeout" : "60000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523336798,
+    "duration" : 294,
+    "sequenceNumber" : 4,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "assertConditionCommand" : {
+        "condition" : {
+          "visible" : {
+            "textRegex" : "Log in",
+            "optional" : false
+          }
+        },
+        "timeout" : "60000",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "takeScreenshotCommand" : {
+      "path" : "01-login",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523337092,
+    "duration" : 190,
+    "sequenceNumber" : 5,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "takeScreenshotCommand" : {
+        "path" : "01-login",
+        "optional" : false
+      }
+    },
+    "artifacts" : [ {
+      "type" : "TAKE_SCREENSHOT",
+      "path" : "takeScreenshot/01-login.png"
+    } ]
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : ".*Sign up.*",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523337283,
+    "duration" : 6921,
+    "sequenceNumber" : 6,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : ".*Sign up.*",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "assertConditionCommand" : {
+      "condition" : {
+        "visible" : {
+          "textRegex" : "Create your account",
+          "optional" : false
+        }
+      },
+      "timeout" : "15000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523344206,
+    "duration" : 355,
+    "sequenceNumber" : 7,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "assertConditionCommand" : {
+        "condition" : {
+          "visible" : {
+            "textRegex" : "Create your account",
+            "optional" : false
+          }
+        },
+        "timeout" : "15000",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "takeScreenshotCommand" : {
+      "path" : "02-signup",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523344562,
+    "duration" : 236,
+    "sequenceNumber" : 8,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "takeScreenshotCommand" : {
+        "path" : "02-signup",
+        "optional" : false
+      }
+    },
+    "artifacts" : [ {
+      "type" : "TAKE_SCREENSHOT",
+      "path" : "takeScreenshot/02-signup.png"
+    } ]
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Display name",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523344799,
+    "duration" : 2346,
+    "sequenceNumber" : 9,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Display name",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "inputTextCommand" : {
+      "text" : "Katkee iPhone Test",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523347147,
+    "duration" : 4424,
+    "sequenceNumber" : 10,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "inputTextCommand" : {
+        "text" : "Katkee iPhone Test",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "applyConfigurationCommand" : {
+          "config" : {
+            "appId" : "com.katkee.app"
+          },
+          "optional" : false
+        }
+      }, {
+        "runFlowCommand" : {
+          "commands" : [ {
+            "hideKeyboardCommand" : {
+              "optional" : false
+            }
+          } ],
+          "condition" : {
+            "platform" : "ANDROID"
+          },
+          "optional" : false
+        }
+      }, {
+        "runFlowCommand" : {
+          "commands" : [ {
+            "swipeCommand" : {
+              "startRelative" : "50%, 25%",
+              "endRelative" : "50%, 40%",
+              "duration" : 300,
+              "optional" : false
+            }
+          } ],
+          "condition" : {
+            "platform" : "IOS"
+          },
+          "optional" : false
+        }
+      } ],
+      "sourceDescription" : "close-keyboard.yaml",
+      "config" : {
+        "appId" : "com.katkee.app"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523351598,
+    "duration" : 4577,
+    "sequenceNumber" : 11,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "runFlowCommand" : {
+        "commands" : [ {
+          "applyConfigurationCommand" : {
+            "config" : {
+              "appId" : "com.katkee.app"
+            },
+            "optional" : false
+          }
+        }, {
+          "runFlowCommand" : {
+            "commands" : [ {
+              "hideKeyboardCommand" : {
+                "optional" : false
+              }
+            } ],
+            "condition" : {
+              "platform" : "ANDROID"
+            },
+            "optional" : false
+          }
+        }, {
+          "runFlowCommand" : {
+            "commands" : [ {
+              "swipeCommand" : {
+                "startRelative" : "50%, 25%",
+                "endRelative" : "50%, 40%",
+                "duration" : 300,
+                "optional" : false
+              }
+            } ],
+            "condition" : {
+              "platform" : "IOS"
+            },
+            "optional" : false
+          }
+        } ],
+        "sourceDescription" : "close-keyboard.yaml",
+        "config" : {
+          "appId" : "com.katkee.app"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "applyConfigurationCommand" : {
+      "config" : {
+        "appId" : "com.katkee.app"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523351988,
+    "duration" : 1,
+    "sequenceNumber" : 12,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "applyConfigurationCommand" : {
+        "config" : {
+          "appId" : "com.katkee.app"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "hideKeyboardCommand" : {
+          "optional" : false
+        }
+      } ],
+      "condition" : {
+        "platform" : "ANDROID"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "SKIPPED",
+    "timestamp" : 1792523351990,
+    "duration" : 80,
+    "sequenceNumber" : 13,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "runFlowCommand" : {
+        "commands" : [ {
+          "hideKeyboardCommand" : {
+            "optional" : false
+          }
+        } ],
+        "condition" : {
+          "platform" : "ANDROID"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "swipeCommand" : {
+          "startRelative" : "50%, 25%",
+          "endRelative" : "50%, 40%",
+          "duration" : 300,
+          "optional" : false
+        }
+      } ],
+      "condition" : {
+        "platform" : "IOS"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523352071,
+    "duration" : 4104,
+    "sequenceNumber" : 14,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "runFlowCommand" : {
+        "commands" : [ {
+          "swipeCommand" : {
+            "startRelative" : "50%, 25%",
+            "endRelative" : "50%, 40%",
+            "duration" : 300,
+            "optional" : false
+          }
+        } ],
+        "condition" : {
+          "platform" : "IOS"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "swipeCommand" : {
+      "startRelative" : "50%, 25%",
+      "endRelative" : "50%, 40%",
+      "duration" : 300,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523352071,
+    "duration" : 4103,
+    "sequenceNumber" : 15,
+    "depth" : 2,
+    "evaluatedCommand" : {
+      "swipeCommand" : {
+        "startRelative" : "50%, 25%",
+        "endRelative" : "50%, 40%",
+        "duration" : 300,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Username",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523356175,
+    "duration" : 3343,
+    "sequenceNumber" : 16,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Username",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "inputTextCommand" : {
+      "text" : "${USERNAME}",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523359547,
+    "duration" : 6318,
+    "sequenceNumber" : 17,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "inputTextCommand" : {
+        "text" : "e2e_ios_371340_large",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "applyConfigurationCommand" : {
+          "config" : {
+            "appId" : "com.katkee.app"
+          },
+          "optional" : false
+        }
+      }, {
+        "runFlowCommand" : {
+          "commands" : [ {
+            "hideKeyboardCommand" : {
+              "optional" : false
+            }
+          } ],
+          "condition" : {
+            "platform" : "ANDROID"
+          },
+          "optional" : false
+        }
+      }, {
+        "runFlowCommand" : {
+          "commands" : [ {
+            "swipeCommand" : {
+              "startRelative" : "50%, 25%",
+              "endRelative" : "50%, 40%",
+              "duration" : 300,
+              "optional" : false
+            }
+          } ],
+          "condition" : {
+            "platform" : "IOS"
+          },
+          "optional" : false
+        }
+      } ],
+      "sourceDescription" : "close-keyboard.yaml",
+      "config" : {
+        "appId" : "com.katkee.app"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523365866,
+    "duration" : 3802,
+    "sequenceNumber" : 18,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "runFlowCommand" : {
+        "commands" : [ {
+          "applyConfigurationCommand" : {
+            "config" : {
+              "appId" : "com.katkee.app"
+            },
+            "optional" : false
+          }
+        }, {
+          "runFlowCommand" : {
+            "commands" : [ {
+              "hideKeyboardCommand" : {
+                "optional" : false
+              }
+            } ],
+            "condition" : {
+              "platform" : "ANDROID"
+            },
+            "optional" : false
+          }
+        }, {
+          "runFlowCommand" : {
+            "commands" : [ {
+              "swipeCommand" : {
+                "startRelative" : "50%, 25%",
+                "endRelative" : "50%, 40%",
+                "duration" : 300,
+                "optional" : false
+              }
+            } ],
+            "condition" : {
+              "platform" : "IOS"
+            },
+            "optional" : false
+          }
+        } ],
+        "sourceDescription" : "close-keyboard.yaml",
+        "config" : {
+          "appId" : "com.katkee.app"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "applyConfigurationCommand" : {
+      "config" : {
+        "appId" : "com.katkee.app"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523365866,
+    "duration" : 0,
+    "sequenceNumber" : 19,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "applyConfigurationCommand" : {
+        "config" : {
+          "appId" : "com.katkee.app"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "hideKeyboardCommand" : {
+          "optional" : false
+        }
+      } ],
+      "condition" : {
+        "platform" : "ANDROID"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "SKIPPED",
+    "timestamp" : 1792523365867,
+    "duration" : 0,
+    "sequenceNumber" : 20,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "runFlowCommand" : {
+        "commands" : [ {
+          "hideKeyboardCommand" : {
+            "optional" : false
+          }
+        } ],
+        "condition" : {
+          "platform" : "ANDROID"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "swipeCommand" : {
+          "startRelative" : "50%, 25%",
+          "endRelative" : "50%, 40%",
+          "duration" : 300,
+          "optional" : false
+        }
+      } ],
+      "condition" : {
+        "platform" : "IOS"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523365867,
+    "duration" : 3801,
+    "sequenceNumber" : 21,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "runFlowCommand" : {
+        "commands" : [ {
+          "swipeCommand" : {
+            "startRelative" : "50%, 25%",
+            "endRelative" : "50%, 40%",
+            "duration" : 300,
+            "optional" : false
+          }
+        } ],
+        "condition" : {
+          "platform" : "IOS"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "swipeCommand" : {
+      "startRelative" : "50%, 25%",
+      "endRelative" : "50%, 40%",
+      "duration" : 300,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523365867,
+    "duration" : 3800,
+    "sequenceNumber" : 22,
+    "depth" : 2,
+    "evaluatedCommand" : {
+      "swipeCommand" : {
+        "startRelative" : "50%, 25%",
+        "endRelative" : "50%, 40%",
+        "duration" : 300,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Email",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523369668,
+    "duration" : 2988,
+    "sequenceNumber" : 23,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Email",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "inputTextCommand" : {
+      "text" : "${EMAIL}",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523372667,
+    "duration" : 2632,
+    "sequenceNumber" : 24,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "inputTextCommand" : {
+        "text" : "support+e2e-371340-large@katkee.com",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "applyConfigurationCommand" : {
+          "config" : {
+            "appId" : "com.katkee.app"
+          },
+          "optional" : false
+        }
+      }, {
+        "runFlowCommand" : {
+          "commands" : [ {
+            "hideKeyboardCommand" : {
+              "optional" : false
+            }
+          } ],
+          "condition" : {
+            "platform" : "ANDROID"
+          },
+          "optional" : false
+        }
+      }, {
+        "runFlowCommand" : {
+          "commands" : [ {
+            "swipeCommand" : {
+              "startRelative" : "50%, 25%",
+              "endRelative" : "50%, 40%",
+              "duration" : 300,
+              "optional" : false
+            }
+          } ],
+          "condition" : {
+            "platform" : "IOS"
+          },
+          "optional" : false
+        }
+      } ],
+      "sourceDescription" : "close-keyboard.yaml",
+      "config" : {
+        "appId" : "com.katkee.app"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523375340,
+    "duration" : 2305,
+    "sequenceNumber" : 25,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "runFlowCommand" : {
+        "commands" : [ {
+          "applyConfigurationCommand" : {
+            "config" : {
+              "appId" : "com.katkee.app"
+            },
+            "optional" : false
+          }
+        }, {
+          "runFlowCommand" : {
+            "commands" : [ {
+              "hideKeyboardCommand" : {
+                "optional" : false
+              }
+            } ],
+            "condition" : {
+              "platform" : "ANDROID"
+            },
+            "optional" : false
+          }
+        }, {
+          "runFlowCommand" : {
+            "commands" : [ {
+              "swipeCommand" : {
+                "startRelative" : "50%, 25%",
+                "endRelative" : "50%, 40%",
+                "duration" : 300,
+                "optional" : false
+              }
+            } ],
+            "condition" : {
+              "platform" : "IOS"
+            },
+            "optional" : false
+          }
+        } ],
+        "sourceDescription" : "close-keyboard.yaml",
+        "config" : {
+          "appId" : "com.katkee.app"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "applyConfigurationCommand" : {
+      "config" : {
+        "appId" : "com.katkee.app"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523375351,
+    "duration" : 0,
+    "sequenceNumber" : 26,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "applyConfigurationCommand" : {
+        "config" : {
+          "appId" : "com.katkee.app"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "hideKeyboardCommand" : {
+          "optional" : false
+        }
+      } ],
+      "condition" : {
+        "platform" : "ANDROID"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "SKIPPED",
+    "timestamp" : 1792523375351,
+    "duration" : 0,
+    "sequenceNumber" : 27,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "runFlowCommand" : {
+        "commands" : [ {
+          "hideKeyboardCommand" : {
+            "optional" : false
+          }
+        } ],
+        "condition" : {
+          "platform" : "ANDROID"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "swipeCommand" : {
+          "startRelative" : "50%, 25%",
+          "endRelative" : "50%, 40%",
+          "duration" : 300,
+          "optional" : false
+        }
+      } ],
+      "condition" : {
+        "platform" : "IOS"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523375351,
+    "duration" : 2293,
+    "sequenceNumber" : 28,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "runFlowCommand" : {
+        "commands" : [ {
+          "swipeCommand" : {
+            "startRelative" : "50%, 25%",
+            "endRelative" : "50%, 40%",
+            "duration" : 300,
+            "optional" : false
+          }
+        } ],
+        "condition" : {
+          "platform" : "IOS"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "swipeCommand" : {
+      "startRelative" : "50%, 25%",
+      "endRelative" : "50%, 40%",
+      "duration" : 300,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523375351,
+    "duration" : 2290,
+    "sequenceNumber" : 29,
+    "depth" : 2,
+    "evaluatedCommand" : {
+      "swipeCommand" : {
+        "startRelative" : "50%, 25%",
+        "endRelative" : "50%, 40%",
+        "duration" : 300,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Date of birth",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523377646,
+    "duration" : 4633,
+    "sequenceNumber" : 30,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Date of birth",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "inputTextCommand" : {
+      "text" : "01011995",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523382280,
+    "duration" : 1568,
+    "sequenceNumber" : 31,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "inputTextCommand" : {
+        "text" : "01011995",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "applyConfigurationCommand" : {
+          "config" : {
+            "appId" : "com.katkee.app"
+          },
+          "optional" : false
+        }
+      }, {
+        "runFlowCommand" : {
+          "commands" : [ {
+            "hideKeyboardCommand" : {
+              "optional" : false
+            }
+          } ],
+          "condition" : {
+            "platform" : "ANDROID"
+          },
+          "optional" : false
+        }
+      }, {
+        "runFlowCommand" : {
+          "commands" : [ {
+            "swipeCommand" : {
+              "startRelative" : "50%, 25%",
+              "endRelative" : "50%, 40%",
+              "duration" : 300,
+              "optional" : false
+            }
+          } ],
+          "condition" : {
+            "platform" : "IOS"
+          },
+          "optional" : false
+        }
+      } ],
+      "sourceDescription" : "close-keyboard.yaml",
+      "config" : {
+        "appId" : "com.katkee.app"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523383848,
+    "duration" : 2638,
+    "sequenceNumber" : 32,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "runFlowCommand" : {
+        "commands" : [ {
+          "applyConfigurationCommand" : {
+            "config" : {
+              "appId" : "com.katkee.app"
+            },
+            "optional" : false
+          }
+        }, {
+          "runFlowCommand" : {
+            "commands" : [ {
+              "hideKeyboardCommand" : {
+                "optional" : false
+              }
+            } ],
+            "condition" : {
+              "platform" : "ANDROID"
+            },
+            "optional" : false
+          }
+        }, {
+          "runFlowCommand" : {
+            "commands" : [ {
+              "swipeCommand" : {
+                "startRelative" : "50%, 25%",
+                "endRelative" : "50%, 40%",
+                "duration" : 300,
+                "optional" : false
+              }
+            } ],
+            "condition" : {
+              "platform" : "IOS"
+            },
+            "optional" : false
+          }
+        } ],
+        "sourceDescription" : "close-keyboard.yaml",
+        "config" : {
+          "appId" : "com.katkee.app"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "applyConfigurationCommand" : {
+      "config" : {
+        "appId" : "com.katkee.app"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523383849,
+    "duration" : 0,
+    "sequenceNumber" : 33,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "applyConfigurationCommand" : {
+        "config" : {
+          "appId" : "com.katkee.app"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "hideKeyboardCommand" : {
+          "optional" : false
+        }
+      } ],
+      "condition" : {
+        "platform" : "ANDROID"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "SKIPPED",
+    "timestamp" : 1792523383849,
+    "duration" : 1,
+    "sequenceNumber" : 34,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "runFlowCommand" : {
+        "commands" : [ {
+          "hideKeyboardCommand" : {
+            "optional" : false
+          }
+        } ],
+        "condition" : {
+          "platform" : "ANDROID"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "swipeCommand" : {
+          "startRelative" : "50%, 25%",
+          "endRelative" : "50%, 40%",
+          "duration" : 300,
+          "optional" : false
+        }
+      } ],
+      "condition" : {
+        "platform" : "IOS"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523383850,
+    "duration" : 2636,
+    "sequenceNumber" : 35,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "runFlowCommand" : {
+        "commands" : [ {
+          "swipeCommand" : {
+            "startRelative" : "50%, 25%",
+            "endRelative" : "50%, 40%",
+            "duration" : 300,
+            "optional" : false
+          }
+        } ],
+        "condition" : {
+          "platform" : "IOS"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "swipeCommand" : {
+      "startRelative" : "50%, 25%",
+      "endRelative" : "50%, 40%",
+      "duration" : 300,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523383850,
+    "duration" : 2635,
+    "sequenceNumber" : 36,
+    "depth" : 2,
+    "evaluatedCommand" : {
+      "swipeCommand" : {
+        "startRelative" : "50%, 25%",
+        "endRelative" : "50%, 40%",
+        "duration" : 300,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Password",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523386487,
+    "duration" : 3600,
+    "sequenceNumber" : 37,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Password",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "inputTextCommand" : {
+      "text" : "${PASSWORD}",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523390088,
+    "duration" : 2048,
+    "sequenceNumber" : 38,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "inputTextCommand" : {
+        "text" : "E2e-96776f60b926e2a5",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "applyConfigurationCommand" : {
+          "config" : {
+            "appId" : "com.katkee.app"
+          },
+          "optional" : false
+        }
+      }, {
+        "runFlowCommand" : {
+          "commands" : [ {
+            "hideKeyboardCommand" : {
+              "optional" : false
+            }
+          } ],
+          "condition" : {
+            "platform" : "ANDROID"
+          },
+          "optional" : false
+        }
+      }, {
+        "runFlowCommand" : {
+          "commands" : [ {
+            "swipeCommand" : {
+              "startRelative" : "50%, 25%",
+              "endRelative" : "50%, 40%",
+              "duration" : 300,
+              "optional" : false
+            }
+          } ],
+          "condition" : {
+            "platform" : "IOS"
+          },
+          "optional" : false
+        }
+      } ],
+      "sourceDescription" : "close-keyboard.yaml",
+      "config" : {
+        "appId" : "com.katkee.app"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523392139,
+    "duration" : 1882,
+    "sequenceNumber" : 39,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "runFlowCommand" : {
+        "commands" : [ {
+          "applyConfigurationCommand" : {
+            "config" : {
+              "appId" : "com.katkee.app"
+            },
+            "optional" : false
+          }
+        }, {
+          "runFlowCommand" : {
+            "commands" : [ {
+              "hideKeyboardCommand" : {
+                "optional" : false
+              }
+            } ],
+            "condition" : {
+              "platform" : "ANDROID"
+            },
+            "optional" : false
+          }
+        }, {
+          "runFlowCommand" : {
+            "commands" : [ {
+              "swipeCommand" : {
+                "startRelative" : "50%, 25%",
+                "endRelative" : "50%, 40%",
+                "duration" : 300,
+                "optional" : false
+              }
+            } ],
+            "condition" : {
+              "platform" : "IOS"
+            },
+            "optional" : false
+          }
+        } ],
+        "sourceDescription" : "close-keyboard.yaml",
+        "config" : {
+          "appId" : "com.katkee.app"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "applyConfigurationCommand" : {
+      "config" : {
+        "appId" : "com.katkee.app"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523392141,
+    "duration" : 0,
+    "sequenceNumber" : 40,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "applyConfigurationCommand" : {
+        "config" : {
+          "appId" : "com.katkee.app"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "hideKeyboardCommand" : {
+          "optional" : false
+        }
+      } ],
+      "condition" : {
+        "platform" : "ANDROID"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "SKIPPED",
+    "timestamp" : 1792523392141,
+    "duration" : 1,
+    "sequenceNumber" : 41,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "runFlowCommand" : {
+        "commands" : [ {
+          "hideKeyboardCommand" : {
+            "optional" : false
+          }
+        } ],
+        "condition" : {
+          "platform" : "ANDROID"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "swipeCommand" : {
+          "startRelative" : "50%, 25%",
+          "endRelative" : "50%, 40%",
+          "duration" : 300,
+          "optional" : false
+        }
+      } ],
+      "condition" : {
+        "platform" : "IOS"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523392142,
+    "duration" : 1879,
+    "sequenceNumber" : 42,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "runFlowCommand" : {
+        "commands" : [ {
+          "swipeCommand" : {
+            "startRelative" : "50%, 25%",
+            "endRelative" : "50%, 40%",
+            "duration" : 300,
+            "optional" : false
+          }
+        } ],
+        "condition" : {
+          "platform" : "IOS"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "swipeCommand" : {
+      "startRelative" : "50%, 25%",
+      "endRelative" : "50%, 40%",
+      "duration" : 300,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523392143,
+    "duration" : 1876,
+    "sequenceNumber" : 43,
+    "depth" : 2,
+    "evaluatedCommand" : {
+      "swipeCommand" : {
+        "startRelative" : "50%, 25%",
+        "endRelative" : "50%, 40%",
+        "duration" : 300,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "takeScreenshotCommand" : {
+      "path" : "03-signup-filled",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523394022,
+    "duration" : 229,
+    "sequenceNumber" : 44,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "takeScreenshotCommand" : {
+        "path" : "03-signup-filled",
+        "optional" : false
+      }
+    },
+    "artifacts" : [ {
+      "type" : "TAKE_SCREENSHOT",
+      "path" : "takeScreenshot/03-signup-filled.png"
+    } ]
+  }
+}, {
+  "command" : {
+    "scrollUntilVisible" : {
+      "selector" : {
+        "textRegex" : "Sign up",
+        "optional" : false
+      },
+      "direction" : "DOWN",
+      "scrollDuration" : "40",
+      "visibilityPercentage" : 100,
+      "timeout" : "20000",
+      "centerElement" : false,
+      "originalSpeedValue" : "40",
+      "optional" : true,
+      "visibilityPercentageNormalized" : 1.0
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523394251,
+    "duration" : 405,
+    "sequenceNumber" : 45,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "scrollUntilVisible" : {
+        "selector" : {
+          "textRegex" : "Sign up",
+          "optional" : false
+        },
+        "direction" : "DOWN",
+        "scrollDuration" : "601",
+        "visibilityPercentage" : 100,
+        "timeout" : "20000",
+        "centerElement" : false,
+        "originalSpeedValue" : "40",
+        "optional" : true,
+        "visibilityPercentageNormalized" : 1.0
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Sign up",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523394656,
+    "duration" : 5642,
+    "sequenceNumber" : 46,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Sign up",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "assertConditionCommand" : {
+      "condition" : {
+        "visible" : {
+          "textRegex" : "Verify your email",
+          "optional" : false
+        }
+      },
+      "timeout" : "45000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523400299,
+    "duration" : 496,
+    "sequenceNumber" : 47,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "assertConditionCommand" : {
+        "condition" : {
+          "visible" : {
+            "textRegex" : "Verify your email",
+            "optional" : false
+          }
+        },
+        "timeout" : "45000",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "takeScreenshotCommand" : {
+      "path" : "04-verify-email",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523400797,
+    "duration" : 230,
+    "sequenceNumber" : 48,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "takeScreenshotCommand" : {
+        "path" : "04-verify-email",
+        "optional" : false
+      }
+    },
+    "artifacts" : [ {
+      "type" : "TAKE_SCREENSHOT",
+      "path" : "takeScreenshot/04-verify-email.png"
+    } ]
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Verify your email",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523401028,
+    "duration" : 5295,
+    "sequenceNumber" : 49,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Verify your email",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "assertConditionCommand" : {
+      "condition" : {
+        "visible" : {
+          "textRegex" : "Wrong email? Change it",
+          "optional" : false
+        }
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523406322,
+    "duration" : 363,
+    "sequenceNumber" : 50,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "assertConditionCommand" : {
+        "condition" : {
+          "visible" : {
+            "textRegex" : "Wrong email? Change it",
+            "optional" : false
+          }
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "assertConditionCommand" : {
+      "condition" : {
+        "notVisible" : {
+          "textRegex" : "Later",
+          "optional" : false
+        }
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523406685,
+    "duration" : 1110,
+    "sequenceNumber" : 51,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "assertConditionCommand" : {
+        "condition" : {
+          "notVisible" : {
+            "textRegex" : "Later",
+            "optional" : false
+          }
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Wrong email? Change it",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523407795,
+    "duration" : 1764,
+    "sequenceNumber" : 52,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Wrong email? Change it",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "takeScreenshotCommand" : {
+      "path" : "04b-change-email",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523409559,
+    "duration" : 204,
+    "sequenceNumber" : 53,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "takeScreenshotCommand" : {
+        "path" : "04b-change-email",
+        "optional" : false
+      }
+    },
+    "artifacts" : [ {
+      "type" : "TAKE_SCREENSHOT",
+      "path" : "takeScreenshot/04b-change-email.png"
+    } ]
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Change your email",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523409764,
+    "duration" : 1661,
+    "sequenceNumber" : 54,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Change your email",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Cancel",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523411425,
+    "duration" : 2092,
+    "sequenceNumber" : 55,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Cancel",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "runScriptCommand" : {
+      "script" : "// Run by smoke.yaml on GitHub Actions: the throwaway account can't read its code email, so this\n// asks GitHub for a signed OIDC token and has the API verify the account with it\n// (backend/src/modules/auth/ci-verify.ts). OIDC_URL and OIDC_TOKEN come from the workflow.\nvar API = \"https://api.katkee.com\";\nvar oidc = http.get(OIDC_URL + \"&audience=katkee-e2e\", { headers: { Authorization: \"bearer \" + OIDC_TOKEN } });\nif (oidc.status !== 200) throw new Error(\"GitHub OIDC token: \" + oidc.status);\nvar login = http.post(API + \"/api/v1/auth/login\", {\n  headers: { \"Content-Type\": \"application/json\" },\n  body: JSON.stringify({ email: EMAIL, password: PASSWORD }),\n});\nif (login.status !== 200) throw new Error(\"Login: \" + login.status);\nvar verified = http.post(API + \"/api/v1/auth/email/ci-verify\", {\n  headers: { \"Content-Type\": \"application/json\", Authorization: \"Bearer \" + json(login.body).tokens.accessToken },\n  body: JSON.stringify({ token: json(oidc.body).value }),\n});\nif (verified.status !== 200) throw new Error(\"Verify: \" + verified.status + \" \" + verified.body);\n",
+      "sourceDescription" : "ci-verify.js",
+      "optional" : false,
+      "scriptDir" : "/Users/runner/work/story-trail/story-trail/mobile/.maestro"
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523413517,
+    "duration" : 2069,
+    "sequenceNumber" : 56,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "runScriptCommand" : {
+        "script" : "// Run by smoke.yaml on GitHub Actions: the throwaway account can't read its code email, so this\n// asks GitHub for a signed OIDC token and has the API verify the account with it\n// (backend/src/modules/auth/ci-verify.ts). OIDC_URL and OIDC_TOKEN come from the workflow.\nvar API = \"https://api.katkee.com\";\nvar oidc = http.get(OIDC_URL + \"&audience=katkee-e2e\", { headers: { Authorization: \"bearer \" + OIDC_TOKEN } });\nif (oidc.status !== 200) throw new Error(\"GitHub OIDC token: \" + oidc.status);\nvar login = http.post(API + \"/api/v1/auth/login\", {\n  headers: { \"Content-Type\": \"application/json\" },\n  body: JSON.stringify({ email: EMAIL, password: PASSWORD }),\n});\nif (login.status !== 200) throw new Error(\"Login: \" + login.status);\nvar verified = http.post(API + \"/api/v1/auth/email/ci-verify\", {\n  headers: { \"Content-Type\": \"application/json\", Authorization: \"Bearer \" + json(login.body).tokens.accessToken },\n  body: JSON.stringify({ token: json(oidc.body).value }),\n});\nif (verified.status !== 200) throw new Error(\"Verify: \" + verified.status + \" \" + verified.body);\n",
+        "sourceDescription" : "ci-verify.js",
+        "optional" : false,
+        "scriptDir" : "/Users/runner/work/story-trail/story-trail/mobile/.maestro"
+      }
+    }
+  }
+}, {
+  "command" : {
+    "stopAppCommand" : {
+      "appId" : "com.katkee.app",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523415588,
+    "duration" : 1025,
+    "sequenceNumber" : 57,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "stopAppCommand" : {
+        "appId" : "com.katkee.app",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "launchAppCommand" : {
+      "appId" : "com.katkee.app",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523416613,
+    "duration" : 15191,
+    "sequenceNumber" : 58,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "launchAppCommand" : {
+        "appId" : "com.katkee.app",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "assertConditionCommand" : {
+      "condition" : {
+        "visible" : {
+          "textRegex" : "(What are you into\\?|Forgot password\\?)",
+          "optional" : false
+        }
+      },
+      "timeout" : "30000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523431866,
+    "duration" : 65954,
+    "sequenceNumber" : 59,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "assertConditionCommand" : {
+        "condition" : {
+          "visible" : {
+            "textRegex" : "(What are you into\\?|Forgot password\\?)",
+            "optional" : false
+          }
+        },
+        "timeout" : "30000",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "applyConfigurationCommand" : {
+          "config" : {
+            "appId" : "com.katkee.app"
+          },
+          "optional" : false
+        }
+      }, {
+        "runFlowCommand" : {
+          "commands" : [ {
+            "tapOnElement" : {
+              "selector" : {
+                "textRegex" : "Email",
+                "optional" : false
+              },
+              "retryIfNoChange" : false,
+              "waitUntilVisible" : false,
+              "longPress" : false,
+              "optional" : false
+            }
+          }, {
+            "inputTextCommand" : {
+              "text" : "${EMAIL}",
+              "optional" : false
+            }
+          }, {
+            "tapOnElement" : {
+              "selector" : {
+                "textRegex" : "Password",
+                "optional" : false
+              },
+              "retryIfNoChange" : false,
+              "waitUntilVisible" : false,
+              "longPress" : false,
+              "optional" : false
+            }
+          }, {
+            "inputTextCommand" : {
+              "text" : "${PASSWORD}",
+              "optional" : false
+            }
+          }, {
+            "runFlowCommand" : {
+              "commands" : [ {
+                "applyConfigurationCommand" : {
+                  "config" : {
+                    "appId" : "com.katkee.app"
+                  },
+                  "optional" : false
+                }
+              }, {
+                "runFlowCommand" : {
+                  "commands" : [ {
+                    "hideKeyboardCommand" : {
+                      "optional" : false
+                    }
+                  } ],
+                  "condition" : {
+                    "platform" : "ANDROID"
+                  },
+                  "optional" : false
+                }
+              }, {
+                "runFlowCommand" : {
+                  "commands" : [ {
+                    "swipeCommand" : {
+                      "startRelative" : "50%, 25%",
+                      "endRelative" : "50%, 40%",
+                      "duration" : 300,
+                      "optional" : false
+                    }
+                  } ],
+                  "condition" : {
+                    "platform" : "IOS"
+                  },
+                  "optional" : false
+                }
+              } ],
+              "sourceDescription" : "close-keyboard.yaml",
+              "config" : {
+                "appId" : "com.katkee.app"
+              },
+              "optional" : false
+            }
+          }, {
+            "tapOnElement" : {
+              "selector" : {
+                "textRegex" : "Log in",
+                "optional" : false
+              },
+              "retryIfNoChange" : false,
+              "waitUntilVisible" : false,
+              "longPress" : false,
+              "optional" : false
+            }
+          } ],
+          "condition" : {
+            "visible" : {
+              "textRegex" : "Forgot password?",
+              "optional" : false
+            }
+          },
+          "optional" : false
+        }
+      } ],
+      "sourceDescription" : "login-if-needed.yaml",
+      "config" : {
+        "appId" : "com.katkee.app"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "RUNNING",
+    "timestamp" : 1792523497863,
+    "sequenceNumber" : 60,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "runFlowCommand" : {
+        "commands" : [ {
+          "applyConfigurationCommand" : {
+            "config" : {
+              "appId" : "com.katkee.app"
+            },
+            "optional" : false
+          }
+        }, {
+          "runFlowCommand" : {
+            "commands" : [ {
+              "tapOnElement" : {
+                "selector" : {
+                  "textRegex" : "Email",
+                  "optional" : false
+                },
+                "retryIfNoChange" : false,
+                "waitUntilVisible" : false,
+                "longPress" : false,
+                "optional" : false
+              }
+            }, {
+              "inputTextCommand" : {
+                "text" : "${EMAIL}",
+                "optional" : false
+              }
+            }, {
+              "tapOnElement" : {
+                "selector" : {
+                  "textRegex" : "Password",
+                  "optional" : false
+                },
+                "retryIfNoChange" : false,
+                "waitUntilVisible" : false,
+                "longPress" : false,
+                "optional" : false
+              }
+            }, {
+              "inputTextCommand" : {
+                "text" : "${PASSWORD}",
+                "optional" : false
+              }
+            }, {
+              "runFlowCommand" : {
+                "commands" : [ {
+                  "applyConfigurationCommand" : {
+                    "config" : {
+                      "appId" : "com.katkee.app"
+                    },
+                    "optional" : false
+                  }
+                }, {
+                  "runFlowCommand" : {
+                    "commands" : [ {
+                      "hideKeyboardCommand" : {
+                        "optional" : false
+                      }
+                    } ],
+                    "condition" : {
+                      "platform" : "ANDROID"
+                    },
+                    "optional" : false
+                  }
+                }, {
+                  "runFlowCommand" : {
+                    "commands" : [ {
+                      "swipeCommand" : {
+                        "startRelative" : "50%, 25%",
+                        "endRelative" : "50%, 40%",
+                        "duration" : 300,
+                        "optional" : false
+                      }
+                    } ],
+                    "condition" : {
+                      "platform" : "IOS"
+                    },
+                    "optional" : false
+                  }
+                } ],
+                "sourceDescription" : "close-keyboard.yaml",
+                "config" : {
+                  "appId" : "com.katkee.app"
+                },
+                "optional" : false
+              }
+            }, {
+              "tapOnElement" : {
+                "selector" : {
+                  "textRegex" : "Log in",
+                  "optional" : false
+                },
+                "retryIfNoChange" : false,
+                "waitUntilVisible" : false,
+                "longPress" : false,
+                "optional" : false
+              }
+            } ],
+            "condition" : {
+              "visible" : {
+                "textRegex" : "Forgot password?",
+                "optional" : false
+              }
+            },
+            "optional" : false
+          }
+        } ],
+        "sourceDescription" : "login-if-needed.yaml",
+        "config" : {
+          "appId" : "com.katkee.app"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "applyConfigurationCommand" : {
+      "config" : {
+        "appId" : "com.katkee.app"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792523497866,
+    "duration" : 0,
+    "sequenceNumber" : 61,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "applyConfigurationCommand" : {
+        "config" : {
+          "appId" : "com.katkee.app"
+        },
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "tapOnElement" : {
+          "selector" : {
+            "textRegex" : "Email",
+            "optional" : false
+          },
+          "retryIfNoChange" : false,
+          "waitUntilVisible" : false,
+          "longPress" : false,
+          "optional" : false
+        }
+      }, {
+        "inputTextCommand" : {
+          "text" : "${EMAIL}",
+          "optional" : false
+        }
+      }, {
+        "tapOnElement" : {
+          "selector" : {
+            "textRegex" : "Password",
+            "optional" : false
+          },
+          "retryIfNoChange" : false,
+          "waitUntilVisible" : false,
+          "longPress" : false,
+          "optional" : false
+        }
+      }, {
+        "inputTextCommand" : {
+          "text" : "${PASSWORD}",
+          "optional" : false
+        }
+      }, {
+        "runFlowCommand" : {
+          "commands" : [ {
+            "applyConfigurationCommand" : {
+              "config" : {
+                "appId" : "com.katkee.app"
+              },
+              "optional" : false
+            }
+          }, {
+            "runFlowCommand" : {
+              "commands" : [ {
+                "hideKeyboardCommand" : {
+                  "optional" : false
+                }
+              } ],
+              "condition" : {
+                "platform" : "ANDROID"
+              },
+              "optional" : false
+            }
+          }, {
+            "runFlowCommand" : {
+              "commands" : [ {
+                "swipeCommand" : {
+                  "startRelative" : "50%, 25%",
+                  "endRelative" : "50%, 40%",
+                  "duration" : 300,
+                  "optional" : false
+                }
+              } ],
+              "condition" : {
+                "platform" : "IOS"
+              },
+              "optional" : false
+            }
+          } ],
+          "sourceDescription" : "close-keyboard.yaml",
+          "config" : {
+            "appId" : "com.katkee.app"
+          },
+          "optional" : false
+        }
+      }, {
+        "tapOnElement" : {
+          "selector" : {
+            "textRegex" : "Log in",
+            "optional" : false
+          },
+          "retryIfNoChange" : false,
+          "waitUntilVisible" : false,
+          "longPress" : false,
+          "optional" : false
+        }
+      } ],
+      "condition" : {
+        "visible" : {
+          "textRegex" : "Forgot password?",
+          "optional" : false
+        }
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "RUNNING",
+    "timestamp" : 1792523497867,
+    "sequenceNumber" : 62,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "runFlowCommand" : {
+        "commands" : [ {
+          "tapOnElement" : {
+            "selector" : {
+              "textRegex" : "Email",
+              "optional" : false
+            },
+            "retryIfNoChange" : false,
+            "waitUntilVisible" : false,
+            "longPress" : false,
+            "optional" : false
+          }
+        }, {
+          "inputTextCommand" : {
+            "text" : "${EMAIL}",
+            "optional" : false
+          }
+        }, {
+          "tapOnElement" : {
+            "selector" : {
+              "textRegex" : "Password",
+              "optional" : false
+            },
+            "retryIfNoChange" : false,
+            "waitUntilVisible" : false,
+            "longPress" : false,
+            "optional" : false
+          }
+        }, {
+          "inputTextCommand" : {
+            "text" : "${PASSWORD}",
+            "optional" : false
+          }
+        }, {
+          "runFlowCommand" : {
+            "commands" : [ {
+              "applyConfigurationCommand" : {
+                "config" : {
+                  "appId" : "com.katkee.app"
+                },
+                "optional" : false
+              }
+            }, {
+              "runFlowCommand" : {
+                "commands" : [ {
+                  "hideKeyboardCommand" : {
+                    "optional" : false
+                  }
+                } ],
+                "condition" : {
+                  "platform" : "ANDROID"
+                },
+                "optional" : false
+              }
+            }, {
+              "runFlowCommand" : {
+                "commands" : [ {
+                  "swipeCommand" : {
+                    "startRelative" : "50%, 25%",
+                    "endRelative" : "50%, 40%",
+                    "duration" : 300,
+                    "optional" : false
+                  }
+                } ],
+                "condition" : {
+                  "platform" : "IOS"
+                },
+                "optional" : false
+              }
+            } ],
+            "sourceDescription" : "close-keyboard.yaml",
+            "config" : {
+              "appId" : "com.katkee.app"
+            },
+            "optional" : false
+          }
+        }, {
+          "tapOnElement" : {
+            "selector" : {
+              "textRegex" : "Log in",
+              "optional" : false
+            },
+            "retryIfNoChange" : false,
+            "waitUntilVisible" : false,
+            "longPress" : false,
+            "optional" : false
+          }
+        } ],
+        "condition" : {
+          "visible" : {
+            "textRegex" : "Forgot password?",
+            "optional" : false
+          }
+        },
+        "optional" : false
+      }
+    }
+  }
+} ]
