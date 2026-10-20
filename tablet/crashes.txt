@@ -1,98 +1,98 @@
-10-20 13:30:51.821 D/AndroidRuntime( 2940): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-20 13:30:51.824 D/TrafficStats(  996): tagSocket(6) with statsTag=0xffffffff, statsUid=-1
-10-20 13:30:51.827 I/AndroidRuntime( 2940): Using default boot image
-10-20 13:30:51.827 I/AndroidRuntime( 2940): Leaving lock profiling enabled
-10-20 13:30:51.827 W/ActivityManager(  565): Slow operation: 54ms so far, now at attachApplicationLocked: after updateOomAdjLocked
-10-20 13:30:51.828 W/Looper  (  565): Slow dispatch took 130ms main h=android.app.ActivityThread$H c=android.app.LoadedApk$ReceiverDispatcher$Args$$ExternalSyntheticLambda0@ad340c7 m=0
-10-20 13:30:51.830 W/Role    (  565): Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58
-10-20 13:30:51.833 I/app_process( 2940): Core platform API reporting enabled, enforcing=false
-10-20 13:30:51.833 D/Telephony( 1098): isEmergencyPreferredAccount: subId=1, activeData=-1
-10-20 13:30:51.833 D/Telephony( 1098): isEmergencyPreferredAccount: Device does not require preference.
-10-20 13:30:51.834 W/Telephony( 1098): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-10-20 13:30:51.835 W/gle.android.gms( 1383): Long monitor contention with owner [com.google.android.gms.chimera.container.intentoperation.GmsIntentOperationChimeraService-Executor] processing com.google.android.gms.icing.proxy.UpdateIcingCorporaIntentOperation for action com.google.android.gms.icing.proxy.ACTION_UPDATE (2655) at void pkf.run()(:com.google.android.gms@242335041@24.23.35 (190800-646585959):73) waiters=1 in void pkf.run() for 2.002s
-10-20 13:30:51.836 I/app_process( 2940): Using CollectorTypeCMC GC.
-10-20 13:30:51.841 D/CompatChangeReporter( 2908): Compat change id reported: 242716250; UID 10184; state: ENABLED
-10-20 13:30:51.842 D/TrafficStats(  996): tagSocket(6) with statsTag=0xffffffff, statsUid=-1
-10-20 13:30:51.852 W/GmsTaskScheduler( 1383): com.google.android.gms.icing.service.IcingGcmTaskChimeraService is not available. This may cause the task to be lost.
-10-20 13:30:51.853 D/NetworkMonitor/100(  996): PROBE_DNS www.google.com 276ms OK 142.251.156.119,142.251.150.119,142.251.154.119,142.251.155.119,142.251.157.119,142.251.151.119,142.251.153.119,142.251.152.119,2001:4860:4829:7700::,2001:4860:4828:7700::,2001:4860:482b:7700::,2001:4860:4827:7700::,2001:4860:482c:7700::,2001:4860:482a:7700::,2001:4860:482d:7700::,2001:4860:4826:7700::
-10-20 13:30:51.856 D/TrafficStats(  996): tagSocket(6) with statsTag=0xffffffff, statsUid=-1
-10-20 13:30:51.884 D/NetworkMonitor/100(  996): PROBE_DNS connectivitycheck.gstatic.com 303ms OK 142.251.150.120,2001:4860:4826:7800::
-10-20 13:30:51.897 I/resolv  (  366): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
-10-20 13:30:51.898 I/resolv  (  366): res_nmkquery: (QUERY, IN, AAAA)
-10-20 13:30:51.898 I/resolv  (  366): resolv_cache_lookup: FOUND IN CACHE entry=0x752dd2e89f50
-10-20 13:30:51.898 I/resolv  (  366): doQuery: rcode=0, ancount=8, return value=256
-10-20 13:30:51.898 I/resolv  (  366): res_nmkquery: (QUERY, IN, A)
-10-20 13:30:51.898 I/resolv  (  366): resolv_cache_lookup: FOUND IN CACHE entry=0x752ca2e81530
-10-20 13:30:51.898 I/resolv  (  366): doQuery: rcode=0, ancount=8, return value=160
-10-20 13:30:51.912 D/TrafficStats(  996): tagSocket(6) with statsTag=0xffffff81, statsUid=-1
-10-20 13:30:51.912 I/resolv  (  366): GetAddrInfoHandler::run: {100 786532 100 983140 10143 0}
-10-20 13:30:51.912 I/resolv  (  366): res_nmkquery: (QUERY, IN, A)
-10-20 13:30:51.914 I/resolv  (  366): res_nmkquery: (QUERY, IN, AAAA)
-10-20 13:30:51.926 I/ContentCaptureHelper( 1581): Setting logging level to DEBUG
-10-20 13:30:51.926 D/ContentCaptureManager( 1581): setFlushViewTreeAppearingEventDisabled(): setting to false
-10-20 13:30:51.926 I/Telephony( 1098): isRttCurrentlySupported -- regular acct, hasVoiceAvailability: false
-10-20 13:30:51.926 I/Telephony( 1098):  isRttSupported: false
+10-20 13:56:29.790 D/AndroidRuntime( 2888): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-20 13:56:29.791 D/PackageManager(  554): Clear ephemeral installer activity
+10-20 13:56:29.797 I/AndroidRuntime( 2888): Using default boot image
+10-20 13:56:29.798 I/AndroidRuntime( 2888): Leaving lock profiling enabled
+10-20 13:56:29.800 I/app_process( 2888): Core platform API reporting enabled, enforcing=false
+10-20 13:56:29.802 I/app_process( 2888): Using CollectorTypeCMC GC.
+10-20 13:56:29.986 I/init    (    0): starting service 'idmap2d'...
+10-20 13:56:29.844 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 13:56:29.844 D/PackageManager(  554): Clear ephemeral installer activity
+10-20 13:56:29.844 D/CompatChangeReporter( 1086): Compat change id reported: 311402873; UID 1000; state: ENABLED
+10-20 13:56:29.844 D/CompatChangeReporter( 1086): Compat change id reported: 323349338; UID 1000; state: ENABLED
+10-20 13:56:29.845 I/AppWidgetServiceImpl(  554): Received broadcast: android.intent.action.PACKAGE_CHANGED on user 0
+10-20 13:56:29.850 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 13:56:29.850 D/PackageManager(  554): Clear ephemeral installer activity
+10-20 13:56:29.851 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 13:56:29.851 D/PackageManager(  554): Clear ephemeral installer activity
+10-20 13:56:29.852 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 13:56:29.852 D/PackageManager(  554): Clear ephemeral installer activity
+10-20 13:56:29.853 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 13:56:29.853 D/PackageManager(  554): Clear ephemeral installer activity
+10-20 13:56:29.853 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 13:56:29.853 D/PackageManager(  554): Clear ephemeral installer activity
+10-20 13:56:29.853 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 13:56:29.853 D/PackageManager(  554): Clear ephemeral installer activity
+10-20 13:56:29.854 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 13:56:29.854 D/PackageManager(  554): Clear ephemeral installer activity
+10-20 13:56:29.854 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 13:56:29.854 D/PackageManager(  554): Clear ephemeral installer activity
+10-20 13:56:29.854 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 13:56:29.854 D/PackageManager(  554): Clear ephemeral installer activity
+10-20 13:56:29.855 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 13:56:29.855 D/PackageManager(  554): Clear ephemeral installer activity
+10-20 13:56:29.855 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 13:56:29.855 D/PackageManager(  554): Clear ephemeral installer activity
 --
-10-20 13:30:52.180 D/AndroidRuntime( 2940): Calling main entry com.android.commands.am.Am
-10-20 13:30:52.183 D/UiAutomationConnection( 2940): Created on user UserHandle{0}
-10-20 13:30:52.184 I/AppsFilter(  565): interaction: PackageSetting{7e67adb com.android.microdroid.empty_payload/10188} -> PackageSetting{bf1d16d dev.mobile.maestro.test/10211} BLOCKED
-10-20 13:30:52.192 D/CompatChangeReporter(  565): Compat change id reported: 151861875; UID 10140; state: ENABLED
-10-20 13:30:52.192 V/GrammaticalInflectionUtils(  565): AttributionSource: AttributionSource { uid = 10140, packageName = null, attributionTag = null, token = android.os.Binder@434dca1, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
-10-20 13:30:52.197 D/SimSelectNotification( 1101): Checking satellite enabled status
-10-20 13:30:52.198 D/CompatChangeReporter( 1101): Compat change id reported: 330583731; UID 1000; state: ENABLED
-10-20 13:30:52.198 W/SatelliteRepository( 1101): SatelliteManager is null
-10-20 13:30:52.198 I/SimSelectNotification( 1101): Device is not in a satellite session. Handle primary subscription list changes
-10-20 13:30:52.198 W/.gms.persistent( 1214): Long monitor contention with owner lowpool[4] (2234) at void angp.execute(java.lang.Runnable)(:com.google.android.gms@242335041@24.23.35 (190800-646585959):12) waiters=0 in void angp.execute(java.lang.Runnable) for 550ms
-10-20 13:30:52.200 I/SimDialogProhibitService( 1101): No SimDialogActivity for dismiss.
-10-20 13:30:52.209 W/Looper  (  565): Drained
-10-20 13:30:52.211 I/INV.Configuration( 1581): #onAssistantEnabledSettingsDataChanged()
-10-20 13:30:52.217 V/GraphicsEnvironment( 2908): Currently set values for:
-10-20 13:30:52.217 V/GraphicsEnvironment( 2908):   angle_gl_driver_selection_pkgs=[]
-10-20 13:30:52.217 V/GraphicsEnvironment( 2908):   angle_gl_driver_selection_values=[]
-10-20 13:30:52.218 V/GraphicsEnvironment( 2908): Global.Settings values are invalid: number of packages: 0, number of values: 0
-10-20 13:30:52.217 I/SodaEnrollmentClient( 1581): #getSpeakerIdModel
-10-20 13:30:52.219 V/GraphicsEnvironment( 2908): Neither updatable production driver nor prerelease driver is supported.
-10-20 13:30:52.224 I/Telephony( 1098): reRegisterPstnPhoneAccount: subId: 1 - re-register due to account change.
-10-20 13:30:52.224 I/SodaEnrollmentClient( 1581): #initialize
-10-20 13:30:52.226 I/Telecom (  565): TelecomServiceImpl$1: registerPhoneAccount: account=[[ ] PhoneAccount: ComponentInfo{com.android.phone/com.android.services.telephony.TelephonyConnectionService}, 1, UserHandle{0} Capabilities: CallProvider MultiUser PlaceEmerg SimSub  Audio Routes: BESW Schemes: tel voicemail  Extras: Bundle[{android.telecom.extra.SUPPORTS_VIDEO_CALLING_FALLBACK=true}] GroupId: *** SC Restrictions: [ ]]: TSI.rPA(cap)@AJE🔒
-10-20 13:30:52.227 I/Telecom (  565): PhoneAccountRegistrar: Modify account: [ComponentInfo{com.android.phone/com.android.services.telephony.TelephonyConnectionService}, 1, UserHandle{0}(lbl: T-Mobile -> CARD 1)(desc: T-Mobile -> CARD 1)]: TSI.rPA(cap)@AJE🔒
-10-20 13:30:52.231 W/A       ( 1581): No system LP found. Offline SODA ASR is unavailable and SODA init may fail.
-10-20 13:30:52.231 D/WM-WrkMgrInitializer( 2908): Initializing WorkManager with default configuration.
-10-20 13:30:52.233 I/Telecom (  565): CallsManager: handlePhoneAccountChanged: phoneAccount=[[X] PhoneAccount: ComponentInfo{com.android.phone/com.android.services.telephony.TelephonyConnectionService}, 1, UserHandle{0} Capabilities: CallProvider MultiUser PlaceEmerg SimSub  Audio Routes: BESW Schemes: tel voicemail  Extras: Bundle[{android.telecom.extra.SUPPORTS_VIDEO_CALLING_FALLBACK=true}] GroupId: *** SC Restrictions: [ ]]: TSI.rPA(cap)@AJE🔒
-10-20 13:30:52.241 I/AppWidgetServiceImpl(  565): Received broadcast: android.intent.action.PACKAGE_CHANGED on user 0
-10-20 13:30:52.242 D/AppWidgetServiceImpl(  565): Trying to notify widget providers changed
-10-20 13:30:52.248 D/ShortcutService(  565): received package broadcast intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x45000010 (has extras) }
-10-20 13:30:52.249 D/Zygote  (  370): Forked child process 2979
-10-20 13:30:52.251 D/ShortcutService(  565): changing package: com.google.android.googlequicksearchbox userId0
+10-20 13:56:29.983 D/AndroidRuntime( 2888): Calling main entry com.android.commands.am.Am
+10-20 13:56:29.984 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 13:56:29.985 D/PackageManager(  554): Clear ephemeral installer activity
+10-20 13:56:29.988 W/Role    (  554): Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58
+10-20 13:56:29.991 D/UiAutomationConnection( 2888): Created on user UserHandle{0}
+10-20 13:56:29.996 E/AppOps  (  554): attributionTag VCN not declared in manifest of android
+10-20 13:56:29.996 D/CellBroadcastConfigTracker-0( 1081): GsmConfiguringState message:2
+10-20 13:56:29.996 D/CellBroadcastConfigTracker-0( 1081): GsmConfiguringState handle EVENT_CONFIGURATION_DONE with request:Request[mCbRangesRequest3gpp = [CellBroadcastIdRange[4352, 4354, 1, true], CellBroadcastIdRange[4355, 4355, 1, false], CellBroadcastIdRange[4356, 4356, 1, true], CellBroadcastIdRange[4370, 4379, 1, true], CellBroadcastIdRange[4380, 4382, 1, false], CellBroadcastIdRange[4383, 4392, 1, true], CellBroadcastIdRange[4393, 4395, 1, false], CellBroadcastIdRange[4396, 4397, 1, true], CellBroadcastIdRange[4398, 4399, 1, false], CellBroadcastIdRange[4400, 4400, 1, true]], mCbRangesRequest3gpp2 = [CellBroadcastIdRange[4096, 4099, 2, true], CellBroadcastIdRange[4100, 4100, 2, false]]]
+10-20 13:56:29.996 D/CellBroadcastConfigTracker-0( 1081): Failed to set gsm config
+10-20 13:56:29.997 E/CellBroadcastConfigService( 1620): fails to setCellBroadcastRanges, result = 2
+10-20 13:56:30.000 I/VcnManagementService(  554): new snapshot: TelephonySubscriptionSnapshot{ mActiveDataSubId=1, mSubIdToInfoMap={}, mSubIdToCarrierConfigMap={1=PersistableBundle[{carrier_config_applied_bool=true, carrier_config_version_string=}]}, mPrivilegedPackages={} }
+10-20 13:56:30.001 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 13:56:30.001 D/PackageManager(  554): Clear ephemeral installer activity
+10-20 13:56:30.005 I/NearbySharing( 1189): NearbySharingService created [CONTEXT service_id=194 ]
+10-20 13:56:30.012 I/PermissionControllerServiceImpl(  916): Updating user sensitive for uid 1000
+10-20 13:56:30.013 I/SafetyLabelChangedBroadcastReceiver(  916): received broadcast packageName: dev.mobile.maestro.test, current user: UserHandle{0}, packageChangeEvent: NEW_INSTALL, intent user: UserHandle{0}
+10-20 13:56:30.022 D/ControlsListingControllerImpl(  911): ServiceConfig reloaded, count: 0
+10-20 13:56:30.029 I/SdkSandboxManager(  554): No SDKs used. Skipping SDK data reconcilation for CallingInfo{mUid=10211, mPackageName='dev.mobile.maestro.test, mAppProcessToken='null'}
+10-20 13:56:30.043 D/ActivityTaskManager(  554): Remove task fragment: deleteTaskFragment
+10-20 13:56:30.046 W/Looper  (  554): Slow delivery took 200ms main h=android.os.Handler c=com.android.internal.content.PackageMonitor$$ExternalSyntheticLambda0@6d9e633 m=0
+10-20 13:56:30.106 I/A       ( 1628): (REDACTED) Loaded SODA %s native library: %s
+10-20 13:56:30.112 I/native  ( 1628): I0000 00:00:1792504590.111939    2036 enrollment_manager_impl.cc:444] UpdateConfigRequest with timeout: 0
+10-20 13:56:30.112 I/AiAiEcho( 1487): Settings changed for uri: content://settings/secure/nearby_sharing_component
+10-20 13:56:30.113 W/Looper  (  911): Slow delivery took 68ms wmshell.main h=android.os.Handler c=null m=19
+10-20 13:56:30.113 I/AiAiEcho( 1487): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-20 13:56:30.113 I/AiAiEcho( 1487): EchoTargets: 
+10-20 13:56:30.113 I/AiAiEcho( 1487): Filtered by AiAi flag check: 
+10-20 13:56:30.113 I/AiAiEcho( 1487): [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 13:56:30.113 I/AiAiEcho( 1487): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 13:56:30.114 I/AiAiEcho( 1487): #remoteViewsTwiddler: feature disabled.
+10-20 13:56:30.114 I/AiAiEcho( 1487): Predicting[0]:  [CONTEXT sampling_count=5 ]
 --
-10-20 13:34:13.084 I/AndroidRuntime( 2940): VM exiting with result code 0.
-10-20 13:34:13.086 I/netd    (  366): tetherGetStats() -> {[]} <0.28ms>
-10-20 13:34:13.098 I/adbd    (  446): Remote process closed the socket (on MSG_PEEK)
-10-20 13:34:13.098 W/ActivityManager(  565): pid 565 system sent binder code 1 with flags 1 to frozen apps and got error -32
-10-20 13:34:13.100 W/MagnificationConnectionManager(  565): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-20 13:34:13.100 W/MagnificationConnectionManager(  565): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-20 13:34:13.244 I/init    (    0): ... started service 'artd' has pid 5618
-10-20 13:34:13.245 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 152 (/system/bin/servicemanager)
-10-20 13:34:13.101 V/UiAutomationManager(  565): UiAutomation service owner died
-10-20 13:34:13.102 I/Zygote  (  370): Process 2984 exited due to signal 9 (Killed)
-10-20 13:34:13.106 W/MagnificationConnectionManager(  565): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-20 13:34:13.108 I/libprocessgroup(  565): Removed cgroup /sys/fs/cgroup/uid_10210/pid_2984
-10-20 13:34:13.257 I/init    (    0): Untracked pid 2940 exited with status 0
-10-20 13:34:13.258 I/init    (    0): Untracked pid 2940 did not have an associated service entry and will not be reaped
-10-20 13:34:13.259 I/binder  (    0): 600:565 cannot find target node
-10-20 13:34:13.113 W/IPCThreadState(  565): Sending oneway calls to frozen process.
-10-20 13:34:13.113 W/IPCThreadState(  565): Sending oneway calls to frozen process.
-10-20 13:34:13.113 W/IPCThreadState(  565): Sending oneway calls to frozen process.
-10-20 13:34:13.113 W/IPCThreadState(  565): Sending oneway calls to frozen process.
-10-20 13:34:13.113 W/IPCThreadState(  565): Sending oneway calls to frozen process.
-10-20 13:34:13.113 W/IPCThreadState(  565): Sending oneway calls to frozen process.
-10-20 13:34:13.113 V/ActivityManager(  565): Got obituary of 2984:dev.mobile.maestro
-10-20 13:34:13.114 W/IPCThreadState(  565): Sending oneway calls to frozen process.
-10-20 13:34:13.262 I/binder  (    0): 565:600 transaction async to 0:0 failed 440172/29189/-22, size 88-0 line 3344
-10-20 13:34:13.115 W/IPCThreadState(  565): Sending oneway calls to frozen process.
-10-20 13:34:13.115 W/IPCThreadState(  565): Sending oneway calls to frozen process.
-10-20 13:34:13.115 W/IPCThreadState(  565): Sending oneway calls to frozen process.
-10-20 13:34:13.115 W/IPCThreadState(  565): Sending oneway calls to frozen process.
-10-20 13:34:13.115 W/IPCThreadState(  565): Sending oneway calls to frozen process.
-10-20 13:34:13.115 W/IPCThreadState(  565): Sending oneway calls to frozen process.
-10-20 13:34:13.115 W/IPCThreadState(  565): Sending oneway calls to frozen process.
+10-20 14:00:28.567 I/AndroidRuntime( 2888): VM exiting with result code 0.
+10-20 14:00:28.578 I/netd    (  355): tetherGetStats() -> {[]} <2.99ms>
+10-20 14:00:28.711 I/servicemanager(    0): Caller(pid=554,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+10-20 14:00:28.725 I/init    (    0): starting service 'artd'...
+10-20 14:00:28.581 V/ActivityManager(  554): Got obituary of 2917:dev.mobile.maestro
+10-20 14:00:28.581 I/adbd    (  435): Remote process closed the socket (on MSG_PEEK)
+10-20 14:00:28.582 I/Zygote  (  356): Process 2917 exited due to signal 9 (Killed)
+10-20 14:00:28.582 W/ActivityManager(  554): pid 554 system sent binder code 1 with flags 1 to frozen apps and got error -32
+10-20 14:00:28.583 I/libprocessgroup(  554): Removed cgroup /sys/fs/cgroup/uid_10210/pid_2917
+10-20 14:00:28.586 I/AiAiEcho( 1487): Settings changed for uri: content://settings/secure/accessibility_enabled
+10-20 14:00:28.586 I/AiAiEcho( 1487): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-20 14:00:28.587 I/AiAiEcho( 1487): EchoTargets: 
+10-20 14:00:28.587 I/AiAiEcho( 1487): Filtered by AiAi flag check: 
+10-20 14:00:28.587 I/AiAiEcho( 1487): [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 14:00:28.587 I/AiAiEcho( 1487): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 14:00:28.588 I/AiAiEcho( 1487): #remoteViewsTwiddler: feature disabled.
+10-20 14:00:28.589 I/AiAiEcho( 1487): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-20 14:00:28.589 I/AiAiEcho( 1487): EchoTargets: 
+10-20 14:00:28.589 I/AiAiEcho( 1487): Filtered by AiAi flag check: 
+10-20 14:00:28.589 I/AiAiEcho( 1487): [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 14:00:28.589 W/MagnificationConnectionManager(  554): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-20 14:00:28.590 I/AiAiEcho( 1487): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 14:00:28.591 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+10-20 14:00:28.591 I/AiAiEcho( 1487): #remoteViewsTwiddler: feature disabled.
+10-20 14:00:28.591 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+10-20 14:00:28.595 I/AiAiEcho( 1487): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+10-20 14:00:28.596 I/AiAiEcho( 1487): Settings changed for uri: content://settings/secure/accessibility_enabled
+10-20 14:00:28.596 W/MagnificationConnectionManager(  554): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-20 14:00:28.597 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+10-20 14:00:28.597 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+10-20 14:00:28.597 I/AiAiEcho( 1487): #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
