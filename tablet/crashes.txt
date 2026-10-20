@@ -1,97 +1,98 @@
-10-20 12:27:17.991 D/AndroidRuntime( 3737): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-20 12:27:17.996 I/AndroidRuntime( 3737): Using default boot image
-10-20 12:27:17.996 I/AndroidRuntime( 3737): Leaving lock profiling enabled
-10-20 12:27:17.997 W/GetConfigSnapshotOp( 1203): Succeeded but not registered: com.google.android.apps.search.transcription.uidevice#com.google.android.tts [CONTEXT service_id=51 ]
-10-20 12:27:18.000 I/app_process( 3737): Core platform API reporting enabled, enforcing=false
-10-20 12:27:18.000 I/app_process( 3737): Using CollectorTypeCMC GC.
-10-20 12:27:18.008 I/GmsApplication( 3590): [gms_startup_benchmark] Static start time (ms): 50029, Startup latency (ms): 410, Is system user: true
-10-20 12:27:18.009 W/ebcf    ( 3590): Primes not initialized, returning default (no-op) Primes instance which will ignore all calls. Please call Primes.initialize(...) before using any Primes API.
-10-20 12:27:18.009 I/BugleNotifications( 3588): Foreground service channel created
-10-20 12:27:18.016 W/MagnificationConnectionManager(  549): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-20 12:27:18.016 D/EGL_emulation( 1156): app_time_stats: avg=803.43ms min=604.13ms max=1002.74ms count=2
-10-20 12:27:18.017 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-20 12:27:18.017 D/ShortcutService(  549): Getting shortcuts for launcher= com.android.systemuiuser=0 pkg=com.google.android.apps.messaging
-10-20 12:27:18.017 D/ShortcutService(  549): Getting shortcuts for launcher= com.google.android.apps.nexuslauncheruser=0 pkg=com.google.android.apps.messaging
-10-20 12:27:18.017 D/ShortcutService(  549): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=com.google.android.apps.messaging
-10-20 12:27:18.019 I/Icing   ( 1488): Indexing done com.google.android.gms-internal.3p:MobileApplication
-10-20 12:27:18.021 I/GmsAccounts( 3588): GMSCore Auth returned 0 accounts.
-10-20 12:27:18.021 I/GmsAccounts( 3588): GoogleOwnersProvider returned 0 accounts.
-10-20 12:27:18.022 D/BaseIconCache( 1156): Default icon returned for dev.mobile.maestro.test
-10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): Error getting setting item searchables
-10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): java.util.concurrent.ExecutionException: java.lang.IllegalStateException: No account, cannot provide search indexables
-10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at npw.r(PG:4)
-10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at npw.get(PG:11)
-10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at ifl.a(PG:18)
-10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at com.google.android.apps.safetyhub.platformsettings.search.EmergencySearchIndexablesProvider.a(PG:9)
-10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at com.google.android.apps.safetyhub.platformsettings.search.EmergencySearchIndexablesProvider.queryRawData(PG:2)
-10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at android.provider.SearchIndexablesProvider.query(SearchIndexablesProvider.java:125)
-10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at android.content.ContentProvider.query(ContentProvider.java:1620)
-10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at android.content.ContentProvider.query(ContentProvider.java:1716)
-10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at android.content.ContentProvider$Transport.query(ContentProvider.java:295)
-10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at android.content.ContentProviderNative.onTransact(ContentProviderNative.java:107)
-10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at android.os.Binder.execTransactInternal(Binder.java:1500)
-10-20 12:27:18.022 W/Safetyhub.EmergencySearchIndexablesProvider( 3582): 	at android.os.Binder.execTransact(Binder.java:1444)
+10-20 12:49:57.634 D/AndroidRuntime( 2939): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-20 12:49:57.639 I/m.android.phone( 1087): Background concurrent mark compact GC freed 3436KB AllocSpace bytes, 0(0B) LOS objects, 49% free, 3380KB/6761KB, paused 6.971ms,2.593ms total 243.415ms
+10-20 12:49:57.649 I/AndroidRuntime( 2939): Using default boot image
+10-20 12:49:57.649 I/AndroidRuntime( 2939): Leaving lock profiling enabled
+10-20 12:49:57.657 I/app_process( 2939): Core platform API reporting enabled, enforcing=false
+10-20 12:49:57.657 I/app_process( 2939): Using CollectorTypeCMC GC.
+10-20 12:49:57.684 D/QueuedWork( 1396): waited: [<1: 0, <2: 1, <4: 0, <8: 1, <16: 1, <32: 1, <64: 0, <128: 1, <256: 1, <512: 0, <1024: 2, <2048: 0, <4096: 0, <8192: 0, <16384: 0, >=16384: 0]
+10-20 12:49:57.738 I/.apps.wellbeing( 1368): Background concurrent mark compact GC freed 3380KB AllocSpace bytes, 0(0B) LOS objects, 49% free, 4884KB/9769KB, paused 284us,537us total 1.275s
+10-20 12:49:57.739 D/ShortcutService(  560): received package broadcast intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x45000010 (has extras) }
+10-20 12:49:57.739 D/ShortcutService(  560): changing package: com.google.android.gms userId0
+10-20 12:49:57.743 D/ShortcutService(  560): handlePackageChanged: com.google.android.gms user=0
+10-20 12:49:57.743 D/ShortcutService(  560): rescanPackageIfNeeded 0@com.google.android.gms, forceRescan=true , isNewApp=false
+10-20 12:49:57.744 D/ShortcutService(  560): Package com.google.android.gms has 0 manifest shortcut(s), and 1 share target(s)
+10-20 12:49:57.744 D/ShortcutService(  560): Package com.google.android.gms updated, version 242335041 -> 242335041
+10-20 12:49:57.744 D/ShortcutService(  560): Package com.google.android.gms: publishing manifest shortcuts
+10-20 12:49:57.744 D/ShortcutService(  560): received package broadcast intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x45000010 (has extras) }
+10-20 12:49:57.744 D/ShortcutService(  560): changing package: com.google.android.tts userId0
+10-20 12:49:57.744 D/ShortcutService(  560): handlePackageChanged: com.google.android.tts user=0
+10-20 12:49:57.744 D/ShortcutService(  560): rescanPackageIfNeeded 0@com.google.android.tts, forceRescan=true , isNewApp=true
+10-20 12:49:57.744 D/ShortcutService(  560): Package com.google.android.tts has 0 manifest shortcut(s), and 0 share target(s)
+10-20 12:49:57.744 D/ShortcutService(  560): received package broadcast intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x45000010 (has extras) }
+10-20 12:49:57.744 D/ShortcutService(  560): changing package: com.android.carrierdefaultapp userId0
+10-20 12:49:57.746 W/ziparchive( 2357): Unable to open '/data/user/0/com.google.android.gms/app_dg_cache/01F6C0AD032BFD9FBACF0642871820D6DC85C588/the.dm': No such file or directory
+10-20 12:49:57.747 I/Telecom (  560): PhoneAccountRegistrar: Modify account: [ComponentInfo{com.android.phone/com.android.services.telephony.TelephonyConnectionService}, 1, UserHandle{0}]: TSI.rPA(cap)@AKA🔒
+10-20 12:49:57.748 I/Telecom (  560): CallsManager: handlePhoneAccountChanged: phoneAccount=[[X] PhoneAccount: ComponentInfo{com.android.phone/com.android.services.telephony.TelephonyConnectionService}, 1, UserHandle{0} Capabilities: CallProvider MultiUser PlaceEmerg SimSub  Audio Routes: BESW Schemes: tel voicemail  Extras: Bundle[{android.telecom.extra.SUPPORTS_VIDEO_CALLING_FALLBACK=true}] GroupId: *** SC Restrictions: [ ]]: TSI.rPA(cap)@AKA🔒
+10-20 12:49:57.756 D/ShortcutService(  560): handlePackageChanged: com.android.carrierdefaultapp user=0
+10-20 12:49:57.756 D/ShortcutService(  560): rescanPackageIfNeeded 0@com.android.carrierdefaultapp, forceRescan=true , isNewApp=true
+10-20 12:49:57.756 D/ShortcutService(  560): Package com.android.carrierdefaultapp has 0 manifest shortcut(s), and 0 share target(s)
+10-20 12:49:57.756 D/ShortcutService(  560): received package broadcast intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x45000010 (has extras) }
+10-20 12:49:57.756 D/ShortcutService(  560): changing package: com.google.android.calendar userId0
+10-20 12:49:57.757 D/ShortcutService(  560): handlePackageChanged: com.google.android.calendar user=0
+10-20 12:49:57.757 D/ShortcutService(  560): rescanPackageIfNeeded 0@com.google.android.calendar, forceRescan=true , isNewApp=false
+10-20 12:49:57.757 E/system_server(  560): No package ID 7f found for resource ID 0x7f0801f7.
+10-20 12:49:57.757 E/system_server(  560): No package ID 7f found for resource ID 0x7f1403b0.
 --
-10-20 12:27:18.352 D/AndroidRuntime( 3737): Calling main entry com.android.commands.am.Am
-10-20 12:27:18.354 W/MetricsFeatureProvider( 3437): Disabled westworld logs writing!!!
-10-20 12:27:18.355 D/UiAutomationConnection( 3737): Created on user UserHandle{0}
-10-20 12:27:18.357 W/ForegroundServiceTypeLoggerModule(  549): Foreground service start for UID: 10135 does not have any types
-10-20 12:27:18.358 I/HeterodyneSyncScheduler( 1203): Scheduling Phenotype for a PhenotypeSyncImmediately(6, com.google.android.libraries.search.audio.device#com.google.android.tts) one off with window [1, 2] in seconds [CONTEXT service_id=51 ]
-10-20 12:27:18.359 I/ebvk$a  ( 1203): Unable to retrieve flag snapshot for com.google.android.gms.presencemanager, using defaults.
-10-20 12:27:18.361 W/ChimeraUtils( 1203): Module com.google.android.gms.backup_base missing resource null(0)
-10-20 12:27:18.361 V/Backup  ( 1203): [BackupAccountNotifier] Handling new intent. Show notification: true
-10-20 12:27:18.363 I/HeterodyneSyncScheduler( 1203): Scheduling Phenotype for a PhenotypeSyncImmediately(6, com.google.android.libraries.search.device#com.google.android.tts) one off with window [1, 2] in seconds [CONTEXT service_id=51 ]
-10-20 12:27:18.368 I/Icing   ( 1488): Indexing com.google.android.gms-apps from com.google.android.gms
-10-20 12:27:18.369 I/AiAiTextClassifier( 1399): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
-10-20 12:27:18.373 I/AiAiTextClassifier( 1399): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
-10-20 12:27:18.374 I/AiAiTextClassifier( 1399): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
-10-20 12:27:18.383 I/netd    (  354): bandwidthSetGlobalAlert(2097152) <0.12ms>
-10-20 12:27:18.409 W/ActivityManager(  549): Slow operation: 85ms so far, now at finishAttachApplicationInner: after mServices.attachApplicationLocked
-10-20 12:27:18.409 I/.android.as.oss( 1813): Background concurrent mark compact GC freed 13MB AllocSpace bytes, 0(0B) LOS objects, 49% free, 13MB/26MB, paused 233us,340us total 642.510ms
-10-20 12:27:18.410 W/gle.android.gms( 1488): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~jvo29DthqGu9d0580Q8ZZQ==/com.katkee.app-rS4VktKEtUhwlz6q7KZX2A==/base.apk' with 1 weak references
-10-20 12:27:18.411 W/gle.android.gms( 1488): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/YouTube/YouTube.apk' with 1 weak references
-10-20 12:27:18.411 I/NetworkScheduler.Stats( 1203): Task com.google.android.gms/com.google.android.gms.ads.social.GcmSchedulerWakeupService finished executing. cause:1 result: 1 elapsed_millis: 1018 uptime_millis: 1018 exec_start_elapsed_seconds: 49 [CONTEXT service_id=218 ]
-10-20 12:27:18.411 W/gle.android.gms( 1488): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/Maps/Maps.apk' with 1 weak references
-10-20 12:27:18.412 W/.apps.safetyhub( 3582): Long monitor contention with owner main (3582) at java.lang.Object ozr.c()(PG:2) waiters=0 in java.lang.Object ozr.c() for 107ms
-10-20 12:27:18.413 W/ActivityManager(  549): Slow operation: 89ms so far, now at finishAttachApplicationInner: after dispatching broadcasts
-10-20 12:27:18.430 W/ActivityManager(  549): Slow operation: 106ms so far, now at finishAttachApplicationInner: after updateOomAdjLocked
-10-20 12:27:18.434 I/FontLog ( 1203): Download finished for https://fonts.gstatic.com/s/a/directory025.pb; checking size and hash [CONTEXT service_id=132 ]
-10-20 12:27:18.442 I/ActivityManager(  549): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-10-20 12:27:18.444 V/GrammaticalInflectionUtils(  549): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@727c571, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
-10-20 12:27:18.445 I/AppsFilter(  549): interaction: PackageSetting{c5d181c com.android.microdroid.empty_payload/10191} -> PackageSetting{2a3fc25 dev.mobile.maestro/10210} BLOCKED
-10-20 12:27:18.445 D/CompatChangeReporter(  549): Compat change id reported: 229362273; UID 10143; state: ENABLED
-10-20 12:27:18.446 I/ebvk$a  ( 3590): Unable to retrieve flag snapshot for com.google.android.gms.adsidentity, using defaults.
-10-20 12:27:18.446 I/ebvk$a  ( 3590): Unable to retrieve flag snapshot for com.google.android.gms.family, using defaults.
-10-20 12:27:18.446 I/ebvk$a  ( 3590): Unable to retrieve flag snapshot for com.google.android.gms.auth.api.credentials, using defaults.
+10-20 12:49:57.903 D/AndroidRuntime( 2939): Calling main entry com.android.commands.am.Am
+10-20 12:49:57.904 I/PhoneInterfaceManager( 1087): setVoiceServiceStateOverride: subId=1, phone=Handler (com.android.internal.telephony.GsmCdmaPhone) {cd5a4d2}, hasService=false, callingPackage=com.android.server.telecom
+10-20 12:49:57.905 I/Telephony( 1087): TelecomAccountRegistry$AccountEntry: Registered phoneAccount: [[ ] PhoneAccount: ComponentInfo{com.android.phone/com.android.services.telephony.TelephonyConnectionService}, 1, UserHandle{0} Capabilities: CallProvider MultiUser PlaceEmerg SimSub  Audio Routes: BESW Schemes: tel voicemail  Extras: Bundle[{android.telecom.extra.SUPPORTS_VIDEO_CALLING_FALLBACK=true}] GroupId: *** SC Restrictions: [ ]] with handle: ComponentInfo{com.android.phone/com.android.services.telephony.TelephonyConnectionService}, 1, UserHandle{0}
+10-20 12:49:57.905 I/Telephony( 1087): PstnIncomingCallNotifier: Registering: [0]
+10-20 12:49:57.905 D/Telephony( 1087): Registering: Handler (com.android.internal.telephony.GsmCdmaPhone) {cd5a4d2}
+10-20 12:49:57.905 D/UiAutomationConnection( 2939): Created on user UserHandle{0}
+10-20 12:49:57.906 I/ActivityManager(  560): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+10-20 12:49:57.913 V/GrammaticalInflectionUtils(  560): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@398cefa, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+10-20 12:49:57.921 I/AppsFilter(  560): interaction: PackageSetting{18ee9dc com.android.microdroid.empty_payload/10202} -> PackageSetting{b067567 dev.mobile.maestro/10210} BLOCKED
+10-20 12:49:57.926 W/s.nexuslauncher( 1203): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/SafetyHubPrebuilt/SafetyHubPrebuilt.apk' with 1 weak references
+10-20 12:49:57.926 W/s.nexuslauncher( 1203): ApkAssets: Deleting an ApkAssets object '<empty> and /system_ext/priv-app/SystemUIGoogle/SystemUIGoogle.apk' with 1 weak references
+10-20 12:49:57.926 I/ActivityManager(  560): Background started FGS: Allowed [callingPackage: com.google.android.inputmethod.latin; callingUid: 10152; uidState: IMPB; uidBFSL: n/a; intent: Intent { cmp=com.google.android.inputmethod.latin/com.google.android.apps.inputmethod.libs.dataservice.superpacks.SuperpacksForegroundTaskService }; code:CURRENT_INPUT_METHOD; tempAllowListReason:<null>; targetSdkVersion:34; callerTargetSdkVersion:34; startForegroundCount:0; bindFromPackage:null: isBindService:false]
+10-20 12:49:57.926 W/s.nexuslauncher( 1203): ApkAssets: Deleting an ApkAssets object '/vendor/overlay/SystemUIGoogle__sdk_gphone64_x86_64__auto_generated_rro_vendor.apk' with 1 weak references
+10-20 12:49:57.926 W/s.nexuslauncher( 1203): ApkAssets: Deleting an ApkAssets object '/product/overlay/SystemUIGoogle__sdk_gphone64_x86_64__auto_generated_rro_product.apk' with 1 weak references
+10-20 12:49:57.926 W/s.nexuslauncher( 1203): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/YouTubeMusicPrebuilt/YouTubeMusicPrebuilt.apk' with 1 weak references
+10-20 12:49:57.927 W/s.nexuslauncher( 1203): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/GoogleContacts/GoogleContacts.apk' with 1 weak references
+10-20 12:49:57.927 D/PackageManager(  560): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 12:49:57.929 D/PackageManager(  560): Clear ephemeral installer activity
+10-20 12:49:57.933 D/PackageManager(  560): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 12:49:57.933 D/PackageManager(  560): Clear ephemeral installer activity
+10-20 12:49:57.933 D/PackageManager(  560): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 12:49:57.933 D/PackageManager(  560): Clear ephemeral installer activity
+10-20 12:49:57.939 D/PackageManager(  560): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-20 12:49:57.939 D/PackageManager(  560): Clear ephemeral installer activity
+10-20 12:49:57.940 W/Telephony( 1087): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+10-20 12:49:57.944 W/Telephony( 1087): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+10-20 12:49:57.944 D/Telephony( 1087): Finished registering mSimultaneousCallingTrackerListener for phoneId = 0; subId = 1
+10-20 12:49:57.945 W/s.nexuslauncher( 1203): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/SettingsIntelligenceGooglePrebuilt/SettingsIntelligenceGooglePrebuilt.apk' with 1 weak references
+10-20 12:49:57.945 W/s.nexuslauncher( 1203): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/Photos/Photos.apk' with 1 weak references
+10-20 12:49:57.945 W/s.nexuslauncher( 1203): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/WellbeingPrebuilt/WellbeingPrebuilt.apk' with 1 weak references
+10-20 12:49:57.948 D/PackageManager(  560): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
 --
-10-20 12:29:30.099 I/AndroidRuntime( 3737): VM exiting with result code 0.
-10-20 12:29:30.105 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-20 12:29:30.105 W/MagnificationConnectionManager(  549): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-20 12:29:30.105 V/UiAutomationManager(  549): UiAutomation service owner died
-10-20 12:29:30.106 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-20 12:29:30.106 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-20 12:29:30.226 I/init    (    0): ... started service 'artd' has pid 5572
-10-20 12:29:30.229 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 139 (/system/bin/servicemanager)
-10-20 12:29:30.109 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-20 12:29:30.109 I/AiAiEcho( 1399): Settings changed for uri: content://settings/secure/accessibility_enabled
-10-20 12:29:30.109 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-20 12:29:30.109 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-20 12:29:30.109 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-20 12:29:30.109 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-20 12:29:30.110 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-20 12:29:30.110 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-20 12:29:30.233 I/init    (    0): Untracked pid 3737 exited with status 0
-10-20 12:29:30.110 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-20 12:29:30.112 I/AiAiEcho( 1399): Predicting[0]:  [CONTEXT sampling_count=5 ]
-10-20 12:29:30.112 I/AiAiEcho( 1399): EchoTargets: 
-10-20 12:29:30.112 I/AiAiEcho( 1399): Filtered by AiAi flag check: 
-10-20 12:29:30.112 I/AiAiEcho( 1399): [CONTEXT ratelimit_period="10 SECONDS" ]
-10-20 12:29:30.112 I/AiAiEcho( 1399): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
-10-20 12:29:30.112 I/AiAiEcho( 1399): #remoteViewsTwiddler: feature disabled.
-10-20 12:29:30.112 I/AiAiEcho( 1399): Predicting[0]:  [CONTEXT sampling_count=5 ]
-10-20 12:29:30.112 I/AiAiEcho( 1399): EchoTargets: 
-10-20 12:29:30.112 I/AiAiEcho( 1399): Filtered by AiAi flag check: 
-10-20 12:29:30.112 I/AiAiEcho( 1399): [CONTEXT ratelimit_period="10 SECONDS" ]
-10-20 12:29:30.112 I/AiAiEcho( 1399): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
-10-20 12:29:30.112 I/AiAiEcho( 1399): #remoteViewsTwiddler: feature disabled.
-10-20 12:29:30.112 I/AiAiEcho( 1399): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+10-20 12:53:23.272 I/AndroidRuntime( 2939): VM exiting with result code 0.
+10-20 12:53:23.275 I/AiAiEcho( 1443): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-20 12:53:23.275 I/AiAiEcho( 1443): EchoTargets: 
+10-20 12:53:23.275 I/AiAiEcho( 1443): Filtered by AiAi flag check: 
+10-20 12:53:23.275 I/AiAiEcho( 1443): [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 12:53:23.275 I/AiAiEcho( 1443): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 12:53:23.275 I/AiAiEcho( 1443): #remoteViewsTwiddler: feature disabled.
+10-20 12:53:23.275 I/AiAiEcho( 1443): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-20 12:53:23.275 I/AiAiEcho( 1443): EchoTargets: 
+10-20 12:53:23.275 I/AiAiEcho( 1443): Filtered by AiAi flag check: 
+10-20 12:53:23.275 I/AiAiEcho( 1443): [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 12:53:23.275 I/AiAiEcho( 1443): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 12:53:23.275 I/AiAiEcho( 1443): #remoteViewsTwiddler: feature disabled.
+10-20 12:53:23.275 I/AiAiEcho( 1443): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-20 12:53:23.275 I/AiAiEcho( 1443): EchoTargets: 
+10-20 12:53:23.275 I/AiAiEcho( 1443): Filtered by AiAi flag check: 
+10-20 12:53:23.275 I/AiAiEcho( 1443): [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 12:53:23.275 I/AiAiEcho( 1443): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 12:53:23.276 I/AiAiEcho( 1443): #remoteViewsTwiddler: feature disabled.
+10-20 12:53:23.276 I/AiAiEcho( 1443): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-20 12:53:23.276 I/AiAiEcho( 1443): EchoTargets: 
+10-20 12:53:23.276 I/AiAiEcho( 1443): Filtered by AiAi flag check: 
+10-20 12:53:23.276 I/AiAiEcho( 1443): [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 12:53:23.276 I/AiAiEcho( 1443): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+10-20 12:53:23.276 I/AiAiEcho( 1443): #remoteViewsTwiddler: feature disabled.
+10-20 12:53:23.276 I/AiAiEcho( 1443): #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+10-20 12:53:23.276 D/SsBaseTemplateCard( 1203): No text view can be set up
+10-20 12:53:23.276 D/SsBaseTemplateCard( 1203): Passed-in item info is null
+10-20 12:53:23.276 D/SsBaseTemplateCard( 1203): Passed-in item info is null
+10-20 12:53:23.276 D/SsBaseTemplateCard( 1203): Passed-in item info is null
+10-20 12:53:23.276 I/SsBaseTemplateCard( 1203): Secondary card pane is null
