@@ -189,6 +189,14 @@ export function websiteGate(req: IncomingMessage, res: ServerResponse): boolean 
     return true;
   }
   if (host === siteHost) {
+    // The Admin console lives on the API host; katkee.com/admin points there.
+    if (readOnly && (pathname === "/admin" || pathname.startsWith("/admin/"))) {
+      res.statusCode = 302;
+      res.setHeader("Location", `${config.admin.origin}/admin/login`);
+      res.setHeader("Cache-Control", "no-store");
+      res.end();
+      return true;
+    }
     const known = site.pages.has(pathname) || site.files.has(pathname) || pathname.startsWith("/assets/");
     if (known && readOnly) return false;
     if (known) {

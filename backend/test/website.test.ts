@@ -183,7 +183,12 @@ describe("with WEBSITE_HOST, as in production", () => {
   });
 
   it("never exposes the API or the Admin console on the website's host", async () => {
-    for (const target of ["/health", "/ready", "/api/v1/auth/login", "/api/v1/users/me", "/admin", "/admin/login", "/api/v1/admin/session"]) {
+    for (const target of ["/admin", "/admin/login"]) {
+      const reply = await get(target, { Host: "katkee.test" });
+      assert.equal(reply.status, 302, target);
+      assert.equal(reply.headers.location, `${config.admin.origin}/admin/login`, "points to the console on the API's host");
+    }
+    for (const target of ["/health", "/ready", "/api/v1/auth/login", "/api/v1/users/me", "/api/v1/admin/session"]) {
       const reply = await get(target, { Host: "katkee.test" });
       assert.equal(reply.status, 404, target);
       assert.equal(reply.headers["content-type"], "text/html; charset=utf-8", target);

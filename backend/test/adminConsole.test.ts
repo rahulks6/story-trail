@@ -92,7 +92,9 @@ describe("serving the built console", () => {
       [page.headers["x-content-type-options"], page.headers["referrer-policy"], page.headers["cross-origin-opener-policy"], page.headers["x-frame-options"]],
       ["nosniff", "no-referrer", "same-origin", "DENY"],
     );
-    assert.equal((await get("/admin")).status, 401, "the console itself still needs an Admin session");
+    const console_ = await get("/admin");
+    assert.equal(console_.status, 302, "the console itself still needs an Admin session");
+    assert.equal(console_.headers.location, "/admin/login", "and sends you to sign in");
   });
 
   it("assets are immutable, match their integrity hash, and come precompressed", async () => {

@@ -24,7 +24,16 @@ function linkDomain(value: unknown): string {
 export function registerAdminRoutes(router: Router): void {
     // The console's pages and assets (console-assets.ts): a built, versioned console in production.
     router.get('/admin/login', async (_req, res) => { enabled(); await sendPage(res, 'login.html'); });
-    router.get('/admin', async (req, res) => { enabled(); await requireAdmin(req); await sendPage(res, 'index.html'); });
+    // Not signed in (or the session ended): the sign-in page, rather than a bare error.
+    router.get('/admin', async (req, res) => {
+        enabled();
+        try { await requireAdmin(req); }
+        catch (e) {
+            if (!(e instanceof HttpError) || e.status !== 401) throw e;
+            res.statusCode = 302; res.setHeader('Location', '/admin/login'); res.setHeader('Cache-Control', 'no-store'); res.end(); return;
+        }
+        await sendPage(res, 'index.html');
+    });
     router.get('/admin/assets/:file', async (req, res) => { enabled(); sendVersionedAsset(req, res, req.params.file!); });
     router.get('/admin/app.js', async (req, res) => { enabled(); await sendUnversionedAsset(req, res, 'app.js'); });
     router.get('/admin/style.css', async (req, res) => { enabled(); await sendUnversionedAsset(req, res, 'style.css'); });
