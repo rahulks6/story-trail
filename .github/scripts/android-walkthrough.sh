@@ -14,6 +14,10 @@ if [ "$SIZE" = tablet ]; then
   adb shell settings put system user_rotation 0
   echo "landscape" >> "$OUT/device.txt"
 fi
+# A just-booted emulator's own launcher can stall ("isn't responding"); let it settle and close
+# any system dialog so the walk-through starts on Katkee.
+sleep 20
+adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS > /dev/null 2>&1 || true
 adb logcat -c
 adb logcat -v time > "$OUT/logcat.txt" &
 LOGCAT=$!

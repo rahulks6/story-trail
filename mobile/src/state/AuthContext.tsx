@@ -81,6 +81,19 @@ interface AuthContextValue extends AuthState {
 const AuthContext = createContext<AuthContextValue | null>(null);
 const signedOut: AuthState = { status: "signedOut", user: null, accessToken: null };
 
+/**
+ * Saves the session to the Keychain/Keystore. If secure storage refuses (an unsigned iOS build, a
+ * locked or broken keystore), the sign-in still goes ahead for this launch instead of failing a
+ * sign-up or login the server already accepted; the person signs in again next time.
+ */
+async function persistTokens(tokens: StoredTokens): Promise<void> {
+  try {
+    await saveTokens(tokens);
+  } catch (err) {
+    console.warn("Couldn't save the session securely; it lasts until Katkee closes.", err);
+  }
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }): React.JSX.Element {
   const [state, setState] = useState<AuthState>({ ...signedOut, status: "loading" });
   const userIdRef = useRef<string | undefined>(undefined);
@@ -109,7 +122,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
         try {
           const { tokens } = await authApi.refresh(current.refreshToken);
           if (cancelled || tokensRef.current !== current) throw new ApiError(401, "Session changed.");
-          await saveTokens(tokens);
+          await persistTokens(tokens);
           if (cancelled || tokensRef.current !== current) throw new ApiError(401, "Session changed.");
           tokensRef.current = tokens;
           knownTokens.current.add(tokens.accessToken);
@@ -228,7 +241,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
       // Finish any old session refresh before replacing its persisted tokens.
       if (refreshInFlight.current) await refreshInFlight.current.catch(() => undefined);
       const { user, tokens } = await action();
-      await saveTokens(tokens);
+      await persistTokens(tokens);
       tokensRef.current = tokens;
       knownTokens.current = new Set([tokens.accessToken]);
       sessionGeneration.current += 1;
@@ -260,7 +273,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
   );
   const adoptTokens = useCallback(async (tokens: StoredTokens) => {
     if (refreshInFlight.current) await refreshInFlight.current.catch(() => undefined);
-    await saveTokens(tokens);
+    await persistTokens(tokens);
     tokensRef.current = tokens;
     knownTokens.current = new Set([tokens.accessToken]);
     setState((current) => (current.status === "signedIn" ? { ...current, accessToken: tokens.accessToken } : current));

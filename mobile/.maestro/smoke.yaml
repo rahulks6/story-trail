@@ -9,6 +9,10 @@ appId: com.katkee.app
     clearState: true
     permissions:
       all: allow
+# An emulator's own "isn't responding" dialog (not Katkee's) is waited out.
+- tapOn:
+    text: "Wait"
+    optional: true
 - extendedWaitUntil:
     visible: "Log in"
     timeout: 60000

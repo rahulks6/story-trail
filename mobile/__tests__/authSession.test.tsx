@@ -13,7 +13,7 @@ jest.mock("../src/api/client", () => {
   const actual = jest.requireActual("../src/api/client");
   return { ...actual, setSessionHandler: (handler: ((token: string) => Promise<string>) | null) => { mockHandler.current = handler; } };
 });
-jest.mock("../src/api/auth", () => ({ fetchMe: jest.fn(), refresh: jest.fn(), logout: jest.fn(async () => undefined) }));
+jest.mock("../src/api/auth", () => ({ fetchMe: jest.fn(), refresh: jest.fn(), logout: jest.fn(async () => undefined), login: jest.fn() }));
 jest.mock("../src/state/tokenStorage", () => ({
   loadTokens: jest.fn(async () => ({ accessToken: "a1", refreshToken: "r1" })),
   saveTokens: jest.fn(async () => undefined),
@@ -27,8 +27,10 @@ const api = authApi as jest.Mocked<typeof authApi>;
 const tokens = tokenStorage as jest.Mocked<typeof tokenStorage>;
 const me = { id: "u-1", username: "rahul", email: "r@example.com", displayName: "Rahul", bio: "", avatarMediaId: null, interests: [], isPrivate: false };
 
+let auth!: ReturnType<typeof useAuth>;
 function Probe(): React.JSX.Element {
-  const { status, user } = useAuth();
+  auth = useAuth();
+  const { status, user } = auth;
   return <Text>{`${status}:${user?.username ?? "-"}`}</Text>;
 }
 let tree: ReactTestRenderer;
@@ -104,4 +106,18 @@ test("a refresh that fails on the network keeps you signed in; only a refused re
   await flush();
   expect(shown()).toEqual(["signedOut:-"]);
   expect(tokens.clearTokens).toHaveBeenCalled();
+});
+
+test("if secure storage refuses the session, a login the server accepted still signs in", async () => {
+  tokens.loadTokens.mockResolvedValueOnce(null);
+  await launch();
+  expect(shown()).toEqual(["signedOut:-"]);
+  api.login.mockResolvedValueOnce({ user: me, tokens: { accessToken: "a2", refreshToken: "r2" } } as never);
+  tokens.saveTokens.mockRejectedValueOnce(new Error("Secure session storage is unavailable."));
+  const warn = jest.spyOn(console, "warn").mockImplementation(() => undefined);
+  await act(async () => { await auth.login({ email: "r@example.com", password: "pw" } as never); });
+  await flush();
+  expect(shown()).toEqual(["signedIn:rahul"]);
+  expect(auth.error).toBeNull();
+  warn.mockRestore();
 });
