@@ -261,6 +261,10 @@ describe("a conversation between two other people", () => {
     refused(await attempt("POST /api/v1/conversations/:id/messages", `${c}/messages`, stranger, { body: "let me in" }), "send", [404]);
     refused(await attempt("POST /api/v1/conversations/:id/read", `${c}/read`, stranger), "read", [404]);
     refused(await attempt("POST /api/v1/conversations/:id/report", `${c}/report`, stranger, { messageId: ids.message, reason: "spam" }), "report", [404]);
+    const r = `${c}/messages/${ids.message}/reaction`;
+    refused(await attempt("PUT /api/v1/conversations/:id/messages/:messageId/reaction", r, stranger, { emoji: "❤️" }), "react", [404]);
+    refused(await attempt("DELETE /api/v1/conversations/:id/messages/:messageId/reaction", r, stranger), "unreact", [404]);
+    assert.equal(await count(`message_reactions WHERE message_id = :'m'`, { m: ids.message }), 0);
     assert.equal(await count(`messages WHERE conversation_id = :'c'`, { c: ids.conversation }), 1);
     assert.equal(await count(`report_message_evidence e JOIN reports r ON r.id = e.report_id WHERE r.reporter_id = :'s'`, { s: stranger.id }), 0);
   });

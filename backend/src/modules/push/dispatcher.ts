@@ -87,7 +87,7 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
   if (item.kind === "badge") {
     return { message: { title: "", body: "", data: { kind: "badge" }, collapseKey: "badge", badge, badgeOnly: true } };
   }
-  if (item.kind === "message" && row.messages_enabled !== "t") return { skip: "message pushes turned off" };
+  if ((item.kind === "message" || item.kind === "message_reaction") && row.messages_enabled !== "t") return { skip: "message pushes turned off" };
   const toggle = SWITCH[item.kind];
   if (toggle && row[toggle] !== "t") return { skip: `${item.kind} pushes turned off` };
   if (item.kind === "new_story" && item.refId) {
@@ -96,15 +96,16 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
     if (!live) return { skip: "story gone" };
   }
   if (item.body) {
+    const conversation = item.kind === "message_reaction" && item.refId;
     return {
       message: {
         title: "Katkee",
         body: item.body,
-        data: { kind: item.kind, url: item.link ?? "katkee://home", ...(item.refId ? { storyId: item.refId } : {}) },
+        data: { kind: item.kind, url: item.link ?? "katkee://home", ...(item.refId ? (conversation ? { conversationId: item.refId } : { storyId: item.refId }) : {}) },
         collapseKey: item.refId ? `${item.kind}-${item.refId}` : item.kind,
-        threadId: "activity",
+        threadId: conversation ? `dm-${item.refId}` : "activity",
         badge,
-        channel: "activity",
+        channel: conversation ? "messages" : "activity",
       },
     };
   }

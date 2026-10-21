@@ -10,7 +10,12 @@ const mockDM = { refreshUnreadCount: jest.fn() };
 const mockNavigation = { navigate: jest.fn(), setParams: jest.fn(), setOptions: jest.fn() };
 jest.mock("../src/state/AuthContext", () => ({ useAuth: () => mockAuth }));
 jest.mock("../src/state/DMContext", () => ({ useDM: () => mockDM }));
-jest.mock("../src/state/RealtimeContext", () => ({ useRealtime: () => ({ connected: true }), useRealtimeEvents: () => undefined }));
+const mockRealtime: { handler: ((event: unknown) => void) | null } = { handler: null };
+jest.mock("../src/state/RealtimeContext", () => ({ useRealtime: () => ({ connected: true }), useRealtimeEvents: (handler: (event: unknown) => void) => { mockRealtime.handler = handler; } }));
+jest.mock("../src/utils/filterPhoto", () => ({
+  filteredPhotoUri: jest.fn(async (uri: string, filter: string, edge: number) => (filter === "original" ? uri : `${uri}#${filter}@${edge}`)),
+  forgetFilteredPhoto: jest.fn(),
+}));
 jest.mock("../src/state/dmOutbox", () => ({
   discardMessage: jest.fn(), enqueueMessage: jest.fn(async () => undefined), flushOutbox: jest.fn(async () => undefined),
   loadOutbox: jest.fn(async () => undefined), onOutboxSent: () => () => undefined, pendingMessages: () => [],
@@ -18,6 +23,9 @@ jest.mock("../src/state/dmOutbox", () => ({
 }));
 jest.mock("../src/api/conversations", () => ({
   MAX_MESSAGE_LENGTH: 1000,
+  MESSAGE_REACTIONS: ["❤️", "😂", "😮", "😢", "😡", "👍"],
+  reactToMessage: jest.fn(async (_c: string, _m: string, emoji: string) => ({ reactions: [{ userId: "u-me", emoji }] })),
+  removeMessageReaction: jest.fn(async () => ({ reactions: [] })),
   newClientMessageId: () => `m_test_${Math.random().toString(36).slice(2, 12)}`,
   getConversation: jest.fn(),
   markConversationRead: jest.fn(async () => undefined),
@@ -88,8 +96,8 @@ test("screen readers hear who sent each message, can report the other person's, 
   expect(tree.root.findByType(TextInput).props.accessibilityLabel).toBe("Message");
   const theirs = bubble("@alice: hello");
   const mine = bubble("You: hi");
-  expect(mine.props.accessibilityActions).toBeUndefined();
-  expect(theirs.props.accessibilityActions).toEqual([{ name: "report", label: "Report message" }]);
+  expect(mine.props.accessibilityActions).toEqual([{ name: "react", label: "React" }]);
+  expect(theirs.props.accessibilityActions).toEqual([{ name: "react", label: "React" }, { name: "report", label: "Report message" }]);
 
   const sheet = () => tree.root.find((n: ReactTestInstance) => (n.type as unknown) === "ReportSheet");
   expect(sheet().props.visible).toBe(false);
@@ -235,4 +243,80 @@ test("a refused camera offers Settings (Android after 'don't ask again', iOS's '
   await pressLabel("Take a photo or video");
   expect(alert.mock.calls.at(-1)![0]).toBe("Allow camera access");
   delete (globalThis as unknown as { __picker: { camera?: unknown } }).__picker.camera;
+});
+
+test("long-press a message to react, like Instagram: the reaction shows under it, a tap on it takes it back", async () => {
+  const api = require("../src/api/conversations");
+  await render();
+  await act(async () => bubble("@alice: hello").props.onLongPress());
+  const { Modal } = require("react-native");
+  const picker = () => tree.root.findAllByType(Modal).find((m: ReactTestInstance) => m.findAll((n) => n.props.accessibilityLabel === "React ❤️").length > 0)!;
+  expect(picker().props.visible).toBe(true);
+  // The other person's message can also be reported from here.
+  expect(picker().findAll((n) => n.props.accessibilityLabel === "Report message" && typeof n.props.onPress === "function")).toHaveLength(1);
+  await pressLabel("React ❤️");
+  await settle();
+  expect(api.reactToMessage).toHaveBeenCalledWith("c1", "m2", "❤️", "token");
+  expect(tree.root.findAllByType(Modal).every((m: ReactTestInstance) => !m.props.visible)).toBe(true);
+  const pill = () => tree.root.findAll((n) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === "Reactions: ❤️ from you");
+  expect(pill()).toHaveLength(1);
+
+  await act(async () => pill()[0]!.props.onPress());
+  await settle();
+  expect(api.removeMessageReaction).toHaveBeenCalledWith("c1", "m2", "token");
+  expect(pill()).toHaveLength(0);
+
+  // Your own messages: react, but no Report.
+  await act(async () => bubble("You: hi").props.onLongPress());
+  expect(picker().findAll((n) => n.props.accessibilityLabel === "Report message")).toHaveLength(0);
+});
+
+test("the other person's reaction arrives live, and a failed reaction is put back", async () => {
+  const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+  const api = require("../src/api/conversations");
+  await render();
+  await act(async () => mockRealtime.handler!({ type: "reaction", conversationId: "c1", messageId: "m1", userId: "u-alice", emoji: "😂" }));
+  expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Reactions: 😂 from @alice" && typeof n.props.onPress === "function")).toHaveLength(1);
+  await act(async () => mockRealtime.handler!({ type: "reaction", conversationId: "c1", messageId: "m1", userId: "u-alice", emoji: null }));
+  expect(tree.root.findAll((n) => typeof n.props.accessibilityLabel === "string" && n.props.accessibilityLabel.startsWith("Reactions:"))).toHaveLength(0);
+
+  api.reactToMessage.mockRejectedValueOnce(new Error("offline"));
+  await act(async () => bubble("@alice: hello").props.onLongPress());
+  await pressLabel("React 👍");
+  await settle();
+  expect(tree.root.findAll((n) => typeof n.props.accessibilityLabel === "string" && n.props.accessibilityLabel.startsWith("Reactions:"))).toHaveLength(0);
+  expect(alert.mock.calls.at(-1)![0]).toBe("Couldn't react");
+});
+
+test("the DM camera shows what it took with the Story filters before sending; a photo goes with the filter baked in", async () => {
+  const sendMedia = require("../src/screens/dm/sendMedia");
+  const sent = jest.spyOn(sendMedia, "sendPendingMedia").mockImplementation(() => new Promise(() => undefined));
+  (Platform as { OS: string }).OS = "ios";
+  const picker = (globalThis as unknown as { __picker: { camera?: unknown } }).__picker;
+  picker.camera = { assets: [{ uri: "file:///cache/cam.jpg", type: "image/jpeg", width: 1000, height: 1500 }] };
+  await render();
+  await pressLabel("Take a photo or video");
+  expect(sent).not.toHaveBeenCalled();
+  await pressLabel("Warm filter");
+  await pressLabel("Send photo");
+  await settle();
+  expect(sent).toHaveBeenCalledTimes(1);
+  // The outbox keeps its own copy of the filtered photo, not of the one the camera took.
+  const fs = require("@dr.pogodin/react-native-fs");
+  expect(fs.copyFile.mock.calls.at(-1)![0]).toContain("cam.jpg#warm@2048");
+
+  // A video carries the filter's name for the server.
+  picker.camera = { assets: [{ uri: "file:///cache/cam.mp4", type: "video/mp4", width: 1080, height: 1920, fileSize: 1000 }] };
+  await pressLabel("Take a photo or video");
+  await pressLabel("Cool filter");
+  await pressLabel("Send video");
+  await settle();
+  expect(sent.mock.calls[1]![1]).toMatchObject({ mediaKind: "video", filter: "cool" });
+
+  // Discard sends nothing.
+  await pressLabel("Take a photo or video");
+  await pressLabel("Discard");
+  await settle();
+  expect(sent).toHaveBeenCalledTimes(2);
+  delete picker.camera;
 });

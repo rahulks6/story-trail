@@ -64,6 +64,8 @@ export interface MessageRow {
   storyReply: StoryReply | null;
   /** A photo or video sent in the message; null once that media has been purged. */
   media: MessageMedia | null;
+  /** Each participant's reaction (long-press, like Instagram), oldest first. */
+  reactions: MessageReaction[];
   createdAt: string;
   /** The sender's device id for the message; only ever shown to the sender (see conversations.service.ts). */
   clientMessageId?: string;
@@ -88,6 +90,17 @@ export interface StoryReply {
   kind: StoryReplyKind;
 }
 
+export interface MessageReaction {
+  userId: string;
+  emoji: string;
+}
+
+function parseReactions(raw: unknown): MessageReaction[] {
+  if (!raw) return [];
+  const list = (typeof raw === "string" ? JSON.parse(raw) : raw) as MessageReaction[];
+  return Array.isArray(list) ? list : [];
+}
+
 function mapMessageRow(row: Row): MessageRow {
   return {
     id: row.id as string,
@@ -97,6 +110,7 @@ function mapMessageRow(row: Row): MessageRow {
     sharedStoryId: (row.shared_story_id as string | null) ?? null,
     storyReply: row.reply_kind ? { storyId: (row.reply_story_id as string | null) ?? null, kind: row.reply_kind as StoryReplyKind } : null,
     media: parseMessageMedia(row.media_json),
+    reactions: parseReactions(row.reactions_json),
     createdAt: row.created_at as string,
     ...(row.client_message_id ? { clientMessageId: row.client_message_id as string } : {}),
   };
@@ -105,7 +119,9 @@ function mapMessageRow(row: Row): MessageRow {
 // The attached media's shape travels with the message, so a thread renders without a lookup per photo.
 const MESSAGE_COLUMNS = `id, conversation_id, sender_id, body, shared_story_id, created_at, client_message_id, reply_story_id, reply_kind, media_id,
   (SELECT json_build_object('id', md.id, 'kind', md.kind, 'width', md.width, 'height', md.height, 'durationMs', md.duration_ms)
-     FROM media md WHERE md.id = messages.media_id AND md.purged_at IS NULL) AS media_json`;
+     FROM media md WHERE md.id = messages.media_id AND md.purged_at IS NULL) AS media_json,
+  (SELECT coalesce(json_agg(json_build_object('userId', r.user_id, 'emoji', r.emoji) ORDER BY r.created_at), '[]')
+     FROM message_reactions r WHERE r.message_id = messages.id) AS reactions_json`;
 
 /**
  * Inserts a message, or — when `clientMessageId` was already used by this sender in
@@ -419,4 +435,41 @@ export async function reportMessage(input: {
     created: row?.created === "t",
     attached: Number(row?.attached ?? 0),
   };
+}
+
+/**
+ * Sets (or with null, removes) the reactor's reaction to a message in this conversation, and tells
+ * both participants in realtime. Adding one to the other person's message queues them a push.
+ * Returns the message's reactions, or null when the message isn't in this conversation.
+ */
+export async function setMessageReaction(conversationId: string, messageId: string, userId: string, otherId: string, emoji: string | null): Promise<MessageReaction[] | null> {
+  const row = await queryOne(
+    `WITH m AS (SELECT id, sender_id FROM messages WHERE id = :'message' AND conversation_id = :'conversation'),
+     removed AS (DELETE FROM message_reactions r USING m WHERE :'emoji' = '' AND r.message_id = m.id AND r.user_id = :'user' RETURNING r.message_id),
+     saved AS (
+       INSERT INTO message_reactions (message_id, user_id, emoji)
+       SELECT m.id, :'user', :'emoji' FROM m WHERE :'emoji' <> ''
+       ON CONFLICT (message_id, user_id) DO UPDATE SET emoji = EXCLUDED.emoji, created_at = now()
+       RETURNING message_id),
+     pushed AS (
+       INSERT INTO push_outbox (user_id, kind, actor_id, ref_id, body, link)
+       SELECT m.sender_id, 'message_reaction', :'user', :'conversation',
+              '@' || (SELECT username FROM users WHERE id = :'user') || ' reacted ' || :'emoji' || ' to your message',
+              'katkee://conversation/' || :'conversation'
+       FROM m, saved WHERE m.sender_id <> :'user'
+       RETURNING id),
+     notified AS (
+       SELECT pg_notify('realtime', json_build_object(
+         'u', json_build_array(:'user', :'other'),
+         'e', json_build_object('type', 'reaction', 'conversationId', :'conversation', 'messageId', m.id, 'userId', :'user', 'emoji', NULLIF(:'emoji', ''))
+       )::text) FROM m)
+     SELECT (SELECT count(*) FROM m) AS found, (SELECT count(*) FROM notified) AS sent`,
+    { conversation: conversationId, message: messageId, user: userId, other: otherId, emoji: emoji ?? "" },
+  );
+  if (!row || Number(row.found) === 0) return null;
+  const rows = await query(
+    `SELECT user_id, emoji FROM message_reactions WHERE message_id = :'message' ORDER BY created_at`,
+    { message: messageId },
+  );
+  return rows.map((r) => ({ userId: r.user_id as string, emoji: r.emoji as string }));
 }

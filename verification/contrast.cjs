@@ -64,6 +64,14 @@ test('red text on its own tints reaches 4.5:1, and the tints follow the palette 
  }
 });
 
+// The liked heart is an icon, not text: it needs 3:1 against what it sits on (WCAG 1.4.11).
+test('the like red reads as red on every surface, in both palettes',()=>{
+ for(const [name,p] of [['dark',palette],['light',light]]){
+  assert.match(p.like??'',/^#[0-9A-Fa-f]{6}$/,`${name} like`);
+  for(const bg of ['background','surface','surfaceElevated'])assert.ok(ratio(p.like,p[bg])>=3,`${name}: like on ${bg} ${ratio(p.like,p[bg]).toFixed(2)}:1`);
+ }
+});
+
 test('the formula matches known values',()=>{
  assert.equal(ratio('#FFFFFF','#000000').toFixed(1),'21.0');
  assert.equal(ratio('#777777','#FFFFFF').toFixed(2),'4.48');

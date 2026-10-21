@@ -41,17 +41,29 @@ import {
   subscribeOutbox,
   type OutboxMessage,
 } from "../../state/dmOutbox";
-import { getConversation, listMessages, markConversationRead, MAX_MESSAGE_LENGTH, type Message } from "../../api/conversations";
+import {
+  getConversation,
+  listMessages,
+  markConversationRead,
+  MAX_MESSAGE_LENGTH,
+  MESSAGE_REACTIONS,
+  reactToMessage,
+  removeMessageReaction,
+  type Message,
+  type MessageReaction,
+} from "../../api/conversations";
 import { ApiError } from "../../api/client";
 import { getStoryOwnerUsername } from "../../api/stories";
 import { ReportSheet } from "../../components/ReportSheet";
 import { KeyboardAvoider } from "../../components/KeyboardAvoider";
-import { applyReceipt, mergeMessages, newestId, oldestId } from "./threadState";
+import { applyReaction, applyReceipt, mergeMessages, newestId, oldestId } from "./threadState";
+import { tapFeedback } from "../../utils/haptics";
 import { launchCamera, launchImageLibrary, type Asset, type ImagePickerResponse } from "react-native-image-picker";
 import Video from "react-native-video";
 import { Avatar } from "../../components/Avatar";
 import { mediaFileUrl } from "../../api/stories";
 import { MAX_DM_VIDEO_BYTES, newPendingMedia, newVoiceNote } from "./sendMedia";
+import { CapturePreview, type Capture } from "./CapturePreview";
 import {
   discardMedia,
   enqueueMedia,
@@ -143,6 +155,8 @@ interface RowActions {
   onPendingPress: (row: OutboxMessage) => void;
   onPendingMediaPress: (row: MediaOutboxEntry) => void;
   onLongPress: (row: ListRow) => void;
+  /** A tap on the reactions under a message: takes yours back, or lets you add one. */
+  onReactionsPress: (row: Message) => void;
   onReport: (messageId: string) => void;
   onOpenStory: (storyId: string) => void;
   onView: (viewing: { id: string; kind: "photo" | "video" }) => void;
@@ -159,6 +173,32 @@ interface RowProps {
   playing: boolean;
   maxMediaSide: number;
   actions: RowActions;
+}
+
+/**
+ * The reactions under a message, like Instagram: each emoji once, with a count when more than
+ * one person chose it. Tapping takes your own reaction back (or opens the picker to add one).
+ */
+function ReactionPills({ reactions, userId, otherUsername, mine, onPress }: { reactions: MessageReaction[] | undefined; userId: string | undefined; otherUsername: string | undefined; mine: boolean; onPress: () => void }): React.JSX.Element | null {
+  if (!reactions?.length) return null;
+  const counts = new Map<string, number>();
+  for (const r of reactions) counts.set(r.emoji, (counts.get(r.emoji) ?? 0) + 1);
+  const ownReaction = reactions.find((r) => r.userId === userId);
+  const spoken = reactions.map((r) => `${r.emoji} from ${r.userId === userId ? "you" : otherUsername ? `@${otherUsername}` : "them"}`).join(", ");
+  return (
+    <Pressable
+      onPress={onPress}
+      hitSlop={6}
+      style={({ pressed }) => [styles.reactionPill, mine ? styles.reactionPillMine : styles.reactionPillTheirs, pressed && styles.reactionPillPressed]}
+      accessibilityRole="button"
+      accessibilityLabel={`Reactions: ${spoken}`}
+      accessibilityHint={ownReaction ? "Removes your reaction" : "Add a reaction"}
+    >
+      {[...counts].map(([emoji, count]) => (
+        <Text key={emoji} style={styles.reactionPillText}>{count > 1 ? `${emoji} ${count}` : emoji}</Text>
+      ))}
+    </Pressable>
+  );
 }
 
 /** One message in the thread. Memoized: typing, recording or a poll that changed nothing doesn't re-render it. */
@@ -186,6 +226,7 @@ const MessageRow = memo(function MessageRow({ row, userId, otherUsername, access
               label={who}
               onLongPress={() => (row.kind === "media" ? actions.onPendingMediaPress(row) : actions.onLongPress(row))}
             />
+            {row.kind === "sent" ? <ReactionPills reactions={row.reactions} userId={userId} otherUsername={otherUsername} mine={mineMedia} onPress={() => actions.onReactionsPress(row)} /> : null}
             {showStatus || failedMedia ? <Text style={styles.statusCaption}>{statusLabel(row)}</Text> : null}
           </View>
         </View>
@@ -226,6 +267,7 @@ const MessageRow = memo(function MessageRow({ row, userId, otherUsername, access
               <Text style={mineMedia ? styles.bubbleTextMine : styles.bubbleTextTheirs}>{row.body}</Text>
             </View>
           ) : null}
+          {row.kind === "sent" ? <ReactionPills reactions={row.reactions} userId={userId} otherUsername={otherUsername} mine={mineMedia} onPress={() => actions.onReactionsPress(row)} /> : null}
           {showStatus || failedMedia ? <Text style={styles.statusCaption}>{statusLabel(row)}</Text> : null}
         </View>
       </View>
@@ -262,9 +304,11 @@ const MessageRow = memo(function MessageRow({ row, userId, otherUsername, access
             row.kind === "pending" && row.status !== "sending" ? "Retry or delete this message"
               : openableStory ? "Opens the Story" : undefined
           }
-          accessibilityActions={canReport ? [{ name: "report", label: "Report message" }] : undefined}
+          accessibilityActions={row.kind === "sent" ? [{ name: "react", label: "React" }, ...(canReport ? [{ name: "report", label: "Report message" }] : [])] : undefined}
           onAccessibilityAction={(event) => {
-            if (event.nativeEvent.actionName === "report" && row.kind === "sent" && canReport) actions.onReport(row.id);
+            if (row.kind !== "sent") return;
+            if (event.nativeEvent.actionName === "react") actions.onLongPress(row);
+            else if (event.nativeEvent.actionName === "report" && canReport) actions.onReport(row.id);
           }}
         >
           {row.kind === "sent" && row.sharedStoryId ? (
@@ -278,6 +322,7 @@ const MessageRow = memo(function MessageRow({ row, userId, otherUsername, access
             <Text style={[mine ? styles.bubbleTextMine : styles.bubbleTextTheirs, reply?.kind === "reaction" && styles.reactionGlyph]}>{row.body}</Text>
           ) : null}
         </Pressable>
+        {row.kind === "sent" ? <ReactionPills reactions={row.reactions} userId={userId} otherUsername={otherUsername} mine={mine} onPress={() => actions.onReactionsPress(row)} /> : null}
         {showStatus ? <Text style={styles.statusCaption}>{statusLabel(row)}</Text> : null}
       </View>
     </View>
@@ -475,6 +520,10 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [outbox, setOutbox] = useState<OutboxMessage[]>([]);
   const [reportingMessageId, setReportingMessageId] = useState<string | null>(null);
+  /** The message whose reaction picker is open (long-press a message). */
+  const [reactingTo, setReactingTo] = useState<Message | null>(null);
+  /** A photo or video the DM camera just took, waiting for a filter and Send. */
+  const [capture, setCapture] = useState<Capture | null>(null);
   const [pendingMedia, setPendingMedia] = useState<MediaOutboxEntry[]>([]);
   const [viewing, setViewing] = useState<{ id?: string; uri?: string; kind: "photo" | "video" } | null>(null);
   // Which voice note is playing (one at a time).
@@ -630,6 +679,8 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       void catchUp();
     } else if (event.type === "receipt" && event.conversationId === conversationId && userId && event.userId !== userId) {
       setMessages((current) => (current ? applyReceipt(current, userId, event) : current));
+    } else if (event.type === "reaction" && event.conversationId === conversationId) {
+      setMessages((current) => (current ? applyReaction(current, event.messageId, event.userId, event.emoji) : current));
     }
   });
 
@@ -697,8 +748,17 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     if (result.errorCode === "permission") accessRefused(source);
     else if (result.errorCode === "camera_unavailable") Alert.alert("No camera", "There's no camera available. Choose from your gallery instead.");
     else if (result.errorCode) Alert.alert(source === "camera" ? "Camera unavailable" : "Gallery unavailable", result.errorMessage ?? "Try again.");
-    else onPickedAssets(result.assets);
+    else if (source === "camera" && result.assets?.length === 1 && result.assets[0]!.uri) {
+      const asset = result.assets[0]!;
+      if (asset.type?.startsWith("video/") && (asset.fileSize ?? 0) > MAX_DM_VIDEO_BYTES) Alert.alert("Video too large", "Record a shorter video.");
+      else setCapture({ uri: asset.uri!, type: asset.type, width: asset.width, height: asset.height });
+    } else onPickedAssets(result.assets);
   }, [onPickedAssets]);
+  const onSendCapture = useCallback((taken: Capture, filter: string | undefined) => {
+    setCapture(null);
+    sendMedia(newPendingMedia(taken, filter));
+  }, [sendMedia]);
+  const onCancelCapture = useCallback(() => setCapture(null), []);
   const onPickFromGallery = useCallback(async () => {
     const result = await launchImageLibrary({ mediaType: "mixed", selectionLimit: 10, maxWidth: 2048, maxHeight: 2048, quality: 0.8, videoQuality: "medium", assetRepresentationMode: "compatible" });
     onPicked(result, "photos");
@@ -728,9 +788,26 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     }
   };
 
+  /** Shown at once; put back (with a note) if the server didn't take it. */
+  const setReaction = async (messageId: string, emoji: string | null) => {
+    const token = tokenRef.current;
+    if (!token || !userId) return;
+    const before = messagesRef.current?.find((m) => m.id === messageId)?.reactions?.find((r) => r.userId === userId)?.emoji ?? null;
+    if (before === emoji) return;
+    tapFeedback("select");
+    setMessages((current) => (current ? applyReaction(current, messageId, userId, emoji) : current));
+    try {
+      const { reactions } = emoji ? await reactToMessage(conversationId, messageId, emoji, token) : await removeMessageReaction(conversationId, messageId, token);
+      setMessages((current) => current?.map((m) => (m.id === messageId && JSON.stringify(m.reactions ?? []) !== JSON.stringify(reactions) ? { ...m, reactions } : m)) ?? current);
+    } catch (error) {
+      setMessages((current) => (current ? applyReaction(current, messageId, userId, before) : current));
+      Alert.alert("Couldn't react", error instanceof ApiError && error.status !== 404 ? error.message : "Check your connection and try again.");
+    }
+  };
+
   // The rows' handlers never change identity; they act on the screen's latest state.
-  const latest = useRef({ userId, getToken, onOpenSharedStory });
-  latest.current = { userId, getToken, onOpenSharedStory };
+  const latest = useRef({ userId, getToken, onOpenSharedStory, setReaction });
+  latest.current = { userId, getToken, onOpenSharedStory, setReaction };
   const actions = useMemo((): RowActions => ({
     onPendingMediaPress: (row) => {
       const owner = latest.current.userId;
@@ -750,14 +827,17 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         { text: "Cancel", style: "cancel" },
       ]);
     },
-    // Long-press a message the other person sent to report it (DM safety workflow). Screen
-    // reader users get the same choice as an action on the message.
+    // Long-press any stored message to react to it (and, on the other person's, to report it:
+    // the DM safety workflow). Screen reader users get the same choices as actions on the message.
     onLongPress: (row) => {
-      if (row.kind !== "sent" || row.senderId === latest.current.userId) return;
-      Alert.alert("Message", undefined, [
-        { text: "Report", style: "destructive", onPress: () => setReportingMessageId(row.id) },
-        { text: "Cancel", style: "cancel" },
-      ]);
+      if (row.kind !== "sent") return;
+      tapFeedback("tap");
+      setReactingTo(row);
+    },
+    onReactionsPress: (row) => {
+      const mineReaction = row.reactions?.find((r) => r.userId === latest.current.userId);
+      if (mineReaction) void latest.current.setReaction(row.id, null);
+      else setReactingTo(row);
     },
     onReport: (messageId) => setReportingMessageId(messageId),
     onOpenStory: (storyId) => void latest.current.onOpenSharedStory(storyId),
@@ -863,6 +943,48 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           </Pressable>
         </View>
       </Modal>
+      <Modal visible={reactingTo !== null} transparent animationType="fade" statusBarTranslucent onRequestClose={() => setReactingTo(null)}>
+        <Pressable style={styles.reactBackdrop} onPress={() => setReactingTo(null)} accessibilityRole="button" accessibilityLabel="Close">
+          <View style={styles.reactCard}>
+            <View style={styles.reactBar} accessibilityRole="menu">
+              {MESSAGE_REACTIONS.map((emoji) => {
+                const chosen = reactingTo?.reactions?.some((r) => r.userId === userId && r.emoji === emoji) ?? false;
+                return (
+                  <Pressable
+                    key={emoji}
+                    onPress={() => {
+                      const target = reactingTo;
+                      setReactingTo(null);
+                      if (target) void setReaction(target.id, chosen ? null : emoji);
+                    }}
+                    style={({ pressed }) => [styles.reactKey, chosen && styles.reactKeyChosen, pressed && styles.reactKeyPressed]}
+                    accessibilityRole="menuitem"
+                    accessibilityState={{ selected: chosen }}
+                    accessibilityLabel={chosen ? `Remove ${emoji}` : `React ${emoji}`}
+                  >
+                    <Text style={styles.reactGlyph}>{emoji}</Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+            {reactingTo && reactingTo.senderId !== userId ? (
+              <Pressable
+                style={styles.reactReport}
+                onPress={() => {
+                  const id = reactingTo.id;
+                  setReactingTo(null);
+                  setReportingMessageId(id);
+                }}
+                accessibilityRole="button"
+                accessibilityLabel="Report message"
+              >
+                <Text style={styles.reactReportText}>Report</Text>
+              </Pressable>
+            ) : null}
+          </View>
+        </Pressable>
+      </Modal>
+      <CapturePreview capture={capture} onCancel={onCancelCapture} onSend={onSendCapture} />
       <ReportSheet
         visible={reportingMessageId !== null}
         targetType="message"
@@ -902,6 +1024,20 @@ const styles = StyleSheet.create({
   attachButton: { width: 32, height: 36, alignItems: "center", justifyContent: "center", marginBottom: 3 },
   viewer: { flex: 1, backgroundColor: "#000000" },
   viewerClose: { position: "absolute", left: spacing.md, width: 44, height: 44, borderRadius: 22, backgroundColor: "rgba(0,0,0,0.5)", alignItems: "center", justifyContent: "center" },
+  reactionPill: { flexDirection: "row", alignItems: "center", gap: 2, marginTop: -6, paddingHorizontal: 6, paddingVertical: 1, borderRadius: radii.pill, backgroundColor: colors.surfaceElevated, borderWidth: 2, borderColor: colors.background },
+  reactionPillMine: { marginRight: spacing.sm },
+  reactionPillTheirs: { marginLeft: spacing.sm },
+  reactionPillPressed: { opacity: 0.7 },
+  reactionPillText: { fontSize: 13, color: colors.textPrimary },
+  reactBackdrop: { flex: 1, backgroundColor: "rgba(0,0,0,0.45)", alignItems: "center", justifyContent: "center", padding: spacing.lg },
+  reactCard: { alignItems: "center", gap: spacing.sm },
+  reactBar: { flexDirection: "row", gap: spacing.xs, padding: spacing.xs, borderRadius: radii.pill, backgroundColor: colors.surfaceElevated },
+  reactKey: { width: 48, height: 48, borderRadius: 24, alignItems: "center", justifyContent: "center" },
+  reactKeyChosen: { backgroundColor: colors.border },
+  reactKeyPressed: { transform: [{ scale: 1.2 }] },
+  reactGlyph: { fontSize: 28 },
+  reactReport: { flexDirection: "row", alignItems: "center", gap: spacing.xs, minHeight: 44, paddingHorizontal: spacing.lg, borderRadius: radii.pill, backgroundColor: colors.surfaceElevated },
+  reactReportText: { color: colors.danger, fontSize: 15, fontWeight: "600" },
   replyLabel: { fontSize: 12, opacity: 0.75, marginBottom: 2 },
   reactionGlyph: { fontSize: 34, lineHeight: 42 },
   container: { flex: 1, backgroundColor: colors.background },

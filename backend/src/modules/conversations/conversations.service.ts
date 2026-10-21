@@ -125,6 +125,23 @@ export async function sendMessage(viewerId: string, conversationId: string, inpu
   return result.created ? result : replayed(result.message, input);
 }
 
+/** Reactions on a message (long-press it); migration 0052 allows exactly these. */
+export const MESSAGE_REACTIONS = ["❤️", "😂", "😮", "😢", "😡", "👍"] as const;
+
+/** Reacts to a message in one of the viewer's conversations (null removes the reaction). */
+export async function reactToMessage(viewerId: string, conversationId: string, messageId: string, emoji: string | null): Promise<conversationsRepo.MessageReaction[]> {
+  const conversation = await requireParticipant(conversationId, viewerId);
+  const otherId = otherParticipant(conversation, viewerId);
+  if (!UUID_RE.test(messageId)) throw new HttpError(404, "Message not found.");
+  if (emoji !== null && !(MESSAGE_REACTIONS as readonly string[]).includes(emoji)) {
+    throw new HttpError(422, "Choose one of the reactions.", { emoji: `One of ${MESSAGE_REACTIONS.join(" ")}` });
+  }
+  if (emoji !== null) await assertNotBlocked(viewerId, otherId);
+  const reactions = await conversationsRepo.setMessageReaction(conversationId, messageId, viewerId, otherId, emoji);
+  if (!reactions) throw new HttpError(404, "Message not found.");
+  return reactions;
+}
+
 /** The quick reactions a viewer can send to a Story with one tap. */
 export const STORY_REACTIONS = ["😂", "😮", "😍", "😢", "👏", "🔥", "🎉", "💯"] as const;
 

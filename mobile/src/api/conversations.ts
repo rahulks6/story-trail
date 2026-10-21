@@ -1,4 +1,4 @@
-import { apiGet, apiPost } from "./client";
+import { apiDelete, apiGet, apiPost, apiPut } from "./client";
 
 /**
  * Mirrors backend/src/modules/conversations/conversations.repository.ts —
@@ -43,6 +43,26 @@ export interface Message {
   status?: MessageDeliveryStatus;
   /** The id this device chose when sending (own messages only): matches an outbox entry to its stored message. */
   clientMessageId?: string;
+  /** Who reacted, and with what: at most one reaction per person. */
+  reactions?: MessageReaction[];
+}
+
+export interface MessageReaction {
+  userId: string;
+  emoji: string;
+}
+
+/** The reactions a message can get (long-press a message), same as the server's list. */
+export const MESSAGE_REACTIONS = ["❤️", "😂", "😮", "😢", "😡", "👍"] as const;
+
+/** Reacts to a message, replacing your earlier reaction to it; returns its reactions. */
+export function reactToMessage(conversationId: string, messageId: string, emoji: string, accessToken: string): Promise<{ reactions: MessageReaction[] }> {
+  return apiPut(`/api/v1/conversations/${conversationId}/messages/${messageId}/reaction`, { emoji }, accessToken);
+}
+
+/** Takes back your reaction to a message; returns its reactions. */
+export function removeMessageReaction(conversationId: string, messageId: string, accessToken: string): Promise<{ reactions: MessageReaction[] }> {
+  return apiDelete(`/api/v1/conversations/${conversationId}/messages/${messageId}/reaction`, accessToken);
 }
 
 export interface ConversationWithOtherUser {

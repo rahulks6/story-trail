@@ -59,6 +59,20 @@ export function applyReceipt(
   return changed ? next : (messages as Message[]);
 }
 
+/** One person's reaction to a message (null: taken back), replacing any earlier one of theirs. */
+export function applyReaction(messages: readonly Message[], messageId: string, userId: string, emoji: string | null): Message[] {
+  let changed = false;
+  const next = messages.map((m) => {
+    if (m.id !== messageId) return m;
+    const others = (m.reactions ?? []).filter((r) => r.userId !== userId);
+    const reactions = emoji ? [...others, { userId, emoji }] : others;
+    if (JSON.stringify(reactions) === JSON.stringify(m.reactions ?? [])) return m;
+    changed = true;
+    return { ...m, reactions };
+  });
+  return changed ? next : (messages as Message[]);
+}
+
 /** The newest message the thread has (the `after` cursor for catching up). */
 export function newestId(messages: readonly Message[]): string | null {
   return messages[0]?.id ?? null;

@@ -1088,7 +1088,7 @@ const styles = StyleSheet.create({
   endButton: { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, minHeight: 44, justifyContent: "center", borderRadius: 22, borderWidth: 1, borderColor: colors.textPrimary },
   endButtonLabel: { ...typography.body, fontWeight: "700" },
   heartBurst: { ...StyleSheet.absoluteFill, alignItems: "center", justifyContent: "center" },
-  heartBurstIcon: { fontSize: 96, color: colors.textPrimary },
+  heartBurstIcon: { fontSize: 96, color: colors.like },
   progressRow: {
     position: "absolute",
     top: spacing.xl,
@@ -1129,7 +1129,7 @@ const styles = StyleSheet.create({
   },
   actionButton: { alignItems: "center", gap: 3, minWidth: 44 },
   actionIcon: { color: colors.textPrimary, fontSize: 32 },
-  actionIconLiked: { color: colors.accent },
+  actionIconLiked: { color: colors.like },
   // Readable over any photo.
   actionCount: { color: colors.textPrimary, fontSize: 14, fontWeight: "700", textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 3, textShadowOffset: { width: 0, height: 1 } },
   replyButton: { width: BOTTOM_BAR_HEIGHT, height: BOTTOM_BAR_HEIGHT, marginLeft: spacing.sm, alignItems: "center", justifyContent: "center" },

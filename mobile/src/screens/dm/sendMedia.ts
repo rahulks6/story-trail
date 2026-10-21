@@ -30,6 +30,8 @@ export interface PendingMedia {
   error?: string;
   /** Set once the server has the file: a retry only waits for it and sends, never uploads again. */
   mediaId?: string;
+  /** A video's filter (chosen in the DM camera), applied by the server while it processes it. */
+  filter?: string;
 }
 
 /**
@@ -41,7 +43,7 @@ export const MAX_DM_VIDEO_BYTES = 100 * 1024 * 1024;
 const READY_TIMEOUT_MS = 10 * 60_000;
 const PART_ATTEMPTS = 3;
 
-export function newPendingMedia(asset: { uri: string; type?: string; width?: number; height?: number }): PendingMedia {
+export function newPendingMedia(asset: { uri: string; type?: string | undefined; width?: number | undefined; height?: number | undefined }, filter?: string): PendingMedia {
   const kind = asset.type?.startsWith("video/") ? "video" : "photo";
   return {
     clientMessageId: newClientMessageId(),
@@ -51,6 +53,7 @@ export function newPendingMedia(asset: { uri: string; type?: string; width?: num
     width: asset.width ?? null,
     height: asset.height ?? null,
     status: "sending",
+    ...(filter && kind === "video" ? { filter } : {}),
   };
 }
 
@@ -71,7 +74,7 @@ async function uploadVideoResumable(item: PendingMedia, token: () => string): Pr
   const path = localPath(item.uri);
   const size = Number((await RNFS.stat(path)).size);
   if (!size) throw new Error("The selected file is empty.");
-  let session: UploadSessionResponse = await createUploadSession({ clientUploadId: item.clientMessageId, kind: "video", mimeType: item.mimeType, byteSize: size }, token());
+  let session: UploadSessionResponse = await createUploadSession({ clientUploadId: item.clientMessageId, kind: "video", mimeType: item.mimeType, byteSize: size, ...(item.filter ? { filter: item.filter } : {}) }, token());
   for (let round = 0; session.upload; round++) {
     if (round >= 4) throw new Error("Upload could not be completed. Try again.");
     const plan = session.upload;

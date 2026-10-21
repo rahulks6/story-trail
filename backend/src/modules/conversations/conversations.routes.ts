@@ -65,6 +65,21 @@ export function registerConversationsRoutes(router: Router): void {
   });
 
   // The reporter chooses to share the reported message and the nine before it with moderators.
+  // Long-press a message to react; the same request with another emoji changes it.
+  router.put("/api/v1/conversations/:id/messages/:messageId/reaction", async (req, res) => {
+    requireAuth(req);
+    const emoji = (req.body as { emoji?: unknown } | undefined)?.emoji;
+    if (typeof emoji !== "string") throw new HttpError(422, "Choose one of the reactions.");
+    const reactions = await conversationsService.reactToMessage(req.userId as string, req.params.id as string, req.params.messageId as string, emoji);
+    sendJson(res, 200, { reactions });
+  });
+
+  router.delete("/api/v1/conversations/:id/messages/:messageId/reaction", async (req, res) => {
+    requireAuth(req);
+    const reactions = await conversationsService.reactToMessage(req.userId as string, req.params.id as string, req.params.messageId as string, null);
+    sendJson(res, 200, { reactions });
+  });
+
   router.post("/api/v1/conversations/:id/report", async (req, res) => {
     requireAuth(req);
     reportLimiter.check(req.userId as string);

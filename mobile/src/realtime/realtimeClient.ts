@@ -20,6 +20,8 @@ export type RealtimeEvent =
   | { type: "message"; conversationId: string; messageId: string; senderId: string; createdAt: string }
   | { type: "receipt"; conversationId: string; userId: string; lastReadAt: string; lastDeliveredAt: string }
   | { type: "notification"; id: string; kind: string }
+  /** Someone in the conversation reacted to a message (emoji null: took their reaction back). */
+  | { type: "reaction"; conversationId: string; messageId: string; userId: string; emoji: string | null }
   /** Local: emitted on every (re)connect, and when the server says events may have been missed. */
   | { type: "resync" };
 
@@ -234,6 +236,7 @@ export class RealtimeClient {
       case "message":
       case "receipt":
       case "notification":
+      case "reaction":
         this.options.onEvent(event as RealtimeEvent);
         return;
       default:

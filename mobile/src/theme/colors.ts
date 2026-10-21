@@ -21,6 +21,7 @@ export const darkPalette = {
   // fills does too (verification/contrast.cjs). Story text/drawing colours are content and keep their red.
   danger: "#ED5246",
   success: "#3FBF7F",
+  like: "#FF3040", // a liked heart: red, as people expect from a like
 
   overlayScrimStart: "rgba(0,0,0,0)",
   overlayScrimEnd: "rgba(0,0,0,0.65)",
@@ -42,6 +43,7 @@ export const lightPalette: Palette = {
 
   danger: "#C5221F",
   success: "#137333",
+  like: "#E0245E", // a deeper red that holds up on white
 
   overlayScrimStart: "rgba(0,0,0,0)",
   overlayScrimEnd: "rgba(0,0,0,0.65)",
