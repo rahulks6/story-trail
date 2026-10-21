@@ -22,7 +22,7 @@ const CONTENT=[
  ['api/conversations.ts',/export const STORY_REACTIONS = \[/],
  ['screens/auth/ProviderEntry.tsx',/\$\{country\} •••• \$\{phone/],
  // The posting streak is text people read ("🔥 5-day streak"), like the "Say hi 👋" lines.
- ['screens/profile/ProfileScreen.tsx',/<Text style=\{styles\.streakLabel\}>🔥 \{streak\.days\}-day streak<\/Text>/],
+ ['components/profile/StreakBadge.tsx',/<Text style=\{styles\.label\}>🔥 \{streak\.days\}-day streak<\/Text>/],
 ];
 
 function glyphLines(files){

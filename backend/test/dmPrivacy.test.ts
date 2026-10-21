@@ -43,7 +43,7 @@ const ADMIN_GETS = [
   "/api/v1/admin/history", "/api/v1/admin/appeals", "/api/v1/admin/audit", "/api/v1/admin/audit/verify",
   "/api/v1/admin/security-alerts", "/api/v1/admin/admins", "/api/v1/admin/advertisers", "/api/v1/admin/campaigns",
   "/api/v1/admin/ad-interest-categories", "/api/v1/admin/campaigns/:campaignId/analytics", "/api/v1/admin/campaigns/:campaignId/preview", "/api/v1/admin/ad-settings",
-  "/api/v1/admin/media/:mediaId", "/api/v1/admin/safety/blocked-domains", "/api/v1/admin/analytics", "/api/v1/moderation/reports", "/api/v1/ads/placements", "/api/v1/ads/deliveries/:deliveryId",
+  "/api/v1/admin/media/:mediaId", "/api/v1/admin/safety/blocked-domains", "/api/v1/admin/festivals", "/api/v1/admin/analytics", "/api/v1/moderation/reports", "/api/v1/ads/placements", "/api/v1/ads/deliveries/:deliveryId",
   "/api/v1/ads/deliveries/:deliveryId/media",
 ];
 

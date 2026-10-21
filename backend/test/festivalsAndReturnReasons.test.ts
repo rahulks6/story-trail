@@ -197,6 +197,19 @@ describe("reasons to come back", () => {
     assert.deepEqual((await client.get("/api/v1/stories/streak", authHeader(u.token))).body.streak, { days: 4, postedToday: true });
   });
 
+  it("others see your streak on your profile, unless your account is private and they don't follow you", async () => {
+    const poster = await signup();
+    const viewer = await signup();
+    const story = await publish(poster);
+    await query(`UPDATE stories SET created_at = now() - interval '1 day' WHERE id = :'id'`, { id: story });
+    await publish(poster);
+    const seen = await client.get(`/api/v1/users/${poster.username}`, authHeader(viewer.token));
+    assert.deepEqual(seen.body.profile.streak, { days: 2, postedToday: true });
+    await client.patch("/api/v1/users/me", { isPrivate: true }, authHeader(poster.token));
+    assert.equal((await client.get(`/api/v1/users/${poster.username}`, authHeader(viewer.token))).body.profile.streak, null);
+    assert.deepEqual((await client.get(`/api/v1/users/${poster.username}`, authHeader(poster.token))).body.profile.streak, { days: 2, postedToday: true }, "always to yourself");
+  });
+
   it("nudges after a few quiet days, at most weekly", async () => {
     const quiet = await signup();
     const active = await signup();

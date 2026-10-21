@@ -144,9 +144,14 @@ const pressByLabel = (label: string) => tree.root.find((n) => typeof n.props.onP
 
 test("on a festival day, Home shows its Stories from everyone, top left", async () => {
   mockNavigation.navigate.mockClear();
+  stories.getRankedHomeFeed.mockResolvedValueOnce({ feed: [feedEntry("asha")], nextCursor: null } as never);
   festivals.getCurrentFestival.mockResolvedValueOnce({ festival: diwali, next: null, creators: ["asha", "dev"], storyCount: 5 });
   await act(async () => { tree = create(<HomeScreen />); });
   await flush();
+  // While Stories play, it sits below the Story's name and avatar, not on them.
+  const { StyleSheet } = jest.requireActual("react-native");
+  const top = (label: string) => StyleSheet.flatten(tree.root.find((n) => n.props.accessibilityLabel === label && n.props.style).props.style).top;
+  expect(top("Diwali Stories, 5")).toBeGreaterThan(40);
   await act(async () => pressByLabel("Diwali Stories, 5").props.onPress());
   expect(mockNavigation.navigate).toHaveBeenCalledWith("StoryViewer", { creators: ["asha", "dev"], startIndex: 0 });
   await act(async () => tree.unmount());

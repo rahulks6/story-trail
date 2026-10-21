@@ -20,6 +20,8 @@ import {useFestival} from '../../hooks/useFestival';
 import type {MainTabParamList,RootStackParamList} from '../../navigation/types';
 /** Away from Home (another tab, a screen on top, the app in the background) this long: the feed is reloaded on return. */
 export const HOME_STALE_MS=3*60*1000;
+/** While Stories play, the festival pill sits just under the Story's name and avatar instead of on them. */
+const FESTIVAL_BELOW_HEADER=46;
 type HomeNavigationProp=CompositeNavigationProp<BottomTabNavigationProp<MainTabParamList,'Home'>,NativeStackNavigationProp<RootStackParamList>>;
 export function HomeScreen():React.JSX.Element {
   useMediaStatusBar();
@@ -30,13 +32,13 @@ export function HomeScreen():React.JSX.Element {
   <Icon name={ICONS.activity} size={26} color={colors.textPrimary}/>{unreadCount>0?<View style={styles.activityDot}/>:null}
  </Pressable>;
  const uploads=<UploadStatusPill top={insets.top+spacing.xl+spacing.sm}/>;
+ const [feed,setFeed]=useState<RankedFeedEntry[]|null>(null),[retry,setRetry]=useState(0),[error,setError]=useState(''),[cursor,setCursor]=useState<string|null>(null),[sponsored,setSponsored]=useState<SponsoredPlacement[]>([]);
  // On a festival day: its Stories from everyone (top left, opposite Activity), or an invitation to post one.
  const {current:festivalInfo,reload:reloadFestival}=useFestival();const festival=festivalInfo?.festival??null;const festivalCreators=festivalInfo?.creators??[];
  const openFestival=useCallback(()=>{if(festivalCreators.length)navigation.navigate('StoryViewer',{creators:festivalCreators,startIndex:0});else navigation.navigate('Create');},[festivalCreators,navigation]);
- const festivalButton=festival?<Pressable onPress={openFestival} hitSlop={8} style={[styles.festival,{top:insets.top+spacing.lg}]} accessibilityRole="button" accessibilityLabel={festivalCreators.length?`${festival.name} Stories, ${festivalInfo?.storyCount??0}`:`Post your ${festival.name} Story`}>
+ const festivalButton=festival?<Pressable onPress={openFestival} hitSlop={8} style={[styles.festival,{top:insets.top+spacing.lg+(feed&&feed.length?FESTIVAL_BELOW_HEADER:0)}]} accessibilityRole="button" accessibilityLabel={festivalCreators.length?`${festival.name} Stories, ${festivalInfo?.storyCount??0}`:`Post your ${festival.name} Story`}>
   <Text style={styles.festivalEmoji}>{festival.emoji}</Text><Text style={styles.festivalLabel} numberOfLines={1}>{festival.name}</Text>{festivalCreators.length?<View style={styles.festivalCount}><Text style={styles.festivalCountLabel}>{festivalInfo!.storyCount>99?'99+':festivalInfo!.storyCount}</Text></View>:null}
  </Pressable>:null;
- const [feed,setFeed]=useState<RankedFeedEntry[]|null>(null),[retry,setRetry]=useState(0),[error,setError]=useState(''),[cursor,setCursor]=useState<string|null>(null),[sponsored,setSponsored]=useState<SponsoredPlacement[]>([]);
  const token=useRef(accessToken);token.current=accessToken;const request=useRef(0),loadingMore=useRef(false);
  useEffect(()=>onStoryPublished(()=>{setRetry(n=>n+1);reloadFestival();}),[reloadFestival]);
  // Your own Story's name and photo come from the feed: reload after an Edit Profile save.

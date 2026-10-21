@@ -1,3 +1,4 @@
+import { postingStreak } from "../reminders/return-reasons";
 import { USERNAME_MESSAGES, usernameProblem } from "./username-policy";
 import { ValidationError } from "../auth/dto";
 import { assertLinksAllowed } from "../safety/links";
@@ -21,6 +22,11 @@ export interface ProfileView {
   isPrivate: boolean;
   isSelf: boolean;
   followerCount: number;
+  /**
+   * Consecutive days with a Story (India time): shown to anyone who can see this person's Stories,
+   * so never for a private account you don't follow. Null when hidden; 0 when there's no streak.
+   */
+  streak: { days: number; postedToday: boolean } | null;
   followingCount: number;
   /** Stories posted so far (not deleted, expired included). Shown to everyone, like the follower count. */
   storyCount: number;
@@ -54,11 +60,13 @@ async function profileView(target: usersRepo.UserRecord | null, viewerId: string
     await eventsRepo.insertEvent({ viewerId, eventType: "profile_visit", creatorId: target.id });
   }
 
-  const [relationship, counts, storyCount] = await Promise.all([
+  const [relationship, counts, storyCount, streak] = await Promise.all([
     socialRepo.getRelationship(viewerId, target.id),
     socialRepo.followCounts(target.id),
     storiesRepo.countStoriesForOwner(target.id),
+    postingStreak(target.id),
   ]);
+  const seesStories = target.id === viewerId || !target.isPrivate || relationship.isFollowing;
 
   return {
     id: target.id,
@@ -70,6 +78,7 @@ async function profileView(target: usersRepo.UserRecord | null, viewerId: string
     isPrivate: target.isPrivate,
     isSelf: target.id === viewerId,
     followerCount: counts.followers,
+    streak: seesStories ? streak : null,
     followingCount: counts.following,
     storyCount,
     viewer: {

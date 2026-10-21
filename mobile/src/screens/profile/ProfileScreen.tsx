@@ -10,6 +10,7 @@ import { getMyActiveStories } from "../../api/stories";
 import { HighlightsRow } from "../../components/HighlightsRow";
 import { ProfileHeader, ProfileSkeleton } from "../../components/profile/ProfileHeader";
 import { getPostingStreak, type PostingStreak } from "../../api/festivals";
+import { StreakBadge } from "../../components/profile/StreakBadge";
 import { profileButton } from "../../components/profile/profileButton";
 import { profileShareLink } from "../../navigation/profileLinks";
 import type { RootStackParamList } from "../../navigation/types";
@@ -152,12 +153,7 @@ export function ProfileScreen(): React.JSX.Element {
             },
           ]}
         >
-          {streak && streak.days > 0 ? (
-            <View style={styles.streak} accessibilityLabel={`${streak.days}-day posting streak${streak.postedToday ? "" : ". Post today to keep it"}`}>
-              <Text style={styles.streakLabel}>🔥 {streak.days}-day streak</Text>
-              {!streak.postedToday ? <Text style={styles.streakHint}>Post today to keep it</Text> : null}
-            </View>
-          ) : null}
+          <StreakBadge streak={streak} own />
           <View style={styles.actions}>
             {profileButton({ label: "Edit profile", onPress: () => navigation.navigate("EditProfile") })}
             {profileButton({ label: "Share profile", onPress: () => void onShareProfile() })}
@@ -193,9 +189,6 @@ export function ProfileScreen(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  streak: { flexDirection: "row", alignItems: "center", gap: spacing.sm, alignSelf: "flex-start", marginTop: spacing.sm, paddingHorizontal: spacing.md, paddingVertical: 6, borderRadius: radii.pill, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
-  streakLabel: { ...typography.body, color: colors.textPrimary, fontWeight: "700" },
-  streakHint: { ...typography.caption, color: colors.textSecondary },
   screen: { flex: 1, backgroundColor: colors.background },
   topBar: {
     flexDirection: "row",

@@ -14,6 +14,7 @@ import { openConversation } from "../../api/conversations";
 import { HighlightsRow } from "../../components/HighlightsRow";
 import { ReportSheet } from "../../components/ReportSheet";
 import { Icon } from "../../components/Icon";
+import { StreakBadge } from "../../components/profile/StreakBadge";
 import { ProfileHeader, ProfileSkeleton } from "../../components/profile/ProfileHeader";
 import { ProfileMoreSheet } from "../../components/profile/ProfileMoreSheet";
 import { profileButton } from "../../components/profile/profileButton";
@@ -313,6 +314,7 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
           },
         ]}
       >
+        <StreakBadge streak={profile.streak} own={false} />
         <View style={styles.actions}>
           {profile.isSelf ? (
             <>

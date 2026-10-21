@@ -3,6 +3,8 @@ import { act, create, type ReactTestInstance, type ReactTestRenderer } from "rea
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { deepLinkTarget } from "../src/navigation/profileLinks";
 import { StickerSheet } from "../src/components/StickerSheet";
+import { StreakBadge } from "../src/components/profile/StreakBadge";
+import { Text } from "react-native";
 
 jest.mock("../src/state/AuthContext", () => ({ useAuth: () => ({ accessToken: "token" }) }));
 
@@ -30,4 +32,17 @@ test("on a festival day the sticker sheet leads with its greeting and emoji", as
   await act(async () => tree.update(sheet(null)));
   expect(tree.root.findAll((n: ReactTestInstance) => n.props.accessibilityLabel === "Add Happy Diwali")).toHaveLength(0);
   await act(async () => tree.unmount());
+});
+
+test("the streak badge: yours reminds you to post today; others just see the count; nothing without one", async () => {
+  let tree!: ReactTestRenderer;
+  const texts = () => tree.root.findAllByType(Text).map((t) => [t.props.children].flat().join(""));
+  await act(async () => { tree = create(<StreakBadge streak={{ days: 5, postedToday: false }} own />); });
+  expect(texts()).toEqual(["🔥 5-day streak", "Post today to keep it"]);
+  await act(async () => tree.update(<StreakBadge streak={{ days: 5, postedToday: false }} own={false} />));
+  expect(texts()).toEqual(["🔥 5-day streak"]);
+  await act(async () => tree.update(<StreakBadge streak={null} own={false} />));
+  expect(tree.toJSON()).toBeNull();
+  await act(async () => tree.update(<StreakBadge streak={{ days: 0, postedToday: false }} own />));
+  expect(tree.toJSON()).toBeNull();
 });

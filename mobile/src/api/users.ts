@@ -18,6 +18,8 @@ export interface ProfileView {
   followingCount: number;
   /** Stories posted so far (not deleted, expired included); missing from a server before release r3. */
   storyCount?: number;
+  /** Posting streak; null when it's hidden from you (a private account you don't follow). */
+  streak?: { days: number; postedToday: boolean } | null;
   viewer: {
     isFollowing: boolean;
     isFollowedBy: boolean;

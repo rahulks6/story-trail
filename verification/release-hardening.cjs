@@ -37,7 +37,7 @@ function service({media,taken=false,failure,linkRefusal}={}) {
   '../../http/errors':{HttpError},'../../db/psql':{DatabaseError},'./username-policy':usernamePolicy(),'../auth/dto':{ValidationError},
   '../users/users.repository':{findUserById:async()=>({id:'owner',username:'old'}),usernameTaken:async()=>taken,setProfile:async(id,input)=>{if(failure)throw failure;writes.push({id,input});return input;}},
   '../media/media.repository':{findMediaById:async(id,excludeModerated)=>{assert.equal(excludeModerated,true);return media;}},
-  '../social/social.repository':{},'../recommendations/events.repository':{},'../stories/stories.repository':{},'../stories/stories.service':{},'../auth/refresh-tokens.repository':{},'../auth/password':{},
+  '../social/social.repository':{},'../reminders/return-reasons':{postingStreak:async()=>({days:0,postedToday:false})},'../recommendations/events.repository':{},'../stories/stories.repository':{},'../stories/stories.service':{},'../auth/refresh-tokens.repository':{},'../auth/password':{},
   '../safety/links':{assertLinksAllowed:async(text,surface,author)=>{linkChecks.push({text,surface,author});if(linkRefusal)throw linkRefusal;}}
  });return {s,writes,linkChecks};
 }
