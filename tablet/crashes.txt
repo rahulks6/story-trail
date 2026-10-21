@@ -1,104 +1,97 @@
-10-20 21:57:22.566 D/AndroidRuntime( 3595): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-20 21:57:22.567 W/system_server(  566): Long monitor contention with owner shortcut (888) at void com.android.server.pm.ShortcutService.injectPostToHandlerDebounced(java.lang.Object, java.lang.Runnable)(ShortcutService.java:1785) waiters=1 in java.util.List com.android.server.pm.ShortcutService$LocalService.getShortcuts(int, java.lang.String, long, java.lang.String, java.util.List, java.util.List, android.content.ComponentName, int, int, int, int) for 2.121s
-10-20 21:57:22.569 W/system_server(  566): Long monitor contention with owner shortcut (888) at void com.android.server.pm.ShortcutService.injectPostToHandlerDebounced(java.lang.Object, java.lang.Runnable)(ShortcutService.java:1785) waiters=2 in boolean com.android.server.pm.ShortcutService.areShortcutsSupportedOnHomeScreen(int) for 2.083s
-10-20 21:57:22.570 W/system_server(  566): Long monitor contention with owner shortcut (888) at void com.android.server.pm.ShortcutService.injectPostToHandlerDebounced(java.lang.Object, java.lang.Runnable)(ShortcutService.java:1785) waiters=0 in java.util.List com.android.server.pm.ShortcutService$LocalService.getShortcuts(int, java.lang.String, long, java.lang.String, java.util.List, java.util.List, android.content.ComponentName, int, int, int, int) for 2.257s
-10-20 21:57:22.573 W/ActivityManager(  566): Slow operation: 72ms so far, now at startProcess: done updating battery stats
-10-20 21:57:22.573 W/ActivityManager(  566): Slow operation: 72ms so far, now at startProcess: building log message
-10-20 21:57:22.576 I/ActivityManager(  566): Start proc 3597:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0ai9000 for  {com.google.android.googlequicksearchbox/org.chromium.content.app.SandboxedProcessService0:0}
-10-20 21:57:22.576 W/ActivityManager(  566): Slow operation: 75ms so far, now at startProcess: starting to update pids map
-10-20 21:57:22.577 I/AndroidRuntime( 3595): Using default boot image
-10-20 21:57:22.577 I/AndroidRuntime( 3595): Leaving lock profiling enabled
-10-20 21:57:22.578 W/ActivityManager(  566): Slow operation: 77ms so far, now at startProcess: done updating pids map
-10-20 21:57:22.581 D/ShortcutService(  566): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=com.google.android.googlequicksearchbox
-10-20 21:57:22.584 I/app_process( 3595): Core platform API reporting enabled, enforcing=false
-10-20 21:57:22.585 I/app_process( 3595): Using CollectorTypeCMC GC.
-10-20 21:57:22.585 D/SsBaseTemplateCard( 1213): No text view can be set up
-10-20 21:57:22.586 D/SsBaseTemplateCard( 1213): Passed-in item info is null
-10-20 21:57:22.586 D/SsBaseTemplateCard( 1213): Passed-in item info is null
-10-20 21:57:22.586 D/SsBaseTemplateCard( 1213): Passed-in item info is null
-10-20 21:57:22.586 I/SsBaseTemplateCard( 1213): Secondary card pane is null
-10-20 21:57:22.589 W/gle.android.gms( 1602): Long monitor contention with owner highpool[12] (3245) at void bfwl.d()(:com.google.android.gms@242335041@24.23.35 (190800-646585959):37) waiters=0 in void bfwl.f(bfwn, long) for 136ms
-10-20 21:57:22.598 D/SsBaseTemplateCard( 1213): No text view can be set up
-10-20 21:57:22.598 D/SsBaseTemplateCard( 1213): Passed-in item info is null
-10-20 21:57:22.598 D/SsBaseTemplateCard( 1213): Passed-in item info is null
-10-20 21:57:22.598 D/SsBaseTemplateCard( 1213): Passed-in item info is null
-10-20 21:57:22.598 I/SsBaseTemplateCard( 1213): Secondary card pane is null
-10-20 21:57:22.600 D/ShortcutService(  566): received package broadcast intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 (has extras) }
-10-20 21:57:22.615 I/netd    (  366): tetherGetStats() -> {[]} <0.67ms>
-10-20 21:57:22.624 I/webview_service( 3590): Using CollectorTypeCMC GC.
-10-20 21:57:22.628 W/webview_service( 3590): Unexpected CPU variant for x86: x86_64.
-10-20 21:57:22.628 W/webview_service( 3590): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
-10-20 21:57:22.629 E/webview_service( 3590): Not starting debugger since process cannot load the jdwp agent.
-10-20 21:57:22.640 W/ActivityManager(  566): Slow operation: 126ms so far, now at startProcess: returned from zygote!
-10-20 21:57:22.641 D/CompatChangeReporter( 3597): Compat change id reported: 242716250; UID 99000; state: ENABLED
-10-20 21:57:22.643 D/PackageUpdatedTask( 1213): Package updated: mOp=UPDATE packages=[dev.mobile.maestro]
-10-20 21:57:22.646 D/ShortcutService(  566): changing package: dev.mobile.maestro.test userId0
-10-20 21:57:22.647 W/AllAppsList( 1213): updatePromiseInstallInfo: no Activities matched updated package, removing all apps from package=dev.mobile.maestro
-10-20 21:57:22.647 D/SessionCommitReceiver( 1213): Removing PromiseIcon for package: dev.mobile.maestro.test, install reason: 0, alreadyAddedPromiseIcon: false
-10-20 21:57:22.659 D/nativeloader( 3590): Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
-10-20 21:57:22.665 D/ShortcutService(  566): handlePackageChanged: dev.mobile.maestro.test user=0
-10-20 21:57:22.674 D/nativeloader( 3595): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+10-21 23:41:52.849 D/AndroidRuntime( 3821): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-21 23:41:52.853 I/AndroidRuntime( 3821): Using default boot image
+10-21 23:41:52.854 I/AndroidRuntime( 3821): Leaving lock profiling enabled
+10-21 23:41:52.856 D/CustomizableLockScreenUtils( 1102): is_custom_lock_screen_quick_affordances_feature_enabled=1
+10-21 23:41:52.856 D/ShortcutService(  558): received package broadcast intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 (has extras) }
+10-21 23:41:52.856 D/ShortcutService(  558): changing package: dev.mobile.maestro.test userId0
+10-21 23:41:52.857 D/ShortcutService(  558): handlePackageChanged: dev.mobile.maestro.test user=0
+10-21 23:41:52.857 I/app_process( 3821): Core platform API reporting enabled, enforcing=false
+10-21 23:41:52.858 D/ShortcutService(  558): rescanPackageIfNeeded 0@dev.mobile.maestro.test, forceRescan=true , isNewApp=true
+10-21 23:41:52.858 D/ShortcutService(  558): Package dev.mobile.maestro.test has 0 manifest shortcut(s), and 0 share target(s)
+10-21 23:41:52.859 I/app_process( 3821): Using CollectorTypeCMC GC.
+10-21 23:41:52.861 I/PermissionControllerServiceImpl(  934): Updating user sensitive for uid 10211
+10-21 23:41:52.866 I/AppWidgetServiceImpl(  558): Received broadcast: android.intent.action.PACKAGE_CHANGED on user 0
+10-21 23:41:52.868 W/ziparchive( 3795): Unable to open '/data/app/~~pYIbMrLRs5phtS8_KNmjUw==/com.google.android.trichromelibrary_636771938-gpo7UwTIRqhoU4u-E-O3kA==/TrichromeLibrary.dm': No such file or directory
+10-21 23:41:52.868 W/ziparchive( 3795): Unable to open '/data/app/~~pYIbMrLRs5phtS8_KNmjUw==/com.google.android.trichromelibrary_636771938-gpo7UwTIRqhoU4u-E-O3kA==/TrichromeLibrary.dm': No such file or directory
+10-21 23:41:52.877 W/iew:webview_apk( 3795): Entry not found
+10-21 23:41:52.879 D/nativeloader( 3795): Configuring clns-7 for other apk /data/app/~~pYIbMrLRs5phtS8_KNmjUw==/com.google.android.trichromelibrary_636771938-gpo7UwTIRqhoU4u-E-O3kA==/TrichromeLibrary.apk. target_sdk_version=34, uses_libraries=ALL, library_path=/data/app/~~rBZcN-y4wI9uFdNEoObBcw==/com.google.android.webview-O60Dvb9l3buSwnJZogMzlQ==/lib/x86_64:/data/app/~~rBZcN-y4wI9uFdNEoObBcw==/com.google.android.webview-O60Dvb9l3buSwnJZogMzlQ==/WebViewGoogle.apk!/lib/x86_64:/data/app/~~pYIbMrLRs5phtS8_KNmjUw==/com.google.android.trichromelibrary_636771938-gpo7UwTIRqhoU4u-E-O3kA==/TrichromeLibrary.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.google.android.webview
+10-21 23:41:52.880 D/ApplicationLoaders( 3795): Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+10-21 23:41:52.894 D/nativeloader( 3795): Configuring clns-8 for other apk /data/app/~~rBZcN-y4wI9uFdNEoObBcw==/com.google.android.webview-O60Dvb9l3buSwnJZogMzlQ==/WebViewGoogle.apk. target_sdk_version=34, uses_libraries=, library_path=/data/app/~~rBZcN-y4wI9uFdNEoObBcw==/com.google.android.webview-O60Dvb9l3buSwnJZogMzlQ==/lib/x86_64:/data/app/~~rBZcN-y4wI9uFdNEoObBcw==/com.google.android.webview-O60Dvb9l3buSwnJZogMzlQ==/WebViewGoogle.apk!/lib/x86_64:/data/app/~~pYIbMrLRs5phtS8_KNmjUw==/com.google.android.trichromelibrary_636771938-gpo7UwTIRqhoU4u-E-O3kA==/TrichromeLibrary.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.google.android.webview
+10-21 23:41:52.899 I/AppWidgetServiceImpl(  558): getInstalledProvidersForProfiles() 0
+10-21 23:41:52.904 I/.android.as.oss( 2023): Background concurrent mark compact GC freed 1701KB AllocSpace bytes, 0(0B) LOS objects, 49% free, 5986KB/11MB, paused 178us,110.037ms total 356.254ms
+10-21 23:41:52.905 W/ParceledListSlice(  558): Element #25 is 19828 bytes.
+10-21 23:41:52.905 W/ParceledListSlice(  558): Element #26 is 19864 bytes.
+10-21 23:41:52.908 W/ParceledListSlice(  558): Element #27 is 19708 bytes.
+10-21 23:41:52.908 W/ParceledListSlice(  558): Element #28 is 19616 bytes.
+10-21 23:41:52.908 W/ParceledListSlice(  558): Element #29 is 19728 bytes.
+10-21 23:41:52.910 W/A       ( 1557): Calling registerSyncInternal api failed.
+10-21 23:41:52.912 W/PackageManager( 1433): Failure retrieving text 0x7f130786 in package com.android.systemui
+10-21 23:41:52.912 W/PackageManager( 1433): android.content.res.Resources$NotFoundException: String resource ID #0x7f130786
+10-21 23:41:52.912 W/PackageManager( 1433): 	at android.content.res.Resources.getText(Resources.java:466)
+10-21 23:41:52.912 W/PackageManager( 1433): 	at android.app.ApplicationPackageManager.getText(ApplicationPackageManager.java:2405)
+10-21 23:41:52.912 W/PackageManager( 1433): 	at android.appwidget.AppWidgetProviderInfo.loadDescription(AppWidgetProviderInfo.java:484)
+10-21 23:41:52.912 W/PackageManager( 1433): 	at kml.a(PG:341)
 --
-10-20 21:57:22.722 D/AndroidRuntime( 3595): Calling main entry com.android.commands.am.Am
-10-20 21:57:22.726 D/UiAutomationConnection( 3595): Created on user UserHandle{0}
-10-20 21:57:22.739 I/ActivityManager(  566): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-10-20 21:57:22.740 D/CompatChangeReporter( 3590): Compat change id reported: 242716250; UID 10151; state: ENABLED
-10-20 21:57:22.743 V/GrammaticalInflectionUtils(  566): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@90380c4, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
-10-20 21:57:22.748 I/AppsFilter(  566): interaction: PackageSetting{cfc6a6b com.android.microdroid.empty_payload/10190} -> PackageSetting{df411af dev.mobile.maestro/10210} BLOCKED
-10-20 21:57:22.756 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/Velvet/Velvet.apk' with 1 weak references
-10-20 21:57:22.758 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/Drive/Drive.apk' with 1 weak references
-10-20 21:57:22.758 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/CalendarGooglePrebuilt/CalendarGooglePrebuilt.apk' with 1 weak references
-10-20 21:57:22.758 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/PrebuiltGmail/PrebuiltGmail.apk' with 1 weak references
-10-20 21:57:22.759 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk' with 1 weak references
-10-20 21:57:22.759 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/talkback/talkback.apk' with 1 weak references
-10-20 21:57:22.759 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '/vendor/overlay/EmulatorTalkBackOverlay/EmulatorTalkBackOverlay.apk' with 1 weak references
-10-20 21:57:22.759 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/LatinIMEGooglePrebuilt/LatinIMEGooglePrebuilt.apk' with 1 weak references
-10-20 21:57:22.765 D/Zygote  (  367): Forked child process 3626
-10-20 21:57:22.765 I/AppWidgetServiceImpl(  566): Received broadcast: android.intent.action.PACKAGE_UNSTOPPED on user 0
-10-20 21:57:22.765 I/AppWidgetServiceImpl(  566): Updating package stopped masked state for uid 10210 package dev.mobile.maestro isStopped false
-10-20 21:57:22.772 I/ActivityManager(  566): Start proc 3626:dev.mobile.maestro/u0a210 for added application dev.mobile.maestro
-10-20 21:57:22.772 I/.mobile.maestro( 3626): Late-enabling -Xcheck:jni
-10-20 21:57:22.779 I/cr_CombinedPProvider( 1633): #linkNativeInternal() 1
-10-20 21:57:22.779 I/cr_AppResProvider( 1633): #getApplicationRestrictionsFromUserManager() Bundle[EMPTY_PARCEL]
-10-20 21:57:22.779 I/cr_PolicyProvider( 1633): #notifySettingsAvailable() 0
-10-20 21:57:22.779 I/cr_CombinedPProvider( 1633): #onSettingsAvailable() 0
-10-20 21:57:22.779 I/cr_CombinedPProvider( 1633): #flushPolicies()
-10-20 21:57:22.946 W/servicemanager(    0): Isolated app with UID 99000 requested 'connectivity', but the service is not allowed for isolated apps.
-10-20 21:57:22.796 I/.mobile.maestro( 3626): Using CollectorTypeCMC GC.
-10-20 21:57:22.798 W/.mobile.maestro( 3626): Unexpected CPU variant for x86: x86_64.
-10-20 21:57:22.798 W/.mobile.maestro( 3626): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
-10-20 21:57:22.970 I/init    (    0): starting service 'idmap2d'...
-10-20 21:57:22.802 W/Looper  ( 1266): Handler (angj) {c07d522} sendMessageAtTime() called with no mQueue
-10-20 21:57:22.802 W/Looper  ( 1266): java.lang.RuntimeException: Handler (angj) {c07d522} sendMessageAtTime() called with no mQueue
+10-21 23:41:52.976 D/AndroidRuntime( 3821): Calling main entry com.android.commands.am.Am
+10-21 23:41:52.979 W/SliceData( 1102): Highlight menu key res is empty: com.android.settings.accessibility.AccessibilitySlicePreferenceController
+10-21 23:41:52.979 W/SliceData( 1102): Highlight menu key res is empty: com.android.settings.accessibility.AccessibilitySlicePreferenceController
+10-21 23:41:52.980 D/UiAutomationConnection( 3821): Created on user UserHandle{0}
+10-21 23:41:52.981 I/ActivityManager(  558): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+10-21 23:41:52.985 D/SlicesIndexer( 1102): Indexing slices database took: 549
+10-21 23:41:52.986 V/GrammaticalInflectionUtils(  558): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@f0aa646, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+10-21 23:41:52.989 I/AppsFilter(  558): interaction: PackageSetting{a5a1af4 com.android.microdroid.empty_payload/10202} -> PackageSetting{663fe1b dev.mobile.maestro/10210} BLOCKED
+10-21 23:41:52.990 D/SettingsSliceProvider( 1102): Allowlisting 12 uris to 3 pkgs.
+10-21 23:41:52.997 D/Zygote  (  361): Forked child process 3844
+10-21 23:41:53.004 I/ActivityManager(  558): Start proc 3844:dev.mobile.maestro/u0a210 for added application dev.mobile.maestro
+10-21 23:41:53.008 I/.mobile.maestro( 3844): Late-enabling -Xcheck:jni
+10-21 23:41:53.012 I/netd    (  360): tetherGetStats() -> {[]} <0.40ms>
+10-21 23:41:53.015 I/AppWidgetServiceImpl(  558): Received broadcast: android.intent.action.PACKAGE_UNSTOPPED on user 0
+10-21 23:41:53.015 I/AppWidgetServiceImpl(  558): Updating package stopped masked state for uid 10210 package dev.mobile.maestro isStopped false
+10-21 23:41:53.028 I/AiAiEcho( 1433): EchoSearch: WidgetFetcherImpl is initialized with [33] widgets [reason=package added for userId: 0]
+10-21 23:41:53.029 D/InetDiagMessage(  558): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+10-21 23:41:53.030 I/.mobile.maestro( 3844): Using CollectorTypeCMC GC.
+10-21 23:41:53.031 W/.mobile.maestro( 3844): Unexpected CPU variant for x86: x86_64.
+10-21 23:41:53.031 W/.mobile.maestro( 3844): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
+10-21 23:41:53.033 D/InetDiagMessage(  558): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+10-21 23:41:53.033 D/InetDiagMessage(  558): Destroyed live tcp sockets for uids={10103} in 4ms
+10-21 23:41:53.034 D/SlicesIndexer( 1102): Slices already indexed - returning.
+10-21 23:41:53.034 D/SettingsSliceProvider( 1102): Allowlisting 5 uris to 3 pkgs.
+10-21 23:41:53.039 I/adbd    (  441): jdwp connection from 3844
+10-21 23:41:53.039 D/InetDiagMessage(  558): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+10-21 23:41:53.040 D/InetDiagMessage(  558): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+10-21 23:41:53.040 D/InetDiagMessage(  558): Destroyed live tcp sockets for uids={20103} in 7ms
+10-21 23:41:53.056 D/nativeloader( 3844): Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+10-21 23:41:53.163 D/ActivityManager(  558): freezing 2609 com.android.externalstorage
+10-21 23:41:53.167 D/InetDiagMessage(  558): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
 --
-10-20 22:01:55.394 I/AndroidRuntime( 3595): VM exiting with result code 0.
-10-20 22:01:55.399 I/PackageWatchdog(  566): Syncing state, reason: observing new packages
-10-20 22:01:55.400 D/PackageWatchdog(  566): rescue-party-observer added the following packages to monitor [android]
-10-20 22:01:55.400 I/PackageWatchdog(  566): Syncing state, reason: updated observers
-10-20 22:01:55.400 I/PackageWatchdog(  566): Saving observer state to file
-10-20 22:01:55.402 I/ExplicitHealthCheckController(  566): Explicit health check service is bound
-10-20 22:01:55.413 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-20 22:01:55.416 W/MagnificationConnectionManager(  566): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-20 22:01:55.416 V/UiAutomationManager(  566): UiAutomation service owner died
-10-20 22:01:55.582 I/binder  (    0): undelivered transaction 469972, process died.
-10-20 22:01:55.585 I/init    (    0): Untracked pid 3595 exited with status 0
-10-20 22:01:55.418 I/PackageWatchdog(  566): Syncing health check requests for packages: {}
-10-20 22:01:55.418 I/ExplicitHealthCheckController(  566): Service not ready to get health check supported packages. Binding...
-10-20 22:01:55.418 I/ExplicitHealthCheckController(  566): Not binding to service, service already connecting
-10-20 22:01:55.418 I/ExplicitHealthCheckController(  566): Explicit health check service is connected ComponentInfo{com.google.android.ext.services/android.ext.services.watchdog.ExplicitHealthCheckServiceImpl}
-10-20 22:01:55.420 I/ExplicitHealthCheckController(  566): Service initialized, syncing requests
-10-20 22:01:55.422 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-20 22:01:55.422 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-20 22:01:55.422 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-20 22:01:55.422 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-20 22:01:55.422 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-20 22:01:55.422 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-20 22:01:55.422 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-20 22:01:55.589 I/init    (    0): Untracked pid 3595 did not have an associated service entry and will not be reaped
-10-20 22:01:55.423 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-20 22:01:55.423 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-20 22:01:55.424 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-20 22:01:55.424 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-20 22:01:55.424 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-20 22:01:55.424 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-20 22:01:55.424 W/IPCThreadState(  566): Sending oneway calls to frozen process.
+10-21 23:47:13.012 I/AndroidRuntime( 3821): VM exiting with result code 0.
+10-21 23:47:13.012 D/InetDiagMessage(  558): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+10-21 23:47:13.012 D/InetDiagMessage(  558): Destroyed live tcp sockets for uids={10210} in 3ms
+10-21 23:47:13.013 D/InetDiagMessage(  558): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+10-21 23:47:13.013 D/InetDiagMessage(  558): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+10-21 23:47:13.013 D/InetDiagMessage(  558): Destroyed live tcp sockets for uids={20210} in 1ms
+10-21 23:47:13.205 I/servicemanager(    0): Caller(pid=558,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+10-21 23:47:13.214 I/init    (    0): starting service 'artd'...
+10-21 23:47:13.223 I/init    (    0): ... started service 'artd' has pid 6041
+10-21 23:47:13.224 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 148 (/system/bin/servicemanager)
+10-21 23:47:13.028 I/netd    (  360): tetherGetStats() -> {[]} <1.76ms>
+10-21 23:47:13.035 V/ActivityManager(  558): Got obituary of 3844:dev.mobile.maestro
+10-21 23:47:13.230 I/binder  (    0): undelivered transaction 460169, process died.
+10-21 23:47:13.232 I/init    (    0): Untracked pid 3821 exited with status 0
+10-21 23:47:13.233 I/binder_alloc(    0): 3844: binder_alloc_buf, no vma
+10-21 23:47:13.233 I/init    (    0): Untracked pid 3821 did not have an associated service entry and will not be reaped
+10-21 23:47:13.037 I/adbd    (  441): Remote process closed the socket (on MSG_PEEK)
+10-21 23:47:13.038 I/Zygote  (  361): Process 3844 exited due to signal 9 (Killed)
+10-21 23:47:13.038 I/libprocessgroup(  558): Removed cgroup /sys/fs/cgroup/uid_10210/pid_3844
+10-21 23:47:13.238 I/binder  (    0): cannot allocate buffer: vma cleared, target dead or dying
+10-21 23:47:13.238 I/binder  (    0): 558:2252 transaction async to 3844:0 failed 460180/29189/-3, size 192-0 line 3544
+10-21 23:47:13.043 E/IPCThreadState(  558): Binder transaction failure. id: 460180, BR_*: 29189, error: -3 (No such process)
+10-21 23:47:13.043 W/ActivityManager(  558): pid 558 system sent binder code 1 with flags 1 to frozen apps and got error -32
+10-21 23:47:13.045 W/MagnificationConnectionManager(  558): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-21 23:47:13.045 V/UiAutomationManager(  558): UiAutomation service owner died
+10-21 23:47:13.046 W/MagnificationConnectionManager(  558): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-21 23:47:13.046 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-21 23:47:13.047 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-21 23:47:13.047 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-21 23:47:13.047 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-21 23:47:13.047 W/IPCThreadState(  558): Sending oneway calls to frozen process.
