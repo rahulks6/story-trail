@@ -273,7 +273,9 @@ describe("your own page", () => {
     api.getProfile.mockResolvedValue({ profile: profile({ username: "me_now", isSelf: true, followerCount: 2, followingCount: 1 }) });
     const share = jest.spyOn(Share, "share").mockResolvedValue({ action: "sharedAction" } as never);
     await render(<ProfileScreen />);
-    expect(texts()).toEqual(expect.arrayContaining(["me_now", "Me Now", "@me_now", "Chai and cricket.", "Cricket", "2", "Followers", "1", "Following", "27", "Stories", "Insights"]));
+    expect(texts()).toEqual(expect.arrayContaining(["me_now", "Me Now", "@me_now", "Chai and cricket.", "Cricket", "2", "Followers", "1", "Following", "27", "Stories"]));
+    // Insights is a small icon button beside Edit and Share profile, not a card.
+    expect(texts()).not.toContain("Insights");
     await press("Share profile");
     expect(share).toHaveBeenCalledWith({ message: "@me_now on Katkee: katkee://user/me_now?id=u-me" });
     await press("Edit profile");

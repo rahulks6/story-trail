@@ -11,7 +11,7 @@ import { HighlightsRow } from "../../components/HighlightsRow";
 import { ProfileHeader, ProfileSkeleton } from "../../components/profile/ProfileHeader";
 import { getPostingStreak, type PostingStreak } from "../../api/festivals";
 import { StreakBadge } from "../../components/profile/StreakBadge";
-import { profileButton } from "../../components/profile/profileButton";
+import { profileButton, profileIconButton } from "../../components/profile/profileButton";
 import { profileShareLink } from "../../navigation/profileLinks";
 import type { RootStackParamList } from "../../navigation/types";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
@@ -157,24 +157,11 @@ export function ProfileScreen(): React.JSX.Element {
           <View style={styles.actions}>
             {profileButton({ label: "Edit profile", onPress: () => navigation.navigate("EditProfile") })}
             {profileButton({ label: "Share profile", onPress: () => void onShareProfile() })}
+            {/* Only you see Insights: a small button beside the others, not a card on your profile. */}
+            {profileIconButton({ icon: ICONS.insights, accessibilityLabel: "Insights. See how your Stories are doing. Only you can see this.", onPress: () => navigation.navigate("SequenceInsights") })}
           </View>
         </ProfileHeader>
 
-        <Pressable
-          style={({ pressed }) => [styles.dashboard, pressed && styles.dashboardPressed]}
-          onPress={() => navigation.navigate("SequenceInsights")}
-          accessibilityRole="button"
-          accessibilityLabel="Insights. See how your Stories are doing. Only you can see this."
-        >
-          <View style={styles.dashboardIcon}>
-            <Icon name={ICONS.insights} size={20} color={colors.accent} />
-          </View>
-          <View style={styles.dashboardText}>
-            <Text style={styles.dashboardTitle}>Insights</Text>
-            <Text style={styles.dashboardBody}>See how your Stories are doing. Only you can see this.</Text>
-          </View>
-          <Icon name={ICONS.chevron} size={18} color={colors.textSecondary} />
-        </Pressable>
 
         <HighlightsRow
           username={user.username}
@@ -204,17 +191,6 @@ const styles = StyleSheet.create({
   topBarButton: { padding: spacing.xs },
   content: { paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.xxl, gap: spacing.md },
   actions: { flexDirection: "row", gap: spacing.sm },
-  dashboard: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.md,
-    backgroundColor: colors.surface,
-    borderRadius: radii.md,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.border,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm + 4,
-  },
   dashboardPressed: { backgroundColor: colors.surfaceElevated },
   verify: {
     flexDirection: "row",
@@ -231,15 +207,4 @@ const styles = StyleSheet.create({
   verifyTitle: { ...typography.bodyStrong },
   verifyBody: { ...typography.caption },
   verifyAction: { color: colors.accent, fontWeight: "700", fontSize: 15 },
-  dashboardIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: colors.surfaceElevated,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  dashboardText: { flex: 1, gap: 2 },
-  dashboardTitle: { ...typography.bodyStrong },
-  dashboardBody: { ...typography.caption },
 });
