@@ -65,7 +65,7 @@ test("a wrong code shows the server's message and stays", async () => {
 });
 
 test("a new code can be sent after a short wait; Later skips for now", async () => {
-  await act(async () => button("Send a new code (30s)").props.onPress());
+  await act(async () => button("Send a new code in 30s").props.onPress());
   expect(api.sendEmailCode).not.toHaveBeenCalled();
   for (let i = 0; i < 30; i++) await act(async () => { jest.advanceTimersByTime(1000); });
   await act(async () => button("Send a new code").props.onPress());
@@ -96,7 +96,7 @@ describe("a new account, which must verify", () => {
   });
 
   test("a mistyped email can be fixed, and a new code goes there", async () => {
-    await act(async () => button("Wrong email? Change it").props.onPress());
+    await act(async () => button("Change email").props.onPress());
     expect(tree.root.findByType(TextInput).props.value).toBe("me@example.com");
     api.changeEmail.mockResolvedValueOnce({ user: { ...mockAuth.user, email: "fixed@example.com" } } as never);
     await act(async () => tree.root.findByType(TextInput).props.onChangeText(" Fixed@Example.com "));
@@ -104,11 +104,11 @@ describe("a new account, which must verify", () => {
     await settle();
     expect(api.changeEmail).toHaveBeenCalledWith("fixed@example.com", "token");
     expect(texts()).toContain("We sent a new code to fixed@example.com.");
-    expect(button("Send a new code (30s)")).toBeTruthy();
+    expect(button("Send a new code in 30s")).toBeTruthy();
   });
 
   test("a rejected email shows the server's message; Log out signs out", async () => {
-    await act(async () => button("Wrong email? Change it").props.onPress());
+    await act(async () => button("Change email").props.onPress());
     api.changeEmail.mockRejectedValueOnce(new ApiError(409, "That email is already used by another account."));
     await act(async () => tree.root.findByType(TextInput).props.onChangeText("taken@example.com"));
     await act(async () => button("Send code").props.onPress());

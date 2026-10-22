@@ -106,12 +106,6 @@ const SWIPE_REPLY_PX = 56;
 const TYPING_SEND_MS = 3_000;
 const TYPING_SHOW_MS = 6_000;
 
-// A fixed emoji set; it inserts into the text composer.
-const EMOJIS = [
-  "😀", "😂", "😍", "😊", "😉", "😢", "😮", "😡",
-  "👍", "👎", "🙏", "👏", "🔥", "💯", "🎉", "❤️",
-  "😴", "🤔", "😎", "🥳", "😭", "🤝", "👋", "✨",
-];
 
 /**
  * A message not yet stored by the server (spec's Sending/Failed states), from the
@@ -522,7 +516,7 @@ interface ComposerProps {
 }
 
 /**
- * The message box, emoji panel and voice recorder. Its own component so typing and
+ * The message box and voice recorder. Its own component so typing and
  * the recording timer re-render only this, never the thread above it.
  */
 const Composer = memo(function Composer({ onSendText, onVoiceNote, onStartRecording, onTakePhoto, onPickFromGallery, onTyping, replyingTo, onCancelReply }: ComposerProps): React.JSX.Element {
@@ -540,7 +534,6 @@ const Composer = memo(function Composer({ onSendText, onVoiceNote, onStartRecord
   }, []);
   const [draft, setDraft] = useState("");
   const [composerError, setComposerError] = useState<string | null>(null);
-  const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
   // A double tap on Send sends once: the draft clears at the first tap, before anything is awaited.
   const sendingRef = useRef(false);
   const lastSendAt = useRef(0);
@@ -581,33 +574,10 @@ const Composer = memo(function Composer({ onSendText, onVoiceNote, onStartRecord
     void recorder.start();
   };
 
-  const toggleEmojiPicker = () => {
-    // The panel replaces the keyboard rather than stacking on top of it.
-    if (!emojiPickerOpen) Keyboard.dismiss();
-    setEmojiPickerOpen((open) => !open);
-  };
-
-  const onInsertEmoji = (emoji: string) => {
-    setDraft((current) => (current + emoji).slice(0, MAX_MESSAGE_LENGTH));
-  };
 
   const padBottom = { paddingBottom: spacing.sm + (keyboardOpen ? 0 : bottomInset) };
   return (
     <>
-      {emojiPickerOpen ? (
-        <View style={styles.emojiPanel}>
-          <FlatList
-            data={EMOJIS}
-            keyExtractor={(emoji) => emoji}
-            numColumns={8}
-            renderItem={({ item }) => (
-              <Pressable style={styles.emojiKey} onPress={() => onInsertEmoji(item)} hitSlop={4} accessibilityRole="button">
-                <Text style={styles.emojiKeyGlyph}>{item}</Text>
-              </Pressable>
-            )}
-          />
-        </View>
-      ) : null}
       {composerError ? <Text style={styles.composerError}>{composerError}</Text> : null}
       {replyingTo ? (
         <View style={styles.replyBar}>
@@ -632,32 +602,26 @@ const Composer = memo(function Composer({ onSendText, onVoiceNote, onStartRecord
           </Text>
           <Text style={styles.recordHint} numberOfLines={1}>Recording…</Text>
           <Pressable
-            style={styles.sendButton}
+            style={[styles.roundButton, styles.sendRound]}
             onPress={() => void recorder.send()}
             disabled={recorder.state.status !== "recording"}
             accessibilityRole="button"
             accessibilityLabel="Send voice message"
           >
-            <Icon style={styles.sendButtonText} name={ICONS.send} />
+            <Icon name={ICONS.send} size={20} color={colors.onAccent} />
           </Pressable>
         </View>
       ) : (
         <View style={[styles.composerRow, padBottom]}>
-          <Pressable style={styles.cameraButton} onPress={() => { setEmojiPickerOpen(false); onTakePhoto(); }} hitSlop={6} accessibilityRole="button" accessibilityLabel="Take a photo or video">
+          {/* Camera always; the gallery steps aside while you type (emoji come from the keyboard). */}
+          <Pressable style={[styles.roundButton, styles.cameraButton]} onPress={onTakePhoto} hitSlop={4} accessibilityRole="button" accessibilityLabel="Take a photo or video">
             <Icon name={ICONS.camera} size={20} color={colors.onAccent} />
           </Pressable>
-          <Pressable style={styles.attachButton} onPress={() => { setEmojiPickerOpen(false); onPickFromGallery(); }} hitSlop={6} accessibilityRole="button" accessibilityLabel="Send a photo or video from your gallery">
-            <Icon name={ICONS.gallery} size={24} color={colors.textPrimary} />
-          </Pressable>
-          <Pressable
-            style={styles.emojiToggle}
-            onPress={toggleEmojiPicker}
-            hitSlop={8}
-            accessibilityRole="button"
-            accessibilityLabel={emojiPickerOpen ? "Hide emoji picker" : "Show emoji picker"}
-          >
-            <Icon style={styles.emojiToggleGlyph} name={ICONS.emoji} />
-          </Pressable>
+          {draft.trim() ? null : (
+            <Pressable style={styles.roundButton} onPress={onPickFromGallery} hitSlop={4} accessibilityRole="button" accessibilityLabel="Send a photo or video from your gallery">
+              <Icon name={ICONS.gallery} size={22} color={colors.textPrimary} />
+            </Pressable>
+          )}
           <TextInput
             ref={inputRef}
             style={styles.composerInput}
@@ -666,17 +630,16 @@ const Composer = memo(function Composer({ onSendText, onVoiceNote, onStartRecord
             placeholderTextColor={colors.textDisabled}
             value={draft}
             onChangeText={onChangeDraft}
-            onFocus={() => setEmojiPickerOpen(false)}
             maxLength={MAX_MESSAGE_LENGTH}
             multiline
           />
           {draft.trim() ? (
-            <Pressable style={styles.sendButton} onPress={() => void onSend()} accessibilityRole="button" accessibilityLabel="Send">
-              <Icon style={styles.sendButtonText} name={ICONS.send} />
+            <Pressable style={[styles.roundButton, styles.sendRound]} onPress={() => void onSend()} accessibilityRole="button" accessibilityLabel="Send">
+              <Icon name={ICONS.send} size={20} color={colors.onAccent} />
             </Pressable>
           ) : (
             // Nothing typed: the microphone, like Instagram and WhatsApp. Tap to record.
-            <Pressable style={styles.micButton} onPress={onMic} accessibilityRole="button" accessibilityLabel="Record a voice message">
+            <Pressable style={styles.roundButton} onPress={onMic} accessibilityRole="button" accessibilityLabel="Record a voice message">
               <Icon name={ICONS.mic} size={22} color={colors.textPrimary} />
             </Pressable>
           )}
@@ -1271,7 +1234,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       {/* Outside the inverted list: Android flips an inverted list on both axes, which mirrored this text. */}
       {rows.length === 0 ? (
         <View style={styles.emptyState} pointerEvents="none">
-          <Text style={typography.body}>{otherUsername && !isGroup ? `Say hi to @${otherUsername} 👋` : "Say hi 👋"}</Text>
+          <Text style={typography.body}>{otherUsername && !isGroup ? `Say hi to @${otherUsername}` : "Say hi to the group"}</Text>
         </View>
       ) : null}
       {otherTyping ? (
@@ -1372,7 +1335,6 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  micButton: { width: 44, height: 40, borderRadius: radii.md, alignItems: "center", justifyContent: "center", backgroundColor: colors.surfaceElevated },
   recordingRow: { alignItems: "center" },
   recordCancel: { width: 40, height: 40, alignItems: "center", justifyContent: "center" },
   recordDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: colors.danger },
@@ -1388,8 +1350,10 @@ const styles = StyleSheet.create({
   mediaSending: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.35)", alignItems: "center", justifyContent: "center" },
   playBadge: { position: "absolute", top: "50%", left: "50%", width: 48, height: 48, marginLeft: -24, marginTop: -24, borderRadius: 24, backgroundColor: "rgba(0,0,0,0.5)", alignItems: "center", justifyContent: "center" },
   videoPlaceholder: { backgroundColor: "#111111" },
-  cameraButton: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.accent, alignItems: "center", justifyContent: "center", marginBottom: 3 },
-  attachButton: { width: 32, height: 36, alignItems: "center", justifyContent: "center", marginBottom: 3 },
+  // Every composer button: one 40pt round shape.
+  roundButton: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center", backgroundColor: colors.surfaceElevated },
+  sendRound: { backgroundColor: colors.accent },
+  cameraButton: { backgroundColor: colors.accent },
   viewer: { flex: 1, backgroundColor: "#000000" },
   viewerClose: { position: "absolute", left: spacing.md, width: 44, height: 44, borderRadius: 22, backgroundColor: "rgba(0,0,0,0.5)", alignItems: "center", justifyContent: "center" },
   reactionPill: { flexDirection: "row", alignItems: "center", gap: 2, marginTop: -6, paddingHorizontal: 6, paddingVertical: 1, borderRadius: radii.pill, backgroundColor: colors.surfaceElevated, borderWidth: 2, borderColor: colors.background },
@@ -1472,24 +1436,4 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     fontSize: 15,
   },
-  sendButton: {
-    backgroundColor: colors.accent,
-    borderRadius: radii.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-  },
-  sendButtonDisabled: { opacity: 0.5 },
-  sendButtonText: { color: colors.onAccent, fontWeight: "700" },
-  emojiToggle: { paddingBottom: spacing.sm },
-  emojiToggleGlyph: { fontSize: 22 },
-  emojiPanel: {
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.border,
-    backgroundColor: colors.background,
-    paddingHorizontal: spacing.sm,
-    paddingTop: spacing.xs,
-    maxHeight: 180,
-  },
-  emojiKey: { flex: 1 / 8, alignItems: "center", paddingVertical: spacing.xs },
-  emojiKeyGlyph: { fontSize: 24 },
 });

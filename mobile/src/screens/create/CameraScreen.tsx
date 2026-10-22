@@ -19,6 +19,7 @@ import { launchImageLibrary } from "react-native-image-picker";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { CreateStackParamList } from "../../navigation/types";
 import { mediaColors as colors, radii, spacing, ICONS } from "../../theme";
+import { reportHandledError } from "../../crashReporting";
 import { useTapGesture } from "../../hooks/useTapGesture";
 import { EmptyState } from "../../components/EmptyState";
 import { guessMimeTypeFromUri } from "../../utils/mime";
@@ -172,7 +173,9 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
       return;
     }
     cameraErrors.current = [];
-    Alert.alert("Camera unavailable", `Close the camera and try again.\n\n(${(error?.message ?? "Unknown error").slice(0, 120)})`);
+    // The technical detail goes to crash reports (Admin > Crashes), not into the message.
+    reportHandledError(error ?? new Error("Camera error"));
+    Alert.alert("Camera unavailable", "Close the camera and open it again. If it keeps happening, restart your phone.");
   }, []);
 
   useEffect(() => {
@@ -477,13 +480,31 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
     </Pressable>
   );
   if (!hasCameraPermission) {
-    return <View style={styles.container}>{closeButton}<EmptyState variant="media" icon="camera" title="Camera access needed" message="Enable camera access in Settings, or choose media from your gallery."/><Pressable accessibilityRole="button" style={styles.sideButton} onPress={()=>void Linking.openSettings().catch(()=>undefined)}><Text style={{color:colors.textPrimary}}>Open Settings</Text></Pressable><Pressable accessibilityRole="button" style={styles.sideButton} onPress={()=>void openGallery()}><Text style={{color:colors.textPrimary}}>Choose from gallery</Text></Pressable></View>;
+    return (
+      <View style={styles.container}>
+        <EmptyState variant="media" icon="camera" title="Camera access needed" message="Turn on camera access in Settings, or post a photo or video from your gallery.">
+          <View style={styles.emptyActions}>
+            <Pressable accessibilityRole="button" style={[styles.emptyButton, styles.emptyButtonPrimary]} onPress={() => void Linking.openSettings().catch(() => undefined)}>
+              <Text style={[styles.emptyButtonLabel, styles.emptyButtonPrimaryLabel]}>Open Settings</Text>
+            </Pressable>
+            <Pressable accessibilityRole="button" style={styles.emptyButton} onPress={() => void openGallery()}>
+              <Text style={styles.emptyButtonLabel}>Choose from gallery</Text>
+            </Pressable>
+          </View>
+        </EmptyState>
+        {closeButton}
+      </View>
+    );
   }
   if (!device) {
     return (
       <View style={styles.container}>
         {cameraSearchOver ? (
-          <EmptyState variant="media" icon="camera" title="No camera available" message="This device doesn't have a usable camera." />
+          <EmptyState variant="media" icon="camera" title="No camera available" message="You can still post a photo or video from your gallery.">
+            <Pressable accessibilityRole="button" style={styles.emptyButton} onPress={() => void openGallery()}>
+              <Text style={styles.emptyButtonLabel}>Choose from gallery</Text>
+            </Pressable>
+          </EmptyState>
         ) : (
           <ActivityIndicator style={styles.cameraLoading} color={colors.textPrimary} accessibilityLabel="Starting camera" />
         )}
@@ -762,4 +783,9 @@ const styles = StyleSheet.create({
   modeLabelActive: { color: "#000" },
   countdown: { ...StyleSheet.absoluteFill, alignItems: "center", justifyContent: "center" },
   countdownLabel: { color: colors.textPrimary, fontSize: 96, fontWeight: "700" },
+  emptyActions: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: spacing.md },
+  emptyButton: { minHeight: 44, paddingHorizontal: spacing.lg, justifyContent: "center", borderRadius: radii.pill, borderWidth: 1, borderColor: colors.textPrimary },
+  emptyButtonPrimary: { backgroundColor: colors.accent, borderColor: colors.accent },
+  emptyButtonLabel: { color: colors.textPrimary, fontSize: 15, fontWeight: "700" },
+  emptyButtonPrimaryLabel: { color: colors.onAccent },
 });

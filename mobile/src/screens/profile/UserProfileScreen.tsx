@@ -1,3 +1,4 @@
+import { showToast } from "../../components/Toast";
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Alert, Pressable, RefreshControl, ScrollView, Share, StyleSheet, Text, View } from "react-native";
 import Clipboard from "@react-native-clipboard/clipboard";
@@ -232,10 +233,7 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
     }
     // Show the new state straight away; the refresh below confirms it.
     setProfile((current) => (current ? { ...current, viewer: { ...current.viewer, isMutedByViewer: muting } } : current));
-    Alert.alert(
-      muting ? `@${username} muted` : `@${username} unmuted`,
-      muting ? "You won't see their Stories on Home. They won't know." : "Their Stories can show on Home again.",
-    );
+    showToast(muting ? `Muted @${username}. They won't know.` : `Unmuted @${username}`);
     await load(true);
   };
 
@@ -379,7 +377,7 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
         onShare={() => void onShare()}
         onCopyLink={() => {
           Clipboard.setString(link);
-          Alert.alert("Link copied");
+          showToast("Link copied");
         }}
         onToggleMute={() => void onToggleMute()}
         onBlock={onBlock}

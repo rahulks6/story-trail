@@ -129,7 +129,7 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
             onSubmitEditing={() => void saveEmail()}
           />
           <Button label="Send code" onPress={() => void saveEmail()} busy={busy} disabled={!newEmail.trim()} />
-          <Button label="Cancel" onPress={() => { setEditingEmail(false); setError(null); }} variant="secondary" />
+          <Button label="Cancel" onPress={() => { setEditingEmail(false); setError(null); }} variant="text" />
         </ScrollView>
       </KeyboardAvoider>
     );
@@ -156,23 +156,26 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
           onSubmitEditing={() => void submit()}
         />
         <Button label="Verify" onPress={() => void submit()} busy={busy} disabled={code.length !== 6} />
-        <View style={styles.row}>
+        {/* One clear action; everything else is a quiet link under it. */}
+        <Text style={styles.hint}>Can't find it? Check your spam or promotions folder.</Text>
+        <View style={styles.links}>
           <Button
-            label={cooldown > 0 ? `Send a new code (${cooldown}s)` : "Send a new code"}
+            label={cooldown > 0 ? `Send a new code in ${cooldown}s` : "Send a new code"}
             onPress={() => void resend()}
             disabled={cooldown > 0}
-            variant="secondary"
+            variant="text"
           />
+          {required ? (
+            <Button label="Change email" onPress={() => { setNewEmail(user?.email ?? ""); setError(null); setNotice(null); setEditingEmail(true); }} variant="text" />
+          ) : null}
         </View>
-        <Text style={styles.hint}>Can't find it? Check your spam or promotions folder.</Text>
-        {required ? (
-          <>
-            <Button label="Wrong email? Change it" onPress={() => { setNewEmail(user?.email ?? ""); setError(null); setNotice(null); setEditingEmail(true); }} variant="secondary" />
-            <Button label="Log out" onPress={() => void logout()} variant="secondary" />
-          </>
-        ) : (
-          <Button label="Later" onPress={leave} variant="secondary" accessibilityHint="Verify from your profile any time" />
-        )}
+        <View style={styles.footer}>
+          {required ? (
+            <Button label="Log out" onPress={() => void logout()} variant="text" />
+          ) : (
+            <Button label="Later" onPress={leave} variant="text" accessibilityHint="Verify from your profile any time" />
+          )}
+        </View>
       </ScrollView>
     </KeyboardAvoider>
   );
@@ -183,6 +186,7 @@ const styles = StyleSheet.create({
   content: { flexGrow: 1, paddingHorizontal: spacing.xl, gap: spacing.md, width: "100%", maxWidth: FORM_MAX_WIDTH, alignSelf: "center" },
   body: { ...typography.body, color: colors.textSecondary },
   email: { color: colors.textPrimary, fontWeight: "700" },
-  row: { gap: spacing.sm },
+  links: { flexDirection: "row", justifyContent: "center", flexWrap: "wrap", gap: spacing.md },
+  footer: { flex: 1, justifyContent: "flex-end", alignItems: "center" },
   hint: { ...typography.caption, textAlign: "center" },
 });

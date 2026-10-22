@@ -23,7 +23,7 @@ const PAGE_SIZE = 50;
 
 function previewText(conversation: ConversationSummary, myUserId: string | undefined): string {
   const lastMessage = conversation.lastMessage;
-  if (!lastMessage) return "Say hi 👋";
+  if (!lastMessage) return "No messages yet";
   if (lastMessage.event) {
     const actor = actorName(lastMessage.senderId, myUserId, lastMessage.senderUsername);
     const known = new Map((conversation.group?.members ?? []).map((m) => [m.id, `@${m.username}`]));
@@ -180,6 +180,7 @@ export function DMInboxScreen(): React.JSX.Element {
       <EmptyState icon="dm" title="No messages yet" message="Conversations with people you message will appear here.">
         <View style={styles.emptyAction}>
           <Button label="New message" onPress={() => navigation.navigate("NewChat")} />
+          <Button label="New group" variant="text" onPress={() => navigation.navigate("NewGroup", {})} />
         </View>
       </EmptyState>
     );
@@ -236,7 +237,7 @@ export function DMInboxScreen(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  emptyAction: { marginTop: spacing.md, minWidth: 200 },
+  emptyAction: { marginTop: spacing.md, minWidth: 200, gap: spacing.xs },
   container: { flex: 1, backgroundColor: colors.background },
   searchRow: { paddingHorizontal: spacing.md, paddingTop: spacing.sm, paddingBottom: spacing.xs, gap: spacing.sm },
   newGroup: { flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 44 },

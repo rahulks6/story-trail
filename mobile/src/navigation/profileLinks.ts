@@ -52,3 +52,8 @@ export function deepLinkTarget(path: string): DeepLinkTarget | null {
 export function profileShareLink(username: string, userId: string): string {
   return `katkee://user/${username}?id=${userId}`;
 }
+
+/** The link a shared Story carries (Share via…, Copy link). */
+export function storyShareLink(storyId: string): string {
+  return `katkee://story/${storyId}`;
+}

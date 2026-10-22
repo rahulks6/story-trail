@@ -53,9 +53,9 @@ appId: com.katkee.app
 # A new account can't skip this: no "Later", only a way to fix the email or log out.
 # Tapping the title closes the keyboard (Android's "hide keyboard" acts as Back when it's already closed).
 - tapOn: "Verify your email"
-- assertVisible: "Wrong email? Change it"
+- assertVisible: "Change email"
 - assertNotVisible: "Later"
-- tapOn: "Wrong email? Change it"
+- tapOn: "Change email"
 - takeScreenshot: 04b-change-email
 # Tapping the title closes the keyboard (Android's "hide keyboard" acts as Back when it's already closed).
 - tapOn: "Change your email"
@@ -105,7 +105,7 @@ appId: com.katkee.app
     timeout: 5000
 - takeScreenshot: 06-search
 
-- tapOn: "DM"
+- tapOn: "Messages"
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: 07-messages
@@ -129,10 +129,7 @@ appId: com.katkee.app
     element: "Appearance"
     optional: true
 - takeScreenshot: 12-settings-lower
-# The second "Appearance" is the row (the first is the section heading above it).
-- tapOn:
-    text: "Appearance"
-    index: 1
+- tapOn: "Appearance"
 - takeScreenshot: 13-appearance-sheet
 - tapOn: "Light"
 - tapOn:
@@ -154,7 +151,7 @@ appId: com.katkee.app
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: 15-profile-light
-- tapOn: "DM"
+- tapOn: "Messages"
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: 16-messages-light

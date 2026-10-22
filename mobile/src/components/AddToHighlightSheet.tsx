@@ -1,3 +1,4 @@
+import { showToast } from "./Toast";
 import React, { useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -55,7 +56,7 @@ export function AddToHighlightSheet({ visible, storyIds, onClose, onAdded }: { v
       const current = detail.items.map((item) => item.storyId);
       const next = withAddedStories(current, storyIds);
       if (next.length === current.length) {
-        Alert.alert("Already there", `${storyIds.length === 1 ? "This Story is" : "These Stories are"} already in ${highlight.title}.`);
+        showToast(`${storyIds.length === 1 ? "Already" : "All already"} in ${highlight.title}`);
         return;
       }
       await updateHighlight(highlight.id, { storyIds: next }, accessToken);

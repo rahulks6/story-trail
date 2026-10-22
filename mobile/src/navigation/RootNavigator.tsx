@@ -136,7 +136,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={EditProfileScreen}
         options={{
           headerShown: true,
-          title: "Edit Profile",
+          title: "Edit profile",
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -202,7 +202,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={FollowRequestsScreen}
         options={{
           headerShown: true,
-          title: "Follow Requests",
+          title: "Follow requests",
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -213,7 +213,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={BlockedAccountsScreen}
         options={{
           headerShown: true,
-          title: "Blocked Accounts",
+          title: "Blocked accounts",
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -224,7 +224,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={MutedAccountsScreen}
         options={{
           headerShown: true,
-          title: "Muted Accounts",
+          title: "Muted accounts",
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,

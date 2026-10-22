@@ -74,7 +74,9 @@ export function HomeScreen():React.JSX.Element {
  const openDM=useCallback(({storyId,ownerUsername}:{storyId:string;ownerUsername:string})=>navigation.navigate('DM',{screen:'SendStory',initial:false,params:{storyId,ownerUsername}}),[navigation]);
  const openProfile=useCallback((username:string)=>navigation.navigate('Search',{screen:'UserProfile',initial:false,params:{username}}),[navigation]);
  if(feed===null&&!error)return <View style={styles.root}><StorySkeleton/>{festivalButton}{activityButton}{uploads}</View>;
- if(feed===null)return <View style={styles.empty}>{festivalButton}{activityButton}<Text style={typography.body}>{error||'Loading Stories…'}</Text>{error&&<Pressable onPress={refresh} accessibilityRole="button"><Text style={typography.body}>Try again</Text></Pressable>}</View>;
+ if(feed===null)return <View style={styles.empty}><EmptyState variant="media" title="Couldn't load Stories" message="Check your connection and try again.">
+  <Pressable onPress={refresh} style={styles.emptyButton} accessibilityRole="button"><Text style={styles.emptyButtonLabel}>Try again</Text></Pressable>
+ </EmptyState>{festivalButton}{activityButton}</View>;
  // Pull down (or tap Refresh) to look again; Find people for someone to follow.
  if(!feed.length)return <View style={styles.root}><ScrollView contentContainerStyle={styles.emptyScroll} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={reloadQuietly} tintColor={colors.textPrimary} colors={[colors.accent]}/>}>
   {festival?<View style={styles.festivalCard}>
@@ -90,6 +92,7 @@ export function HomeScreen():React.JSX.Element {
   </View>
  </ScrollView>{festivalButton}{activityButton}{uploads}</View>;
  return <View style={styles.root}><StoryFeed key={`${user?.id}:${retry}:${version}`} creators={creators} following={following} startIndex={0} sponsored={sponsored} onNeedMore={more} onRefresh={refresh}
+  onCreate={()=>navigation.navigate('Create')} onFindPeople={()=>navigation.navigate('Search',{screen:'SearchHome'})}
   onOpenDM={openDM} onOpenProfile={openProfile}/>
   {!!error&&<View style={[styles.error,{top:insets.top+spacing.xl+40}]}><Text style={typography.caption}>{error}</Text><Pressable onPress={more} accessibilityRole="button"><Text style={typography.body}>Retry</Text></Pressable><Pressable onPress={refresh} accessibilityRole="button"><Text style={typography.body}>Refresh</Text></Pressable></View>}
   {festivalButton}{activityButton}{uploads}

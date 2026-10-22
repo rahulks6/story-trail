@@ -170,6 +170,7 @@ describe("someone else's page", () => {
 
   test("More: copy the link with the account ID, mute, block after confirming, report", async () => {
     const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+    const toast = jest.spyOn(require("../src/components/Toast"), "showToast");
     api.getProfile.mockResolvedValue({ profile: profile() });
     await renderOther();
 
@@ -185,7 +186,7 @@ describe("someone else's page", () => {
     await openMore();
     await chooseInMore("Mute");
     expect(api.muteUser).toHaveBeenCalledWith("asha_k", "token");
-    expect(alert.mock.calls.at(-1)![0]).toBe("@asha_k muted");
+    expect(toast).toHaveBeenLastCalledWith("Muted @asha_k. They won't know."); // a toast, not a dialog to dismiss
     await openMore();
     expect(labelled("Unmute")).toHaveLength(1);
     await chooseInMore("Unmute");

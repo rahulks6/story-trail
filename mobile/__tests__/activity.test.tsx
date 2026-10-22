@@ -66,7 +66,7 @@ test("rows say what happened, how long ago and whether it is unread; filters are
   expect(texts()).toContain("2h ago");
   const tabs = tree.root.findAll((n) => typeof n.type === "string" && n.props.accessibilityRole === "tab");
   expect(tabs.map((t) => [t.props.accessibilityLabel, t.props.accessibilityState.selected])).toEqual([
-    ["All", true], ["Likes", false], ["Comments", false], ["Follows", false], ["Mentions", false],
+    ["All", true], ["Follows", false], ["Comments", false],
   ]);
 });
 

@@ -132,6 +132,9 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
     return (
       <View style={styles.centered}>
         <ActivityIndicator color={colors.accent} />
+        <Pressable style={[styles.closeButton, { top: insets.top + spacing.sm + 10 }]} onPress={close} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close">
+          <Icon style={styles.closeIcon} name={ICONS.close} />
+        </Pressable>
       </View>
     );
   }

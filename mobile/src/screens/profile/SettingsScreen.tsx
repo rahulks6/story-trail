@@ -134,26 +134,36 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <Text style={[styles.sectionHeader, styles.firstHeader]}>Account</Text>
       <View style={styles.card}>
-        <ListRow label="Account and sign-in methods" icon={ICONS.profile} onPress={()=>navigation.navigate("AccountSecurity")}/>
-        <ListRow label="Story uploads" icon={ICONS.create} onPress={()=>navigation.navigate('UploadQueue')}/>
-        <ListRow label="Account notices and appeals" icon={ICONS.about} onPress={()=>navigation.navigate('Appeals')}/>
+        <ListRow label="Account and sign-in" icon={ICONS.profile} onPress={() => navigation.navigate("AccountSecurity")} />
+        <ListRow label="Notifications" icon={ICONS.notifications} onPress={() => navigation.navigate("NotificationSettings")} />
+        <ListRow label="Appearance" icon={ICONS.settings} detail={APPEARANCE_LABELS[appearanceChoice()]} onPress={() => setAppearanceOpen(true)} />
       </View>
+      <ActionSheet
+        visible={appearanceOpen}
+        title="Appearance"
+        groups={[(["system", "light", "dark"] as AppearanceChoice[]).map((c) => ({
+          label: APPEARANCE_LABELS[c],
+          selected: c === appearanceChoice(),
+          onPress: () => void chooseAppearance(c),
+        }))]}
+        onClose={() => setAppearanceOpen(false)}
+      />
+
       <Text style={styles.sectionHeader}>Privacy</Text>
       <View style={styles.card}>
         <View style={styles.switchRow}>
           <View style={styles.switchLabelGroup}>
             <Text style={typography.body}>Private account</Text>
-            <Text style={styles.switchHint}>Only followers you approve can see your Stories.</Text>
+            <Text style={styles.switchHint}>Only followers you approve see your Stories.</Text>
           </View>
-          {togglingPrivacy ? <ActivityIndicator color={colors.accent} /> : <Switch value={isPrivate} onValueChange={onTogglePrivacy} />}
+          {togglingPrivacy ? <ActivityIndicator color={colors.accent} /> : <Switch value={isPrivate} onValueChange={onTogglePrivacy} accessibilityLabel="Private account" />}
         </View>
         <View style={styles.switchRow}>
           <View style={styles.switchLabelGroup}>
             <Text style={typography.body}>Nearby Stories</Text>
-            <Text style={styles.switchHint}>
-              See Stories from people near you and let them discover your public Stories. Uses an approximate, city-sized area, never your exact location.
-            </Text>
+            <Text style={styles.switchHint}>Uses your city-sized area, never your exact location.</Text>
           </View>
           {togglingNearby || nearbyOn === null ? (
             <ActivityIndicator color={colors.accent} />
@@ -172,27 +182,9 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
         <ListRow label="Muted accounts" icon={ICONS.audioMuted} onPress={() => navigation.navigate("MutedAccounts")} />
       </View>
 
-      <Text style={styles.sectionHeader}>Appearance</Text>
+      <Text style={styles.sectionHeader}>Stories</Text>
       <View style={styles.card}>
-        <ListRow label="Appearance" icon={ICONS.settings} detail={APPEARANCE_LABELS[appearanceChoice()]} onPress={() => setAppearanceOpen(true)} />
-      </View>
-      <ActionSheet
-        visible={appearanceOpen}
-        title="Appearance"
-        groups={[(["system", "light", "dark"] as AppearanceChoice[]).map((c) => ({
-          label: c === appearanceChoice() ? `${APPEARANCE_LABELS[c]} (current)` : APPEARANCE_LABELS[c],
-          onPress: () => void chooseAppearance(c),
-        }))]}
-        onClose={() => setAppearanceOpen(false)}
-      />
-
-      <Text style={styles.sectionHeader}>Notifications</Text>
-      <View style={styles.card}>
-        <ListRow label="Notifications" icon={ICONS.notifications} onPress={() => navigation.navigate("NotificationSettings")} />
-      </View>
-
-      <Text style={styles.sectionHeader}>Data &amp; Storage</Text>
-      <View style={styles.card}>
+        <ListRow label="Uploads" icon={ICONS.create} onPress={() => navigation.navigate("UploadQueue")} />
         <ListRow
           label="Clear saved drafts"
           icon={ICONS.trash}
@@ -206,10 +198,11 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
       <View style={styles.card}>
         <ListRow label="Help" icon={ICONS.help} onPress={() => navigation.navigate("Help")} />
         <ListRow label="Send feedback" icon={ICONS.dm} onPress={() => navigation.navigate("Feedback")} />
+        <ListRow label="Account status" icon={ICONS.about} onPress={() => navigation.navigate("Appeals")} />
         <ListRow label="About" icon={ICONS.about} onPress={() => navigation.navigate("About")} />
       </View>
 
-      <View style={styles.card}>
+      <View style={[styles.card, styles.lastCard]}>
         <ListRow label="Log out" icon={ICONS.logout} destructive onPress={onLogOut} />
         {/* One path for every account: it verifies with a password or Google/phone, so accounts without a password can delete too. */}
         <ListRow label="Delete account" icon={ICONS.trash} destructive onPress={() => navigation.navigate("AccountSecurity")} />
@@ -223,6 +216,8 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.md, paddingBottom: spacing.xxl },
   sectionHeader: { ...typography.label, color: colors.textSecondary, marginTop: spacing.lg, marginBottom: spacing.xs },
+  firstHeader: { marginTop: 0 },
+  lastCard: { marginTop: spacing.lg },
   card: {
     backgroundColor: colors.surface,
     borderRadius: radii.md,
@@ -241,4 +236,4 @@ const styles = StyleSheet.create({
   switchHint: { ...typography.caption, color: colors.textSecondary },
 });
 
-const APPEARANCE_LABELS: Record<AppearanceChoice, string> = { system: "Automatic (phone setting)", light: "Light", dark: "Dark" };
+const APPEARANCE_LABELS: Record<AppearanceChoice, string> = { system: "Automatic", light: "Light", dark: "Dark" };

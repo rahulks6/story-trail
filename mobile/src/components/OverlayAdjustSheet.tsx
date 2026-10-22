@@ -113,7 +113,7 @@ export function OverlayAdjustSheet({ overlay, onChange, onEditText, onEditLocati
             accessibilityRole="button"
             accessibilityLabel="Edit text and style"
           >
-            <Text style={styles.secondaryButtonLabel}>Edit Text</Text>
+            <Text style={styles.secondaryButtonLabel}>Edit text</Text>
           </Pressable>
         ) : null}
 
@@ -127,7 +127,7 @@ export function OverlayAdjustSheet({ overlay, onChange, onEditText, onEditLocati
             accessibilityRole="button"
             accessibilityLabel={shown.type === "location" ? "Edit location" : "Edit date or time"}
           >
-            <Text style={styles.secondaryButtonLabel}>{shown.type === "location" ? "Edit Location" : "Edit Date/Time"}</Text>
+            <Text style={styles.secondaryButtonLabel}>{shown.type === "location" ? "Edit location" : "Edit date and time"}</Text>
           </Pressable>
         ) : null}
 

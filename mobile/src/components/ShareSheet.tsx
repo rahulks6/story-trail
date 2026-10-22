@@ -1,10 +1,11 @@
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import React, { useState } from "react";
-import { Alert, Modal, Pressable, Share, StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { Share } from "react-native";
 import Clipboard from "@react-native-clipboard/clipboard";
-import { colors, radii, spacing, typography } from "../theme";
 import { useAuth } from "../state/AuthContext";
 import { shareStory } from "../api/engagement";
+import { storyShareLink } from "../navigation/profileLinks";
+import { ActionSheet, type SheetAction } from "./ActionSheet";
+import { showToast } from "./Toast";
 
 interface Props {
   visible: boolean;
@@ -12,32 +13,18 @@ interface Props {
   ownerUsername: string;
   isPublic: boolean;
   onClose: () => void;
-  /** Opens the DM "Send to…" picker (Phase 8) — the caller owns navigation since this component doesn't know its own nav context. */
+  /** Opens the "Send to…" picker; the caller owns navigation. */
   onSendToUser: () => void;
 }
 
 /**
- * Share bottom sheet (spec section 15). Real: a native OS share sheet via
- * React Native's built-in `Share` API, "Copy link" (offered only for
- * public Stories, never followers-only ones, so sharing can't leak private
- * content — spec: "Sharing must NEVER bypass Story privacy"), and now
- * "Send to a Katkee user" (Phase 8), which opens the DM SendStory picker.
- * All three record the real `POST /api/v1/stories/:id/share` analytics
- * event — "Send to…" via `sendMessage`'s reuse of `engagement.service
- * .shareStory` server-side, the other two directly here.
- *
- * The copied/shared link is a `katkee://` deep link. It will open the app
- * on a device that has Universal Links (iOS) / App Links (Android)
- * configured for this scheme — that native configuration doesn't exist
- * yet, so the link is correct but inert until it does.
+ * Share a Story: send it to someone on Katkee, through another app (the system share sheet),
+ * or copy its link. Copy link is for public Stories only, so sharing never bypasses privacy.
+ * Share via… and Copy link record the share (Send records it when the message is sent).
  */
 export function ShareSheet({ visible, storyId, ownerUsername, isPublic, onClose, onSendToUser }: Props): React.JSX.Element {
-  // Clears Android's navigation bar and the iPhone home indicator.
-  const bottomInset = useSafeAreaInsets().bottom;
   const { accessToken } = useAuth();
-  const [busy, setBusy] = useState(false);
-
-  const deepLink = `katkee://story/${storyId}`;
+  const link = storyShareLink(storyId);
 
   const recordShare = async () => {
     if (!accessToken) return;
@@ -48,73 +35,26 @@ export function ShareSheet({ visible, storyId, ownerUsername, isPublic, onClose,
     }
   };
 
-  const onCopyLink = async () => {
-    setBusy(true);
-    await recordShare();
-    Clipboard.setString(deepLink);
-    setBusy(false);
-    onClose();
-    Alert.alert("Link copied");
-  };
+  const actions: SheetAction[] = [
+    { label: "Send in Katkee", onPress: onSendToUser },
+    {
+      label: "Share via…",
+      onPress: () => {
+        void recordShare();
+        Share.share({ message: `@${ownerUsername} on Katkee: ${link}` }).catch(() => undefined); // cancelling isn't an error
+      },
+    },
+    ...(isPublic
+      ? [{
+          label: "Copy link",
+          onPress: () => {
+            void recordShare();
+            Clipboard.setString(link);
+            showToast("Link copied");
+          },
+        }]
+      : []),
+  ];
 
-  const onNativeShare = async () => {
-    setBusy(true);
-    await recordShare();
-    try {
-      await Share.share({ message: `@${ownerUsername} on Katkee: ${deepLink}` });
-    } catch {
-      // User cancelled the native sheet — not an error.
-    }
-    setBusy(false);
-    onClose();
-  };
-
-  return (
-    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-      <Pressable style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
-      <View style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]}>
-        <View style={styles.handle} />
-        <Pressable
-          accessibilityRole="button"
-          style={styles.row}
-          disabled={busy}
-          onPress={() => {
-            onClose();
-            onSendToUser();
-          }}
-        >
-          {/* Analytics are recorded on actual send, not here — opening the
-              picker and backing out shouldn't log a share that never happened
-              (unlike Share via… / Copy link, which are one real action). */}
-          <Text style={typography.body}>Send to a Katkee user</Text>
-        </Pressable>
-        <Pressable accessibilityRole="button" style={styles.row} disabled={busy} onPress={onNativeShare}>
-          <Text style={typography.body}>Share via…</Text>
-        </Pressable>
-        {isPublic ? (
-          <Pressable accessibilityRole="button" style={styles.row} disabled={busy} onPress={onCopyLink}>
-            <Text style={typography.body}>Copy link</Text>
-          </Pressable>
-        ) : (
-          <Text style={[typography.caption, styles.note]}>
-            Copying a link is only available for public Stories.
-          </Text>
-        )}
-      </View>
-    </Modal>
-  );
+  return <ActionSheet visible={visible} title="Share" groups={[actions]} onClose={onClose} />;
 }
-
-const styles = StyleSheet.create({
-  backdrop: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
-  sheet: {
-    backgroundColor: colors.surface,
-    borderTopLeftRadius: radii.lg,
-    borderTopRightRadius: radii.lg,
-    paddingHorizontal: spacing.md,
-    paddingBottom: spacing.xl,
-  },
-  handle: { width: 40, height: 4, borderRadius: 2, backgroundColor: colors.border, alignSelf: "center", marginVertical: spacing.sm },
-  row: { paddingVertical: spacing.md, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border },
-  note: { paddingVertical: spacing.md, textAlign: "center" },
-});

@@ -7,6 +7,7 @@ import { DMProvider } from "./src/state/DMContext";
 import { RealtimeProvider } from "./src/state/RealtimeContext";
 import { RootNavigator } from "./src/navigation/RootNavigator";
 import { ErrorBoundary } from "./src/components/ErrorBoundary";
+import { ToastHost } from "./src/components/Toast";
 import { colorScheme } from "./src/theme/colors";
 
 export default function App(): React.JSX.Element {
@@ -22,6 +23,7 @@ export default function App(): React.JSX.Element {
             <NotificationsProvider>
               <DMProvider>
                 <RootNavigator />
+                <ToastHost />
               </DMProvider>
             </NotificationsProvider>
           </RealtimeProvider>

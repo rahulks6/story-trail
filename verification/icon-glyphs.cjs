@@ -17,12 +17,10 @@ const CONTENT=[
  ['components/OverlayBody.tsx',/STICKER_GLYPHS\[overlay\.properties\.stickerId\] \?\? "✦"/],
  ['components/OverlayBody.tsx',/<Text allowFontScaling=\{false\} style=\{styles\.chip\}>📍 \{overlay\.properties\.label\}<\/Text>/],
  ['screens/dm/ConversationScreen.tsx',/^\s*("[^"]+",\s*)+$/],
- ['screens/dm/ConversationScreen.tsx',/Say hi to @\$\{otherUsername\} 👋` : "Say hi 👋"/],
- ['screens/dm/DMInboxScreen.tsx',/return "Say hi 👋";/],
  ['api/conversations.ts',/export const STORY_REACTIONS = \[/],
  ['api/conversations.ts',/export const MESSAGE_REACTIONS = \[/],
  ['screens/auth/ProviderEntry.tsx',/\$\{country\} •••• \$\{phone/],
- // The posting streak is text people read ("🔥 5-day streak"), like the "Say hi 👋" lines.
+ // The posting streak is text people read ("🔥 5-day streak").
  ['components/profile/StreakBadge.tsx',/<Text style=\{styles\.label\}>🔥 \{streak\.days\}-day streak<\/Text>/],
 ];
 

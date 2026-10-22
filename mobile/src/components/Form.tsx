@@ -62,7 +62,8 @@ interface ButtonProps {
   onPress: () => void;
   disabled?: boolean;
   busy?: boolean;
-  variant?: "primary" | "secondary" | "destructive";
+  /** "text": a quiet link-style action under the main one (Resend, Change email, Log out). */
+  variant?: "primary" | "secondary" | "destructive" | "text";
   accessibilityHint?: string;
 }
 
@@ -79,7 +80,7 @@ export function Button({ label, onPress, disabled, busy, variant = "primary", ac
       accessibilityState={{ disabled: !!inactive, busy: !!busy }}
       style={({ pressed }) => [
         styles.button,
-        variant === "primary" ? styles.primary : styles.secondary,
+        variant === "primary" ? styles.primary : variant === "text" ? styles.text : styles.secondary,
         pressed && !inactive && styles.pressed,
         inactive && styles.disabled,
       ]}
@@ -87,7 +88,7 @@ export function Button({ label, onPress, disabled, busy, variant = "primary", ac
       {busy ? (
         <ActivityIndicator color={variant === "primary" ? colors.onAccent : colors.textPrimary} />
       ) : (
-        <Text style={[styles.buttonLabel, variant === "primary" ? styles.primaryLabel : variant === "destructive" ? styles.destructiveLabel : styles.secondaryLabel]}>
+        <Text style={[styles.buttonLabel, variant === "primary" ? styles.primaryLabel : variant === "destructive" ? styles.destructiveLabel : variant === "text" ? styles.textLabel : styles.secondaryLabel]}>
           {label}
         </Text>
       )}
@@ -127,12 +128,14 @@ const styles = StyleSheet.create({
   button: { minHeight: 48, borderRadius: radii.md, alignItems: "center", justifyContent: "center", paddingHorizontal: spacing.lg },
   primary: { backgroundColor: colors.accent },
   secondary: { backgroundColor: colors.surfaceElevated, borderWidth: 1, borderColor: colors.border },
+  text: { minHeight: 44, backgroundColor: "transparent" },
   // A slight press-in, so taps feel physical.
   pressed: { opacity: 0.85, transform: [{ scale: 0.98 }] },
   disabled: { opacity: 0.5 },
   buttonLabel: { fontSize: 16, fontWeight: "700" },
   primaryLabel: { color: colors.onAccent },
   secondaryLabel: { color: colors.textPrimary },
+  textLabel: { color: colors.accent, fontSize: 15, fontWeight: "600" },
   destructiveLabel: { color: colors.danger },
   banner: { borderRadius: radii.sm, padding: spacing.sm + 2, fontSize: 14, overflow: "hidden" },
   bannerError: { backgroundColor: "rgba(237,82,70,0.14)", color: colors.danger },

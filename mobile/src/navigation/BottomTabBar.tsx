@@ -11,7 +11,7 @@ const TAB_LABELS: Record<string, string> = {
   Home: "Home",
   Search: "Search",
   Create: "",
-  DM: "DM",
+  DM: "Messages",
   Profile: "Profile",
 };
 

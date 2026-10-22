@@ -161,16 +161,18 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
   const latest = useRef({ comments, stored, user, accessToken, storyOwnerId, onClose, onOpenProfile, onCommentCountChange });
   latest.current = { comments, stored, user, accessToken, storyOwnerId, onClose, onOpenProfile, onCommentCountChange };
 
+  const [loadFailed, setLoadFailed] = useState(false);
   const load = useCallback(async () => {
     if (!accessToken) return;
     setLoading(true);
     setError(null);
+    setLoadFailed(false);
     try {
       const { comments: fetched } = await listComments(storyId, accessToken, { limit: PAGE });
       setComments(fetched);
       setHasMore(fetched.length === PAGE);
     } catch {
-      setError("Couldn't load comments.");
+      setLoadFailed(true);
     } finally {
       setLoading(false);
     }
@@ -310,6 +312,15 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
 
           {loading ? (
             <ActivityIndicator color={colors.accent} style={styles.spinner} />
+          ) : loadFailed ? (
+            // Not "no comments": they couldn't be loaded.
+            <View style={styles.emptyBox}>
+              <Text style={typography.bodyStrong}>Couldn't load comments</Text>
+              <Text style={[typography.caption, styles.emptyHint]}>Check your connection and try again.</Text>
+              <Pressable onPress={() => void load()} style={styles.retry} accessibilityRole="button" hitSlop={8}>
+                <Text style={styles.retryText}>Try again</Text>
+              </Pressable>
+            </View>
           ) : comments.length === 0 ? (
             <View style={styles.emptyBox}>
               <Text style={typography.bodyStrong}>No comments yet</Text>
@@ -361,6 +372,8 @@ const styles = StyleSheet.create({
   handle: { width: 40, height: 4, borderRadius: 2, backgroundColor: colors.border, alignSelf: "center", marginVertical: spacing.sm },
   title: { textAlign: "center", marginBottom: spacing.sm },
   spinner: { marginVertical: spacing.lg },
+  retry: { marginTop: spacing.sm, minHeight: 44, paddingHorizontal: spacing.lg, justifyContent: "center", borderRadius: radii.pill, backgroundColor: colors.surfaceElevated },
+  retryText: { color: colors.textPrimary, fontWeight: "700" },
   emptyBox: { flex: 1, alignItems: "center", justifyContent: "center", gap: spacing.xs },
   emptyHint: { color: colors.textSecondary },
   list: { flex: 1 },

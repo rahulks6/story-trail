@@ -102,12 +102,13 @@ async function gesture(from: [number, number], to: [number, number], holdMs = 0)
 }
 const sequence = () => tree.root.findAll((n) => typeof n.type === "string" && n.props.accessibilityRole === "progressbar").map((n) => n.props.accessibilityLabel as string)[0];
 
-test("the right rail is Like, Comment, Share, More; everyone sees the view count, only owners open viewers", async () => {
+test("the right rail is Like, Share, More; view counts are the owner's alone", async () => {
   await renderFeed();
   const rail = tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && n.props.accessibilityRole === "button" && ["Like", "Unlike", "Comments", "Share", "More"].includes(n.props.accessibilityLabel));
-  expect(rail.map((n) => n.props.accessibilityLabel)).toEqual(["Like", "Comments", "Share", "More"]);
-  expect(texts()).toContain("12");
-  expect(texts().some((t) => /viewers/.test(t))).toBe(false); // an icon, not the word "viewers"
+  // Comments open from "Add a comment…" under the Story (the rail carries them on your own Story only).
+  expect(rail.map((n) => n.props.accessibilityLabel)).toEqual(["Like", "Share", "More"]);
+  expect(texts()).not.toContain("12"); // someone else's Story: no view count (as on Instagram)
+  expect(tree.root.findAll((n) => typeof n.props.accessibilityLabel === "string" && /views/.test(n.props.accessibilityLabel))).toHaveLength(0);
   expect(tree.root.findAll((n) => n.props.accessibilityLabel === "12 views. Open viewers and Insights")).toHaveLength(0);
 
   await act(async () => tree.unmount());
@@ -202,7 +203,7 @@ test("the top shows who posted it and when, with Follow for a creator you don't 
 
 test("holding a Story clears the screen to just the Story", async () => {
   await renderFeed();
-  const rail = () => tree.root.find((n: ReactTestInstance) => typeof n.type === "string" && Array.isArray(n.props.style) && n.props.pointerEvents !== undefined && n.findAll((c) => c.props.accessibilityLabel === "Comments").length > 0 && n.props.style.some((st: unknown) => st && typeof st === "object" && "right" in (st as object)));
+  const rail = () => tree.root.find((n: ReactTestInstance) => typeof n.type === "string" && Array.isArray(n.props.style) && n.props.pointerEvents !== undefined && n.findAll((c) => c.props.accessibilityLabel === "Share").length > 0 && n.props.style.some((st: unknown) => st && typeof st === "object" && "right" in (st as object)));
   expect(StyleSheet.flatten(rail().props.style).opacity ?? 1).toBe(1);
   await act(async () => surface().props.onResponderGrant(touch(300, 400)));
   await act(async () => { jest.advanceTimersByTime(400); });

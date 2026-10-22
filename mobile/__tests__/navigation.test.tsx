@@ -37,10 +37,10 @@ afterEach(async () => {
   mounted = null;
 });
 
-test("the tab bar is exactly Home | Search | Create | DM | Profile, with unread counts", async () => {
+test("the tab bar is exactly Home | Search | Create | Messages | Profile, with unread counts", async () => {
   const tree = (mounted = await renderTabs());
   // Activity opens from the heart at the top of Home.
-  expect(tabs(tree)).toEqual(["Home", "Search", "Create a Story", "DM, 120 unread", "Profile"]);
+  expect(tabs(tree)).toEqual(["Home", "Search", "Create a Story", "Messages, 120 unread", "Profile"]);
   expect(JSON.stringify(tree.toJSON())).not.toMatch(/Discover|Reels|Admin|Ads Manager/);
 });
 

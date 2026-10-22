@@ -55,6 +55,9 @@ export interface StoryFeedProps {
   initialStoryId?: string;
   onRefresh?: () => void;
   onNeedMore?: () => void;
+  /** Home's end of the feed: somewhere to go next (post a Story, find people to follow). */
+  onCreate?: () => void;
+  onFindPeople?: () => void;
   sponsored?: SponsoredPlacement[];
   /**
    * Present only when this feed was pushed on top of something to return
@@ -95,7 +98,7 @@ let viewerMuted = false;
 /** The comment box (or your Story's Activity button) along the bottom. */
 const BOTTOM_BAR_HEIGHT = 46;
 
-export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpenDM, onOpenProfile, onOpenArchived, onRefresh, onNeedMore, sponsored = [], following }: StoryFeedProps): React.JSX.Element {
+export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpenDM, onOpenProfile, onOpenArchived, onRefresh, onNeedMore, onCreate, onFindPeople, sponsored = [], following }: StoryFeedProps): React.JSX.Element {
   // Overlays clear the status bar / notch; the bottom ones also the home indicator when no tab bar is below.
   const insets = useScreenInsets();
   const { user: authUser, accessToken } = useAuth();
@@ -636,8 +639,12 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
 
   if (caughtUp) {
     return <View style={styles.centered}>
-      <EmptyState variant="media" icon="check" title="You're all caught up" message="No more Stories right now — check back soon.">
-        {onRefresh ? <Pressable onPress={onRefresh} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>Check for new Stories</Text></Pressable> : null}
+      <EmptyState variant="media" icon="check" title="You're all caught up" message="You've seen every new Story. Share one of your own, or follow more people.">
+        <View style={styles.endActions}>
+          {onCreate ? <Pressable onPress={onCreate} style={[styles.endButton, styles.endButtonPrimary]} accessibilityRole="button"><Text style={[styles.endButtonLabel, styles.endButtonPrimaryLabel]}>Post a Story</Text></Pressable> : null}
+          {onFindPeople ? <Pressable onPress={onFindPeople} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>Find people</Text></Pressable> : null}
+        </View>
+        {onRefresh ? <Pressable onPress={onRefresh} hitSlop={8} style={styles.endLink} accessibilityRole="button"><Text style={styles.endLinkLabel}>Check for new Stories</Text></Pressable> : null}
       </EmptyState>
     </View>;
   }
@@ -856,26 +863,23 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           <Icon style={[styles.actionIcon, detail?.viewerHasLiked && styles.actionIconLiked]} name={detail?.viewerHasLiked ? ICONS.liked : ICONS.like} />
           <Text style={styles.actionCount} maxFontSizeMultiplier={1.3}>{detail?.likeCount ?? "—"}</Text>
         </Pressable>
-        <Pressable
-          onPress={() => {
-            emit("comment_open", { storyId: currentStory.id, creatorId: currentStory.ownerId });
-            setCommentsOpen(true);
-          }}
-          hitSlop={10}
-          style={styles.actionButton}
-          accessibilityRole="button"
-          accessibilityLabel="Comments"
-        >
-          <Icon style={styles.actionIcon} name={ICONS.comment} />
-          <Text style={styles.actionCount} maxFontSizeMultiplier={1.3}>{detail?.commentCount ?? "—"}</Text>
-        </Pressable>
-        {!isOwnStory ? (
-          // How many have seen it; who they are is the owner's to see (StoryInsightsSheet).
-          <View style={styles.actionButton} accessible accessibilityLabel={`${viewCount ?? 0} views`}>
-            <Icon style={styles.actionIcon} name={ICONS.viewers} />
-            <Text style={styles.actionCount} maxFontSizeMultiplier={1.3}>{viewCount ?? "—"}</Text>
-          </View>
+        {/* Someone else's Story: "Add a comment…" below is the way in. Your own: its comments, here. */}
+        {isOwnStory ? (
+          <Pressable
+            onPress={() => {
+              emit("comment_open", { storyId: currentStory.id, creatorId: currentStory.ownerId });
+              setCommentsOpen(true);
+            }}
+            hitSlop={10}
+            style={styles.actionButton}
+            accessibilityRole="button"
+            accessibilityLabel="Comments"
+          >
+            <Icon style={styles.actionIcon} name={ICONS.comment} />
+            <Text style={styles.actionCount} maxFontSizeMultiplier={1.3}>{detail?.commentCount ?? "—"}</Text>
+          </Pressable>
         ) : null}
+        {/* View counts are the owner's (the Activity button at the bottom), as on Instagram: a quieter rail. */}
         <Pressable onPress={() => setShareOpen(true)} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel="Share">
           <Icon style={styles.actionIcon} name={ICONS.share} />
         </Pressable>
@@ -1045,6 +1049,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         otherUsername={isOwnStory ? null : (currentUsername ?? null)}
         otherUserId={isOwnStory ? null : currentStory.ownerId}
         onClose={() => setMoreOpen(false)}
+        onOpenInsights={() => setInsightsOpen(true)}
         onDeleted={() => {
           setMoreOpen(false);
           const deletedId = currentStory.id;
@@ -1087,6 +1092,10 @@ const styles = StyleSheet.create({
   endActions: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: spacing.md },
   endButton: { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, minHeight: 44, justifyContent: "center", borderRadius: 22, borderWidth: 1, borderColor: colors.textPrimary },
   endButtonLabel: { ...typography.body, fontWeight: "700" },
+  endButtonPrimary: { backgroundColor: colors.accent, borderColor: colors.accent },
+  endButtonPrimaryLabel: { color: colors.onAccent },
+  endLink: { marginTop: spacing.md, minHeight: 44, justifyContent: "center" },
+  endLinkLabel: { ...typography.body, color: colors.textSecondary, fontWeight: "600" },
   heartBurst: { ...StyleSheet.absoluteFill, alignItems: "center", justifyContent: "center" },
   heartBurstIcon: { fontSize: 96, color: colors.like },
   progressRow: {

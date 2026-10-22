@@ -1,8 +1,10 @@
 import { AddToHighlightSheet } from "../../components/AddToHighlightSheet";
 import { Icon } from "../../components/Icon";
+import { showToast } from "../../components/Toast";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Alert, Image, Pressable, SectionList, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../../navigation/types";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
@@ -74,6 +76,24 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
+  /** Choosing Stories (Select in the header, or a long-press): taps select instead of opening. */
+  const [selecting, setSelecting] = useState(false);
+  const choosing = selecting || selected.length > 0;
+  const { bottom: bottomInset } = useSafeAreaInsets();
+  const endSelection = useCallback(() => {
+    setSelected([]);
+    setSelecting(false);
+  }, []);
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () =>
+        stories?.length ? (
+          <Pressable onPress={choosing ? endSelection : () => setSelecting(true)} hitSlop={10} accessibilityRole="button">
+            <Text style={styles.headerAction}>{choosing ? "Cancel" : "Select"}</Text>
+          </Pressable>
+        ) : null,
+    });
+  }, [choosing, endSelection, navigation, stories?.length]);
   const [deleting, setDeleting] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
   // A failed next page waits for a tap on "Try again" rather than retrying on every scroll.
@@ -150,6 +170,7 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
             });
             setStories((prev) => (prev ?? []).filter((s) => !done.includes(s.id)));
             setSelected((current) => current.filter((id) => !done.includes(id)));
+            setSelecting(false);
             setDeleting(false);
             const failed = ids.length - done.length;
             if (failed > 0) {
@@ -198,10 +219,10 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
                   <Pressable
                     accessibilityRole="button"
                     accessibilityLabel={`Archived Story, ${serverDate(story.createdAt)?.toLocaleDateString() ?? ""}`}
-                    accessibilityHint={selected.length > 0 ? undefined : "Long press to select"}
+                    accessibilityHint={choosing ? undefined : "Long press to select"}
                     accessibilityState={{ selected: isSelected }}
                     key={story.id}
-                    onPress={() => (selected.length > 0 ? toggle(story.id) : navigation.navigate("ArchivedStoryViewer", { storyId: story.id }))}
+                    onPress={() => (choosing ? toggle(story.id) : navigation.navigate("ArchivedStoryViewer", { storyId: story.id }))}
                     onLongPress={() => toggle(story.id)}
                     style={[styles.thumbWrapper, { width: thumbSize, height: thumbSize }]}
                   >
@@ -221,20 +242,17 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
         />
       )}
 
-      {selected.length > 0 ? (
-        <View style={styles.actionBar}>
-          <Pressable accessibilityRole="button" onPress={() => setSelected([])} hitSlop={8}>
-            <Text style={styles.actionCancel}>Cancel</Text>
+      {choosing ? (
+        // Clear of the home indicator / navigation bar; the actions wait for at least one Story.
+        <View style={[styles.actionBar, { paddingBottom: spacing.sm + bottomInset }]}>
+          <Pressable accessibilityRole="button" onPress={onDelete} disabled={deleting || !selected.length} hitSlop={8} style={[styles.actionButton, !selected.length && styles.actionDisabled]}>
+            {deleting ? <ActivityIndicator color={colors.danger} /> : <><Icon name={ICONS.trash} size={20} color={colors.danger} /><Text style={styles.actionDelete}>Delete</Text></>}
           </Pressable>
-          <Text style={typography.caption}>{selected.length} selected</Text>
-          <View style={styles.actionButtons}>
-            <Pressable accessibilityRole="button" onPress={onDelete} disabled={deleting} hitSlop={8} style={styles.actionButton}>
-              {deleting ? <ActivityIndicator color={colors.danger} /> : <View style={{flexDirection:"row",alignItems:"center",gap:6}}><Icon name="trash" color={colors.danger}/><Text style={styles.actionDelete}>Delete</Text></View>}
-            </Pressable>
-            <Pressable accessibilityRole="button" onPress={onCreateHighlight} hitSlop={8} style={styles.actionButton}>
-              <View style={{flexDirection:"row",alignItems:"center",gap:6}}><Icon name="add" color={colors.onAccent}/><Text style={styles.actionCreate}>Add to Highlight</Text></View>
-            </Pressable>
-          </View>
+          <Text style={typography.caption} accessibilityLiveRegion="polite">{selected.length ? `${selected.length} selected` : "Choose Stories"}</Text>
+          <Pressable accessibilityRole="button" onPress={onCreateHighlight} disabled={!selected.length} hitSlop={8} style={[styles.actionButton, !selected.length && styles.actionDisabled]}>
+            <Icon name={ICONS.add} size={20} color={colors.accent} />
+            <Text style={styles.actionCreate}>Highlight</Text>
+          </Pressable>
         </View>
       ) : null}
       <AddToHighlightSheet
@@ -242,8 +260,8 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
         storyIds={selected}
         onClose={() => setAddOpen(false)}
         onAdded={(title) => {
-          setSelected([]);
-          Alert.alert("Added", `Added to ${title}.`);
+          endSelection();
+          showToast(`Added to ${title}`);
         }}
       />
     </View>
@@ -284,9 +302,9 @@ const styles = StyleSheet.create({
     borderTopColor: colors.border,
     backgroundColor: colors.surface,
   },
-  actionCancel: { color: colors.textSecondary },
-  actionButtons: { flexDirection: "row", gap: spacing.lg },
-  actionButton: {},
+  actionButton: { flexDirection: "row", alignItems: "center", gap: 6, minHeight: 44 },
+  actionDisabled: { opacity: 0.4 },
+  headerAction: { color: colors.accent, fontSize: 16, fontWeight: "600" },
   actionDelete: { color: colors.danger, fontWeight: "600" },
   actionCreate: { color: colors.accent, fontWeight: "700" },
 });

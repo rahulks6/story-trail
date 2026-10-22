@@ -106,17 +106,6 @@ test("screen readers hear who sent each message, can report the other person's, 
   expect(sheet().props).toMatchObject({ visible: true, targetType: "message", targetId: "m2", conversationId: "c1" });
 });
 
-test("the emoji panel replaces the keyboard instead of stacking on it", async () => {
-  const dismiss = jest.spyOn(Keyboard, "dismiss");
-  await render();
-  const toggle = () => tree.root.find((n) => typeof n.props.onPress === "function" && /emoji picker/.test(n.props.accessibilityLabel ?? ""));
-  expect(toggle().props.accessibilityLabel).toBe("Show emoji picker");
-  await act(async () => toggle().props.onPress());
-  expect(dismiss).toHaveBeenCalledTimes(1);
-  expect(toggle().props.accessibilityLabel).toBe("Hide emoji picker");
-  await act(async () => toggle().props.onPress());
-  expect(dismiss).toHaveBeenCalledTimes(1); // closing the panel leaves the keyboard alone
-});
 
 test("the header shows who you're chatting with, and opens their profile", async () => {
   await render();

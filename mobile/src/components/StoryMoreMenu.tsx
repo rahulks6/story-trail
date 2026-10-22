@@ -1,9 +1,9 @@
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useState } from "react";
-import { ActivityIndicator, Alert, Modal, Pressable, StyleSheet, Text, View } from "react-native";
-import { colors, radii, spacing, typography } from "../theme";
+import { Alert } from "react-native";
 import { useAuth } from "../state/AuthContext";
-import { deleteStory, getViewCount } from "../api/stories";
+import { deleteStory } from "../api/stories";
+import { ActionSheet, type SheetAction } from "./ActionSheet";
+import { showToast } from "./Toast";
 import { muteUser, blockUser } from "../api/users";
 import { recordEvent } from "../api/events";
 import { ReportSheet } from "./ReportSheet";
@@ -16,19 +16,16 @@ interface Props {
   otherUserId: string | null;
   onClose: () => void;
   onDeleted: () => void;
+  /** Your own Story: its viewers and Insights (the same sheet as the Activity button). */
+  onOpenInsights?: () => void;
 }
 
 /**
- * More menu (spec section 16). For your own Story: delete, or view its
- * real view count. For someone else's: Not Interested (Phase 6's real
- * exclusion — see backend's creator_not_interested table), Mute, Block,
- * and now Report (Phase 10's real moderation queue — see ReportSheet.tsx).
+ * The Story's More menu, as the app's other action sheets. Your own Story: Insights, Delete.
+ * Someone else's: Not interested (they're no longer recommended), Mute, Report, Block.
  */
-export function StoryMoreMenu({ visible, storyId, isOwnStory, otherUsername, otherUserId, onClose, onDeleted }: Props): React.JSX.Element {
-  // Clears Android's navigation bar and the iPhone home indicator.
-  const bottomInset = useSafeAreaInsets().bottom;
+export function StoryMoreMenu({ visible, storyId, isOwnStory, otherUsername, otherUserId, onClose, onDeleted, onOpenInsights }: Props): React.JSX.Element {
   const { accessToken } = useAuth();
-  const [busy, setBusy] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
 
   const onDelete = () => {
@@ -39,141 +36,77 @@ export function StoryMoreMenu({ visible, storyId, isOwnStory, otherUsername, oth
         style: "destructive",
         onPress: async () => {
           if (!accessToken) return;
-          setBusy(true);
           try {
             await deleteStory(storyId, accessToken);
+            showToast("Story deleted");
             onDeleted();
           } catch {
-            Alert.alert("Couldn't delete that Story — try again.");
-          } finally {
-            setBusy(false);
+            Alert.alert("Couldn't delete that Story", "Check your connection and try again.");
           }
         },
       },
     ]);
   };
 
-  const onViewInsights = async () => {
-    if (!accessToken) return;
-    setBusy(true);
-    try {
-      const { views } = await getViewCount(storyId, accessToken);
-      Alert.alert("Insights", `${views} view${views === 1 ? "" : "s"}`);
-    } catch {
-      Alert.alert("Couldn't load insights.");
-    } finally {
-      setBusy(false);
-      onClose();
-    }
-  };
-
   const onNotInterested = async () => {
     if (!accessToken || !otherUserId) return;
-    setBusy(true);
     try {
       await recordEvent({ eventType: "not_interested", creatorId: otherUserId }, accessToken);
-      onDeleted(); // this creator won't be recommended again — nothing more to show here
+      showToast("You'll see fewer Stories like this");
+      onDeleted(); // this creator won't be recommended again: nothing more to show here
     } catch {
-      Alert.alert("Couldn't save that — try again.");
-    } finally {
-      setBusy(false);
+      Alert.alert("Couldn't save that", "Check your connection and try again.");
     }
   };
 
   const onMute = async () => {
     if (!accessToken || !otherUsername) return;
-    setBusy(true);
     try {
       await muteUser(otherUsername, accessToken);
-      Alert.alert(`Muted @${otherUsername}`);
+      showToast(`Muted @${otherUsername}`);
     } catch {
-      Alert.alert("Couldn't mute — try again.");
-    } finally {
-      setBusy(false);
-      onClose();
+      Alert.alert("Couldn't mute", "Check your connection and try again.");
     }
   };
 
   const onBlock = () => {
     if (!otherUsername) return;
-    Alert.alert(`Block @${otherUsername}?`, "They won't be able to see your Stories or profile.", [
+    Alert.alert(`Block @${otherUsername}?`, "They won't be able to see your Stories or profile, or message you.", [
       { text: "Cancel", style: "cancel" },
       {
         text: "Block",
         style: "destructive",
         onPress: async () => {
           if (!accessToken) return;
-          setBusy(true);
           try {
             await blockUser(otherUsername, accessToken);
-            onDeleted(); // the story is no longer visible either way — close the viewer
+            showToast(`Blocked @${otherUsername}`);
+            onDeleted(); // the Story is no longer visible either way: close the viewer
           } catch {
-            Alert.alert("Couldn't block — try again.");
-          } finally {
-            setBusy(false);
+            Alert.alert("Couldn't block", "Check your connection and try again.");
           }
         },
       },
     ]);
   };
 
+  const groups: SheetAction[][] = isOwnStory
+    ? [[...(onOpenInsights ? [{ label: "View insights", onPress: onOpenInsights }] : []), { label: "Delete Story", destructive: true, onPress: onDelete }]]
+    : [
+        [
+          { label: "Not interested", onPress: () => void onNotInterested() },
+          { label: `Mute @${otherUsername ?? ""}`, onPress: () => void onMute() },
+        ],
+        [
+          { label: "Report", destructive: true, onPress: () => setReportOpen(true) },
+          { label: `Block @${otherUsername ?? ""}`, destructive: true, onPress: onBlock },
+        ],
+      ];
+
   return (
     <>
-      <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-        <Pressable style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
-        <View style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]}>
-          <View style={styles.handle} />
-          {busy ? (
-            <ActivityIndicator color={colors.accent} style={{ marginVertical: spacing.lg }} />
-          ) : isOwnStory ? (
-            <>
-              <Pressable accessibilityRole="button" style={styles.row} onPress={onViewInsights}>
-                <Text style={typography.body}>View Insights</Text>
-              </Pressable>
-              <Pressable accessibilityRole="button" style={styles.row} onPress={onDelete}>
-                <Text style={[typography.body, styles.destructive]}>Delete</Text>
-              </Pressable>
-            </>
-          ) : (
-            <>
-              <Pressable accessibilityRole="button" style={styles.row} onPress={onNotInterested}>
-                <Text style={typography.body}>Not Interested</Text>
-              </Pressable>
-              <Pressable accessibilityRole="button" style={styles.row} onPress={onMute}>
-                <Text style={typography.body}>Mute @{otherUsername}</Text>
-              </Pressable>
-              <Pressable accessibilityRole="button" style={styles.row} onPress={onBlock}>
-                <Text style={[typography.body, styles.destructive]}>Block @{otherUsername}</Text>
-              </Pressable>
-              <Pressable
-                accessibilityRole="button"
-                style={styles.row}
-                onPress={() => {
-                  onClose();
-                  setReportOpen(true);
-                }}
-              >
-                <Text style={[typography.body, styles.destructive]}>Report</Text>
-              </Pressable>
-            </>
-          )}
-        </View>
-      </Modal>
+      <ActionSheet visible={visible} groups={groups} onClose={onClose} />
       <ReportSheet visible={reportOpen} targetType="story" targetId={storyId} onClose={() => setReportOpen(false)} />
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  backdrop: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
-  sheet: {
-    backgroundColor: colors.surface,
-    borderTopLeftRadius: radii.lg,
-    borderTopRightRadius: radii.lg,
-    paddingHorizontal: spacing.md,
-    paddingBottom: spacing.xl,
-  },
-  handle: { width: 40, height: 4, borderRadius: 2, backgroundColor: colors.border, alignSelf: "center", marginVertical: spacing.sm },
-  row: { paddingVertical: spacing.md, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border },
-  destructive: { color: colors.danger },
-});

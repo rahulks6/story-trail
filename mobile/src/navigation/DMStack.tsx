@@ -43,7 +43,7 @@ export function DMStack(): React.JSX.Element {
       />
       <Stack.Screen name="Conversation" component={ConversationScreen} options={{ title: "" }} />
       <Stack.Screen name="SendStory" component={SendStoryScreen} options={{ title: "Send to…" }} />
-      <Stack.Screen name="NewChat" component={NewChatScreen} options={{ title: "New Chat" }} />
+      <Stack.Screen name="NewChat" component={NewChatScreen} options={{ title: "New message" }} />
       <Stack.Screen name="NewGroup" component={NewGroupScreen} options={{ title: "New group" }} />
       <Stack.Screen name="GroupInfo" component={GroupInfoScreen} options={{ title: "Group" }} />
     </Stack.Navigator>

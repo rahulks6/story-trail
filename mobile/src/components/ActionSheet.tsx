@@ -1,12 +1,15 @@
 import React, { useRef } from "react";
 import { Modal, Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { colors, radii, spacing } from "../theme";
+import { colors, radii, spacing, ICONS } from "../theme";
+import { Icon } from "./Icon";
 
 export interface SheetAction {
   label: string;
   onPress: () => void;
   destructive?: boolean;
+  /** The current choice (a tick beside it), for a sheet that picks one of several. */
+  selected?: boolean;
 }
 
 interface Props {
@@ -52,8 +55,10 @@ export function ActionSheet({ visible, title, groups, onClose }: Props): React.J
                   onPress={() => choose(action.onPress)}
                   accessibilityRole="button"
                   accessibilityLabel={action.label}
+                  accessibilityState={action.selected !== undefined ? { selected: action.selected } : undefined}
                 >
                   <Text style={[styles.rowLabel, action.destructive && styles.destructive]}>{action.label}</Text>
+                  {action.selected ? <Icon name={ICONS.check} size={20} color={colors.accent} style={styles.tick} /> : null}
                 </Pressable>
               ))}
             </View>
@@ -89,6 +94,7 @@ const styles = StyleSheet.create({
   },
   rowPressed: { backgroundColor: colors.border },
   rowLabel: { color: colors.textPrimary, fontSize: 16, textAlign: "center" },
+  tick: { position: "absolute", right: spacing.md },
   destructive: { color: colors.danger, fontWeight: "600" },
   cancel: { minHeight: 50, justifyContent: "center", borderRadius: radii.md, backgroundColor: colors.surfaceElevated },
 });

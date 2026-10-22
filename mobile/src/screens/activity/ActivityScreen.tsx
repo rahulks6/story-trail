@@ -27,18 +27,18 @@ const PAGE_SIZE = 20;
 
 type ActivityTab = "all" | "like" | "comment" | "follow" | "mention";
 
+// Three, not five: fewer chips, each easy to tap. "Comments" includes mentions (both are people talking to you).
 const TABS: Array<{ key: ActivityTab; label: string }> = [
   { key: "all", label: "All" },
-  { key: "like", label: "Likes" },
-  { key: "comment", label: "Comments" },
   { key: "follow", label: "Follows" },
-  { key: "mention", label: "Mentions" },
+  { key: "comment", label: "Comments" },
 ];
 
 /** A `follow_request` reads as the same relationship-y thing a `follow` does — the "Follows" tab covers both rather than needing a 5th tab. */
 function matchesTab(notification: NotificationRecord, tab: ActivityTab): boolean {
   if (tab === "all") return true;
   if (tab === "follow") return notification.type === "follow" || notification.type === "follow_request" || notification.type === "follow_accepted";
+  if (tab === "comment") return notification.type === "comment" || notification.type === "mention";
   return notification.type === tab;
 }
 
@@ -403,7 +403,7 @@ export function ActivityScreen(): React.JSX.Element {
     <View style={styles.container}>
       {header}
       {loadError ? <Banner text={loadError} /> : null}
-      {/* Scrolls sideways when the five tabs don't fit (small phones, large text). */}
+      {/* Scrolls sideways if the tabs don't fit (large text). */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabScroll} contentContainerStyle={styles.tabBar} accessibilityRole="tablist">
         {TABS.map((tab) => (
           <Pressable
@@ -420,7 +420,7 @@ export function ActivityScreen(): React.JSX.Element {
       </ScrollView>
       {tabFiltered.length === 0 ? (
         <View style={styles.emptyTab}>
-          <Text style={typography.body}>Nothing here yet.</Text>
+          <EmptyState icon="activity" title={activeTab === "follow" ? "No new followers yet" : "No comments yet"} message={activeTab === "follow" ? "When someone follows you, you'll see it here." : "Comments and mentions on your Stories show up here."} />
         </View>
       ) : (
         <SectionList
@@ -488,10 +488,10 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
     paddingBottom: spacing.sm,
   },
-  tab: { paddingVertical: spacing.xs, paddingHorizontal: spacing.sm, borderRadius: radii.pill },
-  tabActive: { backgroundColor: colors.surfaceElevated },
-  tabLabel: { ...typography.caption, color: colors.textSecondary, fontWeight: "600" },
-  tabLabelActive: { color: colors.textPrimary },
+  tab: { minHeight: 36, justifyContent: "center", paddingHorizontal: spacing.md, borderRadius: radii.pill, borderWidth: StyleSheet.hairlineWidth, borderColor: colors.border },
+  tabActive: { backgroundColor: colors.textPrimary, borderColor: colors.textPrimary },
+  tabLabel: { ...typography.body, fontSize: 14, color: colors.textSecondary, fontWeight: "600" },
+  tabLabelActive: { color: colors.background },
   emptyTab: { flex: 1, alignItems: "center", justifyContent: "center" },
   sectionHeader: {
     ...typography.label,

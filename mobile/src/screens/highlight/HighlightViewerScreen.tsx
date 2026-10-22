@@ -50,6 +50,9 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
   const rootNavigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const [items, setItems] = useState<HighlightItem[] | null>(null);
+  /** The first load failed (not "empty"): say so, with Try again. */
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [reload, setReload] = useState(0);
   const [ownerId, setOwnerId] = useState<string | null>(null);
   const [index, setIndex] = useState(0);
   const [mediaKind, setMediaKind] = useState<"photo" | "video" | null>(null);
@@ -77,6 +80,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
     useCallback(() => {
       if (!accessToken) return;
       let cancelled = false;
+      setLoadFailed(false);
       getHighlightDetail(highlightId, accessToken)
         .then(({ highlight }) => {
           if (cancelled) return;
@@ -94,13 +98,14 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
           }
         })
         .catch(() => {
-          if (!cancelled) setItems((previous) => previous ?? []);
+          // Still showing what loaded before; a first load that failed says so.
+          if (!cancelled && showingRef.current === null) setLoadFailed(true);
         });
       return () => {
         cancelled = true;
       };
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [highlightId, accessToken]),
+    }, [highlightId, accessToken, reload]),
   );
 
   // Where the progress bar stopped when playback paused, to carry on from there for the same Story.
@@ -210,16 +215,43 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
     ]);
   };
 
+  // Always a way out, whatever state it's in (a full-screen modal has no swipe-to-close on iPhone).
+  const close = (
+    <Pressable
+      style={[styles.closeButton, { top: insets.top + spacing.sm + 10 }]}
+      onPress={() => navigation.goBack()}
+      hitSlop={12}
+      accessibilityRole="button"
+      accessibilityLabel="Close"
+    >
+      <Icon style={styles.closeIcon} name={ICONS.close} />
+    </Pressable>
+  );
+
   if (items === null) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={colors.accent} />
+        {loadFailed ? (
+          <EmptyState variant="media" title="Couldn't load this Highlight" message="Check your connection and try again.">
+            <Pressable onPress={() => setReload((n) => n + 1)} style={styles.retry} accessibilityRole="button">
+              <Text style={styles.retryText}>Try again</Text>
+            </Pressable>
+          </EmptyState>
+        ) : (
+          <ActivityIndicator color={colors.accent} />
+        )}
+        {close}
       </View>
     );
   }
 
   if (items.length === 0) {
-    return <EmptyState title="Nothing here" message="This Highlight has no Stories left to show." />;
+    return (
+      <View style={styles.centered}>
+        <EmptyState variant="media" title="Nothing here" message="This Highlight has no Stories left to show." />
+        {close}
+      </View>
+    );
   }
 
   if (!currentItem) return <View style={styles.container} />;
@@ -283,15 +315,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
           <Icon style={styles.editIcon} name={ICONS.more} />
         </Pressable>
       ) : null}
-      <Pressable
-        style={[styles.closeButton, { top: insets.top + spacing.sm + 10 }]}
-        onPress={() => navigation.goBack()}
-        hitSlop={12}
-        accessibilityRole="button"
-        accessibilityLabel="Close"
-      >
-        <Icon style={styles.closeIcon} name={ICONS.close} />
-      </Pressable>
+      {close}
 
       <View style={styles.tapZones}>
         <Pressable style={styles.tapZone} onPress={goPrevious} accessibilityRole="button" accessibilityLabel="Previous item" />
@@ -351,6 +375,8 @@ const styles = StyleSheet.create({
   progressFill: { height: "100%", width: "100%", backgroundColor: "#fff", transformOrigin: "left" },
   title: { position: "absolute", top: spacing.xl + 14, left: spacing.md, color: "#fff", fontWeight: "700" },
   // Above the tap zones and the Story's own text, which are drawn after them.
+  retry: { minHeight: 44, paddingHorizontal: spacing.lg, justifyContent: "center", borderRadius: 22, borderWidth: 1, borderColor: colors.textPrimary },
+  retryText: { color: colors.textPrimary, fontWeight: "700" },
   closeButton: { position: "absolute", top: spacing.xl + 10, right: spacing.md, padding: spacing.xs, zIndex: 10, elevation: 10 },
   closeIcon: { color: "#fff", fontSize: 20 },
   editButton: { position: "absolute", top: spacing.xl + 10, right: spacing.xxl + spacing.sm, padding: spacing.xs, zIndex: 10, elevation: 10 },
