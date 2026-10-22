@@ -371,6 +371,8 @@ test("a double tap on a message hearts it, and another double tap takes the hear
   await settle();
   expect(api.reactToMessage).toHaveBeenCalledWith("c1", "m2", "❤️", "token");
   expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Reactions: ❤️ from you" && typeof n.props.onPress === "function")).toHaveLength(1);
+  // A heart pops on the message (an icon, not an emoji glyph).
+  expect(bubble("@alice: hello").findAll((n) => n.props.name === "liked")).not.toHaveLength(0);
   await act(async () => { bubble("@alice: hello").props.onPress(); bubble("@alice: hello").props.onPress(); });
   await settle();
   expect(api.removeMessageReaction).toHaveBeenCalledWith("c1", "m2", "token");

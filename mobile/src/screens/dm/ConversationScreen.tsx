@@ -298,6 +298,27 @@ function Quote({ quote, userId, otherUsername, mine, onPress }: { quote: QuotedM
   );
 }
 
+/** The heart that pops on a message you double-tap, like Instagram (only when adding one). */
+function HeartPop({ trigger }: { trigger: number }): React.JSX.Element | null {
+  const progress = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (!trigger) return;
+    progress.setValue(0);
+    Animated.sequence([
+      Animated.spring(progress, { toValue: 1, friction: 4, tension: 120, useNativeDriver: true }),
+      Animated.timing(progress, { toValue: 2, duration: 220, delay: 180, useNativeDriver: true }),
+    ]).start();
+  }, [progress, trigger]);
+  if (!trigger) return null;
+  const scale = progress.interpolate({ inputRange: [0, 1, 2], outputRange: [0.3, 1, 1.2] });
+  const opacity = progress.interpolate({ inputRange: [0, 0.15, 1, 2], outputRange: [0, 1, 1, 0] });
+  return (
+    <Animated.View pointerEvents="none" style={[styles.heartPop, { opacity, transform: [{ scale }] }]}>
+      <Icon name={ICONS.liked} size={40} color={colors.like} />
+    </Animated.View>
+  );
+}
+
 /** One message in the thread. Memoized: typing, recording or a poll that changed nothing doesn't re-render it. */
 const MessageRow = memo(function MessageRow(props: RowProps): React.JSX.Element {
   const { row, actions } = props;
@@ -314,6 +335,7 @@ function MessageContent({ row, userId, otherUsername, accessToken, showStatus, p
   // or a shared Story) waits a moment to be sure it isn't the first of two.
   const lastTapAt = useRef(0);
   const singleTap = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [heartPop, setHeartPop] = useState(0);
   useEffect(() => () => { if (singleTap.current) clearTimeout(singleTap.current); }, []);
   const onTap = (single?: () => void) => {
     if (row.kind !== "sent") return single?.();
@@ -322,6 +344,7 @@ function MessageContent({ row, userId, otherUsername, accessToken, showStatus, p
       lastTapAt.current = 0;
       if (singleTap.current) clearTimeout(singleTap.current);
       singleTap.current = null;
+      if (row.reactions?.find((r) => r.userId === userId)?.emoji !== DOUBLE_TAP_REACTION) setHeartPop((n) => n + 1);
       actions.onDoubleTap(row);
       return;
     }
@@ -390,6 +413,7 @@ function MessageContent({ row, userId, otherUsername, accessToken, showStatus, p
             {row.kind === "media" && row.status === "sending" ? (
               <View style={styles.mediaSending} pointerEvents="none"><ActivityIndicator color="#FFFFFF" /></View>
             ) : null}
+            <HeartPop trigger={heartPop} />
           </Pressable>
           {row.kind === "sent" && row.body ? (
             <View style={[styles.bubble, mineMedia ? styles.bubbleMine : styles.bubbleTheirs, styles.mediaCaption]}>
@@ -452,6 +476,7 @@ function MessageContent({ row, userId, otherUsername, accessToken, showStatus, p
           {row.body ? (
             <Text style={[mine ? styles.bubbleTextMine : styles.bubbleTextTheirs, reply?.kind === "reaction" && styles.reactionGlyph]}>{row.body}</Text>
           ) : null}
+          <HeartPop trigger={heartPop} />
         </Pressable>
         {row.kind === "sent" ? <ReactionPills reactions={row.reactions} userId={userId} otherUsername={otherUsername} mine={mine} onPress={() => actions.onReactionsPress(row)} /> : null}
         {showStatus ? <Text style={styles.statusCaption}>{statusLabel(row)}</Text> : null}
@@ -1292,6 +1317,7 @@ const styles = StyleSheet.create({
   reactReport: { flexDirection: "row", alignItems: "center", gap: spacing.xs, minHeight: 44, paddingHorizontal: spacing.lg, borderRadius: radii.pill, backgroundColor: colors.surfaceElevated },
   reactReportText: { color: colors.danger, fontSize: 15, fontWeight: "600" },
   reactReplyText: { color: colors.textPrimary, fontSize: 15, fontWeight: "600" },
+  heartPop: { position: "absolute", top: -12, bottom: -12, left: -12, right: -12, alignItems: "center", justifyContent: "center" },
   swipeArrow: { position: "absolute", left: 0, top: 0, bottom: 0, width: 32, alignItems: "center", justifyContent: "center" },
   quote: { maxWidth: "100%", marginBottom: -4, paddingHorizontal: spacing.sm, paddingTop: spacing.xs, paddingBottom: spacing.xs + 4, borderRadius: radii.md, backgroundColor: colors.surface, borderLeftWidth: 3, borderLeftColor: colors.border, opacity: 0.9 },
   quoteMine: { alignSelf: "flex-end" },
