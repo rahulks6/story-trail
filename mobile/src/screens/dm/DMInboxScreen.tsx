@@ -4,16 +4,19 @@ import { FlatList, Pressable, RefreshControl, StyleSheet, Text, TextInput, View 
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { DMStackParamList } from "../../navigation/types";
-import { colors, radii, spacing, typography } from "../../theme";
+import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { useDM } from "../../state/DMContext";
 import { useRealtimeEvents } from "../../state/RealtimeContext";
 import { askForPushOnce } from "../../push/usePushRegistration";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
-import { listConversations, type ConversationSummary } from "../../api/conversations";
+import { groupName, listConversations, type ConversationSummary } from "../../api/conversations";
+import { actorName, groupEventText } from "../../models/groupEvents";
 import { EmptyState } from "../../components/EmptyState";
 import { Button } from "../../components/Form";
 import { Avatar } from "../../components/Avatar";
+import { GroupAvatar } from "../../components/GroupAvatar";
+import { Icon } from "../../components/Icon";
 
 /** The server's largest page; older conversations load as the list scrolls. */
 const PAGE_SIZE = 50;
@@ -21,7 +24,13 @@ const PAGE_SIZE = 50;
 function previewText(conversation: ConversationSummary, myUserId: string | undefined): string {
   const lastMessage = conversation.lastMessage;
   if (!lastMessage) return "Say hi 👋";
-  const prefix = lastMessage.senderId === myUserId ? "You: " : "";
+  if (lastMessage.event) {
+    const actor = actorName(lastMessage.senderId, myUserId, lastMessage.senderUsername);
+    const known = new Map((conversation.group?.members ?? []).map((m) => [m.id, `@${m.username}`]));
+    return groupEventText(lastMessage.event, actor, (id) => (id === myUserId ? "you" : known.get(id) ?? "someone"));
+  }
+  // In a group, whose message it was.
+  const prefix = lastMessage.senderId === myUserId ? "You: " : conversation.kind === "group" && lastMessage.senderUsername ? `${lastMessage.senderUsername}: ` : "";
   if (lastMessage.sharedStoryId) return `${prefix}Shared a Story`;
   if (lastMessage.mediaKind && !lastMessage.body) return `${prefix}Sent a ${lastMessage.mediaKind === "audio" ? "voice message" : lastMessage.mediaKind}`;
   return `${prefix}${lastMessage.body ?? ""}`;
@@ -134,6 +143,10 @@ export function DMInboxScreen(): React.JSX.Element {
 
   const searchBox = (
     <View style={styles.searchRow}>
+      <Pressable style={styles.newGroup} onPress={() => navigation.navigate("NewGroup", {})} accessibilityRole="button" accessibilityLabel="New group">
+        <View style={styles.newGroupIcon}><Icon name={ICONS.add} size={18} color={colors.onAccent} /></View>
+        <Text style={styles.newGroupText}>New group</Text>
+      </Pressable>
       <TextInput
         style={styles.searchInput}
         placeholder="Search messages by name"
@@ -183,30 +196,41 @@ export function DMInboxScreen(): React.JSX.Element {
       ListHeaderComponent={searchBox}
       ListEmptyComponent={<Text style={styles.noMatches}>No conversations match “{search}”.</Text>}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
-      renderItem={({ item }) => (
+      renderItem={({ item }) => {
+        const group = item.kind === "group" && item.group ? item.group : null;
+        const person = item.otherUser;
+        const name = group ? groupName(group.title, group.members, group.memberCount - 1) : person?.displayName ?? "";
+        return (
         <Pressable
           style={styles.row}
           onPress={() =>
-            navigation.navigate("Conversation", {
-              conversationId: item.id,
-              otherUsername: item.otherUser.username,
-              otherDisplayName: item.otherUser.displayName,
-              otherAvatarMediaId: item.otherUser.avatarMediaId ?? null,
-            })
+            navigation.navigate("Conversation", group
+              ? { conversationId: item.id, group: true, title: name }
+              : {
+                  conversationId: item.id,
+                  otherUsername: person?.username,
+                  otherDisplayName: person?.displayName,
+                  otherAvatarMediaId: person?.avatarMediaId ?? null,
+                })
           }
           accessibilityRole="button"
-          accessibilityLabel={`${item.otherUser.displayName}${item.unread ? ", unread" : ""}`}
+          accessibilityLabel={`${name}${group ? `, group of ${group.memberCount}` : ""}${item.unread ? ", unread" : ""}`}
         >
-          <Avatar username={item.otherUser.username} displayName={item.otherUser.displayName} avatarMediaId={item.otherUser.avatarMediaId} size={48} />
+          {group ? (
+            <GroupAvatar members={group.members} size={48} />
+          ) : person ? (
+            <Avatar username={person.username} displayName={person.displayName} avatarMediaId={person.avatarMediaId} size={48} />
+          ) : null}
           <View style={styles.rowText}>
-            <Text style={typography.bodyStrong}>{item.otherUser.displayName}</Text>
+            <Text style={typography.bodyStrong} numberOfLines={1}>{name}</Text>
             <Text style={[typography.caption, item.unread && styles.unreadPreview]} numberOfLines={1}>
               {previewText(item, user?.id)}
             </Text>
           </View>
           {item.unread ? <View style={styles.unreadDot} /> : null}
         </Pressable>
-      )}
+        );
+      }}
     />
   );
 }
@@ -214,7 +238,10 @@ export function DMInboxScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   emptyAction: { marginTop: spacing.md, minWidth: 200 },
   container: { flex: 1, backgroundColor: colors.background },
-  searchRow: { paddingHorizontal: spacing.md, paddingTop: spacing.sm, paddingBottom: spacing.xs },
+  searchRow: { paddingHorizontal: spacing.md, paddingTop: spacing.sm, paddingBottom: spacing.xs, gap: spacing.sm },
+  newGroup: { flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 44 },
+  newGroupIcon: { width: 32, height: 32, borderRadius: 16, backgroundColor: colors.accent, alignItems: "center", justifyContent: "center" },
+  newGroupText: { color: colors.textPrimary, fontSize: 15, fontWeight: "600" },
   searchInput: {
     backgroundColor: colors.surface,
     borderRadius: radii.md,

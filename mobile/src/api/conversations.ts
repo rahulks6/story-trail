@@ -1,20 +1,38 @@
-import { apiDelete, apiGet, apiPost, apiPut } from "./client";
+import { apiDelete, apiGet, apiPatch, apiPost, apiPut } from "./client";
 
 /**
  * Mirrors backend/src/modules/conversations/conversations.repository.ts —
  * see the note atop client.ts about keeping these in lockstep by hand
  * until there's a shared types package.
  */
+export interface PersonSummary { id: string; username: string; displayName: string; avatarMediaId?: string | null }
+
+/** A line in a group's thread about the group itself ("@asha added @dev"). */
+export type GroupEvent =
+  | { type: "created"; title: string | null }
+  | { type: "added"; userIds: string[] }
+  | { type: "removed"; userIds: string[] }
+  | { type: "left" }
+  | { type: "renamed"; title: string | null };
+
 export interface ConversationSummary {
   id: string;
-  otherUser: { id: string; username: string; displayName: string; avatarMediaId?: string | null };
+  /** Older servers don't send it: a missing kind is a 1:1 conversation. */
+  kind?: "direct" | "group";
+  /** The other person in a 1:1 conversation; null for a group. */
+  otherUser: PersonSummary | null;
+  /** A group's name (null if nobody named it), size, and up to three of the others. */
+  group?: { title: string | null; memberCount: number; members: PersonSummary[] };
   lastMessage: {
     id: string;
     senderId: string;
+    /** Who sent it, in a group. */
+    senderUsername?: string;
     body: string | null;
     sharedStoryId: string | null;
     /** Set when the last message was a photo or video. */
     mediaKind?: "photo" | "video" | "audio" | null;
+    event?: GroupEvent | null;
     createdAt: string;
   } | null;
   unread: boolean;
@@ -47,6 +65,10 @@ export interface Message {
   reactions?: MessageReaction[];
   /** The message this one replies to (swipe a message to reply), quoted; null once it's gone. */
   replyTo?: QuotedMessage | null;
+  /** A group's "what happened" line (no text of its own). */
+  event?: GroupEvent | null;
+  /** A group only, on your own messages: who has read it so far. */
+  seenBy?: string[];
 }
 
 /** The start of a replied-to message: enough to show it above the reply. */
@@ -86,21 +108,75 @@ export function openConversation(username: string, accessToken: string): Promise
   return apiPost(`/api/v1/users/${username}/conversation`, undefined, accessToken);
 }
 
+export interface GroupMember {
+  userId: string;
+  username: string;
+  displayName: string;
+  avatarMediaId: string | null;
+  role: "admin" | "member";
+  joinedAt: string;
+}
+
+/** A group as its members see it: name, people (admins first) and your own role. */
+export interface GroupDetails {
+  id: string;
+  kind: "group";
+  createdAt: string;
+  title: string | null;
+  otherUser: null;
+  role: "admin" | "member";
+  members: GroupMember[];
+}
+
+export const MAX_GROUP_MEMBERS = 32;
+export const MAX_GROUP_TITLE = 60;
+
+/** A new group with these people (at least two, besides you); you're its admin. */
+export function createGroup(usernames: string[], title: string | null, accessToken: string): Promise<{ conversation: GroupDetails }> {
+  return apiPost("/api/v1/conversations/groups", { usernames, ...(title ? { title } : {}) }, accessToken);
+}
+
+export function renameGroup(conversationId: string, title: string | null, accessToken: string): Promise<{ conversation: GroupDetails }> {
+  return apiPatch(`/api/v1/conversations/${conversationId}`, { title }, accessToken);
+}
+
+export function addGroupMembers(conversationId: string, usernames: string[], accessToken: string): Promise<{ conversation: GroupDetails }> {
+  return apiPost(`/api/v1/conversations/${conversationId}/members`, { usernames }, accessToken);
+}
+
+/** Admins only. */
+export function removeGroupMember(conversationId: string, userId: string, accessToken: string): Promise<{ conversation: GroupDetails }> {
+  return apiDelete(`/api/v1/conversations/${conversationId}/members/${userId}`, accessToken);
+}
+
+export function leaveGroup(conversationId: string, accessToken: string): Promise<void> {
+  return apiPost(`/api/v1/conversations/${conversationId}/leave`, undefined, accessToken);
+}
+
 export function listConversations(
   accessToken: string,
   params: { limit?: number; offset?: number; q?: string } = {},
 ): Promise<{ conversations: ConversationSummary[]; limit: number; offset: number }> {
-  const query = new URLSearchParams();
+  // This app shows group chats (older ones are never sent any).
+  const query = new URLSearchParams({ groups: "1" });
   if (params.limit) query.set("limit", String(params.limit));
   if (params.offset) query.set("offset", String(params.offset));
   if (params.q?.trim()) query.set("q", params.q.trim());
-  const qs = query.toString();
-  return apiGet(`/api/v1/conversations${qs ? `?${qs}` : ""}`, accessToken);
+  return apiGet(`/api/v1/conversations?${query.toString()}`, accessToken);
 }
 
 /** One of your conversations by id (a push notification's link carries only the id). */
-export function getConversation(conversationId: string, accessToken: string): Promise<{ conversation: ConversationWithOtherUser }> {
-  return apiGet(`/api/v1/conversations/${encodeURIComponent(conversationId)}`, accessToken);
+export function getConversation(conversationId: string, accessToken: string): Promise<{ conversation: (ConversationWithOtherUser & { kind?: "direct" }) | GroupDetails }> {
+  return apiGet(`/api/v1/conversations/${encodeURIComponent(conversationId)}?groups=1`, accessToken);
+}
+
+/** A group's name, or its people's names when nobody named it ("Asha, Dev and 2 others"). */
+export function groupName(title: string | null | undefined, people: Array<{ displayName: string }>, total?: number): string {
+  if (title) return title;
+  const names = people.slice(0, 2).map((p) => p.displayName.split(" ")[0] || p.displayName);
+  const rest = (total ?? people.length) - names.length;
+  if (!names.length) return "Group";
+  return rest > 0 ? `${names.join(", ")} and ${rest} other${rest === 1 ? "" : "s"}` : names.join(" and ");
 }
 
 export function getUnreadConversationCount(accessToken: string): Promise<{ count: number }> {

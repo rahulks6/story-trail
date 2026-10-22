@@ -45,6 +45,7 @@ import {
 } from "../../state/dmOutbox";
 import {
   getConversation,
+  groupName,
   listMessages,
   markConversationRead,
   MAX_MESSAGE_LENGTH,
@@ -55,6 +56,7 @@ import {
   type Message,
   type MessageReaction,
   type QuotedMessage,
+  type GroupDetails,
 } from "../../api/conversations";
 import { ApiError } from "../../api/client";
 import { getStoryOwnerUsername } from "../../api/stories";
@@ -82,6 +84,8 @@ import {
 import { VoiceNoteBubble } from "../../components/VoiceNote";
 import { useVoiceRecorder } from "../../hooks/useVoiceRecorder";
 import { formatClock } from "../../api/music";
+import { actorName, groupEventText } from "../../models/groupEvents";
+import { GroupAvatar } from "../../components/GroupAvatar";
 
 type Props = NativeStackScreenProps<DMStackParamList, "Conversation">;
 
@@ -159,11 +163,17 @@ export function quoteSnippet(quote: QuotedMessage): string {
   return quote.sharedStory ? "Shared a Story" : "Message";
 }
 
-function statusLabel(row: ListRow): string {
+function statusLabel(row: ListRow, nameOf?: RowProps["nameOf"]): string {
   if (row.kind === "media") return row.status === "failed" ? `${row.error ?? "Not sent"} · Tap to retry` : "Sending…";
   if (row.kind === "pending") {
     if (row.status === "failed") return `${row.error ?? "Not sent"} · Tap to retry`;
     return row.status === "waiting" && row.attempts > 0 ? "Waiting for connection…" : "Sending…";
+  }
+  // A group: Seen once everyone has read it; until then, who has.
+  if (row.seenBy) {
+    if (row.status === "read") return "Seen by everyone";
+    const names = row.seenBy.map((id) => nameOf?.(id)).filter((n): n is string => !!n).map((n) => `@${n}`);
+    if (names.length) return `Seen by ${names.length <= 2 ? names.join(" and ") : `${names.slice(0, 2).join(", ")} and ${names.length - 2} more`}`;
   }
   switch (row.status) {
     case "read":
@@ -202,7 +212,10 @@ interface RowActions {
 interface RowProps {
   row: ListRow;
   userId: string | undefined;
-  otherUsername: string | undefined;
+  /** "username" for a person in this conversation (undefined if not known: they left). */
+  nameOf: (userId: string) => string | undefined;
+  /** In a group: the sender's name above the first of their messages in a run. */
+  senderLabel?: string;
   accessToken: string | null | undefined;
   showStatus: boolean;
   playing: boolean;
@@ -214,12 +227,12 @@ interface RowProps {
  * The reactions under a message, like Instagram: each emoji once, with a count when more than
  * one person chose it. Tapping takes your own reaction back (or opens the picker to add one).
  */
-function ReactionPills({ reactions, userId, otherUsername, mine, onPress }: { reactions: MessageReaction[] | undefined; userId: string | undefined; otherUsername: string | undefined; mine: boolean; onPress: () => void }): React.JSX.Element | null {
+function ReactionPills({ reactions, userId, nameOf, mine, onPress }: { reactions: MessageReaction[] | undefined; userId: string | undefined; nameOf: RowProps["nameOf"]; mine: boolean; onPress: () => void }): React.JSX.Element | null {
   if (!reactions?.length) return null;
   const counts = new Map<string, number>();
   for (const r of reactions) counts.set(r.emoji, (counts.get(r.emoji) ?? 0) + 1);
   const ownReaction = reactions.find((r) => r.userId === userId);
-  const spoken = reactions.map((r) => `${r.emoji} from ${r.userId === userId ? "you" : otherUsername ? `@${otherUsername}` : "them"}`).join(", ");
+  const spoken = reactions.map((r) => `${r.emoji} from ${r.userId === userId ? "you" : nameOf(r.userId) ? `@${nameOf(r.userId)}` : "them"}`).join(", ");
   return (
     <Pressable
       onPress={onPress}
@@ -281,8 +294,8 @@ function SwipeToReply({ enabled, onReply, children }: { enabled: boolean; onRepl
 }
 
 /** The message a reply answers, above the reply: who wrote it and how it started. A tap goes to it. */
-function Quote({ quote, userId, otherUsername, mine, onPress }: { quote: QuotedMessage; userId: string | undefined; otherUsername: string | undefined; mine: boolean; onPress: (id: string) => void }): React.JSX.Element {
-  const author = quote.senderId === userId ? "You" : otherUsername ? `@${otherUsername}` : "Them";
+function Quote({ quote, userId, nameOf, mine, onPress }: { quote: QuotedMessage; userId: string | undefined; nameOf: RowProps["nameOf"]; mine: boolean; onPress: (id: string) => void }): React.JSX.Element {
+  const author = quote.senderId === userId ? "You" : nameOf(quote.senderId) ? `@${nameOf(quote.senderId)}` : "Them";
   const snippet = quoteSnippet(quote);
   return (
     <Pressable
@@ -323,14 +336,15 @@ function HeartPop({ trigger }: { trigger: number }): React.JSX.Element | null {
 const MessageRow = memo(function MessageRow(props: RowProps): React.JSX.Element {
   const { row, actions } = props;
   return (
-    <SwipeToReply enabled={row.kind === "sent"} onReply={() => { if (row.kind === "sent") actions.onReply(row); }}>
+    <SwipeToReply enabled={row.kind === "sent" && !row.event} onReply={() => { if (row.kind === "sent") actions.onReply(row); }}>
       <MessageContent {...props} />
     </SwipeToReply>
   );
 });
 
-function MessageContent({ row, userId, otherUsername, accessToken, showStatus, playing, maxMediaSide, actions }: RowProps): React.JSX.Element {
+function MessageContent({ row, userId, nameOf, senderLabel, accessToken, showStatus, playing, maxMediaSide, actions }: RowProps): React.JSX.Element {
   const canReport = row.kind === "sent" && row.senderId !== userId;
+  const otherUsername = row.kind === "sent" && row.senderId !== userId ? nameOf(row.senderId) : undefined;
   // A double tap hearts a stored message; a single tap that also does something (open a photo
   // or a shared Story) waits a moment to be sure it isn't the first of two.
   const lastTapAt = useRef(0);
@@ -351,8 +365,13 @@ function MessageContent({ row, userId, otherUsername, accessToken, showStatus, p
     lastTapAt.current = now;
     if (single) singleTap.current = setTimeout(() => { singleTap.current = null; single(); }, DOUBLE_TAP_MS);
   };
+  // A group's "what happened" line, centred, not a bubble.
+  if (row.kind === "sent" && row.event) {
+    const text = groupEventText(row.event, actorName(row.senderId, userId, nameOf(row.senderId)), (id) => (id === userId ? "you" : nameOf(id) ? `@${nameOf(id)}` : "someone"));
+    return <Text style={styles.eventLine} accessibilityRole="text">{text}</Text>;
+  }
   const quote = row.replyTo ? (
-    <Quote quote={row.replyTo} userId={userId} otherUsername={otherUsername} mine={row.kind !== "sent" || row.senderId === userId} onPress={actions.onQuotePress} />
+    <Quote quote={row.replyTo} userId={userId} nameOf={nameOf} mine={row.kind !== "sent" || row.senderId === userId} onPress={actions.onQuotePress} />
   ) : null;
   if (row.kind === "media" || (row.kind === "sent" && row.media)) {
     const mineMedia = row.kind === "media" || row.senderId === userId;
@@ -364,6 +383,7 @@ function MessageContent({ row, userId, otherUsername, accessToken, showStatus, p
       return (
         <View style={[styles.bubbleRow, mineMedia ? styles.bubbleRowMine : styles.bubbleRowTheirs]}>
           <View style={[styles.bubbleColumn, mineMedia ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
+            {senderLabel ? <Text style={styles.senderLabel} numberOfLines={1}>{senderLabel}</Text> : null}
             {quote}
             <VoiceNoteBubble
               url={row.kind === "media" ? row.uri : mediaFileUrl(row.media!.id, "audio")}
@@ -377,8 +397,8 @@ function MessageContent({ row, userId, otherUsername, accessToken, showStatus, p
               label={who}
               onLongPress={() => (row.kind === "media" ? actions.onPendingMediaPress(row) : actions.onLongPress(row))}
             />
-            {row.kind === "sent" ? <ReactionPills reactions={row.reactions} userId={userId} otherUsername={otherUsername} mine={mineMedia} onPress={() => actions.onReactionsPress(row)} /> : null}
-            {showStatus || failedMedia ? <Text style={styles.statusCaption}>{statusLabel(row)}</Text> : null}
+            {row.kind === "sent" ? <ReactionPills reactions={row.reactions} userId={userId} nameOf={nameOf} mine={mineMedia} onPress={() => actions.onReactionsPress(row)} /> : null}
+            {showStatus || failedMedia ? <Text style={styles.statusCaption}>{statusLabel(row, nameOf)}</Text> : null}
           </View>
         </View>
       );
@@ -389,6 +409,7 @@ function MessageContent({ row, userId, otherUsername, accessToken, showStatus, p
     return (
       <View style={[styles.bubbleRow, mineMedia ? styles.bubbleRowMine : styles.bubbleRowTheirs]}>
         <View style={[styles.bubbleColumn, mineMedia ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
+          {senderLabel ? <Text style={styles.senderLabel} numberOfLines={1}>{senderLabel}</Text> : null}
           {quote}
           <Pressable
             accessibilityRole="button"
@@ -420,8 +441,8 @@ function MessageContent({ row, userId, otherUsername, accessToken, showStatus, p
               <Text style={mineMedia ? styles.bubbleTextMine : styles.bubbleTextTheirs}>{row.body}</Text>
             </View>
           ) : null}
-          {row.kind === "sent" ? <ReactionPills reactions={row.reactions} userId={userId} otherUsername={otherUsername} mine={mineMedia} onPress={() => actions.onReactionsPress(row)} /> : null}
-          {showStatus || failedMedia ? <Text style={styles.statusCaption}>{statusLabel(row)}</Text> : null}
+          {row.kind === "sent" ? <ReactionPills reactions={row.reactions} userId={userId} nameOf={nameOf} mine={mineMedia} onPress={() => actions.onReactionsPress(row)} /> : null}
+          {showStatus || failedMedia ? <Text style={styles.statusCaption}>{statusLabel(row, nameOf)}</Text> : null}
         </View>
       </View>
     );
@@ -437,6 +458,7 @@ function MessageContent({ row, userId, otherUsername, accessToken, showStatus, p
   return (
     <View style={[styles.bubbleRow, mine ? styles.bubbleRowMine : styles.bubbleRowTheirs]}>
       <View style={[styles.bubbleColumn, mine ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
+        {senderLabel ? <Text style={styles.senderLabel} numberOfLines={1}>{senderLabel}</Text> : null}
         {quote}
         <Pressable
           // A button only where a tap does something (retry, open the shared Story).
@@ -478,8 +500,8 @@ function MessageContent({ row, userId, otherUsername, accessToken, showStatus, p
           ) : null}
           <HeartPop trigger={heartPop} />
         </Pressable>
-        {row.kind === "sent" ? <ReactionPills reactions={row.reactions} userId={userId} otherUsername={otherUsername} mine={mine} onPress={() => actions.onReactionsPress(row)} /> : null}
-        {showStatus ? <Text style={styles.statusCaption}>{statusLabel(row)}</Text> : null}
+        {row.kind === "sent" ? <ReactionPills reactions={row.reactions} userId={userId} nameOf={nameOf} mine={mine} onPress={() => actions.onReactionsPress(row)} /> : null}
+        {showStatus ? <Text style={styles.statusCaption}>{statusLabel(row, nameOf)}</Text> : null}
       </View>
     </View>
   );
@@ -686,7 +708,7 @@ function accessRefused(what: "camera" | "photos"): void {
  * pages use message-id cursors, which don't shift as new messages arrive.
  */
 export function ConversationScreen({ route }: Props): React.JSX.Element {
-  const { conversationId, otherUsername, otherDisplayName, otherAvatarMediaId } = route.params;
+  const { conversationId, otherUsername, otherDisplayName, otherAvatarMediaId, group: isGroupParam, title: groupTitleParam } = route.params;
   const { top: insetsTop } = useSafeAreaInsets();
   const { width: windowWidth } = useWindowDimensions();
   // Media bubbles fit the 78% column on small phones too.
@@ -710,8 +732,12 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   const replyingRef = useRef<Message | null>(null);
   replyingRef.current = replyingTo;
-  /** The other person is typing right now (their app says so every few seconds). */
-  const [otherTyping, setOtherTyping] = useState(false);
+  /** Who is typing right now (their app says so every few seconds); null when nobody is. */
+  const [typingUserId, setTypingUserId] = useState<string | null>(null);
+  const otherTyping = typingUserId !== null;
+  /** A group's name and people (loaded from the server; refreshed when someone joins or leaves). */
+  const [group, setGroup] = useState<GroupDetails | null>(null);
+  const isGroup = !!isGroupParam || group !== null;
   const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastTypingSent = useRef(0);
   const listRef = useRef<FlatList<ListRow>>(null);
@@ -729,19 +755,40 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   const userId = user?.id;
   const getToken = useCallback(() => tokenRef.current, []);
 
-  // A notification link carries only the conversation id: fill in who it's with.
+  /** Who it's with: a notification link carries only the conversation id, and a group's people change. */
+  const loadDetails = useCallback(async () => {
+    const token = tokenRef.current;
+    if (!token) return;
+    try {
+      const { conversation } = await getConversation(conversationId, token);
+      if (conversation.kind === "group") {
+        setGroup(conversation);
+        const others = conversation.members.filter((m) => m.userId !== userId);
+        navigation.setParams({ group: true, title: groupName(conversation.title, others, others.length) });
+      } else if (conversation.otherUser) {
+        navigation.setParams({
+          otherUsername: conversation.otherUser.username,
+          otherDisplayName: conversation.otherUser.displayName,
+          otherAvatarMediaId: conversation.otherUser.avatarMediaId ?? null,
+        });
+      }
+    } catch (error: unknown) {
+      if (error instanceof ApiError && error.status === 404) setLoadError(isGroupParam ? "You're no longer in this group." : "This conversation isn't available.");
+    }
+  }, [conversationId, isGroupParam, navigation, userId]);
   useEffect(() => {
-    if (otherUsername || !accessToken) return;
-    getConversation(conversationId, accessToken)
-      .then(({ conversation }) => navigation.setParams({
-        otherUsername: conversation.otherUser.username,
-        otherDisplayName: conversation.otherUser.displayName,
-        otherAvatarMediaId: conversation.otherUser.avatarMediaId ?? null,
-      }))
-      .catch((error: unknown) => {
-        if (error instanceof ApiError && error.status === 404) setLoadError("This conversation isn't available.");
-      });
-  }, [accessToken, conversationId, navigation, otherUsername]);
+    if (otherUsername && !isGroupParam) return;
+    void loadDetails();
+  }, [isGroupParam, loadDetails, otherUsername]);
+
+  const isGroupRef = useRef(isGroup);
+  isGroupRef.current = isGroup;
+  const loadDetailsRef = useRef(loadDetails);
+  loadDetailsRef.current = loadDetails;
+
+  /** "username" for someone in this conversation. */
+  const members = useMemo(() => new Map((group?.members ?? []).map((m) => [m.userId, m])), [group]);
+  const nameOf = useCallback((id: string): string | undefined => members.get(id)?.username ?? (!isGroup && id !== userId ? otherUsername : undefined), [isGroup, members, otherUsername, userId]);
 
   // The header: who you're talking to, with their photo; a tap opens their profile. `initial: false`
   // keeps the Search tab's own first screen under it (a first visit creates that stack).
@@ -749,6 +796,29 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     if (otherUsername) rootNavigation.navigate("Main", { screen: "Search", params: { screen: "UserProfile", params: { username: otherUsername }, initial: false } });
   }, [otherUsername, rootNavigation]);
   useEffect(() => {
+    if (isGroup) {
+      const others = (group?.members ?? []).filter((m) => m.userId !== userId);
+      const title = group ? groupName(group.title, others, others.length) : groupTitleParam ?? "Group";
+      navigation.setOptions({
+        headerTitle: () => (
+          <Pressable
+            onPress={() => navigation.navigate("GroupInfo", { conversationId })}
+            style={styles.header}
+            hitSlop={6}
+            accessibilityRole="button"
+            accessibilityLabel={`${title}${group ? `, ${group.members.length} people` : ""}`}
+            accessibilityHint="Shows the group's people and settings"
+          >
+            <GroupAvatar members={others} size={34} />
+            <View style={styles.headerNames}>
+              <Text style={styles.headerName} numberOfLines={1}>{title}</Text>
+              {group ? <Text style={styles.headerUsername} numberOfLines={1}>{group.members.length} people</Text> : null}
+            </View>
+          </Pressable>
+        ),
+      });
+      return;
+    }
     navigation.setOptions({
       headerTitle: () => (
         <Pressable
@@ -768,7 +838,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         </Pressable>
       ),
     });
-  }, [navigation, openProfile, otherAvatarMediaId, otherDisplayName, otherUsername]);
+  }, [conversationId, group, groupTitleParam, isGroup, navigation, openProfile, otherAvatarMediaId, otherDisplayName, otherUsername, userId]);
 
   // Unsent messages for this thread, kept in sync with the persisted outbox.
   useEffect(() => {
@@ -851,13 +921,17 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           }
         }
         await loadLatest(true); // a very long gap: start again from the latest page
-      } catch {
-        // Offline: the next event, resync or poll tries again.
+      } catch (error) {
+        // Taken out of a group (or the chat is gone): say so. Offline: the next event, resync or poll tries again.
+        if (error instanceof ApiError && error.status === 404) {
+          setMessages(null);
+          setLoadError(isGroupParam ? "You're no longer in this group." : "This conversation isn't available.");
+        }
       }
     })();
     catchingUp.current = work;
     try { await work; } finally { catchingUp.current = null; }
-  }, [conversationId, loadLatest, markRead, userId]);
+  }, [conversationId, isGroupParam, loadLatest, markRead, userId]);
 
   /** Everything new since the thread was last current, then fresh statuses for recent messages. */
   const syncThread = useCallback(async () => {
@@ -865,10 +939,12 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     await loadLatest();
   }, [catchUp, loadLatest]);
 
+  const typingRef = useRef<string | null>(null);
   const stopTyping = useCallback(() => {
     if (typingTimer.current) clearTimeout(typingTimer.current);
     typingTimer.current = null;
-    setOtherTyping(false);
+    typingRef.current = null;
+    setTypingUserId(null);
   }, []);
   useEffect(() => stopTyping, [stopTyping]);
 
@@ -894,10 +970,12 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     if (event.type === "resync") {
       void syncThread(); // reconnected: anything could have happened meanwhile
     } else if (event.type === "message" && event.conversationId === conversationId) {
-      if (event.senderId !== userId) stopTyping(); // what they were typing just arrived
+      if (event.senderId === typingRef.current) stopTyping(); // what they were typing just arrived
       void catchUp();
+      if (isGroup) void loadDetails(); // someone may have joined, left or renamed it
     } else if (event.type === "typing" && event.conversationId === conversationId && event.userId !== userId) {
-      setOtherTyping(true);
+      setTypingUserId(event.userId);
+      typingRef.current = event.userId;
       if (typingTimer.current) clearTimeout(typingTimer.current);
       typingTimer.current = setTimeout(stopTyping, TYPING_SHOW_MS);
     } else if (event.type === "receipt" && event.conversationId === conversationId && userId && event.userId !== userId) {
@@ -911,6 +989,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     useCallback(() => {
       focusedRef.current = true;
       void syncThread();
+      if (isGroupRef.current) void loadDetailsRef.current(); // back from the group's info: names may have changed
       const interval = setInterval(() => {
         if (AppState.currentState === "active") void catchUp();
       }, connected ? POLL_LIVE_MS : POLL_OFFLINE_MS);
@@ -1110,8 +1189,9 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   }, []);
   const replyPreview = useMemo(() => {
     if (!replyingTo) return null;
-    return { author: replyingTo.senderId === userId ? "yourself" : otherUsername ? `@${otherUsername}` : "them", snippet: quoteSnippet(quoteOf(replyingTo)) };
-  }, [otherUsername, replyingTo, userId]);
+    const name = nameOf(replyingTo.senderId);
+    return { author: replyingTo.senderId === userId ? "yourself" : name ? `@${name}` : "them", snippet: quoteSnippet(quoteOf(replyingTo)) };
+  }, [nameOf, replyingTo, userId]);
 
   // A status caption only ever makes sense under the single most recent
   // message *you* sent — same convention as iMessage/WhatsApp. If the
@@ -1125,13 +1205,23 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     return first.senderId === userId ? first.id : null;
   }, [rows, userId]);
 
-  const renderItem = useCallback<ListRenderItem<ListRow>>(({ item }) => {
+  const renderItem = useCallback<ListRenderItem<ListRow>>(({ item, index }) => {
     const key = rowKey(item);
+    // In a group, the sender's name above the first (oldest) of their messages in a run.
+    let senderLabel: string | undefined;
+    if (isGroup && item.kind === "sent" && item.senderId !== userId && !item.event) {
+      const older = rows[index + 1];
+      if (!older || older.kind !== "sent" || older.senderId !== item.senderId || older.event) {
+        const member = members.get(item.senderId);
+        senderLabel = member ? member.displayName : "Someone";
+      }
+    }
     return (
       <MessageRow
         row={item}
         userId={userId}
-        otherUsername={otherUsername}
+        nameOf={nameOf}
+        senderLabel={senderLabel}
         accessToken={accessToken}
         showStatus={key === statusRowKey}
         playing={playingKey === key}
@@ -1139,7 +1229,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         actions={actions}
       />
     );
-  }, [accessToken, actions, maxMediaSide, otherUsername, playingKey, statusRowKey, userId]);
+  }, [accessToken, actions, isGroup, maxMediaSide, members, nameOf, playingKey, rows, statusRowKey, userId]);
 
   if (messages === null) {
     return (
@@ -1181,13 +1271,13 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       {/* Outside the inverted list: Android flips an inverted list on both axes, which mirrored this text. */}
       {rows.length === 0 ? (
         <View style={styles.emptyState} pointerEvents="none">
-          <Text style={typography.body}>{otherUsername ? `Say hi to @${otherUsername} 👋` : "Say hi 👋"}</Text>
+          <Text style={typography.body}>{otherUsername && !isGroup ? `Say hi to @${otherUsername} 👋` : "Say hi 👋"}</Text>
         </View>
       ) : null}
       {otherTyping ? (
         <View style={styles.typingRow} accessibilityLiveRegion="polite">
           <View style={styles.typingBubble}>
-            <Text style={styles.typingText}>{otherUsername ? `@${otherUsername} is typing…` : "Typing…"}</Text>
+            <Text style={styles.typingText}>{typingUserId && nameOf(typingUserId) ? `@${nameOf(typingUserId)} is typing…` : "Typing…"}</Text>
           </View>
         </View>
       ) : null}
@@ -1316,6 +1406,8 @@ const styles = StyleSheet.create({
   reactGlyph: { fontSize: 28 },
   reactReport: { flexDirection: "row", alignItems: "center", gap: spacing.xs, minHeight: 44, paddingHorizontal: spacing.lg, borderRadius: radii.pill, backgroundColor: colors.surfaceElevated },
   reactReportText: { color: colors.danger, fontSize: 15, fontWeight: "600" },
+  eventLine: { alignSelf: "center", textAlign: "center", color: colors.textSecondary, fontSize: 12, marginVertical: spacing.sm, paddingHorizontal: spacing.lg },
+  senderLabel: { color: colors.textSecondary, fontSize: 12, fontWeight: "600", marginBottom: 2, marginLeft: spacing.xs },
   reactReplyText: { color: colors.textPrimary, fontSize: 15, fontWeight: "600" },
   heartPop: { position: "absolute", top: -12, bottom: -12, left: -12, right: -12, alignItems: "center", justifyContent: "center" },
   swipeArrow: { position: "absolute", left: 0, top: 0, bottom: 0, width: 32, alignItems: "center", justifyContent: "center" },

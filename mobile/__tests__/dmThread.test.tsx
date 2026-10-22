@@ -402,3 +402,39 @@ test("\"typing…\" shows while the other person types and goes when their messa
   expect(api.sendTyping).toHaveBeenCalledTimes(1);
   expect(api.sendTyping).toHaveBeenCalledWith("c1", "token");
 });
+
+test("a group thread: who said what, what happened, Seen by, and who is typing", async () => {
+  const api = require("../src/api/conversations");
+  const member = (userId: string, username: string, displayName: string, role = "member") => ({ userId, username, displayName, avatarMediaId: null, role, joinedAt: "" });
+  api.getConversation.mockResolvedValue({ conversation: { id: "c1", kind: "group", createdAt: "", title: "Goa trip", otherUser: null, role: "admin",
+    members: [member("u-me", "me", "Me", "admin"), member("u-alice", "alice", "Alice"), member("u-bob", "bob", "Bob")] } });
+  api.groupName = (title: string | null) => title ?? "Group";
+  const original = api.listMessages.getMockImplementation();
+  api.listMessages.mockResolvedValue({ hasMore: false, messages: [
+    { id: "g5", conversationId: "c1", senderId: "u-me", body: "8 it is", sharedStoryId: null, createdAt: "2026-10-06 09:05:00+00", status: "delivered", seenBy: ["u-alice"] },
+    { id: "g4", conversationId: "c1", senderId: "u-bob", body: "8?", sharedStoryId: null, createdAt: "2026-10-06 09:04:00+00" },
+    { id: "g3", conversationId: "c1", senderId: "u-alice", body: "or 9", sharedStoryId: null, createdAt: "2026-10-06 09:03:00+00" },
+    { id: "g2", conversationId: "c1", senderId: "u-alice", body: "dinner at 8", sharedStoryId: null, createdAt: "2026-10-06 09:02:00+00" },
+    { id: "g1", conversationId: "c1", senderId: "u-me", body: null, sharedStoryId: null, createdAt: "2026-10-06 09:01:00+00", event: { type: "added", userIds: ["u-bob"] } },
+  ] });
+  const groupProps = { route: { params: { conversationId: "c1", group: true, title: "Goa trip" } } } as unknown as Props;
+  await act(async () => { tree = create(<ConversationScreen {...groupProps} />); });
+  for (let i = 0; i < 4; i++) await act(async () => { await Promise.resolve(); });
+  const texts = () => tree.root.findAll((n) => typeof n.props.children === "string").map((n) => n.props.children as string);
+  expect(texts()).toEqual(expect.arrayContaining(["You added @bob", "Seen by @alice", "Alice", "Bob"]));
+  const hostTexts = tree.root.findAll((n) => typeof n.type === "string" && n.props.children === "Alice");
+  expect(hostTexts).toHaveLength(1); // once, above the first of her two messages
+  expect(bubble("@alice: or 9")).toBeTruthy();
+
+  const options = mockNavigation.setOptions.mock.calls.at(-1)![0] as { headerTitle: () => React.ReactElement };
+  let header!: ReactTestRenderer;
+  act(() => { header = create(options.headerTitle()); });
+  expect(header.root.findAll((n) => n.props.accessibilityLabel === "Goa trip, 3 people")).not.toHaveLength(0);
+  act(() => header.root.find((n) => n.props.accessibilityHint === "Shows the group's people and settings" && typeof n.props.onPress === "function").props.onPress());
+  expect(mockNavigation.navigate).toHaveBeenCalledWith("GroupInfo", { conversationId: "c1" });
+
+  await act(async () => mockRealtime.handler!({ type: "typing", conversationId: "c1", userId: "u-bob" }));
+  expect(texts()).toContain("@bob is typing…");
+  api.getConversation.mockReset();
+  api.listMessages.mockImplementation(original);
+});

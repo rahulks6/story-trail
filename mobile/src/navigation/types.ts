@@ -18,7 +18,11 @@ export type SearchStackParamList = {
 export type DMStackParamList = {
   DMInbox: undefined;
   /** The names are filled in from the server when only the id is known (a notification's katkee://conversation/<id> link). */
-  Conversation: { conversationId: string; otherUsername?: string; otherDisplayName?: string; otherAvatarMediaId?: string | null };
+  Conversation: { conversationId: string; otherUsername?: string; otherDisplayName?: string; otherAvatarMediaId?: string | null; group?: boolean; title?: string };
+  /** Choose people for a new group (or, with `conversationId`, people to add to one). */
+  NewGroup: { conversationId?: string };
+  /** A group's people, name, Add people and Leave. */
+  GroupInfo: { conversationId: string };
   /** Reached from ShareSheet's "Send to a Katkee user" (spec section 15) via a root→tab→stack deep link. */
   SendStory: { storyId: string; ownerUsername: string };
   /** Search a user and open (or reopen) a real conversation with them via the existing conversation-start endpoint. */
