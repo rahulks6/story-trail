@@ -1,97 +1,97 @@
-10-22 07:17:53.055 D/AndroidRuntime( 3608): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-22 07:17:53.060 I/AndroidRuntime( 3608): Using default boot image
-10-22 07:17:53.061 I/AndroidRuntime( 3608): Leaving lock profiling enabled
-10-22 07:17:53.074 I/app_process( 3608): Core platform API reporting enabled, enforcing=false
-10-22 07:17:53.074 I/app_process( 3608): Using CollectorTypeCMC GC.
-10-22 07:17:53.077 I/AppWidgetServiceImpl(  560): Received broadcast: android.intent.action.PACKAGE_CHANGED on user 0
-10-22 07:17:53.080 W/BestClock(  560): java.time.DateTimeException: Missing network time fix
-10-22 07:17:53.101 W/earchbox:search( 1535): Long monitor contention with owner BG Thread #1 (1731) at java.lang.Object e.c.d.b()(PG:46) waiters=0 in java.lang.Object e.c.d.b() for 1.128s
-10-22 07:17:53.106 I/resolv  (  358): GetAddrInfoHandler::run: {101 786533 101 983141 10143 0}
-10-22 07:17:53.107 I/resolv  (  358): res_nmkquery: (QUERY, IN, AAAA)
-10-22 07:17:53.107 I/resolv  (  358): resolv_cache_lookup: FOUND IN CACHE entry=0x7c2e0cb11850
-10-22 07:17:53.107 I/resolv  (  358): doQuery: rcode=0, ancount=2, return value=93
-10-22 07:17:53.107 I/resolv  (  358): res_nmkquery: (QUERY, IN, A)
-10-22 07:17:53.108 I/resolv  (  358): resolv_cache_lookup: FOUND IN CACHE entry=0x7c2dfcb13890
-10-22 07:17:53.108 I/resolv  (  358): doQuery: rcode=0, ancount=2, return value=81
-10-22 07:17:53.110 D/TrafficStats( 1205): tagSocket(282) with statsTag=0x30000407, statsUid=-1
-10-22 07:17:53.116 I/WebViewFactory( 1535): Loading com.google.android.webview version 124.0.6367.219 (code 636771938)
-10-22 07:17:53.126 I/PermissionControllerServiceImpl(  914): Updating user sensitive for uid 10211
-10-22 07:17:53.127 D/CustomizableLockScreenUtils( 1090): is_custom_lock_screen_quick_affordances_feature_enabled=1
-10-22 07:17:53.128 W/SliceDataConverter( 1090): Get slice data from XML failed 
-10-22 07:17:53.128 W/SliceDataConverter( 1090): java.lang.IllegalStateException: Invalid preference controller: com.android.settings.applications.credentials.CredentialManagerPreferenceController
-10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.core.BasePreferenceController.createInstance(BasePreferenceController.java:146)
-10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.slices.SliceBuilderUtils.getPreferenceController(SliceBuilderUtils.java:367)
-10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.slices.SliceDataConverter.getSliceDataFromXML(SliceDataConverter.java:192)
-10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.slices.SliceDataConverter.getSliceDataFromProvider(SliceDataConverter.java:147)
-10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.slices.SliceDataConverter.getSliceData(SliceDataConverter.java:117)
-10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.slices.SlicesIndexer.getSliceData(SlicesIndexer.java:94)
-10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.slices.SlicesIndexer.indexSliceData(SlicesIndexer.java:75)
-10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.slices.SlicesFeatureProviderImpl.indexSliceData(SlicesFeatureProviderImpl.java:63)
-10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.slices.SlicesDatabaseAccessor.verifyIndexing(SlicesDatabaseAccessor.java:197)
-10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.slices.SlicesDatabaseAccessor.getSliceUris(SlicesDatabaseAccessor.java:97)
-10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.slices.SettingsSliceProvider.onGetSliceDescendants(SettingsSliceProvider.java:346)
-10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at androidx.slice.compat.SliceProviderWrapperContainer$SliceProviderWrapper.onGetSliceDescendants(SliceProviderWrapperContainer.java:166)
+10-22 11:00:44.458 D/AndroidRuntime( 3952): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-22 11:00:44.464 I/AndroidRuntime( 3952): Using default boot image
+10-22 11:00:44.464 I/AndroidRuntime( 3952): Leaving lock profiling enabled
+10-22 11:00:44.470 I/app_process( 3952): Core platform API reporting enabled, enforcing=false
+10-22 11:00:44.471 V/BackupManagerConstants(  554): getFullBackupIntervalMilliseconds(...) returns 86400000
+10-22 11:00:44.471 V/BackupManagerConstants(  554): getFullBackupRequiredNetworkType(...) returns 2
+10-22 11:00:44.471 I/app_process( 3952): Using CollectorTypeCMC GC.
+10-22 11:00:44.478 W/gle.android.gms( 1491): Long monitor contention with owner lowpool[17] (3721) at void bfwl.d()(:com.google.android.gms@242335041@24.23.35 (190800-646585959):37) waiters=0 in void bfwl.f(bfwn, long) for 165ms
+10-22 11:00:44.481 V/BackupManagerConstants(  554): getFullBackupRequireCharging(...) returns true
+10-22 11:00:44.481 I/BugleRcsEngine( 3541): handleMessage processing message:[NOTIFY_UPTIME_IGNORE_STATE_CHANGED] with [non-null]:RcsEngineImpl reference [CONTEXT log_prefix="RcsEngineImpl[DUAL_REG]:[69f91bed-6ff4]>Handler" thread_id=67 ]
+10-22 11:00:44.485 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-22 11:00:44.485 D/PackageManager(  554): Clear ephemeral installer activity
+10-22 11:00:44.500 I/BugleRcsEngine( 3541): Connected state: [1], networkType: [WIFI] [CONTEXT thread_id=61 ]
+10-22 11:00:44.511 D/CarrierSvcBindHelper( 1080): onPackageModified: com.google.android.gms
+10-22 11:00:44.514 D/ImsResolver( 1080): maybeAddedImsService, packageName: com.google.android.as
+10-22 11:00:44.514 D/CarrierSvcBindHelper( 1080): No carrier app for: 0
+10-22 11:00:44.518 I/Auth    ( 1491): [SupervisedAccountIntentOperation] onHandleIntent(): android.intent.action.PACKAGE_ADDED
+10-22 11:00:44.522 W/GCM     ( 1238): Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package: flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
+10-22 11:00:44.523 W/NetworkScheduler( 1238): Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package: flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
+10-22 11:00:44.524 I/Blockstore( 1491): [DataStoreImpl] Clearing Blockstore Data for package dev.mobile.maestro [CONTEXT service_id=258 ]
+10-22 11:00:44.524 I/Blockstore( 1491): [DataStoreImpl] Keyless data not found or its IsLastInstallationData = false. [CONTEXT service_id=258 ]
+10-22 11:00:44.529 I/Auth    ( 1491): [SupervisedAccountIntentOperation] This operation is disabled
+10-22 11:00:44.533 W/system_server(  554): Long monitor contention with owner android.bg (590) at void android.app.ResourcesManager.registerAllResourcesReference(android.content.res.Resources)(ResourcesManager.java:1965) waiters=0 in android.content.res.Resources android.app.ResourcesManager.createResources(android.content.res.ResourcesKey, java.lang.ClassLoader, android.app.ResourcesManager$ApkAssetsSupplier) for 121ms
+10-22 11:00:44.556 V/Backup  ( 1491): [PhotosPackagedAddedIO] Flag is disabled.
+10-22 11:00:44.563 E/RoleControllerServiceImpl(  554): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.devicelockcontroller, role: android.app.role.SYSTEM_FINANCED_DEVICE_CONTROLLER
+10-22 11:00:44.571 I/Dck     ( 1491): disableDckSupport: false [CONTEXT service_id=289 ]
+10-22 11:00:44.571 I/Dck     ( 1491): doesDeviceHaveSupportedWirelessCapabilities: wccSysProp:0, wccMendel:3, deviceWccOverride:false [CONTEXT service_id=289 ]
+10-22 11:00:44.571 I/Dck     ( 1491): Dck module condition - hasWccSupport: false [CONTEXT service_id=289 ]
+10-22 11:00:44.571 I/Dck     ( 1491): Dck module condition - downloadAllowed: false [CONTEXT service_id=289 ]
+10-22 11:00:44.571 W/Dck     ( 1491): Dck module not eligible for asynchronous downloading [CONTEXT service_id=289 ]
+10-22 11:00:44.601 E/SmsApplication( 1080): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
+10-22 11:00:44.620 D/ShortcutService(  554): Package com.google.android.gms has 0 manifest shortcut(s), and 1 share target(s)
+10-22 11:00:44.620 D/ShortcutService(  554): Package com.google.android.gms updated, version 242335041 -> 242335041
 --
-10-22 07:17:53.457 D/AndroidRuntime( 3608): Calling main entry com.android.commands.am.Am
-10-22 07:17:53.458 W/TimedProcessReaper( 1535): Scheduling killing of process to refresh configuration
-10-22 07:17:53.461 D/UiAutomationConnection( 3608): Created on user UserHandle{0}
-10-22 07:17:53.466 W/BestClock(  560): java.time.DateTimeException: Missing network time fix
-10-22 07:17:53.466 I/Fitness ( 1205): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
-10-22 07:17:53.467 I/Fitness ( 1205): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
-10-22 07:17:53.467 W/BestClock(  560): java.time.DateTimeException: Missing network time fix
-10-22 07:17:53.468 W/BestClock(  560): java.time.DateTimeException: Missing network time fix
-10-22 07:17:53.469 W/BestClock(  560): java.time.DateTimeException: Missing network time fix
-10-22 07:17:53.470 D/NetworkStatsObservers(  560): Unregistering RequestInfo from pid/uid:560/1000(android) for DataUsageRequest [ requestId=5, networkTemplate=NetworkTemplate: matchRule=MOBILE, matchSubscriberIds=[310260...], matchWifiNetworkKeys=[], metered=YES, defaultNetwork=NO, thresholdInBytes=3458768 ] accessLevel:3
-10-22 07:17:53.472 D/NetworkStatsObservers(  560): Registering observer for RequestInfo from pid/uid:560/1000(android) for DataUsageRequest [ requestId=6, networkTemplate=NetworkTemplate: matchRule=MOBILE, matchSubscriberIds=[310260...], matchWifiNetworkKeys=[], metered=YES, defaultNetwork=NO, thresholdInBytes=3447910 ] accessLevel:3
-10-22 07:17:53.472 I/dfmd    ( 3587): SslGuard completed installation.
-10-22 07:17:53.472 D/OomAdjuster(  560): Not killing cached processes
-10-22 07:17:53.472 I/ActivityManager(  560): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-10-22 07:17:53.477 W/BestClock(  560): java.time.DateTimeException: Missing network time fix
-10-22 07:17:53.478 I/Fitness ( 1205): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
-10-22 07:17:53.483 W/GetConfigSnapshotOp( 1205): Succeeded but not registered: googledata.experiments.mobile.assistant.client_packages.component.assistant_suw.user#com.google.android.googlequicksearchbox [CONTEXT service_id=51 ]
-10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): fetch grpc failed
-10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): java.util.NoSuchElementException: No value present
-10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at j$.util.Optional.orElseThrow(SourceFile:1)
-10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at com.google.android.apps.search.googleapp.notifications.settings.a.e.a(PG:198)
-10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at com.google.android.apps.search.googleapp.notifications.settings.a.g.a(PG:80)
-10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at com.google.android.apps.search.googleapp.notifications.settings.a.j.jd(PG:71)
-10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at n.c.b.a.a.q(PG:12)
-10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at kotlinx.coroutines.bh.run(PG:112)
-10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at com.google.apps.tiktok.f.y.run(PG:3)
-10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at com.google.android.libraries.k.x.run(PG:3)
-10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at com.google.common.n.c.c.run(PG:50)
-10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at com.google.android.libraries.k.e.run(PG:8)
-10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at java.lang.Thread.run(Thread.java:1012)
-10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at com.google.android.libraries.k.d.b.run(PG:74)
+10-22 11:00:44.754 D/AndroidRuntime( 3952): Calling main entry com.android.commands.am.Am
+10-22 11:00:44.756 D/CarrierSvcBindHelper( 1080): No carrier app for: 0
+10-22 11:00:44.759 D/UiAutomationConnection( 3952): Created on user UserHandle{0}
+10-22 11:00:44.777 I/Bugle   ( 3311): BroadcastReceiverAsyncWorkTracker: Acknowledging broadcast of buoi@f43a392
+10-22 11:00:44.779 I/Bugle   ( 3311): BroadcastReceiverAsyncWorkTracker: Acknowledging broadcast of buoi@f43a392
+10-22 11:00:44.780 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-22 11:00:44.780 D/PackageManager(  554): Clear ephemeral installer activity
+10-22 11:00:44.785 I/PeopleGalProvider( 1491): Gal directories started.
+10-22 11:00:44.787 I/PeopleGalProvider( 1491): Method 1 completed.
+10-22 11:00:44.787 I/PeopleGalProvider( 1491): Method 1 finished successfully.
+10-22 11:00:44.789 E/SmsApplication( 1080): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
+10-22 11:00:44.789 W/AppOpService(  554): Ignored setUidMode call for runtime permission app op: uid = 10133, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+10-22 11:00:44.795 D/PackageManager(  554): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-22 11:00:44.796 D/PackageManager(  554): Clear ephemeral installer activity
+10-22 11:00:44.796 D/ShortcutService(  554): Saving package item com.google.android.gms to /data/system_ce/0/shortcut_service/packages/com.google.android.gms.xml
+10-22 11:00:44.799 W/MagnificationConnectionManager(  554): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-22 11:00:44.799 D/ControlsListingControllerImpl(  912): ServiceConfig reloaded, count: 0
+10-22 11:00:44.801 D/AmbientContextManagerService(  554): onServiceRemoved
+10-22 11:00:44.801 D/AmbientContextManagerPerUserService(  554): Trying to cancel the remote request. Reason: Service destroyed.
+10-22 11:00:44.801 D/AmbientContextManagerService(  554): newServicesListLocked with service name: com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiAmbientContextDetectionService
+10-22 11:00:44.801 D/DefaultAmbientContextManagerPerUserService(  554): Created DefaultAmbientContextManagerPerUserServiceand service type: DEFAULT and service name: com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiAmbientContextDetectionService
+10-22 11:00:44.802 D/PackageUpdatedTask( 2496): Package updated: mOp=UPDATE packages=[com.google.android.as]
+10-22 11:00:44.803 I/AiAiEcho( 1434): AppFetcherImpl onPackageChanged com.google.android.as.
+10-22 11:00:44.804 I/GsaVoiceInteractionSrv( 1478): (REDACTED) O received %s
+10-22 11:00:44.806 W/.gms.persistent( 1238): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/PrebuiltBugle/PrebuiltBugle.apk' with 1 weak references
+10-22 11:00:44.806 W/.gms.persistent( 1238): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/SafetyHubPrebuilt/SafetyHubPrebuilt.apk' with 1 weak references
+10-22 11:00:44.807 W/.gms.persistent( 1238): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/YouTube/YouTube.apk' with 1 weak references
+10-22 11:00:44.807 W/.gms.persistent( 1238): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/Velvet/Velvet.apk' with 1 weak references
+10-22 11:00:44.808 W/AllAppsList( 2496): updatePromiseInstallInfo: no Activities matched updated package, removing all apps from package=com.google.android.as
+10-22 11:00:44.808 D/ControlsListingControllerImpl(  912): ServiceConfig reloaded, count: 0
+10-22 11:00:44.809 W/.gms.persistent( 1238): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/SoundPickerPrebuilt/SoundPickerPrebuilt.apk' with 1 weak references
 --
-10-22 07:21:21.489 I/AndroidRuntime( 3608): VM exiting with result code 0.
-10-22 07:21:21.600 I/servicemanager(    0): Caller(pid=560,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
-10-22 07:21:21.494 I/netd    (  358): tetherGetStats() -> {[]} <0.29ms>
-10-22 07:21:21.618 I/init    (    0): starting service 'artd'...
-10-22 07:21:21.507 W/IPCThreadState(  560): Sending oneway calls to frozen process.
-10-22 07:21:21.510 W/MagnificationConnectionManager(  560): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-22 07:21:21.510 V/UiAutomationManager(  560): UiAutomation service owner died
-10-22 07:21:21.627 I/init    (    0): ... started service 'artd' has pid 5959
-10-22 07:21:21.628 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 145 (/system/bin/servicemanager)
-10-22 07:21:21.628 I/binder  (    0): undelivered transaction 470336, process died.
-10-22 07:21:21.513 V/ActivityManager(  560): Got obituary of 3676:dev.mobile.maestro
-10-22 07:21:21.513 W/IPCThreadState(  560): Sending oneway calls to frozen process.
-10-22 07:21:21.513 W/IPCThreadState(  560): Sending oneway calls to frozen process.
-10-22 07:21:21.513 W/IPCThreadState(  560): Sending oneway calls to frozen process.
-10-22 07:21:21.513 W/IPCThreadState(  560): Sending oneway calls to frozen process.
-10-22 07:21:21.513 W/IPCThreadState(  560): Sending oneway calls to frozen process.
-10-22 07:21:21.513 W/IPCThreadState(  560): Sending oneway calls to frozen process.
-10-22 07:21:21.513 W/IPCThreadState(  560): Sending oneway calls to frozen process.
-10-22 07:21:21.514 I/libprocessgroup(  560): Removed cgroup /sys/fs/cgroup/uid_10210/pid_3676
-10-22 07:21:21.515 I/AiAiEcho( 1401): Settings changed for uri: content://settings/secure/accessibility_enabled
-10-22 07:21:21.517 W/IPCThreadState(  560): Sending oneway calls to frozen process.
-10-22 07:21:21.517 W/IPCThreadState(  560): Sending oneway calls to frozen process.
-10-22 07:21:21.517 W/IPCThreadState(  560): Sending oneway calls to frozen process.
-10-22 07:21:21.517 W/IPCThreadState(  560): Sending oneway calls to frozen process.
-10-22 07:21:21.517 W/IPCThreadState(  560): Sending oneway calls to frozen process.
-10-22 07:21:21.518 W/IPCThreadState(  560): Sending oneway calls to frozen process.
-10-22 07:21:21.633 I/init    (    0): Untracked pid 3608 exited with status 0
-10-22 07:21:21.634 I/init    (    0): Untracked pid 3608 did not have an associated service entry and will not be reaped
-10-22 07:21:21.518 W/IPCThreadState(  560): Sending oneway calls to frozen process.
-10-22 07:21:21.518 W/IPCThreadState(  560): Sending oneway calls to frozen process.
-10-22 07:21:21.518 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-22 11:04:19.262 I/AndroidRuntime( 3952): VM exiting with result code 0.
+10-22 11:04:19.266 I/netd    (  354): tetherGetStats() -> {[]} <1.05ms>
+10-22 11:04:19.410 I/init    (    0): starting service 'artd'...
+10-22 11:04:19.418 I/init    (    0): ... started service 'artd' has pid 5922
+10-22 11:04:19.420 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 141 (/system/bin/servicemanager)
+10-22 11:04:19.295 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+10-22 11:04:19.432 I/binder  (    0): undelivered transaction 449719, process died.
+10-22 11:04:19.434 I/init    (    0): Untracked pid 3952 exited with status 0
+10-22 11:04:19.436 I/init    (    0): Untracked pid 3952 did not have an associated service entry and will not be reaped
+10-22 11:04:19.302 I/AiAiEcho( 1434): Settings changed for uri: content://settings/secure/accessibility_enabled
+10-22 11:04:19.302 W/MagnificationConnectionManager(  554): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-22 11:04:19.302 V/UiAutomationManager(  554): UiAutomation service owner died
+10-22 11:04:19.303 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+10-22 11:04:19.305 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+10-22 11:04:19.305 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+10-22 11:04:19.307 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+10-22 11:04:19.308 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+10-22 11:04:19.308 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+10-22 11:04:19.308 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+10-22 11:04:19.308 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+10-22 11:04:19.308 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+10-22 11:04:19.309 V/ActivityManager(  554): Got obituary of 3997:dev.mobile.maestro
+10-22 11:04:19.311 I/AiAiEcho( 1434): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-22 11:04:19.311 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+10-22 11:04:19.312 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+10-22 11:04:19.312 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+10-22 11:04:19.312 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+10-22 11:04:19.312 I/AiAiEcho( 1434): EchoTargets: 
+10-22 11:04:19.312 I/AiAiEcho( 1434): Filtered by AiAi flag check: 
+10-22 11:04:19.312 I/AiAiEcho( 1434): [CONTEXT ratelimit_period="10 SECONDS" ]
+10-22 11:04:19.314 W/IPCThreadState(  554): Sending oneway calls to frozen process.
