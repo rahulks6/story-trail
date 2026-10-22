@@ -33,3 +33,4 @@ tools/screen-preview/shots/
 
 # Local Claude Code settings
 .claude/settings.local.json
+.claude/worktrees/
