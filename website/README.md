@@ -11,6 +11,9 @@ so they must be live before you submit (`npm run check:live`).
 | Privacy Policy | https://katkee.com/privacy | `../legal/PRIVACY_POLICY.md` |
 | Terms of Service | https://katkee.com/terms | `../legal/TERMS_OF_SERVICE.md` |
 | Delete your account (Google Play's deletion URL) | https://katkee.com/delete-account | `src/pages/delete-account.html` |
+| Shared profile or Story ("Open in Katkee") | https://katkee.com/u/&lt;username&gt;, /s/&lt;story id&gt; | `src/pages/open.html` |
+| Android App Links | https://katkee.com/.well-known/assetlinks.json | `site.json` (`appLinks.android`) |
+| iOS Universal Links | https://katkee.com/.well-known/apple-app-site-association | `site.json` (`appLinks.ios`) |
 
 ## How it works
 
@@ -49,6 +52,42 @@ buttons become "Download on the App Store" and "Get it on Google Play":
   "googlePlay": "https://play.google.com/store/apps/details?id=com.katkee.app"
 }
 ```
+
+## Shared links
+
+Share profile, Share via… and Copy link send `https://katkee.com/u/<username>?id=<account id>`
+and `https://katkee.com/s/<story id>`.
+
+- **With the app installed**, the phone opens the link in the app: Android checks
+  `/.well-known/assetlinks.json` (App Links), iOS checks `/.well-known/apple-app-site-association`
+  (Universal Links).
+- **Without it**, the link shows the "Open in Katkee" page: an "Open in the app" button (the
+  matching `katkee://` link) and the store buttons, or a line that the app is coming soon. The
+  API fills in the link (`backend/src/modules/website`) after checking it strictly (a username of
+  3 to 30 letters, digits, `_` or `.`; a Story ID that is a UUID); anything else is a 404. The
+  page never looks the account or Story up, so it can't tell anyone whether they exist, are
+  private or have expired. It is `noindex`.
+
+The app-link files come from `site.json`:
+
+```json
+"appLinks": {
+  "android": { "package": "com.katkee.app", "sha256CertFingerprints": ["<upload key>", "<Play app signing key>"] },
+  "ios": { "teamId": "", "bundleId": "com.katkee.app" }
+}
+```
+
+- **Android.** The list holds the upload key's SHA-256 fingerprint. Google re-signs what Play
+  installs with its own **app signing key**, so add that one too once the app is in Play Console:
+  **Test and release, App integrity, Play app signing, Settings**, then "App signing key
+  certificate", **SHA-256 certificate fingerprint**. Paste it as a second string in
+  `sha256CertFingerprints` (upper case, colon-separated, as Play shows it), rebuild and deploy.
+  Until then, links open the app only in builds signed with the upload key (sideloaded release
+  APKs); Play installs show the page with its "Open in the app" button.
+- **iOS.** Put the 10-character Apple **Team ID** (developer.apple.com, Membership details) in
+  `appLinks.ios.teamId`, rebuild and deploy. Until it's there the build writes no
+  `apple-app-site-association`, katkee.com answers 404 for it, and on iPhone the links open the
+  page in Safari. iOS reads the file when the app is installed, so test with a fresh install.
 
 ## Hosting
 

@@ -347,6 +347,23 @@ describe("the Admin API", () => {
       assert.ok(!reply.text.includes("\"dependencies\""), "no file from outside the website");
     }
   });
+
+  it("a shared link's page (katkee.com/u/, /s/) says nothing about a private account or its Story", async () => {
+    // The same page as for an account and a Story that don't exist, apart from the link itself.
+    const strip = (html: string) => html.replace(/(katkee:\/\/|katkee\.com\/)[^"]+/g, "");
+    const nobody = strip((await request("GET", `/u/nobody_${randomUUID().slice(0, 8)}`)).text);
+    for (const method of ["GET", "HEAD"]) {
+      for (const [key, path, who] of [
+        [`${method} /u/:username`, `/u/${owner.username}?id=${owner.id}`, stranger],
+        [`${method} /s/:storyId`, `/s/${ids.story}`, null],
+      ] as const) {
+        const reply = await attempt(key, path, who);
+        assert.equal(reply.status, 200, key);
+        for (const secret of [...Object.values(SECRET), owner.email, owner.username.replace("_", " ")]) assert.ok(!reply.text.includes(secret), `${key} leaked ${secret}`);
+        if (method === "GET") assert.equal(strip(reply.text), nobody, key);
+      }
+    }
+  });
 });
 
 describe("Story replies and Close Friends", () => {

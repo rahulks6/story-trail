@@ -66,7 +66,14 @@ katkee.com), in `mobile/build-config.json` and in Xcode (the test target is
 `com.katkee.app.tests`). It can never change after the first upload.
 
 1. On <https://developer.apple.com/account/resources/identifiers>, add an **App ID** with the
-   bundle ID `com.katkee.app`, and turn on **Push Notifications**.
+   bundle ID `com.katkee.app`, and turn on **Push Notifications** and **Associated Domains**
+   (the app's entitlements ask for `applinks:katkee.com`, so shared katkee.com links open the
+   app; automatic signing normally turns it on for you).
+   Then put your Team ID (Membership details, 10 letters and digits; the same value as the
+   `APPLE_TEAM_ID` secret) in `appLinks.ios.teamId` in `website/site.json`, run
+   `node website/build.cjs`, commit and deploy. That publishes
+   `https://katkee.com/.well-known/apple-app-site-association`; until then, shared links open
+   the website's "Open in Katkee" page in Safari (`website/README.md`, "Shared links").
 2. `mobile/build-config.json` already holds the release values:
 
    ```json

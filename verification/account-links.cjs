@@ -25,6 +25,16 @@ test('profile links keep working and normalize case', () => {
   assert.deepEqual(deepLinkTarget('/user/some_one/'), { kind: 'profile', username: 'some_one' });
 });
 
+test('shared links are katkee.com addresses the app opens, and the old katkee:// ones still open', () => {
+  const id = '0f3c2b1a-1111-4222-8333-444455556666';
+  assert.equal(links.profileShareLink('old_name', id), `https://katkee.com/u/old_name?id=${id}`);
+  assert.equal(links.storyShareLink(id), `https://katkee.com/s/${id}`);
+  assert.deepEqual(deepLinkTarget(links.linkPath(links.profileShareLink('old_name', id))), { kind: 'profile', username: 'old_name', userId: id });
+  assert.deepEqual(deepLinkTarget(links.linkPath(links.storyShareLink(id))), { kind: 'story', storyId: id });
+  assert.deepEqual(deepLinkTarget(links.linkPath(`katkee://user/old_name?id=${id}`)), { kind: 'profile', username: 'old_name', userId: id });
+  assert.equal(links.linkPath('https://katkee.com.evil.example/u/old_name'), null);
+});
+
 test('a shared profile link carries the account ID, so it still opens after a rename', () => {
   assert.deepEqual(deepLinkTarget('user/old_name?id=0F3C2B1A-1111-4222-8333-444455556666'),
     { kind: 'profile', username: 'old_name', userId: '0f3c2b1a-1111-4222-8333-444455556666' });

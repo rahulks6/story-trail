@@ -19,6 +19,7 @@ import { WEBSITE_CSP } from "../src/modules/website/website.routes";
 const siteRoot = path.join(__dirname, "../../../website/public");
 const manifest = JSON.parse(fs.readFileSync(path.join(siteRoot, "manifest.json"), "utf8")) as {
   pages: Record<string, string>; notFound: string; assets: Record<string, string>; files: Record<string, { file: string; type: string }>;
+  openInApp?: { file: string; markers: { appLink: string; linkPath: string } };
 };
 /** The website's host as production sets it (the config is read-only in its type only). */
 const setSiteHost = (host: string) => { (config.website as { host: string }).host = host; };
@@ -168,6 +169,84 @@ describe("the website's pages", () => {
   });
 });
 
+describe("shared links (katkee.com/u/<username>, /s/<story id>)", () => {
+  const ID = "0F3C2B1A-1111-4222-8333-444455556666";
+  const id = ID.toLowerCase();
+  const open = manifest.openInApp!;
+  /** The page the API should send: the built template with this link's own addresses, nothing else. */
+  const expected = (appLink: string, linkPath: string) =>
+    file(open.file).toString().split(open.markers.appLink).join(appLink).split(open.markers.linkPath).join(linkPath);
+
+  it("answers a profile link with the Open in Katkee page, pointing the app at that profile", async () => {
+    const reply = await get(`/u/Asha_K?id=${ID}`);
+    assert.equal(reply.status, 200);
+    assert.equal(reply.headers["content-type"], "text/html; charset=utf-8");
+    assert.equal(reply.headers["content-security-policy"], WEBSITE_CSP);
+    assert.equal(reply.headers["x-robots-tag"], "noindex");
+    const html = reply.body.toString();
+    assert.equal(html, expected(`katkee://user/asha_k?id=${id}`, `u/asha_k?id=${id}`));
+    assert.match(html, /<title>Open in Katkee<\/title>/);
+    assert.match(html, /<meta name="robots" content="noindex">/);
+    assert.match(html, new RegExp(`<a class="button" href="katkee://user/asha_k\\?id=${id}">Open in the app</a>`));
+    assert.match(html, new RegExp(`<link rel="canonical" href="https://katkee\\.com/u/asha_k\\?id=${id}">`));
+    assert.match(html, /coming soon to the App Store and Google Play/, "no store links yet");
+    assert.doesNotMatch(html, /%[A-Z_]+%|<script/);
+    // A missing or malformed id is dropped; the username still finds the profile.
+    for (const target of ["/u/asha.k", "/u/asha.k/", "/u/asha.k?id=nope", `/u/asha.k?id=${id}x`, '/u/asha.k?id="><script>alert(1)</script>']) {
+      const plain = await get(target);
+      assert.equal(plain.status, 200, target);
+      assert.equal(plain.body.toString(), expected("katkee://user/asha.k", "u/asha.k"), target);
+    }
+  });
+
+  it("answers a Story link the same way, and reveals nothing about the account or Story", async () => {
+    const reply = await get(`/s/${ID}`);
+    assert.equal(reply.status, 200);
+    assert.equal(reply.body.toString(), expected(`katkee://story/${id}`, `s/${id}`));
+    // Nothing is looked up: an account or Story that doesn't exist gets the same page as one
+    // that does, apart from the link itself.
+    const strip = (html: string) => html.replace(/(katkee:\/\/|katkee\.com\/)[^"]+/g, "");
+    assert.equal(strip((await get("/u/nobody_here")).body.toString()), strip(reply.body.toString()));
+    const head = await request("HEAD", `/s/${ID}`);
+    assert.equal(head.status, 200);
+    assert.equal(head.body.length, 0);
+    const br = await get(`/s/${ID}`, { "Accept-Encoding": "br" });
+    assert.equal(br.headers["content-encoding"], "br");
+    assert.ok(zlib.brotliDecompressSync(br.body).equals(reply.body));
+    assert.equal((await get(`/s/${ID}`, { "If-None-Match": reply.headers.etag! })).status, 304);
+  });
+
+  it("answers anything that isn't a plain username or Story ID with the 404 page", async () => {
+    const bad = [
+      "/u/ab", `/u/${"a".repeat(31)}`, "/u/a-b-c", "/u/asha%20k", "/u/%3Cscript%3E", "/u/asha%2Fk", "/u/asha%2Ek", "/u/asha/extra",
+      "/s/not-a-uuid", `/s/${id}x`, `/s/${id}/extra`, "/s/..%2F..%2Fmanifest.json", `/s/${id.replace(/-/g, "")}`,
+    ];
+    for (const target of bad) {
+      const reply = await get(target);
+      assert.equal(reply.status, 404, target);
+      if (reply.headers["content-type"]?.startsWith("text/html")) assert.ok(reply.body.equals(file(manifest.notFound)), target);
+    }
+  });
+
+  it("serves the Android App Links file for the app's package and signing keys", async () => {
+    const reply = await get("/.well-known/assetlinks.json");
+    assert.equal(reply.status, 200);
+    assert.equal(reply.headers["content-type"], "application/json");
+    const links = JSON.parse(reply.body.toString());
+    assert.deepEqual(links[0].relation, ["delegate_permission/common.handle_all_urls"]);
+    assert.equal(links[0].target.namespace, "android_app");
+    assert.equal(links[0].target.package_name, "com.katkee.app");
+    assert.ok(links[0].target.sha256_cert_fingerprints.includes("8F:D4:72:1F:1F:FF:05:08:3C:B3:B5:5A:5B:92:8F:59:4F:5E:71:B4:08:CF:55:05:2E:78:DF:7E:AF:41:CA:F0"), "the upload key");
+    // iOS needs the Apple Team ID (website/site.json); until it's there, there's no file.
+    const site = JSON.parse(fs.readFileSync(path.join(siteRoot, "../site.json"), "utf8")) as { appLinks: { ios: { teamId: string } } };
+    const aasa = await get("/.well-known/apple-app-site-association");
+    if (site.appLinks.ios.teamId) {
+      assert.equal(aasa.status, 200);
+      assert.equal(aasa.headers["content-type"], "application/json");
+    } else assert.equal(aasa.status, 404);
+  });
+});
+
 describe("with WEBSITE_HOST, as in production", () => {
   before(() => setSiteHost("katkee.test"));
   after(() => setSiteHost(""));
@@ -203,6 +282,26 @@ describe("with WEBSITE_HOST, as in production", () => {
     // Nor the realtime socket: refused before any authentication on the website's names.
     for (const host of ["katkee.test", "www.katkee.test"]) assert.equal(await upgradeStatus(host), 404, host);
     assert.equal(await upgradeStatus("api.katkee.test"), 401, "the API's own host still asks for a token");
+  });
+
+  it("serves shared links and the app-link files on the website's host, and nothing else that looks like them", async () => {
+    const id = "0f3c2b1a-1111-4222-8333-444455556666";
+    for (const target of [`/u/asha_k?id=${id}`, `/s/${id}`, "/.well-known/assetlinks.json"]) {
+      assert.equal((await get(target, { Host: "katkee.test" })).status, 200, target);
+    }
+    for (const target of ["/u/ab", "/u/asha_k/extra", "/s/nope", "/u/", "/.well-known/other.json"]) {
+      const reply = await get(target, { Host: "katkee.test" });
+      assert.equal(reply.status, 404, target);
+      assert.ok(reply.body.equals(file(manifest.notFound)), target);
+    }
+    assert.equal((await request("POST", `/s/${id}`, { Host: "katkee.test" })).status, 405);
+    // One address: asked for on the API's host or www, a shared link redirects to the website.
+    for (const host of ["api.katkee.test", "www.katkee.test"]) {
+      const reply = await get(`/u/asha_k?id=${id}`, { Host: host });
+      assert.equal(reply.status, 301, host);
+      assert.equal(reply.headers.location, `https://katkee.test/u/asha_k?id=${id}`, host);
+    }
+    assert.notEqual((await get("/u/ab", { Host: "api.katkee.test" })).status, 301, "only valid links redirect");
   });
 
   it("redirects www to the website's host, keeping the path and query", async () => {

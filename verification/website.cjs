@@ -29,7 +29,7 @@ test('website/public is exactly what the sources build',()=>{
 
 test('every page is well-formed, self-contained and accessible',()=>{
  const manifest=JSON.parse(fs.readFileSync(path.join(root,'website/public/manifest.json'),'utf8'));
- const pages=[...Object.values(manifest.pages),manifest.notFound];
+ const pages=[...Object.values(manifest.pages),manifest.notFound,manifest.openInApp.file];
  const ids=new Map(pages.map(p=>[p,new Set([...fs.readFileSync(path.join(root,'website/public',p),'utf8').matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]))]));
  for(const page of pages){
   const html=fs.readFileSync(path.join(root,'website/public',page),'utf8');
@@ -95,6 +95,43 @@ test('the build refuses broken links, unknown addresses, scripts, inline styles 
   assert.doesNotThrow(s.run,'the untouched copy builds');
   s.edit(file,from,to);
   assert.throws(s.run,error,`${file}: ${to}`);
+ }
+});
+
+test('shared links: one noindex "Open in Katkee" page, and the files that let the app open them',t=>{
+ const files=build();
+ const open=files.get('open.html').toString();
+ const markers=JSON.parse(files.get('manifest.json').toString()).openInApp.markers;
+ assert.match(open,/<title>Open in Katkee<\/title>/);
+ assert.match(open,/<meta name="robots" content="noindex">/);
+ assert.ok(open.includes(`<a class="button" href="${markers.appLink}">Open in the app</a>`));
+ assert.ok(open.includes(`<link rel="canonical" href="${site.origin}/${markers.linkPath}">`));
+ const links=JSON.parse(files.get('assetlinks.json').toString());
+ assert.equal(links[0].target.package_name,'com.katkee.app');
+ assert.deepEqual(links[0].target.sha256_cert_fingerprints,site.appLinks.android.sha256CertFingerprints);
+ // No Apple Team ID yet: no apple-app-site-association (katkee.com answers 404), and links open the page.
+ assert.equal(files.has('apple-app-site-association.json'),Boolean(site.appLinks.ios.teamId));
+
+ const s=sandbox(t);
+ s.edit('website/site.json','"teamId": ""','"teamId": "ABCDE12345"');
+ s.edit('website/site.json','"googlePlay": ""','"googlePlay": "https://play.google.com/store/apps/details?id=com.katkee.app"');
+ const live=s.run();
+ assert.deepEqual(JSON.parse(live.get('apple-app-site-association.json').toString()),
+  {applinks:{details:[{appIDs:['ABCDE12345.com.katkee.app'],components:[{'/':'/u/*'},{'/':'/s/*'}]}]}});
+ assert.deepEqual(JSON.parse(live.get('manifest.json').toString()).files['/.well-known/apple-app-site-association'],{file:'apple-app-site-association.json',type:'application/json'});
+ const liveOpen=live.get('open.html').toString();
+ assert.match(liveOpen,/<h2 class="open-get">Get Katkee<\/h2>/);
+ assert.match(liveOpen,/href="https:\/\/play\.google\.com\/store\/apps\/details\?id=com\.katkee\.app"/);
+ assert.doesNotMatch(liveOpen,/App Store|coming soon/,'only the stores the app is in');
+
+ for(const [from,to,error] of [
+  ['"teamId": ""','"teamId": "abc"',/not an Apple Team ID/],
+  ['"8F:D4:72','"8f:D4:72',/not a SHA-256 fingerprint/],
+  ['"package": "com.katkee.app"','"package": "katkee"',/not a package name/],
+ ]){
+  const bad=sandbox(t);
+  bad.edit('website/site.json',from,to);
+  assert.throws(bad.run,error,to);
  }
 });
 

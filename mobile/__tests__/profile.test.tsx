@@ -180,7 +180,7 @@ describe("someone else's page", () => {
     const sheet = tree.root.findAllByType(Modal).find((m) => typeof m.props.onDismiss === "function")!;
     expect(sheet.props.visible).toBe(false);
     await act(async () => sheet.props.onDismiss());
-    expect(Clipboard.setString).toHaveBeenCalledWith("katkee://user/asha_k?id=11111111-2222-4333-8444-555555555555");
+    expect(Clipboard.setString).toHaveBeenCalledWith("https://katkee.com/u/asha_k?id=11111111-2222-4333-8444-555555555555");
 
     api.getProfile.mockResolvedValue({ profile: profile({}, { isMutedByViewer: true }) });
     await openMore();
@@ -278,7 +278,7 @@ describe("your own page", () => {
     // Insights is a small icon button beside Edit and Share profile, not a card.
     expect(texts()).not.toContain("Insights");
     await press("Share profile");
-    expect(share).toHaveBeenCalledWith({ message: "@me_now on Katkee: katkee://user/me_now?id=u-me" });
+    expect(share).toHaveBeenCalledWith({ message: "@me_now on Katkee: https://katkee.com/u/me_now?id=u-me" });
     await press("Edit profile");
     await press("Insights. See how your Stories are doing. Only you can see this.");
     await press("Archive");

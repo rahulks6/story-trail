@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Linking, View } from "react-native";
 import { DarkTheme, DefaultTheme, NavigationContainer, type LinkingOptions, type Theme } from "@react-navigation/native";
 import { colorScheme } from "../theme/colors";
-import { deepLinkTarget } from "./profileLinks";
+import { deepLinkTarget, LINK_PREFIXES, linkPath } from "./profileLinks";
 import { initialNotificationLink, onNotificationOpened } from "../push/pushNotifications";
 import { usePushRegistration } from "../push/usePushRegistration";
 import { useAreaSync } from "../state/nearby";
@@ -281,13 +281,14 @@ export function RootNavigator(): React.JSX.Element {
   useEffect(() => {
     if (status === "signedIn") return;
     const subscription = Linking.addEventListener("url", ({url}) => {
-      const target = url.startsWith("katkee://") ? deepLinkTarget(url.slice(9)) : null;
+      const path = linkPath(url);
+      const target = path === null ? null : deepLinkTarget(path);
       if (target && target.kind !== "resetPassword") pendingLink.current = url;
     });
     return () => subscription.remove();
   }, [status]);
   const linking = useMemo<LinkingOptions<RootStackParamList>>(() => ({
-    prefixes: ["katkee://"],
+    prefixes: LINK_PREFIXES,
     getInitialURL: async () => {
       const url = pendingLink.current ?? await Linking.getInitialURL() ?? await initialNotificationLink();
       pendingLink.current = null;
@@ -321,7 +322,7 @@ export function RootNavigator(): React.JSX.Element {
   }), []);
   // Signed out, only password-reset links are meaningful.
   const signedOutLinking = useMemo<LinkingOptions<AuthStackParamList>>(() => ({
-    prefixes: ["katkee://"],
+    prefixes: LINK_PREFIXES,
     getStateFromPath: path => {
       const target = deepLinkTarget(path);
       if (target?.kind !== "resetPassword") return undefined;
