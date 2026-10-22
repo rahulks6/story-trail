@@ -20,6 +20,8 @@ export interface OutboxMessage {
   conversationId: string;
   body: string | null;
   storyId: string | null;
+  /** The message this one replies to (swipe to reply). */
+  replyToMessageId?: string;
   createdAt: string;
   status: OutboxStatus;
   attempts: number;
@@ -139,7 +141,7 @@ function patch(userId: string, clientMessageId: string, fields: Partial<OutboxMe
 export async function enqueueMessage(
   userId: string,
   conversationId: string,
-  input: { body?: string; storyId?: string },
+  input: { body?: string; storyId?: string; replyToMessageId?: string },
 ): Promise<OutboxMessage> {
   keyFor(userId);
   const body = input.body?.trim() || null;
@@ -155,6 +157,7 @@ export async function enqueueMessage(
     conversationId,
     body,
     storyId,
+    ...(input.replyToMessageId ? { replyToMessageId: input.replyToMessageId } : {}),
     createdAt: new Date(now()).toISOString(),
     status: "waiting",
     attempts: 0,
@@ -220,7 +223,8 @@ async function drain(userId: string, getAccessToken: () => string | null): Promi
     try {
       const { message } = await sendMessage(
         entry.conversationId,
-        { ...(entry.body ? { body: entry.body } : {}), ...(entry.storyId ? { storyId: entry.storyId } : {}), clientMessageId: entry.clientMessageId },
+        { ...(entry.body ? { body: entry.body } : {}), ...(entry.storyId ? { storyId: entry.storyId } : {}),
+          ...(entry.replyToMessageId ? { replyToMessageId: entry.replyToMessageId } : {}), clientMessageId: entry.clientMessageId },
         token,
       );
       if (epoch !== epochOf(userId)) return;

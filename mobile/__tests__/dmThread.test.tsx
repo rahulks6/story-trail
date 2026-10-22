@@ -26,6 +26,7 @@ jest.mock("../src/api/conversations", () => ({
   MESSAGE_REACTIONS: ["❤️", "😂", "😮", "😢", "😡", "👍"],
   reactToMessage: jest.fn(async (_c: string, _m: string, emoji: string) => ({ reactions: [{ userId: "u-me", emoji }] })),
   removeMessageReaction: jest.fn(async () => ({ reactions: [] })),
+  sendTyping: jest.fn(async () => undefined),
   newClientMessageId: () => `m_test_${Math.random().toString(36).slice(2, 12)}`,
   getConversation: jest.fn(),
   markConversationRead: jest.fn(async () => undefined),
@@ -96,8 +97,8 @@ test("screen readers hear who sent each message, can report the other person's, 
   expect(tree.root.findByType(TextInput).props.accessibilityLabel).toBe("Message");
   const theirs = bubble("@alice: hello");
   const mine = bubble("You: hi");
-  expect(mine.props.accessibilityActions).toEqual([{ name: "react", label: "React" }]);
-  expect(theirs.props.accessibilityActions).toEqual([{ name: "react", label: "React" }, { name: "report", label: "Report message" }]);
+  expect(mine.props.accessibilityActions).toEqual([{ name: "reply", label: "Reply" }, { name: "react", label: "React" }]);
+  expect(theirs.props.accessibilityActions).toEqual([{ name: "reply", label: "Reply" }, { name: "react", label: "React" }, { name: "report", label: "Report message" }]);
 
   const sheet = () => tree.root.find((n: ReactTestInstance) => (n.type as unknown) === "ReportSheet");
   expect(sheet().props.visible).toBe(false);
@@ -134,7 +135,8 @@ test("photos in the thread open full screen, and there are buttons to send photo
   const images = (uri: string) => tree.root.findAll((n) => (n.type as unknown) === "Image" && n.props.source?.uri === uri);
   expect(photo.findAll((n) => (n.type as unknown) === "Image" && n.props.source?.uri === "/media/md1/thumbnail")[0]!.props.resizeMethod).toBe("resize");
   expect(images("/media/md1/display")).toHaveLength(0);
-  await act(async () => photo.props.onPress());
+  // One tap opens it, once it's clear it wasn't the first of a double tap (which hearts it).
+  await act(async () => { photo.props.onPress(); await new Promise<void>((r) => setTimeout(r, 320)); });
   const { Modal } = require("react-native");
   expect(tree.root.findAllByType(Modal).some((m: ReactTestInstance) => m.props.visible)).toBe(true);
   expect(images("/media/md1/display")).not.toHaveLength(0);
@@ -319,4 +321,82 @@ test("the DM camera shows what it took with the Story filters before sending; a 
   await settle();
   expect(sent).toHaveBeenCalledTimes(2);
   delete picker.camera;
+});
+
+test("swipe or choose Reply to answer a message: the box says what you're replying to, and the reply carries it", async () => {
+  const outbox = require("../src/state/dmOutbox");
+  outbox.enqueueMessage.mockClear();
+  await render();
+  await act(async () => bubble("@alice: hello").props.onLongPress());
+  await pressLabel("Reply");
+  const texts = () => tree.root.findAll((n) => typeof n.props.children === "string").map((n) => n.props.children as string);
+  expect(texts()).toEqual(expect.arrayContaining(["hello"]));
+  expect(tree.root.findAll((n) => Array.isArray(n.props.children) && n.props.children.join("") === "Replying to @alice")).not.toHaveLength(0);
+  await act(async () => tree.root.findByType(TextInput).props.onChangeText("see you there"));
+  await pressLabel("Send");
+  expect(outbox.enqueueMessage).toHaveBeenCalledWith("u-me", "c1", { body: "see you there", replyToMessageId: "m2" });
+  expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Cancel reply")).toHaveLength(0);
+
+  // Screen readers reply from the message's actions; Cancel drops the reply.
+  await act(async () => bubble("You: hi").props.onAccessibilityAction({ nativeEvent: { actionName: "reply" } }));
+  expect(tree.root.findAll((n) => Array.isArray(n.props.children) && n.props.children.join("") === "Replying to yourself")).not.toHaveLength(0);
+  await pressLabel("Cancel reply");
+  await act(async () => tree.root.findByType(TextInput).props.onChangeText("no reply"));
+  await pressLabel("Send");
+  expect(outbox.enqueueMessage).toHaveBeenLastCalledWith("u-me", "c1", { body: "no reply" });
+});
+
+test("a reply shows the message it quotes above it, and Seen under your last message once it's read", async () => {
+  const api = require("../src/api/conversations");
+  api.listMessages.mockResolvedValueOnce({
+    hasMore: false,
+    messages: [
+      { id: "m3", conversationId: "c1", senderId: "u-me", body: "yes!", sharedStoryId: null, createdAt: "2026-10-06 09:02:00+00", status: "read",
+        replyTo: { id: "m2", senderId: "u-alice", body: "hello", mediaKind: null, sharedStory: false } },
+      { id: "m2", conversationId: "c1", senderId: "u-alice", body: "hello", sharedStoryId: null, createdAt: "2026-10-06 09:01:00+00",
+        replyTo: { id: "m0", senderId: "u-alice", body: null, mediaKind: "photo", sharedStory: false } },
+    ],
+  });
+  await render();
+  expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Replying to @alice: hello" && typeof n.props.onPress === "function")).toHaveLength(1);
+  expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Replying to @alice: Photo" && typeof n.props.onPress === "function")).toHaveLength(1);
+  expect(tree.root.findAll((n) => typeof n.props.children === "string" && n.props.children === "Seen")).not.toHaveLength(0);
+});
+
+test("a double tap on a message hearts it, and another double tap takes the heart back", async () => {
+  const api = require("../src/api/conversations");
+  api.reactToMessage.mockClear();
+  await render();
+  await act(async () => { bubble("@alice: hello").props.onPress(); bubble("@alice: hello").props.onPress(); });
+  await settle();
+  expect(api.reactToMessage).toHaveBeenCalledWith("c1", "m2", "❤️", "token");
+  expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Reactions: ❤️ from you" && typeof n.props.onPress === "function")).toHaveLength(1);
+  await act(async () => { bubble("@alice: hello").props.onPress(); bubble("@alice: hello").props.onPress(); });
+  await settle();
+  expect(api.removeMessageReaction).toHaveBeenCalledWith("c1", "m2", "token");
+  // One tap on a plain message does nothing.
+  await act(async () => { bubble("You: hi").props.onPress(); await new Promise<void>((r) => setTimeout(r, 320)); });
+  expect(api.reactToMessage).toHaveBeenCalledTimes(1);
+});
+
+test("\"typing…\" shows while the other person types and goes when their message arrives; yours goes out at most every few seconds", async () => {
+  const api = require("../src/api/conversations");
+  api.sendTyping.mockClear();
+  await render();
+  const typing = () => tree.root.findAll((n) => typeof n.props.children === "string" && n.props.children === "@alice is typing…");
+  expect(typing()).toHaveLength(0);
+  await act(async () => mockRealtime.handler!({ type: "typing", conversationId: "c1", userId: "u-alice" }));
+  expect(typing()).not.toHaveLength(0);
+  await act(async () => mockRealtime.handler!({ type: "message", conversationId: "c1", messageId: "m9", senderId: "u-alice", createdAt: "2026-10-06 09:05:00+00" }));
+  expect(typing()).toHaveLength(0);
+  // Your own other phone typing, or another chat, doesn't show here.
+  await act(async () => mockRealtime.handler!({ type: "typing", conversationId: "c1", userId: "u-me" }));
+  await act(async () => mockRealtime.handler!({ type: "typing", conversationId: "c2", userId: "u-alice" }));
+  expect(typing()).toHaveLength(0);
+
+  await act(async () => tree.root.findByType(TextInput).props.onChangeText("h"));
+  await act(async () => tree.root.findByType(TextInput).props.onChangeText("he"));
+  await act(async () => tree.root.findByType(TextInput).props.onChangeText("hey"));
+  expect(api.sendTyping).toHaveBeenCalledTimes(1);
+  expect(api.sendTyping).toHaveBeenCalledWith("c1", "token");
 });

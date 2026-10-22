@@ -38,6 +38,7 @@ export const ICONS = {minus:"minus",up:"up",down:"down",left:"left",right:"right
   "edit": "edit",
   "changeCover": "changeCover",
   "undo": "undo",
+  "reply": "reply",
   "redo": "redo",
   "logout": "logout",
   "star": "star",

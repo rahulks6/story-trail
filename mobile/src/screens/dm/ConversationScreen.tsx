@@ -5,12 +5,14 @@ import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "
 import {
   ActivityIndicator,
   Alert,
+  Animated,
   AppState,
   FlatList,
   Image,
   Keyboard,
   Linking,
   Modal,
+  PanResponder,
   PermissionsAndroid,
   Platform,
   Pressable,
@@ -49,8 +51,10 @@ import {
   MESSAGE_REACTIONS,
   reactToMessage,
   removeMessageReaction,
+  sendTyping,
   type Message,
   type MessageReaction,
+  type QuotedMessage,
 } from "../../api/conversations";
 import { ApiError } from "../../api/client";
 import { getStoryOwnerUsername } from "../../api/stories";
@@ -89,6 +93,14 @@ const POLL_LIVE_MS = 30_000;
 const MAX_CATCH_UP_PAGES = 5;
 /** Right after Send the mic takes the button's place: a second tap there isn't a new recording. */
 const SEND_TAP_GUARD_MS = 600;
+/** Two taps on a message this close together heart it (like Instagram). */
+const DOUBLE_TAP_MS = 280;
+const DOUBLE_TAP_REACTION = MESSAGE_REACTIONS[0];
+/** How far a message is swiped to the right before letting go replies to it. */
+const SWIPE_REPLY_PX = 56;
+/** "typing…" goes out at most this often while you type, and shows this long after the last one. */
+const TYPING_SEND_MS = 3_000;
+const TYPING_SHOW_MS = 6_000;
 
 // A fixed emoji set; it inserts into the text composer.
 const EMOJIS = [
@@ -105,7 +117,10 @@ const EMOJIS = [
  * from realtime read receipts). Photos, videos and voice notes on their way have
  * their own persisted outbox (dmMediaOutbox.ts).
  */
-type ListRow = (OutboxMessage & { kind: "pending" }) | (Message & { kind: "sent" }) | (MediaOutboxEntry & { kind: "media" });
+type ListRow =
+  | (OutboxMessage & { kind: "pending"; replyTo?: QuotedMessage | null })
+  | (Message & { kind: "sent" })
+  | (MediaOutboxEntry & { kind: "media"; replyTo?: QuotedMessage | null });
 
 // One row object per message object, so a row whose message didn't change keeps its
 // props and its memoized bubble doesn't re-render.
@@ -130,6 +145,20 @@ function mediaBox(width: number | null | undefined, height: number | null | unde
   return ratio >= 1 ? { width: maxSide, height: maxSide / ratio } : { width: tall * ratio, height: tall };
 }
 
+/** A message as a reply quotes it (the same shape the server sends). */
+function quoteOf(message: Message): QuotedMessage {
+  return { id: message.id, senderId: message.senderId, body: message.body?.slice(0, 160) ?? null, mediaKind: message.media?.kind ?? null, sharedStory: !!message.sharedStoryId };
+}
+
+/** What a quote shows of the message: its text, or what kind of message it was. */
+export function quoteSnippet(quote: QuotedMessage): string {
+  if (quote.body) return quote.body;
+  if (quote.mediaKind === "photo") return "Photo";
+  if (quote.mediaKind === "video") return "Video";
+  if (quote.mediaKind === "audio") return "Voice message";
+  return quote.sharedStory ? "Shared a Story" : "Message";
+}
+
 function statusLabel(row: ListRow): string {
   if (row.kind === "media") return row.status === "failed" ? `${row.error ?? "Not sent"} · Tap to retry` : "Sending…";
   if (row.kind === "pending") {
@@ -138,7 +167,7 @@ function statusLabel(row: ListRow): string {
   }
   switch (row.status) {
     case "read":
-      return "Read";
+      return "Seen";
     case "delivered":
       return "Delivered";
     default:
@@ -158,6 +187,12 @@ interface RowActions {
   /** A tap on the reactions under a message: takes yours back, or lets you add one. */
   onReactionsPress: (row: Message) => void;
   onReport: (messageId: string) => void;
+  /** Swipe a message (or choose Reply) to answer it with a quote. */
+  onReply: (row: Message) => void;
+  /** Two quick taps on a message: ❤️ it (or take the ❤️ back). */
+  onDoubleTap: (row: Message) => void;
+  /** A tap on a quote: scrolls to the message it quotes. */
+  onQuotePress: (messageId: string) => void;
   onOpenStory: (storyId: string) => void;
   onView: (viewing: { id: string; kind: "photo" | "video" }) => void;
   onPlay: (key: string) => void;
@@ -201,9 +236,101 @@ function ReactionPills({ reactions, userId, otherUsername, mine, onPress }: { re
   );
 }
 
+/**
+ * Swipe a message to the right to reply to it, like Instagram: a reply arrow fades in behind it,
+ * a tick of haptics says "let go now", and it springs back. Vertical scrolling is untouched.
+ */
+function SwipeToReply({ enabled, onReply, children }: { enabled: boolean; onReply: () => void; children: React.ReactNode }): React.JSX.Element {
+  const dx = useRef(new Animated.Value(0)).current;
+  const armed = useRef(false);
+  const onReplyRef = useRef(onReply);
+  onReplyRef.current = onReply;
+  const responder = useMemo(() => {
+    const settle = () => {
+      armed.current = false;
+      Animated.spring(dx, { toValue: 0, useNativeDriver: true, bounciness: 6 }).start();
+    };
+    return PanResponder.create({
+      onMoveShouldSetPanResponder: (_event, g) => g.dx > 12 && Math.abs(g.dx) > Math.abs(g.dy) * 2,
+      onPanResponderTerminationRequest: () => false,
+      onPanResponderMove: (_event, g) => {
+        const x = Math.max(0, Math.min(g.dx, SWIPE_REPLY_PX + 24));
+        dx.setValue(x);
+        if (!armed.current && x >= SWIPE_REPLY_PX) {
+          armed.current = true;
+          tapFeedback("select");
+        } else if (armed.current && x < SWIPE_REPLY_PX) armed.current = false;
+      },
+      onPanResponderRelease: () => {
+        if (armed.current) onReplyRef.current();
+        settle();
+      },
+      onPanResponderTerminate: settle,
+    });
+  }, [dx]);
+  if (!enabled) return <>{children}</>;
+  const arrowOpacity = dx.interpolate({ inputRange: [0, SWIPE_REPLY_PX], outputRange: [0, 1], extrapolate: "clamp" });
+  return (
+    <View collapsable={false} {...responder.panHandlers}>
+      <Animated.View style={[styles.swipeArrow, { opacity: arrowOpacity }]} pointerEvents="none">
+        <Icon name={ICONS.reply} size={20} color={colors.textSecondary} />
+      </Animated.View>
+      <Animated.View style={{ transform: [{ translateX: dx }] }}>{children}</Animated.View>
+    </View>
+  );
+}
+
+/** The message a reply answers, above the reply: who wrote it and how it started. A tap goes to it. */
+function Quote({ quote, userId, otherUsername, mine, onPress }: { quote: QuotedMessage; userId: string | undefined; otherUsername: string | undefined; mine: boolean; onPress: (id: string) => void }): React.JSX.Element {
+  const author = quote.senderId === userId ? "You" : otherUsername ? `@${otherUsername}` : "Them";
+  const snippet = quoteSnippet(quote);
+  return (
+    <Pressable
+      onPress={() => onPress(quote.id)}
+      style={[styles.quote, mine ? styles.quoteMine : styles.quoteTheirs]}
+      accessibilityRole="button"
+      accessibilityLabel={`Replying to ${author === "You" ? "you" : author}: ${snippet}`}
+      accessibilityHint="Shows that message"
+    >
+      <Text style={styles.quoteAuthor} numberOfLines={1}>{author}</Text>
+      <Text style={styles.quoteText} numberOfLines={2}>{snippet}</Text>
+    </Pressable>
+  );
+}
+
 /** One message in the thread. Memoized: typing, recording or a poll that changed nothing doesn't re-render it. */
-const MessageRow = memo(function MessageRow({ row, userId, otherUsername, accessToken, showStatus, playing, maxMediaSide, actions }: RowProps): React.JSX.Element {
+const MessageRow = memo(function MessageRow(props: RowProps): React.JSX.Element {
+  const { row, actions } = props;
+  return (
+    <SwipeToReply enabled={row.kind === "sent"} onReply={() => { if (row.kind === "sent") actions.onReply(row); }}>
+      <MessageContent {...props} />
+    </SwipeToReply>
+  );
+});
+
+function MessageContent({ row, userId, otherUsername, accessToken, showStatus, playing, maxMediaSide, actions }: RowProps): React.JSX.Element {
   const canReport = row.kind === "sent" && row.senderId !== userId;
+  // A double tap hearts a stored message; a single tap that also does something (open a photo
+  // or a shared Story) waits a moment to be sure it isn't the first of two.
+  const lastTapAt = useRef(0);
+  const singleTap = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (singleTap.current) clearTimeout(singleTap.current); }, []);
+  const onTap = (single?: () => void) => {
+    if (row.kind !== "sent") return single?.();
+    const now = Date.now();
+    if (now - lastTapAt.current < DOUBLE_TAP_MS) {
+      lastTapAt.current = 0;
+      if (singleTap.current) clearTimeout(singleTap.current);
+      singleTap.current = null;
+      actions.onDoubleTap(row);
+      return;
+    }
+    lastTapAt.current = now;
+    if (single) singleTap.current = setTimeout(() => { singleTap.current = null; single(); }, DOUBLE_TAP_MS);
+  };
+  const quote = row.replyTo ? (
+    <Quote quote={row.replyTo} userId={userId} otherUsername={otherUsername} mine={row.kind !== "sent" || row.senderId === userId} onPress={actions.onQuotePress} />
+  ) : null;
   if (row.kind === "media" || (row.kind === "sent" && row.media)) {
     const mineMedia = row.kind === "media" || row.senderId === userId;
     const kind = row.kind === "media" ? row.mediaKind : row.media!.kind;
@@ -214,6 +341,7 @@ const MessageRow = memo(function MessageRow({ row, userId, otherUsername, access
       return (
         <View style={[styles.bubbleRow, mineMedia ? styles.bubbleRowMine : styles.bubbleRowTheirs]}>
           <View style={[styles.bubbleColumn, mineMedia ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
+            {quote}
             <VoiceNoteBubble
               url={row.kind === "media" ? row.uri : mediaFileUrl(row.media!.id, "audio")}
               accessToken={accessToken}
@@ -238,13 +366,14 @@ const MessageRow = memo(function MessageRow({ row, userId, otherUsername, access
     return (
       <View style={[styles.bubbleRow, mineMedia ? styles.bubbleRowMine : styles.bubbleRowTheirs]}>
         <View style={[styles.bubbleColumn, mineMedia ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
+          {quote}
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={`${who}: ${kind === "video" ? "Video" : "Photo"}`}
             accessibilityHint={row.kind === "media" ? (failedMedia ? "Retry or delete" : undefined) : "Opens it full screen"}
             onPress={() => {
               if (row.kind === "media") actions.onPendingMediaPress(row);
-              else actions.onView({ id: row.media!.id, kind: kind === "video" ? "video" : "photo" });
+              else onTap(() => actions.onView({ id: row.media!.id, kind: kind === "video" ? "video" : "photo" }));
             }}
             onLongPress={() => actions.onLongPress(row)}
             style={[styles.mediaBubble, box, failedMedia && styles.mediaFailed]}
@@ -284,6 +413,7 @@ const MessageRow = memo(function MessageRow({ row, userId, otherUsername, access
   return (
     <View style={[styles.bubbleRow, mine ? styles.bubbleRowMine : styles.bubbleRowTheirs]}>
       <View style={[styles.bubbleColumn, mine ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
+        {quote}
         <Pressable
           // A button only where a tap does something (retry, open the shared Story).
           accessibilityRole={row.kind === "pending" || openableStory ? "button" : undefined}
@@ -293,10 +423,10 @@ const MessageRow = memo(function MessageRow({ row, userId, otherUsername, access
             row.kind === "pending" && styles.bubblePending,
             failed && styles.bubbleFailed,
           ]}
-          disabled={row.kind === "sent" ? !openableStory && mine : row.status === "sending"}
+          disabled={row.kind === "pending" && row.status === "sending"}
           onPress={() => {
             if (row.kind === "pending") actions.onPendingPress(row);
-            else if (openableStory) actions.onOpenStory(openableStory);
+            else onTap(openableStory ? () => actions.onOpenStory(openableStory) : undefined);
           }}
           onLongPress={() => actions.onLongPress(row)}
           accessibilityLabel={`${mine ? "You" : otherUsername ? `@${otherUsername}` : "Them"}: ${spoken}`}
@@ -304,10 +434,11 @@ const MessageRow = memo(function MessageRow({ row, userId, otherUsername, access
             row.kind === "pending" && row.status !== "sending" ? "Retry or delete this message"
               : openableStory ? "Opens the Story" : undefined
           }
-          accessibilityActions={row.kind === "sent" ? [{ name: "react", label: "React" }, ...(canReport ? [{ name: "report", label: "Report message" }] : [])] : undefined}
+          accessibilityActions={row.kind === "sent" ? [{ name: "reply", label: "Reply" }, { name: "react", label: "React" }, ...(canReport ? [{ name: "report", label: "Report message" }] : [])] : undefined}
           onAccessibilityAction={(event) => {
             if (row.kind !== "sent") return;
-            if (event.nativeEvent.actionName === "react") actions.onLongPress(row);
+            if (event.nativeEvent.actionName === "reply") actions.onReply(row);
+            else if (event.nativeEvent.actionName === "react") actions.onLongPress(row);
             else if (event.nativeEvent.actionName === "report" && canReport) actions.onReport(row.id);
           }}
         >
@@ -327,7 +458,7 @@ const MessageRow = memo(function MessageRow({ row, userId, otherUsername, access
       </View>
     </View>
   );
-});
+}
 
 interface ComposerProps {
   /** Queues a text message; throws (with a message to show) when it can't. */
@@ -336,13 +467,18 @@ interface ComposerProps {
   onStartRecording: () => void;
   onTakePhoto: () => void;
   onPickFromGallery: () => void;
+  /** Called as you type (the screen decides how often the other person hears about it). */
+  onTyping: () => void;
+  /** The message you're replying to, shown above the box; null when not replying. */
+  replyingTo: { author: string; snippet: string } | null;
+  onCancelReply: () => void;
 }
 
 /**
  * The message box, emoji panel and voice recorder. Its own component so typing and
  * the recording timer re-render only this, never the thread above it.
  */
-const Composer = memo(function Composer({ onSendText, onVoiceNote, onStartRecording, onTakePhoto, onPickFromGallery }: ComposerProps): React.JSX.Element {
+const Composer = memo(function Composer({ onSendText, onVoiceNote, onStartRecording, onTakePhoto, onPickFromGallery, onTyping, replyingTo, onCancelReply }: ComposerProps): React.JSX.Element {
   // The tab bar hides in a chat, so the message box keeps clear of Android's navigation bar and
   // the iPhone home indicator itself — except while the keyboard covers them.
   const { bottom: bottomInset } = useSafeAreaInsets();
@@ -364,6 +500,16 @@ const Composer = memo(function Composer({ onSendText, onVoiceNote, onStartRecord
 
   const recorder = useVoiceRecorder(onVoiceNote, setComposerError);
   const recording = recorder.state.status !== "idle";
+  // Choosing a message to reply to puts you straight into the box.
+  const inputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
+  const replying = replyingTo !== null;
+  useEffect(() => {
+    if (replying) inputRef.current?.focus();
+  }, [replying, replyingTo]);
+  const onChangeDraft = (text: string) => {
+    setDraft(text);
+    if (text.trim()) onTyping();
+  };
 
   const onSend = async () => {
     const body = draft.trim();
@@ -416,6 +562,18 @@ const Composer = memo(function Composer({ onSendText, onVoiceNote, onStartRecord
         </View>
       ) : null}
       {composerError ? <Text style={styles.composerError}>{composerError}</Text> : null}
+      {replyingTo ? (
+        <View style={styles.replyBar}>
+          <Icon name={ICONS.reply} size={18} color={colors.textSecondary} />
+          <View style={styles.replyBarText}>
+            <Text style={styles.replyBarTitle} numberOfLines={1}>Replying to {replyingTo.author}</Text>
+            <Text style={styles.replyBarSnippet} numberOfLines={1}>{replyingTo.snippet}</Text>
+          </View>
+          <Pressable onPress={onCancelReply} hitSlop={10} style={styles.replyBarClose} accessibilityRole="button" accessibilityLabel="Cancel reply">
+            <Icon name={ICONS.close} size={18} color={colors.textSecondary} />
+          </Pressable>
+        </View>
+      ) : null}
       {recording ? (
         <View style={[styles.composerRow, styles.recordingRow, padBottom]}>
           <Pressable onPress={() => void recorder.cancel()} hitSlop={8} style={styles.recordCancel} accessibilityRole="button" accessibilityLabel="Delete voice message">
@@ -454,12 +612,13 @@ const Composer = memo(function Composer({ onSendText, onVoiceNote, onStartRecord
             <Icon style={styles.emojiToggleGlyph} name={ICONS.emoji} />
           </Pressable>
           <TextInput
+            ref={inputRef}
             style={styles.composerInput}
             accessibilityLabel="Message"
             placeholder="Message…"
             placeholderTextColor={colors.textDisabled}
             value={draft}
-            onChangeText={setDraft}
+            onChangeText={onChangeDraft}
             onFocus={() => setEmojiPickerOpen(false)}
             maxLength={MAX_MESSAGE_LENGTH}
             multiline
@@ -522,6 +681,15 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   const [reportingMessageId, setReportingMessageId] = useState<string | null>(null);
   /** The message whose reaction picker is open (long-press a message). */
   const [reactingTo, setReactingTo] = useState<Message | null>(null);
+  /** The message you're answering (swipe it, or Reply in its menu); quoted above your reply. */
+  const [replyingTo, setReplyingTo] = useState<Message | null>(null);
+  const replyingRef = useRef<Message | null>(null);
+  replyingRef.current = replyingTo;
+  /** The other person is typing right now (their app says so every few seconds). */
+  const [otherTyping, setOtherTyping] = useState(false);
+  const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastTypingSent = useRef(0);
+  const listRef = useRef<FlatList<ListRow>>(null);
   /** A photo or video the DM camera just took, waiting for a filter and Send. */
   const [capture, setCapture] = useState<Capture | null>(null);
   const [pendingMedia, setPendingMedia] = useState<MediaOutboxEntry[]>([]);
@@ -672,11 +840,41 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     await loadLatest();
   }, [catchUp, loadLatest]);
 
+  const stopTyping = useCallback(() => {
+    if (typingTimer.current) clearTimeout(typingTimer.current);
+    typingTimer.current = null;
+    setOtherTyping(false);
+  }, []);
+  useEffect(() => stopTyping, [stopTyping]);
+
+  /** Tells the other person you're typing: at most every few seconds, and never waits on it. */
+  const onTyping = useCallback(() => {
+    const token = tokenRef.current;
+    if (!token || Date.now() - lastTypingSent.current < TYPING_SEND_MS) return;
+    lastTypingSent.current = Date.now();
+    void sendTyping(conversationId, token).catch(() => undefined);
+  }, [conversationId]);
+
+  /** The reply in progress goes with the next message you send, whatever kind it is. */
+  const takeReply = useCallback((): string | undefined => {
+    const target = replyingRef.current;
+    if (!target) return undefined;
+    replyingRef.current = null;
+    setReplyingTo(null);
+    return target.id;
+  }, []);
+  const onCancelReply = useCallback(() => setReplyingTo(null), []);
+
   useRealtimeEvents((event) => {
     if (event.type === "resync") {
       void syncThread(); // reconnected: anything could have happened meanwhile
     } else if (event.type === "message" && event.conversationId === conversationId) {
+      if (event.senderId !== userId) stopTyping(); // what they were typing just arrived
       void catchUp();
+    } else if (event.type === "typing" && event.conversationId === conversationId && event.userId !== userId) {
+      setOtherTyping(true);
+      if (typingTimer.current) clearTimeout(typingTimer.current);
+      typingTimer.current = setTimeout(stopTyping, TYPING_SHOW_MS);
     } else if (event.type === "receipt" && event.conversationId === conversationId && userId && event.userId !== userId) {
       setMessages((current) => (current ? applyReceipt(current, userId, event) : current));
     } else if (event.type === "reaction" && event.conversationId === conversationId) {
@@ -718,16 +916,20 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
 
   const onSendText = useCallback(async (body: string) => {
     if (!userId) throw new Error("You're signed out.");
-    await enqueueMessage(userId, conversationId, { body });
+    const replyToMessageId = replyingRef.current?.id;
+    await enqueueMessage(userId, conversationId, { body, ...(replyToMessageId ? { replyToMessageId } : {}) });
+    takeReply(); // only once it's queued: a refused message keeps its reply
+    lastTypingSent.current = 0;
     void flushOutbox(userId, getToken, { force: true });
-  }, [conversationId, getToken, userId]);
+  }, [conversationId, getToken, takeReply, userId]);
 
   const sendMedia = useCallback((item: Parameters<typeof enqueueMedia>[2]) => {
     if (!userId) return;
-    void enqueueMedia(userId, conversationId, item, getToken).catch(() => {
+    const replyToMessageId = takeReply();
+    void enqueueMedia(userId, conversationId, replyToMessageId ? { ...item, replyToMessageId } : item, getToken).catch(() => {
       Alert.alert("Not sent", "Couldn't send that. Try again.");
     });
-  }, [conversationId, getToken, userId]);
+  }, [conversationId, getToken, takeReply, userId]);
 
   const onVoiceNote = useCallback((uri: string, durationMs: number) => sendMedia(newVoiceNote(uri, durationMs)), [sendMedia]);
   const onStartRecording = useCallback(() => setPlayingKey(null), []);
@@ -806,8 +1008,13 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   };
 
   // The rows' handlers never change identity; they act on the screen's latest state.
-  const latest = useRef({ userId, getToken, onOpenSharedStory, setReaction });
-  latest.current = { userId, getToken, onOpenSharedStory, setReaction };
+  /** Brings a quoted message into view, if it's among the messages loaded so far. */
+  const scrollToMessage = (messageId: string) => {
+    const index = rowsRef.current.findIndex((r) => r.kind === "sent" && r.id === messageId);
+    if (index >= 0) listRef.current?.scrollToIndex({ index, viewPosition: 0.5, animated: true });
+  };
+  const latest = useRef({ userId, getToken, onOpenSharedStory, setReaction, scrollToMessage });
+  latest.current = { userId, getToken, onOpenSharedStory, setReaction, scrollToMessage };
   const actions = useMemo((): RowActions => ({
     onPendingMediaPress: (row) => {
       const owner = latest.current.userId;
@@ -840,6 +1047,15 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       else setReactingTo(row);
     },
     onReport: (messageId) => setReportingMessageId(messageId),
+    onReply: (row) => {
+      setReactingTo(null);
+      setReplyingTo(row);
+    },
+    onDoubleTap: (row) => {
+      const mine = row.reactions?.find((r) => r.userId === latest.current.userId)?.emoji;
+      void latest.current.setReaction(row.id, mine === DOUBLE_TAP_REACTION ? null : DOUBLE_TAP_REACTION);
+    },
+    onQuotePress: (messageId) => latest.current.scrollToMessage(messageId),
     onOpenStory: (storyId) => void latest.current.onOpenSharedStory(storyId),
     onView: (item) => setViewing(item),
     onPlay: (key) => setPlayingKey(key),
@@ -851,10 +1067,26 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     // An outbox entry the server already stored (seen via realtime before the send
     // response came back) is shown once, as the stored message.
     const storedIds = new Set(stored.flatMap((m) => (m.clientMessageId ? [m.clientMessageId] : [])));
-    const pending = outbox.filter((m) => !storedIds.has(m.clientMessageId)).reverse().map((m) => rowOf(m, (s) => ({ ...s, kind: "pending" as const })));
-    const media = pendingMedia.filter((m) => !storedIds.has(m.clientMessageId)).reverse().map((m) => rowOf(m, (s) => ({ ...s, kind: "media" as const })));
+    // Something on its way shows the quote of what it replies to, from the thread.
+    const quoted = (id: string | undefined) => {
+      const target = id ? stored.find((m) => m.id === id) : undefined;
+      return target ? quoteOf(target) : null;
+    };
+    const pending = outbox.filter((m) => !storedIds.has(m.clientMessageId)).reverse().map((m) => rowOf(m, (s) => ({ ...s, kind: "pending" as const, replyTo: quoted(s.replyToMessageId) })));
+    const media = pendingMedia.filter((m) => !storedIds.has(m.clientMessageId)).reverse().map((m) => rowOf(m, (s) => ({ ...s, kind: "media" as const, replyTo: quoted(s.replyToMessageId) })));
     return [...media, ...pending, ...stored.map((m) => rowOf(m, (s) => ({ ...s, kind: "sent" as const })))];
   }, [outbox, messages, pendingMedia]);
+  const rowsRef = useRef<ListRow[]>([]);
+  rowsRef.current = rows;
+  const onScrollToIndexFailed = useCallback((info: { index: number; averageItemLength: number }) => {
+    // Not measured yet: get close, then try again once it is.
+    listRef.current?.scrollToOffset({ offset: info.averageItemLength * info.index, animated: false });
+    setTimeout(() => listRef.current?.scrollToIndex({ index: info.index, viewPosition: 0.5, animated: true }), 120);
+  }, []);
+  const replyPreview = useMemo(() => {
+    if (!replyingTo) return null;
+    return { author: replyingTo.senderId === userId ? "yourself" : otherUsername ? `@${otherUsername}` : "them", snippet: quoteSnippet(quoteOf(replyingTo)) };
+  }, [otherUsername, replyingTo, userId]);
 
   // A status caption only ever makes sense under the single most recent
   // message *you* sent — same convention as iMessage/WhatsApp. If the
@@ -906,6 +1138,8 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   return (
     <KeyboardAvoider style={styles.container} topOffset={headerHeight}>
       <FlatList
+        ref={listRef}
+        onScrollToIndexFailed={onScrollToIndexFailed}
         style={styles.list}
         contentContainerStyle={styles.listContent}
         data={rows}
@@ -923,6 +1157,13 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       {rows.length === 0 ? (
         <View style={styles.emptyState} pointerEvents="none">
           <Text style={typography.body}>{otherUsername ? `Say hi to @${otherUsername} 👋` : "Say hi 👋"}</Text>
+        </View>
+      ) : null}
+      {otherTyping ? (
+        <View style={styles.typingRow} accessibilityLiveRegion="polite">
+          <View style={styles.typingBubble}>
+            <Text style={styles.typingText}>{otherUsername ? `@${otherUsername} is typing…` : "Typing…"}</Text>
+          </View>
         </View>
       ) : null}
       <Modal visible={viewing !== null} animationType="fade" transparent={false} statusBarTranslucent navigationBarTranslucent onRequestClose={() => setViewing(null)}>
@@ -967,6 +1208,15 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
                 );
               })}
             </View>
+            <Pressable
+              style={styles.reactReport}
+              onPress={() => { if (reactingTo) actions.onReply(reactingTo); }}
+              accessibilityRole="button"
+              accessibilityLabel="Reply"
+            >
+              <Icon name={ICONS.reply} size={18} color={colors.textPrimary} />
+              <Text style={styles.reactReplyText}>Reply</Text>
+            </Pressable>
             {reactingTo && reactingTo.senderId !== userId ? (
               <Pressable
                 style={styles.reactReport}
@@ -998,6 +1248,9 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         onStartRecording={onStartRecording}
         onTakePhoto={onTakePhotoPress}
         onPickFromGallery={onPickFromGalleryPress}
+        onTyping={onTyping}
+        replyingTo={replyPreview}
+        onCancelReply={onCancelReply}
       />
     </KeyboardAvoider>
   );
@@ -1038,6 +1291,21 @@ const styles = StyleSheet.create({
   reactGlyph: { fontSize: 28 },
   reactReport: { flexDirection: "row", alignItems: "center", gap: spacing.xs, minHeight: 44, paddingHorizontal: spacing.lg, borderRadius: radii.pill, backgroundColor: colors.surfaceElevated },
   reactReportText: { color: colors.danger, fontSize: 15, fontWeight: "600" },
+  reactReplyText: { color: colors.textPrimary, fontSize: 15, fontWeight: "600" },
+  swipeArrow: { position: "absolute", left: 0, top: 0, bottom: 0, width: 32, alignItems: "center", justifyContent: "center" },
+  quote: { maxWidth: "100%", marginBottom: -4, paddingHorizontal: spacing.sm, paddingTop: spacing.xs, paddingBottom: spacing.xs + 4, borderRadius: radii.md, backgroundColor: colors.surface, borderLeftWidth: 3, borderLeftColor: colors.border, opacity: 0.9 },
+  quoteMine: { alignSelf: "flex-end" },
+  quoteTheirs: { alignSelf: "flex-start" },
+  quoteAuthor: { color: colors.textSecondary, fontSize: 12, fontWeight: "700" },
+  quoteText: { color: colors.textSecondary, fontSize: 13 },
+  replyBar: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.border, backgroundColor: colors.surface },
+  replyBarText: { flex: 1 },
+  replyBarTitle: { color: colors.textPrimary, fontSize: 13, fontWeight: "600" },
+  replyBarSnippet: { color: colors.textSecondary, fontSize: 13 },
+  replyBarClose: { width: 32, height: 32, alignItems: "center", justifyContent: "center" },
+  typingRow: { flexDirection: "row", paddingHorizontal: spacing.md, paddingBottom: spacing.xs },
+  typingBubble: { borderRadius: radii.md, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, backgroundColor: colors.surfaceElevated },
+  typingText: { color: colors.textSecondary, fontSize: 13, fontStyle: "italic" },
   replyLabel: { fontSize: 12, opacity: 0.75, marginBottom: 2 },
   reactionGlyph: { fontSize: 34, lineHeight: 42 },
   container: { flex: 1, backgroundColor: colors.background },

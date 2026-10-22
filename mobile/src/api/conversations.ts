@@ -45,6 +45,17 @@ export interface Message {
   clientMessageId?: string;
   /** Who reacted, and with what: at most one reaction per person. */
   reactions?: MessageReaction[];
+  /** The message this one replies to (swipe a message to reply), quoted; null once it's gone. */
+  replyTo?: QuotedMessage | null;
+}
+
+/** The start of a replied-to message: enough to show it above the reply. */
+export interface QuotedMessage {
+  id: string;
+  senderId: string;
+  body: string | null;
+  mediaKind: "photo" | "video" | "audio" | null;
+  sharedStory: boolean;
 }
 
 export interface MessageReaction {
@@ -129,10 +140,15 @@ export function newClientMessageId(): string {
  */
 export function sendMessage(
   conversationId: string,
-  input: { body?: string; storyId?: string; mediaId?: string; clientMessageId?: string },
+  input: { body?: string; storyId?: string; mediaId?: string; clientMessageId?: string; replyToMessageId?: string },
   accessToken: string,
 ): Promise<{ message: Message }> {
   return apiPost(`/api/v1/conversations/${conversationId}/messages`, input, accessToken);
+}
+
+/** "typing…" for the other person: the app sends it every few seconds while you type. */
+export function sendTyping(conversationId: string, accessToken: string): Promise<void> {
+  return apiPost(`/api/v1/conversations/${conversationId}/typing`, undefined, accessToken);
 }
 
 export function markConversationRead(conversationId: string, accessToken: string): Promise<void> {

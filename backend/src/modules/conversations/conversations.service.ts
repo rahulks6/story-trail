@@ -9,6 +9,7 @@ import * as conversationsRepo from "./conversations.repository";
 import type { ConversationRow, ConversationSummary, MessageRow, StoryReplyKind } from "./conversations.repository";
 import { getStoryForViewer } from "../stories/stories.service";
 import * as mediaRepo from "../media/media.repository";
+import { publishRealtime } from "../../realtime/hub";
 
 async function requireOtherUser(username: string, viewerId: string): Promise<usersRepo.UserRecord> {
   const target = await usersRepo.findUserByUsername(username);
@@ -89,6 +90,8 @@ export interface SendMessageInput {
   mediaId?: string | null;
   /** Set by replyToStory only: the Story this message answers. */
   storyReply?: { storyId: string; kind: StoryReplyKind } | null;
+  /** A message in this conversation that this one replies to (swipe to reply). */
+  replyToMessageId?: string | null;
 }
 
 export async function sendMessage(viewerId: string, conversationId: string, input: SendMessageInput): Promise<{ message: MessageRow; created: boolean }> {
@@ -112,6 +115,10 @@ export async function sendMessage(viewerId: string, conversationId: string, inpu
     }
   }
 
+  if (input.replyToMessageId && !(await conversationsRepo.messageInConversation(conversationId, input.replyToMessageId))) {
+    throw new HttpError(422, "That message can't be replied to.", { replyToMessageId: "Reply to a message in this conversation." });
+  }
+
   if (input.storyId) {
     // Reuses the exact same view-access + allowSharing rule and analytics
     // logging as the Share sheet's other two options (native share, copy
@@ -121,7 +128,7 @@ export async function sendMessage(viewerId: string, conversationId: string, inpu
     await engagementService.shareStory(viewerId, input.storyId);
   }
 
-  const result = await conversationsRepo.createMessage(conversationId, viewerId, input.body, input.storyId, input.clientMessageId, input.storyReply ?? null, input.mediaId ?? null);
+  const result = await conversationsRepo.createMessage(conversationId, viewerId, input.body, input.storyId, input.clientMessageId, input.storyReply ?? null, input.mediaId ?? null, input.replyToMessageId ?? null);
   return result.created ? result : replayed(result.message, input);
 }
 
@@ -175,7 +182,9 @@ export async function replyToStory(viewerId: string, storyId: string, input: Sto
 function replayed(message: MessageRow, input: SendMessageInput): { message: MessageRow; created: boolean } {
   const reply = input.storyReply ?? null;
   if (message.body !== input.body || message.sharedStoryId !== input.storyId || (message.media?.id ?? null) !== (input.mediaId ?? null) ||
-      (message.storyReply?.kind ?? null) !== (reply?.kind ?? null) || (reply && message.storyReply?.storyId !== reply.storyId)) {
+      (message.storyReply?.kind ?? null) !== (reply?.kind ?? null) || (reply && message.storyReply?.storyId !== reply.storyId) ||
+      // A quoted message that has since gone (null) doesn't make a retry a different message.
+      (input.replyToMessageId && message.replyTo && message.replyTo.id !== input.replyToMessageId)) {
     throw new HttpError(409, "This message id was already used for a different message.");
   }
   return { message, created: false };
@@ -235,6 +244,27 @@ export async function listMessages(
 function withoutClientId(message: MessageRow): MessageRow {
   const { clientMessageId: _hidden, ...rest } = message;
   return rest;
+}
+
+/** At most one "typing…" signal per person per conversation in this window (per API instance). */
+const TYPING_INTERVAL_MS = 2_000;
+const lastTyping = new Map<string, number>();
+
+/**
+ * "typing…" in the other person's open thread: a realtime signal only, never stored. The
+ * app sends it every few seconds while someone types and hides it after a few seconds
+ * without one, so a lost signal costs nothing.
+ */
+export async function signalTyping(viewerId: string, conversationId: string): Promise<void> {
+  const conversation = await requireParticipant(conversationId, viewerId);
+  const key = `${viewerId}:${conversationId}`;
+  const now = Date.now();
+  if (now - (lastTyping.get(key) ?? 0) < TYPING_INTERVAL_MS) return;
+  const otherId = otherParticipant(conversation, viewerId);
+  if (await socialRepo.anyBlockBetween(viewerId, otherId)) return; // silently: nothing to tell a blocked person
+  if (lastTyping.size > 10_000) lastTyping.clear(); // bounded: losing it only lets one extra signal through
+  lastTyping.set(key, now);
+  await publishRealtime([otherId], { type: "typing", conversationId, userId: viewerId });
 }
 
 export async function markConversationRead(viewerId: string, conversationId: string): Promise<void> {

@@ -261,6 +261,7 @@ describe("a conversation between two other people", () => {
     refused(await attempt("POST /api/v1/conversations/:id/messages", `${c}/messages`, stranger, { body: "let me in" }), "send", [404]);
     refused(await attempt("POST /api/v1/conversations/:id/read", `${c}/read`, stranger), "read", [404]);
     refused(await attempt("POST /api/v1/conversations/:id/report", `${c}/report`, stranger, { messageId: ids.message, reason: "spam" }), "report", [404]);
+    refused(await attempt("POST /api/v1/conversations/:id/typing", `${c}/typing`, stranger), "typing", [404]);
     const r = `${c}/messages/${ids.message}/reaction`;
     refused(await attempt("PUT /api/v1/conversations/:id/messages/:messageId/reaction", r, stranger, { emoji: "❤️" }), "react", [404]);
     refused(await attempt("DELETE /api/v1/conversations/:id/messages/:messageId/reaction", r, stranger), "unreact", [404]);

@@ -66,6 +66,8 @@ export interface MessageRow {
   media: MessageMedia | null;
   /** Each participant's reaction (long-press, like Instagram), oldest first. */
   reactions: MessageReaction[];
+  /** The message this one replies to (swipe to reply), quoted; null once that message is gone. */
+  replyTo: QuotedMessage | null;
   createdAt: string;
   /** The sender's device id for the message; only ever shown to the sender (see conversations.service.ts). */
   clientMessageId?: string;
@@ -90,6 +92,31 @@ export interface StoryReply {
   kind: StoryReplyKind;
 }
 
+/** Enough of a replied-to message to quote it above the reply. */
+export interface QuotedMessage {
+  id: string;
+  senderId: string;
+  /** The start of its text, if it has any. */
+  body: string | null;
+  mediaKind: MessageMedia["kind"] | null;
+  sharedStory: boolean;
+}
+
+/** How much of a replied-to message's text a quote carries. */
+export const QUOTE_LENGTH = 160;
+
+function parseQuote(raw: unknown): QuotedMessage | null {
+  if (!raw) return null;
+  const q = (typeof raw === "string" ? JSON.parse(raw) : raw) as Record<string, unknown>;
+  return {
+    id: q.id as string,
+    senderId: q.senderId as string,
+    body: (q.body as string | null) ?? null,
+    mediaKind: (q.mediaKind as QuotedMessage["mediaKind"]) ?? null,
+    sharedStory: q.sharedStory === true,
+  };
+}
+
 export interface MessageReaction {
   userId: string;
   emoji: string;
@@ -111,6 +138,7 @@ function mapMessageRow(row: Row): MessageRow {
     storyReply: row.reply_kind ? { storyId: (row.reply_story_id as string | null) ?? null, kind: row.reply_kind as StoryReplyKind } : null,
     media: parseMessageMedia(row.media_json),
     reactions: parseReactions(row.reactions_json),
+    replyTo: parseQuote(row.reply_to_json),
     createdAt: row.created_at as string,
     ...(row.client_message_id ? { clientMessageId: row.client_message_id as string } : {}),
   };
@@ -121,7 +149,11 @@ const MESSAGE_COLUMNS = `id, conversation_id, sender_id, body, shared_story_id, 
   (SELECT json_build_object('id', md.id, 'kind', md.kind, 'width', md.width, 'height', md.height, 'durationMs', md.duration_ms)
      FROM media md WHERE md.id = messages.media_id AND md.purged_at IS NULL) AS media_json,
   (SELECT coalesce(json_agg(json_build_object('userId', r.user_id, 'emoji', r.emoji) ORDER BY r.created_at), '[]')
-     FROM message_reactions r WHERE r.message_id = messages.id) AS reactions_json`;
+     FROM message_reactions r WHERE r.message_id = messages.id) AS reactions_json,
+  (SELECT json_build_object('id', q.id, 'senderId', q.sender_id, 'body', left(q.body, ${QUOTE_LENGTH}),
+                            'mediaKind', qm.kind, 'sharedStory', q.shared_story_id IS NOT NULL)
+     FROM messages q LEFT JOIN media qm ON qm.id = q.media_id AND qm.purged_at IS NULL
+     WHERE q.id = messages.reply_to_message_id) AS reply_to_json`;
 
 /**
  * Inserts a message, or — when `clientMessageId` was already used by this sender in
@@ -137,12 +169,15 @@ export async function createMessage(
   clientMessageId: string | null = null,
   storyReply: { storyId: string; kind: StoryReplyKind } | null = null,
   mediaId: string | null = null,
+  replyToMessageId: string | null = null,
 ): Promise<{ message: MessageRow; created: boolean }> {
   const row = await queryOne(
     `WITH m AS (
-       INSERT INTO messages (conversation_id, sender_id, body, shared_story_id, client_message_id, reply_story_id, reply_kind, media_id)
+       INSERT INTO messages (conversation_id, sender_id, body, shared_story_id, client_message_id, reply_story_id, reply_kind, media_id, reply_to_message_id)
        VALUES (:'conversation_id', :'sender_id', ${nullable("body")}, ${nullable("shared_story_id", "uuid")}, ${nullable("client_message_id")},
-               ${nullable("reply_story_id", "uuid")}, ${nullable("reply_kind")}, ${nullable("media_id", "uuid")})
+               ${nullable("reply_story_id", "uuid")}, ${nullable("reply_kind")}, ${nullable("media_id", "uuid")},
+               -- Only ever a message in this same conversation.
+               (SELECT id FROM messages WHERE id = ${nullable("reply_to", "uuid")} AND conversation_id = :'conversation_id'))
        ON CONFLICT (conversation_id, sender_id, client_message_id) WHERE client_message_id IS NOT NULL DO NOTHING
        RETURNING ${MESSAGE_COLUMNS}),
      c AS (SELECT CASE WHEN user_a_id = :'sender_id' THEN user_b_id ELSE user_a_id END AS recipient_id
@@ -158,6 +193,7 @@ export async function createMessage(
       conversation_id: conversationId, sender_id: senderId, body: body ?? "",
       shared_story_id: sharedStoryId ?? "", client_message_id: clientMessageId ?? "",
       reply_story_id: storyReply?.storyId ?? "", reply_kind: storyReply?.kind ?? "", media_id: mediaId ?? "",
+      reply_to: replyToMessageId ?? "",
     },
   );
   if (row) {
@@ -167,6 +203,12 @@ export async function createMessage(
   const existing = clientMessageId ? await findMessageByClientId(conversationId, senderId, clientMessageId) : null;
   if (!existing) throw new Error("Message insert returned no row");
   return { message: existing, created: false };
+}
+
+/** Whether a message is in this conversation (what a reply may quote). */
+export async function messageInConversation(conversationId: string, messageId: string): Promise<boolean> {
+  const row = await queryOne(`SELECT 1 AS ok FROM messages WHERE id = :'id' AND conversation_id = :'conversation_id'`, { id: messageId, conversation_id: conversationId });
+  return !!row;
 }
 
 /** Whether `viewerId` is in a conversation where this media was sent: they may see it. */

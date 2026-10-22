@@ -88,6 +88,13 @@ export function registerConversationsRoutes(router: Router): void {
     sendJson(res, created ? 201 : 200, { report });
   });
 
+  // "typing…": sent every few seconds while someone types; relayed to the other person's devices.
+  router.post("/api/v1/conversations/:id/typing", async (req, res) => {
+    requireAuth(req);
+    await conversationsService.signalTyping(req.userId as string, req.params.id as string);
+    sendJson(res, 204, undefined);
+  });
+
   router.post("/api/v1/conversations/:id/read", async (req, res) => {
     requireAuth(req);
     await conversationsService.markConversationRead(req.userId as string, req.params.id as string);

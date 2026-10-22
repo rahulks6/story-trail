@@ -117,6 +117,28 @@ describe("realtime connections", () => {
     liveB.ws.close();
   });
 
+  it("relays \"typing…\" to the other person only, at a bounded rate, and never across a block", async () => {
+    const [a, b, stranger] = [await signup(), await signup(), await signup()];
+    const conversation = (await client.post(`/api/v1/users/${b.username}/conversation`, undefined, authHeader(a.token))).body.conversation;
+    const [liveA, liveB] = [await open("/api/v1/realtime", bearer(a.token)), await open("/api/v1/realtime", bearer(b.token))];
+    const typing = (token: string) => client.post(`/api/v1/conversations/${conversation.id}/typing`, undefined, authHeader(token));
+    assert.equal((await typing(a.token)).status, 204);
+    const event = await liveB.next("typing");
+    assert.deepEqual([event.conversationId, event.userId], [conversation.id, a.id]);
+    assert.equal((await typing(a.token)).status, 204, "a second signal straight away is accepted");
+    assert.equal((await typing(stranger.token)).status, 404);
+    await new Promise((r) => setTimeout(r, 400));
+    assert.equal(liveB.events.filter((e) => e.type === "typing").length, 1, "but not relayed: at most one per 2 s");
+    assert.ok(!liveA.events.some((e) => e.type === "typing"), "the typist's own devices aren't told");
+    await client.post(`/api/v1/users/${a.username}/block`, undefined, authHeader(b.token));
+    await new Promise((r) => setTimeout(r, 2_100));
+    assert.equal((await typing(a.token)).status, 204, "nothing reveals the block");
+    await new Promise((r) => setTimeout(r, 400));
+    assert.equal(liveB.events.filter((e) => e.type === "typing").length, 1);
+    liveA.ws.close();
+    liveB.ws.close();
+  });
+
   it("delivers Activity notifications", async () => {
     const [a, b] = [await signup(), await signup()];
     const liveA = await open("/api/v1/realtime", bearer(a.token));

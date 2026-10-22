@@ -28,6 +28,8 @@ export interface PendingMedia {
   height: number | null;
   status: "sending" | "failed";
   error?: string;
+  /** The message this one replies to (swipe to reply). */
+  replyToMessageId?: string;
   /** Set once the server has the file: a retry only waits for it and sends, never uploads again. */
   mediaId?: string;
   /** A video's filter (chosen in the DM camera), applied by the server while it processes it. */
@@ -154,7 +156,7 @@ export async function sendPendingMedia(
     media = await getMedia(mediaId, token());
   }
   try {
-    const { message } = await sendMessage(conversationId, { mediaId, clientMessageId: item.clientMessageId }, token());
+    const { message } = await sendMessage(conversationId, { mediaId, clientMessageId: item.clientMessageId, ...(item.replyToMessageId ? { replyToMessageId: item.replyToMessageId } : {}) }, token());
     return message;
   } catch (error) {
     if (error instanceof ApiError) throw new Error(error.message);
