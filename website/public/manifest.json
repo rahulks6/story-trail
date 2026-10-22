@@ -10,8 +10,15 @@
     "/terms": "terms.html"
   },
   "notFound": "404.html",
+  "openInApp": {
+    "file": "open.html",
+    "markers": {
+      "appLink": "%APP_LINK%",
+      "linkPath": "%LINK_PATH%"
+    }
+  },
   "assets": {
-    "site.82c3ecf5c9.css": "text/css; charset=utf-8",
+    "site.51ef041823.css": "text/css; charset=utf-8",
     "katkee-icon.483d838bba.svg": "image/svg+xml",
     "social-card.5e7e0ce26c.png": "image/png"
   },
@@ -31,6 +38,10 @@
     "/sitemap.xml": {
       "file": "sitemap.xml",
       "type": "application/xml; charset=utf-8"
+    },
+    "/.well-known/assetlinks.json": {
+      "file": "assetlinks.json",
+      "type": "application/json"
     }
   }
 }

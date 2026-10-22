@@ -138,7 +138,16 @@ function markdown(source, where) {
 const TYPES = {
   '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon',
   '.html': 'text/html; charset=utf-8', '.txt': 'text/plain; charset=utf-8', '.xml': 'application/xml; charset=utf-8',
+  '.json': 'application/json',
 };
+
+/**
+ * The "Open in Katkee" page is one template for every shared link (/u/<username>, /s/<story id>).
+ * The API puts the link's own katkee:// address and path where these markers are, escaped; the
+ * markers are in the manifest so the two never disagree.
+ */
+const OPEN_MARKERS = { appLink: '%APP_LINK%', linkPath: '%LINK_PATH%' };
+const FINGERPRINT = /^([0-9A-F]{2}:){31}[0-9A-F]{2}$/;
 
 function hashed(name, data) {
   const ext = path.extname(name);
@@ -154,6 +163,38 @@ function storeButtons(site) {
     ? `<a class="store-button" href="${escape(url)}"><span class="store-small">${live}</span><span class="store-name">${name}</span></a>`
     : `<span class="store-button is-soon"><span class="store-small">Coming soon to</span><span class="store-name">${name}</span></span>`;
   return `<div class="store-buttons">${button('App Store', 'Download on the', site.stores.appStore)}${button('Google Play', 'Get it on', site.stores.googlePlay)}</div>`;
+}
+
+/** On the "Open in Katkee" page: the live store links, or a quiet line until there are some. */
+function getKatkee(site) {
+  const live = [['App Store', 'Download on the', site.stores.appStore], ['Google Play', 'Get it on', site.stores.googlePlay]].filter(([, , url]) => url);
+  if (!live.length) return '<p class="open-note">Katkee is coming soon to the App Store and Google Play.</p>';
+  return `<h2 class="open-get">Get Katkee</h2>\n<div class="store-buttons">${live.map(([name, small, url]) => `<a class="store-button" href="${escape(url)}"><span class="store-small">${small}</span><span class="store-name">${name}</span></a>`).join('')}</div>`;
+}
+
+/**
+ * The files that let katkee.com links open the app directly (Android App Links, iOS Universal
+ * Links), for the paths of shared profiles and Stories. iOS needs the Apple Team ID: without it
+ * there's no file, and links open the "Open in Katkee" page in Safari instead.
+ */
+function appLinkFiles(site) {
+  const { android, ios } = site.appLinks;
+  if (!/^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(android.package)) throw new Error(`appLinks.android.package ${android.package} is not a package name`);
+  if (!android.sha256CertFingerprints.length) throw new Error('appLinks.android.sha256CertFingerprints needs at least the upload key');
+  for (const fp of android.sha256CertFingerprints) if (!FINGERPRINT.test(fp)) throw new Error(`appLinks.android: ${fp} is not a SHA-256 fingerprint (AA:BB:..., 32 pairs, upper case)`);
+  const files = {
+    '/.well-known/assetlinks.json': ['assetlinks.json', Buffer.from(JSON.stringify([{
+      relation: ['delegate_permission/common.handle_all_urls'],
+      target: { namespace: 'android_app', package_name: android.package, sha256_cert_fingerprints: android.sha256CertFingerprints },
+    }], null, 2) + '\n')],
+  };
+  if (ios.teamId) {
+    if (!/^[A-Z0-9]{10}$/.test(ios.teamId)) throw new Error(`appLinks.ios.teamId ${ios.teamId} is not an Apple Team ID (10 letters and digits)`);
+    files['/.well-known/apple-app-site-association'] = ['apple-app-site-association.json', Buffer.from(JSON.stringify({
+      applinks: { details: [{ appIDs: [`${ios.teamId}.${ios.bundleId}`], components: [{ '/': '/u/*' }, { '/': '/s/*' }] }] },
+    }, null, 2) + '\n')];
+  }
+  return files;
 }
 
 function build() {
@@ -207,11 +248,14 @@ ${doc.html}
     { route: '/privacy', file: 'privacy.html', title: `Privacy Policy · ${site.name}`, description: `What ${site.name} collects, how we use it, who can see it and the choices you have.`, content: legalPage(privacy), body: 'legal-page' },
     { route: '/terms', file: 'terms.html', title: `Terms of Service · ${site.name}`, description: `The terms for using ${site.name}.`, content: legalPage(terms), body: 'legal-page' },
     { route: null, file: '404.html', title: `Page not found · ${site.name}`, description: site.description, content: read('src/pages/404.html'), body: 'not-found' },
+    // Shared links (/u/<username>, /s/<story id>) for people without the app. It says nothing
+    // about the account or Story: those may be private, blocked or gone.
+    { route: null, file: 'open.html', title: `Open in ${site.name}`, description: `Someone shared this with you on ${site.name}. Open it in the app.`, content: read('src/pages/open.html'), body: 'open', url: `${site.origin}/${OPEN_MARKERS.linkPath}`, appLink: OPEN_MARKERS.appLink },
   ];
   const routes = new Set(pages.filter((p) => p.route).map((p) => p.route));
   const layout = read('src/layout.html');
 
-  const context = { site, contact: site.contact, origin: site.origin, storeButtons: storeButtons(site) };
+  const context = { site, contact: site.contact, origin: site.origin, storeButtons: storeButtons(site), getKatkee: getKatkee(site) };
   const lookup = (key, page) => {
     const value = key.split('.').reduce((v, k) => (v == null ? undefined : v[k]), { ...context, ...page });
     if (value === undefined || value === null) throw new Error(`${page.file}: unknown placeholder {{${key}}}`);
@@ -224,13 +268,15 @@ ${doc.html}
     .replace(/\{\{([\w.]+)\}\}/g, (_, key) => escape(lookup(key, page)));
 
   for (const page of pages) {
-    const pageContext = { ...page, url: `${site.origin}${page.route ?? '/'}`, robots: page.route ? 'index, follow' : 'noindex' };
+    const pageContext = { ...page, url: page.url ?? `${site.origin}${page.route ?? '/'}`, robots: page.route ? 'index, follow' : 'noindex' };
     const html = fill(layout, { ...pageContext, content: fill(page.content, pageContext) });
     // Refuse what would break the strict Content-Security-Policy, or a broken link.
     if (/\{\{|\}\}/.test(html)) throw new Error(`${page.file}: unfilled placeholder`);
     if (/<script|\son[a-z]+=|\sstyle=|javascript:/i.test(html)) throw new Error(`${page.file}: scripts and inline styles are not allowed (the site's Content-Security-Policy blocks them)`);
     for (const [, href] of html.matchAll(/\shref="([^"]+)"/g)) {
       if (href.startsWith('#') || href.startsWith('mailto:')) continue;
+      // The open page's own address and app link are filled in per request by the API.
+      if (page.file === 'open.html' && (href === OPEN_MARKERS.appLink || href === page.url)) continue;
       const local = href.startsWith(site.origin) ? href.slice(site.origin.length) || '/' : href;
       if (!local.startsWith('/')) { if (!/^https:\/\//.test(local)) throw new Error(`${page.file}: link ${href} must be https`); continue; }
       const pathname = local.split('#')[0].split('?')[0];
@@ -238,6 +284,9 @@ ${doc.html}
     }
     for (const [, email] of html.matchAll(/mailto:([^"?]+)/g)) {
       if (!Object.values(site.contact).includes(email)) throw new Error(`${page.file}: ${email} is not one of the contact addresses in site.json`);
+    }
+    for (const marker of Object.values(OPEN_MARKERS)) {
+      if (html.includes(marker) !== (page.file === 'open.html')) throw new Error(`${page.file}: ${marker} belongs on open.html only`);
     }
     files.set(page.file, Buffer.from(html));
   }
@@ -258,6 +307,7 @@ ${doc.html}
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[...routes].map((r) => `  <url><loc>${site.origin}${r}</loc></url>`).join('\n')}\n</urlset>\n`;
   rootFiles['/robots.txt'] = ['robots.txt', Buffer.from(robots)];
   rootFiles['/sitemap.xml'] = ['sitemap.xml', Buffer.from(sitemap)];
+  Object.assign(rootFiles, appLinkFiles(site));
   for (const [file, data] of Object.values(rootFiles)) files.set(file, data);
 
   const manifest = {
@@ -265,6 +315,7 @@ ${doc.html}
     host: origin.host,
     pages: Object.fromEntries(pages.filter((p) => p.route).map((p) => [p.route, p.file])),
     notFound: '404.html',
+    openInApp: { file: 'open.html', markers: OPEN_MARKERS },
     assets,
     files: Object.fromEntries(Object.entries(rootFiles).map(([route, [file]]) => [route, { file, type: TYPES[path.extname(file)] }])),
   };

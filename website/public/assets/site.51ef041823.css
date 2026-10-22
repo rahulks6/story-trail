@@ -228,6 +228,15 @@ details p { margin: 0; padding: 0 20px 18px; color: var(--text-2); }
 .not-found img { margin: 0 auto 24px; border-radius: 22.37%; }
 .not-found h1 { font-size: clamp(1.8rem, 4vw, 2.4rem); margin-bottom: 12px; }
 .not-found .lead { margin: 0 auto 28px; }
+/* Open in Katkee (shared links) */
+.open-in-app { text-align: center; padding: 96px 20px 120px; }
+.open-in-app img { margin: 0 auto 24px; border-radius: 22.37%; }
+.open-in-app h1 { font-size: clamp(1.8rem, 4vw, 2.4rem); margin-bottom: 12px; }
+.open-in-app .lead { margin: 0 auto 28px; }
+.open-get { font-size: 1.1rem; margin-top: 48px; }
+.open-in-app .store-buttons { justify-content: center; margin-top: 16px; }
+.open-note { color: var(--text-2); font-size: 0.95rem; margin-top: 40px; }
+
 .button { display: inline-block; padding: 12px 24px; border-radius: 999px; background: var(--accent); color: var(--on-accent); font-weight: 700; }
 .button:hover { background: var(--accent-pressed); text-decoration: none; }
 

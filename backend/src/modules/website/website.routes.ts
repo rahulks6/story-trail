@@ -3,6 +3,12 @@
  * and account deletion page. website/build.cjs builds it into website/public (committed); the
  * image carries it as dist/website.
  *
+ * Shared links are katkee.com addresses too: /u/<username>?id=<account id> and /s/<story id>.
+ * With the app installed, Android App Links and iOS Universal Links open them in the app (the
+ * /.well-known files say which app may); without it, they show the "Open in Katkee" page. That
+ * page is the same for every link and never looks anything up, so it can't reveal whether an
+ * account exists or is private, or whether a Story has expired.
+ *
  * - Read once into memory, with brotli and gzip copies of the text files. Pages are cached for
  *   ten minutes and revalidated with ETags; content-hashed assets are immutable.
  * - Strict headers: the pages run no scripts at all, can't be framed, and load nothing from
@@ -39,13 +45,17 @@ interface Website {
   pages: Map<string, WebsiteFile>;
   /** By hashed file name, served at /assets/<file>. */
   assets: Map<string, WebsiteFile>;
-  /** Fixed paths: /favicon.ico, /apple-touch-icon.png, /robots.txt, /sitemap.xml. */
+  /** Fixed paths: /favicon.ico, /robots.txt, ..., and the app-link files under /.well-known. */
   files: Map<string, WebsiteFile>;
   notFound: WebsiteFile;
+  /** The "Open in Katkee" page, with the markers each request's own link replaces. */
+  openInApp: { template: string; markers: OpenMarkers } | null;
 }
+interface OpenMarkers { appLink: string; linkPath: string }
 interface Manifest {
   pages: Record<string, string>;
   notFound: string;
+  openInApp?: { file: string; markers: OpenMarkers };
   assets: Record<string, string>;
   files: Record<string, { file: string; type: string }>;
 }
@@ -55,17 +65,21 @@ const ASSET_CACHE = "public, max-age=31536000, immutable";
 const FILE_CACHE = "public, max-age=86400";
 const HTML = "text/html; charset=utf-8";
 
-function load(root: string, file: string, type: string, cacheControl: string): WebsiteFile {
-  const body = fs.readFileSync(path.join(root, file));
-  const text = /^(text\/|application\/xml|image\/svg\+xml)/.test(type);
+/** `quality` is brotli's: the best for files read once, a quicker one for pages made per request. */
+function prepare(body: Buffer, type: string, cacheControl: string, quality = 11): WebsiteFile {
+  const text = /^(text\/|application\/(xml|json)|image\/svg\+xml)/.test(type);
   return {
     body,
-    br: text ? zlib.brotliCompressSync(body, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 11 } }) : null,
+    br: text ? zlib.brotliCompressSync(body, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: quality } }) : null,
     gzip: text ? zlib.gzipSync(body, { level: 9 }) : null,
     type,
     etag: `"${createHash("sha256").update(body).digest("hex").slice(0, 32)}"`,
     cacheControl,
   };
+}
+
+function load(root: string, file: string, type: string, cacheControl: string): WebsiteFile {
+  return prepare(fs.readFileSync(path.join(root, file)), type, cacheControl);
 }
 
 const loaded = new Map<string, Website | null>();
@@ -87,6 +101,9 @@ export function loadWebsite(root: string): Website | null {
       assets: new Map(Object.entries(manifest.assets).map(([file, type]) => [file, load(root, path.join("assets", safe(file)), type, ASSET_CACHE)])),
       files: new Map(Object.entries(manifest.files).map(([route, { file, type }]) => [route, load(root, safe(file), type, FILE_CACHE)])),
       notFound: load(root, safe(manifest.notFound), HTML, "no-cache"),
+      openInApp: manifest.openInApp
+        ? { template: fs.readFileSync(path.join(root, safe(manifest.openInApp.file)), "utf8"), markers: manifest.openInApp.markers }
+        : null,
     };
   }
   loaded.set(root, site);
@@ -127,6 +144,44 @@ function send(req: IncomingMessage, res: ServerResponse, file: WebsiteFile, stat
   res.end(req.method === "HEAD" ? undefined : body);
 }
 
+const USERNAME = /^[a-z0-9_.]{3,30}$/i;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * For a shared link's request target ("/u/<username>?id=<uuid>", "/s/<story id>"): the app's
+ * katkee:// link and the page's own path, or null for anything else. Strict, and checked on the
+ * raw (still percent-encoded) path, so only plain names and IDs are ever echoed into the page.
+ * A missing or malformed ?id= is dropped: the username alone still finds the profile.
+ */
+export function sharedLink(target: string): { appLink: string; linkPath: string } | null {
+  const q = target.indexOf("?");
+  const pathname = q < 0 ? target : target.slice(0, q);
+  const profile = /^\/u\/([^/]+)\/?$/.exec(pathname)?.[1];
+  if (profile !== undefined) {
+    if (!USERNAME.test(profile)) return null;
+    const username = profile.toLowerCase();
+    const id = new URLSearchParams(q < 0 ? "" : target.slice(q + 1)).get("id")?.toLowerCase();
+    const query = id && UUID.test(id) ? `?id=${id}` : "";
+    return { appLink: `katkee://user/${username}${query}`, linkPath: `u/${username}${query}` };
+  }
+  const story = /^\/s\/([^/]+)\/?$/.exec(pathname)?.[1];
+  if (story !== undefined && UUID.test(story)) {
+    const id = story.toLowerCase();
+    return { appLink: `katkee://story/${id}`, linkPath: `s/${id}` };
+  }
+  return null;
+}
+
+const escapeHtml = (value: string) =>
+  value.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+
+function openPage(open: NonNullable<Website["openInApp"]>, link: { appLink: string; linkPath: string }): WebsiteFile {
+  const html = open.template
+    .split(open.markers.appLink).join(escapeHtml(link.appLink))
+    .split(open.markers.linkPath).join(escapeHtml(link.linkPath));
+  return prepare(Buffer.from(html), HTML, PAGE_CACHE, 5);
+}
+
 function sendNotFound(req: IncomingMessage, res: ServerResponse, site: Website): void {
   send(req, res, site.notFound, 404);
 }
@@ -140,6 +195,18 @@ export function registerWebsiteRoutes(router: Router): void {
   };
   for (const [route, page] of site.pages) both(route, (req, res) => send(req, res, page));
   for (const [route, file] of site.files) both(route, (req, res) => send(req, res, file));
+  const open = site.openInApp;
+  if (open) {
+    for (const route of ["/u/:username", "/s/:storyId"]) {
+      both(route, (req, res) => {
+        const link = sharedLink(req.url ?? "");
+        if (!link) return sendNotFound(req, res, site);
+        // Also in the page's <meta>; the header covers crawlers that only read headers.
+        res.setHeader("X-Robots-Tag", "noindex");
+        send(req, res, openPage(open, link));
+      });
+    }
+  }
   both("/assets/:file", (req, res) => {
     const asset = site.assets.get((req as KatkeeRequest).params.file ?? "");
     if (asset) send(req, res, asset);
@@ -197,7 +264,7 @@ export function websiteGate(req: IncomingMessage, res: ServerResponse): boolean 
       res.end();
       return true;
     }
-    const known = site.pages.has(pathname) || site.files.has(pathname) || pathname.startsWith("/assets/");
+    const known = site.pages.has(pathname) || site.files.has(pathname) || pathname.startsWith("/assets/") || (!!site.openInApp && sharedLink(target) !== null);
     if (known && readOnly) return false;
     if (known) {
       websiteHeaders(res);
@@ -209,7 +276,7 @@ export function websiteGate(req: IncomingMessage, res: ServerResponse): boolean 
     sendNotFound(req, res, site);
     return true;
   }
-  if (readOnly && site.pages.has(pathname)) {
+  if (readOnly && (site.pages.has(pathname) || (!!site.openInApp && sharedLink(target) !== null))) {
     redirect(res, `https://${siteHost}${target}`);
     return true;
   }

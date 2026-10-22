@@ -67,7 +67,7 @@ export type RootStackParamList = {
    * `startIndex` is which one to open on.
    */
   StoryViewer: { creators: string[]; startIndex: number; initialStoryId?: string };
-  /** katkee://story/<id> (Share sheet links): resolves the owner, then opens StoryViewer. */
+  /** katkee.com/s/<id> (Share sheet links) and katkee://story/<id>: resolves the owner, then opens StoryViewer. */
   StoryLink: { storyId: string };
   /** Sequential, view-only playback of one Highlight's items — see HighlightViewerScreen.tsx for why it's a separate, simpler viewer from StoryViewer. */
   HighlightViewer: { highlightId: string; title: string };

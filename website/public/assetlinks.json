@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.katkee.app",
+      "sha256_cert_fingerprints": [
+        "8F:D4:72:1F:1F:FF:05:08:3C:B3:B5:5A:5B:92:8F:59:4F:5E:71:B4:08:CF:55:05:2E:78:DF:7E:AF:41:CA:F0"
+      ]
+    }
+  }
+]

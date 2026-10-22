@@ -51,6 +51,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     return RCTLinkingManager.application(app, open: url, options: options)
   }
+
+  // Universal Links: katkee.com/u/... and /s/... shared links, once katkee.com's
+  // apple-app-site-association names this app (it needs the Apple Team ID in website/site.json).
+  func application(
+    _ application: UIApplication,
+    continue userActivity: NSUserActivity,
+    restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
+  ) -> Bool {
+    return RCTLinkingManager.application(application, continue: userActivity, restorationHandler: restorationHandler)
+  }
 }
 
 class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {

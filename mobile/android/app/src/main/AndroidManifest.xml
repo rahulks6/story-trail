@@ -55,6 +55,20 @@
             <data android:scheme="katkee" android:host="follow-requests" />
             <data android:scheme="katkee" android:host="home" />
         </intent-filter>
+        <!-- Shared profiles and Stories: https://katkee.com/u/<username> and /s/<id> (App Links).
+             Android checks katkee.com/.well-known/assetlinks.json for this app's signing key, then
+             opens these links here without asking; anywhere else they show the website's
+             "Open in Katkee" page. Only katkee.com: www redirects, and a host that fails
+             verification would fail all of them on Android 11 and older. -->
+        <intent-filter android:autoVerify="true">
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+            <data android:host="katkee.com" />
+            <data android:pathPrefix="/u/" />
+            <data android:pathPrefix="/s/" />
+        </intent-filter>
       </activity>
       <!-- Notifications drawn by Firebase while the app is in the background use this
            status-bar icon (shape only, tinted). The default channel and colour come from

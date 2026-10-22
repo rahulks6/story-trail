@@ -127,6 +127,16 @@ At <https://play.google.com/console>, choose **Create app**:
 Then, under **Test and release**, **Setup**, **App signing**: keep **Google-managed key**
 (Play App Signing). Your first upload registers your upload key.
 
+**Shared links (App Links).** Shared profiles and Stories are `https://katkee.com/u/…` and
+`/s/…` links. Android opens them in the app only if katkee.com's `assetlinks.json` lists the key
+the installed app is signed with, and apps from Play are signed with Google's key. After the first
+upload, open **Test and release**, **App integrity**, **Play app signing**, **Settings**, copy the
+**SHA-256 certificate fingerprint** under "App signing key certificate", add it to
+`appLinks.android.sha256CertFingerprints` in `website/site.json` (next to the upload key that's
+already there), then `node website/build.cjs`, commit and deploy (`website/README.md`, "Shared
+links"). Until then, the links open the website's "Open in Katkee" page, whose button still opens
+the app.
+
 ## 6. Fill in the app content forms
 
 Play Console lists them on the dashboard, under "Set up your app".

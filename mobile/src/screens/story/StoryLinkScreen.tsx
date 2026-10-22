@@ -12,7 +12,7 @@ import { Button } from "../../components/Form";
 type Props = NativeStackScreenProps<RootStackParamList, "StoryLink">;
 
 /**
- * Landing route for katkee://story/<id>. The server applies the same privacy, block and
+ * Landing route for katkee.com/s/<id> and katkee://story/<id>. The server applies the same privacy, block and
  * expiry rules as opening the Story itself, so a link never reveals more than the viewer
  * could already see.
  */
