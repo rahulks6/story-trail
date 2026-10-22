@@ -1,97 +1,97 @@
-10-22 06:06:40.854 D/AndroidRuntime( 3817): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-22 06:06:40.859 I/AndroidRuntime( 3817): Using default boot image
-10-22 06:06:40.861 I/AndroidRuntime( 3817): Leaving lock profiling enabled
-10-22 06:06:40.865 I/resolv  (  357): GetAddrInfoHandler::run: {100 786532 100 983140 10143 0}
-10-22 06:06:40.866 I/resolv  (  357): res_nmkquery: (QUERY, IN, AAAA)
-10-22 06:06:40.866 I/resolv  (  357): res_nmkquery: (QUERY, IN, A)
-10-22 06:06:40.873 I/app_process( 3817): Core platform API reporting enabled, enforcing=false
-10-22 06:06:40.873 I/app_process( 3817): Using CollectorTypeCMC GC.
-10-22 06:06:40.882 I/BugleSimStateTracker( 3207): Updating PhoneSimState
-10-22 06:06:40.883 I/resolv  (  357): res_nsend: used send_dg 272 terrno: 0
-10-22 06:06:40.883 I/resolv  (  357): doQuery: rcode=0, ancount=8, return value=272
-10-22 06:06:40.887 W/ZappDownloader( 1544): No successful Zapp module downloads for requested modules [MapsCoreDynamite.integ:241610202100800, TfliteDynamiteDynamite.integ:264010405100800].
-10-22 06:06:40.887 I/GmsDebugLogger( 1544): [30] [MapsCoreDynamite.integ:241610202100800],[TfliteDynamiteDynamite.integ:264010405100800]
-10-22 06:06:40.890 I/BugleRcsEngine( 3207): Processing an intent [CONTEXT log_prefix="(Sim)" thread_id=96 ]
-10-22 06:06:40.891 I/BugleRcsEngine( 3207): SIM state LOADED [CONTEXT log_prefix="(Sim)" thread_id=96 ]
-10-22 06:06:40.891 I/resolv  (  357): GetAddrInfoHandler::run: {100 100 100 983140 10151 0}
-10-22 06:06:40.892 I/resolv  (  357): res_nmkquery: (QUERY, IN, AAAA)
-10-22 06:06:40.892 I/resolv  (  357): res_nmkquery: (QUERY, IN, A)
-10-22 06:06:40.895 I/resolv  (  357): res_nsend: used send_dg 176 terrno: 0
-10-22 06:06:40.895 I/resolv  (  357): doQuery: rcode=0, ancount=8, return value=176
-10-22 06:06:40.906 I/resolv  (  357): res_nsend: used send_dg 55 terrno: 0
-10-22 06:06:40.906 I/resolv  (  357): doQuery: rcode=0, ancount=1, return value=55
-10-22 06:06:40.909 D/TrafficStats( 1544): tagSocket(160) with statsTag=0x30004901, statsUid=10143
-10-22 06:06:40.917 I/resolv  (  357): res_nsend: used send_dg 67 terrno: 0
-10-22 06:06:40.917 I/resolv  (  357): doQuery: rcode=0, ancount=1, return value=67
-10-22 06:06:40.919 D/TrafficStats( 3782): tagSocket(100) with statsTag=0xffffffff, statsUid=-1
-10-22 06:06:40.920 I/BugleRcsEngine( 3207): Broadcasting provisioning intent rcs.intent.action.rcsSimSwap to Bugle with extras redacted-pii:[chars:86] from source SIM_STATE_TRACKER [CONTEXT log_prefix="EngineBroadcaster" thread_id=96 ]
-10-22 06:06:40.940 D/PackageManager(  556): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
-10-22 06:06:40.955 D/PackageManager(  556): Clear ephemeral installer activity
-10-22 06:06:40.963 D/SlicesIndexer( 1090): Slices already indexed - returning.
-10-22 06:06:40.966 I/system_server(  556): Background concurrent mark compact GC freed 17MB AllocSpace bytes, 26(520KB) LOS objects, 47% free, 26MB/50MB, paused 581us,22.930ms total 474.438ms
-10-22 06:06:40.993 I/BugleRcsProvisioning( 3207): RcsProvisioningTrigger: SIM swap detected, restarting provisioning
-10-22 06:06:40.994 I/BugleRcsProvisioning( 3207): RcsProvisioningTrigger: updateRcsAvailabilityForProvisioningId : rcsProvisioningId = redacted-pii:sim_id[chars:35,last3:97)] hint = SIM_SWAP, logTriggerEvent = true 
+10-22 07:17:53.055 D/AndroidRuntime( 3608): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-22 07:17:53.060 I/AndroidRuntime( 3608): Using default boot image
+10-22 07:17:53.061 I/AndroidRuntime( 3608): Leaving lock profiling enabled
+10-22 07:17:53.074 I/app_process( 3608): Core platform API reporting enabled, enforcing=false
+10-22 07:17:53.074 I/app_process( 3608): Using CollectorTypeCMC GC.
+10-22 07:17:53.077 I/AppWidgetServiceImpl(  560): Received broadcast: android.intent.action.PACKAGE_CHANGED on user 0
+10-22 07:17:53.080 W/BestClock(  560): java.time.DateTimeException: Missing network time fix
+10-22 07:17:53.101 W/earchbox:search( 1535): Long monitor contention with owner BG Thread #1 (1731) at java.lang.Object e.c.d.b()(PG:46) waiters=0 in java.lang.Object e.c.d.b() for 1.128s
+10-22 07:17:53.106 I/resolv  (  358): GetAddrInfoHandler::run: {101 786533 101 983141 10143 0}
+10-22 07:17:53.107 I/resolv  (  358): res_nmkquery: (QUERY, IN, AAAA)
+10-22 07:17:53.107 I/resolv  (  358): resolv_cache_lookup: FOUND IN CACHE entry=0x7c2e0cb11850
+10-22 07:17:53.107 I/resolv  (  358): doQuery: rcode=0, ancount=2, return value=93
+10-22 07:17:53.107 I/resolv  (  358): res_nmkquery: (QUERY, IN, A)
+10-22 07:17:53.108 I/resolv  (  358): resolv_cache_lookup: FOUND IN CACHE entry=0x7c2dfcb13890
+10-22 07:17:53.108 I/resolv  (  358): doQuery: rcode=0, ancount=2, return value=81
+10-22 07:17:53.110 D/TrafficStats( 1205): tagSocket(282) with statsTag=0x30000407, statsUid=-1
+10-22 07:17:53.116 I/WebViewFactory( 1535): Loading com.google.android.webview version 124.0.6367.219 (code 636771938)
+10-22 07:17:53.126 I/PermissionControllerServiceImpl(  914): Updating user sensitive for uid 10211
+10-22 07:17:53.127 D/CustomizableLockScreenUtils( 1090): is_custom_lock_screen_quick_affordances_feature_enabled=1
+10-22 07:17:53.128 W/SliceDataConverter( 1090): Get slice data from XML failed 
+10-22 07:17:53.128 W/SliceDataConverter( 1090): java.lang.IllegalStateException: Invalid preference controller: com.android.settings.applications.credentials.CredentialManagerPreferenceController
+10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.core.BasePreferenceController.createInstance(BasePreferenceController.java:146)
+10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.slices.SliceBuilderUtils.getPreferenceController(SliceBuilderUtils.java:367)
+10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.slices.SliceDataConverter.getSliceDataFromXML(SliceDataConverter.java:192)
+10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.slices.SliceDataConverter.getSliceDataFromProvider(SliceDataConverter.java:147)
+10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.slices.SliceDataConverter.getSliceData(SliceDataConverter.java:117)
+10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.slices.SlicesIndexer.getSliceData(SlicesIndexer.java:94)
+10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.slices.SlicesIndexer.indexSliceData(SlicesIndexer.java:75)
+10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.slices.SlicesFeatureProviderImpl.indexSliceData(SlicesFeatureProviderImpl.java:63)
+10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.slices.SlicesDatabaseAccessor.verifyIndexing(SlicesDatabaseAccessor.java:197)
+10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.slices.SlicesDatabaseAccessor.getSliceUris(SlicesDatabaseAccessor.java:97)
+10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at com.android.settings.slices.SettingsSliceProvider.onGetSliceDescendants(SettingsSliceProvider.java:346)
+10-22 07:17:53.128 W/SliceDataConverter( 1090): 	at androidx.slice.compat.SliceProviderWrapperContainer$SliceProviderWrapper.onGetSliceDescendants(SliceProviderWrapperContainer.java:166)
 --
-10-22 06:06:41.333 D/AndroidRuntime( 3817): Calling main entry com.android.commands.am.Am
-10-22 06:06:41.341 D/UiAutomationConnection( 3817): Created on user UserHandle{0}
-10-22 06:06:41.343 I/ActivityManager(  556): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-10-22 06:06:41.344 V/GrammaticalInflectionUtils(  556): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@8734f54, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
-10-22 06:06:41.346 I/AppsFilter(  556): interaction: PackageSetting{7c5cbae com.android.microdroid.empty_payload/10197} -> PackageSetting{8bf6a39 dev.mobile.maestro/10210} BLOCKED
-10-22 06:06:41.354 I/BugleRcsEngine( 3207): [SR]: Single Registration is disabled. Skipping Single Registration capability check for subId: 1, OS.isAtLeastS:[true], enableSingleRegistrationProvisioning:[false] [CONTEXT thread_id=82 ]
-10-22 06:06:41.357 I/gle.android.gms( 1544): Background concurrent mark compact GC freed 10MB AllocSpace bytes, 126(6404KB) LOS objects, 49% free, 17MB/35MB, paused 11.164ms,3.916ms total 195.653ms
-10-22 06:06:41.360 I/RcsAvailabilityUpdaterL( 3207): RcsAvailability configuration availability and enabled status: simId: redacted-pii:sim_id[chars:20,last3:897], SipConnectionType: DUAL_REG, isConfigurationAvailableAndEnabled: false
-10-22 06:06:41.362 I/RcsAvailabilityUpdaterL( 3207): updateRcsAvailability: currentAvailability: 9, newAvailability: 2, hint: NO_HINT
-10-22 06:06:41.363 D/Zygote  (  358): Forked child process 3851
-10-22 06:06:41.364 I/BugleRcsProvisioning( 3207): RcsProvisioningTrigger: onRcsAvailabilityUpdate : availability is updated to RCS is disabled for this carrier by Google, lastAvailabilityLocal is null, simId hash = -4034685370423269955, simId = redacted-pii:sim_id[chars:20,last3:897], isPev3Enabled = true
-10-22 06:06:41.364 W/SharedPreferencesSimSta( 3207): SharedPreferencesSimStateStore: No sim subscription info found for RCS provisioning id
-10-22 06:06:41.364 W/SharedPreferencesSimSta( 3207): SharedPreferencesSimStateStore: can't get simId for null SimSubscriptionInfo when setting PhoneDefaults.
-10-22 06:06:41.364 W/SharedPreferencesSimSta( 3207): SharedPreferencesSimStateStore: can't get simId for null SimSubscriptionInfo when setting PhoneDefaults.
-10-22 06:06:41.365 W/SharedPreferencesSimSta( 3207): SharedPreferencesSimStateStore: can't get simId for null SimSubscriptionInfo when setting PhoneDefaults.
-10-22 06:06:41.365 W/SharedPreferencesSimSta( 3207): SharedPreferencesSimStateStore: can't get simId for null SimSubscriptionInfo when setting PhoneDefaults.
-10-22 06:06:41.367 I/BugleRcsEngine( 3207): Receive onRcsAvailabilityUpdate, SIM = redacted-pii:sim_id[chars:20,last3:897], availability = RcsAvailability{mAvailability=DISABLED_VIA_GSERVICES (RCS is disabled for this carrier by Google)} [CONTEXT log_prefix="RcsProvisioningManager" thread_id=51 ]
-10-22 06:06:41.367 I/BugleSimStateTracker( 3207): Is carrier config for identified carrier: true
-10-22 06:06:41.368 W/Bugle   ( 3207): Bugle: SubscriptionMetadataUtils get: unexpected subId = -1, replacing with -1
-10-22 06:06:41.368 W/Bugle   ( 3207): Bugle: SubscriptionMetadataUtils get: unexpected subId = -1, replacing with -1
-10-22 06:06:41.373 I/BugleRcsProvisioning( 3207): RcsProvisioningTrigger: onRcsAvailabilityUpdate : isPreviousDisabled = true, isCurrentDisabled = true, config[simId:redacted-pii:sim_id[chars:20,last3:897]] = [Type: 0, Version: 0, Validity: 0, Last updated: 0, Remaining validity: 0, Reconfiguration requested: false, Messaging technology: SIMPLE_IM, rcsVolteSingleRegistration: false], hasToken: false, isValidAndUpdated: false
-10-22 06:06:41.376 I/BugleTransport( 3207): onRcsAvailabilityUpdate: kicking off updateActiveTransport for simId:redacted-pii:sim_id[chars:20,last3:897]
-10-22 06:06:41.381 I/BugleRcsEngine( 3207): AvailabilityObserver.onUpdate : Notify RcsAvailabilityListener brtj@4a4ca5b onRcsAvailabilityUpdate, SIM = redacted-pii:sim_id[chars:20,last3:897], availability = 2 [CONTEXT log_prefix="RcsProvisioningManager" thread_id=54 ]
-10-22 06:06:41.382 I/BugleTransport( 3207): isChatAvailable: RcsAvailability is DISABLED_VIA_GSERVICES (RCS is disabled for this carrier by Google)
-10-22 06:06:41.382 I/BugleRcsEngine( 3207): RCS Configuration storage in Bugle is disabled by p/h flag, using ProvisioningEngineStateCacheUtil.getProvisioningConfigurationForGivenSimIfExist() [CONTEXT log_prefix="ProvisioningEngineDataRetriever" thread_id=51 ]
-10-22 06:06:41.382 W/BugleAction( 3207): Failed to get msisdn from Bugle
-10-22 06:06:41.383 I/.mobile.maestro( 3851): Late-enabling -Xcheck:jni
-10-22 06:06:41.389 W/Bugle   ( 3207): Bugle: SubscriptionMetadataUtils get: unexpected subId = -2, replacing with -1
-10-22 06:06:41.392 W/Bugle   ( 3207): Bugle: SubscriptionMetadataUtils get: unexpected subId = -2, replacing with -1
-10-22 06:06:41.392 W/Bugle   ( 3207): Bugle: SubscriptionMetadataUtils get: unexpected subId = -2, replacing with -1
-10-22 06:06:41.395 I/ebvk$a  ( 1544): Unable to retrieve flag snapshot for com.google.android.gms.potokens, using defaults.
+10-22 07:17:53.457 D/AndroidRuntime( 3608): Calling main entry com.android.commands.am.Am
+10-22 07:17:53.458 W/TimedProcessReaper( 1535): Scheduling killing of process to refresh configuration
+10-22 07:17:53.461 D/UiAutomationConnection( 3608): Created on user UserHandle{0}
+10-22 07:17:53.466 W/BestClock(  560): java.time.DateTimeException: Missing network time fix
+10-22 07:17:53.466 I/Fitness ( 1205): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+10-22 07:17:53.467 I/Fitness ( 1205): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+10-22 07:17:53.467 W/BestClock(  560): java.time.DateTimeException: Missing network time fix
+10-22 07:17:53.468 W/BestClock(  560): java.time.DateTimeException: Missing network time fix
+10-22 07:17:53.469 W/BestClock(  560): java.time.DateTimeException: Missing network time fix
+10-22 07:17:53.470 D/NetworkStatsObservers(  560): Unregistering RequestInfo from pid/uid:560/1000(android) for DataUsageRequest [ requestId=5, networkTemplate=NetworkTemplate: matchRule=MOBILE, matchSubscriberIds=[310260...], matchWifiNetworkKeys=[], metered=YES, defaultNetwork=NO, thresholdInBytes=3458768 ] accessLevel:3
+10-22 07:17:53.472 D/NetworkStatsObservers(  560): Registering observer for RequestInfo from pid/uid:560/1000(android) for DataUsageRequest [ requestId=6, networkTemplate=NetworkTemplate: matchRule=MOBILE, matchSubscriberIds=[310260...], matchWifiNetworkKeys=[], metered=YES, defaultNetwork=NO, thresholdInBytes=3447910 ] accessLevel:3
+10-22 07:17:53.472 I/dfmd    ( 3587): SslGuard completed installation.
+10-22 07:17:53.472 D/OomAdjuster(  560): Not killing cached processes
+10-22 07:17:53.472 I/ActivityManager(  560): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+10-22 07:17:53.477 W/BestClock(  560): java.time.DateTimeException: Missing network time fix
+10-22 07:17:53.478 I/Fitness ( 1205): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+10-22 07:17:53.483 W/GetConfigSnapshotOp( 1205): Succeeded but not registered: googledata.experiments.mobile.assistant.client_packages.component.assistant_suw.user#com.google.android.googlequicksearchbox [CONTEXT service_id=51 ]
+10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): fetch grpc failed
+10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): java.util.NoSuchElementException: No value present
+10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at j$.util.Optional.orElseThrow(SourceFile:1)
+10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at com.google.android.apps.search.googleapp.notifications.settings.a.e.a(PG:198)
+10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at com.google.android.apps.search.googleapp.notifications.settings.a.g.a(PG:80)
+10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at com.google.android.apps.search.googleapp.notifications.settings.a.j.jd(PG:71)
+10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at n.c.b.a.a.q(PG:12)
+10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at kotlinx.coroutines.bh.run(PG:112)
+10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at com.google.apps.tiktok.f.y.run(PG:3)
+10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at com.google.android.libraries.k.x.run(PG:3)
+10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at com.google.common.n.c.c.run(PG:50)
+10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at com.google.android.libraries.k.e.run(PG:8)
+10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at java.lang.Thread.run(Thread.java:1012)
+10-22 07:17:53.491 E/DeviceChannelFetcher( 1535): 	at com.google.android.libraries.k.d.b.run(PG:74)
 --
-10-22 06:10:22.737 I/AndroidRuntime( 3817): VM exiting with result code 0.
-10-22 06:10:22.744 I/netd    (  357): tetherGetStats() -> {[]} <0.35ms>
-10-22 06:10:22.755 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-22 06:10:22.758 W/MagnificationConnectionManager(  556): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-22 06:10:22.758 V/UiAutomationManager(  556): UiAutomation service owner died
-10-22 06:10:22.759 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-22 06:10:22.875 I/init    (    0): ... started service 'artd' has pid 6046
-10-22 06:10:22.877 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 141 (/system/bin/servicemanager)
-10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-22 06:10:22.761 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-22 06:10:22.881 I/init    (    0): Untracked pid 3817 exited with status 0
-10-22 06:10:22.883 I/init    (    0): Untracked pid 3817 did not have an associated service entry and will not be reaped
-10-22 06:10:22.893 I/binder  (    0): undelivered transaction 455172, process died.
-10-22 06:10:22.776 I/Zygote  (  358): Process 3851 exited due to signal 9 (Killed)
-10-22 06:10:22.777 V/ActivityManager(  556): Got obituary of 3851:dev.mobile.maestro
-10-22 06:10:22.779 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-22 06:10:22.780 I/AiAiEcho( 1432): Settings changed for uri: content://settings/secure/accessibility_enabled
-10-22 06:10:22.780 I/AiAiEcho( 1432): Predicting[0]:  [CONTEXT sampling_count=5 ]
-10-22 06:10:22.780 I/AiAiEcho( 1432): EchoTargets: 
-10-22 06:10:22.780 I/AiAiEcho( 1432): Filtered by AiAi flag check: 
-10-22 06:10:22.780 I/AiAiEcho( 1432): [CONTEXT ratelimit_period="10 SECONDS" ]
+10-22 07:21:21.489 I/AndroidRuntime( 3608): VM exiting with result code 0.
+10-22 07:21:21.600 I/servicemanager(    0): Caller(pid=560,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+10-22 07:21:21.494 I/netd    (  358): tetherGetStats() -> {[]} <0.29ms>
+10-22 07:21:21.618 I/init    (    0): starting service 'artd'...
+10-22 07:21:21.507 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-22 07:21:21.510 W/MagnificationConnectionManager(  560): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-22 07:21:21.510 V/UiAutomationManager(  560): UiAutomation service owner died
+10-22 07:21:21.627 I/init    (    0): ... started service 'artd' has pid 5959
+10-22 07:21:21.628 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 145 (/system/bin/servicemanager)
+10-22 07:21:21.628 I/binder  (    0): undelivered transaction 470336, process died.
+10-22 07:21:21.513 V/ActivityManager(  560): Got obituary of 3676:dev.mobile.maestro
+10-22 07:21:21.513 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-22 07:21:21.513 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-22 07:21:21.513 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-22 07:21:21.513 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-22 07:21:21.513 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-22 07:21:21.513 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-22 07:21:21.513 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-22 07:21:21.514 I/libprocessgroup(  560): Removed cgroup /sys/fs/cgroup/uid_10210/pid_3676
+10-22 07:21:21.515 I/AiAiEcho( 1401): Settings changed for uri: content://settings/secure/accessibility_enabled
+10-22 07:21:21.517 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-22 07:21:21.517 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-22 07:21:21.517 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-22 07:21:21.517 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-22 07:21:21.517 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-22 07:21:21.518 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-22 07:21:21.633 I/init    (    0): Untracked pid 3608 exited with status 0
+10-22 07:21:21.634 I/init    (    0): Untracked pid 3608 did not have an associated service entry and will not be reaped
+10-22 07:21:21.518 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-22 07:21:21.518 W/IPCThreadState(  560): Sending oneway calls to frozen process.
+10-22 07:21:21.518 W/IPCThreadState(  560): Sending oneway calls to frozen process.
