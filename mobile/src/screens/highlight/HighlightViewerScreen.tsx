@@ -69,7 +69,9 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
   // video and song pause and the timer stops (so it can't move on, or close the screen above it).
   const focused = useIsFocused();
   const foreground = useAppForeground();
-  const active = focused && foreground && !optionsOpen;
+  // Holding a finger on the Story pauses it, as on a live Story.
+  const [held, setHeld] = useState(false);
+  const active = focused && foreground && !optionsOpen && !held;
   const currentItem = items?.[index] ?? null;
   const showingRef = useRef<string | null>(null);
   showingRef.current = currentItem?.storyId ?? null;
@@ -318,8 +320,8 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
       {close}
 
       <View style={styles.tapZones}>
-        <Pressable style={styles.tapZone} onPress={goPrevious} accessibilityRole="button" accessibilityLabel="Previous item" />
-        <Pressable style={styles.tapZone} onPress={goNext} accessibilityRole="button" accessibilityLabel="Next item" />
+        <Pressable style={styles.tapZone} onPress={goPrevious} onLongPress={() => setHeld(true)} onPressOut={() => setHeld(false)} delayLongPress={200} accessibilityRole="button" accessibilityLabel="Previous item" />
+        <Pressable style={styles.tapZone} onPress={goNext} onLongPress={() => setHeld(true)} onPressOut={() => setHeld(false)} delayLongPress={200} accessibilityRole="button" accessibilityLabel="Next item" />
       </View>
 
       {detail && containerSize.width > 0 ? (
@@ -373,7 +375,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   progressFill: { height: "100%", width: "100%", backgroundColor: "#fff", transformOrigin: "left" },
-  title: { position: "absolute", top: spacing.xl + 14, left: spacing.md, color: "#fff", fontWeight: "700" },
+  // Shadowed so it reads on a bright photo too; stops short of the ⋯ and close buttons.
+  title: { position: "absolute", top: spacing.xl + 14, left: spacing.md, right: 96, color: "#fff", fontWeight: "700", textShadowColor: "rgba(0,0,0,0.5)", textShadowRadius: 4, textShadowOffset: { width: 0, height: 1 } },
   // Above the tap zones and the Story's own text, which are drawn after them.
   retry: { minHeight: 44, paddingHorizontal: spacing.lg, justifyContent: "center", borderRadius: 22, borderWidth: 1, borderColor: colors.textPrimary },
   retryText: { color: colors.textPrimary, fontWeight: "700" },

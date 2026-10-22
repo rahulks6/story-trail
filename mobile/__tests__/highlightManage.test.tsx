@@ -260,3 +260,25 @@ test("with the editor pushed on top, the viewer pauses: its video stops, and its
     jest.useRealTimers();
   }
 });
+
+test("holding a finger on a Highlight pauses it until you let go", async () => {
+  jest.useFakeTimers();
+  timeNativeAnimations();
+  (AppState as { currentState: string }).currentState = "active";
+  mockFocused = true;
+  (mediaApi.getMedia as jest.Mock).mockResolvedValue({ kind: "video" });
+  try {
+    await openViewer(["s1", "s2"]);
+    for (let i = 0; i < 3; i++) await act(async () => { await Promise.resolve(); });
+    const video = () => tree.root.find((n: ReactTestInstance) => (n.type as unknown) === "Video");
+    expect(video().props.paused).toBe(false);
+    await act(async () => byLabel("Next item").props.onLongPress());
+    expect(video().props.paused).toBe(true);
+    await act(async () => byLabel("Next item").props.onPressOut());
+    expect(video().props.paused).toBe(false);
+  } finally {
+    (mediaApi.getMedia as jest.Mock).mockResolvedValue({ kind: "photo" });
+    await act(async () => tree?.unmount());
+    jest.useRealTimers();
+  }
+});

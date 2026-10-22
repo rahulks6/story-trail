@@ -4,6 +4,7 @@ import { colors, radii, spacing, typography } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { getSequenceInsights, type StoryInsights } from "../../api/stories";
 import { EmptyState } from "../../components/EmptyState";
+import { Button } from "../../components/Form";
 
 function StatCard({ label, value, hint }: { label: string; value: string; hint: string }): React.JSX.Element {
   return (
@@ -28,24 +29,32 @@ export function SequenceInsightsScreen(): React.JSX.Element {
   const { accessToken } = useAuth();
   const [insights, setInsights] = useState<StoryInsights | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [reload, setReload] = useState(0);
 
   useEffect(() => {
     if (!accessToken) return;
     let cancelled = false;
+    setError(null);
     getSequenceInsights(accessToken)
       .then(({ insights: fetched }) => {
         if (!cancelled) setInsights(fetched);
       })
       .catch(() => {
-        if (!cancelled) setError("Couldn't load Insights — try again.");
+        if (!cancelled) setError("Check your connection and try again.");
       });
     return () => {
       cancelled = true;
     };
-  }, [accessToken]);
+  }, [accessToken, reload]);
 
   if (error) {
-    return <EmptyState title="Couldn't load Insights" message={error} />;
+    return (
+      <View style={styles.centered}>
+        <EmptyState title="Couldn't load Insights" message={error}>
+          <Button label="Try again" variant="secondary" onPress={() => setReload((n) => n + 1)} />
+        </EmptyState>
+      </View>
+    );
   }
 
   if (insights === null) {
@@ -68,14 +77,14 @@ export function SequenceInsightsScreen(): React.JSX.Element {
   return (
     <View style={styles.container}>
       <Text style={[typography.caption, styles.subtitle]}>
-        Across every Story you have active right now
+        Your Stories from the last 24 hours
       </Text>
       <View style={styles.grid}>
-        <StatCard label="Views" value={String(insights.viewCount)} hint="People who watched at least one" />
-        <StatCard label="Completed" value={`${insights.completionRate}%`} hint="Watched through to the end" />
-        <StatCard label="Following" value={`${insights.followingViewRate}%`} hint="Already followed you" />
-        <StatCard label="Discovery" value={`${insights.discoveryViewRate}%`} hint="Found you through Katkee" />
-        <StatCard label="Profile visits" value={`${insights.profileVisitRate}%`} hint="Also visited your profile" />
+        <StatCard label="Viewers" value={String(insights.viewCount)} hint="Watched at least one" />
+        <StatCard label="Watched to the end" value={`${insights.completionRate}%`} hint="Of your viewers" />
+        <StatCard label="Followers" value={`${insights.followingViewRate}%`} hint="Already follow you" />
+        <StatCard label="New people" value={`${insights.discoveryViewRate}%`} hint="Don't follow you yet" />
+        <StatCard label="Profile visits" value={`${insights.profileVisitRate}%`} hint="Then opened your profile" />
       </View>
     </View>
   );
