@@ -7,6 +7,10 @@ import { parseReportMessageInput, parseSendMessageInput, parseStoryReplyInput } 
 import { reportLimiter } from "../moderation/moderation.routes";
 import { HttpError } from "../../http/errors";
 import * as conversationsService from "./conversations.service";
+import * as groupsService from "./groups.service";
+
+/** An app that shows group chats says so (?groups=1); older apps never see one. */
+const wantsGroups = (params: Record<string, string | undefined>) => params.groups === "1";
 
 export function registerConversationsRoutes(router: Router): void {
   router.post("/api/v1/users/:username/conversation", async (req, res) => {
@@ -20,7 +24,7 @@ export function registerConversationsRoutes(router: Router): void {
     requireAuth(req);
     const params = parseQueryString(req.url ?? "");
     const { limit, offset } = parsePagination(params);
-    const conversations = await conversationsService.listConversations(req.userId as string, limit, offset, params.q ?? "");
+    const conversations = await conversationsService.listConversations(req.userId as string, limit, offset, params.q ?? "", wantsGroups(params));
     sendJson(res, 200, { conversations, limit, offset });
   });
 
@@ -32,8 +36,40 @@ export function registerConversationsRoutes(router: Router): void {
 
   router.get("/api/v1/conversations/:id", async (req, res) => {
     requireAuth(req);
-    const conversation = await conversationsService.getConversation(req.userId as string, req.params.id as string);
+    const conversation = await conversationsService.getConversation(req.userId as string, req.params.id as string, wantsGroups(parseQueryString(req.url ?? "")));
     sendJson(res, 200, { conversation });
+  });
+
+  // Group chats (groups.service.ts).
+  router.post("/api/v1/conversations/groups", async (req, res) => {
+    requireAuth(req);
+    const b = (req.body ?? {}) as { usernames?: unknown; title?: unknown };
+    const conversation = await groupsService.createGroup(req.userId as string, groupsService.parseUsernames(b.usernames, groupsService.MAX_GROUP_MEMBERS - 1), groupsService.parseTitle(b.title));
+    sendJson(res, 201, { conversation });
+  });
+
+  router.patch("/api/v1/conversations/:id", async (req, res) => {
+    requireAuth(req);
+    const conversation = await groupsService.renameGroup(req.userId as string, req.params.id as string, groupsService.parseTitle((req.body as { title?: unknown } | undefined)?.title));
+    sendJson(res, 200, { conversation });
+  });
+
+  router.post("/api/v1/conversations/:id/members", async (req, res) => {
+    requireAuth(req);
+    const conversation = await groupsService.addPeople(req.userId as string, req.params.id as string, groupsService.parseUsernames((req.body as { usernames?: unknown } | undefined)?.usernames));
+    sendJson(res, 200, { conversation });
+  });
+
+  router.delete("/api/v1/conversations/:id/members/:userId", async (req, res) => {
+    requireAuth(req);
+    const conversation = await groupsService.removePerson(req.userId as string, req.params.id as string, req.params.userId as string);
+    sendJson(res, 200, { conversation });
+  });
+
+  router.post("/api/v1/conversations/:id/leave", async (req, res) => {
+    requireAuth(req);
+    await groupsService.leaveGroup(req.userId as string, req.params.id as string);
+    sendJson(res, 204, undefined);
   });
 
   router.get("/api/v1/conversations/:id/messages", async (req, res) => {

@@ -6,6 +6,7 @@ import * as usersRepo from "../users/users.repository";
 import * as socialRepo from "../social/social.repository";
 import * as engagementService from "../stories/engagement.service";
 import * as conversationsRepo from "./conversations.repository";
+import * as groupsRepo from "./groups.repository";
 import type { ConversationRow, ConversationSummary, MessageRow, StoryReplyKind } from "./conversations.repository";
 import { getStoryForViewer } from "../stories/stories.service";
 import * as mediaRepo from "../media/media.repository";
@@ -46,8 +47,8 @@ export async function openConversationWith(viewerId: string, targetUsername: str
   };
 }
 
-export async function listConversations(viewerId: string, limit: number, offset: number, search = ""): Promise<ConversationSummary[]> {
-  return conversationsRepo.listConversationsForUser(viewerId, limit, offset, search.trim().slice(0, 60));
+export async function listConversations(viewerId: string, limit: number, offset: number, search = "", includeGroups = false): Promise<ConversationSummary[]> {
+  return conversationsRepo.listConversationsForUser(viewerId, limit, offset, search.trim().slice(0, 60), includeGroups);
 }
 
 export async function getUnreadConversationCount(viewerId: string): Promise<number> {
@@ -56,26 +57,54 @@ export async function getUnreadConversationCount(viewerId: string): Promise<numb
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-async function requireParticipant(conversationId: string, viewerId: string): Promise<ConversationRow> {
-  // A malformed id is just "not found" (and never reaches the uuid cast in SQL).
-  const conversation = UUID_RE.test(conversationId) ? await conversationsRepo.findConversationById(conversationId) : null;
-  if (!conversation || (conversation.userAId !== viewerId && conversation.userBId !== viewerId)) {
-    throw new HttpError(404, "Conversation not found.");
-  }
-  return conversation;
+export interface Participation extends ConversationRow {
+  /** When the viewer joined: a group's members see what was sent from then on (1:1: everything). */
+  since: string;
+  role: conversationsRepo.Membership["role"];
 }
 
-function otherParticipant(conversation: ConversationRow, viewerId: string): string {
+/** The conversation, if the viewer is in it now (a 1:1 participant, or a group member who hasn't left). */
+export async function requireParticipant(conversationId: string, viewerId: string): Promise<Participation> {
+  // A malformed id is just "not found" (and never reaches the uuid cast in SQL).
+  const conversation = UUID_RE.test(conversationId) ? await conversationsRepo.findConversationById(conversationId) : null;
+  const membership = conversation ? await conversationsRepo.findActiveMembership(conversation.id, viewerId) : null;
+  if (!conversation || !membership) throw new HttpError(404, "Conversation not found.");
+  return { ...conversation, since: conversation.kind === "group" ? membership.joinedAt : new Date(0).toISOString(), role: membership.role };
+}
+
+/** The other person in a 1:1 conversation (null in a group). */
+function otherParticipant(conversation: ConversationRow, viewerId: string): string | null {
+  if (conversation.kind !== "direct") return null;
   return conversation.userAId === viewerId ? conversation.userBId : conversation.userAId;
 }
 
-/** One of the viewer's conversations, e.g. to open a thread from a push notification's link. */
-export async function getConversation(viewerId: string, conversationId: string): Promise<ConversationWithOtherUser> {
+export interface GroupDetails {
+  id: string;
+  kind: "group";
+  createdAt: string;
+  title: string | null;
+  otherUser: null;
+  /** The viewer's own role (admins can remove people). */
+  role: conversationsRepo.Membership["role"];
+  members: conversationsRepo.MemberRow[];
+}
+
+/**
+ * One of the viewer's conversations, e.g. to open a thread from a push notification's link.
+ * A group only for an app that shows groups (`includeGroups`); to an older one it isn't there.
+ */
+export async function getConversation(viewerId: string, conversationId: string, includeGroups = false): Promise<(ConversationWithOtherUser & { kind: "direct" }) | GroupDetails> {
   const conversation = await requireParticipant(conversationId, viewerId);
-  const other = await usersRepo.findUserById(otherParticipant(conversation, viewerId));
+  if (conversation.kind === "group") {
+    if (!includeGroups) throw new HttpError(404, "Conversation not found.");
+    return { id: conversation.id, kind: "group", createdAt: conversation.createdAt, title: conversation.title, otherUser: null, role: conversation.role,
+             members: await conversationsRepo.listActiveMembers(conversation.id) };
+  }
+  const other = await usersRepo.findUserById(otherParticipant(conversation, viewerId)!);
   if (!other) throw new HttpError(404, "Conversation not found.");
   return {
     id: conversation.id,
+    kind: "direct",
     createdAt: conversation.createdAt,
     otherUser: { id: other.id, username: other.username, displayName: other.displayName, avatarMediaId: other.avatarMediaId },
   };
@@ -103,7 +132,9 @@ export async function sendMessage(viewerId: string, conversationId: string, inpu
     const existing = await conversationsRepo.findMessageByClientId(conversationId, viewerId, input.clientMessageId);
     if (existing) return replayed(existing, input);
   }
-  await assertNotBlocked(viewerId, otherId); // re-checked at send time, not just at conversation creation
+  // Re-checked at send time, not just at conversation creation. In a group, a block between two
+  // members doesn't silence the group (like Instagram); it keeps them out of each other's 1:1s.
+  if (otherId) await assertNotBlocked(viewerId, otherId);
   await enforceAction(viewerId, "message"); // retries above never count
   if (input.body) await assertLinksAllowed(input.body, "message", viewerId);
 
@@ -143,8 +174,8 @@ export async function reactToMessage(viewerId: string, conversationId: string, m
   if (emoji !== null && !(MESSAGE_REACTIONS as readonly string[]).includes(emoji)) {
     throw new HttpError(422, "Choose one of the reactions.", { emoji: `One of ${MESSAGE_REACTIONS.join(" ")}` });
   }
-  if (emoji !== null) await assertNotBlocked(viewerId, otherId);
-  const reactions = await conversationsRepo.setMessageReaction(conversationId, messageId, viewerId, otherId, emoji);
+  if (emoji !== null && otherId) await assertNotBlocked(viewerId, otherId);
+  const reactions = await conversationsRepo.setMessageReaction(conversationId, messageId, viewerId, emoji, conversation.since);
   if (!reactions) throw new HttpError(404, "Message not found.");
   return reactions;
 }
@@ -193,6 +224,8 @@ function replayed(message: MessageRow, input: SendMessageInput): { message: Mess
 export type MessageDeliveryStatus = "sent" | "delivered" | "read";
 
 export interface MessageWithStatus extends MessageRow {
+  /** A group only, on the viewer's own messages: who has read it so far. */
+  seenBy?: string[];
   /** Only present on the viewer's OWN messages — spec: Sending/Failed are
    * purely client-local (never reach here at all); a message that exists
    * in the database is definitionally at least "sent". Absent entirely on
@@ -213,8 +246,8 @@ export async function listMessages(
 
   const [page] = await Promise.all([
     cursor
-      ? conversationsRepo.listMessagesByCursor(conversationId, cursor, limit)
-      : conversationsRepo.listMessages(conversationId, limit, offset).then((messages) => ({ messages, hasMore: null })),
+      ? conversationsRepo.listMessagesByCursor(conversationId, cursor, limit, conversation.since)
+      : conversationsRepo.listMessages(conversationId, limit, offset, conversation.since).then((messages) => ({ messages, hasMore: null })),
     // Fetching messages at all is itself the real "my client received
     // this" signal (see markDelivered's own comment) — every fetch, not
     // just the first page, since even loading older history proves the
@@ -224,15 +257,31 @@ export async function listMessages(
 
   // The device id of a message is the sender's business only.
   const rows = page.messages.map((m) => (m.senderId === viewerId || m.clientMessageId === undefined ? m : withoutClientId(m)));
-  const mine = rows.filter((m) => m.senderId === viewerId);
+  const mine = rows.filter((m) => m.senderId === viewerId && !m.event);
   if (mine.length === 0) return { messages: rows, hasMore: page.hasMore };
+
+  if (!otherId) {
+    // A group: read once everyone else has read it (delivered likewise), and who has so far.
+    const others = [...(await conversationsRepo.getOthersReadState(conversationId, viewerId))];
+    return {
+      hasMore: page.hasMore,
+      messages: rows.map((m): MessageWithStatus => {
+        if (m.senderId !== viewerId || m.event) return m;
+        const at = new Date(m.createdAt).getTime();
+        const seenBy = others.filter(([, s]) => new Date(s.lastReadAt).getTime() >= at).map(([id]) => id);
+        const delivered = others.every(([, s]) => new Date(s.lastDeliveredAt).getTime() >= at);
+        const status: MessageDeliveryStatus = others.length > 0 && seenBy.length === others.length ? "read" : delivered && others.length > 0 ? "delivered" : "sent";
+        return { ...m, status, seenBy };
+      }),
+    };
+  }
 
   const otherState = await conversationsRepo.getReadState(conversationId, otherId);
   const lastReadMs = new Date(otherState.lastReadAt).getTime();
   const lastDeliveredMs = new Date(otherState.lastDeliveredAt).getTime();
 
   const messages = rows.map((m): MessageWithStatus => {
-    if (m.senderId !== viewerId) return m;
+    if (m.senderId !== viewerId || m.event) return m;
     const createdAtMs = new Date(m.createdAt).getTime();
     const status: MessageDeliveryStatus =
       createdAtMs <= lastReadMs ? "read" : createdAtMs <= lastDeliveredMs ? "delivered" : "sent";
@@ -260,11 +309,13 @@ export async function signalTyping(viewerId: string, conversationId: string): Pr
   const key = `${viewerId}:${conversationId}`;
   const now = Date.now();
   if (now - (lastTyping.get(key) ?? 0) < TYPING_INTERVAL_MS) return;
-  const otherId = otherParticipant(conversation, viewerId);
-  if (await socialRepo.anyBlockBetween(viewerId, otherId)) return; // silently: nothing to tell a blocked person
+  // Everyone else in it, except anyone with a block either way: nothing to tell a blocked person.
+  const others = (await conversationsRepo.listActiveMembers(conversationId)).map((m) => m.userId).filter((id) => id !== viewerId);
+  const told: string[] = [];
+  for (const id of others) if (!(await socialRepo.anyBlockBetween(viewerId, id))) told.push(id);
   if (lastTyping.size > 10_000) lastTyping.clear(); // bounded: losing it only lets one extra signal through
   lastTyping.set(key, now);
-  await publishRealtime([otherId], { type: "typing", conversationId, userId: viewerId });
+  await publishRealtime(told, { type: "typing", conversationId, userId: viewerId });
 }
 
 export async function markConversationRead(viewerId: string, conversationId: string): Promise<void> {
@@ -278,8 +329,10 @@ export async function reportMessage(
   conversationId: string,
   input: { messageId: string; reason: string; details: string | null },
 ): Promise<{ report: { id: string }; created: boolean }> {
-  const conversation = await requireParticipant(conversationId, reporterId);
-  const otherId = otherParticipant(conversation, reporterId);
+  await requireParticipant(conversationId, reporterId);
+  // The person who sent it (in a group, one of the others); never your own message.
+  const otherId = UUID_RE.test(input.messageId) ? await groupsRepo.messageSender(conversationId, input.messageId) : null;
+  if (!otherId || otherId === reporterId) throw new HttpError(404, "Message not found.");
   const result = await conversationsRepo.reportMessage({ reporterId, otherId, conversationId, ...input });
   if (!result.found || !result.reportId) throw new HttpError(404, "Message not found.");
   return { report: { id: result.reportId }, created: result.created };

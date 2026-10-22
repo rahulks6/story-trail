@@ -105,11 +105,15 @@ describe("DM privacy", () => {
     const readers = files.filter((f) => dmTable.test(fs.readFileSync(f, "utf8"))).map((f) => path.relative(src, f)).sort();
     assert.deepEqual(readers, [
       "modules/conversations/conversations.repository.ts",
+      // Group membership, and who sent a reported message: never a message's body.
+      "modules/conversations/groups.repository.ts",
       // Unread badge only: counts conversations by message timestamps, never selects a body.
       "modules/push/dispatcher.ts",
     ], "a new reader of DM tables needs a privacy review (and an update here)");
     const dispatcher = fs.readFileSync(path.join(src, "modules/push/dispatcher.ts"), "utf8");
     assert.ok(!/\bm\.body\b|messages\.body|SELECT\s+body/i.test(dispatcher), "the dispatcher never reads message bodies");
+    const groups = fs.readFileSync(path.join(src, "modules/conversations/groups.repository.ts"), "utf8");
+    assert.ok(!/\bbody\b/i.test(groups), "group membership code never reads message bodies");
 
     const adminAndAds = files.filter((f) => /modules\/(admin|ads|recommendations|moderation|analytics)\//.test(f));
     assert.ok(adminAndAds.length >= 5);

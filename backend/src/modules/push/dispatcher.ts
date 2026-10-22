@@ -71,10 +71,10 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
             EXISTS (SELECT 1 FROM blocks b WHERE (b.blocker_id = u.id AND b.blocked_id = a.id)
                                             OR (b.blocker_id = a.id AND b.blocked_id = u.id)) AS blocked,
             (SELECT count(*) FROM notifications n WHERE n.recipient_id = u.id AND n.read_at IS NULL) AS unread_activity,
-            (SELECT count(*) FROM conversations c
-               JOIN LATERAL (SELECT created_at FROM messages m WHERE m.conversation_id = c.id ORDER BY m.created_at DESC LIMIT 1) lm ON true
-               LEFT JOIN conversation_reads cr ON cr.conversation_id = c.id AND cr.user_id = u.id
-              WHERE (c.user_a_id = u.id OR c.user_b_id = u.id) AND lm.created_at > coalesce(cr.last_read_at, 'epoch')) AS unread_conversations
+            (SELECT count(*) FROM conversation_members me
+               JOIN LATERAL (SELECT created_at FROM messages m WHERE m.conversation_id = me.conversation_id AND m.created_at >= me.joined_at ORDER BY m.created_at DESC LIMIT 1) lm ON true
+               LEFT JOIN conversation_reads cr ON cr.conversation_id = me.conversation_id AND cr.user_id = u.id
+              WHERE me.user_id = u.id AND me.left_at IS NULL AND lm.created_at > coalesce(cr.last_read_at, 'epoch')) AS unread_conversations
      FROM users u
      LEFT JOIN notification_preferences p ON p.user_id = u.id
      LEFT JOIN users a ON a.id = NULLIF(:'actor', '')::uuid
@@ -96,13 +96,15 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
     if (!live) return { skip: "story gone" };
   }
   if (item.body) {
-    const conversation = item.kind === "message_reaction" && item.refId;
+    // A group message's push names the group; it's still a message (and never from someone blocked).
+    const conversation = (item.kind === "message_reaction" || item.kind === "message") && item.refId;
+    if (conversation && item.actorId && (row.actor_ok !== "t" || row.blocked === "t")) return { skip: "actor unavailable" };
     return {
       message: {
         title: "Katkee",
         body: item.body,
         data: { kind: item.kind, url: item.link ?? "katkee://home", ...(item.refId ? (conversation ? { conversationId: item.refId } : { storyId: item.refId }) : {}) },
-        collapseKey: item.refId ? `${item.kind}-${item.refId}` : item.kind,
+        collapseKey: item.refId ? (item.kind === "message" ? `dm-${item.refId}` : `${item.kind}-${item.refId}`) : item.kind,
         threadId: conversation ? `dm-${item.refId}` : "activity",
         badge,
         channel: conversation ? "messages" : "activity",
