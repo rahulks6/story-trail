@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ListSkeleton } from "../../components/Skeleton";
-import { FlatList, Pressable, RefreshControl, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, FlatList, Pressable, RefreshControl, StyleSheet, Text, TextInput, View } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { DMStackParamList } from "../../navigation/types";
@@ -10,7 +10,9 @@ import { useDM } from "../../state/DMContext";
 import { useRealtimeEvents } from "../../state/RealtimeContext";
 import { askForPushOnce } from "../../push/usePushRegistration";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
-import { groupName, listConversations, type ConversationSummary } from "../../api/conversations";
+import { groupName, hideConversation, listConversations, setConversationMuted, type ConversationSummary } from "../../api/conversations";
+import { ActionSheet } from "../../components/ActionSheet";
+import { showToast } from "../../components/Toast";
 import { actorName, groupEventText } from "../../models/groupEvents";
 import { EmptyState } from "../../components/EmptyState";
 import { Button } from "../../components/Form";
@@ -56,6 +58,41 @@ export function DMInboxScreen(): React.JSX.Element {
   const reloadTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const latestRequest = useRef(0);
   const [hasMore, setHasMore] = useState(false);
+  /** The conversation whose options are open (long-press a row). */
+  const [menuFor, setMenuFor] = useState<ConversationSummary | null>(null);
+  const patch = (id: string, change: Partial<ConversationSummary> | null) =>
+    setConversations((current) => current && (change ? current.map((c) => (c.id === id ? { ...c, ...change } : c)) : current.filter((c) => c.id !== id)));
+  const toggleMute = async (item: ConversationSummary) => {
+    if (!accessToken) return;
+    const next = !item.muted;
+    patch(item.id, { muted: next });
+    try {
+      await setConversationMuted(item.id, next, accessToken);
+      showToast(next ? "Notifications muted" : "Notifications on");
+    } catch {
+      patch(item.id, { muted: !next });
+      Alert.alert("Couldn't change that", "Check your connection and try again.");
+    }
+  };
+  const deleteChat = (item: ConversationSummary) => {
+    Alert.alert("Delete this chat?", "It's removed from your inbox only. If they message you again, it comes back.", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: async () => {
+          if (!accessToken) return;
+          try {
+            await hideConversation(item.id, accessToken);
+            patch(item.id, null);
+            void refreshUnreadCount();
+          } catch {
+            Alert.alert("Couldn't delete", "Check your connection and try again.");
+          }
+        },
+      },
+    ]);
+  };
   const loadingMore = useRef(false);
   // Which search the list on screen is for: a reload of the same one keeps the older pages already loaded.
   const listedSearch = useRef<string | null>(null);
@@ -186,7 +223,14 @@ export function DMInboxScreen(): React.JSX.Element {
     );
   }
 
+  const menu = menuFor;
   return (
+    <>
+    <ActionSheet
+      visible={menu !== null}
+      onClose={() => setMenuFor(null)}
+      groups={menu ? [[{ label: menu.muted ? "Unmute notifications" : "Mute notifications", onPress: () => void toggleMute(menu) }], [{ label: "Delete chat", destructive: true, onPress: () => deleteChat(menu) }]] : []}
+    />
     <FlatList
       style={styles.container}
       data={conversations}
@@ -214,8 +258,10 @@ export function DMInboxScreen(): React.JSX.Element {
                   otherAvatarMediaId: person?.avatarMediaId ?? null,
                 })
           }
+          onLongPress={() => setMenuFor(item)}
           accessibilityRole="button"
-          accessibilityLabel={`${name}${group ? `, group of ${group.memberCount}` : ""}${item.unread ? ", unread" : ""}`}
+          accessibilityLabel={`${name}${group ? `, group of ${group.memberCount}` : ""}${item.unread ? ", unread" : ""}${item.muted ? ", muted" : ""}`}
+          accessibilityHint="Long press for options"
         >
           {group ? (
             <GroupAvatar members={group.members} size={48} />
@@ -228,11 +274,13 @@ export function DMInboxScreen(): React.JSX.Element {
               {previewText(item, user?.id)}
             </Text>
           </View>
+          {item.muted ? <Icon name={ICONS.audioMuted} size={16} color={colors.textSecondary} /> : null}
           {item.unread ? <View style={styles.unreadDot} /> : null}
         </Pressable>
         );
       }}
     />
+    </>
   );
 }
 

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ListSkeleton } from "../../components/Skeleton";
-import { ActivityIndicator, Pressable, RefreshControl, ScrollView, SectionList, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Image, Pressable, RefreshControl, ScrollView, SectionList, StyleSheet, Text, View } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../navigation/types";
@@ -16,7 +16,9 @@ import {
   markNotificationRead,
   type NotificationRecord,
 } from "../../api/notifications";
-import { getStoryOwnerUsername } from "../../api/stories";
+import { getStoryOwnerUsername, mediaFileUrl } from "../../api/stories";
+import { acceptFollowRequest, declineFollowRequest, followUser } from "../../api/users";
+import { ApiError } from "../../api/client";
 import { Avatar } from "../../components/Avatar";
 import { EmptyState } from "../../components/EmptyState";
 import { Banner, Button } from "../../components/Form";
@@ -81,6 +83,8 @@ interface GroupedLikeRow {
   key: string;
   unreadIds: string[];
   storyId: string;
+  /** The Story's picture, shown at the row's end. */
+  storyMediaId: string;
   actorNames: string[]; // up to 2, most recent first
   firstActor: NotificationRecord["actor"];
   totalCount: number;
@@ -138,6 +142,7 @@ function groupNotifications(notifications: NotificationRecord[]): ActivityRow[] 
         key: `like-group-${storyId}`,
         unreadIds: notification.readAt === null ? [notification.id] : [],
         storyId,
+        storyMediaId: notification.story.mediaId,
         actorNames: [actorName],
         firstActor: notification.actor,
         totalCount: 1,
@@ -339,6 +344,67 @@ export function ActivityScreen(): React.JSX.Element {
     }
   };
 
+  // What a row ends with, like Instagram: Follow back, Confirm/Delete, or the Story's picture.
+  const [followedBack, setFollowedBack] = useState<Record<string, "following" | "requested">>({});
+  const [answered, setAnswered] = useState<Record<string, "accepted" | "declined">>({});
+  const followBack = async (username: string) => {
+    if (!accessToken) return;
+    try {
+      const status = await followUser(username, accessToken);
+      setFollowedBack((m) => ({ ...m, [username]: status.status === "requested" ? "requested" : "following" }));
+    } catch (e) {
+      setLoadError(e instanceof ApiError ? e.message : "Couldn't follow. Check your connection and try again.");
+    }
+  };
+  const answer = async (requestId: string, accept: boolean) => {
+    if (!accessToken) return;
+    try {
+      if (accept) await acceptFollowRequest(requestId, accessToken);
+      else await declineFollowRequest(requestId, accessToken);
+      setAnswered((m) => ({ ...m, [requestId]: accept ? "accepted" : "declined" }));
+    } catch (e) {
+      setLoadError(e instanceof ApiError ? e.message : "Couldn't answer that request. Check your connection and try again.");
+    }
+  };
+  const authHeaders = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
+  const trailing = (row: ActivityRow): React.ReactNode => {
+    if (row.kind === "grouped-like") {
+      return <Image source={{ uri: mediaFileUrl(row.storyMediaId, "thumbnail"), headers: authHeaders }} style={styles.thumb} accessibilityIgnoresInvertColors />;
+    }
+    const n = row.notification;
+    if (n.type === "follow_request" && n.followRequest) {
+      const done = answered[n.followRequest.id] ?? (n.followRequest.status !== "pending" ? (n.followRequest.status as "accepted" | "declined") : undefined);
+      if (done) return <Text style={styles.trailingNote}>{done === "accepted" ? "Accepted" : "Deleted"}</Text>;
+      const id = n.followRequest.id;
+      return (
+        <View style={styles.trailingButtons}>
+          <Pressable onPress={() => void answer(id, true)} style={[styles.smallButton, styles.smallButtonPrimary]} accessibilityRole="button" accessibilityLabel={`Confirm @${n.actor?.username ?? ""}`}>
+            <Text style={styles.smallButtonPrimaryText}>Confirm</Text>
+          </Pressable>
+          <Pressable onPress={() => void answer(id, false)} style={styles.smallButton} accessibilityRole="button" accessibilityLabel={`Delete @${n.actor?.username ?? ""}'s request`}>
+            <Text style={styles.smallButtonText}>Delete</Text>
+          </Pressable>
+        </View>
+      );
+    }
+    if ((n.type === "follow" || n.type === "follow_accepted") && n.actor) {
+      const state = followedBack[n.actor.username];
+      if (n.actor.followedByYou && !state) return null;
+      const username = n.actor.username;
+      return state ? (
+        <Text style={styles.trailingNote}>{state === "requested" ? "Requested" : "Following"}</Text>
+      ) : (
+        <Pressable onPress={() => void followBack(username)} style={[styles.smallButton, styles.smallButtonPrimary]} accessibilityRole="button" accessibilityLabel={`Follow @${username} back`}>
+          <Text style={styles.smallButtonPrimaryText}>Follow back</Text>
+        </Pressable>
+      );
+    }
+    if (n.story?.mediaId) {
+      return <Image source={{ uri: mediaFileUrl(n.story.mediaId, "thumbnail"), headers: authHeaders }} style={styles.thumb} accessibilityIgnoresInvertColors />;
+    }
+    return null;
+  };
+
   const onMarkAllRead = async () => {
     if (!accessToken) return;
     setNotifications((current) => (current ? current.map((n) => ({ ...n, readAt: n.readAt ?? new Date().toISOString() })) : current));
@@ -452,6 +518,7 @@ export function ActivityScreen(): React.JSX.Element {
                   <Text style={typography.caption}>{ago}</Text>
                 </View>
                 {unread ? <View style={styles.unreadDot} /> : null}
+                {trailing(row)}
               </Pressable>
             );
           }}
@@ -468,6 +535,13 @@ export function ActivityScreen(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
+  thumb: { width: 44, height: 58, borderRadius: radii.sm, backgroundColor: colors.surfaceElevated },
+  trailingButtons: { flexDirection: "row", gap: spacing.xs },
+  smallButton: { minHeight: 34, paddingHorizontal: spacing.md, borderRadius: radii.sm, justifyContent: "center", backgroundColor: colors.surfaceElevated },
+  smallButtonPrimary: { backgroundColor: colors.accent },
+  smallButtonText: { color: colors.textPrimary, fontWeight: "700", fontSize: 14 },
+  smallButtonPrimaryText: { color: colors.onAccent, fontWeight: "700", fontSize: 14 },
+  trailingNote: { ...typography.caption, color: colors.textSecondary },
   centered: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background, padding: spacing.lg, gap: spacing.md },
   loadError: { textAlign: "center" },
   footerRetry: { padding: spacing.md },

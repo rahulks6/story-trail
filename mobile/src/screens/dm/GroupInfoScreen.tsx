@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from "react";
-import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Switch, Text, TextInput, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { DMStackParamList } from "../../navigation/types";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
-import { getConversation, leaveGroup, MAX_GROUP_MEMBERS, MAX_GROUP_TITLE, removeGroupMember, renameGroup, type GroupDetails } from "../../api/conversations";
+import { getConversation, leaveGroup, setConversationMuted, MAX_GROUP_MEMBERS, MAX_GROUP_TITLE, removeGroupMember, renameGroup, type GroupDetails } from "../../api/conversations";
 import { ApiError } from "../../api/client";
 import { Avatar } from "../../components/Avatar";
 import { GroupAvatar } from "../../components/GroupAvatar";
@@ -69,6 +69,17 @@ export function GroupInfoScreen({ navigation, route }: Props): React.JSX.Element
     ]);
   };
 
+  const toggleMute = async (next: boolean) => {
+    if (!accessToken || !group) return;
+    setGroup({ ...group, muted: next });
+    try {
+      await setConversationMuted(conversationId, next, accessToken);
+    } catch (e) {
+      setGroup((current) => (current ? { ...current, muted: !next } : current));
+      fail(e);
+    }
+  };
+
   const leave = () => {
     Alert.alert("Leave this group?", "You won't get its messages any more. Someone in it can add you back.", [
       { text: "Cancel", style: "cancel" },
@@ -126,6 +137,10 @@ export function GroupInfoScreen({ navigation, route }: Props): React.JSX.Element
             {group.members.length < MAX_GROUP_MEMBERS ? (
               <ListRow label="Add people" icon={ICONS.add} onPress={() => navigation.navigate("NewGroup", { conversationId })} />
             ) : null}
+            <View style={styles.switchRow}>
+              <Text style={typography.body}>Mute notifications</Text>
+              <Switch value={!!group.muted} onValueChange={(next) => void toggleMute(next)} accessibilityLabel="Mute notifications" />
+            </View>
           </View>
           {error ? <Banner text={error} /> : null}
           <Text style={styles.section}>People</Text>
@@ -166,6 +181,7 @@ const styles = StyleSheet.create({
   muted: { color: colors.textSecondary, textAlign: "center" },
   section: { alignSelf: "flex-start", color: colors.textSecondary, fontSize: 13, fontWeight: "600", marginTop: spacing.md },
   card: { alignSelf: "stretch", backgroundColor: colors.surface, borderRadius: radii.md, borderWidth: StyleSheet.hairlineWidth, borderColor: colors.border, overflow: "hidden" },
+  switchRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", minHeight: 52, paddingHorizontal: spacing.md },
   member: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.sm },
   memberText: { flex: 1, gap: 2 },
   remove: { minHeight: 36, paddingHorizontal: spacing.sm, justifyContent: "center" },

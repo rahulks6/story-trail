@@ -5,7 +5,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { DMStackParamList } from "../../navigation/types";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
-import { searchUsers, type SearchResult } from "../../api/users";
+import { getFollowing, searchUsers, type SearchResult } from "../../api/users";
 import { openConversation } from "../../api/conversations";
 import { ApiError } from "../../api/client";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
@@ -31,20 +31,35 @@ export function NewChatScreen({ navigation }: Props): React.JSX.Element {
   const [loading, setLoading] = useState(false);
   const [opening, setOpening] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [searchFailed, setSearchFailed] = useState(false);
+  // Before you type: people you follow, so starting a chat is a tap.
+  const [suggested, setSuggested] = useState<SearchResult[]>([]);
+  const { user } = useAuth();
+  useEffect(() => {
+    if (!accessToken || !user?.username) return;
+    getFollowing(user.username, accessToken, { limit: 50 })
+      .then(({ following }) => setSuggested(following.map((p) => ({ id: p.id, username: p.username, displayName: p.displayName, avatarMediaId: p.avatarMediaId ?? null }) as SearchResult)))
+      .catch(() => undefined);
+  }, [accessToken, user?.username]);
 
   useEffect(() => {
     if (!debouncedQuery || !accessToken) {
       setResults([]);
+      setSearchFailed(false);
       return;
     }
     let cancelled = false;
     setLoading(true);
+    setSearchFailed(false);
     searchUsers(debouncedQuery, accessToken)
       .then(({ results: found }) => {
         if (!cancelled) setResults(found);
       })
       .catch(() => {
-        if (!cancelled) setResults([]);
+        if (!cancelled) {
+          setResults([]);
+          setSearchFailed(true);
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -91,11 +106,14 @@ export function NewChatScreen({ navigation }: Props): React.JSX.Element {
       {error ? <Text style={styles.error}>{error}</Text> : null}
       {loading ? <ActivityIndicator color={colors.accent} style={styles.spinner} /> : null}
 
-      {!loading && debouncedQuery && results.length === 0 ? (
+      {searchFailed ? (
+        <EmptyState icon="search" title="Couldn't search" message="Check your connection and try again." />
+      ) : !loading && debouncedQuery && results.length === 0 ? (
         <EmptyState icon="search" title="No one found" message={`No people match "${debouncedQuery}".`} />
       ) : (
         <FlatList
-          data={results}
+          data={debouncedQuery ? results : suggested}
+          ListHeaderComponent={!debouncedQuery && suggested.length ? <Text style={styles.section}>People you follow</Text> : undefined}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingBottom: bottomInset }}
           renderItem={({ item }) => (
@@ -130,6 +148,7 @@ const styles = StyleSheet.create({
   inputIcon: { color: colors.textDisabled, fontSize: 16 },
   input: { flex: 1, paddingVertical: spacing.sm, color: colors.textPrimary, fontSize: 15 },
   error: { color: colors.danger, marginTop: spacing.sm },
+  section: { ...typography.label, color: colors.textSecondary, marginTop: spacing.sm, marginBottom: spacing.xs },
   spinner: { marginTop: spacing.md },
   row: {
     flexDirection: "row",

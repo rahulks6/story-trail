@@ -40,6 +40,7 @@ import { FollowListScreen } from "../screens/profile/FollowListScreen";
 import { ActivityScreen } from "../screens/activity/ActivityScreen";
 import { UploadRunner } from "../state/UploadRunner";
 import { FeedbackScreen } from "../screens/profile/FeedbackScreen";
+import { SendStoryScreen } from "../screens/dm/SendStoryScreen";
 import { setCurrentScreen } from "../crashReporting";
 
 /** The screen on view, deepest navigator first (crash reports say where they happened). */
@@ -91,6 +92,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
       <Stack.Screen name="UploadQueue" component={UploadQueueScreen} options={{headerShown:true,title:'Story uploads',headerStyle:{backgroundColor:colors.background},headerTintColor:colors.textPrimary}}/>
       <Stack.Screen name="Appeals" component={AppealsScreen} options={{headerShown:true,title:'Account review',headerStyle:{backgroundColor:colors.background},headerTintColor:colors.textPrimary}}/>
       <Stack.Screen name="StoryViewer" component={StoryViewerScreen} options={{ presentation: "fullScreenModal" }} />
+      <Stack.Screen name="SendStory" component={SendStoryScreen} options={{ presentation: "modal", headerShown: true, title: "Send to", headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary, headerShadowVisible: false }} />
       <Stack.Screen name="StoryLink" component={StoryLinkScreen} options={{ presentation: "fullScreenModal" }} />
       <Stack.Screen name="HighlightViewer" component={HighlightViewerScreen} options={{ presentation: "fullScreenModal" }} />
       <Stack.Screen

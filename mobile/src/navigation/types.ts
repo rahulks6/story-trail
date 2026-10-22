@@ -23,8 +23,6 @@ export type DMStackParamList = {
   NewGroup: { conversationId?: string };
   /** A group's people, name, Add people and Leave. */
   GroupInfo: { conversationId: string };
-  /** Reached from ShareSheet's "Send to a Katkee user" (spec section 15) via a root→tab→stack deep link. */
-  SendStory: { storyId: string; ownerUsername: string };
   /** Search a user and open (or reopen) a real conversation with them via the existing conversation-start endpoint. */
   NewChat: undefined;
 };
@@ -54,8 +52,10 @@ export type CreateStackParamList = {
 
 export type RootStackParamList = {
   // Nested so the root level (StoryViewer's ShareSheet) can deep-link two
-  // levels down into a tab's own stack — e.g. Main -> DM -> SendStory.
+  // levels down into a tab's own stack — e.g. Main -> Search -> UserProfile.
   Main: NavigatorScreenParams<MainTabParamList>;
+  /** Share > Send in Katkee: over the Story, so closing it returns to the same Story. */
+  SendStory: { storyId: string; ownerUsername: string };
   /** Likes, comments, follows and mentions: opened from the heart at the top of Home. */
   Activity: undefined;
   /**

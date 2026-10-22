@@ -12,7 +12,8 @@ export interface NotificationRecord {
   type: NotificationType;
   createdAt: string;
   readAt: string | null;
-  actor: { id: string; username: string; displayName: string; avatarMediaId?: string | null } | null;
+  /** `followedByYou`: you follow them (or asked to); Activity offers Follow back only when not. */
+  actor: { id: string; username: string; displayName: string; avatarMediaId?: string | null; followedByYou?: boolean } | null;
   story: { id: string; mediaId: string } | null;
   comment: { id: string; body: string } | null;
   followRequest: { id: string; status: string } | null;

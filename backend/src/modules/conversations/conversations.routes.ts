@@ -116,6 +116,28 @@ export function registerConversationsRoutes(router: Router): void {
     sendJson(res, 200, { reactions });
   });
 
+  // Unsend your own message (for everyone).
+  router.delete("/api/v1/conversations/:id/messages/:messageId", async (req, res) => {
+    requireAuth(req);
+    await conversationsService.unsendMessage(req.userId as string, req.params.id as string, req.params.messageId as string);
+    sendJson(res, 204, undefined);
+  });
+
+  // Your own settings for a conversation: mute its pushes; delete it from your inbox.
+  router.put("/api/v1/conversations/:id/mute", async (req, res) => {
+    requireAuth(req);
+    const muted = (req.body as { muted?: unknown } | undefined)?.muted;
+    if (typeof muted !== "boolean") throw new HttpError(422, "muted must be true or false.");
+    await conversationsService.setMuted(req.userId as string, req.params.id as string, muted);
+    sendJson(res, 204, undefined);
+  });
+
+  router.post("/api/v1/conversations/:id/hide", async (req, res) => {
+    requireAuth(req);
+    await conversationsService.hideConversation(req.userId as string, req.params.id as string);
+    sendJson(res, 204, undefined);
+  });
+
   router.post("/api/v1/conversations/:id/report", async (req, res) => {
     requireAuth(req);
     reportLimiter.check(req.userId as string);

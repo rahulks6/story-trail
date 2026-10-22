@@ -71,7 +71,8 @@ export function HomeScreen():React.JSX.Element {
  const creators=useMemo(()=>feed?.map(e=>e.owner.username)??[],[feed]);
  const following=useMemo(()=>Object.fromEntries((feed??[]).map(e=>[e.owner.username,e.isFollowing])),[feed]);
  // initial:false keeps Search's own first screen under the profile, so the Search tab still works after.
- const openDM=useCallback(({storyId,ownerUsername}:{storyId:string;ownerUsername:string})=>navigation.navigate('DM',{screen:'SendStory',initial:false,params:{storyId,ownerUsername}}),[navigation]);
+ // Over the Story: closing "Send to" comes back to the same Story.
+ const openDM=useCallback(({storyId,ownerUsername}:{storyId:string;ownerUsername:string})=>navigation.navigate('SendStory',{storyId,ownerUsername}),[navigation]);
  const openProfile=useCallback((username:string)=>navigation.navigate('Search',{screen:'UserProfile',initial:false,params:{username}}),[navigation]);
  if(feed===null&&!error)return <View style={styles.root}><StorySkeleton/>{festivalButton}{activityButton}{uploads}</View>;
  if(feed===null)return <View style={styles.empty}><EmptyState variant="media" title="Couldn't load Stories" message="Check your connection and try again.">

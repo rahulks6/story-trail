@@ -36,15 +36,44 @@ const ACTIVE_MEMBERS_JSON = (conversation: string) =>
 export interface Membership {
   role: "admin" | "member";
   joinedAt: string;
+  /** No pushes for this conversation. */
+  muted: boolean;
+  /** Deleted from their inbox at this moment: they see only what came after. */
+  hiddenBefore: string | null;
 }
 
 /** The viewer's place in a conversation, or null when they aren't (or are no longer) in it. */
 export async function findActiveMembership(conversationId: string, userId: string): Promise<Membership | null> {
   const row = await queryOne(
-    `SELECT role, joined_at FROM conversation_members WHERE conversation_id = :'c' AND user_id = :'u' AND left_at IS NULL`,
+    `SELECT role, joined_at, muted, hidden_before FROM conversation_members WHERE conversation_id = :'c' AND user_id = :'u' AND left_at IS NULL`,
     { c: conversationId, u: userId },
   );
-  return row ? { role: row.role as Membership["role"], joinedAt: row.joined_at as string } : null;
+  return row ? { role: row.role as Membership["role"], joinedAt: row.joined_at as string, muted: row.muted === "t", hiddenBefore: (row.hidden_before as string | null) ?? null } : null;
+}
+
+/** Mutes (or unmutes) a conversation's pushes for this person. */
+export async function setMuted(conversationId: string, userId: string, muted: boolean): Promise<void> {
+  await query(`UPDATE conversation_members SET muted = :'muted'::boolean WHERE conversation_id = :'c' AND user_id = :'u' AND left_at IS NULL`, { c: conversationId, u: userId, muted: muted ? "true" : "false" });
+}
+
+/** "Delete chat": gone from their inbox and history now; it comes back with the next message. */
+export async function hideConversation(conversationId: string, userId: string): Promise<void> {
+  await query(`UPDATE conversation_members SET hidden_before = now() WHERE conversation_id = :'c' AND user_id = :'u' AND left_at IS NULL`, { c: conversationId, u: userId });
+}
+
+/**
+ * The sender unsends their own message: gone for everyone (its reactions with it; a reply that
+ * quoted it keeps its own text). A report already made keeps its copy as evidence.
+ */
+export async function unsendMessage(conversationId: string, messageId: string, senderId: string): Promise<boolean> {
+  const row = await queryOne(
+    `WITH gone AS (DELETE FROM messages WHERE id = :'m' AND conversation_id = :'c' AND sender_id = :'u' AND event IS NULL RETURNING id),
+     n AS (SELECT pg_notify('realtime', json_build_object('u', ${ACTIVE_MEMBERS_JSON(":'c'")},
+             'e', json_build_object('type', 'unsent', 'conversationId', :'c'::uuid, 'messageId', gone.id))::text) FROM gone)
+     SELECT (SELECT count(*) FROM gone) AS n, (SELECT count(*) FROM n) AS sent`,
+    { c: conversationId, m: messageId, u: senderId },
+  );
+  return Number(row?.n ?? 0) > 0;
 }
 
 export interface MemberRow {
@@ -124,6 +153,11 @@ export interface MessageRow {
   replyTo: QuotedMessage | null;
   /** Set on a group's "what happened" line (someone was added, left, renamed it); no text then. */
   event: GroupEvent | null;
+  /**
+   * A shared Story's card: whose it is and whether it's still up. The thumbnail loads only for
+   * someone allowed to see the Story (the media route checks), so `mediaId` reveals nothing.
+   */
+  sharedStory: { ownerUsername: string; ownerAvatarMediaId: string | null; mediaId: string | null; active: boolean } | null;
   createdAt: string;
   /** The sender's device id for the message; only ever shown to the sender (see conversations.service.ts). */
   clientMessageId?: string;
@@ -204,6 +238,7 @@ function mapMessageRow(row: Row): MessageRow {
     reactions: parseReactions(row.reactions_json),
     replyTo: parseQuote(row.reply_to_json),
     event: row.event ? ((typeof row.event === "string" ? JSON.parse(row.event) : row.event) as GroupEvent) : null,
+    sharedStory: row.shared_story_json ? ((typeof row.shared_story_json === "string" ? JSON.parse(row.shared_story_json) : row.shared_story_json) as MessageRow["sharedStory"]) : null,
     createdAt: row.created_at as string,
     ...(row.client_message_id ? { clientMessageId: row.client_message_id as string } : {}),
   };
@@ -218,7 +253,12 @@ const MESSAGE_COLUMNS = `id, conversation_id, sender_id, body, shared_story_id, 
   (SELECT json_build_object('id', q.id, 'senderId', q.sender_id, 'body', left(q.body, ${QUOTE_LENGTH}),
                             'mediaKind', qm.kind, 'sharedStory', q.shared_story_id IS NOT NULL)
      FROM messages q LEFT JOIN media qm ON qm.id = q.media_id AND qm.purged_at IS NULL
-     WHERE q.id = messages.reply_to_message_id) AS reply_to_json`;
+     WHERE q.id = messages.reply_to_message_id) AS reply_to_json,
+  (SELECT json_build_object('ownerUsername', su.username, 'ownerAvatarMediaId', su.avatar_media_id,
+                            'active', s.deleted_at IS NULL AND s.moderation_removed_at IS NULL AND s.expires_at > now(),
+                            'mediaId', CASE WHEN s.deleted_at IS NULL AND s.moderation_removed_at IS NULL AND s.expires_at > now() THEN s.media_id END)
+     FROM stories s JOIN users su ON su.id = s.owner_id
+     WHERE s.id = messages.shared_story_id) AS shared_story_json`;
 
 /**
  * Inserts a message, or — when `clientMessageId` was already used by this sender in
@@ -248,7 +288,7 @@ export async function createMessage(
      conv AS (SELECT kind, title FROM conversations WHERE id = :'conversation_id'),
      -- Everyone else still in the conversation gets the push; a group's says which group.
      c AS (SELECT cm.user_id AS recipient_id FROM conversation_members cm
-           WHERE cm.conversation_id = :'conversation_id' AND cm.left_at IS NULL AND cm.user_id <> :'sender_id'),
+           WHERE cm.conversation_id = :'conversation_id' AND cm.left_at IS NULL AND cm.user_id <> :'sender_id' AND NOT cm.muted),
      p AS (INSERT INTO push_outbox (user_id, kind, actor_id, ref_id, body, link)
            SELECT c.recipient_id, 'message', m.sender_id, m.conversation_id,
                   CASE WHEN conv.kind = 'group' THEN
@@ -458,6 +498,8 @@ export interface ConversationSummary {
     createdAt: string;
   } | null;
   unread: boolean;
+  /** You muted it: no pushes from it. */
+  muted: boolean;
   createdAt: string;
 }
 
@@ -490,6 +532,7 @@ function mapConversationSummaryRow(row: Row): ConversationSummary {
         }
       : null,
     unread: row.is_unread === "t",
+    muted: row.muted === "t",
     createdAt: row.created_at as string,
   };
 }
@@ -501,7 +544,7 @@ function mapConversationSummaryRow(row: Row): ConversationSummary {
 export async function listConversationsForUser(userId: string, limit: number, offset: number, search = "", includeGroups = false): Promise<ConversationSummary[]> {
   const rows = await query(
     `SELECT
-       c.id, c.created_at, c.kind, c.title,
+       c.id, c.created_at, c.kind, c.title, me.muted,
        ou.id AS other_user_id, ou.username AS other_username, ou.display_name AS other_display_name, ou.avatar_media_id AS other_avatar_media_id,
        lm.id AS last_message_id, lm.sender_id AS last_message_sender_id, lm.body AS last_message_body, lm.event AS last_message_event,
        (SELECT username FROM users WHERE id = lm.sender_id) AS last_message_sender_username,
@@ -519,13 +562,15 @@ export async function listConversationsForUser(userId: string, limit: number, of
        SELECT id, sender_id, body, shared_story_id, created_at, event,
               (SELECT md.kind FROM media md WHERE md.id = m.media_id) AS media_kind
        FROM messages m
-       WHERE m.conversation_id = c.id AND m.created_at >= me.joined_at
+       WHERE m.conversation_id = c.id AND m.created_at >= me.joined_at AND m.created_at > coalesce(me.hidden_before, '-infinity')
        ORDER BY m.created_at DESC
        LIMIT 1
      ) lm ON true
      LEFT JOIN conversation_reads cr ON cr.conversation_id = c.id AND cr.user_id = :'user_id'
      WHERE me.user_id = :'user_id' AND me.left_at IS NULL
        AND (c.kind = 'direct' OR :'groups' = '1')
+       -- Deleted from the inbox: back only once something new arrives.
+       AND (me.hidden_before IS NULL OR lm.id IS NOT NULL)
        AND (:'search' = '' OR ou.username::text ILIKE :'pattern' OR ou.display_name ILIKE :'pattern' OR c.title ILIKE :'pattern'
             OR (c.kind = 'group' AND EXISTS (SELECT 1 FROM conversation_members g JOIN users u ON u.id = g.user_id
                   WHERE g.conversation_id = c.id AND g.left_at IS NULL AND g.user_id <> :'user_id'
@@ -544,7 +589,7 @@ export async function countUnreadConversations(userId: string): Promise<number> 
        FROM conversation_members me
        JOIN conversations c ON c.id = me.conversation_id
        JOIN LATERAL (
-         SELECT created_at FROM messages m WHERE m.conversation_id = c.id AND m.created_at >= me.joined_at ORDER BY m.created_at DESC LIMIT 1
+         SELECT created_at FROM messages m WHERE m.conversation_id = c.id AND m.created_at >= me.joined_at AND m.created_at > coalesce(me.hidden_before, '-infinity') ORDER BY m.created_at DESC LIMIT 1
        ) lm ON true
        LEFT JOIN conversation_reads cr ON cr.conversation_id = c.id AND cr.user_id = :'user_id'
        WHERE me.user_id = :'user_id' AND me.left_at IS NULL
@@ -633,7 +678,7 @@ export async function setMessageReaction(conversationId: string, messageId: stri
               '@' || (SELECT username FROM users WHERE id = :'user') || ' reacted ' || :'emoji' || ' to your message',
               'katkee://conversation/' || :'conversation'
        FROM m, saved WHERE m.sender_id <> :'user'
-         AND EXISTS (SELECT 1 FROM conversation_members cm WHERE cm.conversation_id = :'conversation' AND cm.user_id = m.sender_id AND cm.left_at IS NULL)
+         AND EXISTS (SELECT 1 FROM conversation_members cm WHERE cm.conversation_id = :'conversation' AND cm.user_id = m.sender_id AND cm.left_at IS NULL AND NOT cm.muted)
        RETURNING id),
      notified AS (
        SELECT pg_notify('realtime', json_build_object(

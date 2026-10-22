@@ -266,6 +266,9 @@ describe("a conversation between two other people", () => {
     refused(await attempt("POST /api/v1/conversations/:id/members", `${c}/members`, stranger, { usernames: [owner.username] }), "add people", [404]);
     refused(await attempt("DELETE /api/v1/conversations/:id/members/:userId", `${c}/members/${owner.id}`, stranger), "remove", [404]);
     refused(await attempt("POST /api/v1/conversations/:id/leave", `${c}/leave`, stranger), "leave", [404]);
+    refused(await attempt("DELETE /api/v1/conversations/:id/messages/:messageId", `${c}/messages/${ids.message}`, stranger), "unsend", [404]);
+    refused(await attempt("PUT /api/v1/conversations/:id/mute", `${c}/mute`, stranger, { muted: true }), "mute", [404]);
+    refused(await attempt("POST /api/v1/conversations/:id/hide", `${c}/hide`, stranger), "hide", [404]);
     const r = `${c}/messages/${ids.message}/reaction`;
     refused(await attempt("PUT /api/v1/conversations/:id/messages/:messageId/reaction", r, stranger, { emoji: "❤️" }), "react", [404]);
     refused(await attempt("DELETE /api/v1/conversations/:id/messages/:messageId/reaction", r, stranger), "unreact", [404]);

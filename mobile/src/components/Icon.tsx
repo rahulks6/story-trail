@@ -41,6 +41,8 @@ export function Icon({name,size,color,selected=false,style}: {name:IconName;size
   edit:'M3 21l1-6L17 2l5 5L9 20l-6 1ZM14 5l5 5',
   undo:'M3 9h11a6 6 0 0 1 0 12M3 9l6-6m-6 6 6 6',
   reply:'M10 5 3 12l7 7M3 12h9a9 9 0 0 1 9 9',
+  copy:'M9 9h11v12H9ZM5 15H4V4h11v1',
+  report:'M5 21V4h12l-2.5 4L17 12H5',
   redo:'M21 9H10a6 6 0 0 0 0 12M21 9l-6-6m6 6-6 6',
   logout:'M10 3H3v18h7m-2-9h14m-5-5 5 5-5 5',
   star:'m12 2 3 6 7 1-5 5 1 8-6-4-6 4 1-8-5-5 7-1Z',

@@ -13,7 +13,13 @@ jest.mock("../src/state/AuthContext", () => ({ useAuth: () => mockAuth }));
 jest.mock("../src/state/NotificationsContext", () => ({ useNotifications: () => mockNotifications }));
 jest.mock("../src/state/RealtimeContext", () => ({ useRealtimeEvents: () => undefined }));
 jest.mock("../src/push/usePushRegistration", () => ({ askForPushOnce: jest.fn(async () => undefined) }));
-jest.mock("../src/api/stories", () => ({ getStoryOwnerUsername: jest.fn() }));
+jest.mock("../src/api/stories", () => ({ getStoryOwnerUsername: jest.fn(), mediaFileUrl: (id: string, v: string) => `/media/${id}/${v}` }));
+jest.mock("../src/api/users", () => ({
+  ...jest.requireActual("../src/api/users"),
+  followUser: jest.fn(async () => ({ status: "following" })),
+  acceptFollowRequest: jest.fn(async () => undefined),
+  declineFollowRequest: jest.fn(async () => undefined),
+}));
 jest.mock("../src/api/notifications", () => ({
   listNotifications: jest.fn(),
   markAllNotificationsRead: jest.fn(async () => undefined),
@@ -102,4 +108,24 @@ test("an accepted request and a Story mention say so; a request opens Follow req
 
   await act(async () => row(/carol.*accepted/).props.onPress());
   expect(mockNavigation.navigate).toHaveBeenCalledWith("Main", { screen: "Search", params: { screen: "UserProfile", params: { username: "carol" }, initial: false } });
+});
+
+test("rows end with what you'd do next: Follow back, Confirm or Delete a request, or the Story's picture", async () => {
+  const users = require("../src/api/users");
+  const actor = (u: string, followedByYou = false) => ({ id: `u-${u}`, username: u, displayName: u, followedByYou });
+  list.mockResolvedValue({ notifications: [
+    { ...follow("f1", "ana", 1, false), actor: actor("ana") },
+    { ...follow("f2", "ben", 2, false), actor: actor("ben", true) },
+    { ...follow("r1", "cy", 3, false), type: "follow_request", actor: actor("cy"), followRequest: { id: "req1", status: "pending" } },
+    { ...follow("l1", "dee", 4, false), type: "like", actor: actor("dee"), story: { id: "st1", mediaId: "md1" } },
+  ] });
+  await render();
+  expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Follow @ben back")).toHaveLength(0); // already following
+  await act(async () => button("Follow @ana back").props.onPress());
+  expect(users.followUser).toHaveBeenCalledWith("ana", "token");
+  expect(texts()).toContain("Following");
+  await act(async () => button("Confirm @cy").props.onPress());
+  expect(users.acceptFollowRequest).toHaveBeenCalledWith("req1", "token");
+  expect(texts()).toContain("Accepted");
+  expect(tree.root.findAll((n) => (n.type as unknown) === "Image" && n.props.source?.uri === "/media/md1/thumbnail")).not.toHaveLength(0);
 });

@@ -36,6 +36,8 @@ export interface ConversationSummary {
     createdAt: string;
   } | null;
   unread: boolean;
+  /** You muted it: no pushes from it. */
+  muted?: boolean;
   createdAt: string;
 }
 
@@ -69,6 +71,8 @@ export interface Message {
   event?: GroupEvent | null;
   /** A group only, on your own messages: who has read it so far. */
   seenBy?: string[];
+  /** A shared Story's card: whose, and whether it's still up (`mediaId` only then). */
+  sharedStory?: { ownerUsername: string; ownerAvatarMediaId: string | null; mediaId: string | null; active: boolean } | null;
 }
 
 /** The start of a replied-to message: enough to show it above the reply. */
@@ -125,6 +129,7 @@ export interface GroupDetails {
   title: string | null;
   otherUser: null;
   role: "admin" | "member";
+  muted?: boolean;
   members: GroupMember[];
 }
 
@@ -149,6 +154,21 @@ export function removeGroupMember(conversationId: string, userId: string, access
   return apiDelete(`/api/v1/conversations/${conversationId}/members/${userId}`, accessToken);
 }
 
+/** Unsend your own message, for everyone. */
+export function unsendMessage(conversationId: string, messageId: string, accessToken: string): Promise<void> {
+  return apiDelete(`/api/v1/conversations/${conversationId}/messages/${messageId}`, accessToken);
+}
+
+/** Mute (or unmute) a conversation's notifications, for you. */
+export function setConversationMuted(conversationId: string, muted: boolean, accessToken: string): Promise<void> {
+  return apiPut(`/api/v1/conversations/${conversationId}/mute`, { muted }, accessToken);
+}
+
+/** Delete a chat from your inbox (it comes back with the next message). */
+export function hideConversation(conversationId: string, accessToken: string): Promise<void> {
+  return apiPost(`/api/v1/conversations/${conversationId}/hide`, undefined, accessToken);
+}
+
 export function leaveGroup(conversationId: string, accessToken: string): Promise<void> {
   return apiPost(`/api/v1/conversations/${conversationId}/leave`, undefined, accessToken);
 }
@@ -166,7 +186,7 @@ export function listConversations(
 }
 
 /** One of your conversations by id (a push notification's link carries only the id). */
-export function getConversation(conversationId: string, accessToken: string): Promise<{ conversation: (ConversationWithOtherUser & { kind?: "direct" }) | GroupDetails }> {
+export function getConversation(conversationId: string, accessToken: string): Promise<{ conversation: (ConversationWithOtherUser & { kind?: "direct"; muted?: boolean }) | GroupDetails }> {
   return apiGet(`/api/v1/conversations/${encodeURIComponent(conversationId)}?groups=1`, accessToken);
 }
 

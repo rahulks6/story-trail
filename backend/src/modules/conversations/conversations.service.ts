@@ -58,9 +58,10 @@ export async function getUnreadConversationCount(viewerId: string): Promise<numb
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export interface Participation extends ConversationRow {
-  /** When the viewer joined: a group's members see what was sent from then on (1:1: everything). */
+  /** What the viewer sees starts here: a group's members from when they joined, and anyone from when they last deleted the chat. */
   since: string;
   role: conversationsRepo.Membership["role"];
+  muted: boolean;
 }
 
 /** The conversation, if the viewer is in it now (a 1:1 participant, or a group member who hasn't left). */
@@ -69,7 +70,9 @@ export async function requireParticipant(conversationId: string, viewerId: strin
   const conversation = UUID_RE.test(conversationId) ? await conversationsRepo.findConversationById(conversationId) : null;
   const membership = conversation ? await conversationsRepo.findActiveMembership(conversation.id, viewerId) : null;
   if (!conversation || !membership) throw new HttpError(404, "Conversation not found.");
-  return { ...conversation, since: conversation.kind === "group" ? membership.joinedAt : new Date(0).toISOString(), role: membership.role };
+  const joined = conversation.kind === "group" ? membership.joinedAt : new Date(0).toISOString();
+  const since = membership.hiddenBefore && new Date(membership.hiddenBefore) > new Date(joined) ? membership.hiddenBefore : joined;
+  return { ...conversation, since, role: membership.role, muted: membership.muted };
 }
 
 /** The other person in a 1:1 conversation (null in a group). */
@@ -86,6 +89,7 @@ export interface GroupDetails {
   otherUser: null;
   /** The viewer's own role (admins can remove people). */
   role: conversationsRepo.Membership["role"];
+  muted: boolean;
   members: conversationsRepo.MemberRow[];
 }
 
@@ -93,11 +97,11 @@ export interface GroupDetails {
  * One of the viewer's conversations, e.g. to open a thread from a push notification's link.
  * A group only for an app that shows groups (`includeGroups`); to an older one it isn't there.
  */
-export async function getConversation(viewerId: string, conversationId: string, includeGroups = false): Promise<(ConversationWithOtherUser & { kind: "direct" }) | GroupDetails> {
+export async function getConversation(viewerId: string, conversationId: string, includeGroups = false): Promise<(ConversationWithOtherUser & { kind: "direct"; muted: boolean }) | GroupDetails> {
   const conversation = await requireParticipant(conversationId, viewerId);
   if (conversation.kind === "group") {
     if (!includeGroups) throw new HttpError(404, "Conversation not found.");
-    return { id: conversation.id, kind: "group", createdAt: conversation.createdAt, title: conversation.title, otherUser: null, role: conversation.role,
+    return { id: conversation.id, kind: "group", createdAt: conversation.createdAt, title: conversation.title, otherUser: null, role: conversation.role, muted: conversation.muted,
              members: await conversationsRepo.listActiveMembers(conversation.id) };
   }
   const other = await usersRepo.findUserById(otherParticipant(conversation, viewerId)!);
@@ -105,6 +109,7 @@ export async function getConversation(viewerId: string, conversationId: string, 
   return {
     id: conversation.id,
     kind: "direct",
+    muted: conversation.muted,
     createdAt: conversation.createdAt,
     otherUser: { id: other.id, username: other.username, displayName: other.displayName, avatarMediaId: other.avatarMediaId },
   };
@@ -316,6 +321,25 @@ export async function signalTyping(viewerId: string, conversationId: string): Pr
   if (lastTyping.size > 10_000) lastTyping.clear(); // bounded: losing it only lets one extra signal through
   lastTyping.set(key, now);
   await publishRealtime(told, { type: "typing", conversationId, userId: viewerId });
+}
+
+/** Unsend your own message, for everyone in the conversation. */
+export async function unsendMessage(viewerId: string, conversationId: string, messageId: string): Promise<void> {
+  await requireParticipant(conversationId, viewerId);
+  if (!UUID_RE.test(messageId) || !(await conversationsRepo.unsendMessage(conversationId, messageId, viewerId))) {
+    throw new HttpError(404, "Message not found.");
+  }
+}
+
+export async function setMuted(viewerId: string, conversationId: string, muted: boolean): Promise<void> {
+  await requireParticipant(conversationId, viewerId);
+  await conversationsRepo.setMuted(conversationId, viewerId, muted);
+}
+
+/** "Delete chat" for the viewer only (see conversationsRepo.hideConversation). */
+export async function hideConversation(viewerId: string, conversationId: string): Promise<void> {
+  await requireParticipant(conversationId, viewerId);
+  await conversationsRepo.hideConversation(conversationId, viewerId);
 }
 
 export async function markConversationRead(viewerId: string, conversationId: string): Promise<void> {

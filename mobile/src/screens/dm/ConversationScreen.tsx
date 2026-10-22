@@ -53,6 +53,9 @@ import {
   reactToMessage,
   removeMessageReaction,
   sendTyping,
+  unsendMessage,
+  setConversationMuted,
+  hideConversation,
   type Message,
   type MessageReaction,
   type QuotedMessage,
@@ -84,6 +87,10 @@ import {
 import { VoiceNoteBubble } from "../../components/VoiceNote";
 import { useVoiceRecorder } from "../../hooks/useVoiceRecorder";
 import { formatClock } from "../../api/music";
+import Clipboard from "@react-native-clipboard/clipboard";
+import { showToast } from "../../components/Toast";
+import { ActionSheet } from "../../components/ActionSheet";
+import { blockUser } from "../../api/users";
 import { actorName, groupEventText } from "../../models/groupEvents";
 import { GroupAvatar } from "../../components/GroupAvatar";
 
@@ -446,7 +453,9 @@ function MessageContent({ row, userId, nameOf, senderLabel, accessToken, showSta
   const reply = row.kind === "sent" ? row.storyReply ?? null : null;
   const replyLabel = reply ? storyReplyLabel(reply, mine) : null;
   const openableStory = row.kind === "sent" ? row.sharedStoryId ?? reply?.storyId ?? null : null;
-  const shared = row.kind === "sent" ? (row.sharedStoryId ? "Shared a Story" : replyLabel) : row.storyId ? "Shared a Story" : null;
+  const shared = row.kind === "sent"
+    ? (row.sharedStoryId ? (row.sharedStory ? `@${row.sharedStory.ownerUsername}'s Story${row.sharedStory.active ? "" : ", no longer available"}` : "Shared a Story") : replyLabel)
+    : row.storyId ? "Shared a Story" : null;
   // Bubbles show who sent what by their side of the screen; a screen reader says it.
   const spoken = [shared, row.body].filter(Boolean).join(". ");
   return (
@@ -483,7 +492,19 @@ function MessageContent({ row, userId, nameOf, senderLabel, accessToken, showSta
           }}
         >
           {row.kind === "sent" && row.sharedStoryId ? (
-            <Text style={mine ? styles.bubbleTextMine : styles.bubbleTextTheirs}>Shared a Story — tap to view</Text>
+            // A card: the Story's picture (when you may see it), and whose it is.
+            <View style={styles.storyCard}>
+              {row.sharedStory?.mediaId ? (
+                <Image source={{ uri: mediaFileUrl(row.sharedStory.mediaId, "thumbnail"), headers: authHeaders(accessToken) }} style={styles.storyCardImage} resizeMode="cover" />
+              ) : (
+                <View style={[styles.storyCardImage, styles.storyCardGone]}>
+                  <Text style={styles.storyCardGoneText}>{row.sharedStory && !row.sharedStory.active ? "Story unavailable" : "Story"}</Text>
+                </View>
+              )}
+              <Text style={[styles.storyCardOwner, mine ? styles.bubbleTextMine : styles.bubbleTextTheirs]} numberOfLines={1}>
+                {row.sharedStory ? `@${row.sharedStory.ownerUsername}'s Story` : "Shared a Story"}
+              </Text>
+            </View>
           ) : null}
           {row.kind === "pending" && row.storyId ? (
             <Text style={styles.bubbleTextMine}>Shared a Story</Text>
@@ -698,6 +719,9 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   /** Who is typing right now (their app says so every few seconds); null when nobody is. */
   const [typingUserId, setTypingUserId] = useState<string | null>(null);
   const otherTyping = typingUserId !== null;
+  /** You muted this chat (no pushes from it); and the 1:1 header's ⋯ menu. */
+  const [muted, setMuted] = useState(false);
+  const [chatMenuOpen, setChatMenuOpen] = useState(false);
   /** A group's name and people (loaded from the server; refreshed when someone joins or leaves). */
   const [group, setGroup] = useState<GroupDetails | null>(null);
   const isGroup = !!isGroupParam || group !== null;
@@ -724,6 +748,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     if (!token) return;
     try {
       const { conversation } = await getConversation(conversationId, token);
+      setMuted(!!conversation.muted);
       if (conversation.kind === "group") {
         setGroup(conversation);
         const others = conversation.members.filter((m) => m.userId !== userId);
@@ -739,10 +764,10 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       if (error instanceof ApiError && error.status === 404) setLoadError(isGroupParam ? "You're no longer in this group." : "This conversation isn't available.");
     }
   }, [conversationId, isGroupParam, navigation, userId]);
+  // Also for a 1:1 chat opened from the inbox: whether you muted it (the header's menu).
   useEffect(() => {
-    if (otherUsername && !isGroupParam) return;
     void loadDetails();
-  }, [isGroupParam, loadDetails, otherUsername]);
+  }, [loadDetails]);
 
   const isGroupRef = useRef(isGroup);
   isGroupRef.current = isGroup;
@@ -779,6 +804,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
             </View>
           </Pressable>
         ),
+        headerRight: undefined, // a group's options are on its info screen
       });
       return;
     }
@@ -798,6 +824,11 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
             <Text style={styles.headerName} numberOfLines={1}>{otherDisplayName ?? otherUsername ?? ""}</Text>
             {otherUsername ? <Text style={styles.headerUsername} numberOfLines={1}>@{otherUsername}</Text> : null}
           </View>
+        </Pressable>
+      ),
+      headerRight: () => (
+        <Pressable onPress={() => setChatMenuOpen(true)} hitSlop={10} style={styles.headerMore} accessibilityRole="button" accessibilityLabel="Chat options">
+          <Icon name={ICONS.more} size={22} color={colors.textPrimary} />
         </Pressable>
       ),
     });
@@ -936,6 +967,8 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       if (event.senderId === typingRef.current) stopTyping(); // what they were typing just arrived
       void catchUp();
       if (isGroup) void loadDetails(); // someone may have joined, left or renamed it
+    } else if (event.type === "unsent" && event.conversationId === conversationId) {
+      setMessages((current) => current?.filter((m) => m.id !== event.messageId) ?? current);
     } else if (event.type === "typing" && event.conversationId === conversationId && event.userId !== userId) {
       setTypingUserId(event.userId);
       typingRef.current = event.userId;
@@ -1072,6 +1105,83 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       setMessages((current) => (current ? applyReaction(current, messageId, userId, before) : current));
       Alert.alert("Couldn't react", error instanceof ApiError && error.status !== 404 ? error.message : "Check your connection and try again.");
     }
+  };
+
+  const toggleMute = async () => {
+    const token = tokenRef.current;
+    if (!token) return;
+    const next = !muted;
+    setMuted(next);
+    try {
+      await setConversationMuted(conversationId, next, token);
+      showToast(next ? "Notifications muted" : "Notifications on");
+    } catch {
+      setMuted(!next);
+      Alert.alert("Couldn't change that", "Check your connection and try again.");
+    }
+  };
+  const blockOther = () => {
+    if (!otherUsername) return;
+    Alert.alert(`Block @${otherUsername}?`, "They won't be able to message you, see your Stories or find your profile.", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Block",
+        style: "destructive",
+        onPress: async () => {
+          const token = tokenRef.current;
+          if (!token) return;
+          try {
+            await blockUser(otherUsername, token);
+            showToast(`Blocked @${otherUsername}`);
+            navigation.popToTop();
+          } catch {
+            Alert.alert("Couldn't block", "Check your connection and try again.");
+          }
+        },
+      },
+    ]);
+  };
+  const deleteChat = () => {
+    Alert.alert("Delete this chat?", "It's removed from your inbox only. If they message you again, it comes back.", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: async () => {
+          const token = tokenRef.current;
+          if (!token) return;
+          try {
+            await hideConversation(conversationId, token);
+            void refreshUnreadCount();
+            navigation.popToTop();
+          } catch {
+            Alert.alert("Couldn't delete", "Check your connection and try again.");
+          }
+        },
+      },
+    ]);
+  };
+
+  /** Unsend your own message, after a confirmation; it goes at once and comes back if that fails. */
+  const unsend = (message: Message) => {
+    Alert.alert("Unsend message?", "It will be removed for everyone in this chat.", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Unsend",
+        style: "destructive",
+        onPress: async () => {
+          const token = tokenRef.current;
+          if (!token) return;
+          setMessages((current) => current?.filter((m) => m.id !== message.id) ?? current);
+          try {
+            await unsendMessage(conversationId, message.id, token);
+          } catch {
+            setMessages((current) => (current ? mergeMessages(current, [message]) : current));
+            Alert.alert("Couldn't unsend", "Check your connection and try again.");
+          }
+        },
+      },
+    ]);
   };
 
   // The rows' handlers never change identity; they act on the screen's latest state.
@@ -1286,32 +1396,74 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
                 );
               })}
             </View>
-            <Pressable
-              style={styles.reactReport}
-              onPress={() => { if (reactingTo) actions.onReply(reactingTo); }}
-              accessibilityRole="button"
-              accessibilityLabel="Reply"
-            >
-              <Icon name={ICONS.reply} size={18} color={colors.textPrimary} />
-              <Text style={styles.reactReplyText}>Reply</Text>
-            </Pressable>
-            {reactingTo && reactingTo.senderId !== userId ? (
-              <Pressable
-                style={styles.reactReport}
-                onPress={() => {
-                  const id = reactingTo.id;
-                  setReactingTo(null);
-                  setReportingMessageId(id);
-                }}
-                accessibilityRole="button"
-                accessibilityLabel="Report message"
-              >
-                <Text style={styles.reactReportText}>Report</Text>
+            {/* One short list under the reactions, like Instagram: Reply, Copy, then Unsend or Report. */}
+            <View style={styles.menuCard}>
+              <Pressable style={styles.menuRow} onPress={() => { if (reactingTo) actions.onReply(reactingTo); }} accessibilityRole="button" accessibilityLabel="Reply">
+                <Text style={styles.menuText}>Reply</Text>
+                <Icon name={ICONS.reply} size={18} color={colors.textPrimary} />
               </Pressable>
-            ) : null}
+              {reactingTo?.body ? (
+                <Pressable
+                  style={styles.menuRow}
+                  onPress={() => {
+                    Clipboard.setString(reactingTo.body ?? "");
+                    setReactingTo(null);
+                    showToast("Copied");
+                  }}
+                  accessibilityRole="button"
+                  accessibilityLabel="Copy"
+                >
+                  <Text style={styles.menuText}>Copy</Text>
+                  <Icon name={ICONS.copy} size={18} color={colors.textPrimary} />
+                </Pressable>
+              ) : null}
+              {reactingTo && reactingTo.senderId === userId ? (
+                <Pressable
+                  style={styles.menuRow}
+                  onPress={() => {
+                    const target = reactingTo;
+                    setReactingTo(null);
+                    unsend(target);
+                  }}
+                  accessibilityRole="button"
+                  accessibilityLabel="Unsend"
+                >
+                  <Text style={styles.menuDanger}>Unsend</Text>
+                  <Icon name={ICONS.trash} size={18} color={colors.danger} />
+                </Pressable>
+              ) : reactingTo ? (
+                <Pressable
+                  style={styles.menuRow}
+                  onPress={() => {
+                    const id = reactingTo.id;
+                    setReactingTo(null);
+                    setReportingMessageId(id);
+                  }}
+                  accessibilityRole="button"
+                  accessibilityLabel="Report message"
+                >
+                  <Text style={styles.menuDanger}>Report</Text>
+                  <Icon name={ICONS.report} size={18} color={colors.danger} />
+                </Pressable>
+              ) : null}
+            </View>
           </View>
         </Pressable>
       </Modal>
+      <ActionSheet
+        visible={chatMenuOpen}
+        onClose={() => setChatMenuOpen(false)}
+        groups={[
+          [
+            { label: muted ? "Unmute notifications" : "Mute notifications", onPress: () => void toggleMute() },
+            ...(otherUsername ? [{ label: "View profile", onPress: openProfile }] : []),
+          ],
+          [
+            ...(otherUsername ? [{ label: `Block @${otherUsername}`, destructive: true, onPress: blockOther }] : []),
+            { label: "Delete chat", destructive: true, onPress: deleteChat },
+          ],
+        ]}
+      />
       <CapturePreview capture={capture} onCancel={onCancelCapture} onSend={onSendCapture} />
       <ReportSheet
         visible={reportingMessageId !== null}
@@ -1341,6 +1493,7 @@ const styles = StyleSheet.create({
   recordTime: { color: colors.textPrimary, fontSize: 16, fontWeight: "600", fontVariant: ["tabular-nums"] },
   recordHint: { flex: 1, color: colors.textSecondary, fontSize: 14 },
   header: { flexDirection: "row", alignItems: "center", gap: spacing.sm, maxWidth: 260 },
+  headerMore: { paddingHorizontal: spacing.xs, minHeight: 44, justifyContent: "center" },
   headerNames: { flexShrink: 1 },
   headerName: { color: colors.textPrimary, fontSize: 16, fontWeight: "700" },
   headerUsername: { color: colors.textSecondary, fontSize: 12 },
@@ -1368,11 +1521,17 @@ const styles = StyleSheet.create({
   reactKeyChosen: { backgroundColor: colors.border },
   reactKeyPressed: { transform: [{ scale: 1.2 }] },
   reactGlyph: { fontSize: 28 },
-  reactReport: { flexDirection: "row", alignItems: "center", gap: spacing.xs, minHeight: 44, paddingHorizontal: spacing.lg, borderRadius: radii.pill, backgroundColor: colors.surfaceElevated },
-  reactReportText: { color: colors.danger, fontSize: 15, fontWeight: "600" },
+  storyCard: { width: 150, gap: spacing.xs, paddingVertical: 2 },
+  storyCardImage: { width: 150, height: 220, borderRadius: radii.sm, backgroundColor: colors.surface },
+  storyCardGone: { alignItems: "center", justifyContent: "center", borderWidth: StyleSheet.hairlineWidth, borderColor: colors.border },
+  storyCardGoneText: { color: colors.textSecondary, fontSize: 13 },
+  storyCardOwner: { fontSize: 13, fontWeight: "600" },
+  menuCard: { alignSelf: "stretch", maxWidth: 320, width: "100%", marginHorizontal: "auto", borderRadius: radii.md, backgroundColor: colors.surfaceElevated, overflow: "hidden" },
+  menuRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", minHeight: 48, paddingHorizontal: spacing.md, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border },
+  menuText: { color: colors.textPrimary, fontSize: 16 },
+  menuDanger: { color: colors.danger, fontSize: 16 },
   eventLine: { alignSelf: "center", textAlign: "center", color: colors.textSecondary, fontSize: 12, marginVertical: spacing.sm, paddingHorizontal: spacing.lg },
   senderLabel: { color: colors.textSecondary, fontSize: 12, fontWeight: "600", marginBottom: 2, marginLeft: spacing.xs },
-  reactReplyText: { color: colors.textPrimary, fontSize: 15, fontWeight: "600" },
   heartPop: { position: "absolute", top: -12, bottom: -12, left: -12, right: -12, alignItems: "center", justifyContent: "center" },
   swipeArrow: { position: "absolute", left: 0, top: 0, bottom: 0, width: 32, alignItems: "center", justifyContent: "center" },
   quote: { maxWidth: "100%", marginBottom: -4, paddingHorizontal: spacing.sm, paddingTop: spacing.xs, paddingBottom: spacing.xs + 4, borderRadius: radii.md, backgroundColor: colors.surface, borderLeftWidth: 3, borderLeftColor: colors.border, opacity: 0.9 },

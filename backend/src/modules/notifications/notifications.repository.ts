@@ -7,7 +7,7 @@ export interface NotificationRecord {
   type: NotificationType;
   createdAt: string;
   readAt: string | null;
-  actor: { id: string; username: string; displayName: string; avatarMediaId: string | null } | null;
+  actor: { id: string; username: string; displayName: string; avatarMediaId: string | null; followedByYou: boolean } | null;
   story: { id: string; mediaId: string } | null;
   comment: { id: string; body: string } | null;
   followRequest: { id: string; status: string } | null;
@@ -20,7 +20,7 @@ function mapRow(row: Row): NotificationRecord {
     createdAt: row.created_at as string,
     readAt: (row.read_at as string | null) ?? null,
     actor: row.actor_id
-      ? { id: row.actor_id as string, username: row.actor_username as string, displayName: row.actor_display_name as string, avatarMediaId: (row.actor_avatar_media_id as string | null) ?? null }
+      ? { id: row.actor_id as string, username: row.actor_username as string, displayName: row.actor_display_name as string, avatarMediaId: (row.actor_avatar_media_id as string | null) ?? null, followedByYou: row.actor_followed === "t" }
       : null,
     story: row.story_id ? { id: row.story_id as string, mediaId: row.story_media_id as string } : null,
     comment: row.comment_id ? { id: row.comment_id as string, body: row.comment_body as string } : null,
@@ -31,6 +31,9 @@ function mapRow(row: Row): NotificationRecord {
 const SELECT_COLUMNS = `
   n.id, n.type, n.created_at, n.read_at,
   a.id AS actor_id, a.username AS actor_username, a.display_name AS actor_display_name, a.avatar_media_id AS actor_avatar_media_id,
+  -- Whether you follow them (or asked to): Activity offers "Follow back" only when you don't.
+  (EXISTS (SELECT 1 FROM follows f WHERE f.follower_id = n.recipient_id AND f.followee_id = a.id)
+   OR EXISTS (SELECT 1 FROM follow_requests q WHERE q.requester_id = n.recipient_id AND q.target_id = a.id AND q.status = 'pending')) AS actor_followed,
   s.id AS story_id, s.media_id AS story_media_id,
   c.id AS comment_id, c.body AS comment_body,
   fr.id AS follow_request_id, fr.status AS follow_request_status

@@ -72,7 +72,7 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
                                             OR (b.blocker_id = a.id AND b.blocked_id = u.id)) AS blocked,
             (SELECT count(*) FROM notifications n WHERE n.recipient_id = u.id AND n.read_at IS NULL) AS unread_activity,
             (SELECT count(*) FROM conversation_members me
-               JOIN LATERAL (SELECT created_at FROM messages m WHERE m.conversation_id = me.conversation_id AND m.created_at >= me.joined_at ORDER BY m.created_at DESC LIMIT 1) lm ON true
+               JOIN LATERAL (SELECT created_at FROM messages m WHERE m.conversation_id = me.conversation_id AND m.created_at >= me.joined_at AND m.created_at > coalesce(me.hidden_before, '-infinity') ORDER BY m.created_at DESC LIMIT 1) lm ON true
                LEFT JOIN conversation_reads cr ON cr.conversation_id = me.conversation_id AND cr.user_id = u.id
               WHERE me.user_id = u.id AND me.left_at IS NULL AND lm.created_at > coalesce(cr.last_read_at, 'epoch')) AS unread_conversations
      FROM users u

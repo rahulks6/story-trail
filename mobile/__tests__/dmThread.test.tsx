@@ -27,6 +27,9 @@ jest.mock("../src/api/conversations", () => ({
   reactToMessage: jest.fn(async (_c: string, _m: string, emoji: string) => ({ reactions: [{ userId: "u-me", emoji }] })),
   removeMessageReaction: jest.fn(async () => ({ reactions: [] })),
   sendTyping: jest.fn(async () => undefined),
+  unsendMessage: jest.fn(async () => undefined),
+  setConversationMuted: jest.fn(async () => undefined),
+  hideConversation: jest.fn(async () => undefined),
   newClientMessageId: () => `m_test_${Math.random().toString(36).slice(2, 12)}`,
   getConversation: jest.fn(),
   markConversationRead: jest.fn(async () => undefined),
@@ -39,6 +42,7 @@ jest.mock("../src/api/conversations", () => ({
     ],
   })),
 }));
+jest.mock("../src/api/users", () => ({ blockUser: jest.fn(async () => undefined) }));
 jest.mock("../src/api/stories", () => ({ getStoryOwnerUsername: jest.fn(), mediaFileUrl: (id: string, v: string) => `/media/${id}/${v}` }));
 jest.mock("../src/components/Avatar", () => ({ Avatar: (p: object) => require("react").createElement("Avatar", p) }));
 jest.mock("../src/components/ReportSheet", () => ({ ReportSheet: (p: object) => require("react").createElement("ReportSheet", p) }));
@@ -425,5 +429,61 @@ test("a group thread: who said what, what happened, Seen by, and who is typing",
   await act(async () => mockRealtime.handler!({ type: "typing", conversationId: "c1", userId: "u-bob" }));
   expect(texts()).toContain("@bob is typing…");
   api.getConversation.mockReset();
+  api.listMessages.mockImplementation(original);
+});
+
+test("long-press: Copy your text, Unsend your own message (gone for everyone), Report theirs", async () => {
+  const api = require("../src/api/conversations");
+  const clip = require("@react-native-clipboard/clipboard"); const Clipboard = clip.default ?? clip;
+  const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+  await render();
+  await act(async () => bubble("You: hi").props.onLongPress());
+  expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Report message")).toHaveLength(0);
+  await pressLabel("Copy");
+  expect(Clipboard.setString).toHaveBeenCalledWith("hi");
+
+  await act(async () => bubble("You: hi").props.onLongPress());
+  await pressLabel("Unsend");
+  expect(alert.mock.calls.at(-1)![0]).toBe("Unsend message?");
+  await act(async () => { await (alert.mock.calls.at(-1)![2] as Array<{ text: string; onPress?: () => Promise<void> }>).find((b) => b.text === "Unsend")!.onPress!(); });
+  expect(api.unsendMessage).toHaveBeenCalledWith("c1", "m1", "token");
+  expect(tree.root.findAll((n) => n.props.accessibilityLabel === "You: hi")).toHaveLength(0);
+
+  // Their message, unsent by them: gone live.
+  await act(async () => mockRealtime.handler!({ type: "unsent", conversationId: "c1", messageId: "m2" }));
+  expect(tree.root.findAll((n) => n.props.accessibilityLabel === "@alice: hello")).toHaveLength(0);
+});
+
+test("the chat menu mutes the chat's notifications", async () => {
+  const api = require("../src/api/conversations");
+  const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+  api.getConversation.mockResolvedValue({ conversation: { id: "c1", kind: "direct", muted: false, createdAt: "", otherUser: { id: "u-alice", username: "alice", displayName: "Alice" } } });
+  await render();
+  const options = mockNavigation.setOptions.mock.calls.at(-1)![0];
+  let header!: ReactTestRenderer;
+  act(() => { header = create((options as { headerRight: () => React.ReactElement }).headerRight()); });
+  await act(async () => header.root.find((n) => n.props.accessibilityLabel === "Chat options" && typeof n.props.onPress === "function").props.onPress());
+  const { Modal } = require("react-native");
+  const sheet = tree.root.findAllByType(Modal).find((m: ReactTestInstance) => m.props.visible && m.findAll((n) => n.props.accessibilityLabel === "Mute notifications").length)!;
+  expect(sheet).toBeTruthy();
+  await act(async () => sheet.find((n) => n.props.accessibilityLabel === "Mute notifications" && typeof n.props.onPress === "function").props.onPress());
+  await act(async () => sheet.props.onDismiss?.()); // iOS runs the choice once the sheet has closed
+  for (let i = 0; i < 5; i++) await act(async () => { await Promise.resolve(); });
+  expect(api.setConversationMuted).toHaveBeenCalledWith("c1", true, "token");
+  api.getConversation.mockReset();
+  alert.mockRestore();
+});
+
+test("a shared Story is a card with its picture and owner, or says it's no longer available", async () => {
+  const api = require("../src/api/conversations");
+  const original = api.listMessages.getMockImplementation();
+  api.listMessages.mockResolvedValue({ hasMore: false, messages: [
+    { id: "s2", conversationId: "c1", senderId: "u-alice", body: null, sharedStoryId: "st2", createdAt: "2026-10-06 09:02:00+00", sharedStory: { ownerUsername: "bob", ownerAvatarMediaId: null, mediaId: null, active: false } },
+    { id: "s1", conversationId: "c1", senderId: "u-alice", body: null, sharedStoryId: "st1", createdAt: "2026-10-06 09:01:00+00", sharedStory: { ownerUsername: "bob", ownerAvatarMediaId: null, mediaId: "md9", active: true } },
+  ] });
+  await render();
+  expect(tree.root.findAll((n) => (n.type as unknown) === "Image" && n.props.source?.uri === "/media/md9/thumbnail")).not.toHaveLength(0);
+  expect(bubble("@alice: @bob's Story")).toBeTruthy();
+  expect(bubble("@alice: @bob's Story, no longer available")).toBeTruthy();
   api.listMessages.mockImplementation(original);
 });
