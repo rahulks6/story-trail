@@ -1,10 +1,10 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Icon } from "../../components/Icon";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Image, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from "react-native";
+import { usePreventRemove } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../navigation/types";
-import { colors, radii, spacing, typography, ICONS } from "../../theme";
+import { colors, radii, spacing, typography } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { getMyArchivedStories, mediaFileUrl, type PublicStory } from "../../api/stories";
 import { createHighlight, deleteHighlight, getHighlightDetail, setHighlightCover, updateHighlight } from "../../api/highlights";
@@ -50,6 +50,30 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
   const [error, setError] = useState<string | null>(null);
   // Set once Create has made the Highlight, so trying again never makes a second one.
   const createdId = useRef<string | null>(null);
+  // What was there when the editor opened, so leaving with changes asks first.
+  const [initial, setInitial] = useState<{ title: string; selected: string[] } | null>(isEditing ? null : { title: "", selected: initialStoryIds ?? [] });
+  const [done, setDone] = useState<"saved" | "deleted" | null>(null);
+  const dirty =
+    !!initial && !done &&
+    (cleanTitle(title) !== initial.title || selected.join() !== initial.selected.join() || coverStoryId !== initialCoverStoryId);
+  // Back button, Android back and the iOS swipe all come through here while changes are unsaved.
+  usePreventRemove(dirty, ({ data }) => {
+    Alert.alert("Discard changes?", isEditing ? "Your changes to this Highlight won't be saved." : "This Highlight won't be created.", [
+      { text: "Keep editing", style: "cancel" },
+      { text: "Discard", style: "destructive", onPress: () => navigation.dispatch(data.action) },
+    ]);
+  });
+  // Leave only once the guard above has seen the save.
+  useEffect(() => {
+    if (done === "saved") navigation.goBack();
+    if (done === "deleted") {
+      // Opened from the Highlight itself: go back past it too, it's gone.
+      const routes = navigation.getState().routes;
+      const opener = routes[routes.length - 2];
+      if (opener?.name === "HighlightViewer") navigation.pop(2);
+      else navigation.goBack();
+    }
+  }, [done, navigation]);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -71,6 +95,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
           const currentCover = existing.highlight.items.find((item) => item.mediaId === existing.highlight.coverMediaId);
           setCoverStoryId(currentCover?.storyId);
           setInitialCoverStoryId(currentCover?.storyId);
+          setInitial({ title: existing.highlight.title, selected: existing.highlight.items.map((item) => item.storyId) });
         }
       } catch {
         if (!cancelled) setError("Couldn't load your Stories — try again.");
@@ -106,10 +131,6 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
     );
     // A cover can't survive its own Story leaving the selection — fall back to the default (first item) rather than point at content that's no longer in the Highlight.
     setCoverStoryId((current) => (current === storyId ? undefined : current));
-  };
-
-  const setCover = (storyId: string) => {
-    setCoverStoryId((current) => (current === storyId ? undefined : storyId));
   };
 
   // Selected Stories, in order, with their media for the reorder strip's thumbnails. Every one is
@@ -154,7 +175,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
           }
         }
       }
-      navigation.goBack();
+      setDone("saved");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "That didn't save — try again.");
     } finally {
@@ -172,11 +193,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
         onPress: async () => {
           try {
             await deleteHighlight(highlightId, accessToken);
-            // Opened from the Highlight itself: go back past it too, it's gone.
-            const routes = navigation.getState().routes;
-            const opener = routes[routes.length - 2];
-            if (opener?.name === "HighlightViewer") navigation.pop(2);
-            else navigation.goBack();
+            setDone("deleted");
           } catch {
             setError("Couldn't delete — try again.");
           }
@@ -238,16 +255,16 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
             maxLength={MAX_TITLE_LENGTH}
             autoCapitalize="words"
             returnKeyType="done"
+            accessibilityLabel="Highlight name"
           />
-          <Text style={styles.counter}>{cleanTitle(title).length}/{MAX_TITLE_LENGTH} · shown under the cover on your profile</Text>
+          <Text style={styles.counter}>{cleanTitle(title).length}/{MAX_TITLE_LENGTH}</Text>
         </View>
       </View>
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
       {selectedStories.length > 0 ? (
         <>
-          <Text style={styles.sectionLabel}>Selected, in order — long-press and drag to reorder</Text>
-          <Text style={styles.sectionHint}>Tap the star to use a Story as this Highlight's cover.</Text>
+          <Text style={styles.sectionLabel}>In this Highlight · hold and drag to reorder</Text>
           <View style={styles.selectedStrip}>
             <DraggableGrid
               data={selectedStories}
@@ -257,36 +274,24 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
               itemHeight={selectedThumbSize}
               gap={SELECTED_STRIP_GAP}
               onReorder={onReorderSelected}
-              renderItem={(story) => {
-                const isCover = coverStoryId ? coverStoryId === story.id : selected[0] === story.id;
-                return (
-                  <View style={styles.selectedThumbWrapper}>
-                    <Image
-                      source={{ uri: mediaFileUrl(story.mediaId, "thumbnail"), headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined }}
-                      style={styles.selectedThumb}
-                      resizeMode="cover"
-                    />
-                    <View style={styles.orderBadge}>
-                      <Text style={styles.orderBadgeText}>{selected.indexOf(story.id) + 1}</Text>
-                    </View>
-                    <Pressable
-                      style={styles.coverBadge}
-                      onPress={() => setCover(story.id)}
-                      hitSlop={8}
-                      accessibilityRole="button"
-                      accessibilityLabel={isCover ? "This Story is the cover" : "Set as cover"}
-                    >
-                      <Icon style={[styles.coverBadgeGlyph, isCover && styles.coverBadgeGlyphActive]} name={isCover ? ICONS.starFilled : ICONS.star} />
-                    </Pressable>
+              renderItem={(story) => (
+                <View style={styles.selectedThumbWrapper}>
+                  <Image
+                    source={{ uri: mediaFileUrl(story.mediaId, "thumbnail"), headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined }}
+                    style={styles.selectedThumb}
+                    resizeMode="cover"
+                  />
+                  <View style={styles.orderBadge}>
+                    <Text style={styles.orderBadgeText}>{selected.indexOf(story.id) + 1}</Text>
                   </View>
-                );
-              }}
+                </View>
+              )}
             />
           </View>
         </>
       ) : null}
 
-      <Text style={styles.sectionLabel}>Choose from your Archive ({selected.length} selected)</Text>
+      <Text style={styles.sectionLabel}>Your Archive</Text>
       <FlatList
         data={archive ?? []}
         numColumns={3}
@@ -300,7 +305,13 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
           const order = selected.indexOf(item.id);
           const isSelected = order !== -1;
           return (
-            <Pressable accessibilityRole="button" style={styles.thumbWrapper} onPress={() => toggle(item.id)}>
+            <Pressable
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked: isSelected }}
+              accessibilityLabel={isSelected ? `Story ${order + 1} in this Highlight` : "Add Story"}
+              style={styles.thumbWrapper}
+              onPress={() => toggle(item.id)}
+            >
               <Image
                 source={{ uri: mediaFileUrl(item.mediaId, "thumbnail"), headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined }}
                 style={[styles.thumb, { width: archiveThumbSize, height: archiveThumbSize }, isSelected && styles.thumbSelected]}
@@ -340,7 +351,6 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
               );
             })}
           </ScrollView>
-          {isEditing ? <Text style={styles.sectionHint}>Tap Save to keep the new cover.</Text> : null}
         </View>
       </Modal>
 
@@ -423,20 +433,6 @@ const styles = StyleSheet.create({
   },
   orderBadgeText: { color: colors.onAccent, fontSize: 11, fontWeight: "700" },
   footerSpinner: { marginVertical: spacing.md },
-  coverBadge: {
-    position: "absolute",
-    bottom: 4,
-    left: 4,
-    width: 22,
-    height: 22,
-    borderRadius: radii.pill,
-    backgroundColor: "rgba(0,0,0,0.55)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  // Always white: it sits on a dark circle over a photo, in light mode too.
-  coverBadgeGlyph: { color: "#FFFFFF", fontSize: 13 },
-  coverBadgeGlyphActive: { color: colors.accent },
   footer: {
     flexDirection: "row",
     justifyContent: "space-between",

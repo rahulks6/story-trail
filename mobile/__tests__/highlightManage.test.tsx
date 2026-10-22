@@ -11,8 +11,13 @@ import { timeNativeAnimations } from "./helpers/nativeAnimations";
 // Managing your own Highlight: from the Highlight itself (⋯) and in the editor.
 jest.mock("../src/state/AuthContext", () => ({ useAuth: () => ({ accessToken: "token", user: { id: "u-me", username: "me" } }) }));
 let mockFocused = true;
+const mockPrevent = { enabled: false, callback: null as null | ((e: { data: { action: unknown } }) => void) };
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
+  usePreventRemove: (enabled: boolean, callback: (e: { data: { action: unknown } }) => void) => {
+    mockPrevent.enabled = enabled;
+    mockPrevent.callback = callback;
+  },
   useIsFocused: () => mockFocused,
   useNavigation: () => ({ navigate: jest.fn() }),
   useFocusEffect: (effect: () => void) => require("react").useEffect(() => effect(), [effect]),
@@ -44,7 +49,7 @@ jest.mock("../src/api/highlights", () => ({
 const api = highlightsApi as jest.Mocked<typeof highlightsApi>;
 
 let tree: ReactTestRenderer;
-const navigation = { navigate: jest.fn(), goBack: jest.fn(), pop: jest.fn(), getState: jest.fn() };
+const navigation = { navigate: jest.fn(), goBack: jest.fn(), pop: jest.fn(), getState: jest.fn(), dispatch: jest.fn() };
 afterEach(async () => {
   await act(async () => tree?.unmount());
   jest.clearAllMocks();
@@ -173,6 +178,33 @@ test("a cover that fails to set doesn't keep the editor open, so Create can't ma
   await act(async () => create_().props.onPress());
   expect(api.createHighlight).toHaveBeenCalledTimes(1);
   expect(alert).toHaveBeenCalledWith("Highlight created", expect.stringContaining("Couldn't set the cover"));
+  expect(navigation.goBack).toHaveBeenCalledTimes(1);
+  alert.mockRestore();
+});
+
+test("leaving a new Highlight part-made asks first; Create leaves without asking", async () => {
+  const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+  api.createHighlight.mockResolvedValue({ highlight: { ...highlight(["s1"]), id: "h-new" } } as never);
+  await act(async () => {
+    tree = create(
+      <SafeAreaProvider initialMetrics={{ frame: { x: 0, y: 0, width: 390, height: 844 }, insets: { top: 0, left: 0, right: 0, bottom: 0 } }}>
+        <HighlightEditorScreen route={{ key: "e", name: "HighlightEditor", params: { initialStoryIds: ["s1"] } } as never} navigation={navigation as never} />
+      </SafeAreaProvider>,
+    );
+  });
+  await act(async () => { await Promise.resolve(); });
+  expect(mockPrevent.enabled).toBe(false); // nothing typed yet
+  const { TextInput } = jest.requireActual("react-native");
+  await act(async () => tree.root.findByType(TextInput).props.onChangeText("Trip"));
+  expect(mockPrevent.enabled).toBe(true);
+  act(() => mockPrevent.callback!({ data: { action: { type: "GO_BACK" } } }));
+  const [title, , buttons] = alert.mock.calls.at(-1)!;
+  expect(title).toBe("Discard changes?");
+  act(() => (buttons as Array<{ text: string; onPress?: () => void }>).find((b) => b.text === "Discard")!.onPress!());
+  expect(navigation.dispatch).toHaveBeenCalledWith({ type: "GO_BACK" });
+  const create_ = tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.findAll((c) => c.props.children === "Create").length > 0);
+  await act(async () => create_.props.onPress());
+  expect(mockPrevent.enabled).toBe(false);
   expect(navigation.goBack).toHaveBeenCalledTimes(1);
   alert.mockRestore();
 });

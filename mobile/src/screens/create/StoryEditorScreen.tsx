@@ -60,6 +60,7 @@ import { CropAdjustControls } from "../../components/CropAdjustControls";
 import { savePendingDraft, loadPendingDraft, clearPendingDraft } from "../../state/draftStorage";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
 import { useScreenReader } from "../../hooks/useScreenReader";
+import { DEFAULT_STORY_SETTINGS, loadStorySettings, saveStorySettings, StorySettingsSheet, storySettingsSummary, type StorySettings, type StoryVisibility } from "../../components/StorySettingsSheet";
 import { Avatar } from "../../components/Avatar";
 import { listCloseFriends } from "../../api/users";
 
@@ -141,6 +142,20 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   const submittingUpload=useRef(false);
   const rootNavigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [audience, setAudience] = useState<Audience>("public");
+  // Who can comment and share, remembered from your last Story (Story settings sheet).
+  const [settings, setSettings] = useState<StorySettings>(DEFAULT_STORY_SETTINGS);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  useEffect(() => {
+    void loadStorySettings().then((saved) => {
+      setSettings(saved);
+      setAudience((current) => (current === "close_friends" ? current : saved.visibility));
+    });
+  }, []);
+  const changeSettings = (next: StorySettings) => {
+    setSettings(next);
+    setAudience(next.visibility);
+    saveStorySettings(next);
+  };
 
   const [draft, setDraft] = useState(() => createEmptyDraft({ uri: mediaUri, kind, width: route.params.width, height: route.params.height }));
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
@@ -273,6 +288,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
       if (saved && hasMeaningfulEdits(saved.draft)) {
         setDraft(saved.draft);
         setAudience(saved.audience);
+        if (saved.audience !== "close_friends") setSettings((current) => ({ ...current, visibility: saved.audience as StoryVisibility }));
       }
       setRestored(true);
     });
@@ -603,8 +619,8 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         {
           caption: draft.caption,
           audience: target,
-          allowComments: "everyone",
-          allowSharing: true,
+          allowComments: settings.allowComments,
+          allowSharing: settings.allowSharing,
           overlays: draft.overlays,
           drawing: draft.drawing,
           filter: filterKey(draft.filter),
@@ -881,15 +897,15 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             returnKeyType="done"
           />
 
+          {/* One quiet line for who can see, comment and share; the choices are in a sheet. */}
           <Pressable
-            onPress={() => setAudience(storyAudience === "public" ? "followers" : "public")}
+            onPress={() => setSettingsOpen(true)}
             hitSlop={8}
             style={styles.visibility}
-            accessibilityRole="switch"
-            accessibilityLabel="Your story for followers only"
-            accessibilityState={{ checked: storyAudience === "followers" }}
+            accessibilityRole="button"
+            accessibilityLabel={`Story settings: ${storySettingsSummary({ ...settings, visibility: storyAudience }, festival && joinFestival && storyAudience === "public" ? festival.name : null)}`}
           >
-            <Text style={styles.visibilityLabel}>Your story: {storyAudience === "public" ? "Everyone" : "Followers only"}</Text>
+            <Text style={styles.visibilityLabel} numberOfLines={1}>{storySettingsSummary({ ...settings, visibility: storyAudience }, festival && joinFestival && storyAudience === "public" ? festival.name : null)}</Text>
             <Icon name={ICONS.chevron} size={14} color={colors.textPrimary} />
           </Pressable>
 
@@ -902,20 +918,6 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             </View>
           ) : null}
 
-          {festival && storyAudience === "public" ? (
-            <Pressable
-              style={[styles.festivalToggle, joinFestival && styles.festivalToggleOn]}
-              onPress={() => setJoinFestival((v) => !v)}
-              accessibilityRole="switch"
-              accessibilityState={{ checked: joinFestival }}
-              accessibilityLabel={`Add to ${festival.name} Stories`}
-            >
-              <Text style={styles.festivalToggleLabel} numberOfLines={1}>
-                {festival.emoji} Add to {festival.name} Stories
-              </Text>
-              <Icon name={joinFestival ? ICONS.check : ICONS.add} size={16} color={colors.textPrimary} />
-            </Pressable>
-          ) : null}
 
           {/* Like Instagram: one tap shares to Your story or to Close Friends. */}
           <View style={styles.shareRow}>
@@ -968,6 +970,15 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         </KeyboardAvoider>
       ) : null}
 
+      <StorySettingsSheet
+        visible={settingsOpen}
+        settings={{ ...settings, visibility: storyAudience }}
+        onChange={changeSettings}
+        onClose={() => setSettingsOpen(false)}
+        festival={festival}
+        joinFestival={joinFestival}
+        onJoinFestival={setJoinFestival}
+      />
       <TextToolModal
         // Starts fresh each time it opens: new text, or the text being edited.
         key={textModalVisible ? editingOverlayId ?? "new" : "closed"}
@@ -1080,9 +1091,6 @@ const styles = StyleSheet.create({
   visibility: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: spacing.sm, paddingVertical: 4, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.35)" },
   visibilityLabel: { color: colors.textPrimary, fontSize: 13, fontWeight: "600" },
   shareRow: { flexDirection: "row", gap: spacing.sm },
-  festivalToggle: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.sm, minHeight: 40, paddingHorizontal: spacing.md, borderRadius: radii.pill, borderWidth: 1, borderColor: "rgba(255,255,255,0.35)" },
-  festivalToggleOn: { backgroundColor: "rgba(255,255,255,0.14)", borderColor: colors.textPrimary },
-  festivalToggleLabel: { ...typography.body, color: colors.textPrimary, fontWeight: "600", flexShrink: 1 },
   shareButton: { flex: 1, minHeight: 48, paddingVertical: spacing.sm, paddingHorizontal: spacing.sm, borderRadius: radii.pill, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm },
   shareYourStory: { backgroundColor: colors.textPrimary },
   shareYourStoryLabel: { color: colors.background, fontWeight: "700", fontSize: 15, flexShrink: 1 },

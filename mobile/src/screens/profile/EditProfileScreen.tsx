@@ -16,6 +16,7 @@ import { usernameCheckText, usernameRefused, useUsernameAvailability } from "../
 import { Avatar } from "../../components/Avatar";
 import { ActionSheet } from "../../components/ActionSheet";
 import { AvatarCropper, type PickedPhoto } from "../../components/AvatarCropper";
+import { INTEREST_CHOICES, MAX_INTERESTS } from "../onboarding/OnboardingScreen";
 
 type Props = NativeStackScreenProps<RootStackParamList, "EditProfile">;
 
@@ -28,7 +29,8 @@ type PhotoChange = { kind: "unchanged" } | { kind: "new"; uri: string } | { kind
 
 /**
  * Edit Profile (spec section 23; Phase 11 completes it): photo (take, choose or remove, then
- * move and scale it in a circle), username with a live check, name, bio and interests. The old
+ * move and scale it in a circle), username with a live check, name, bio and interests (the
+ * same chips as onboarding). The old
  * photo stays until Save succeeds. Leaving with unsaved changes asks first, including the back
  * gesture. A save updates your page at once and tells Home to refresh. The account's privacy
  * switch lives in Settings, under Privacy.
@@ -42,12 +44,25 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
     username: user?.username ?? "",
     displayName: user?.displayName ?? "",
     bio: user?.bio ?? "",
-    interests: (user?.interests ?? []).join(", "),
+    interests: user?.interests ?? [],
   }).current;
   const [username, setUsername] = useState(original.username);
   const [displayName, setDisplayName] = useState(original.displayName);
   const [bio, setBio] = useState(original.bio);
-  const [interests, setInterests] = useState(original.interests);
+  const [interests, setInterests] = useState<string[]>(original.interests);
+  // The usual choices, plus any older free-typed interest you still have.
+  const interestChoices = useRef([...INTEREST_CHOICES, ...original.interests.filter((i) => !INTEREST_CHOICES.includes(i))]).current;
+  const toggleInterest = (interest: string) => {
+    setError(null);
+    setInterests((current) => {
+      if (current.includes(interest)) return current.filter((i) => i !== interest);
+      if (current.length >= MAX_INTERESTS) {
+        setError(`Pick up to ${MAX_INTERESTS} interests.`);
+        return current;
+      }
+      return [...current, interest];
+    });
+  };
   const [photo, setPhoto] = useState<PhotoChange>({ kind: "unchanged" });
   const [photoSheetOpen, setPhotoSheetOpen] = useState(false);
   const [picked, setPicked] = useState<PickedPhoto | null>(null);
@@ -61,7 +76,7 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
   const canSave = username.trim().length >= 3 && !nameMissing && !saving && !!accessToken && !usernameRefused(availability);
   const dirty =
     username !== original.username || displayName !== original.displayName || bio !== original.bio ||
-    interests !== original.interests || photo.kind !== "unchanged";
+    interests.join("\n") !== original.interests.join("\n") || photo.kind !== "unchanged";
   const hasPhoto = photo.kind === "new" || (photo.kind === "unchanged" && !!user?.avatarMediaId);
 
   // Back button, Android back and the iOS swipe all come through here while changes are unsaved.
@@ -126,13 +141,8 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
       navigation.goBack();
       return;
     }
-    const parsedInterests = [...new Set(interests.split(",").map((item) => item.trim()).filter(Boolean))];
     if (!/^[a-z0-9_.]{3,30}$/.test(username.trim().toLowerCase())) {
       setError("Enter a valid username.");
-      return;
-    }
-    if (parsedInterests.length > 5 || parsedInterests.some((item) => item.length > 30)) {
-      setError("Use up to 5 interests, each at most 30 characters.");
       return;
     }
     inFlight.current = true;
@@ -154,7 +164,7 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
           username: username.trim().toLowerCase(),
           displayName: displayName.trim(),
           bio: bio.trim(),
-          interests: parsedInterests,
+          interests,
           ...(avatarMediaId !== undefined ? { avatarMediaId } : {}),
         },
         accessToken,
@@ -254,17 +264,27 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
           accessibilityLabel="Bio"
         />
 
-        <Text style={styles.label}>Interests</Text>
-        <TextInput
-          style={styles.input}
-          value={interests}
-          onChangeText={setInterests}
-          placeholder="Travel, food, music"
-          placeholderTextColor={colors.textDisabled}
-          maxLength={180}
-          accessibilityLabel="Interests, separated by commas"
-        />
-        <Text style={styles.hint}>Add up to 5 interests separated by commas.</Text>
+        <View style={styles.labelRow}>
+          <Text style={styles.label}>Interests</Text>
+          <Text style={styles.counter}>{interests.length}/{MAX_INTERESTS}</Text>
+        </View>
+        <View style={styles.chips}>
+          {interestChoices.map((interest) => {
+            const selected = interests.includes(interest);
+            return (
+              <Pressable
+                key={interest}
+                onPress={() => toggleInterest(interest)}
+                style={[styles.chip, selected && styles.chipSelected]}
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: selected }}
+                accessibilityLabel={interest}
+              >
+                <Text style={[styles.chipLabel, selected && styles.chipLabelSelected]}>{interest}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
 
         {error ? <Text style={styles.error} accessibilityLiveRegion="polite">{error}</Text> : null}
 
@@ -315,6 +335,11 @@ const styles = StyleSheet.create({
   bioInput: { minHeight: 88, textAlignVertical: "top" },
   counter: { ...typography.caption, color: colors.textDisabled, marginBottom: spacing.xs },
   hint: { ...typography.caption, color: colors.textSecondary, marginTop: spacing.xs },
+  chips: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
+  chip: { minHeight: 36, paddingHorizontal: spacing.md, justifyContent: "center", borderRadius: radii.pill, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface },
+  chipSelected: { backgroundColor: colors.accent, borderColor: colors.accent },
+  chipLabel: { ...typography.body, color: colors.textPrimary, fontWeight: "600" },
+  chipLabelSelected: { color: colors.onAccent },
   error: { color: colors.danger, marginTop: spacing.md },
   available: { color: colors.success },
   unavailable: { color: colors.danger },

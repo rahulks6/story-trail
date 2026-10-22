@@ -48,6 +48,7 @@ beforeEach(() => {
   g.__haptics = [];
 });
 afterEach(async () => {
+  await require("@react-native-async-storage/async-storage").default.clear(); // Story settings are remembered between Stories
   await act(async () => tree.unmount());
 });
 
@@ -79,7 +80,7 @@ describe("sharing from the editor, like Instagram", () => {
   beforeEach(() => jest.restoreAllMocks());
   const press = (label: string) => act(async () => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === label).props.onPress());
 
-  it("shares to Your story in one tap, to everyone or followers only", async () => {
+  it("shares to Your story in one tap, with who can see and comment from Story settings", async () => {
     const enqueue = jest.spyOn(uploadQueue, "enqueueUpload").mockResolvedValue({} as never);
     jest.spyOn(usersApi, "listCloseFriends").mockResolvedValue({ closeFriends: [], limit: 1, offset: 0 });
     await open();
@@ -88,9 +89,12 @@ describe("sharing from the editor, like Instagram", () => {
     await act(async () => tree.unmount());
     enqueue.mockClear();
     await open();
-    await press("Your story for followers only");
+    // Who can see, comment and share are one line that opens Story settings.
+    await press("Story settings: Everyone · Comments on");
+    await press("Followers only");
+    await press("No one");
     await press("Share to Your story, followers only");
-    expect(enqueue.mock.calls[0]![4]).toMatchObject({ audience: "followers" });
+    expect(enqueue.mock.calls[0]![4]).toMatchObject({ audience: "followers", allowComments: "disabled", allowSharing: true });
   });
 
   it("asks you to add people before sharing to an empty Close Friends list, and shares once you have some", async () => {
