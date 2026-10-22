@@ -163,13 +163,16 @@ describe("retention", () => {
     await query(`INSERT INTO analytics_active_days (day, platform, user_id) VALUES (current_date - 40, 'ios', :'id') ON CONFLICT DO NOTHING`, { id: user.id });
     await query(`INSERT INTO analytics_events (id, user_id, name, platform, occurred_at) VALUES (gen_random_uuid(), :'id', 'app_session_started', 'ios', now() - interval '35 days')`, { id: user.id });
     await query(`INSERT INTO user_areas (user_id, cell, time_zone) VALUES (:'id', 'tdr1', 'Asia/Calcutta')`, { id: user.id });
+    await query(`INSERT INTO crash_reports (user_id, client_report_id, fingerprint, kind, name, message, platform, occurred_at)
+                 VALUES (:'id', 'crash-before-delete-01', 'f', 'fatal', 'Error', 'boom', 'ios', now())`, { id: user.id });
+    await query(`INSERT INTO app_feedback (user_id, body, platform) VALUES (:'id', 'the camera froze', 'ios')`, { id: user.id });
 
     assert.ok((await deletedAccounts(mediaStorage, 200, 30, 180)) >= 1);
     const row = await queryOne(`SELECT username, email, password_hash, display_name, bio, avatar_media_id, data_purged_at FROM users WHERE id = :'id'`, { id: user.id });
     assert.match(String(row?.username), /^deleted_[0-9a-f]{12}$/);
     assert.deepEqual([row?.email, row?.password_hash, row?.display_name, row?.bio, row?.avatar_media_id], [null, null, "Deleted account", "", null]);
     assert.notEqual(row?.data_purged_at, null);
-    for (const table of ["auth_identities", "refresh_tokens", "auth_security_events", "analytics_events", "analytics_active_days", "username_changes", "user_areas"]) {
+    for (const table of ["auth_identities", "refresh_tokens", "auth_security_events", "analytics_events", "analytics_active_days", "username_changes", "user_areas", "crash_reports", "app_feedback"]) {
       assert.equal((await queryOne(`SELECT count(*) AS n FROM ${table} WHERE user_id = :'id'`, { id: user.id }))?.n, "0", table);
     }
     assert.equal((await queryOne(`SELECT birth_date FROM users WHERE id = :'id'`, { id: user.id }))?.birth_date, null);

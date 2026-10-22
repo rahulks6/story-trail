@@ -1,6 +1,6 @@
 # Katkee Privacy Policy
 
-**Last updated:** 19 October 2026
+**Last updated:** 22 October 2026
 
 This policy explains what Katkee collects, how we use it, who can see it, how long we keep it
 and the choices you have. It covers the Katkee apps for iPhone and Android, the website at
@@ -95,8 +95,24 @@ across other companies' apps and websites.
 ### App usage and crashes
 Katkee's own analytics record when the app is opened, which platform and
 app version you use, and crash counts. We use them to measure how many
-people use Katkee each day and month, and how stable it is. We don't use
-third-party analytics or advertising SDKs.
+people use Katkee each day and month, and how stable it is.
+
+When the app crashes, it sends Katkee a crash report: the error, the
+technical trace of where in the app's code it happened, the screen you
+were on, your phone's model and system version, and the app version,
+linked to your account. A crash report never contains your messages,
+captions, photos or videos. We use crash reports only to find and fix
+bugs. Crashes of the app's native code are also collected by Google Play
+and Apple, under their own privacy policies, and shown to us without
+your identity.
+
+We don't use third-party analytics, crash-reporting or advertising SDKs.
+
+### Feedback you send
+Settings > Send feedback sends us what you write, and a screenshot only if
+you choose to attach one, with your username, app version, phone model
+and system version. Only Katkee staff who handle support can see it. We
+use it to answer you and to improve Katkee.
 
 ### Reports
 If you report a Story, comment, message or account, we keep a record of the
@@ -198,6 +214,9 @@ recorded in an audit log that can't be edited.
 - **Your area**: see above.
 - **Raw analytics events**: deleted after 90 days; only daily totals that
   identify nobody remain.
+- **Crash reports**: deleted after 90 days.
+- **Feedback**: kept until we've dealt with it, then deleted after 180
+  days. Deleting your account deletes your feedback and crash reports.
 - **Security records**: up to 400 days.
 - **Server logs**: 180 days, kept in India, as the CERT-In directions of
   2022 require.

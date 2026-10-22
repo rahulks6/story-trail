@@ -39,6 +39,21 @@ import { CloseFriendsScreen } from "../screens/profile/CloseFriendsScreen";
 import { FollowListScreen } from "../screens/profile/FollowListScreen";
 import { ActivityScreen } from "../screens/activity/ActivityScreen";
 import { UploadRunner } from "../state/UploadRunner";
+import { FeedbackScreen } from "../screens/profile/FeedbackScreen";
+import { setCurrentScreen } from "../crashReporting";
+
+/** The screen on view, deepest navigator first (crash reports say where they happened). */
+export function focusedRouteName(state: { index?: number; routes: Array<{ name: string; state?: unknown }> } | undefined): string | undefined {
+  let current = state;
+  let name: string | undefined;
+  while (current?.routes?.length) {
+    const route = current.routes[current.index ?? current.routes.length - 1];
+    if (!route) break;
+    name = route.name;
+    current = route.state as typeof current;
+  }
+  return name;
+}
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -155,6 +170,17 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         options={{
           headerShown: true,
           title: "Help",
+          headerStyle: { backgroundColor: colors.background },
+          headerTintColor: colors.textPrimary,
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="Feedback"
+        component={FeedbackScreen}
+        options={{
+          headerShown: true,
+          title: "Send feedback",
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -316,7 +342,7 @@ export function RootNavigator(): React.JSX.Element {
     const inApp = !user?.emailVerificationRequired && !onboarding;
     return (
       <OnboardingProvider value={onboardingControl}>
-        <NavigationContainer key={user?.id ?? "signedIn"} linking={linking} theme={navigationTheme()}>
+        <NavigationContainer key={user?.id ?? "signedIn"} linking={linking} theme={navigationTheme()} onStateChange={(state) => setCurrentScreen(focusedRouteName(state))}>
           <SignedInNavigator onboarding={!!onboarding && !user?.emailVerificationRequired} />
           {inApp ? <NearbyPrompt /> : null}
           <UploadRunner />

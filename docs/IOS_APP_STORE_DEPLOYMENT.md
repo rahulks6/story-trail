@@ -206,6 +206,8 @@ match `mobile/ios/KatkeeMobile/PrivacyInfo.xcprivacy`, and none is used for trac
 | User ID | Yes | No | App Functionality, Analytics |
 | Product Interaction (views, likes, follows) | Yes | No | App Functionality, Analytics, Product Personalization |
 | Other Diagnostic Data (crash counts) | Yes | No | Analytics |
+| Crash Data (crash reports to Katkee's own server: the error, its trace, the screen, phone model and app version) | Yes | No | App Functionality |
+| Customer Support (Send feedback: the note and a screenshot the person chooses to attach) | Yes | No | App Functionality |
 
 Advertisers never see who anyone is, and messages and location are never used for ads.
 
@@ -262,9 +264,10 @@ Advertising" here and in the privacy manifest.
 ## 9. After release
 
 - Use a **phased release** (7 days) to watch for problems first.
-- **Monitoring**: the infra alarms email you. Add a crash reporter before launch: Sentry is
-  wired as a stub in `mobile/src/crashReporting.ts`. Today only JavaScript crash counts are
-  recorded.
+- **Monitoring**: the infra alarms email you. JavaScript crashes (with the error, trace and
+  screen) are in the Admin console's **Crashes** page, and what testers send from
+  Settings > Send feedback is in **Feedback**. Native crashes are in App Store Connect,
+  TestFlight > Crashes (and Xcode's Organizer).
 - **Every update**:
   1. Raise `appVersion` in `build-config.json` and Version in Xcode (they must match), and
      raise the Build number.

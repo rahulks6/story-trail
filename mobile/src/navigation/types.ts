@@ -92,6 +92,8 @@ export type RootStackParamList = {
   /** Per-type (like/comment/follow/mention) notification toggles, backed by migration 0018's real preferences table. */
   NotificationSettings: undefined;
   Help: undefined;
+  /** Settings > Help > Send feedback, with an optional screenshot. */
+  Feedback: undefined;
   About: undefined;
   /** Incoming, still-pending follow requests on a private account — accept/decline each one. */
   FollowRequests: undefined;

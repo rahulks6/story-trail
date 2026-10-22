@@ -3,3 +3,6 @@
 svg.qr{display:block;width:220px;height:220px;background:#fff;padding:8px;border-radius:12px;margin:12px 0}
 ol.codes{columns:2;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:15px;letter-spacing:.04em;padding-left:1.4em}
 details code{display:inline-block;margin-top:6px;font-size:15px;letter-spacing:.08em;word-break:break-all}.table-wrap{overflow-x:auto;margin:8px 0 24px}table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}th{color:var(--muted);font-weight:600}th:first-child,td:first-child{text-align:left}.chart{width:100%;height:auto;display:block}.chart rect{fill:var(--accent)}.chart text{fill:var(--muted);font-size:13px}.chart .axis{stroke:var(--line)}.toolbar select{width:auto}
+
+/* Crashes and feedback */
+pre.stack{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;background:#121412;border:1px solid var(--line);border-radius:8px;padding:12px;max-height:360px;overflow:auto}p.feedback{white-space:pre-wrap;font-size:15px}img.screenshot{display:block;max-width:320px;width:100%;border-radius:12px;border:1px solid var(--line);margin-top:14px}.card>select{width:auto}

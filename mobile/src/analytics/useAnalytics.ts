@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "react";
 import { useAuth } from "../state/AuthContext";
 import { startAnalytics } from "./analytics";
+import { startCrashReports } from "../crashReporting";
 
-/** While signed in: app sessions and the background analytics queue (see analytics.ts). */
+/** While signed in: app sessions, the background analytics queue (see analytics.ts) and crash reports. */
 export function useAnalytics(): void {
   const { status, user, accessToken } = useAuth();
   const tokenRef = useRef(accessToken);
@@ -11,6 +12,11 @@ export function useAnalytics(): void {
 
   useEffect(() => {
     if (!userId) return;
-    return startAnalytics(userId, () => tokenRef.current);
+    const stopAnalytics = startAnalytics(userId, () => tokenRef.current);
+    const stopCrashReports = startCrashReports(userId, () => tokenRef.current);
+    return () => {
+      stopAnalytics();
+      stopCrashReports();
+    };
   }, [userId]);
 }

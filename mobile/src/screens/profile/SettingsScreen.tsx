@@ -205,6 +205,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
       <Text style={styles.sectionHeader}>Support</Text>
       <View style={styles.card}>
         <ListRow label="Help" icon={ICONS.help} onPress={() => navigation.navigate("Help")} />
+        <ListRow label="Send feedback" icon={ICONS.dm} onPress={() => navigation.navigate("Feedback")} />
         <ListRow label="About" icon={ICONS.about} onPress={() => navigation.navigate("About")} />
       </View>
 

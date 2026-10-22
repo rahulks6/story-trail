@@ -173,8 +173,8 @@ under 18, the Families policy doesn't apply.
 | Photos and videos: Photos; Videos | Yes | Optional | App functionality |
 | Audio: Voice or sound recordings (sound in video Stories) | Yes | Optional | App functionality |
 | App activity: App interactions (views, likes, follows) | Yes | Required | App functionality, Analytics, Personalization |
-| App activity: Other user-generated content (captions, comments) | Yes | Optional | App functionality |
-| App info and performance: Crash logs; Diagnostics | Yes | Required | Analytics |
+| App activity: Other user-generated content (captions, comments, feedback sent from Settings) | Yes | Optional | App functionality |
+| App info and performance: Crash logs (crash reports to Katkee's own server: the error, its trace, the screen, phone model and app version); Diagnostics | Yes | Required | App functionality, Analytics |
 | Device or other IDs (the push token) | Yes | Optional | App functionality |
 
 If Sponsored Stories stay off, remove "Advertising or marketing".

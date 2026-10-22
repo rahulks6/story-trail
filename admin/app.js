@@ -172,7 +172,7 @@ async function analyticsPage(c) {
         [...data.retention].reverse().map(x => [x.cohortDay, count(x.cohortSize), retained(x.d1, x.d1Rate), retained(x.d7, x.d7Rate), retained(x.d30, x.d30Rate)]))
         : el('p', 'No signups in this period yet.', 'muted'));
 }
-const sections = [['Dashboard', 'reports.read'], ['Analytics', 'analytics.read'], ['Reports', 'reports.read'], ['Moderation', 'moderation.history.read'], ['Users', 'users.view'], ['Ads', 'ads.analytics.read'], ['Appeals', 'reports.review'], ['Admins', 'admins.read'], ['Audit Logs', 'audit.read'], ['Security', 'security.alerts.read'], ['Link safety', 'safety.settings.manage'], ['Festivals', 'safety.settings.manage'], ['Settings', 'ads.analytics.read']];
+const sections = [['Dashboard', 'reports.read'], ['Analytics', 'analytics.read'], ['Crashes', 'crashes.read'], ['Feedback', 'feedback.read'], ['Reports', 'reports.read'], ['Moderation', 'moderation.history.read'], ['Users', 'users.view'], ['Ads', 'ads.analytics.read'], ['Appeals', 'reports.review'], ['Admins', 'admins.read'], ['Audit Logs', 'audit.read'], ['Security', 'security.alerts.read'], ['Link safety', 'safety.settings.manage'], ['Festivals', 'safety.settings.manage'], ['Settings', 'ads.analytics.read']];
 async function render() { const version = ++renderVersion; for (const url of objectUrls)
     URL.revokeObjectURL(url); objectUrls = []; $('title').textContent = page; const c = $('content'); c.replaceChildren(el('p', 'Loading…', 'muted')); for (const n of $('navigation').children)
     n.setAttribute('aria-current', n.textContent === page ? 'page' : 'false'); try {
@@ -223,6 +223,67 @@ async function render() { const version = ++renderVersion; for (const url of obj
             fields(box, { Reason: d.reason, 'Blocked by': d.by ? '@' + d.by : '—', When: new Date(d.createdAt).toLocaleString() });
             actions(box).append(button('Unblock', () => mutate('safety/blocked-domains/remove', { domain: d.domain }, 'Allow links to ' + d.domain + ' again?'), true));
             c.append(box);
+        }
+        return;
+    }
+    if (page === 'Crashes') {
+        const days = Number(sessionStorage.getItem('katkee.crashDays') || 7);
+        const data = await api('crashes?days=' + days + '&limit=50');
+        c.replaceChildren();
+        const head = card();
+        const pick = el('select');
+        for (const d of [1, 7, 30, 90]) { const o = el('option', d === 1 ? 'Last 24 hours' : 'Last ' + d + ' days'); o.value = String(d); pick.append(o); }
+        pick.value = String(data.days);
+        pick.onchange = () => { sessionStorage.setItem('katkee.crashDays', pick.value); void render(); };
+        head.append(el('p', 'JavaScript crashes from the app, grouped: the same error on different phones and builds is one row. Reports are kept 90 days. Native (Java, Kotlin, Swift) crashes and freezes are in Play Console > Android vitals and App Store Connect > TestFlight > Crashes.', 'muted'), pick);
+        c.append(head);
+        if (!data.items.length) c.append(el('p', 'No crashes in this period.', 'muted'));
+        for (const g of data.items) {
+            const s = g.sample;
+            const box = card(s.name + ': ' + (s.message || '(no message)'));
+            const kind = { fatal: 'closed the app', render: 'screen crashed (app stayed open)', handled: 'handled error' };
+            fields(box, { Times: g.count, People: g.people, Kind: g.kinds.map(k => kind[k] || k).join(', '), Platforms: g.platforms.join(', '), 'App versions': g.appVersions.filter(Boolean).join(', ') || '—', 'Last seen': new Date(g.lastSeen).toLocaleString(), 'First seen': new Date(g.firstSeen).toLocaleString(), 'Latest on': [s.deviceModel, s.platform + ' ' + s.osVersion, s.screen ? 'screen ' + s.screen : ''].filter(Boolean).join(' · ') });
+            const details = el('details');
+            details.append(el('summary', 'Stack trace'), el('pre', s.stack || '(none)', 'stack'));
+            if (s.componentStack) details.append(el('pre', s.componentStack, 'stack'));
+            box.append(details);
+            c.append(box);
+        }
+        return;
+    }
+    if (page === 'Feedback') {
+        const status = sessionStorage.getItem('katkee.feedbackStatus') || 'open';
+        const data = await api('feedback?status=' + status + '&limit=50&offset=' + offset);
+        c.replaceChildren();
+        const head = card();
+        const pick = el('select');
+        for (const [v, label] of [['open', 'Open'], ['resolved', 'Resolved'], ['all', 'All']]) { const o = el('option', label); o.value = v; pick.append(o); }
+        pick.value = data.status;
+        pick.onchange = () => { sessionStorage.setItem('katkee.feedbackStatus', pick.value); offset = 0; void render(); };
+        head.append(el('p', 'What people sent from Settings > Help > Send feedback. Screenshots are only the ones they chose to attach. Resolved feedback is deleted after 180 days.', 'muted'), pick);
+        c.append(head);
+        if (!data.items.length) c.append(el('p', status === 'open' ? 'Nothing waiting. ' : 'No feedback here.', 'muted'));
+        for (const f of data.items) {
+            const box = card('@' + f.user.username + ' · ' + new Date(f.createdAt).toLocaleString());
+            box.append(el('p', f.body, 'feedback'));
+            fields(box, { Phone: [f.deviceModel, f.platform + ' ' + f.osVersion].filter(Boolean).join(' · '), App: f.appVersion || '—', Status: f.status === 'resolved' ? 'Resolved ' + new Date(f.resolvedAt).toLocaleString() : 'Open' });
+            const a = actions(box);
+            if (f.hasScreenshot) a.append(button('Show screenshot', async () => {
+                const r = await fetch('/api/v1/admin/feedback/' + f.id + '/screenshot', { credentials: 'same-origin' });
+                if (!r.ok) throw Error('Screenshot unavailable.');
+                const src = URL.createObjectURL(await r.blob()); objectUrls.push(src);
+                const img = el('img', undefined, 'screenshot'); img.src = src; img.alt = 'Screenshot from @' + f.user.username;
+                box.append(img);
+            }, true));
+            a.append(f.status === 'open'
+                ? button('Mark resolved', async () => { await api('feedback/' + f.id + '/status', 'POST', { status: 'resolved' }); message('Marked resolved.'); await render(); })
+                : button('Reopen', async () => { await api('feedback/' + f.id + '/status', 'POST', { status: 'open' }); await render(); }, true));
+            c.append(box);
+        }
+        if (data.items.length === 50 || offset) {
+            const pager = actions(c);
+            if (offset) pager.append(button('Newer', () => { offset = Math.max(0, offset - 50); return render(); }, true));
+            if (data.items.length === 50) pager.append(button('Older', () => { offset += 50; return render(); }, true));
         }
         return;
     }

@@ -19,6 +19,7 @@
  */
 import { completeFinishedCampaigns } from "../ads/ads.service";
 import { purgeRawAnalytics, rollupAnalytics } from "../analytics/rollup";
+import { CRASH_RETENTION_DAYS, RESOLVED_FEEDBACK_RETENTION_DAYS } from "../support/support.service";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -194,7 +195,9 @@ export async function deletedAccounts(store: ObjectStore, batch: number, days: n
        ev AS (DELETE FROM email_verification_requests WHERE user_id IN (SELECT id FROM u)),
        -- Per-person analytics go too; the daily totals already computed identify nobody.
        ae AS (DELETE FROM analytics_events WHERE user_id IN (SELECT id FROM u)),
-       ad AS (DELETE FROM analytics_active_days WHERE user_id IN (SELECT id FROM u))
+       ad AS (DELETE FROM analytics_active_days WHERE user_id IN (SELECT id FROM u)),
+       fb AS (DELETE FROM app_feedback WHERE user_id IN (SELECT id FROM u)),
+       cr AS (DELETE FROM crash_reports WHERE user_id IN (SELECT id FROM u))
        SELECT count(*) AS n FROM u`,
       { id },
     );
@@ -254,6 +257,9 @@ export async function expiredRecords(): Promise<number> {
   // IT Rules 2021, rule 3(1)(h): registration details stay 180 days after the account was deleted.
   total += await deleteWhere("deleted_account_records", "deleted_at < now() - make_interval(days => :'days'::integer)", { days: config.retention.deletedAccountRecordDays });
   total += await deleteWhere("retention_runs", "started_at < now() - interval '400 days'");
+  // What went wrong in the app, and feedback someone dealt with (support.service.ts).
+  total += await deleteWhere("crash_reports", "created_at < now() - make_interval(days => :'days'::integer)", { days: CRASH_RETENTION_DAYS });
+  total += await deleteWhere("app_feedback", "status = 'resolved' AND resolved_at < now() - make_interval(days => :'days'::integer)", { days: RESOLVED_FEEDBACK_RETENTION_DAYS });
   total += await deleteWhere("realtime_tickets", "expires_at < now() - interval '1 hour'");
   total += await deleteWhere("push_outbox", "status IN ('sent', 'failed', 'skipped') AND finished_at < now() - interval '30 days'");
   total += await deleteWhere("push_devices", "disabled_at < now() - interval '90 days'");

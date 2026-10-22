@@ -19,6 +19,8 @@ jest.mock("../src/state/AuthContext", () => ({
   useAuth: () => ({ login: jest.fn(), clearError: jest.fn(), error: null, fieldErrors: null }),
 }));
 jest.mock("../src/screens/auth/ProviderEntry", () => ({ ProviderEntry: () => null }));
+const mockNavigate = jest.fn();
+jest.mock("@react-navigation/native", () => ({ ...jest.requireActual("@react-navigation/native"), useNavigation: () => ({ navigate: mockNavigate }) }));
 // A version unlike build-config.json's, so About can only show it by reading the release version.
 jest.mock("../src/config/env", () => ({ appEnv: { apiBaseUrl: "https://api.katkee.com/", appVersion: "9.8.7" } }));
 
@@ -98,5 +100,8 @@ describe("Help", () => {
     expect(hosts(tree, (n) => String(n.type) === "Text").map(textOf)).toContain("Need more help?");
     await act(async () => row(tree, "Help Center").props.onPress());
     expect(open).toHaveBeenCalledWith("https://katkee.com/support");
+    // And to Send feedback, first.
+    await act(async () => row(tree, "Send feedback").props.onPress());
+    expect(mockNavigate).toHaveBeenCalledWith("Feedback");
   });
 });

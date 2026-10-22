@@ -30,6 +30,7 @@ const ALLOWED={
  'state/dmOutbox.ts':1,
  'state/validateSavedDraft.ts':1,
  'analytics/analytics.ts':4,
+ 'crashReporting.ts':1,
  'utils/serverTime.ts':3,
  'utils/birthDate.ts':2,
 };

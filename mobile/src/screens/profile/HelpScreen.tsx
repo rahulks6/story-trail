@@ -1,8 +1,11 @@
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "../../navigation/types";
 import buildConfig from "../../../build-config.json";
 import { ListRow } from "../../components/ListRow";
-import { colors, radii, spacing, typography } from "../../theme";
+import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { openPublicPage } from "./AboutScreen";
 
 const FAQS: Array<{ question: string; answer: string }> = [
@@ -35,8 +38,12 @@ const FAQS: Array<{ question: string; answer: string }> = [
  * answers more and gives the real support, privacy and grievance addresses.
  */
 export function HelpScreen(): React.JSX.Element {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <View style={styles.card}>
+        <ListRow label="Send feedback" icon={ICONS.dm} onPress={() => navigation.navigate("Feedback")} />
+      </View>
       {FAQS.map((faq) => (
         <View key={faq.question} style={styles.item}>
           <Text style={[typography.bodyStrong, styles.question]}>{faq.question}</Text>
