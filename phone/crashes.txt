@@ -1,105 +1,97 @@
-10-21 23:41:40.562 D/AndroidRuntime( 3944): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-21 23:41:40.563 I/AiAiTextClassifier( 1560): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
-10-21 23:41:40.563 I/SP      ( 1389): Scheduling job with delay of 0s for {W:b:u:l, bg}, 1 candidates
-10-21 23:41:40.565 I/AiAiTextClassifier( 1560): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
-10-21 23:41:40.569 W/ModuleInitIntentOp( 1304): Dropping unexpected action com.google.android.gms.phenotype.COMMITTED
-10-21 23:41:40.570 I/MdiSyncModule( 1304): flag handling is skipping irrelevant intent.
-10-21 23:41:40.572 I/MlBenchmarkInstaller( 1304): Intent: com.google.android.gms.phenotype.COMMITTED [CONTEXT service_id=340 ]
-10-21 23:41:40.572 I/MlBenchmarkInstaller( 1304): COMMITTED Extra package name: com.google.android.gms.auth_api_proxy [CONTEXT service_id=340 ]
-10-21 23:41:40.574 I/PermissionControllerServiceImpl(  895): Updating user sensitive for uid 10211
-10-21 23:41:40.574 I/AndroidRuntime( 3944): Using default boot image
-10-21 23:41:40.574 I/AndroidRuntime( 3944): Leaving lock profiling enabled
-10-21 23:41:40.574 W/ModuleInitIntentOp( 1304): Dropping unexpected action com.google.android.gms.phenotype.COMMITTED
-10-21 23:41:40.575 I/GmsSyncPolicyEngine( 1304): Periodic sync 1 disabled by policy, cancelled.
-10-21 23:41:40.577 I/GmsSyncPolicyEngine( 1304): Periodic sync 2 disabled by policy, cancelled.
-10-21 23:41:40.580 W/ModuleInitIntentOp( 1304): Dropping unexpected action com.google.android.gms.phenotype.COMMITTED
-10-21 23:41:40.580 I/LocationHistory( 1304): [IntentOperation] Handling action com.google.android.gms.phenotype.COMMITTED [CONTEXT service_id=314 ]
-10-21 23:41:40.580 D/DownloadManager( 1880): [6] Starting
-10-21 23:41:40.583 I/app_process( 3944): Core platform API reporting enabled, enforcing=false
-10-21 23:41:40.583 I/GmsSyncPolicyEngine( 1304): Periodic sync 3 disabled by policy, cancelled.
-10-21 23:41:40.584 I/PTCommittedOperation( 1172): Receive new configuration for com.google.android.gms.auth_api_phone
-10-21 23:41:40.590 I/app_process( 3944): Using CollectorTypeCMC GC.
-10-21 23:41:40.602 D/BoundBrokerSvc( 1304): onUnbind: Intent { act=com.google.android.gms.feedback.internal.IFeedbackService dat=chimera-action:/... cmp=com.google.android.gms/.chimera.GmsBoundBrokerService }
-10-21 23:41:40.603 D/TrafficStats( 1880): tagSocket(83) with statsTag=0xffffff01, statsUid=10136
-10-21 23:41:40.625 D/ImsResolver( 1050): maybeAddedImsService, packageName: dev.mobile.maestro.test
-10-21 23:41:40.631 W/MagnificationConnectionManager(  550): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-21 23:41:40.632 D/PackageUpdatedTask( 1214): Package updated: mOp=UPDATE packages=[dev.mobile.maestro.test]
-10-21 23:41:40.632 I/AiAiEcho( 1560): AppFetcherImpl onPackageChanged dev.mobile.maestro.test.
-10-21 23:41:40.642 I/AiAiEcho( 1560): AppIndexer Package:[dev.mobile.maestro.test] UserProfile:[0] Enabled:[true].
-10-21 23:41:40.643 I/AiAiEcho( 1560): AppFetcherImplV2 updateApps package:[dev.mobile.maestro.test], userId:[0], reason:[package is updated.].
-10-21 23:41:40.646 W/IPCThreadState(  550): Sending oneway calls to frozen process.
-10-21 23:41:40.646 W/IPCThreadState(  550): Sending oneway calls to frozen process.
-10-21 23:41:40.647 I/SP      ( 1389): Scheduling: job start ({m:b:u:l, bg}), 2 started, 0 paused, 1 scheduled, 3 pending: manifests:emoticon_content_description-2022081613 * {W:b:u:l, bg}, dynamic_art:b1f6f47a53f7820be91b9fe247728980 @ * {m:b:u:l, bg}, dynamic_art:305f81355a729e382ea9f374dd286d9f @ * {m:b:u:l, bg}
-10-21 23:41:40.647 I/SP      ( 1389): Requesting download of URL https://www.gstatic.com/android/keyboard/dynamic_art/20220108002302/animation.zip to b1f6f47a53f7820be91b9fe247728980.zip.fetched (constraints: m:b:u:l)
-10-21 23:41:40.649 I/SP      ( 1389): Requesting download of URL https://www.gstatic.com/android/keyboard/dynamic_art/20220108002302/fonts.zip to 305f81355a729e382ea9f374dd286d9f.zip.fetched (constraints: m:b:u:l)
-10-21 23:41:40.652 I/SP      ( 1389): Syncing transformer_concept (2023011913) with slices: [2023011913_en], metadata: false
-10-21 23:41:40.656 D/TrafficStats( 1389): tagSocket(169) with statsTag=0xffffffff, statsUid=-1
-10-21 23:41:40.657 I/HandwritingSlicingStrategy( 1389): HandwritingSlicingStrategy.getSlices():44 getSlices(): handwriting_recognition.86 useForeground=true
-10-21 23:41:40.658 E/HandwritingSlicingStrategy( 1389): HandwritingSlicingStrategy.getSlices():85 getSlices(): packMapping unavailable for en-US
-10-21 23:41:40.658 E/HandwritingSlicingStrategy( 1389): HandwritingSlicingStrategy.getSlices():85 getSlices(): packMapping unavailable for en-US-x-gesture
-10-21 23:41:40.658 I/HandwritingSlicingStrategy( 1389): HandwritingSlicingStrategy.getSlices():103 getSlices(): result {slices=[{handwriting_recognition:pack_mapping_v1_lstm_20231127, m:*:*:*, fg}], last batch=true, sync metadata=false}
-10-21 23:41:40.658 I/SP      ( 1389): Syncing handwriting_recognition (86) with slices: [{pack_mapping_v1_lstm_20231127, m:*:*:*, fg}], metadata: false
+10-22 06:06:40.854 D/AndroidRuntime( 3817): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-22 06:06:40.859 I/AndroidRuntime( 3817): Using default boot image
+10-22 06:06:40.861 I/AndroidRuntime( 3817): Leaving lock profiling enabled
+10-22 06:06:40.865 I/resolv  (  357): GetAddrInfoHandler::run: {100 786532 100 983140 10143 0}
+10-22 06:06:40.866 I/resolv  (  357): res_nmkquery: (QUERY, IN, AAAA)
+10-22 06:06:40.866 I/resolv  (  357): res_nmkquery: (QUERY, IN, A)
+10-22 06:06:40.873 I/app_process( 3817): Core platform API reporting enabled, enforcing=false
+10-22 06:06:40.873 I/app_process( 3817): Using CollectorTypeCMC GC.
+10-22 06:06:40.882 I/BugleSimStateTracker( 3207): Updating PhoneSimState
+10-22 06:06:40.883 I/resolv  (  357): res_nsend: used send_dg 272 terrno: 0
+10-22 06:06:40.883 I/resolv  (  357): doQuery: rcode=0, ancount=8, return value=272
+10-22 06:06:40.887 W/ZappDownloader( 1544): No successful Zapp module downloads for requested modules [MapsCoreDynamite.integ:241610202100800, TfliteDynamiteDynamite.integ:264010405100800].
+10-22 06:06:40.887 I/GmsDebugLogger( 1544): [30] [MapsCoreDynamite.integ:241610202100800],[TfliteDynamiteDynamite.integ:264010405100800]
+10-22 06:06:40.890 I/BugleRcsEngine( 3207): Processing an intent [CONTEXT log_prefix="(Sim)" thread_id=96 ]
+10-22 06:06:40.891 I/BugleRcsEngine( 3207): SIM state LOADED [CONTEXT log_prefix="(Sim)" thread_id=96 ]
+10-22 06:06:40.891 I/resolv  (  357): GetAddrInfoHandler::run: {100 100 100 983140 10151 0}
+10-22 06:06:40.892 I/resolv  (  357): res_nmkquery: (QUERY, IN, AAAA)
+10-22 06:06:40.892 I/resolv  (  357): res_nmkquery: (QUERY, IN, A)
+10-22 06:06:40.895 I/resolv  (  357): res_nsend: used send_dg 176 terrno: 0
+10-22 06:06:40.895 I/resolv  (  357): doQuery: rcode=0, ancount=8, return value=176
+10-22 06:06:40.906 I/resolv  (  357): res_nsend: used send_dg 55 terrno: 0
+10-22 06:06:40.906 I/resolv  (  357): doQuery: rcode=0, ancount=1, return value=55
+10-22 06:06:40.909 D/TrafficStats( 1544): tagSocket(160) with statsTag=0x30004901, statsUid=10143
+10-22 06:06:40.917 I/resolv  (  357): res_nsend: used send_dg 67 terrno: 0
+10-22 06:06:40.917 I/resolv  (  357): doQuery: rcode=0, ancount=1, return value=67
+10-22 06:06:40.919 D/TrafficStats( 3782): tagSocket(100) with statsTag=0xffffffff, statsUid=-1
+10-22 06:06:40.920 I/BugleRcsEngine( 3207): Broadcasting provisioning intent rcs.intent.action.rcsSimSwap to Bugle with extras redacted-pii:[chars:86] from source SIM_STATE_TRACKER [CONTEXT log_prefix="EngineBroadcaster" thread_id=96 ]
+10-22 06:06:40.940 D/PackageManager(  556): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-22 06:06:40.955 D/PackageManager(  556): Clear ephemeral installer activity
+10-22 06:06:40.963 D/SlicesIndexer( 1090): Slices already indexed - returning.
+10-22 06:06:40.966 I/system_server(  556): Background concurrent mark compact GC freed 17MB AllocSpace bytes, 26(520KB) LOS objects, 47% free, 26MB/50MB, paused 581us,22.930ms total 474.438ms
+10-22 06:06:40.993 I/BugleRcsProvisioning( 3207): RcsProvisioningTrigger: SIM swap detected, restarting provisioning
+10-22 06:06:40.994 I/BugleRcsProvisioning( 3207): RcsProvisioningTrigger: updateRcsAvailabilityForProvisioningId : rcsProvisioningId = redacted-pii:sim_id[chars:35,last3:97)] hint = SIM_SWAP, logTriggerEvent = true 
 --
-10-21 23:41:40.881 D/AndroidRuntime( 3944): Calling main entry com.android.commands.am.Am
-10-21 23:41:40.884 W/system_server(  550): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/Velvet/Velvet.apk' with 1 weak references
-10-21 23:41:40.884 D/UiAutomationConnection( 3944): Created on user UserHandle{0}
-10-21 23:41:40.885 I/ActivityManager(  550): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-10-21 23:41:40.886 D/DownloadManager( 1880): [6] Finished with status SUCCESS
-10-21 23:41:40.886 D/PhFileGroupPop( 3296): Added file groups multitask_experiment
-10-21 23:41:40.894 I/SP      ( 1389): Scheduling: download registered, 0 started, 3 paused, 1 scheduled, 5 pending: manifests:emoticon_content_description-2022081613 {W:b:u:l, bg}, dynamic_art:b1f6f47a53f7820be91b9fe247728980 @ {m:b:u:l, bg}, dynamic_art:305f81355a729e382ea9f374dd286d9f @ {m:b:u:l, bg}, transformer_concept:2023011913_en @ {m:b:u:l, bg}, handwriting_recognition:pack_mapping_v1_lstm_20231127 * {m:b:u:l, fg}
-10-21 23:41:40.895 D/PhFileGroupPop( 3296): Added file groups spam_verdict_enforcement_policy_config
-10-21 23:41:40.896 I/SP      ( 1389): Requesting download of URL https://www.gstatic.com/android/keyboard/modelpack/transformer_concept/2023011913/en.zip to 2023011913_en.zip.fetched (constraints: m:b:u:l)
-10-21 23:41:40.898 D/PhFileGroupPop( 3296): Added file groups smart_suggestion_reranker_models
-10-21 23:41:40.901 I/Fitness ( 1172): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
-10-21 23:41:40.906 V/GrammaticalInflectionUtils(  550): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@6df6eec, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
-10-21 23:41:40.913 I/SP      ( 1389): Scheduling: job start ({m:b:u:l, fg}), 1 started, 3 paused, 0 scheduled, 5 pending: manifests:emoticon_content_description-2022081613 {W:b:u:l, bg}, dynamic_art:b1f6f47a53f7820be91b9fe247728980 @ {m:b:u:l, bg}, dynamic_art:305f81355a729e382ea9f374dd286d9f @ {m:b:u:l, bg}, transformer_concept:2023011913_en @ {m:b:u:l, bg}, handwriting_recognition:pack_mapping_v1_lstm_20231127 @ * {m:b:u:l, fg}
-10-21 23:41:40.913 I/SP      ( 1389): Requesting download of URL https://dl.google.com/handwriting/models/packmapping_release.20231127.pb to pack_mapping_v1_lstm_20231127.fetched (constraints: m:b:u:l)
-10-21 23:41:40.913 I/AppsFilter(  550): interaction: PackageSetting{dceeda6 com.android.microdroid.empty_payload/10203} -> PackageSetting{62c2640 dev.mobile.maestro/10210} BLOCKED
-10-21 23:41:40.914 I/SP      ( 1389): Sync for emoji succeeded in 1810 ms: {added: [2ada3c9a4a17d6bb81b1fe8d51502d60], metadata: false
-10-21 23:41:40.919 D/PhFileGroupPop( 3296): Added file groups supersort_us_grammars
-10-21 23:41:40.923 D/Zygote  (  354): Forked child process 3967
-10-21 23:41:40.930 I/ActivityManager(  550): Start proc 3967:dev.mobile.maestro/u0a210 for added application dev.mobile.maestro
-10-21 23:41:40.931 I/PhenotypeBackgroundRecv( 1633): Skipping com.google.android.apps.search.transcription.device#com.google.android.googlequicksearchbox which doesn't use ProcessStable flags.
-10-21 23:41:40.941 I/.mobile.maestro( 3967): Late-enabling -Xcheck:jni
-10-21 23:41:40.951 I/AppWidgetServiceImpl(  550): Received broadcast: android.intent.action.PACKAGE_UNSTOPPED on user 0
-10-21 23:41:40.953 D/PhFileGroupPop( 3296): Added file groups nudge
-10-21 23:41:40.978 I/SP      ( 1389): Download for dynamic_art:b1f6f47a53f7820be91b9fe247728980 was canceled
-10-21 23:41:40.978 I/SP      ( 1389): Download stopped: dynamic_art:b1f6f47a53f7820be91b9fe247728980, failed (retriable) paused, size: 0
-10-21 23:41:40.978 I/.mobile.maestro( 3967): Using CollectorTypeCMC GC.
-10-21 23:41:40.978 W/.mobile.maestro( 3967): Unexpected CPU variant for x86: x86_64.
-10-21 23:41:40.978 W/.mobile.maestro( 3967): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
-10-21 23:41:40.981 I/AppWidgetServiceImpl(  550): Updating package stopped masked state for uid 10210 package dev.mobile.maestro isStopped false
-10-21 23:41:40.985 I/Auth    ( 1304): [SupervisedAccountIntentOperation] onHandleIntent(): android.intent.action.PACKAGE_ADDED
-10-21 23:41:40.987 V/Backup  ( 1304): [PhotosPackagedAddedIO] Flag is disabled.
+10-22 06:06:41.333 D/AndroidRuntime( 3817): Calling main entry com.android.commands.am.Am
+10-22 06:06:41.341 D/UiAutomationConnection( 3817): Created on user UserHandle{0}
+10-22 06:06:41.343 I/ActivityManager(  556): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+10-22 06:06:41.344 V/GrammaticalInflectionUtils(  556): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@8734f54, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+10-22 06:06:41.346 I/AppsFilter(  556): interaction: PackageSetting{7c5cbae com.android.microdroid.empty_payload/10197} -> PackageSetting{8bf6a39 dev.mobile.maestro/10210} BLOCKED
+10-22 06:06:41.354 I/BugleRcsEngine( 3207): [SR]: Single Registration is disabled. Skipping Single Registration capability check for subId: 1, OS.isAtLeastS:[true], enableSingleRegistrationProvisioning:[false] [CONTEXT thread_id=82 ]
+10-22 06:06:41.357 I/gle.android.gms( 1544): Background concurrent mark compact GC freed 10MB AllocSpace bytes, 126(6404KB) LOS objects, 49% free, 17MB/35MB, paused 11.164ms,3.916ms total 195.653ms
+10-22 06:06:41.360 I/RcsAvailabilityUpdaterL( 3207): RcsAvailability configuration availability and enabled status: simId: redacted-pii:sim_id[chars:20,last3:897], SipConnectionType: DUAL_REG, isConfigurationAvailableAndEnabled: false
+10-22 06:06:41.362 I/RcsAvailabilityUpdaterL( 3207): updateRcsAvailability: currentAvailability: 9, newAvailability: 2, hint: NO_HINT
+10-22 06:06:41.363 D/Zygote  (  358): Forked child process 3851
+10-22 06:06:41.364 I/BugleRcsProvisioning( 3207): RcsProvisioningTrigger: onRcsAvailabilityUpdate : availability is updated to RCS is disabled for this carrier by Google, lastAvailabilityLocal is null, simId hash = -4034685370423269955, simId = redacted-pii:sim_id[chars:20,last3:897], isPev3Enabled = true
+10-22 06:06:41.364 W/SharedPreferencesSimSta( 3207): SharedPreferencesSimStateStore: No sim subscription info found for RCS provisioning id
+10-22 06:06:41.364 W/SharedPreferencesSimSta( 3207): SharedPreferencesSimStateStore: can't get simId for null SimSubscriptionInfo when setting PhoneDefaults.
+10-22 06:06:41.364 W/SharedPreferencesSimSta( 3207): SharedPreferencesSimStateStore: can't get simId for null SimSubscriptionInfo when setting PhoneDefaults.
+10-22 06:06:41.365 W/SharedPreferencesSimSta( 3207): SharedPreferencesSimStateStore: can't get simId for null SimSubscriptionInfo when setting PhoneDefaults.
+10-22 06:06:41.365 W/SharedPreferencesSimSta( 3207): SharedPreferencesSimStateStore: can't get simId for null SimSubscriptionInfo when setting PhoneDefaults.
+10-22 06:06:41.367 I/BugleRcsEngine( 3207): Receive onRcsAvailabilityUpdate, SIM = redacted-pii:sim_id[chars:20,last3:897], availability = RcsAvailability{mAvailability=DISABLED_VIA_GSERVICES (RCS is disabled for this carrier by Google)} [CONTEXT log_prefix="RcsProvisioningManager" thread_id=51 ]
+10-22 06:06:41.367 I/BugleSimStateTracker( 3207): Is carrier config for identified carrier: true
+10-22 06:06:41.368 W/Bugle   ( 3207): Bugle: SubscriptionMetadataUtils get: unexpected subId = -1, replacing with -1
+10-22 06:06:41.368 W/Bugle   ( 3207): Bugle: SubscriptionMetadataUtils get: unexpected subId = -1, replacing with -1
+10-22 06:06:41.373 I/BugleRcsProvisioning( 3207): RcsProvisioningTrigger: onRcsAvailabilityUpdate : isPreviousDisabled = true, isCurrentDisabled = true, config[simId:redacted-pii:sim_id[chars:20,last3:897]] = [Type: 0, Version: 0, Validity: 0, Last updated: 0, Remaining validity: 0, Reconfiguration requested: false, Messaging technology: SIMPLE_IM, rcsVolteSingleRegistration: false], hasToken: false, isValidAndUpdated: false
+10-22 06:06:41.376 I/BugleTransport( 3207): onRcsAvailabilityUpdate: kicking off updateActiveTransport for simId:redacted-pii:sim_id[chars:20,last3:897]
+10-22 06:06:41.381 I/BugleRcsEngine( 3207): AvailabilityObserver.onUpdate : Notify RcsAvailabilityListener brtj@4a4ca5b onRcsAvailabilityUpdate, SIM = redacted-pii:sim_id[chars:20,last3:897], availability = 2 [CONTEXT log_prefix="RcsProvisioningManager" thread_id=54 ]
+10-22 06:06:41.382 I/BugleTransport( 3207): isChatAvailable: RcsAvailability is DISABLED_VIA_GSERVICES (RCS is disabled for this carrier by Google)
+10-22 06:06:41.382 I/BugleRcsEngine( 3207): RCS Configuration storage in Bugle is disabled by p/h flag, using ProvisioningEngineStateCacheUtil.getProvisioningConfigurationForGivenSimIfExist() [CONTEXT log_prefix="ProvisioningEngineDataRetriever" thread_id=51 ]
+10-22 06:06:41.382 W/BugleAction( 3207): Failed to get msisdn from Bugle
+10-22 06:06:41.383 I/.mobile.maestro( 3851): Late-enabling -Xcheck:jni
+10-22 06:06:41.389 W/Bugle   ( 3207): Bugle: SubscriptionMetadataUtils get: unexpected subId = -2, replacing with -1
+10-22 06:06:41.392 W/Bugle   ( 3207): Bugle: SubscriptionMetadataUtils get: unexpected subId = -2, replacing with -1
+10-22 06:06:41.392 W/Bugle   ( 3207): Bugle: SubscriptionMetadataUtils get: unexpected subId = -2, replacing with -1
+10-22 06:06:41.395 I/ebvk$a  ( 1544): Unable to retrieve flag snapshot for com.google.android.gms.potokens, using defaults.
 --
-10-21 23:45:29.698 I/AndroidRuntime( 3944): VM exiting with result code 0.
-10-21 23:45:29.835 I/servicemanager(    0): Caller(pid=550,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
-10-21 23:45:29.715 V/ActivityManager(  550): Got obituary of 3967:dev.mobile.maestro
-10-21 23:45:29.850 I/init    (    0): starting service 'artd'...
-10-21 23:45:29.717 W/ActivityManager(  550): pid 550 system sent binder code 1 with flags 1 to frozen apps and got error -32
-10-21 23:45:29.718 I/Zygote  (  354): Process 3967 exited due to signal 9 (Killed)
-10-21 23:45:29.720 I/AiAiEcho( 1560): Settings changed for uri: content://settings/secure/accessibility_enabled
-10-21 23:45:29.724 W/MagnificationConnectionManager(  550): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-21 23:45:29.725 W/MagnificationConnectionManager(  550): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-21 23:45:29.726 I/AiAiEcho( 1560): Settings changed for uri: content://settings/secure/accessibility_enabled
-10-21 23:45:29.727 I/adbd    (  432): Remote process closed the socket (on MSG_PEEK)
-10-21 23:45:29.732 W/IPCThreadState(  550): Sending oneway calls to frozen process.
-10-21 23:45:29.732 W/IPCThreadState(  550): Sending oneway calls to frozen process.
-10-21 23:45:29.732 W/IPCThreadState(  550): Sending oneway calls to frozen process.
-10-21 23:45:29.732 W/IPCThreadState(  550): Sending oneway calls to frozen process.
-10-21 23:45:29.868 I/binder  (    0): undelivered transaction 501237, process died.
-10-21 23:45:29.871 I/init    (    0): ... started service 'artd' has pid 6277
-10-21 23:45:29.872 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 142 (/system/bin/servicemanager)
-10-21 23:45:29.738 W/IPCThreadState(  550): Sending oneway calls to frozen process.
-10-21 23:45:29.738 W/IPCThreadState(  550): Sending oneway calls to frozen process.
-10-21 23:45:29.741 I/AiAiEcho( 1560): Predicting[0]:  [CONTEXT sampling_count=5 ]
-10-21 23:45:29.741 I/AiAiEcho( 1560): EchoTargets: 
-10-21 23:45:29.741 I/AiAiEcho( 1560): Filtered by AiAi flag check: 
-10-21 23:45:29.741 I/AiAiEcho( 1560): [CONTEXT ratelimit_period="10 SECONDS" ]
-10-21 23:45:29.741 I/AiAiEcho( 1560): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
-10-21 23:45:29.741 I/AiAiEcho( 1560): #remoteViewsTwiddler: feature disabled.
-10-21 23:45:29.741 I/AiAiEcho( 1560): Predicting[0]:  [CONTEXT sampling_count=5 ]
-10-21 23:45:29.741 I/AiAiEcho( 1560): EchoTargets: 
-10-21 23:45:29.741 I/AiAiEcho( 1560): Filtered by AiAi flag check: 
-10-21 23:45:29.741 I/AiAiEcho( 1560): [CONTEXT ratelimit_period="10 SECONDS" ]
-10-21 23:45:29.741 I/AiAiEcho( 1560): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+10-22 06:10:22.737 I/AndroidRuntime( 3817): VM exiting with result code 0.
+10-22 06:10:22.744 I/netd    (  357): tetherGetStats() -> {[]} <0.35ms>
+10-22 06:10:22.755 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-22 06:10:22.758 W/MagnificationConnectionManager(  556): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-22 06:10:22.758 V/UiAutomationManager(  556): UiAutomation service owner died
+10-22 06:10:22.759 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-22 06:10:22.875 I/init    (    0): ... started service 'artd' has pid 6046
+10-22 06:10:22.877 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 141 (/system/bin/servicemanager)
+10-22 06:10:22.760 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-22 06:10:22.761 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-22 06:10:22.881 I/init    (    0): Untracked pid 3817 exited with status 0
+10-22 06:10:22.883 I/init    (    0): Untracked pid 3817 did not have an associated service entry and will not be reaped
+10-22 06:10:22.893 I/binder  (    0): undelivered transaction 455172, process died.
+10-22 06:10:22.776 I/Zygote  (  358): Process 3851 exited due to signal 9 (Killed)
+10-22 06:10:22.777 V/ActivityManager(  556): Got obituary of 3851:dev.mobile.maestro
+10-22 06:10:22.779 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-22 06:10:22.780 I/AiAiEcho( 1432): Settings changed for uri: content://settings/secure/accessibility_enabled
+10-22 06:10:22.780 I/AiAiEcho( 1432): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-22 06:10:22.780 I/AiAiEcho( 1432): EchoTargets: 
+10-22 06:10:22.780 I/AiAiEcho( 1432): Filtered by AiAi flag check: 
+10-22 06:10:22.780 I/AiAiEcho( 1432): [CONTEXT ratelimit_period="10 SECONDS" ]
