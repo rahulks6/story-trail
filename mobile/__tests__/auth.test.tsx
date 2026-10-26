@@ -95,6 +95,12 @@ describe("Sign up", () => {
     expect(field(tree, "Password").props.autoComplete).toBe("new-password");
   });
 
+  test("the name and username stop at the server's limits (60 and 30), as in Edit profile", async () => {
+    const tree = await render(<SignupScreen {...props} />);
+    expect(field(tree, "Display name").props.maxLength).toBe(60);
+    expect(field(tree, "Username").props.maxLength).toBe(30);
+  });
+
   test("asks for a date of birth as DD/MM/YYYY and allows only people 18 and older", async () => {
     const tree = await render(<SignupScreen {...props} />);
     await type(field(tree, "Display name"), "Rahul K");

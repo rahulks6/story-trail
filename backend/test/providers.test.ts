@@ -7,6 +7,7 @@ import {buildApp} from '../src/app';
 import {query,queryOne} from '../src/db/psql';
 import {HttpError} from '../src/http/errors';
 import {liveProviders} from '../src/modules/auth/providers';
+import {clipText} from '../src/shared/validation';
 let sends=0;const tag=randomUUID().slice(0,8);
 // Only the remote gateway is a test double. All HTTP, SQL, uniqueness, and session behavior is real.
 const server=buildApp({async google(token){if(!token.startsWith('verified-'))throw new HttpError(401,'Invalid test assertion');return {subject:token+'-'+tag,email:token==='verified-collision'?`collision-${tag}@example.com`:token==='verified-email'?`google-${tag}@example.com`:null,displayName:'Provider test'};},async sendPhone(){sends++;return 'VE'+'3'.repeat(32);},async checkPhone(_sid,code){return code==='246810';}});
@@ -55,4 +56,11 @@ it('Linking requires recent ownership proof, preserves the user, and cannot remo
  assert.equal((await req('provider/unlink',{provider:'GOOGLE',reauthTicket:ticket.body.reauthTicket,confirmed:true},same.body.tokens.accessToken)).status,409);
  assert.equal((await req('account/delete',{reauthTicket:ticket.body.reauthTicket,confirmed:true},same.body.tokens.accessToken)).status,204);
  assert.equal((await req('google',{idToken:'verified-link'})).status,403);
+});
+
+it('a Google name clipped to 60 never ends in half an emoji',()=>{
+ const name='A'.repeat(59)+'\u{1F600}';
+ assert.equal(clipText(name,60),'A'.repeat(59));
+ assert.equal(clipText('A'.repeat(58)+'\u{1F600}',60),'A'.repeat(58)+'\u{1F600}');
+ assert.equal(clipText('Asha',60),'Asha');
 });

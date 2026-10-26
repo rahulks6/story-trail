@@ -389,6 +389,11 @@ export function ActivityScreen(): React.JSX.Element {
       else await declineFollowRequest(requestId, accessToken);
       setAnswered((m) => ({ ...m, [requestId]: accept ? "accepted" : "declined" }));
     } catch (e) {
+      // Answered already (a second tap, another device) or withdrawn: show how it stands now.
+      if (e instanceof ApiError && (e.status === 409 || e.status === 404)) {
+        void loadFirstPage();
+        return;
+      }
       setLoadError(e instanceof ApiError ? e.message : "Couldn't answer that request. Check your connection and try again.");
     }
   };

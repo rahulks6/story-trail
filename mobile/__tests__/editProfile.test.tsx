@@ -5,6 +5,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as ImagePicker from "react-native-image-picker";
 import * as NitroImage from "react-native-nitro-image";
 import { EditProfileScreen } from "../src/screens/profile/EditProfileScreen";
+import { Avatar } from "../src/components/Avatar";
 import {
   avatarCropRect, avatarImageLayout, clampAvatarCrop, initialAvatarCrop, outputSize, panAvatarCrop, zoomAvatarCrop, COVER_ASPECT, MAX_AVATAR_ZOOM,
 } from "../src/models/avatarCrop";
@@ -256,6 +257,10 @@ describe("profile photo", () => {
     expect(media.uploadPhoto).not.toHaveBeenCalledWith("file:///photos/IMG_1.jpg", expect.anything(), expect.anything());
     expect(users.updateMyProfile).toHaveBeenCalledWith(expect.objectContaining({ avatarMediaId: "m-new" }), "token");
     expect(navigation.goBack).toHaveBeenCalled();
+    // The server is still processing it (its file is a 404 for a few seconds): your photo shows
+    // the square you cut, from the phone, straight away.
+    await act(async () => tree.update(<Avatar username="me_now" avatarMediaId="m-new" />));
+    expect(tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && !!n.props.source)[0]!.props.source).toEqual({ uri: "file:///tmp/katkee-crop-1.jpg" });
   });
 
   test("Remove current photo shows your initial and Save clears it; nothing else is sent for the photo otherwise", async () => {

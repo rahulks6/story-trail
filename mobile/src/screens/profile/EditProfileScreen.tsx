@@ -21,6 +21,7 @@ import { FadeInImage } from "../../components/FadeInImage";
 import { Icon } from "../../components/Icon";
 import { ActionSheet } from "../../components/ActionSheet";
 import { AvatarCropper, type PickedPhoto } from "../../components/AvatarCropper";
+import { rememberLocalProfilePhoto, useProfilePhotoSource } from "../../hooks/useProfilePhotoSource";
 import { INTEREST_CHOICES, MAX_INTERESTS } from "../onboarding/OnboardingScreen";
 
 type Props = NativeStackScreenProps<RootStackParamList, "EditProfile">;
@@ -76,7 +77,6 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
   // The sheet keeps its target while it slides away, so its choices don't change as it closes.
   const [sheet, setSheet] = useState<{ open: boolean; target: Target }>({ open: false, target: "photo" });
   const [picked, setPicked] = useState<{ photo: PickedPhoto; target: Target } | null>(null);
-  const [coverFailed, setCoverFailed] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -93,6 +93,7 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
   const hasPhoto = photo.kind === "new" || (photo.kind === "unchanged" && !!user?.avatarMediaId);
   const savedCoverId = cover.kind === "unchanged" ? user?.coverMediaId ?? null : null;
   const hasCover = cover.kind === "new" || !!savedCoverId;
+  const savedCover = useProfilePhotoSource(savedCoverId && user ? coverFileUrl(user.username, savedCoverId) : null, savedCoverId, accessToken);
 
   // Back button, Android back and the iOS swipe all come through here while changes are unsaved.
   usePreventRemove(dirty && !saved, ({ data }) => {
@@ -195,6 +196,9 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
         },
         accessToken,
       );
+      // Your page shows what you cropped at once; the server's copy may take a few seconds.
+      if (photo.kind === "new" && avatarMediaId) rememberLocalProfilePhoto(avatarMediaId, photo.uri);
+      if (cover.kind === "new" && coverMediaId) rememberLocalProfilePhoto(coverMediaId, cover.uri);
       applyProfile(savedUser);
       profileChanged();
       setSaved(true);
@@ -230,13 +234,8 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
           <View style={styles.cover}>
             {cover.kind === "new" ? (
               <Image source={{ uri: cover.uri }} style={styles.coverImage} accessibilityLabel="New cover photo" />
-            ) : savedCoverId && user && accessToken && !coverFailed ? (
-              <FadeInImage
-                source={{ uri: coverFileUrl(user.username, savedCoverId), headers: { Authorization: `Bearer ${accessToken}` } }}
-                style={styles.coverImage}
-                resizeMode="cover"
-                onError={() => setCoverFailed(true)}
-              />
+            ) : savedCover.source ? (
+              <FadeInImage source={savedCover.source} style={styles.coverImage} resizeMode="cover" onError={savedCover.onError} />
             ) : (
               <Icon name={ICONS.camera} size={22} color={colors.textSecondary} />
             )}

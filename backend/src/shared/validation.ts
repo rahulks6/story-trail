@@ -20,3 +20,12 @@ export function containsPattern(term: string): string {
 export function escapeLike(term: string): string {
   return term.replace(/[\\%_]/g, (c) => `\\${c}`);
 }
+
+/**
+ * At most `max` UTF-16 code units (how every length here is counted), never ending in half of
+ * an emoji: a cut through a surrogate pair would be stored as "\uFFFD".
+ */
+export function clipText(text: string, max: number): string {
+  const clipped = text.slice(0, max);
+  return /[\uD800-\uDBFF]$/.test(clipped) ? clipped.slice(0, -1) : clipped;
+}

@@ -16,6 +16,9 @@ export type FollowResult = { status: "following" } | { status: "requested" };
 export async function follow(viewerId: string, targetUsername: string): Promise<FollowResult> {
   await enforceAction(viewerId, "follow"); // mass-follow protection
   const target = await requireOtherUser(targetUsername, viewerId);
+  // A suspended account's profile is "not found" (profiles.service.ts), so it can't be followed
+  // or sent a request either. Unfollowing, blocking and muting it still work.
+  if (!target.isActive) throw new HttpError(404, "User not found.");
 
   const blocked = await socialRepo.anyBlockBetween(viewerId, target.id);
   if (blocked) throw new HttpError(404, "User not found.");
@@ -57,15 +60,16 @@ async function requireOwnedPendingRequest(requestId: string, viewerId: string) {
 
 export async function acceptFollowRequest(viewerId: string, requestId: string): Promise<void> {
   const request = await requireOwnedPendingRequest(requestId, viewerId);
-  await socialRepo.createFollow(request.requesterId, request.targetId);
-  await socialRepo.resolveFollowRequest(requestId, "accepted");
+  // Only while still pending: a request withdrawn (or accepted on another device) in the
+  // meantime makes no follow and no second notification.
+  if (!(await socialRepo.acceptPendingFollowRequest(requestId))) throw new HttpError(409, "This request has already been resolved.");
   // "@target accepted your follow request" for the person who asked.
   await notificationsService.notifyFollowAccepted(request.targetId, request.requesterId);
 }
 
 export async function declineFollowRequest(viewerId: string, requestId: string): Promise<void> {
   await requireOwnedPendingRequest(requestId, viewerId);
-  await socialRepo.resolveFollowRequest(requestId, "declined");
+  if (!(await socialRepo.resolveFollowRequest(requestId, "declined"))) throw new HttpError(409, "This request has already been resolved.");
 }
 
 export async function block(viewerId: string, targetUsername: string): Promise<void> {
@@ -107,7 +111,7 @@ export const MAX_CLOSE_FRIENDS = 1000;
 
 export async function addCloseFriend(viewerId: string, targetUsername: string): Promise<void> {
   const target = await requireOtherUser(targetUsername, viewerId);
-  if (await socialRepo.anyBlockBetween(viewerId, target.id)) throw new HttpError(404, "User not found.");
+  if (!target.isActive || await socialRepo.anyBlockBetween(viewerId, target.id)) throw new HttpError(404, "User not found.");
   if ((await socialRepo.countCloseFriends(viewerId)) >= MAX_CLOSE_FRIENDS) {
     throw new HttpError(409, `Close Friends can hold up to ${MAX_CLOSE_FRIENDS} people.`);
   }

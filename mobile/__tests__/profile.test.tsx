@@ -8,6 +8,7 @@ import { UserProfileScreen } from "../src/screens/profile/UserProfileScreen";
 import { countLabel, formatCount } from "../src/utils/formatCount";
 import * as usersApi from "../src/api/users";
 import * as storiesApi from "../src/api/stories";
+import { PROFILE_PHOTO_RETRY_DELAYS_MS } from "../src/hooks/useProfilePhotoSource";
 
 // The creator page (Phase 10): your own and other people's, with the network replaced.
 const mockAuth = {
@@ -344,11 +345,28 @@ describe("the cover photo", () => {
     expect(covers()).toHaveLength(0);
   });
 
-  test("a cover that can't be loaded goes, leaving the page as it is without one", async () => {
-    api.getProfile.mockResolvedValue({ profile: profile({ coverMediaId: "c-1" }) });
-    await renderOther();
-    await act(async () => coverImage().props.onError({ nativeEvent: { error: "404" } }));
-    expect(covers()).toHaveLength(0);
+  test("a cover still being processed is asked for again; one that can't be loaded goes, leaving the page as it is without one", async () => {
+    jest.useFakeTimers();
+    try {
+      api.getProfile.mockResolvedValue({ profile: profile({ coverMediaId: "c-1" }) });
+      await renderOther();
+      // Just saved: the file answers 404 until the worker has made it. The banner keeps its
+      // space and the cover is fetched again a little later, and shows once it's ready.
+      await act(async () => coverImage().props.onError({ nativeEvent: { error: "404" } }));
+      expect(covers()).toHaveLength(1);
+      await act(async () => { jest.advanceTimersByTime(PROFILE_PHOTO_RETRY_DELAYS_MS[0]!); });
+      expect(coverImage().props.source.uri).toMatch(/\/cover\/file\?v=c-1&attempt=1$/);
+      // Never ready: after the last try it goes.
+      for (const delay of PROFILE_PHOTO_RETRY_DELAYS_MS.slice(1)) {
+        await act(async () => coverImage().props.onError({ nativeEvent: { error: "404" } }));
+        await act(async () => { jest.advanceTimersByTime(delay); });
+      }
+      expect(covers()).toHaveLength(1);
+      await act(async () => coverImage().props.onError({ nativeEvent: { error: "404" } }));
+      expect(covers()).toHaveLength(0);
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   test("your own page shows the cover from your account, which changes as soon as you save", async () => {

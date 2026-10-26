@@ -5,6 +5,7 @@ import type { AddressInfo } from "node:net";
 import { buildApp } from "../src/app";
 import { authHeader, makeClient, uniqueUser } from "./helpers";
 import { buildTestPng } from "./fixtures";
+import { query } from "../src/db/psql";
 
 let client: ReturnType<typeof makeClient>;
 let baseUrl: string;
@@ -250,6 +251,83 @@ describe("follow — private account", () => {
 
     const profile = await client.get(`/api/v1/users/${carol.input.username}`, authHeader(alice.accessToken));
     assert.equal(profile.body.profile.viewer.isFollowing, false);
+  });
+});
+
+describe("follow requests — races and going public", () => {
+  it("two accepts of the same request at once: one follow, one 204, the other told it's resolved", async () => {
+    const alice = await signupUser();
+    const carol = await signupUser();
+    await client.patch("/api/v1/users/me", { isPrivate: true }, authHeader(carol.accessToken));
+    await client.post(`/api/v1/users/${carol.input.username}/follow`, undefined, authHeader(alice.accessToken));
+    const requestId = (await client.get("/api/v1/follow-requests", authHeader(carol.accessToken))).body.requests[0].requestId;
+    const results = await Promise.all([1, 2].map(() => client.post(`/api/v1/follow-requests/${requestId}/accept`, undefined, authHeader(carol.accessToken))));
+    assert.deepEqual(results.map((r) => r.status).sort(), [204, 409]);
+    const profile = await client.get(`/api/v1/users/${carol.input.username}`, authHeader(alice.accessToken));
+    assert.equal(profile.body.profile.viewer.isFollowing, true);
+    assert.equal(profile.body.profile.followerCount, 1);
+    const declineAfter = await client.post(`/api/v1/follow-requests/${requestId}/decline`, undefined, authHeader(carol.accessToken));
+    assert.equal(declineAfter.status, 409);
+  });
+
+  it("going public turns pending requests into follows, so nobody is left 'Requested' on a public page", async () => {
+    const alice = await signupUser();
+    const bob = await signupUser();
+    const carol = await signupUser();
+    await client.patch("/api/v1/users/me", { isPrivate: true }, authHeader(carol.accessToken));
+    await client.post(`/api/v1/users/${carol.input.username}/follow`, undefined, authHeader(alice.accessToken));
+    await client.post(`/api/v1/users/${carol.input.username}/follow`, undefined, authHeader(bob.accessToken));
+    // Saving other fields while still private changes nothing.
+    await client.patch("/api/v1/users/me", { bio: "Still private", isPrivate: true }, authHeader(carol.accessToken));
+    assert.equal((await client.get("/api/v1/follow-requests", authHeader(carol.accessToken))).body.requests.length, 2);
+
+    const madePublic = await client.patch("/api/v1/users/me", { isPrivate: false }, authHeader(carol.accessToken));
+    assert.equal(madePublic.status, 200);
+    assert.equal((await client.get("/api/v1/follow-requests", authHeader(carol.accessToken))).body.requests.length, 0);
+    const seenByAlice = await client.get(`/api/v1/users/${carol.input.username}`, authHeader(alice.accessToken));
+    assert.equal(seenByAlice.body.profile.viewer.isFollowing, true);
+    assert.equal(seenByAlice.body.profile.viewer.hasPendingRequestFromViewer, false);
+    assert.equal(seenByAlice.body.profile.followerCount, 2);
+  });
+
+  it("a deleted account no longer counts among someone's followers or following, as in the lists", async () => {
+    const alice = await signupUser();
+    const bob = await signupUser();
+    const gone = await signupUser();
+    await client.post(`/api/v1/users/${bob.input.username}/follow`, undefined, authHeader(alice.accessToken));
+    await client.post(`/api/v1/users/${bob.input.username}/follow`, undefined, authHeader(gone.accessToken));
+    await client.post(`/api/v1/users/${gone.input.username}/follow`, undefined, authHeader(bob.accessToken));
+    assert.equal((await client.get(`/api/v1/users/${bob.input.username}`, authHeader(alice.accessToken))).body.profile.followerCount, 2);
+
+    const deleted = await client.deleteWithBody("/api/v1/users/me", { password: gone.input.password }, authHeader(gone.accessToken));
+    assert.equal(deleted.status, 204);
+    const profile = (await client.get(`/api/v1/users/${bob.input.username}`, authHeader(alice.accessToken))).body.profile;
+    const followers = (await client.get(`/api/v1/users/${bob.input.username}/followers`, authHeader(alice.accessToken))).body.followers;
+    const following = (await client.get(`/api/v1/users/${bob.input.username}/following`, authHeader(alice.accessToken))).body.following;
+    assert.equal(profile.followerCount, 1);
+    assert.equal(profile.followerCount, followers.length);
+    assert.equal(profile.followingCount, 0);
+    assert.equal(profile.followingCount, following.length);
+  });
+});
+
+describe("suspended accounts", () => {
+  it("can't be followed, requested or added to Close Friends (their profile is not found), but can still be unfollowed", async () => {
+    const alice = await signupUser();
+    const sam = await signupUser();
+    const pat = await signupUser();
+    await client.patch("/api/v1/users/me", { isPrivate: true }, authHeader(pat.accessToken));
+    await client.post(`/api/v1/users/${sam.input.username}/follow`, undefined, authHeader(alice.accessToken));
+    for (const user of [sam, pat]) {
+      const me = await client.get("/api/v1/auth/me", authHeader(user.accessToken));
+      await query(`UPDATE users SET is_active = false WHERE id = :'id'`, { id: me.body.user.id });
+    }
+    assert.equal((await client.get(`/api/v1/users/${pat.input.username}`, authHeader(alice.accessToken))).status, 404);
+    assert.equal((await client.post(`/api/v1/users/${pat.input.username}/follow`, undefined, authHeader(alice.accessToken))).status, 404);
+    assert.equal((await client.put(`/api/v1/close-friends/${sam.input.username}`, undefined, authHeader(alice.accessToken))).status, 404);
+    const followNew = await client.post(`/api/v1/users/${sam.input.username}/follow`, undefined, authHeader((await signupUser()).accessToken));
+    assert.equal(followNew.status, 404);
+    assert.equal((await client.delete(`/api/v1/users/${sam.input.username}/follow`, authHeader(alice.accessToken))).status, 204);
   });
 });
 
