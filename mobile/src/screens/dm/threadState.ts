@@ -73,6 +73,36 @@ export function applyReaction(messages: readonly Message[], messageId: string, u
   return changed ? next : (messages as Message[]);
 }
 
+/** How much of a replied-to message a quote carries (the server's QUOTE_LENGTH, in characters). */
+export const QUOTE_LENGTH = 160;
+
+const ZWJ = 0x200d;
+const isRegionalIndicator = (cp: number) => cp >= 0x1f1e6 && cp <= 0x1f1ff;
+/** Code points that belong to the character before them: joiners, emoji/text style, skin tones, keycaps, tag letters. */
+const extendsPrevious = (cp: number) => cp === ZWJ || cp === 0xfe0f || cp === 0xfe0e || (cp >= 0x1f3fb && cp <= 0x1f3ff) || cp === 0x20e3 || (cp >= 0xe0020 && cp <= 0xe007f);
+
+/**
+ * The start of `text`, at most `max` characters (code points, as the server counts them), never
+ * cut inside an emoji: `slice` counts UTF-16 units and can split one in half ("�"), and a cut
+ * inside a family, a skin tone or a flag shows the wrong emoji. Whole emoji are dropped instead.
+ */
+export function truncateText(text: string, max: number): string {
+  const points = Array.from(text);
+  if (points.length <= max) return text;
+  const kept = points.slice(0, max);
+  const cp = (s: string | undefined) => (s === undefined ? -1 : s.codePointAt(0)!);
+  for (;;) {
+    const last = cp(kept[kept.length - 1]);
+    const next = cp(points[kept.length]);
+    let trailingFlags = 0;
+    while (trailingFlags < kept.length && isRegionalIndicator(cp(kept[kept.length - 1 - trailingFlags]))) trailingFlags++;
+    const splitsFlag = trailingFlags % 2 === 1 && isRegionalIndicator(next);
+    if (!kept.length || !(last === ZWJ || extendsPrevious(next) || splitsFlag)) break;
+    kept.pop();
+  }
+  return kept.join("");
+}
+
 /** The newest message the thread has (the `after` cursor for catching up). */
 export function newestId(messages: readonly Message[]): string | null {
   return messages[0]?.id ?? null;

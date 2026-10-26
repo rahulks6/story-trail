@@ -116,6 +116,8 @@ async function existingMedia(mediaId: string, token: () => string): Promise<Uplo
     const media = await getMedia(mediaId, token());
     // A temporary processing failure: the server tries again without a new upload.
     if (media.status === "failed" && media.retryable) return (await retryMediaProcessing(mediaId, token())).media;
+    // Failed for good: Retry sends the file on the phone again rather than repeating the same error.
+    if (media.status === "failed") return null;
     return media;
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) return null;
@@ -153,7 +155,13 @@ export async function sendPendingMedia(
     // Uploaded: Retry only waits again, it doesn't upload a second copy.
     if (Date.now() > deadline) throw new Error("Still processing. Tap to check again.");
     await wait(delay);
-    media = await getMedia(mediaId, token());
+    try {
+      media = await getMedia(mediaId, token());
+    } catch (error) {
+      // A dropped connection or a busy server while waiting isn't a failed send: keep checking
+      // until the deadline. Only an answer that the file is gone (or not yours) ends it.
+      if (error instanceof ApiError && error.status >= 400 && error.status < 500 && error.status !== 408 && error.status !== 429) throw error;
+    }
   }
   try {
     const { message } = await sendMessage(conversationId, { mediaId, clientMessageId: item.clientMessageId, ...(item.replyToMessageId ? { replyToMessageId: item.replyToMessageId } : {}) }, token());

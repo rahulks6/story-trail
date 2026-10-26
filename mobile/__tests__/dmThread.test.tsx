@@ -561,3 +561,45 @@ test("pins: the bar shows the latest pin and how many; the list unpins; a fourth
   api.listPins.mockResolvedValue({ pins: [] });
   alert.mockRestore();
 });
+
+test("a message the server announces but 'newer than' can't find (the newest was unsent offline) still shows", async () => {
+  const api = require("../src/api/conversations");
+  const original = api.listMessages.getMockImplementation();
+  await render();
+  const fresh = { id: "m3", conversationId: "c1", senderId: "u-alice", body: "still there?", sharedStoryId: null, createdAt: "2026-10-06 09:10:00+00" };
+  // m2 (the thread's newest) is gone on the server: nothing is "after" it, but the latest page has the new one.
+  api.listMessages.mockImplementation(async (_c: string, _t: string, params: { after?: string }) => (params.after ? { messages: [], hasMore: false } : { hasMore: false, messages: [fresh] }));
+  await act(async () => mockRealtime.handler!({ type: "message", conversationId: "c1", messageId: "m3", senderId: "u-alice", createdAt: fresh.createdAt }));
+  await settle();
+  const shown = (label: string) => tree.root.findAll((n) => n.props.accessibilityLabel === label && typeof n.props.onLongPress === "function");
+  expect(shown("@alice: still there?")).toHaveLength(1);
+  // And the next one comes "after" it, as usual.
+  const next = { ...fresh, id: "m4", body: "hello?", createdAt: "2026-10-06 09:11:00+00" };
+  api.listMessages.mockClear();
+  api.listMessages.mockImplementation(async (_c: string, _t: string, params: { after?: string }) => (params.after === "m3" ? { messages: [next], hasMore: false } : { hasMore: false, messages: [] }));
+  await act(async () => mockRealtime.handler!({ type: "message", conversationId: "c1", messageId: "m4", senderId: "u-alice", createdAt: next.createdAt }));
+  await settle();
+  expect(shown("@alice: hello?")).toHaveLength(1);
+  expect(api.listMessages).toHaveBeenCalledTimes(1);
+  api.listMessages.mockImplementation(original);
+});
+
+test("a voice note on its way stays at the bottom saying 'Sending…' while the server processes it, whatever arrives meanwhile", async () => {
+  const sendMedia = require("../src/screens/dm/sendMedia");
+  jest.spyOn(sendMedia, "sendPendingMedia").mockImplementation(() => new Promise(() => undefined));
+  await render();
+  await pressLabel("Record a voice message");
+  const g = globalThis as unknown as { __sound: { listener: ((e: { currentPosition: number }) => void) | null } };
+  await act(async () => g.__sound.listener!({ currentPosition: 2500 }));
+  await pressLabel("Send voice message");
+  await settle();
+  // Processing takes a while; the other person writes meanwhile.
+  const api = require("../src/api/conversations");
+  const original = api.listMessages.getMockImplementation();
+  const reply = { id: "m5", conversationId: "c1", senderId: "u-alice", body: "ok", sharedStoryId: null, createdAt: "2099-01-01 00:00:00+00" };
+  api.listMessages.mockImplementation(async () => ({ hasMore: false, messages: [reply] }));
+  await act(async () => mockRealtime.handler!({ type: "message", conversationId: "c1", messageId: "m5", senderId: "u-alice", createdAt: reply.createdAt }));
+  await settle();
+  expect(tree.root.findAll((n) => n.props.children === "Sending…")).not.toHaveLength(0);
+  api.listMessages.mockImplementation(original);
+});

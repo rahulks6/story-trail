@@ -52,7 +52,7 @@ import { ApiError } from "../../api/client";
 import { getStoryOwnerUsername } from "../../api/stories";
 import { ReportSheet } from "../../components/ReportSheet";
 import { KeyboardAvoider } from "../../components/KeyboardAvoider";
-import { applyReaction, applyReceipt, mergeMessages, newestId, oldestId } from "./threadState";
+import { applyReaction, applyReceipt, mergeMessages, newestId, oldestId, QUOTE_LENGTH, truncateText } from "./threadState";
 import { tapFeedback } from "../../utils/haptics";
 import { launchCamera, launchImageLibrary, type Asset, type ImagePickerResponse } from "react-native-image-picker";
 import Video from "react-native-video";
@@ -140,7 +140,7 @@ function mediaBox(width: number | null | undefined, height: number | null | unde
 
 /** A message as a reply quotes it (the same shape the server sends). */
 function quoteOf(message: Message): QuotedMessage {
-  return { id: message.id, senderId: message.senderId, body: message.body?.slice(0, 160) ?? null, mediaKind: message.media?.kind ?? null, sharedStory: !!message.sharedStoryId };
+  return { id: message.id, senderId: message.senderId, body: message.body ? truncateText(message.body, QUOTE_LENGTH) : null, mediaKind: message.media?.kind ?? null, sharedStory: !!message.sharedStoryId };
 }
 
 /** What a quote shows of the message: its text, or what kind of message it was. */
@@ -898,28 +898,36 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     }
   }, [conversationId, markRead, userId]);
 
-  const catchingUp = useRef<Promise<void> | null>(null);
-  /** Fetches everything newer than what the thread has, page by page. */
-  const catchUp = useCallback(async () => {
+  const catchingUp = useRef<Promise<Set<string> | null> | null>(null);
+  /**
+   * Fetches everything newer than what the thread has, page by page. Resolves with the ids it
+   * found that way (null when it loaded the latest page instead, or couldn't load anything).
+   */
+  const catchUp = useCallback(async (): Promise<Set<string> | null> => {
     if (catchingUp.current) return catchingUp.current;
-    const work = (async () => {
+    const work = (async (): Promise<Set<string> | null> => {
       const token = tokenRef.current;
       const known = messagesRef.current;
       const after = known ? newestId(known) : null;
-      if (!token || !after) return loadLatest();
+      if (!token || !after) {
+        await loadLatest();
+        return null;
+      }
       try {
         let cursor = after;
         let receivedFromOther = false;
+        const found = new Set<string>();
         for (let page = 0; page < MAX_CATCH_UP_PAGES; page++) {
           const result = await listMessages(conversationId, token, { after: cursor, limit: PAGE_SIZE });
           if (result.messages.length) {
             setMessages((current) => mergeMessages(current ?? [], result.messages));
             receivedFromOther ||= result.messages.some((m) => m.senderId !== userId);
+            result.messages.forEach((m) => found.add(m.id));
             cursor = result.messages[0]!.id;
           }
           if (!result.hasMore) {
             if (receivedFromOther) markRead();
-            return;
+            return found;
           }
         }
         await loadLatest(true); // a very long gap: start again from the latest page
@@ -930,9 +938,10 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           setLoadError(isGroupParam ? "You're no longer in this group." : "This conversation isn't available.");
         }
       }
+      return null;
     })();
     catchingUp.current = work;
-    try { await work; } finally { catchingUp.current = null; }
+    try { return await work; } finally { catchingUp.current = null; }
   }, [conversationId, isGroupParam, loadLatest, markRead, userId]);
 
   /** Everything new since the thread was last current, then fresh statuses for recent messages. */
@@ -988,7 +997,11 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       void loadPins();
     } else if (event.type === "message" && event.conversationId === conversationId) {
       if (event.senderId === typingRef.current) stopTyping(); // what they were typing just arrived
-      void catchUp();
+      void catchUp().then((found) => {
+        // Not found "newer than" the thread's newest message: that one was unsent while this phone
+        // was offline, so nothing is newer than it any more. The latest page brings the thread on.
+        if (found && !found.has(event.messageId) && !messagesRef.current?.some((m) => m.id === event.messageId)) void loadLatest();
+      });
       if (isGroup) void loadDetails(); // someone may have joined, left or renamed it
     } else if (event.type === "unsent" && event.conversationId === conversationId) {
       setMessages((current) => current?.filter((m) => m.id !== event.messageId) ?? current);
@@ -1018,6 +1031,8 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       return () => {
         focusedRef.current = false;
         clearInterval(interval);
+        // A voice note doesn't go on playing over a profile or another screen opened from here.
+        setPlayingKey(null);
       };
     }, [catchUp, connected, loadPins, syncThread]),
   );

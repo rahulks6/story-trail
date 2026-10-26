@@ -60,6 +60,15 @@ it("the sender is told (unless message pushes are off), and never about their ow
   assert.deepEqual(await renderPush(item), { skip: "message pushes turned off" });
 });
 
+it("a heart without its emoji-style selector (U+FE0F) is the same heart, stored one way", async () => {
+  const t = await thread();
+  const bare = await react(t, t.bob.token, "❤");
+  assert.equal(bare.status, 200, JSON.stringify(bare.body));
+  assert.deepEqual(bare.body.reactions, [{ userId: t.bob.id, emoji: "❤️" }]);
+  assert.deepEqual((await react(t, t.alice.token, "❤️")).body.reactions.map((r: { emoji: string }) => r.emoji), ["❤️", "❤️"], "both compare equal");
+  assert.equal((await react(t, t.bob.token, "❤️❤️")).status, 422, "still only one of the six");
+});
+
 it("only the two people in the conversation, only its messages, only the six reactions", async () => {
   const t = await thread();
   const stranger = await signup();
