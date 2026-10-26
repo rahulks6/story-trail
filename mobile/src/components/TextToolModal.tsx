@@ -4,7 +4,7 @@ import { Pressable } from "./Pressable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { mediaColors as colors, radii, spacing, ICONS } from "../theme";
 import { Icon } from "./Icon";
-import { contrastOn, neonCore, neonRadius, STYLE_LABELS, TEXT_STYLES, textStyleLook } from "./textLook";
+import { contrastOn, neonCore, neonRadius, STYLE_LABELS, TEXT_STYLES, textStyleLook, tightTextFits } from "./textLook";
 import type { TextOverlayProperties, TextStyle } from "../models/storyDraft";
 import { tapFeedback } from "../utils/haptics";
 
@@ -17,6 +17,8 @@ const DEFAULT_SIZE = 0.045;
 /** The Neon chip glows pink whatever colour is chosen, so it always looks like neon. */
 const NEON_CHIP_GLOW = "#FF3EA5";
 const SLIDER_HEIGHT = 200;
+/** The server keeps this much of a Story's text (stories/dto.ts): more would be cut off on the Story. */
+const MAX_TEXT_LENGTH = 280;
 
 interface Props {
   visible: boolean;
@@ -135,7 +137,7 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
                 styles.input,
                 { fontSize: previewSize },
                 textStyleLook(style, textColor, previewSize),
-                { color: neon ? neonCore(textColor) : textColor, textAlign: align },
+                { color: neon ? neonCore(textColor) : textColor, textAlign: align, includeFontPadding: !tightTextFits(text) },
                 // Room for the glow, which Android cuts off at the text's edges.
                 neon && { padding: neonRadius(previewSize) },
                 style === "Highlight" && !neon && { textShadowRadius: 0 },
@@ -144,6 +146,7 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
               placeholderTextColor="rgba(255,255,255,0.6)"
               value={text}
               onChangeText={setText}
+              maxLength={MAX_TEXT_LENGTH}
               // A see-through highlight, so selecting text never paints over a coloured label.
               cursorColor={textColor}
               selectionColor="rgba(255,255,255,0.35)"
@@ -219,8 +222,9 @@ const styles = StyleSheet.create({
   sliderTrack: { position: "absolute", top: 8, bottom: 8, width: 4, borderRadius: 2, backgroundColor: "rgba(255,255,255,0.6)" },
   sliderThumb: { position: "absolute", width: 22, height: 22, borderRadius: 11, backgroundColor: "#FFFFFF", borderWidth: 1, borderColor: "rgba(0,0,0,0.2)" },
   inputBox: { maxWidth: "100%", paddingHorizontal: 6, paddingVertical: 2 },
-  // Android pads text for accents above and below; without it the label hugs the words.
-  input: { minWidth: 40, padding: 0, includeFontPadding: false },
+  // Android pads text for accents above and below; without it the label hugs the words
+  // (Latin text only, see tightTextFits: an emoji needs that room).
+  input: { minWidth: 40, padding: 0 },
   // A horizontal list must not grow to fill the screen (it stretched the style buttons into tall ovals).
   row: { flexGrow: 0, flexShrink: 0 },
   rowContent: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.sm },
