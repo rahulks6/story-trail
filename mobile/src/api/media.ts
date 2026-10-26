@@ -166,6 +166,25 @@ export async function uploadVideo(localUri: string, mimeType: string, accessToke
   return uploadBlob("/api/v1/media/videos", blob, mimeType, accessToken);
 }
 
+/**
+ * The transparent drawing of your Story's text, stickers and Katkee mark, for a video shared to
+ * other apps (a 9:16 PNG). The server keeps it only until that video is ready.
+ */
+export async function uploadStoryOverlay(localUri: string, accessToken: string): Promise<{ id: string }> {
+  const blob = await fileUriToBlob(localUri);
+  return withRequestTimeout(async signal => {
+    const res = await authenticatedFetch(`${API_BASE_URL}/api/v1/media/overlays`, {
+      method: "POST",
+      headers: { "Content-Type": "image/png", Authorization: `Bearer ${accessToken}` },
+      body: blob,
+      signal,
+    });
+    const json = await readApiResponse<{ overlay: { id: string } }>(res);
+    if (!json.overlay || typeof json.overlay.id !== "string") throw new ApiError(res.status, "The upload response is incomplete. Please try again.");
+    return json.overlay;
+  }, 60_000);
+}
+
 /** Media access is owner-only unless it's attached to a Story the caller can see (backend Phase 4 rule). */
 export async function getMedia(mediaId: string, accessToken: string): Promise<UploadedMedia> {
   const res = await apiGet<{ media: UploadedMedia }>(`/api/v1/media/${mediaId}`, accessToken);

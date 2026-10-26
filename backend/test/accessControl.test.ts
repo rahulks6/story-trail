@@ -160,6 +160,15 @@ describe("a private account's Story", () => {
     refused(await attempt("DELETE /api/v1/stories/:id/like", `${s}/like`, stranger), "unlike");
     refused(await attempt("POST /api/v1/stories/:id/comments", `${s}/comments`, stranger, { body: "hello" }), "comment");
     refused(await attempt("POST /api/v1/stories/:id/share", `${s}/share`, stranger, {}), "share");
+    // Sharing to other apps is the owner's alone, even for a follower.
+    refused(await attempt("POST /api/v1/stories/:id/export", `${s}/export`, friend, { overlayMediaId: null }), "export");
+    const exportId = (await queryOne(
+      `INSERT INTO story_exports (story_id, owner_id, status, storage_key, byte_size) VALUES (:'story', :'owner', 'ready', 'm/00000000-0000-4000-8000-000000000001/export.mp4', 10) RETURNING id`,
+      { story: ids.story, owner: owner.id },
+    ))!.id!;
+    refused(await attempt("GET /api/v1/stories/:id/export/:exportId", `${s}/export/${exportId}`, friend), "export status");
+    refused(await attempt("GET /api/v1/stories/:id/export/:exportId/file", `${s}/export/${exportId}/file`, stranger), "export file");
+    assert.equal(await count(`story_exports WHERE story_id = :'id'`, { id: ids.story }), 1, "no export was queued");
     refused(await attempt("DELETE /api/v1/comments/:id", `/api/v1/comments/${ids.comment}`, stranger), "delete comment");
     refused(await attempt("DELETE /api/v1/stories/:id", s, stranger), "delete story");
 

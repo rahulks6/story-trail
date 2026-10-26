@@ -10,7 +10,7 @@ import { platformOf } from "./activity";
  */
 export const ANALYTICS_EVENTS = [
   "app_session_started", "app_crash", "story_created", "highlight_viewed",
-  "profile_viewed", "search_performed", "upload_succeeded", "upload_failed",
+  "profile_viewed", "search_performed", "upload_succeeded", "upload_failed", "story_shared_external",
 ] as const;
 export type AnalyticsEventName = (typeof ANALYTICS_EVENTS)[number];
 
@@ -40,6 +40,8 @@ const PROPERTIES: Record<AnalyticsEventName, Record<string, PropertyRule>> = {
     reason: { kind: "enum", values: ["network", "server", "rejected", "timeout", "unknown"] },
     attempts: ATTEMPTS,
   },
+  // Your own Story sent to another app as a picture or video (which app is never known).
+  story_shared_external: { kind: MEDIA_KIND },
 };
 
 export const MAX_EVENTS_PER_BATCH = 50;

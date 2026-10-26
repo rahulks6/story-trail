@@ -79,7 +79,7 @@ export async function createCampaign(p: Principal, b: Record<string, unknown>) {
     const result = await one(`WITH campaign AS (
  INSERT INTO ad_campaigns(advertiser_id,name,objective,start_at,end_at,budget_minor,currency,impression_limit,user_cap,daily_cap,created_by,audience)
  SELECT a.id,:'name',:'objective',:'start'::timestamptz,:'end'::timestamptz,:'budget'::bigint,:'currency',:'allocation'::integer,:'user_cap'::integer,:'daily'::integer,:'actor',:'audience'::jsonb FROM advertisers a,media m
- WHERE a.id=:'advertiser' AND m.id=:'media' AND m.owner_id=:'actor' AND m.status='ready' AND NOT m.verification_document AND NOT EXISTS(SELECT 1 FROM stories WHERE media_id=m.id)
+ WHERE a.id=:'advertiser' AND m.id=:'media' AND m.owner_id=:'actor' AND m.status='ready' AND NOT m.verification_document AND NOT m.export_overlay AND NOT EXISTS(SELECT 1 FROM stories WHERE media_id=m.id)
  RETURNING *),creative AS(INSERT INTO ad_creatives(campaign_id,media_id,caption,cta,destination) SELECT id,:'media',:'caption',:'cta',:'destination' FROM campaign RETURNING id),audit AS(INSERT INTO admin_audit(actor_id,action,target_id) SELECT :'actor','CAMPAIGN_CREATED',id FROM campaign)
  SELECT to_jsonb(k) AS data FROM campaign k`, { actor: p.userId, advertiser: uuid(b.advertiserId), media: uuid(b.mediaId), name: text(b.name, 120), objective: 'awareness', start: start.toISOString(), end: end.toISOString(), budget: integer(b.budgetMinor, 0, 1000000000), currency, allocation: integer(b.impressionLimit, 1, 100000000), user_cap: integer(b.userCap, 1, 100), daily: integer(b.dailyCap, 1, 20), caption: typeof b.caption === 'string' && b.caption.length <= 500 ? b.caption : '', cta, destination: target, audience: JSON.stringify(audience) });
     if (!result)

@@ -226,6 +226,8 @@ recorded in an audit log that can't be edited.
     answer lawful requests.
 - **Uploads never used**: deleted after 48 hours.
 - **Photo originals**: deleted 30 days after processing.
+- **A video of your Story prepared for sharing to another app**: deleted
+  24 hours after you asked for it.
 - **Your area**: see above.
 - **Raw analytics events**: deleted after 90 days; only daily totals that
   identify nobody remain.

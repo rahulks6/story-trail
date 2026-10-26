@@ -181,6 +181,26 @@ export function getStoryOwnerUsername(storyId: string, accessToken: string): Pro
   return apiGet(`/api/v1/stories/${storyId}/owner`, accessToken);
 }
 
+/** A video Story being put together on the server for sharing to other apps (backend media/exports.ts). */
+export interface StoryExport {
+  id: string;
+  status: "processing" | "ready" | "failed";
+  /** When ready: a signed CDN URL, or this API (send the bearer token) in development. */
+  url?: string;
+  /** When failed: what to tell the person. */
+  error?: string;
+  expiresAt: string;
+}
+
+/** Your own video Story only; `overlayMediaId` is the drawing sent with uploadStoryOverlay. */
+export async function startStoryExport(storyId: string, overlayMediaId: string | null, accessToken: string): Promise<StoryExport> {
+  return (await apiPost<{ export: StoryExport }>(`/api/v1/stories/${storyId}/export`, { overlayMediaId }, accessToken)).export;
+}
+
+export async function getStoryExport(storyId: string, exportId: string, accessToken: string, signal?: AbortSignal): Promise<StoryExport> {
+  return (await apiGet<{ export: StoryExport }>(`/api/v1/stories/${storyId}/export/${exportId}`, accessToken, signal)).export;
+}
+
 export type MediaVariant = "display" | "thumbnail" | "poster" | "video_720" | "video_480" | "audio";
 
 export function mediaFileUrl(mediaId: string, variant?: MediaVariant): string {

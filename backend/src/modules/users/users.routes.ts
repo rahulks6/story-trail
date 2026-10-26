@@ -26,7 +26,7 @@ export function registerUserRoutes(router: Router): void {
       throw new HttpError(404, "Avatar not found.");
     }
     const media = await mediaRepo.findMediaById(user.avatarMediaId, true);
-    if (!media || media.ownerId !== user.id || media.kind !== "photo" || media.status !== "ready" || media.verificationDocument) throw new HttpError(404, "Avatar not found.");
+    if (!media || media.ownerId !== user.id || media.kind !== "photo" || media.status !== "ready" || media.verificationDocument || media.exportOverlay) throw new HttpError(404, "Avatar not found.");
     // Avatars are small on screen: the thumbnail unless a size is asked for.
     const params = new URLSearchParams((req.url ?? "").split("?")[1] ?? "");
     await sendMediaFile(req, res, media, parseVariant(params.get("variant")) ?? "thumbnail", user.id === req.userId, mediaStorage);

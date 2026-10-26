@@ -157,6 +157,8 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   // The Story follows a finger swiping up or down to the next creator.
   const dragY = useRef(new Animated.Value(0)).current;
   const [shareOpen, setShareOpen] = useState(false);
+  /** "Share to other apps" is preparing the picture or video: the Story holds still meanwhile. */
+  const [sharingOut, setSharingOut] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [insightsOpen, setInsightsOpen] = useState(false);
   const [highlightOpen, setHighlightOpen] = useState(false);
@@ -185,7 +187,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   const staleStory = !!listedStory && !!currentUsername && storyUrlsExpired(listedStory) && Date.now() - (expiryRefetchAt.current[currentUsername] ?? 0) >= URL_EXPIRY_MARGIN_MS;
   const currentStory = staleStory ? null : listedStory;
 
-  const sheetOpen = commentsOpen || shareOpen || moreOpen || insightsOpen || replyOpen || highlightOpen;
+  const sheetOpen = commentsOpen || shareOpen || sharingOut || moreOpen || insightsOpen || replyOpen || highlightOpen;
   const playbackActive = focused && foreground && !paused && !sheetOpen && !caughtUp && !loadError && !currentAd;
   // How far the current Story's bar has got (0-1). The bar animates on the native side, so this is
   // kept from elapsed time (and the video's own progress), not read back every frame.
@@ -1069,6 +1071,19 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         storyId={currentStory.id}
         ownerUsername={currentUsername ?? ""}
         isPublic={currentStory.audience === "public" && currentStory.allowSharing}
+        ownStory={isOwnStory && authUser && mediaKind ? {
+          ownerId: authUser.id,
+          story: {
+            kind: mediaKind,
+            imageSource,
+            crop: detail?.crop ?? currentStory.crop,
+            overlays: (detail ?? currentStory).overlays,
+            drawing: (detail ?? currentStory).drawing,
+            filter: filterNameFromKey((detail ?? currentStory).filter),
+            filterApplied: (detail ?? currentStory).filterApplied === true,
+          },
+        } : null}
+        onExternalShareChange={setSharingOut}
         onClose={() => setShareOpen(false)}
         onSendToUser={() => {
           setShareOpen(false);

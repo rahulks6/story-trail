@@ -11,6 +11,9 @@ const RULES=[
  {name:'microphone',uses:/useMicrophonePermission\(/,android:['android.permission.RECORD_AUDIO'],ios:['NSMicrophoneUsageDescription']},
  {name:'location',uses:/Geolocation\.getCurrentPosition\(/,android:['android.permission.ACCESS_COARSE_LOCATION'],ios:['NSLocationWhenInUseUsageDescription']},
  {name:'photo library',uses:/launchImageLibrary\(/,ios:['NSPhotoLibraryUsageDescription']},
+ // A picture or video in the system share sheet offers Save Image/Video, which iOS ends the app
+ // for without this.
+ {name:'saving to photos',uses:/from "react-native-share"/,ios:['NSPhotoLibraryAddUsageDescription']},
  {name:'notifications',uses:/@react-native-firebase\/messaging/,android:['android.permission.POST_NOTIFICATIONS']},
 ];
 
