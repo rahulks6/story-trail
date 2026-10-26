@@ -6,6 +6,7 @@ import { colors, radii, spacing, ICONS } from "../theme";
 import { Icon } from "./Icon";
 import { mediaSource } from "../api/media";
 import { formatClock } from "../api/music";
+import { showToast } from "./Toast";
 
 interface BubbleProps {
   /** The voice note's link (relative: this API with the sign-in header), or a local file while it sends. */
@@ -24,9 +25,13 @@ interface BubbleProps {
 
 const BARS = 28;
 
+/** Paused this close to the end, playing again starts over. */
+const RESUME_END_MARGIN_MS = 300;
+
 /**
  * A voice note in a chat, like WhatsApp and Instagram: play or pause, a bar that fills as it
- * plays, and the time left. Sound comes from the same player as videos.
+ * plays, and the time left. Sound comes from the same player as videos (a hidden one, mounted
+ * only while playing); after a pause it carries on from where it stopped.
  */
 export function VoiceNoteBubble({ url, accessToken, durationMs, mine, playing, onPlay, onStop, sending, label, onLongPress }: BubbleProps): React.JSX.Element {
   const ref = useRef<VideoRef>(null);
@@ -74,10 +79,21 @@ export function VoiceNoteBubble({ url, accessToken, durationMs, mine, playing, o
           ignoreSilentSwitch="ignore"
           progressUpdateInterval={100}
           style={styles.hidden}
-          onLoad={(meta) => { setLoading(false); if (meta.duration > 0) setLength(Math.round(meta.duration * 1000)); }}
+          onLoad={(meta) => {
+            setLoading(false);
+            const total = meta.duration > 0 ? Math.round(meta.duration * 1000) : length;
+            if (meta.duration > 0) setLength(total);
+            // Paused earlier: a new player starts at 0, so it's moved to where it was.
+            if (position > 0 && position < total - RESUME_END_MARGIN_MS) ref.current?.seek(position / 1000);
+            else setPosition(0);
+          }}
           onProgress={({ currentTime }) => setPosition(Math.round(currentTime * 1000))}
           onEnd={() => { setPosition(0); onStop(); }}
-          onError={() => { setLoading(false); onStop(); }}
+          onError={() => {
+            setLoading(false);
+            onStop();
+            showToast("Couldn't play this voice message. Check your connection and try again.");
+          }}
         />
       ) : null}
     </Pressable>

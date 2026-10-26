@@ -275,13 +275,24 @@ export async function forwardMessage(viewerId: string, conversationId: string, m
 /** Reactions on a message (long-press it); migration 0052 allows exactly these. */
 export const MESSAGE_REACTIONS = ["❤️", "😂", "😮", "😢", "😡", "👍"] as const;
 
+/**
+ * One of MESSAGE_REACTIONS, however a keyboard or platform spelled it: "❤" with or without its
+ * emoji-style selector (U+FE0F) is the same heart, and is stored one way so it compares equal.
+ */
+export function canonicalReaction(emoji: string): (typeof MESSAGE_REACTIONS)[number] | null {
+  const bare = (s: string) => s.normalize("NFC").replace(/[︎️]/g, "");
+  return MESSAGE_REACTIONS.find((r) => bare(r) === bare(emoji)) ?? null;
+}
+
 /** Reacts to a message in one of the viewer's conversations (null removes the reaction). */
 export async function reactToMessage(viewerId: string, conversationId: string, messageId: string, emoji: string | null): Promise<conversationsRepo.MessageReaction[]> {
   const conversation = await requireParticipant(conversationId, viewerId);
   const otherId = otherParticipant(conversation, viewerId);
   if (!UUID_RE.test(messageId)) throw new HttpError(404, "Message not found.");
-  if (emoji !== null && !(MESSAGE_REACTIONS as readonly string[]).includes(emoji)) {
-    throw new HttpError(422, "Choose one of the reactions.", { emoji: `One of ${MESSAGE_REACTIONS.join(" ")}` });
+  if (emoji !== null) {
+    const chosen = canonicalReaction(emoji);
+    if (!chosen) throw new HttpError(422, "Choose one of the reactions.", { emoji: `One of ${MESSAGE_REACTIONS.join(" ")}` });
+    emoji = chosen;
   }
   if (emoji !== null && otherId) await assertNotBlocked(viewerId, otherId);
   const reactions = await conversationsRepo.setMessageReaction(conversationId, messageId, viewerId, emoji, conversation.since);

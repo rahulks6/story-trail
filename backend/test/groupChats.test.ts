@@ -101,6 +101,21 @@ it("an older app never sees a group; this one sees its name, size and faces", as
   assert.equal((await client.get("/api/v1/conversations/unread-count", as(bob))).body.count, 1);
 });
 
+it("your own group lines (made it, added someone, renamed it) don't make the chat unread for you", async () => {
+  const [alice, bob, carol, dave] = await crew(3);
+  const unread = async (p: Person) => (await client.get("/api/v1/conversations?groups=1", as(p))).body.conversations.find((c: { id: string }) => c.id === g.id).unread;
+  const g = await group(alice, [bob, carol]);
+  assert.equal(await unread(alice), false, "the maker");
+  assert.equal(await unread(bob), true, "the others are told");
+  await client.post(`/api/v1/conversations/${g.id}/read`, undefined, as(bob));
+  assert.equal((await client.patch(`/api/v1/conversations/${g.id}`, { title: "Weekend" }, as(bob))).status, 200);
+  assert.equal(await unread(bob), false, "the one who renamed it");
+  assert.equal((await client.post(`/api/v1/conversations/${g.id}/members`, { usernames: [dave.username] }, as(alice))).status, 200);
+  assert.equal(await unread(alice), false, "the one who added someone");
+  assert.equal((await client.get("/api/v1/conversations/unread-count", as(alice))).body.count, 0);
+  assert.equal(await unread(carol), true);
+});
+
 it("someone added later sees what's said from then on; removed or gone, they see nothing more", async () => {
   const [alice, bob, carol, dave] = await crew(3);
   const g = await group(alice, [bob, carol]);

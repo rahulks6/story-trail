@@ -339,6 +339,8 @@ export async function createGroupEvent(conversationId: string, actorId: string, 
      SELECT m.*, (SELECT count(*) FROM n) AS notified FROM m`,
     { c: conversationId, actor: actorId, event: JSON.stringify(event), extra: JSON.stringify(alsoNotify) },
   );
+  // Like sending a message: your own "you renamed the group" doesn't make the chat unread for you.
+  await markRead(conversationId, actorId);
   return mapMessageRow(row!);
 }
 
