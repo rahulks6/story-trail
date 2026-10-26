@@ -12,6 +12,7 @@ import {
   listFollowRequests,
   type IncomingFollowRequest,
 } from "../../api/users";
+import { ApiError } from "../../api/client";
 import { EmptyState } from "../../components/EmptyState";
 import { LoadFailed } from "../../components/LoadFailed";
 import { Avatar } from "../../components/Avatar";
@@ -58,8 +59,12 @@ export function FollowRequestsScreen(): React.JSX.Element {
     try {
       await (accept ? acceptFollowRequest(request.requestId, accessToken) : declineFollowRequest(request.requestId, accessToken));
       setRequests((current) => (current ?? []).filter((r) => r.requestId !== request.requestId));
-    } catch {
-      // Leave the row in place — the most likely cause (already resolved elsewhere) is harmless to retry, and a hard failure is visible by the row simply staying actionable.
+    } catch (err) {
+      // Already answered on another device (409) or withdrawn by the person who asked (404):
+      // there's nothing left to answer, so the row goes. Any other failure leaves it to retry.
+      if (err instanceof ApiError && (err.status === 409 || err.status === 404)) {
+        setRequests((current) => (current ?? []).filter((r) => r.requestId !== request.requestId));
+      }
     } finally {
       setResolving((current) => {
         const next = new Set(current);

@@ -247,9 +247,12 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
     try {
       const requestId = await findFollowRequestId(profile.id, accessToken);
       if (requestId) await (accept ? acceptFollowRequest(requestId, accessToken) : declineFollowRequest(requestId, accessToken));
-    } catch {
-      setNotice("That didn't go through. Try again.");
-      return;
+    } catch (err) {
+      // Answered on another device, or withdrawn: the refresh below shows how things stand.
+      if (!(err instanceof ApiError && (err.status === 409 || err.status === 404))) {
+        setNotice("That didn't go through. Try again.");
+        return;
+      }
     } finally {
       actionInFlight.current = false;
       setRequestPending(false);

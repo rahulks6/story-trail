@@ -43,3 +43,24 @@ test.each([
   await flush();
   expect(texts()).toContain("@asha");
 });
+
+test("follow requests: one already answered on another device, or withdrawn, leaves the list; a dropped connection keeps it to retry", async () => {
+  const { ApiError } = jest.requireActual("../src/api/client");
+  const request = (n: number) => ({ ...person, username: `asha${n}`, requestId: `r-${n}`, requesterId: `u-${n}`, createdAt: "" });
+  api.listFollowRequests.mockResolvedValue({ requests: [request(1), request(2), request(3)], limit: 30, offset: 0 });
+  api.acceptFollowRequest.mockRejectedValueOnce(new ApiError(409, "This request has already been resolved."));
+  api.declineFollowRequest.mockRejectedValueOnce(new ApiError(404, "Follow request not found.")).mockRejectedValueOnce(new TypeError("Network request failed"));
+  await act(async () => { tree = create(<FollowRequestsScreen />); });
+  await flush();
+  const pressIn = async (username: string, label: string) => {
+    const row = tree.root.findAll((n: ReactTestInstance) => n.props.style !== undefined && n.findAll((t: ReactTestInstance) => t.type === Text && t.props.children?.join?.("") === `@${username}`).length > 0 && n.findAll((t: ReactTestInstance) => t.type === Text && t.props.children === label).length > 0).pop()!;
+    await act(async () => row.findAll((n: ReactTestInstance) => typeof n.props.onPress === "function").find((n) => n.findAll((t: ReactTestInstance) => t.type === Text && t.props.children === label).length > 0)!.props.onPress());
+    await flush();
+  };
+  await pressIn("asha1", "Accept");
+  await pressIn("asha2", "Decline");
+  await pressIn("asha3", "Decline");
+  expect(texts()).not.toContain("@asha1");
+  expect(texts()).not.toContain("@asha2");
+  expect(texts()).toContain("@asha3");
+});
