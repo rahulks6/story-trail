@@ -74,6 +74,7 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
           autoCapitalize="words"
           autoComplete="name"
           textContentType="name"
+          maxLength={60}
           returnKeyType="next"
           submitBehavior="submit"
           onSubmitEditing={() => usernameInput.current?.focus()}
@@ -90,6 +91,7 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
           autoCorrect={false}
           autoComplete="username-new"
           textContentType="username"
+          maxLength={30}
           returnKeyType="next"
           submitBehavior="submit"
           onSubmitEditing={() => emailInput.current?.focus()}
