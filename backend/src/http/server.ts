@@ -71,7 +71,7 @@ function handleError(res: http.ServerResponse, error: unknown, requestId: string
   }
   if (error instanceof HttpError) {
     for (const [name, value] of Object.entries(error.headers ?? {})) res.setHeader(name, value);
-    sendJson(res, error.status, { error: "http_error", message: error.message, fields: error.fieldErrors });
+    sendJson(res, error.status, { error: "http_error", message: error.message, fields: error.fieldErrors, ...(error.code ? { code: error.code } : {}) });
     return;
   }
   // The request id lets support find the server log line for a failure someone reports.

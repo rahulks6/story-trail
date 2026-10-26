@@ -56,6 +56,8 @@ export type RootStackParamList = {
   Main: NavigatorScreenParams<MainTabParamList>;
   /** Share > Send in Katkee: over the Story, so closing it returns to the same Story. */
   SendStory: { storyId: string; ownerUsername: string };
+  /** Long-press a message > Forward: choose people and chats to send it on to. */
+  ForwardMessage: { conversationId: string; messageId: string };
   /** Likes, comments, follows and mentions: opened from the heart at the top of Home. */
   Activity: undefined;
   /**

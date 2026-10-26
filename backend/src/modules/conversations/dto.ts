@@ -1,5 +1,5 @@
 import { ValidationError } from "../auth/dto";
-import { STORY_REACTIONS, type SendMessageInput, type StoryReplyInput } from "./conversations.service";
+import { MAX_FORWARD_RECIPIENTS, STORY_REACTIONS, type ForwardTargets, type SendMessageInput, type StoryReplyInput } from "./conversations.service";
 import { REPORT_REASONS } from "../moderation/dto";
 
 const MAX_BODY_LENGTH = 2000;
@@ -59,6 +59,28 @@ export function parseSendMessageInput(body: unknown): SendMessageInput {
 
   if (Object.keys(errors).length > 0) throw new ValidationError(errors);
   return { body: messageBody, storyId, clientMessageId, mediaId, replyToMessageId };
+}
+
+/** POST …/messages/:messageId/forward: `{ userIds, conversationIds }`, up to ten of each, at least one in all. */
+export function parseForwardInput(body: unknown): ForwardTargets {
+  const b = (typeof body === "object" && body !== null ? body : {}) as Record<string, unknown>;
+  const errors: Record<string, string> = {};
+  const ids = (key: "userIds" | "conversationIds"): string[] => {
+    const value = b[key];
+    if (value === undefined || value === null) return [];
+    if (!Array.isArray(value) || value.some((v) => typeof v !== "string" || !UUID_RE.test(v))) {
+      errors[key] = `${key} must be a list of ids.`;
+      return [];
+    }
+    const unique = [...new Set((value as string[]).map((v) => v.toLowerCase()))];
+    if (unique.length > MAX_FORWARD_RECIPIENTS) errors[key] = `At most ${MAX_FORWARD_RECIPIENTS}.`;
+    return unique;
+  };
+  const userIds = ids("userIds");
+  const conversationIds = ids("conversationIds");
+  if (!Object.keys(errors).length && userIds.length + conversationIds.length === 0) errors.userIds = "Choose at least one person or chat.";
+  if (Object.keys(errors).length > 0) throw new ValidationError(errors);
+  return { userIds, conversationIds };
 }
 
 export interface ReportMessageInput {

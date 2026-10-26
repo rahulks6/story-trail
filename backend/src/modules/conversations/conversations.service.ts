@@ -168,6 +168,110 @@ export async function sendMessage(viewerId: string, conversationId: string, inpu
   return result.created ? result : replayed(result.message, input);
 }
 
+export const MAX_FORWARD_RECIPIENTS = 10;
+
+export interface ForwardTargets {
+  userIds: string[];
+  conversationIds: string[];
+}
+
+// "Blocked" is reported as not_allowed, like a missing account, so forwarding can't be used to
+// find out who has blocked you (profiles and chats hide that too).
+type ForwardStatus = "sent" | "not_allowed";
+export type ForwardResult =
+  | { userId: string; status: ForwardStatus; conversationId?: string; messageId?: string }
+  | { conversationId: string; status: ForwardStatus; messageId?: string };
+
+/** Where a forward goes, or why it can't go there: the same checks as opening a chat and sending in it. */
+async function forwardDestination(viewerId: string, target: { userId: string } | { conversationId: string }): Promise<{ conversationId: string } | { status: "not_allowed" }> {
+  if ("userId" in target) {
+    const person = target.userId === viewerId ? null : await usersRepo.findUserById(target.userId);
+    if (!person || !person.isActive) return { status: "not_allowed" };
+    if (await socialRepo.anyBlockBetween(viewerId, person.id)) return { status: "not_allowed" };
+    const existing = await conversationsRepo.findConversationBetween(viewerId, person.id);
+    if (existing) return { conversationId: existing.id };
+    // A first message to someone: openConversationWith's rules (restricted accounts, the cold-DM budget).
+    try {
+      await assertCanContribute(viewerId);
+    } catch (error) {
+      if (error instanceof HttpError && error.status === 403) return { status: "not_allowed" };
+      throw error;
+    }
+    await enforceAction(viewerId, "conversation");
+    return { conversationId: (await conversationsRepo.createConversation(viewerId, person.id)).id };
+  }
+  let conversation: Participation;
+  try {
+    conversation = await requireParticipant(target.conversationId, viewerId);
+  } catch (error) {
+    if (error instanceof HttpError && error.status === 404) return { status: "not_allowed" };
+    throw error;
+  }
+  // As in sendMessage: a block keeps two people out of each other's 1:1, not out of a group.
+  const otherId = otherParticipant(conversation, viewerId);
+  if (otherId && (await socialRepo.anyBlockBetween(viewerId, otherId))) return { status: "not_allowed" };
+  return { conversationId: conversation.id };
+}
+
+/**
+ * Sends a message the viewer can see on to other chats and people, as a new message of theirs
+ * marked "Forwarded": its text, photo, video or voice note (the same file, which the new chat's
+ * people can then open through that message) or the shared Story (whose own audience rules
+ * still decide who can open it). Each recipient goes through the rules of a normal send; one
+ * that can't be sent to is reported as blocked or not_allowed, and the rest still go.
+ */
+export async function forwardMessage(viewerId: string, conversationId: string, messageId: string, targets: ForwardTargets): Promise<ForwardResult[]> {
+  const source = await requireParticipant(conversationId, viewerId);
+  const original = UUID_RE.test(messageId) ? await conversationsRepo.findVisibleMessage(conversationId, messageId, source.since) : null;
+  if (!original) throw new HttpError(404, "Message not found.");
+  if (original.mediaId) {
+    // An ID photo never leaves its verification request; a removed photo isn't sent on as an empty message.
+    const media = await mediaRepo.findMediaById(original.mediaId, true);
+    if (!media || media.purgedAt || media.verificationDocument || media.status !== "ready") {
+      throw new HttpError(422, "This message can't be forwarded.");
+    }
+  }
+  if (original.sharedStoryId) {
+    // The same check as sharing it from the Story itself: you can see it, and its owner allows sharing.
+    await engagementService.shareStory(viewerId, original.sharedStoryId);
+  }
+  if (original.body) await assertLinksAllowed(original.body, "message", viewerId);
+
+  const results: ForwardResult[] = [];
+  // One message per chat, however it was named (a person and your 1:1 with them are the same chat).
+  const sent = new Map<string, string>();
+  let limited: HttpError | null = null;
+  const requests = [...targets.userIds.map((userId) => ({ userId })), ...targets.conversationIds.map((id) => ({ conversationId: id }))];
+  for (const target of requests) {
+    if (limited) {
+      results.push({ ...target, status: "not_allowed" });
+      continue;
+    }
+    try {
+      const destination = await forwardDestination(viewerId, target);
+      if ("status" in destination) {
+        results.push({ ...target, status: destination.status });
+        continue;
+      }
+      let id = sent.get(destination.conversationId);
+      if (!id) {
+        await enforceAction(viewerId, "message"); // each chat counts as one message sent
+        const { message } = await conversationsRepo.createMessage(destination.conversationId, viewerId, original.body, original.sharedStoryId, null, null, original.mediaId, null, true);
+        id = message.id;
+        sent.set(destination.conversationId, id);
+      }
+      results.push({ ...target, status: "sent", conversationId: destination.conversationId, messageId: id });
+    } catch (error) {
+      // Over a sending budget: what went, went; the rest can be tried again later.
+      if (!(error instanceof HttpError) || error.status !== 429) throw error;
+      limited = error;
+      results.push({ ...target, status: "not_allowed" });
+    }
+  }
+  if (limited && sent.size === 0) throw limited;
+  return results;
+}
+
 /** Reactions on a message (long-press it); migration 0052 allows exactly these. */
 export const MESSAGE_REACTIONS = ["❤️", "😂", "😮", "😢", "😡", "👍"] as const;
 
@@ -321,6 +425,32 @@ export async function signalTyping(viewerId: string, conversationId: string): Pr
   if (lastTyping.size > 10_000) lastTyping.clear(); // bounded: losing it only lets one extra signal through
   lastTyping.set(key, now);
   await publishRealtime(told, { type: "typing", conversationId, userId: viewerId });
+}
+
+/** Any member pins a message for everyone in the chat; at most MAX_PINS, then 409 too_many_pins. */
+export async function pinMessage(viewerId: string, conversationId: string, messageId: string): Promise<void> {
+  const conversation = await requireParticipant(conversationId, viewerId);
+  if (!UUID_RE.test(messageId)) throw new HttpError(404, "Message not found.");
+  const otherId = otherParticipant(conversation, viewerId);
+  if (otherId) await assertNotBlocked(viewerId, otherId);
+  const result = await conversationsRepo.pinMessage(conversationId, messageId, viewerId, conversation.since);
+  if (result === "not_found") throw new HttpError(404, "Message not found.");
+  if (result === "too_many") {
+    throw new HttpError(409, `You can pin up to ${conversationsRepo.MAX_PINS} messages. Unpin one first.`, undefined, undefined, "too_many_pins");
+  }
+}
+
+export async function unpinMessage(viewerId: string, conversationId: string, messageId: string): Promise<void> {
+  const conversation = await requireParticipant(conversationId, viewerId);
+  if (!UUID_RE.test(messageId)) throw new HttpError(404, "Message not found.");
+  await conversationsRepo.unpinMessage(conversationId, messageId, conversation.since);
+}
+
+/** The chat's pins, latest first: only messages the viewer can see. */
+export async function listPins(viewerId: string, conversationId: string): Promise<conversationsRepo.PinRow[]> {
+  const conversation = await requireParticipant(conversationId, viewerId);
+  const pins = await conversationsRepo.listPins(conversationId, conversation.since);
+  return pins.map((p) => (p.message.senderId === viewerId ? p : { ...p, message: withoutClientId(p.message) }));
 }
 
 /** Unsend your own message, for everyone in the conversation. */

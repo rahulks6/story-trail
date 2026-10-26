@@ -3,7 +3,7 @@ import { requireAuth } from "../../http/middleware/auth.middleware";
 import { sendJson } from "../../http/respond";
 import { parsePagination, parseQueryString } from "../../http/pagination";
 import { parseUsernameParam } from "../../shared/validation";
-import { parseReportMessageInput, parseSendMessageInput, parseStoryReplyInput } from "./dto";
+import { parseForwardInput, parseReportMessageInput, parseSendMessageInput, parseStoryReplyInput } from "./dto";
 import { reportLimiter } from "../moderation/moderation.routes";
 import { HttpError } from "../../http/errors";
 import * as conversationsService from "./conversations.service";
@@ -114,6 +114,33 @@ export function registerConversationsRoutes(router: Router): void {
     requireAuth(req);
     const reactions = await conversationsService.reactToMessage(req.userId as string, req.params.id as string, req.params.messageId as string, null);
     sendJson(res, 200, { reactions });
+  });
+
+  // Send a message on to up to ten people and ten chats; each one's outcome comes back.
+  router.post("/api/v1/conversations/:id/messages/:messageId/forward", async (req, res) => {
+    requireAuth(req);
+    const targets = parseForwardInput(req.body);
+    const results = await conversationsService.forwardMessage(req.userId as string, req.params.id as string, req.params.messageId as string, targets);
+    sendJson(res, 200, { results });
+  });
+
+  // Pinned messages: shared by everyone in the chat, up to three.
+  router.get("/api/v1/conversations/:id/pins", async (req, res) => {
+    requireAuth(req);
+    const pins = await conversationsService.listPins(req.userId as string, req.params.id as string);
+    sendJson(res, 200, { pins });
+  });
+
+  router.put("/api/v1/conversations/:id/pins/:messageId", async (req, res) => {
+    requireAuth(req);
+    await conversationsService.pinMessage(req.userId as string, req.params.id as string, req.params.messageId as string);
+    sendJson(res, 204, undefined);
+  });
+
+  router.delete("/api/v1/conversations/:id/pins/:messageId", async (req, res) => {
+    requireAuth(req);
+    await conversationsService.unpinMessage(req.userId as string, req.params.id as string, req.params.messageId as string);
+    sendJson(res, 204, undefined);
   });
 
   // Unsend your own message (for everyone).
