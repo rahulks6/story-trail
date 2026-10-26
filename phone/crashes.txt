@@ -1,98 +1,99 @@
-10-22 11:40:20.194 D/AndroidRuntime( 3572): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-22 11:40:20.199 W/system_server(  549): Weak pointer dereference blocked for 28 milliseconds.
-10-22 11:40:20.199 I/AndroidRuntime( 3572): Using default boot image
-10-22 11:40:20.199 I/AndroidRuntime( 3572): Leaving lock profiling enabled
-10-22 11:40:20.207 I/app_process( 3572): Core platform API reporting enabled, enforcing=false
-10-22 11:40:20.207 I/app_process( 3572): Using CollectorTypeCMC GC.
-10-22 11:40:20.208 W/system_server(  549): Weak pointer dereference blocked for 28 milliseconds.
-10-22 11:40:20.217 W/system_server(  549): Weak pointer dereference blocked for 46 milliseconds.
-10-22 11:40:20.218 W/system_server(  549): Weak pointer dereference blocked for 39 milliseconds.
-10-22 11:40:20.241 W/GetConfigSnapshotOp( 1266): Succeeded but not registered: com.google.android.libraries.consentverifier#com.google.android.gms [CONTEXT service_id=51 ]
-10-22 11:40:20.254 I/BugleNotifications( 3367): Foreground service channel created
-10-22 11:40:20.271 W/IndexDataConverter( 3215): Skipping null deep link for raw indexable com.android.settings/Google
-10-22 11:40:20.282 W/SQLiteLog( 3215): (28) double-quoted string literal: "com.android.cellbroadcastreceiver"
-10-22 11:40:20.287 W/SQLiteLog( 3215): (28) double-quoted string literal: "com.android.healthconnect.controller"
-10-22 11:40:20.287 W/SQLiteLog( 3215): (28) double-quoted string literal: "com.android.permissioncontroller"
-10-22 11:40:20.287 W/SQLiteLog( 3215): (28) double-quoted string literal: "com.android.permissioncontroller.role"
-10-22 11:40:20.287 W/SQLiteLog( 3215): (28) double-quoted string literal: "com.android.permissioncontroller.safetycenter"
-10-22 11:40:20.287 W/SQLiteLog( 3215): (28) double-quoted string literal: "com.android.settings"
-10-22 11:40:20.287 W/SQLiteLog( 3215): (28) double-quoted string literal: "com.android.traceur"
-10-22 11:40:20.287 W/SQLiteLog( 3215): (28) double-quoted string literal: "com.google.android.apps.gsa.opa.AssistantSettingsProvider"
-10-22 11:40:20.288 W/SQLiteLog( 3215): (28) double-quoted string literal: "com.google.android.apps.messaging.settings.search"
-10-22 11:40:20.288 W/SQLiteLog( 3215): (28) double-quoted string literal: "com.google.android.apps.nexuslauncher"
-10-22 11:40:20.288 W/SQLiteLog( 3215): (28) double-quoted string literal: "com.google.android.apps.safetyhub.platformsettings.searchindexablesprovider"
-10-22 11:40:20.288 W/SQLiteLog( 3215): (28) double-quoted string literal: "com.google.android.apps.search.assistant.surfaces.settings.search"
-10-22 11:40:20.288 W/SQLiteLog( 3215): (28) double-quoted string literal: "com.google.android.apps.wellbeing"
-10-22 11:40:20.288 W/SQLiteLog( 3215): (28) double-quoted string literal: "com.google.android.gms.accountsettings.content"
-10-22 11:40:20.288 W/SQLiteLog( 3215): (28) double-quoted string literal: "com.google.android.inputmethod.latin"
-10-22 11:40:20.288 W/SQLiteLog( 3215): (28) double-quoted string literal: "com.google.android.marvin.talkback.preference.search.TalkBackSearchIndexablesProvider"
-10-22 11:40:20.288 W/SQLiteLog( 3215): (28) double-quoted string literal: "com.google.android.settings.intelligence.provider.search"
-10-22 11:40:20.288 W/SQLiteLog( 3215): (28) double-quoted string literal: "com.google.android.settings.intelligence.routines.impl"
-10-22 11:40:20.292 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.292 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.292 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.292 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
+10-26 09:08:37.123 D/AndroidRuntime( 3959): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-26 09:08:37.124 W/AppOpService(  562): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_SMS, mode = allow, callingUid = 1001, oldMode = allow
+10-26 09:08:37.126 I/Auth    ( 1400): [SupervisedAccountIntentOperation] This operation is disabled
+10-26 09:08:37.127 I/AndroidRuntime( 3959): Using default boot image
+10-26 09:08:37.127 I/AndroidRuntime( 3959): Leaving lock profiling enabled
+10-26 09:08:37.129 D/PackageUpdatedTask( 3611): Package updated: mOp=ADD packages=[dev.mobile.maestro.test]
+10-26 09:08:37.131 I/AppWidgetServiceImpl(  562): getInstalledProvidersForProfiles() 0
+10-26 09:08:37.132 I/AiAiEcho( 1444): AppFetcherImplV2 updateApps package:[dev.mobile.maestro.test], userId:[0], reason:[package is added.].
+10-26 09:08:37.132 W/Auth    ( 1400): [PubsubPeriodicSyncherRuntimeInit] Initializing periodic tasks, IntentAction=android.intent.action.BOOT_COMPLETED, InitRuntimeState=2
+10-26 09:08:37.134 I/app_process( 3959): Core platform API reporting enabled, enforcing=false
+10-26 09:08:37.135 I/app_process( 3959): Using CollectorTypeCMC GC.
+10-26 09:08:37.138 W/AppOpService(  562): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_SMS, mode = allow, callingUid = 1001, oldMode = allow
+10-26 09:08:37.139 I/system_server(  562): IncrementDisableThreadFlip blocked for 23.626ms
+10-26 09:08:37.140 W/AppOpService(  562): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_WAP_PUSH, mode = allow, callingUid = 1001, oldMode = allow
+10-26 09:08:37.142 W/AppOpService(  562): Ignored setUidMode call for runtime permission app op: uid = 1001, code = SEND_SMS, mode = allow, callingUid = 1001, oldMode = allow
+10-26 09:08:37.145 W/AppOpService(  562): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+10-26 09:08:37.154 D/BaseIconCache( 3611): Default icon returned for dev.mobile.maestro.test
+10-26 09:08:37.160 D/TrafficStats( 1400): tagSocket(213) with statsTag=0x3c010301, statsUid=-1
+10-26 09:08:37.167 W/GetConfigSnapshotOp( 1230): Succeeded but not registered: com.google.android.libraries.consentverifier#com.google.android.apps.messaging [CONTEXT service_id=51 ]
+10-26 09:08:37.178 I/RecoverableKeyStoreGms( 1400): [RecoverableKeyStoreGmsInitOperation] Initializing auth_folsom
+10-26 09:08:37.182 D/ImsResolver( 1101): maybeAddedImsService, packageName: dev.mobile.maestro.test
+10-26 09:08:37.186 D/CarrierSvcBindHelper( 1101): onPackageModified: dev.mobile.maestro.test
+10-26 09:08:37.187 D/ShortcutService(  562): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=null
+10-26 09:08:37.189 D/CarrierSvcBindHelper( 1101): No carrier app for: 0
+10-26 09:08:37.189 I/RecoverableKeyStoreGms( 1400): [RecoverableKeyStoreGmsInitOperation] Enabling com.google.android.gms.auth.folsom.service.FolsomPublicKeyUpdateService.
+10-26 09:08:37.193 W/PackageManager(  562): Failed registering loading progress callback. Package is fully loaded.
+10-26 09:08:37.202 D/TrafficStats( 1400): tagSocket(213) with statsTag=0x3c010301, statsUid=-1
+10-26 09:08:37.209 D/PackageManager(  562): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-26 09:08:37.210 D/PackageManager(  562): Clear ephemeral installer activity
+10-26 09:08:37.219 E/SmsApplication( 1101): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
+10-26 09:08:37.220 W/AppOpService(  562): Ignored setUidMode call for runtime permission app op: uid = 10134, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+10-26 09:08:37.226 E/CellBroadcastUtils( 1101): getDefaultCellBroadcastReceiverPackageName: no package found
+10-26 09:08:37.229 W/AppOpService(  562): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_SMS, mode = allow, callingUid = 1001, oldMode = allow
+10-26 09:08:37.232 W/AppOpService(  562): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_SMS, mode = allow, callingUid = 1001, oldMode = allow
+10-26 09:08:37.234 W/AppOpService(  562): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_WAP_PUSH, mode = allow, callingUid = 1001, oldMode = allow
 --
-10-22 11:40:20.547 D/AndroidRuntime( 3572): Calling main entry com.android.commands.am.Am
-10-22 11:40:20.551 I/Zygote  (  354): Process 1568 exited due to signal 9 (Killed)
-10-22 11:40:20.715 I/binder  (    0): undelivered transaction 111017, process died.
-10-22 11:40:20.565 D/UiAutomationConnection( 3572): Created on user UserHandle{0}
-10-22 11:40:20.566 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.566 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.566 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.566 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.566 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.566 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.723 I/binder  (    0): undelivered transaction 116359, process died.
-10-22 11:40:20.724 I/binder  (    0): undelivered transaction 83463, process died.
-10-22 11:40:20.738 I/binder  (    0): undelivered transaction 83883, process died.
-10-22 11:40:20.741 I/binder  (    0): undelivered transaction 84754, process died.
-10-22 11:40:20.744 I/binder  (    0): undelivered transaction 85668, process died.
-10-22 11:40:20.583 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.583 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.584 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.584 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.584 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.584 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.584 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.584 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.584 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.584 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.584 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.584 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.584 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.584 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.587 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
-10-22 11:40:20.591 E/gs.intelligence( 3215): No package ID ff found for resource ID 0xffffffff.
+10-26 09:08:37.461 D/AndroidRuntime( 3959): Calling main entry com.android.commands.am.Am
+10-26 09:08:37.466 D/UiAutomationConnection( 3959): Created on user UserHandle{0}
+10-26 09:08:37.468 I/ActivityManager(  562): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+10-26 09:08:37.472 D/TrafficStats( 1400): tagSocket(213) with statsTag=0x3c010301, statsUid=-1
+10-26 09:08:37.478 V/GrammaticalInflectionUtils(  562): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@322bd93, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+10-26 09:08:37.481 E/RoleControllerServiceImpl(  562): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.WALLET
+10-26 09:08:37.486 I/GmsSyncPolicyEngine( 1400): Periodic sync 4 disabled by policy, cancelled.
+10-26 09:08:37.489 I/AppsFilter(  562): interaction: PackageSetting{3a4815f com.android.microdroid.empty_payload/10189} -> PackageSetting{eb4a331 dev.mobile.maestro/10210} BLOCKED
+10-26 09:08:37.491 V/Backup  ( 1400): [ComponentEnabler] Enabling components
+10-26 09:08:37.494 I/Backup  ( 1400): [TargetEnabler] Setting target components to enabled = false
+10-26 09:08:37.498 D/PackageManager(  562): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-26 09:08:37.498 D/PackageManager(  562): Clear ephemeral installer activity
+10-26 09:08:37.500 E/RoleControllerServiceImpl(  562): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.devicelockcontroller, role: android.app.role.SYSTEM_FINANCED_DEVICE_CONTROLLER
+10-26 09:08:37.504 D/Zygote  (  365): Forked child process 3973
+10-26 09:08:37.509 I/Backup  ( 1400): [TargetEnabler] Enabling D2dMigrateHelperService on non-Pixel on P+
+10-26 09:08:37.510 D/PackageManager(  562): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-26 09:08:37.511 D/PackageManager(  562): Clear ephemeral installer activity
+10-26 09:08:37.513 W/gle.android.gms( 1400): Cleared Reference was only reachable from finalizer (only reported once)
+10-26 09:08:37.516 I/Backup  ( 1400): [SourceEnabler] Setting source components to enabled = true
+10-26 09:08:37.520 I/ActivityManager(  562): Start proc 3973:dev.mobile.maestro/u0a210 for added application dev.mobile.maestro
+10-26 09:08:37.520 I/ProximityAuth( 1230): [PhoneHubService] Destroying PhoneHubChimeraService.
+10-26 09:08:37.521 W/ProximityAuth( 1230): [PhoneHubNotificationProcessor] shutdown(): context is null.
+10-26 09:08:37.521 I/ProximityAuth( 1230): [PhoneHubService] All devices have disconnected. Performing cleanup...
+10-26 09:08:37.521 W/ChimeraUtils( 1230): Module com.google.android.gms.auth_proximity missing resource null(0)
+10-26 09:08:37.525 W/.gms.persistent( 1230): Cleared Reference was only reachable from finalizer (only reported once)
+10-26 09:08:37.529 V/Backup  ( 1400): [MigrateUtil] Using O+ select transport api
+10-26 09:08:37.532 W/Backup  ( 1400): [ComponentEnablerUtil] Unable to set component 'com.google.android.gms.backup.component.RestoreSessionV0Service' to enabled=true
+10-26 09:08:37.536 W/Backup  ( 1400): [ComponentEnablerUtil] Unable to set component 'com.google.android.gms.backup.component.CloudRestoreFlowActivity' to enabled=true
+10-26 09:08:37.544 I/.mobile.maestro( 3973): Late-enabling -Xcheck:jni
+10-26 09:08:37.554 W/Backup  ( 1400): [ComponentEnablerUtil] Unable to set component 'com.google.android.gms.backup.component.D2dMigrateFlowActivity' to enabled=false
+10-26 09:08:37.555 I/AppsFilter(  562): interaction: PackageSetting{3a4815f com.android.microdroid.empty_payload/10189} -> PackageSetting{1e76290 com.google.android.as/10138} BLOCKED
 --
-10-22 11:44:14.419 I/AndroidRuntime( 3572): VM exiting with result code 0.
-10-22 11:44:14.422 I/AppsFilter(  549): interaction: PackageSetting{b46f4a9 com.android.microdroid.empty_payload/10190} -> PackageSetting{e50162 dev.mobile.maestro/10210} BLOCKED
-10-22 11:44:14.423 D/InetDiagMessage(  549): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
-10-22 11:44:14.423 D/InetDiagMessage(  549): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
-10-22 11:44:14.423 D/InetDiagMessage(  549): Destroyed live tcp sockets for uids={20210} in 7ms
-10-22 11:44:14.437 I/netd    (  353): tetherGetStats() -> {[]} <2.50ms>
-10-22 11:44:14.438 V/ActivityManager(  549): Got obituary of 3588:dev.mobile.maestro
-10-22 11:44:14.440 W/ActivityManager(  549): pid 549 system sent binder code 1 with flags 1 to frozen apps and got error -32
-10-22 11:44:14.441 W/MagnificationConnectionManager(  549): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-22 11:44:14.441 I/Zygote  (  354): Process 3588 exited due to signal 9 (Killed)
-10-22 11:44:14.443 W/MagnificationConnectionManager(  549): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-22 11:44:14.593 I/servicemanager(    0): Caller(pid=549,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
-10-22 11:44:14.444 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-22 11:44:14.444 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-22 11:44:14.444 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-22 11:44:14.444 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-22 11:44:14.444 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-22 11:44:14.444 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-22 11:44:14.445 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-22 11:44:14.445 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-22 11:44:14.445 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-22 11:44:14.445 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-22 11:44:14.445 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-22 11:44:14.445 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-22 11:44:14.445 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-22 11:44:14.445 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-22 11:44:14.445 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-22 11:44:14.445 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-22 11:44:14.445 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-22 11:44:14.445 W/IPCThreadState(  549): Sending oneway calls to frozen process.
-10-22 11:44:14.445 W/IPCThreadState(  549): Sending oneway calls to frozen process.
+10-26 09:12:41.003 I/AndroidRuntime( 3959): VM exiting with result code 0.
+10-26 09:12:41.172 I/init    (    0): starting service 'artd'...
+10-26 09:12:41.007 I/netd    (  364): tetherGetStats() -> {[]} <0.63ms>
+10-26 09:12:41.187 I/init    (    0): ... started service 'artd' has pid 5966
+10-26 09:12:41.188 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 151 (/system/bin/servicemanager)
+10-26 09:12:41.031 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.032 I/AiAiEcho( 1444): Settings changed for uri: content://settings/secure/accessibility_enabled
+10-26 09:12:41.032 W/MagnificationConnectionManager(  562): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-26 09:12:41.032 V/UiAutomationManager(  562): UiAutomation service owner died
+10-26 09:12:41.033 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.033 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.033 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.033 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.033 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.034 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.034 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.034 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.034 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.034 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.034 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.034 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.034 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.034 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.034 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.034 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.034 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.034 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.034 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.034 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.034 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+10-26 09:12:41.034 W/IPCThreadState(  562): Sending oneway calls to frozen process.
