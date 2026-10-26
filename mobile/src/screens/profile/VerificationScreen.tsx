@@ -113,7 +113,7 @@ export function VerificationScreen({ navigation }: Props): React.JSX.Element {
   }), [navigation, load]);
 
   const withdraw = () => {
-    Alert.alert("Withdraw request?", "We'll stop reviewing it and delete your ID photo. You can apply again later.", [
+    Alert.alert("Withdraw request?", "We'll stop reviewing it, and your ID photo is deleted within 30 days. You can apply again later.", [
       { text: "Keep request", style: "cancel" },
       {
         text: "Withdraw",

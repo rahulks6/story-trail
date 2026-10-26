@@ -68,6 +68,13 @@ describe("Story editor canvas", () => {
     expect(textModalOpen()).toBe(false);
   });
 
+  it("the @ button opens straight on Mention, so tagging a friend is one tap", async () => {
+    await open();
+    await act(async () => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === "Mention someone").props.onPress());
+    const tabs = tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && n.props.accessibilityRole === "tab");
+    expect(tabs.filter((t) => t.props.accessibilityState?.selected).map((t) => t.findByType(Text).props.children)).toEqual(["Mention"]);
+  });
+
   it("opens the text tool with one tap on the photo", async () => {
     await open();
     act(() => canvas().props.onResponderGrant(touchEvent([[200, 300]], 1)));

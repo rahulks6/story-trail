@@ -29,9 +29,9 @@ function offerLocationSettings(): void {
   ]);
 }
 
-type Tab = "emoji" | "mention" | "location" | "datetime" | "stickers";
+export type StickerTab = "emoji" | "mention" | "location" | "datetime" | "stickers";
 
-const TABS: { key: Tab; label: string }[] = [
+const TABS: { key: StickerTab; label: string }[] = [
   { key: "emoji", label: "Emoji" },
   { key: "mention", label: "Mention" },
   { key: "location", label: "Location" },
@@ -75,6 +75,8 @@ interface Props {
    * which OverlayAdjustSheet already covers).
    */
   editingOverlay?: Overlay | null;
+  /** The tab it opens on (the editor's @ button opens straight on Mention). */
+  initialTab?: StickerTab;
   onEditDone?: (id: string, properties: LocationOverlayProperties | DateTimeOverlayProperties) => void;
 }
 
@@ -86,11 +88,11 @@ interface Props {
  * `onAdd` → DraggableCanvasObject path text already uses; this sheet only
  * ever hands back type-specific `properties`, never geometry.
  */
-export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay, onEditDone }: Props): React.JSX.Element {
+export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay, onEditDone, initialTab }: Props): React.JSX.Element {
   // Clears Android's navigation bar and the iPhone home indicator.
   const bottomInset = useSafeAreaInsets().bottom;
   const { accessToken } = useAuth();
-  const [tab, setTab] = useState<Tab>("emoji");
+  const [tab, setTab] = useState<StickerTab>("emoji");
   const [mentionQuery, setMentionQuery] = useState("");
   const debouncedMentionQuery = useDebouncedValue(mentionQuery, 300);
   const [mentionResults, setMentionResults] = useState<SearchResult[]>([]);
@@ -101,6 +103,7 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
 
   React.useEffect(() => {
     if (!visible) return;
+    if (!editingOverlay && initialTab) setTab(initialTab);
     if (editingOverlay?.type === "location") {
       setTab("location");
       setLocationLabel(editingOverlay.properties.label);

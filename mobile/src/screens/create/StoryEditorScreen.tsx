@@ -49,7 +49,7 @@ import { DraggableCanvasObject } from "../../components/DraggableCanvasObject";
 import { OverlayBody } from "../../components/OverlayBody";
 import { PlacedOverlay } from "../../components/PlacedOverlay";
 import { TextToolModal } from "../../components/TextToolModal";
-import { StickerSheet, type StickerAddPayload } from "../../components/StickerSheet";
+import { StickerSheet, type StickerAddPayload, type StickerTab } from "../../components/StickerSheet";
 import { MusicSheet, type ChosenMusic } from "../../components/MusicSheet";
 import { MusicPlayer } from "../../components/MusicPlayer";
 import { listMusic } from "../../api/music";
@@ -161,6 +161,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [textModalVisible, setTextModalVisible] = useState(false);
   const [stickerSheetVisible, setStickerSheetVisible] = useState(false);
+  const [stickerTab, setStickerTab] = useState<StickerTab | undefined>(undefined);
   // A song on the Story (like Instagram): it plays while you edit.
   const [music, setMusic] = useState<ChosenMusic | null>(null);
   const [musicSheetVisible, setMusicSheetVisible] = useState(false);
@@ -823,6 +824,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             <Pressable
               onPress={() => {
                 setEditingStickerOverlayId(null);
+                setStickerTab(undefined);
                 setStickerSheetVisible(true);
               }}
               hitSlop={8} style={toolButtonStyle}
@@ -830,6 +832,19 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               accessibilityLabel="Add sticker, emoji, mention, location, or date and time"
             >
               <Icon style={topIconStyle} name={ICONS.sticker} />
+            </Pressable>
+            {/* Tagging a friend is one tap, not a tab inside the sticker sheet. */}
+            <Pressable
+              onPress={() => {
+                setEditingStickerOverlayId(null);
+                setStickerTab("mention");
+                setStickerSheetVisible(true);
+              }}
+              hitSlop={8} style={toolButtonStyle}
+              accessibilityRole="button"
+              accessibilityLabel="Mention someone"
+            >
+              <Icon style={topIconStyle} name={ICONS.mention} />
             </Pressable>
             <Pressable onPress={() => setDrawMode(true)} hitSlop={8} style={toolButtonStyle} accessibilityRole="button" accessibilityLabel="Draw">
               <Icon style={topIconStyle} name={ICONS.draw} />
@@ -1002,6 +1017,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         onAdd={addSticker}
         festival={festival}
         editingOverlay={editingStickerOverlay}
+        initialTab={stickerTab}
         onEditDone={updateOverlayContent}
       />
       <OverlayAdjustSheet
