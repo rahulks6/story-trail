@@ -1,6 +1,6 @@
 import { Icon } from "../components/Icon";
-import React, { useContext, useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useContext, useEffect, useRef } from "react";
+import { Animated, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "../components/Pressable";
 import { BottomTabBarHeightCallbackContext, type BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
@@ -106,7 +106,7 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
             style={styles.tabItem}
           >
             <View style={styles.tabContent}>
-              <Icon style={[styles.tabIcon, isFocused && styles.labelFocused]} name={TAB_ICONS[route.name] ?? "home"} selected={isFocused} />
+              <TabIcon focused={isFocused} name={TAB_ICONS[route.name] ?? "home"} />
               {showUnreadBadge ? (
                 <View style={styles.unreadBadge}>
                   <Text style={styles.unreadBadgeText} maxFontSizeMultiplier={1.2}>{badgeCount > 99 ? "99+" : badgeCount}</Text>
@@ -118,6 +118,26 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
         );
       })}
     </View>
+  );
+}
+
+/** The tab's icon gives a small bounce when its tab becomes the current one. */
+function TabIcon({ focused, name }: { focused: boolean; name: import("../theme/icons").IconName }): React.JSX.Element {
+  const scale = useRef(new Animated.Value(1)).current;
+  const first = useRef(true);
+  useEffect(() => {
+    if (first.current) {
+      first.current = false;
+      return;
+    }
+    if (!focused) return;
+    scale.setValue(0.82);
+    Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 14, bounciness: 12 }).start();
+  }, [focused, scale]);
+  return (
+    <Animated.View style={{ transform: [{ scale }] }}>
+      <Icon style={[styles.tabIcon, focused && styles.labelFocused]} name={name} selected={focused} />
+    </Animated.View>
   );
 }
 
