@@ -5,6 +5,7 @@ import { useAuth } from "../state/AuthContext";
 import { useProfilePhotoSource } from "../hooks/useProfilePhotoSource";
 import { colors, radii } from "../theme";
 import { FadeInImage } from "./FadeInImage";
+import { initialOf } from "../utils/initial";
 
 interface Props {
   username: string;
@@ -35,7 +36,7 @@ export function Avatar({ username, displayName, avatarMediaId, size = 44, style 
       {photo.source ? (
         <FadeInImage source={photo.source} style={round} onError={photo.onError} />
       ) : (
-        <Text style={[styles.initial, { fontSize: Math.round(size * 0.4) }]}>{(displayName || username || "?").charAt(0).toUpperCase()}</Text>
+        <Text style={[styles.initial, { fontSize: Math.round(size * 0.4) }]}>{initialOf(displayName || username || "") || "?"}</Text>
       )}
     </View>
   );

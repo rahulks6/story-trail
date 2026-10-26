@@ -92,3 +92,12 @@ test("a photo refused because the sign-in had just expired shows once the sessio
   await render(<Avatar username="erin" displayName="Erin" />);
   expect(image()!.props.source.headers).toEqual({ Authorization: "Bearer token-2" });
 });
+
+test("a name starting with an emoji or another script shows that whole character, never half of an emoji", async () => {
+  await render(<Avatar username="sun" displayName="😀 Sunny" avatarMediaId={null} />);
+  expect(initial()).toBe("😀");
+  await render(<Avatar username="raj" displayName="राज" avatarMediaId={null} />);
+  expect(initial()).toBe("र");
+  await render(<Avatar username="ann" displayName="  ann" avatarMediaId={null} />);
+  expect(initial()).toBe("A");
+});

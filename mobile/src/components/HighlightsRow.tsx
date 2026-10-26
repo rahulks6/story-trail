@@ -13,6 +13,7 @@ import { tapFeedback } from "../utils/haptics";
 import { mediaFileUrl } from "../api/stories";
 import { DraggableGrid } from "./DraggableGrid";
 import { FadeInImage } from "./FadeInImage";
+import { initialOf } from "../utils/initial";
 
 interface Props {
   username: string;
@@ -200,7 +201,7 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
                 />
               ) : (
                 <View style={styles.coverFallback}>
-                  <Text style={styles.coverFallbackInitial}>{highlight.title.charAt(0).toUpperCase()}</Text>
+                  <Text style={styles.coverFallbackInitial}>{initialOf(highlight.title)}</Text>
                 </View>
               )}
             </View>
