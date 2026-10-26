@@ -190,6 +190,13 @@ function reasonForm(box, label, submit, action) {
     box.append(f);
     input.focus();
 }
+/** A profile's cover photo: look at it, and take it off the profile (audit-logged with the reason). */
+function coverActions(box, a, user) {
+    a.append(button('Show cover photo', async () => { box.append(await privateImage('/api/v1/admin/users/' + user.id + '/cover', 'Cover photo of @' + user.username, 'cover')); }, true));
+    if (has('content.remove'))
+        a.append(button('Remove cover photo', () => { const reason = prompt('Reason for removing the cover photo (kept in the audit log)'); if (reason)
+            return mutate('users/' + user.id + '/cover/remove', { reason }, 'Remove the cover photo from @' + user.username + '\'s profile?'); }, true));
+}
 function accountFields(box, u) {
     const days = Math.floor((Date.now() - Date.parse(u.joinedAt)) / 86400000);
     fields(box, { Username: '@' + u.username, Name: u.displayName, 'Account age': days + ' days (joined ' + new Date(u.joinedAt).toLocaleDateString() + ')', Followers: u.followers, 'Email verified': u.emailVerified ? 'Yes' : 'No', State: u.active ? u.state : 'SUSPENDED' });
@@ -451,6 +458,8 @@ async function renderItems(container, items) { if (!items.length) {
             if (has(perm))
                 a.append(button(label, () => { const reason = prompt('Reason for this account action'); if (reason)
                     return mutate('moderate', { targetType: 'user', targetId: item.id, action, reason }, label + ' this account?'); }, true));
+        if (item.hasCover)
+            coverActions(box, a, item);
     }
     if (page === 'Moderation' && ['remove'].includes(item.action) && item.target_type !== 'ad' && has('content.restore'))
         a.append(button('Restore content', () => { const reason = prompt('Reason for restoring content'); if (reason)
@@ -481,6 +490,9 @@ async function review(id) { const version = ++renderVersion; const data = await 
     fields(box, data.target);
     if (data.target.mediaId)
         await preview(box, '/api/v1/admin/evidence/' + id, data.target.caption || '', 'Reported content');
+    // A reported profile includes its cover photo.
+    if (data.report.target_type === 'user' && data.target.hasCover && has('reports.review'))
+        coverActions(box, actions(box), data.target);
 } if (data.evidence && data.evidence.messages > 0) {
     // Messages the reporter attached; opening them is recorded in the audit log.
     const dm = el('div', undefined, 'notice');

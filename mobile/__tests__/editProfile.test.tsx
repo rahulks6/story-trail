@@ -6,15 +6,15 @@ import * as ImagePicker from "react-native-image-picker";
 import * as NitroImage from "react-native-nitro-image";
 import { EditProfileScreen } from "../src/screens/profile/EditProfileScreen";
 import {
-  avatarCropRect, avatarImageLayout, clampAvatarCrop, initialAvatarCrop, panAvatarCrop, zoomAvatarCrop, MAX_AVATAR_ZOOM,
+  avatarCropRect, avatarImageLayout, clampAvatarCrop, initialAvatarCrop, outputSize, panAvatarCrop, zoomAvatarCrop, COVER_ASPECT, MAX_AVATAR_ZOOM,
 } from "../src/models/avatarCrop";
 import { onProfileChanged } from "../src/state/storyChanges";
 import * as usersApi from "../src/api/users";
 import * as mediaApi from "../src/api/media";
 
-// Edit Profile (spec section 23, Phase 11): photo take/choose/remove with a square crop made on
-// the phone, Save and Discard, name and bio rules, and the change reaching other screens.
-const mockUser = { id: "u-me", username: "me_now", email: "me@example.com", displayName: "Me Now", bio: "Old bio", avatarMediaId: "m-old" as string | null, interests: ["Cricket"], isPrivate: false };
+// Edit Profile (spec section 23, Phase 11): photo and cover take/choose/remove with a square or
+// 3:1 crop made on the phone, Save and Discard, name and bio rules, and the change reaching other screens.
+const mockUser = { id: "u-me", username: "me_now", email: "me@example.com", displayName: "Me Now", bio: "Old bio", avatarMediaId: "m-old" as string | null, coverMediaId: undefined as string | null | undefined, interests: ["Cricket"], isPrivate: false };
 const mockAuth = { user: mockUser, accessToken: "token", applyProfile: jest.fn() };
 const mockPrevent = { enabled: false, callback: null as null | ((e: { data: { action: unknown } }) => void) };
 jest.mock("../src/state/AuthContext", () => ({ useAuth: () => mockAuth }));
@@ -46,6 +46,7 @@ beforeEach(() => {
   g.__nitroImage.fail = false;
   g.__nitroImage.size = { width: 2048, height: 1536 };
   mockUser.avatarMediaId = "m-old";
+  mockUser.coverMediaId = undefined;
   users.updateMyProfile.mockImplementation(async (input) => ({ user: { ...mockUser, ...input } as never }));
 });
 afterEach(async () => {
@@ -73,6 +74,14 @@ const type = async (label: string, text: string) => {
 /** Choose in the photo sheet; like on iOS, the choice runs once the sheet has closed. */
 async function choosePhotoAction(label: string): Promise<void> {
   await press("Change profile photo");
+  await press(label);
+  const sheet = tree.root.findAllByType(Modal).find((m) => typeof m.props.onDismiss === "function")!;
+  await act(async () => sheet.props.onDismiss());
+  await flush();
+}
+/** The same for the cover's sheet, opened from the banner at the top of the form. */
+async function chooseCoverAction(button: "Add cover photo" | "Change cover photo", label: string): Promise<void> {
+  await press(button);
   await press(label);
   const sheet = tree.root.findAllByType(Modal).find((m) => typeof m.props.onDismiss === "function")!;
   await act(async () => sheet.props.onDismiss());
@@ -115,6 +124,109 @@ describe("the square cut", () => {
     }
     const tight = clampAvatarCrop({ zoom: 2, centerX: 0, centerY: 0 }, W, H);
     expect([tight.centerX, tight.centerY]).toEqual([384, 384]);
+  });
+});
+
+describe("the 3:1 cover cut", () => {
+  const W = 2048, H = 1536, A = COVER_ASPECT;
+  test("starts centred with the photo's full width, and every cut is exactly three times as wide as it is tall", () => {
+    expect(avatarCropRect(initialAvatarCrop(W, H), W, H, A)).toEqual({ startX: 1, startY: 427, endX: 2047, endY: 1109 });
+    expect(avatarImageLayout(initialAvatarCrop(W, H), W, H, 300, A)).toEqual({ width: 300, height: 225, left: 0, top: -62.5 });
+    for (const crop of [
+      { zoom: 1, centerX: 0, centerY: 0 },
+      { zoom: 2.5, centerX: 5000, centerY: -20 },
+      { zoom: 4, centerX: 900.3, centerY: 1400.8 },
+      { zoom: Number.NaN, centerX: Number.NaN, centerY: 10 },
+    ]) {
+      const r = avatarCropRect(crop, W, H, A);
+      expect(r.endX - r.startX).toBe((r.endY - r.startY) * 3);
+      expect(r.startX).toBeGreaterThanOrEqual(0);
+      expect(r.startY).toBeGreaterThanOrEqual(0);
+      expect(r.endX).toBeLessThanOrEqual(W);
+      expect(r.endY).toBeLessThanOrEqual(H);
+    }
+    // A tall photo: the banner spans its width, and drags up and down within it.
+    expect(avatarCropRect(initialAvatarCrop(1080, 1920), 1080, 1920, A)).toEqual({ startX: 0, startY: 780, endX: 1080, endY: 1140 });
+    expect(panAvatarCrop(initialAvatarCrop(1080, 1920), 0, 1000, 300, 1080, 1920, A).centerY).toBe(180);
+  });
+
+  test("is saved at most 1500 x 500, never enlarged", () => {
+    expect(outputSize(2046, 682, 1500, 500)).toEqual({ width: 1500, height: 500 });
+    expect(outputSize(900, 300, 1500, 500)).toEqual({ width: 900, height: 300 });
+    expect(outputSize(1228, 1228, 640, 640)).toEqual({ width: 640, height: 640 });
+  });
+});
+
+describe("cover photo", () => {
+  test("add one: choose, frame the 3:1 banner, and Save uploads only that cut and sends it", async () => {
+    g.__picker.result = { assets: [{ uri: "file:///photos/WIDE.jpg", width: 2048, height: 1536 }] };
+    await render();
+    expect(texts()).toContain("Add cover photo");
+    await press("Add cover photo");
+    expect(texts()).toContain("Cover photo");
+    expect(labelled("Remove cover photo")).toHaveLength(0);
+    expect(labelled("Remove current photo")).toHaveLength(0);
+    await press("Choose from library");
+    const sheet = tree.root.findAllByType(Modal).find((m) => typeof m.props.onDismiss === "function")!;
+    await act(async () => sheet.props.onDismiss());
+    await flush();
+    expect(texts()).toContain("Move and scale");
+
+    await press("Use photo");
+    expect(g.__nitroImage.saved).toHaveLength(1);
+    expect(g.__nitroImage.saved[0]).toMatchObject({ width: 1500, height: 500, format: "jpg", quality: 90 });
+    expect(g.__nitroImage.saved[0]!.steps).toEqual([["load", "file:///photos/WIDE.jpg"], ["crop", 1, 427, 2047, 1109], ["resize", 1500, 500]]);
+    expect(labelled("New cover photo")).toHaveLength(1);
+    expect(texts()).toEqual(expect.arrayContaining(["Your new cover is used when you save.", "Change cover photo"]));
+    expect(media.uploadPhoto).not.toHaveBeenCalled(); // nothing uploads before Save
+    expect(mockPrevent.enabled).toBe(true);
+
+    await act(async () => saveButton().props.onPress());
+    await flush();
+    expect(media.uploadPhoto).toHaveBeenCalledTimes(1);
+    expect(media.uploadPhoto).toHaveBeenCalledWith("file:///tmp/katkee-crop-1.jpg", "image/jpeg", "token");
+    const sent = users.updateMyProfile.mock.calls[0]![0];
+    expect(sent).toMatchObject({ coverMediaId: "m-new" });
+    expect(sent).not.toHaveProperty("avatarMediaId");
+    expect(navigation.goBack).toHaveBeenCalled();
+  });
+
+  test("taking a cover uses the back camera", async () => {
+    g.__picker.camera = { assets: [{ uri: "file:///camera/2.jpg", width: 1440, height: 1080 }] };
+    await render();
+    await chooseCoverAction("Add cover photo", "Take photo");
+    expect(picker.launchCamera).toHaveBeenCalledWith(expect.objectContaining({ mediaType: "photo", cameraType: "back" }));
+    expect(texts()).toContain("Move and scale");
+  });
+
+  test("an existing cover shows; Remove cover photo sends null on Save and leaves the profile photo alone", async () => {
+    mockUser.coverMediaId = "c-old";
+    await render();
+    const shown = tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && typeof n.props.source?.uri === "string" && n.props.source.uri.includes("/cover/file"));
+    expect(shown[0]!.props.source).toEqual({ uri: expect.stringMatching(/\/users\/me_now\/cover\/file\?v=c-old$/), headers: { Authorization: "Bearer token" } });
+    await chooseCoverAction("Change cover photo", "Remove cover photo");
+    expect(texts()).toEqual(expect.arrayContaining(["Your cover is removed when you save.", "Add cover photo"]));
+    await act(async () => saveButton().props.onPress());
+    await flush();
+    const sent = users.updateMyProfile.mock.calls[0]![0];
+    expect(sent).toMatchObject({ coverMediaId: null });
+    expect(sent).not.toHaveProperty("avatarMediaId");
+    expect(media.uploadPhoto).not.toHaveBeenCalled();
+  });
+
+  test("a cover change counts as unsaved: leaving asks first, and Discard leaves without saving", async () => {
+    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+    mockUser.coverMediaId = "c-old";
+    await render();
+    expect(mockPrevent.enabled).toBe(false);
+    await chooseCoverAction("Change cover photo", "Remove cover photo");
+    expect(mockPrevent.enabled).toBe(true);
+    const action = { type: "GO_BACK" };
+    await act(async () => mockPrevent.callback!({ data: { action } }));
+    expect(alert.mock.calls[0]![0]).toBe("Discard changes?");
+    (alert.mock.calls[0]![2] as Array<{ text: string; onPress?: () => void }>).find((b) => b.text === "Discard")!.onPress!();
+    expect(navigation.dispatch).toHaveBeenCalledWith(action);
+    expect(users.updateMyProfile).not.toHaveBeenCalled();
   });
 });
 

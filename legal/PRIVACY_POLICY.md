@@ -25,7 +25,7 @@ contacts.
 ### Account information
 Username, email address, a securely hashed password (we never store your
 actual password; see Section 6), display name, **date of birth**, and an
-optional bio, interests (up to five) and profile photo.
+optional bio, interests (up to five), profile photo and cover photo.
 
 If you sign in with your phone number, Twilio receives it to send you a
 code. We keep only a keyed fingerprint of the number, not the number
@@ -53,7 +53,8 @@ library and which part of it plays. The songs are openly licensed and credited
 on the Story; choosing one tells us nothing else about you.
 
 When you change your profile photo, the app cuts out the square you choose
-on your phone and uploads only that square.
+on your phone and uploads only that square. Your cover photo works the same
+way: only the wide banner you frame is uploaded.
 
 ### Your connections
 Who you follow, who follows you, follow requests, and who you've blocked or
@@ -195,6 +196,9 @@ message is kept as evidence for the moderator.
 - **Direct messages**: only the people in the conversation see them. Staff
   can't browse messages. A moderator sees a message only when someone
   reports it.
+- **Profile photo and cover photo**: anyone signed in who can see your
+  profile, including when your account is private. People you've blocked,
+  or who've blocked you, never see them.
 - **Blocking**: hides your content from someone and theirs from you, both
   ways, at once.
 - **Your area and time zone**: never shown to anyone.

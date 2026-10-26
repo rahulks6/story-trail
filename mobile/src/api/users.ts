@@ -11,6 +11,8 @@ export interface ProfileView {
   displayName: string;
   bio: string;
   avatarMediaId: string | null;
+  /** The banner at the top of the profile; missing from servers before covers. */
+  coverMediaId?: string | null;
   interests: string[];
   isPrivate: boolean;
   isSelf: boolean;
@@ -93,7 +95,7 @@ export function getSuggestions(accessToken: string, signal?: AbortSignal): Promi
 }
 
 export function updateMyProfile(
-  input: { username?: string; displayName?: string; bio?: string; isPrivate?: boolean; interests?: string[]; avatarMediaId?: string | null },
+  input: { username?: string; displayName?: string; bio?: string; isPrivate?: boolean; interests?: string[]; avatarMediaId?: string | null; coverMediaId?: string | null },
   accessToken: string,
 ) {
   return apiPatch<{ user: PublicUser }>("/api/v1/users/me", input, accessToken);
@@ -102,6 +104,11 @@ export function updateMyProfile(
 export function avatarFileUrl(username: string, avatarMediaId?: string | null): string {
   const version = avatarMediaId ? `?v=${encodeURIComponent(avatarMediaId)}` : "";
   return `${API_BASE_URL}/api/v1/users/${encodeURIComponent(username)}/avatar/file${version}`;
+}
+
+/** The profile cover, through the same access checks as the avatar; versioned by its media id. */
+export function coverFileUrl(username: string, coverMediaId: string): string {
+  return `${API_BASE_URL}/api/v1/users/${encodeURIComponent(username)}/cover/file?v=${encodeURIComponent(coverMediaId)}`;
 }
 
 export function searchUsers(

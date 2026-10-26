@@ -295,6 +295,8 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
         bio={profile.bio}
         interests={profile.interests ?? []}
         avatarMediaId={profile.avatarMediaId}
+        coverMediaId={profile.coverMediaId ?? null}
+        coverBleed={{ sides: spacing.lg, top: spacing.md }}
         isPrivate={profile.isPrivate}
         verified={!!profile.verified}
         verifiedCategory={profile.verifiedCategory}

@@ -32,6 +32,8 @@ export function ProfileScreen(): React.JSX.Element {
   const [hasActiveStory, setHasActiveStory] = useState(false);
   // From the profile fetch, which is fresher than the signed-in account's copy (a badge put on hold).
   const [badge, setBadge] = useState<{ verified: boolean; category: string | null } | null>(null);
+  // Your cover from the profile fetch, for an account saved before covers (your account's copy has none).
+  const [fetchedCover, setFetchedCover] = useState<string | null>(null);
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [refreshToken, setRefreshToken] = useState(0);
@@ -42,6 +44,7 @@ export function ProfileScreen(): React.JSX.Element {
       const { profile } = await getProfile(user.username, accessToken);
       setCounts({ followerCount: profile.followerCount, followingCount: profile.followingCount, storyCount: profile.storyCount ?? null });
       setBadge({ verified: !!profile.verified, category: profile.verifiedCategory ?? null });
+      setFetchedCover(profile.coverMediaId ?? null);
     } catch {
       // Non-fatal: the counts show dashes and the rest of the page still works.
     }
@@ -83,6 +86,8 @@ export function ProfileScreen(): React.JSX.Element {
     setRefreshing(false);
   };
 
+  const emailReminder = !!user.email && user.emailVerified === false;
+
   const onShareProfile = async () => {
     try {
       await Share.share({ message: `@${user.username} on Katkee: ${profileShareLink(user.username, user.id)}` });
@@ -117,7 +122,7 @@ export function ProfileScreen(): React.JSX.Element {
         scrollEnabled={scrollEnabled}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} tintColor={colors.accentText} />}
       >
-        {user.email && user.emailVerified === false ? (
+        {emailReminder ? (
           // Until the email is confirmed: a gentle reminder, never a block.
           <Pressable
             style={({ pressed }) => [styles.verify, pressed && styles.dashboardPressed]}
@@ -139,6 +144,9 @@ export function ProfileScreen(): React.JSX.Element {
           bio={user.bio}
           interests={user.interests ?? []}
           avatarMediaId={user.avatarMediaId}
+          // Your account's copy changes the moment you save in Edit profile.
+          coverMediaId={user.coverMediaId !== undefined ? user.coverMediaId : fetchedCover}
+          coverBleed={{ sides: spacing.lg, top: emailReminder ? 0 : spacing.sm }}
           isPrivate={user.isPrivate}
           verified={badge ? badge.verified : !!user.verified}
           verifiedCategory={badge ? badge.category : user.verifiedCategory}

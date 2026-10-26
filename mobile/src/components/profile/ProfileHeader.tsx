@@ -1,7 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Pressable } from "../Pressable";
 import { Avatar } from "../Avatar";
+import { FadeInImage } from "../FadeInImage";
+import { coverFileUrl } from "../../api/users";
+import { useAuth } from "../../state/AuthContext";
+import { COVER_ASPECT } from "../../models/avatarCrop";
 import { Icon } from "../Icon";
 import { VerifiedBadgeSheet, VerifiedName } from "../VerifiedBadge";
 import { colors, radii, spacing, ICONS } from "../../theme";
@@ -22,6 +27,13 @@ interface Props {
   bio: string;
   interests: string[];
   avatarMediaId: string | null;
+  /** The cover photo: a 3:1 banner across the top, the photo overlapping its lower edge. */
+  coverMediaId?: string | null;
+  /**
+   * How far the cover reaches past the header to the screen's edges: the page's side padding,
+   * and its top padding when the header is the first thing on the page.
+   */
+  coverBleed?: { sides: number; top: number };
   isPrivate: boolean;
   /** The badge after the name; tapping it explains it, naming the category. */
   verified?: boolean;
@@ -42,61 +54,109 @@ export const PHOTO_SIZE = 86;
 const RING_WIDTH = 3;
 const RING_GAP = 3;
 const RING_SIZE = PHOTO_SIZE + (RING_WIDTH + RING_GAP) * 2;
+/** How much of the photo's ring sits over the cover's lower edge. */
+const COVER_OVERLAP = Math.round(RING_SIZE * 0.45);
 
 /**
- * The top of a creator page (Phase 10), shared by your own page and other people's: the photo in
- * its Story ring, the counts, name, username, bio and interests, then the page's buttons.
+ * A profile's cover: decorative, so nothing happens on a tap. It fades in once loaded and fades
+ * softly into the page at its foot (in the page's own colour, so it works in light and dark).
+ * Until the image has an answer it holds its space, so the page doesn't jump; if it can't be
+ * shown at all it goes, and the header looks as it does without a cover.
+ */
+function ProfileCover({ username, coverMediaId, accessToken, bleed, onUnavailable }: {
+  username: string; coverMediaId: string; accessToken: string; bleed: { sides: number; top: number }; onUnavailable: () => void;
+}): React.JSX.Element {
+  return (
+    <View
+      testID="profile-cover"
+      style={[styles.cover, { marginHorizontal: -bleed.sides, marginTop: -bleed.top }]}
+      accessible={false}
+      importantForAccessibility="no-hide-descendants"
+    >
+      <FadeInImage
+        source={{ uri: coverFileUrl(username, coverMediaId), headers: { Authorization: `Bearer ${accessToken}` } }}
+        style={StyleSheet.absoluteFill}
+        resizeMode="cover"
+        onError={onUnavailable}
+      />
+      <Svg style={styles.coverScrim} width="100%" height="100%" pointerEvents="none">
+        <Defs>
+          <LinearGradient id="profileCoverScrim" x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0" stopColor={colors.background} stopOpacity={0} />
+            <Stop offset="1" stopColor={colors.background} stopOpacity={1} />
+          </LinearGradient>
+        </Defs>
+        <Rect x="0" y="0" width="100%" height="100%" fill="url(#profileCoverScrim)" />
+      </Svg>
+    </View>
+  );
+}
+
+/**
+ * The top of a creator page (Phase 10), shared by your own page and other people's: the cover
+ * (when there is one) with the photo in its Story ring overlapping it, the counts, name,
+ * username, bio and interests, then the page's buttons.
  * Stories open only from the photo (spec sections 34 and 58); there is no grid of posts.
  */
 export function ProfileHeader({
-  username, displayName, bio, interests, avatarMediaId, isPrivate, verified, verifiedCategory, hasActiveStory, storyLabel,
-  onOpenStory, onAddStory, followsYou, stats, children,
+  username, displayName, bio, interests, avatarMediaId, coverMediaId, coverBleed = DEFAULT_BLEED, isPrivate, verified, verifiedCategory,
+  hasActiveStory, storyLabel, onOpenStory, onAddStory, followsYou, stats, children,
 }: Props): React.JSX.Element {
   const [badgeSheetOpen, setBadgeSheetOpen] = useState(false);
+  const { accessToken } = useAuth();
+  const [coverFailed, setCoverFailed] = useState(false);
+  useEffect(() => setCoverFailed(false), [username, coverMediaId]);
+  const showCover = !!coverMediaId && !!accessToken && !coverFailed;
   const photo = (
-    <View style={[styles.ring, hasActiveStory && styles.ringActive]}>
+    <View style={[styles.ring, showCover && styles.ringOverCover, hasActiveStory && styles.ringActive]}>
       <Avatar username={username} displayName={displayName} avatarMediaId={avatarMediaId} size={PHOTO_SIZE} />
     </View>
   );
   return (
     <View style={styles.container}>
-      <View style={styles.topRow}>
-        <View>
-          {hasActiveStory && onOpenStory ? (
-            <Pressable onPress={onOpenStory} hitSlop={4} accessibilityRole="button" accessibilityLabel={storyLabel}>
-              {photo}
-            </Pressable>
-          ) : (
-            <View accessible accessibilityLabel={`${displayName}, profile photo`}>
-              {photo}
-            </View>
-          )}
-          {!hasActiveStory && onAddStory ? (
-            <Pressable style={styles.addBadge} onPress={onAddStory} hitSlop={8} accessibilityRole="button" accessibilityLabel="Add to your Story">
-              <Icon name={ICONS.add} size={14} color={colors.onAccent} />
-            </Pressable>
-          ) : null}
-        </View>
-        <View style={styles.stats}>
-          {stats.map((stat) => {
-            const label = stat.value === 1 ? stat.singular : stat.plural;
-            const spoken = stat.value === null ? stat.plural : countLabel(stat.value, stat.singular.toLowerCase(), stat.plural.toLowerCase());
-            const content = (
-              <>
-                <Text style={styles.statValue} numberOfLines={1} adjustsFontSizeToFit>{stat.value === null ? "—" : formatCount(stat.value)}</Text>
-                <Text style={styles.statLabel} numberOfLines={1}>{label}</Text>
-              </>
-            );
-            return stat.onPress && stat.value !== null ? (
-              <Pressable key={stat.key} style={styles.stat} onPress={stat.onPress} accessibilityRole="button" accessibilityLabel={spoken}>
-                {content}
+      {/* The cover and the row that overlaps it: without a cover, just the row, as before. */}
+      <View>
+        {showCover ? (
+          <ProfileCover username={username} coverMediaId={coverMediaId!} accessToken={accessToken!} bleed={coverBleed} onUnavailable={() => setCoverFailed(true)} />
+        ) : null}
+        <View style={[styles.topRow, showCover && styles.topRowOverCover]}>
+          <View>
+            {hasActiveStory && onOpenStory ? (
+              <Pressable onPress={onOpenStory} hitSlop={4} accessibilityRole="button" accessibilityLabel={storyLabel}>
+                {photo}
               </Pressable>
             ) : (
-              <View key={stat.key} style={styles.stat} accessible accessibilityLabel={spoken}>
-                {content}
+              <View accessible accessibilityLabel={`${displayName}, profile photo`}>
+                {photo}
               </View>
-            );
-          })}
+            )}
+            {!hasActiveStory && onAddStory ? (
+              <Pressable style={styles.addBadge} onPress={onAddStory} hitSlop={8} accessibilityRole="button" accessibilityLabel="Add to your Story">
+                <Icon name={ICONS.add} size={14} color={colors.onAccent} />
+              </Pressable>
+            ) : null}
+          </View>
+          <View style={[styles.stats, showCover && styles.statsUnderCover]}>
+            {stats.map((stat) => {
+              const label = stat.value === 1 ? stat.singular : stat.plural;
+              const spoken = stat.value === null ? stat.plural : countLabel(stat.value, stat.singular.toLowerCase(), stat.plural.toLowerCase());
+              const content = (
+                <>
+                  <Text style={styles.statValue} numberOfLines={1} adjustsFontSizeToFit>{stat.value === null ? "—" : formatCount(stat.value)}</Text>
+                  <Text style={styles.statLabel} numberOfLines={1}>{label}</Text>
+                </>
+              );
+              return stat.onPress && stat.value !== null ? (
+                <Pressable key={stat.key} style={styles.stat} onPress={stat.onPress} accessibilityRole="button" accessibilityLabel={spoken}>
+                  {content}
+                </Pressable>
+              ) : (
+                <View key={stat.key} style={styles.stat} accessible accessibilityLabel={spoken}>
+                  {content}
+                </View>
+              );
+            })}
+          </View>
         </View>
       </View>
 
@@ -154,9 +214,17 @@ export function ProfileSkeleton(): React.JSX.Element {
   );
 }
 
+const DEFAULT_BLEED = { sides: spacing.lg, top: 0 };
+
 const styles = StyleSheet.create({
   container: { width: "100%", gap: spacing.md },
+  // Full width (past the page's padding), three times as wide as it is tall.
+  cover: { aspectRatio: COVER_ASPECT, backgroundColor: colors.surfaceElevated, overflow: "hidden" },
+  coverScrim: { position: "absolute", left: 0, right: 0, bottom: 0, height: "45%" },
   topRow: { flexDirection: "row", alignItems: "center", gap: spacing.md },
+  // The photo rides up over the cover's foot. The counts start below the cover, so large text
+  // grows the row downwards and never runs over the banner.
+  topRowOverCover: { marginTop: -COVER_OVERLAP, alignItems: "flex-start" },
   ring: {
     width: RING_SIZE,
     height: RING_SIZE,
@@ -166,6 +234,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  // A ring of page colour separates the photo from the cover behind it.
+  ringOverCover: { backgroundColor: colors.background },
   ringActive: { borderColor: colors.accentText },
   addBadge: {
     position: "absolute",
@@ -181,6 +251,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   stats: { flex: 1, minWidth: 0, flexDirection: "row", justifyContent: "space-around" },
+  statsUnderCover: { paddingTop: COVER_OVERLAP + spacing.xs },
   // Each stat shares the row equally and may shrink, so small phones and large text never overflow.
   stat: { flex: 1, minWidth: 0, alignItems: "center", paddingVertical: spacing.xs, gap: 2 },
   statValue: { color: colors.textPrimary, fontSize: 18, fontWeight: "700" },

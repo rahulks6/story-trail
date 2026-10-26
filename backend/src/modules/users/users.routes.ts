@@ -1,4 +1,5 @@
-import type { Router } from "../../http/router";
+import type { ServerResponse } from "node:http";
+import type { KatkeeRequest, Router } from "../../http/router";
 import { requireAuth } from "../../http/middleware/auth.middleware";
 import { sendJson } from "../../http/respond";
 import { parsePagination, parseQueryString } from "../../http/pagination";
@@ -16,20 +17,34 @@ import { cleanUsername, USERNAME_MESSAGES, usernameProblem } from "./username-po
 
 const USER_ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
+async function sendProfilePhoto(req: KatkeeRequest, res: ServerResponse, which: "avatar" | "cover"): Promise<void> {
+  requireAuth(req);
+  const missing = which === "avatar" ? "Avatar not found." : "Cover photo not found.";
+  const username = parseUsernameParam(req.params.username);
+  const user = await usersRepo.findUserByUsername(username);
+  const mediaId = which === "avatar" ? user?.avatarMediaId : user?.coverMediaId;
+  if (!user || !user.isActive || !mediaId) throw new HttpError(404, missing);
+  if (user.id !== req.userId && await socialRepo.anyBlockBetween(req.userId as string, user.id)) {
+    throw new HttpError(404, missing);
+  }
+  const media = await mediaRepo.findMediaById(mediaId, true);
+  if (!media || media.ownerId !== user.id || media.kind !== "photo" || media.status !== "ready" || media.verificationDocument || media.exportOverlay) throw new HttpError(404, missing);
+  // Avatars are small on screen: the thumbnail unless a size is asked for. A cover spans the
+  // screen, so it is the display size.
+  const params = new URLSearchParams((req.url ?? "").split("?")[1] ?? "");
+  const fallback = which === "avatar" ? "thumbnail" : "display";
+  await sendMediaFile(req, res, media, parseVariant(params.get("variant")) ?? fallback, user.id === req.userId, mediaStorage);
+}
+
 export function registerUserRoutes(router: Router): void {
+  // The profile photo and the cover: whoever can see the profile header sees them (private
+  // accounts' too); blocked people, either way, never do.
   router.get("/api/v1/users/:username/avatar/file", async (req, res) => {
-    requireAuth(req);
-    const username = parseUsernameParam(req.params.username);
-    const user = await usersRepo.findUserByUsername(username);
-    if (!user || !user.isActive || !user.avatarMediaId) throw new HttpError(404, "Avatar not found.");
-    if (user.id !== req.userId && await socialRepo.anyBlockBetween(req.userId as string, user.id)) {
-      throw new HttpError(404, "Avatar not found.");
-    }
-    const media = await mediaRepo.findMediaById(user.avatarMediaId, true);
-    if (!media || media.ownerId !== user.id || media.kind !== "photo" || media.status !== "ready" || media.verificationDocument || media.exportOverlay) throw new HttpError(404, "Avatar not found.");
-    // Avatars are small on screen: the thumbnail unless a size is asked for.
-    const params = new URLSearchParams((req.url ?? "").split("?")[1] ?? "");
-    await sendMediaFile(req, res, media, parseVariant(params.get("variant")) ?? "thumbnail", user.id === req.userId, mediaStorage);
+    await sendProfilePhoto(req, res, "avatar");
+  });
+
+  router.get("/api/v1/users/:username/cover/file", async (req, res) => {
+    await sendProfilePhoto(req, res, "cover");
   });
 
   // Live availability while someone types a username, at sign-up (signed out) or in Edit
@@ -80,6 +95,7 @@ export function registerUserRoutes(router: Router): void {
         displayName: user.displayName,
         bio: user.bio,
         avatarMediaId: user.avatarMediaId,
+        coverMediaId: user.coverMediaId,
         // False straight after a rename while verified: the badge is on hold until an admin looks.
         verified: user.verified,
         verifiedCategory: user.verifiedCategory,

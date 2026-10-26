@@ -3,7 +3,8 @@
  * reporter chose to attach, and appeal decisions. Authorization is re-checked here for
  * every permission involved; routes only establish the Admin session.
  */
-import { DatabaseError } from "../../db/psql";
+import { DatabaseError, queryOne } from "../../db/psql";
+import { MEDIA_COLUMNS, mapMediaRow, type MediaRecord } from "../media/media.repository";
 import { HttpError } from "../../http/errors";
 import { one, rows } from "./admin.service";
 import { authorize, confirmation, integer, text, uuid, type Permission, type Principal } from "./policy";
@@ -26,7 +27,7 @@ export async function reportDetail(p: Principal, reportId: string): Promise<Reco
   const preview = await one(`SELECT data FROM (
     SELECT 'story' AS type, s.id, jsonb_build_object('id', s.id, 'username', u.username, 'caption', s.caption, 'mediaId', s.media_id, 'deleted', s.deleted_at IS NOT NULL) AS data FROM stories s JOIN users u ON u.id = s.owner_id
     UNION ALL SELECT 'comment', c.id, jsonb_build_object('id', c.id, 'username', u.username, 'body', c.body, 'deleted', c.deleted_at IS NOT NULL) FROM story_comments c JOIN users u ON u.id = c.user_id
-    UNION ALL SELECT 'user', u.id, jsonb_build_object('id', u.id, 'username', u.username, 'bio', u.bio, 'state', u.moderation_state) FROM users u
+    UNION ALL SELECT 'user', u.id, jsonb_build_object('id', u.id, 'username', u.username, 'bio', u.bio, 'state', u.moderation_state, 'hasCover', u.cover_media_id IS NOT NULL) FROM users u
     UNION ALL SELECT 'ad', c.id, jsonb_build_object('id', c.id, 'caption', c.caption, 'mediaId', c.media_id, 'destination', c.destination, 'state', c.review_status) FROM ad_creatives c
   ) targets WHERE type = :'type' AND id = :'target'`, { type, target });
   const creator = await one(`SELECT jsonb_build_object(
@@ -89,6 +90,40 @@ export async function reportMessages(p: Principal, reportId: string): Promise<Re
     FROM report_message_evidence e JOIN r ON r.id = e.report_id LEFT JOIN users u ON u.id = e.sender_id
     ORDER BY e.sent_at ASC`, { id, actor: p.userId });
   return items;
+}
+
+/**
+ * A profile's cover photo is part of the profile: reporting the account covers it. Moderators
+ * reviewing reports, or anyone who can view accounts, may look at it.
+ */
+export async function coverForAdmin(p: Principal, userId: string): Promise<MediaRecord> {
+  if (p.role !== "SUPER_ADMIN" && !p.permissions.includes("reports.read") && !p.permissions.includes("users.view")) {
+    throw new HttpError(403, "Permission denied.");
+  }
+  const row = await queryOne(
+    `SELECT ${MEDIA_COLUMNS.split(", ").map((c) => `m.${c}`).join(", ")} FROM users u JOIN media m ON m.id = u.cover_media_id WHERE u.id = :'id'`,
+    { id: uuid(userId) },
+  );
+  const media = row ? mapMediaRow(row) : null;
+  if (!media || media.purgedAt) throw new HttpError(404, "No cover photo.");
+  return media;
+}
+
+/**
+ * Takes a cover photo off a profile (`content.remove`), written to the audit log with the reason.
+ * The account keeps everything else; the photo, now unused, is deleted by the retention job.
+ */
+export async function removeCover(p: Principal, userId: string, input: Record<string, unknown>): Promise<Record<string, unknown>> {
+  authorize(p, "content.remove");
+  confirmation(input.confirmed);
+  const removed = await one(`WITH target AS (SELECT id, cover_media_id FROM users WHERE id = :'id' AND cover_media_id IS NOT NULL FOR UPDATE),
+      u AS (UPDATE users SET cover_media_id = NULL FROM target WHERE users.id = target.id RETURNING users.id, target.cover_media_id AS media_id),
+      audit AS (INSERT INTO admin_audit (actor_id, action, target_id, metadata)
+                SELECT :'actor', 'USER_COVER_REMOVED', u.id, jsonb_build_object('mediaId', u.media_id, 'reason', :'reason') FROM u)
+    SELECT jsonb_build_object('userId', id, 'mediaId', media_id) AS data FROM u`,
+    { id: uuid(userId), actor: p.userId, reason: text(input.reason, 500) });
+  if (!removed) throw new HttpError(404, "This account has no cover photo.");
+  return removed;
 }
 
 export async function listAppeals(p: Principal, status: string, limit: number, offset: number): Promise<Record<string, unknown>[]> {

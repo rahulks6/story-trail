@@ -10,6 +10,8 @@ export interface UserRecord {
   displayName: string;
   bio: string;
   avatarMediaId: string | null;
+  /** The wide banner at the top of the profile; served like the avatar. */
+  coverMediaId: string | null;
   interests: string[];
   isPrivate: boolean;
   isActive: boolean;
@@ -25,7 +27,7 @@ export interface UserRecord {
   verifiedCategory: string | null;
 }
 
-const SELECT_COLUMNS = "id, username, email, password_hash, display_name, bio, avatar_media_id, interests_json, is_private, is_active, is_moderator, email_verified_at IS NOT NULL AS email_verified, email_verification_required, created_at, " +
+const SELECT_COLUMNS = "id, username, email, password_hash, display_name, bio, avatar_media_id, cover_media_id, interests_json, is_private, is_active, is_moderator, email_verified_at IS NOT NULL AS email_verified, email_verification_required, created_at, " +
   `${verifiedSql()} AS verified, CASE WHEN ${verifiedSql()} THEN verified_category END AS verified_category`;
 
 function parseInterests(json: string | null | undefined): string[] {
@@ -46,6 +48,7 @@ function mapRow(row: Record<string, string | null>): UserRecord {
     displayName: row.display_name as string,
     bio: row.bio as string,
     avatarMediaId: row.avatar_media_id as string | null,
+    coverMediaId: row.cover_media_id ?? null,
     interests: parseInterests(row.interests_json),
     isPrivate: row.is_private === "t",
     isActive: row.is_active === "t",
@@ -138,7 +141,7 @@ export async function usernameTaken(username: string, exceptUserId: string): Pro
  */
 export async function setProfile(
   id: string,
-  values: { username?: string; displayName?: string; bio?: string; isPrivate?: boolean; interests?: string[]; avatarMediaId?: string | null },
+  values: { username?: string; displayName?: string; bio?: string; isPrivate?: boolean; interests?: string[]; avatarMediaId?: string | null; coverMediaId?: string | null },
 ): Promise<UserRecord> {
   const row = await queryOne(
     `UPDATE users
@@ -147,7 +150,8 @@ export async function setProfile(
          bio = CASE WHEN :'has_bio'::boolean THEN :'bio' ELSE bio END,
          interests_json = CASE WHEN :'has_interests'::boolean THEN :'interests_json' ELSE interests_json END,
          is_private = CASE WHEN :'has_private'::boolean THEN :'is_private'::boolean ELSE is_private END,
-         avatar_media_id = CASE WHEN :'has_avatar'::boolean THEN ${nullable("avatar_media_id", "uuid")} ELSE avatar_media_id END
+         avatar_media_id = CASE WHEN :'has_avatar'::boolean THEN ${nullable("avatar_media_id", "uuid")} ELSE avatar_media_id END,
+         cover_media_id = CASE WHEN :'has_cover'::boolean THEN ${nullable("cover_media_id", "uuid")} ELSE cover_media_id END
      WHERE id = :'id' AND deleted_at IS NULL
      RETURNING ${SELECT_COLUMNS}`,
     {
@@ -157,6 +161,7 @@ export async function setProfile(
       bio: values.bio ?? '',
       interests_json: JSON.stringify(values.interests ?? []),
       avatar_media_id: values.avatarMediaId ?? null,
+      cover_media_id: values.coverMediaId ?? null,
       is_private: values.isPrivate ?? false,
       has_username: values.username !== undefined,
       has_name: values.displayName !== undefined,
@@ -164,6 +169,7 @@ export async function setProfile(
       has_interests: values.interests !== undefined,
       has_private: values.isPrivate !== undefined,
       has_avatar: values.avatarMediaId !== undefined,
+      has_cover: values.coverMediaId !== undefined,
     },
   );
   if (!row) throw new Error("Update did not return a row");

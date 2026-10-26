@@ -17,6 +17,8 @@ export interface PublicUser {
   displayName: string;
   bio: string;
   avatarMediaId: string | null;
+  /** The profile cover (absent from servers before covers). */
+  coverMediaId?: string | null;
   interests: string[];
   isPrivate: boolean;
   /** The verified badge, and what kind of account it confirms (absent from servers before the badge). */

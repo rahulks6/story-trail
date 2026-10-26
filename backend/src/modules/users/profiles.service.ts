@@ -18,6 +18,8 @@ export interface ProfileView {
   displayName: string;
   bio: string;
   avatarMediaId: string | null;
+  /** The banner at the top of the profile, served like the avatar (users.routes.ts). */
+  coverMediaId: string | null;
   /** The verified badge (not while on hold after a rename). */
   verified: boolean;
   /** creator, public_figure, brand, news_media or organization; null unless verified. */
@@ -78,6 +80,7 @@ async function profileView(target: usersRepo.UserRecord | null, viewerId: string
     displayName: target.displayName,
     bio: target.bio,
     avatarMediaId: target.avatarMediaId,
+    coverMediaId: target.coverMediaId,
     verified: target.verified,
     verifiedCategory: target.verifiedCategory,
     interests: target.interests,
@@ -130,6 +133,19 @@ export interface UpdateProfileInput {
   isPrivate?: boolean;
   interests?: string[];
   avatarMediaId?: string | null;
+  coverMediaId?: string | null;
+}
+
+/**
+ * A profile photo or cover must be a ready photo the person uploaded themselves: never someone
+ * else's upload, a video, an ID photo sent for verification (0057) or a Story export overlay.
+ */
+async function assertUsableProfilePhoto(userId: string, mediaId: string, message: string): Promise<void> {
+  const { findMediaById } = await import("../media/media.repository");
+  const media = await findMediaById(mediaId, true);
+  if (!media || media.ownerId !== userId || media.kind !== "photo" || media.status !== "ready" || media.verificationDocument || media.exportOverlay) {
+    throw new HttpError(400, message);
+  }
 }
 
 export async function updateMyProfile(userId: string, input: UpdateProfileInput): Promise<usersRepo.UserRecord> {
@@ -143,17 +159,12 @@ export async function updateMyProfile(userId: string, input: UpdateProfileInput)
       throw new HttpError(409, "That username is already taken.");
     }
   }
-  if (input.avatarMediaId !== undefined) {
-    if (input.avatarMediaId !== null) {
-      const media = await import("../media/media.repository").then((repo) => repo.findMediaById(input.avatarMediaId!, true));
-      if (!media || media.ownerId !== userId || media.kind !== "photo" || media.status !== "ready" || media.verificationDocument || media.exportOverlay) {
-        throw new HttpError(400, "Choose a valid uploaded photo for your avatar.");
-      }
-    }
-  }
+  if (input.avatarMediaId) await assertUsableProfilePhoto(userId, input.avatarMediaId, "Choose a valid uploaded photo for your avatar.");
+  if (input.coverMediaId) await assertUsableProfilePhoto(userId, input.coverMediaId, "Choose a valid uploaded photo for your cover.");
   try {
-    // Username, avatar, and the remaining profile fields share one UPDATE so
-    // a failed change cannot leave the account half-updated.
+    // Username, avatar, cover and the remaining profile fields share one UPDATE so
+    // a failed change cannot leave the account half-updated. A replaced or removed photo is
+    // then unused, and the retention job deletes it (media/retention.ts).
     return await usersRepo.setProfile(userId, input);
   } catch (error) {
     // The preflight uniqueness check is user-friendly, but the partial unique

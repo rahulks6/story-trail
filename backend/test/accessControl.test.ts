@@ -209,6 +209,8 @@ describe("a private account's profile", () => {
     assert.ok(!card.text.includes(owner.email) && !card.text.includes(SECRET.caption));
     const avatar = await attempt("GET /api/v1/users/:username/avatar/file", `/api/v1/users/${owner.username}/avatar/file`, stranger);
     assert.equal(avatar.status, 404, "no avatar set (avatars are public otherwise, like the card)");
+    const cover = await attempt("GET /api/v1/users/:username/cover/file", `/api/v1/users/${owner.username}/cover/file`, stranger);
+    assert.equal(cover.status, 404, "no cover set (covers are public otherwise, like the avatar)");
     for (const [key, path] of [
       ["GET /api/v1/users/:username/followers", "followers"], ["GET /api/v1/users/:username/following", "following"],
       ["GET /api/v1/users/:username/stories", "stories"], ["GET /api/v1/users/:username/highlights", "highlights"],

@@ -68,6 +68,14 @@ export function parseUpdateProfileInput(body: unknown): UpdateProfileInput {
     }
   }
 
+  if (b.coverMediaId !== undefined) {
+    if (b.coverMediaId !== null && (typeof b.coverMediaId !== "string" || !UUID_RE.test(b.coverMediaId))) {
+      errors.coverMediaId = "Invalid cover photo.";
+    } else {
+      result.coverMediaId = b.coverMediaId as string | null;
+    }
+  }
+
   if (Object.keys(errors).length > 0) throw new ValidationError(errors);
   return result;
 }

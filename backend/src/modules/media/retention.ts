@@ -5,7 +5,7 @@
  *
  * Policy (all configurable, see config.retention):
  *  - expired upload sessions: aborted and removed;
- *  - media nobody uses (no Story, avatar, ad or waiting publish) after 48 h: deleted;
+ *  - media nobody uses (no Story, avatar, cover, ad or waiting publish) after 48 h: deleted;
  *  - Stories the owner deleted: media purged after 30 days (already unreachable on delete),
  *    unless an open report still needs it as evidence;
  *  - content removed by moderation: kept as evidence for 180 days, then purged;
@@ -129,6 +129,7 @@ export async function unusedMedia(store: ObjectStore, batch: number, minAgeHours
      WHERE m.created_at < now() - make_interval(hours => :'hours'::integer) AND m.status <> 'uploading'
        AND NOT EXISTS (SELECT 1 FROM stories s WHERE s.media_id = m.id)
        AND NOT EXISTS (SELECT 1 FROM users u WHERE u.avatar_media_id = m.id)
+       AND NOT EXISTS (SELECT 1 FROM users u WHERE u.cover_media_id = m.id)
        AND NOT EXISTS (SELECT 1 FROM ad_creatives c WHERE c.media_id = m.id)
        AND NOT m.verification_document
        AND NOT EXISTS (SELECT 1 FROM story_publish_requests r WHERE r.media_id = m.id AND r.state = 'waiting')
@@ -204,7 +205,7 @@ export async function deletedAccounts(store: ObjectStore, batch: number, days: n
     await query(
       `WITH u AS (
          UPDATE users SET username = 'deleted_' || substr(replace(id::text, '-', ''), 1, 12), email = NULL, password_hash = NULL,
-                display_name = 'Deleted account', bio = '', avatar_media_id = NULL, interests_json = '[]', birth_date = NULL,
+                display_name = 'Deleted account', bio = '', avatar_media_id = NULL, cover_media_id = NULL, interests_json = '[]', birth_date = NULL,
                 data_purged_at = now()
          WHERE id = :'id' AND deleted_at IS NOT NULL AND data_purged_at IS NULL RETURNING id),
        kept AS (

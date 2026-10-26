@@ -37,6 +37,7 @@ export interface PublicUser {
   displayName: string;
   bio: string;
   avatarMediaId: string | null;
+  coverMediaId: string | null;
   interests: string[];
   isPrivate: boolean;
   /** False until the email is proved with a code; phone-only accounts have no email. */
@@ -56,6 +57,7 @@ function toPublicUser(user: usersRepo.UserRecord): PublicUser {
     displayName: user.displayName,
     bio: user.bio,
     avatarMediaId: user.avatarMediaId,
+    coverMediaId: user.coverMediaId,
     interests: user.interests,
     isPrivate: user.isPrivate,
     emailVerified: user.emailVerified,

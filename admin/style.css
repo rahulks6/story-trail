@@ -6,4 +6,4 @@ details code{display:inline-block;margin-top:6px;font-size:15px;letter-spacing:.
 
 /* Crashes and feedback */
 pre.stack{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;background:#121412;border:1px solid var(--line);border-radius:8px;padding:12px;max-height:360px;overflow:auto}p.feedback{white-space:pre-wrap;font-size:15px}img.screenshot{display:block;max-width:320px;width:100%;border-radius:12px;border:1px solid var(--line);margin-top:14px}.card>select{width:auto}
-.avatar{display:block;width:64px;height:64px;border-radius:50%;object-fit:cover;border:1px solid var(--line);margin-bottom:10px}
+.avatar{display:block;width:64px;height:64px;border-radius:50%;object-fit:cover;border:1px solid var(--line);margin-bottom:10px}img.cover{display:block;width:100%;max-width:480px;aspect-ratio:3/1;object-fit:cover;border-radius:12px;border:1px solid var(--line);margin-top:14px}

@@ -7,15 +7,18 @@ import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import { launchCamera, launchImageLibrary, type ImagePickerResponse } from "react-native-image-picker";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../navigation/types";
-import { colors, radii, spacing, typography } from "../../theme";
+import { colors, radii, spacing, typography, ICONS } from "../../theme";
+import { COVER_ASPECT } from "../../models/avatarCrop";
 import { useAuth } from "../../state/AuthContext";
 import { profileChanged } from "../../state/storyChanges";
-import { updateMyProfile } from "../../api/users";
+import { coverFileUrl, updateMyProfile } from "../../api/users";
 import { uploadPhoto } from "../../api/media";
 import { ApiError } from "../../api/client";
 import { hasTickLikeCharacter, NAME_TICK_ERROR } from "../../api/verification";
 import { usernameCheckText, usernameRefused, useUsernameAvailability } from "../../hooks/useUsernameAvailability";
 import { Avatar } from "../../components/Avatar";
+import { FadeInImage } from "../../components/FadeInImage";
+import { Icon } from "../../components/Icon";
 import { ActionSheet } from "../../components/ActionSheet";
 import { AvatarCropper, type PickedPhoto } from "../../components/AvatarCropper";
 import { INTEREST_CHOICES, MAX_INTERESTS } from "../onboarding/OnboardingScreen";
@@ -26,22 +29,25 @@ const MAX_DISPLAY_NAME_LENGTH = 60;
 const MAX_BIO_LENGTH = 150;
 const PHOTO_SIZE = 96;
 
-/** What Save will do with the profile photo. Nothing is uploaded or removed before Save. */
+/** What Save will do with the profile photo or cover. Nothing is uploaded or removed before Save. */
 type PhotoChange = { kind: "unchanged" } | { kind: "new"; uri: string } | { kind: "removed" };
+/** Which picture the photo sheet and the cropper are working on. */
+type Target = "photo" | "cover";
 
 /**
- * Edit Profile (spec section 23; Phase 11 completes it): photo (take, choose or remove, then
- * move and scale it in a circle), username with a live check, name, bio and interests (the
- * same chips as onboarding). The old
- * photo stays until Save succeeds. Leaving with unsaved changes asks first, including the back
- * gesture. A save updates your page at once and tells Home to refresh. The account's privacy
- * switch lives in Settings, under Privacy.
+ * Edit Profile (spec section 23; Phase 11 completes it): cover (take, choose or remove, then
+ * frame it in a 3:1 banner), photo (the same, in a circle), username with a live check, name,
+ * bio and interests (the same chips as onboarding). The old photo and cover stay until Save
+ * succeeds. Leaving with unsaved changes asks first, including the back gesture. A save updates
+ * your page at once and tells Home to refresh. The account's privacy switch lives in Settings,
+ * under Privacy.
  */
 export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
   const { user, accessToken, applyProfile } = useAuth();
   const headerHeight = useHeaderHeight();
   const inFlight = useRef(false);
   const uploadedPhoto = useRef<{ uri: string; id: string } | null>(null);
+  const uploadedCover = useRef<{ uri: string; id: string } | null>(null);
   const original = useRef({
     username: user?.username ?? "",
     displayName: user?.displayName ?? "",
@@ -66,8 +72,11 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
     });
   };
   const [photo, setPhoto] = useState<PhotoChange>({ kind: "unchanged" });
-  const [photoSheetOpen, setPhotoSheetOpen] = useState(false);
-  const [picked, setPicked] = useState<PickedPhoto | null>(null);
+  const [cover, setCover] = useState<PhotoChange>({ kind: "unchanged" });
+  // The sheet keeps its target while it slides away, so its choices don't change as it closes.
+  const [sheet, setSheet] = useState<{ open: boolean; target: Target }>({ open: false, target: "photo" });
+  const [picked, setPicked] = useState<{ photo: PickedPhoto; target: Target } | null>(null);
+  const [coverFailed, setCoverFailed] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -80,8 +89,10 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
   const canSave = username.trim().length >= 3 && !nameMissing && !nameHasTick && !saving && !!accessToken && !usernameRefused(availability);
   const dirty =
     username !== original.username || displayName !== original.displayName || bio !== original.bio ||
-    interests.join("\n") !== original.interests.join("\n") || photo.kind !== "unchanged";
+    interests.join("\n") !== original.interests.join("\n") || photo.kind !== "unchanged" || cover.kind !== "unchanged";
   const hasPhoto = photo.kind === "new" || (photo.kind === "unchanged" && !!user?.avatarMediaId);
+  const savedCoverId = cover.kind === "unchanged" ? user?.coverMediaId ?? null : null;
+  const hasCover = cover.kind === "new" || !!savedCoverId;
 
   // Back button, Android back and the iOS swipe all come through here while changes are unsaved.
   usePreventRemove(dirty && !saved, ({ data }) => {
@@ -96,7 +107,7 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
     if (saved) navigation.goBack();
   }, [saved, navigation]);
 
-  const takeFrom = async (source: "camera" | "library") => {
+  const takeFrom = async (source: "camera" | "library", target: Target) => {
     setError(null);
     try {
       if (source === "camera" && Platform.OS === "android") {
@@ -108,7 +119,7 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
       }
       const result: ImagePickerResponse =
         source === "camera"
-          ? await launchCamera({ mediaType: "photo", cameraType: "front", saveToPhotos: false, maxWidth: 2048, maxHeight: 2048, quality: 0.9 })
+          ? await launchCamera({ mediaType: "photo", cameraType: target === "cover" ? "back" : "front", saveToPhotos: false, maxWidth: 2048, maxHeight: 2048, quality: 0.9 })
           : await launchImageLibrary({ mediaType: "photo", selectionLimit: 1, assetRepresentationMode: "compatible", maxWidth: 2048, maxHeight: 2048, quality: 0.9 });
       if (result.didCancel) return;
       if (result.errorCode === "permission") {
@@ -125,7 +136,7 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
         return;
       }
       const asset = result.assets?.[0];
-      if (asset?.uri && asset.width && asset.height) setPicked({ uri: asset.uri, width: asset.width, height: asset.height });
+      if (asset?.uri && asset.width && asset.height) setPicked({ photo: { uri: asset.uri, width: asset.width, height: asset.height }, target });
       else setError("Couldn't read that photo. Try another.");
     } catch {
       setError("Couldn't open that. Try again.");
@@ -163,6 +174,16 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
       } else if (photo.kind === "removed") {
         avatarMediaId = null;
       }
+      let coverMediaId: string | null | undefined;
+      if (cover.kind === "new") {
+        if (uploadedCover.current?.uri !== cover.uri) {
+          const uploaded = await uploadPhoto(cover.uri, "image/jpeg", accessToken);
+          uploadedCover.current = { uri: cover.uri, id: uploaded.id };
+        }
+        coverMediaId = uploadedCover.current.id;
+      } else if (cover.kind === "removed") {
+        coverMediaId = null;
+      }
       const { user: savedUser } = await updateMyProfile(
         {
           username: username.trim().toLowerCase(),
@@ -170,6 +191,7 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
           bio: bio.trim(),
           interests,
           ...(avatarMediaId !== undefined ? { avatarMediaId } : {}),
+          ...(coverMediaId !== undefined ? { coverMediaId } : {}),
         },
         accessToken,
       );
@@ -184,21 +206,53 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
     }
   };
 
-  const photoActions = [
+  const target = sheet.target;
+  const sheetActions = [
     [
-      { label: "Take photo", onPress: () => void takeFrom("camera") },
-      { label: "Choose from library", onPress: () => void takeFrom("library") },
+      { label: "Take photo", onPress: () => void takeFrom("camera", target) },
+      { label: "Choose from library", onPress: () => void takeFrom("library", target) },
     ],
-    ...(hasPhoto ? [[{ label: "Remove current photo", onPress: () => setPhoto({ kind: "removed" }), destructive: true }]] : []),
+    ...(target === "photo" && hasPhoto ? [[{ label: "Remove current photo", onPress: () => setPhoto({ kind: "removed" }), destructive: true }]] : []),
+    ...(target === "cover" && hasCover ? [[{ label: "Remove cover photo", onPress: () => setCover({ kind: "removed" }), destructive: true }]] : []),
   ];
+  const openSheet = (next: Target) => setSheet({ open: true, target: next });
 
   return (
     <KeyboardAvoider style={styles.container} topOffset={headerHeight}>
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <Pressable
+          style={styles.coverButton}
+          disabled={saving}
+          onPress={() => openSheet("cover")}
+          accessibilityRole="button"
+          accessibilityLabel={hasCover ? "Change cover photo" : "Add cover photo"}
+        >
+          <View style={styles.cover}>
+            {cover.kind === "new" ? (
+              <Image source={{ uri: cover.uri }} style={styles.coverImage} accessibilityLabel="New cover photo" />
+            ) : savedCoverId && user && accessToken && !coverFailed ? (
+              <FadeInImage
+                source={{ uri: coverFileUrl(user.username, savedCoverId), headers: { Authorization: `Bearer ${accessToken}` } }}
+                style={styles.coverImage}
+                resizeMode="cover"
+                onError={() => setCoverFailed(true)}
+              />
+            ) : (
+              <Icon name={ICONS.camera} size={22} color={colors.textSecondary} />
+            )}
+          </View>
+          <Text style={styles.photoAction}>{hasCover ? "Change cover photo" : "Add cover photo"}</Text>
+        </Pressable>
+        {cover.kind !== "unchanged" ? (
+          <Text style={styles.photoNote} accessibilityLiveRegion="polite">
+            {cover.kind === "new" ? "Your new cover is used when you save." : "Your cover is removed when you save."}
+          </Text>
+        ) : null}
+
+        <Pressable
           style={styles.photoButton}
           disabled={saving}
-          onPress={() => setPhotoSheetOpen(true)}
+          onPress={() => openSheet("photo")}
           accessibilityRole="button"
           accessibilityLabel="Change profile photo"
         >
@@ -304,13 +358,21 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
         </Pressable>
       </ScrollView>
 
-      <ActionSheet visible={photoSheetOpen} title="Profile photo" groups={photoActions} onClose={() => setPhotoSheetOpen(false)} />
+      <ActionSheet
+        visible={sheet.open}
+        title={target === "cover" ? "Cover photo" : "Profile photo"}
+        groups={sheetActions}
+        onClose={() => setSheet((current) => ({ ...current, open: false }))}
+      />
       <AvatarCropper
-        photo={picked}
+        photo={picked?.photo ?? null}
+        kind={picked?.target === "cover" ? "cover" : "avatar"}
         onCancel={() => setPicked(null)}
         onDone={(uri) => {
+          const done = picked?.target;
           setPicked(null);
-          setPhoto({ kind: "new", uri });
+          if (done === "cover") setCover({ kind: "new", uri });
+          else setPhoto({ kind: "new", uri });
         }}
       />
     </KeyboardAvoider>
@@ -320,7 +382,21 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   scrollContent: { padding: spacing.md, paddingBottom: spacing.xxl },
-  photoButton: { alignItems: "center", gap: spacing.sm, marginTop: spacing.sm },
+  coverButton: { alignItems: "center", gap: spacing.sm, marginTop: spacing.sm },
+  // The banner as it will look: full width of the form, three times as wide as it is tall.
+  cover: {
+    alignSelf: "stretch",
+    aspectRatio: COVER_ASPECT,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+  coverImage: { ...StyleSheet.absoluteFill },
+  photoButton: { alignItems: "center", gap: spacing.sm, marginTop: spacing.lg },
   photo: { width: PHOTO_SIZE, height: PHOTO_SIZE, borderRadius: PHOTO_SIZE / 2 },
   photoAction: { color: colors.accentText, fontWeight: "700", fontSize: 15 },
   photoNote: { ...typography.caption, textAlign: "center", marginTop: spacing.xs },

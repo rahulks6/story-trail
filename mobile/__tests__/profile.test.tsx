@@ -318,3 +318,59 @@ describe("your own page", () => {
     expect(mockRootNavigation.navigate).toHaveBeenLastCalledWith("StoryViewer", { creators: ["me_now"], startIndex: 0 });
   });
 });
+
+describe("the cover photo", () => {
+  const covers = () => tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && n.props.testID === "profile-cover");
+  const coverImage = () => covers()[0]!.findAll((n: ReactTestInstance) => typeof n.type === "string" && !!n.props.source)[0]!;
+
+  test("someone's cover shows across the top when they have one, fetched with your sign-in; a tap does nothing", async () => {
+    api.getProfile.mockResolvedValue({ profile: profile({ coverMediaId: "c-1" }) });
+    await renderOther();
+    expect(covers()).toHaveLength(1);
+    expect(coverImage().props.source).toEqual({ uri: expect.stringMatching(/\/api\/v1\/users\/asha_k\/cover\/file\?v=c-1$/), headers: { Authorization: "Bearer token" } });
+    expect(covers()[0]!.findAll((n: ReactTestInstance) => typeof n.props.onPress === "function")).toHaveLength(0);
+    // Decorative: screen readers skip it; the photo, name and counts still read as before.
+    expect(covers()[0]!.props.importantForAccessibility).toBe("no-hide-descendants");
+    expect(texts()).toEqual(expect.arrayContaining(["Asha K", "@asha_k", "12.3K"]));
+  });
+
+  test("no cover (or a server without covers): no banner at all", async () => {
+    api.getProfile.mockResolvedValue({ profile: profile({ coverMediaId: null }) });
+    await renderOther();
+    expect(covers()).toHaveLength(0);
+    await act(async () => tree.unmount());
+    api.getProfile.mockResolvedValue({ profile: profile() });
+    await renderOther();
+    expect(covers()).toHaveLength(0);
+  });
+
+  test("a cover that can't be loaded goes, leaving the page as it is without one", async () => {
+    api.getProfile.mockResolvedValue({ profile: profile({ coverMediaId: "c-1" }) });
+    await renderOther();
+    await act(async () => coverImage().props.onError({ nativeEvent: { error: "404" } }));
+    expect(covers()).toHaveLength(0);
+  });
+
+  test("your own page shows the cover from your account, which changes as soon as you save", async () => {
+    const me = mockAuth.user as { coverMediaId?: string | null };
+    try {
+      api.getProfile.mockResolvedValue({ profile: profile({ username: "me_now", isSelf: true, coverMediaId: "c-old" }) });
+      me.coverMediaId = "c-me";
+      await render(<ProfileScreen />);
+      expect(coverImage().props.source.uri).toMatch(/\/users\/me_now\/cover\/file\?v=c-me$/);
+
+      await act(async () => tree.unmount());
+      me.coverMediaId = null;
+      await render(<ProfileScreen />);
+      expect(covers()).toHaveLength(0);
+
+      // An account saved before covers: the profile fetch says.
+      await act(async () => tree.unmount());
+      delete me.coverMediaId;
+      await render(<ProfileScreen />);
+      expect(coverImage().props.source.uri).toMatch(/\/cover\/file\?v=c-old$/);
+    } finally {
+      delete me.coverMediaId;
+    }
+  });
+});

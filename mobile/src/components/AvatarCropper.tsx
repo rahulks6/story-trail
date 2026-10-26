@@ -7,8 +7,9 @@ import { Icon } from "./Icon";
 import { colors, radii, spacing, ICONS } from "../theme";
 import {
   avatarCropRect, avatarImageLayout, initialAvatarCrop, panAvatarCrop, zoomAvatarCrop, type AvatarCrop,
+  AVATAR_OUTPUT_SIZE, COVER_ASPECT, COVER_OUTPUT_HEIGHT, COVER_OUTPUT_WIDTH,
 } from "../models/avatarCrop";
-import { cropSquarePhoto } from "../utils/cropPhoto";
+import { cropPhoto } from "../utils/cropPhoto";
 
 export interface PickedPhoto {
   uri: string;
@@ -19,21 +20,32 @@ export interface PickedPhoto {
 interface Props {
   photo: PickedPhoto | null;
   onCancel: () => void;
-  /** The cut, square JPEG, ready to preview and upload. */
+  /** The cut JPEG (square, or 3:1 for a cover), ready to preview and upload. */
   onDone: (uri: string) => void;
+  /** A profile photo is framed in a circle; a cover in a 3:1 banner. */
+  kind?: "avatar" | "cover";
 }
+
+const SHAPES = {
+  avatar: { aspect: 1, maxViewport: 420, outputWidth: AVATAR_OUTPUT_SIZE, outputHeight: AVATAR_OUTPUT_SIZE },
+  cover: { aspect: COVER_ASPECT, maxViewport: 600, outputWidth: COVER_OUTPUT_WIDTH, outputHeight: COVER_OUTPUT_HEIGHT },
+} as const;
 
 const touchDistance = (touches: GestureResponderEvent["nativeEvent"]["touches"]) =>
   Math.hypot(touches[1]!.pageX - touches[0]!.pageX, touches[1]!.pageY - touches[0]!.pageY);
 
 /**
- * Move and scale a new profile photo inside a circle (Phase 11): drag to move, pinch or use the
- * buttons to zoom. The square is cut on the phone, so the rest of the photo is never uploaded.
+ * Move and scale a new profile photo inside a circle, or a cover inside a 3:1 banner (Phase 11):
+ * drag to move, pinch or use the buttons to zoom. The cut is made on the phone, so the rest of
+ * the photo is never uploaded.
  */
-export function AvatarCropper({ photo, onCancel, onDone }: Props): React.JSX.Element | null {
+export function AvatarCropper({ photo, onCancel, onDone, kind = "avatar" }: Props): React.JSX.Element | null {
   const insets = useSafeAreaInsets();
   const { width: screenWidth } = useWindowDimensions();
-  const viewport = Math.min(screenWidth - spacing.lg * 2, 420);
+  const shape = SHAPES[kind];
+  const aspect = shape.aspect;
+  const viewport = Math.min(screenWidth - spacing.lg * 2, shape.maxViewport);
+  const viewportHeight = viewport / aspect;
   const [crop, setCrop] = useState<AvatarCrop | null>(null);
   const [working, setWorking] = useState(false);
   const gesture = useRef<{ start: AvatarCrop; pinch: number } | null>(null);
@@ -61,7 +73,7 @@ export function AvatarCropper({ photo, onCancel, onDone }: Props): React.JSX.Ele
               gesture.current = { start: shownRef.current ?? current.start, pinch: distance };
               return;
             }
-            setCrop(zoomAvatarCrop(current.start, distance / current.pinch, photo.width, photo.height));
+            setCrop(zoomAvatarCrop(current.start, distance / current.pinch, photo.width, photo.height, aspect));
             return;
           }
           if (current.pinch !== 0) {
@@ -69,18 +81,18 @@ export function AvatarCropper({ photo, onCancel, onDone }: Props): React.JSX.Ele
             gesture.current = { start: shownRef.current ?? current.start, pinch: 0 };
             return;
           }
-          setCrop(panAvatarCrop(current.start, state.dx, state.dy, viewport, photo.width, photo.height));
+          setCrop(panAvatarCrop(current.start, state.dx, state.dy, viewport, photo.width, photo.height, aspect));
         },
         onPanResponderRelease: () => {
           gesture.current = null;
         },
       }),
-    [photo, viewport],
+    [photo, viewport, aspect],
   );
 
   if (!photo || !shown) return null;
-  const layout = avatarImageLayout(shown, photo.width, photo.height, viewport);
-  const zoomBy = (factor: number) => setCrop(zoomAvatarCrop(shown, factor, photo.width, photo.height));
+  const layout = avatarImageLayout(shown, photo.width, photo.height, viewport, aspect);
+  const zoomBy = (factor: number) => setCrop(zoomAvatarCrop(shown, factor, photo.width, photo.height, aspect));
   const close = () => {
     if (working) return;
     setCrop(null);
@@ -90,7 +102,7 @@ export function AvatarCropper({ photo, onCancel, onDone }: Props): React.JSX.Ele
     if (working) return;
     setWorking(true);
     try {
-      const uri = await cropSquarePhoto(photo.uri, avatarCropRect(shown, photo.width, photo.height));
+      const uri = await cropPhoto(photo.uri, avatarCropRect(shown, photo.width, photo.height, aspect), shape.outputWidth, shape.outputHeight);
       setCrop(null);
       onDone(uri);
     } catch {
@@ -118,16 +130,19 @@ export function AvatarCropper({ photo, onCancel, onDone }: Props): React.JSX.Ele
 
         <View style={styles.middle}>
           <View
-            style={[styles.viewport, { width: viewport, height: viewport }]}
+            style={[styles.viewport, { width: viewport, height: viewportHeight }, kind === "cover" && styles.banner]}
             {...responder.panHandlers}
             accessible
             accessibilityLabel="Photo: drag to move it, pinch to zoom"
           >
             <Image source={{ uri: photo.uri }} style={[styles.photo, layout]} resizeMode="stretch" />
-            <Svg width={viewport} height={viewport} style={StyleSheet.absoluteFill} pointerEvents="none">
-              <Path d={mask} fill="rgba(0,0,0,0.6)" fillRule="evenodd" />
-            </Svg>
-            <View pointerEvents="none" style={[styles.circle, { width: viewport, height: viewport, borderRadius: r }]} />
+            {kind === "avatar" ? (
+              <Svg width={viewport} height={viewport} style={StyleSheet.absoluteFill} pointerEvents="none">
+                <Path d={mask} fill="rgba(0,0,0,0.6)" fillRule="evenodd" />
+              </Svg>
+            ) : null}
+            {/* The frame: everything inside it is the photo or cover you get. */}
+            <View pointerEvents="none" style={[styles.circle, { width: viewport, height: viewportHeight, borderRadius: kind === "avatar" ? r : radii.sm }]} />
           </View>
           <Text style={styles.hint}>Drag to move. Pinch to zoom.</Text>
           <View style={styles.zoomRow}>
@@ -152,6 +167,7 @@ const styles = StyleSheet.create({
   title: { color: colors.textPrimary, fontSize: 17, fontWeight: "700" },
   middle: { flex: 1, alignItems: "center", justifyContent: "center", gap: spacing.lg },
   viewport: { overflow: "hidden", backgroundColor: colors.surface },
+  banner: { borderRadius: radii.sm },
   photo: { position: "absolute" },
   circle: { position: "absolute", left: 0, top: 0, borderWidth: 2, borderColor: "rgba(255,255,255,0.85)" },
   hint: { color: colors.textSecondary, fontSize: 13 },
