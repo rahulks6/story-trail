@@ -130,7 +130,11 @@ export async function receiveUpload(
       storageKey,
     });
 
-    if (kind === "video") {
+    // Processing happens in the request only on a single machine (the Postgres job queue: local
+    // development and tests). In production (SQS) the API has no ffmpeg and may write only
+    // originals, so everything goes to the worker, which takes it off the queue at once; trying
+    // here first failed every time and left each photo and voice note waiting 30 s for the retry.
+    if (kind === "video" || kind === "audio" || config.media.queue.driver !== "postgres") {
       await enqueueMediaJob(media.id);
       return media;
     }

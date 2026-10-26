@@ -93,7 +93,10 @@ describe("voice notes", () => {
     execFileSync("ffmpeg", ["-v", "error", "-y", "-f", "lavfi", "-i", "sine=frequency=330:duration=3", "-c:a", "aac", "-b:a", "96k", file]);
     const up = await fetch(`${baseUrl}/api/v1/media/audio`, { method: "POST", headers: { "Content-Type": "audio/mp4", ...authHeader(a.token) }, body: fs.readFileSync(file) });
     assert.equal(up.status, 201);
-    const mediaId = ((await up.json()) as { media: { id: string; kind: string } }).media.id;
+    const uploaded = (await up.json()) as { media: { id: string; kind: string; status: string } };
+    const mediaId = uploaded.media.id;
+    // Handed to the worker (it has ffmpeg) at once, not tried in the request first.
+    assert.equal(uploaded.media.status, "processing");
     // A picture isn't a voice note.
     const bad = await fetch(`${baseUrl}/api/v1/media/audio`, { method: "POST", headers: { "Content-Type": "audio/mp4", ...authHeader(a.token) }, body: buildTestPng(4, 4) });
     assert.equal(bad.status, 415);

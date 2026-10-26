@@ -71,7 +71,7 @@ describe("setting a cover", () => {
     assert.equal(await coverFile(alice.username, alice.token), 404, "no cover, nothing served");
   });
 
-  it("refuses someone else's upload, a video, an unready upload and an ID photo, changing nothing", async () => {
+  it("refuses someone else's upload, a video, a failed upload and an ID photo, changing nothing", async () => {
     const [alice, bob] = [await signup(), await signup()];
     const mine = await uploadPhoto(alice.token);
     await setCover(alice.token, mine);
@@ -86,9 +86,10 @@ describe("setting a cover", () => {
     const video = await uploadPhoto(alice.token);
     await query(`UPDATE media SET kind = 'video' WHERE id = :'id'`, { id: video });
     await refuse(video, "not a photo");
-    const processing = await uploadPhoto(alice.token);
-    await query(`UPDATE media SET status = 'processing' WHERE id = :'id'`, { id: processing });
-    await refuse(processing, "not ready");
+    // Still processing is fine (production hands every photo to the worker); a failed one isn't.
+    const failed = await uploadPhoto(alice.token);
+    await query(`UPDATE media SET status = 'failed' WHERE id = :'id'`, { id: failed });
+    await refuse(failed, "failed processing");
     const idPhoto = await uploadPhoto(alice.token);
     await query(`UPDATE media SET verification_document = true WHERE id = :'id'`, { id: idPhoto });
     await refuse(idPhoto, "a verification document");

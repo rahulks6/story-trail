@@ -97,4 +97,17 @@ describe("avatars in lists", () => {
     await client.post(`/api/v1/users/${bob.username}/block`, undefined, authHeader(alice.token));
     assert.equal((await file()).status, 404);
   });
+
+  it("a photo still being processed can be set (production hands every photo to the worker)", async () => {
+    const { query } = await import("../src/db/psql");
+    const me = await signup();
+    const mediaId = await uploadPhoto(me.token);
+    await query(`UPDATE media SET status = 'processing' WHERE id = :'id'`, { id: mediaId });
+    const saved = await client.patch("/api/v1/users/me", { avatarMediaId: mediaId }, authHeader(me.token));
+    assert.equal(saved.status, 200);
+    assert.equal(saved.body.user.avatarMediaId, mediaId);
+    // Until it's ready, the photo itself isn't served (the app shows the initial).
+    const file = await fetch(`${baseUrl}/api/v1/users/${me.username}/avatar/file`, { headers: authHeader(me.token) });
+    assert.equal(file.status, 404);
+  });
 });

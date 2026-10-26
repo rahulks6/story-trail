@@ -137,13 +137,14 @@ export interface UpdateProfileInput {
 }
 
 /**
- * A profile photo or cover must be a ready photo the person uploaded themselves: never someone
+ * A profile photo or cover must be a photo the person uploaded themselves, ready or still being
+ * processed (the worker finishes it within seconds; until then the initial shows): never someone
  * else's upload, a video, an ID photo sent for verification (0057) or a Story export overlay.
  */
 async function assertUsableProfilePhoto(userId: string, mediaId: string, message: string): Promise<void> {
   const { findMediaById } = await import("../media/media.repository");
   const media = await findMediaById(mediaId, true);
-  if (!media || media.ownerId !== userId || media.kind !== "photo" || media.status !== "ready" || media.verificationDocument || media.exportOverlay) {
+  if (!media || media.ownerId !== userId || media.kind !== "photo" || (media.status !== "ready" && media.status !== "processing") || media.verificationDocument || media.exportOverlay) {
     throw new HttpError(400, message);
   }
 }
