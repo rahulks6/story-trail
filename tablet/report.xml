@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <testsuites>
-  <testsuite name="Test Suite" device="test" tests="1" failures="0" time="258.96" timestamp="2026-10-26T10:43:55">
-    <testcase id="smoke" name="smoke" classname="smoke" file="/home/runner/work/story-trail/story-trail/mobile/.maestro/smoke.yaml" time="258.816" timestamp="2026-10-26T10:43:55" status="SUCCESS"/>
+  <testsuite name="Test Suite" device="test" tests="1" failures="0" time="261.287" timestamp="2026-10-26T11:45:52">
+    <testcase id="smoke" name="smoke" classname="smoke" file="/home/runner/work/story-trail/story-trail/mobile/.maestro/smoke.yaml" time="261.201" timestamp="2026-10-26T11:45:53" status="SUCCESS"/>
   </testsuite>
 </testsuites>
