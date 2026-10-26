@@ -126,7 +126,7 @@ export function ExternalShareModal({ visible, storyId, story, username, message,
             </>
           ) : (
             <>
-              <ActivityIndicator color={colors.accent} />
+              <ActivityIndicator color={colors.accentText} />
               <Text style={styles.title}>{isPhoto ? "Preparing photo…" : "Preparing video…"}</Text>
               {!isPhoto ? <Text style={styles.message}>This can take up to a minute.</Text> : null}
               <Pressable style={styles.secondary} onPress={close} accessibilityRole="button">
