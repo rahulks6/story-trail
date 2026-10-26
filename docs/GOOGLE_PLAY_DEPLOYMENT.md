@@ -180,8 +180,8 @@ under 18, the Families policy doesn't apply.
 | Personal info: Phone number | Yes | Optional (phone sign-in) | Account management |
 | Personal info: Other info (date of birth; bio, interests) | Yes | Required (the date of birth; bio and interests are optional) | App functionality, Account management, Fraud prevention, security and compliance (the date of birth confirms the person is 18 or older; it is never used for ads), Personalization, Advertising or marketing (interests choose Sponsored Stories, when on) |
 | Messages: Other in-app messages | Yes | Optional | App functionality |
-| Photos and videos: Photos; Videos | Yes | Optional | App functionality |
-| Audio: Voice or sound recordings (sound in video Stories) | Yes | Optional | App functionality |
+| Photos and videos: Photos; Videos (Stories, profile and cover photos, chat photos, and the ID photo sent with an optional verification request) | Yes | Optional | App functionality, Fraud prevention, security and compliance (the ID photo is only seen by staff reviewing verification and deleted afterwards) |
+| Audio: Voice or sound recordings (sound in video Stories, voice messages in chats) | Yes | Optional | App functionality |
 | App activity: App interactions (views, likes, follows) | Yes | Required | App functionality, Analytics, Personalization |
 | App activity: Other user-generated content (captions, comments, feedback sent from Settings) | Yes | Optional | App functionality |
 | App info and performance: Crash logs (crash reports to Katkee's own server: the error, its trace, the screen, phone model and app version); Diagnostics | Yes | Required | App functionality, Analytics |

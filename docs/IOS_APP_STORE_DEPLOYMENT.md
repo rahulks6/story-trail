@@ -206,8 +206,8 @@ match `mobile/ios/KatkeeMobile/PrivacyInfo.xcprivacy`, and none is used for trac
 | Other Data Types (date of birth, to confirm the person is 18 or older) | Yes | No | App Functionality |
 | Phone Number (only if phone sign-in is on) | Yes | No | App Functionality |
 | Coarse Location (only with Nearby Stories on) | Yes | No | App Functionality, Product Personalization |
-| Photos or Videos | Yes | No | App Functionality |
-| Audio Data (sound in video Stories) | Yes | No | App Functionality |
+| Photos or Videos (Stories, profile and cover photos, chat photos, and the ID photo sent with an optional verification request) | Yes | No | App Functionality |
+| Audio Data (sound in video Stories, voice messages in chats) | Yes | No | App Functionality |
 | Emails or Text Messages (direct messages) | Yes | No | App Functionality |
 | Other User Content (bio, captions, comments, interests) | Yes | No | App Functionality, Product Personalization, Developer's Advertising (interests choose which Sponsored Stories appear) |
 | User ID | Yes | No | App Functionality, Analytics |
