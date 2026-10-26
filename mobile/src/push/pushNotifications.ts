@@ -14,7 +14,14 @@ import { registerPushDevice, unregisterPushDevice } from "../api/push";
  */
 type MessagingModule = typeof import("@react-native-firebase/messaging");
 type Messaging = ReturnType<MessagingModule["getMessaging"]>;
-type RemoteMessage = { data?: { [key: string]: unknown } } | null | undefined;
+type RemoteMessage = { data?: { [key: string]: unknown }; notification?: { title?: string; body?: string } } | null | undefined;
+
+/** What a push said, for the in-app banner while the app is open. */
+export interface ForegroundNotice {
+  title: string;
+  body: string;
+  url: string | null;
+}
 
 export type PushPermission = "granted" | "denied" | "undetermined" | "unavailable";
 
@@ -188,12 +195,19 @@ export function onNotificationOpened(listener: (url: string) => void): () => voi
   }
 }
 
-/** A push that arrived while the app is open (the system shows nothing); used to refresh badges. */
-export function onForegroundPush(listener: () => void): () => void {
+/**
+ * A push that arrived while the app is open: the system shows nothing then, so the app shows its
+ * own banner (InAppNotificationBanner). Silent pushes (the app-icon badge count) have no title.
+ */
+export function onForegroundPush(listener: (notice: ForegroundNotice) => void): () => void {
   const fb = messagingOrNull();
   if (!fb) return () => undefined;
   try {
-    return fb.mod.onMessage(fb.messaging, () => listener());
+    return fb.mod.onMessage(fb.messaging, (message: RemoteMessage) => {
+      const title = message?.notification?.title?.trim() ?? "";
+      if (!title) return;
+      listener({ title, body: message?.notification?.body?.trim() ?? "", url: notificationLink(message) });
+    });
   } catch {
     return () => undefined;
   }

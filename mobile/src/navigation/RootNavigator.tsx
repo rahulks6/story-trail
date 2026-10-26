@@ -3,7 +3,8 @@ import {UploadQueueScreen} from '../screens/create/UploadQueueScreen';
 import {AppealsScreen} from '../screens/profile/AppealsScreen';
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Linking, View } from "react-native";
-import { DarkTheme, DefaultTheme, NavigationContainer, type LinkingOptions, type Theme } from "@react-navigation/native";
+import { createNavigationContainerRef, DarkTheme, DefaultTheme, NavigationContainer, type LinkingOptions, type Theme } from "@react-navigation/native";
+import { InAppNotificationBanner } from "../components/InAppNotificationBanner";
 import { colorScheme } from "../theme/colors";
 import { deepLinkTarget, LINK_PREFIXES, linkPath } from "./profileLinks";
 import { initialNotificationLink, onNotificationOpened } from "../push/pushNotifications";
@@ -277,6 +278,9 @@ export function RootNavigator(): React.JSX.Element {
   useAreaSync();
   useAnalytics();
   const pendingLink = useRef<string | null>(null);
+  const navigationRef = useMemo(() => createNavigationContainerRef<RootStackParamList>(), []);
+  // The linking listener below, so a tapped in-app banner opens its link like a tapped notification.
+  const openLink = useRef<((url: string) => void) | null>(null);
   // A profile or Story link that arrives while signed out opens after sign-in.
   useEffect(() => {
     if (status === "signedIn") return;
@@ -296,11 +300,13 @@ export function RootNavigator(): React.JSX.Element {
     },
     // Links opened from outside, plus taps on push notifications while the app runs.
     subscribe: listener => {
+      openLink.current = listener;
       const links = Linking.addEventListener("url", ({ url }) => listener(url));
       const stopNotifications = onNotificationOpened(listener);
       return () => {
         links.remove();
         stopNotifications();
+        openLink.current = null;
       };
     },
     getStateFromPath: path => {
@@ -345,9 +351,15 @@ export function RootNavigator(): React.JSX.Element {
     const inApp = !user?.emailVerificationRequired && !onboarding;
     return (
       <OnboardingProvider value={onboardingControl}>
-        <NavigationContainer key={user?.id ?? "signedIn"} linking={linking} theme={navigationTheme()} onStateChange={(state) => setCurrentScreen(focusedRouteName(state))}>
+        <NavigationContainer ref={navigationRef} key={user?.id ?? "signedIn"} linking={linking} theme={navigationTheme()} onStateChange={(state) => setCurrentScreen(focusedRouteName(state))}>
           <SignedInNavigator onboarding={!!onboarding && !user?.emailVerificationRequired} />
           {inApp ? <NearbyPrompt /> : null}
+          {inApp ? (
+            <InAppNotificationBanner
+              currentRoute={() => (navigationRef.isReady() ? navigationRef.getCurrentRoute() : undefined)}
+              open={(url) => openLink.current?.(url)}
+            />
+          ) : null}
           <UploadRunner />
         </NavigationContainer>
       </OnboardingProvider>
