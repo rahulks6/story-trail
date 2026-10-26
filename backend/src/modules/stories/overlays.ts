@@ -67,7 +67,7 @@ export interface MentionOverlay extends OverlayBase {
    * deleted account or a block in either direction makes the whole overlay
    * disappear from the response rather than ever rendering stale data.
    */
-  properties: { userId: string; username?: string; displayName?: string };
+  properties: { userId: string; username?: string; displayName?: string; verified?: boolean };
 }
 
 export interface LocationOverlay extends OverlayBase {

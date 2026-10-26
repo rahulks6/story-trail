@@ -85,7 +85,7 @@ test('the build refuses broken links, unknown addresses, scripts, inline styles 
   ['website/src/pages/index.html','{{{storeButtons}}}','{{{storeButton}}}',/unknown placeholder \{\{storeButton\}\}/],
   ['website/src/pages/support.html','href="/delete-account"','href="http://katkee.com/delete-account"',/must be https/],
   ['legal/TERMS_OF_SERVICE.md','[Privacy Policy](./PRIVACY_POLICY.md)','[Privacy Policy](./PRIVACY.md)',/unsupported link \.\/PRIVACY\.md/],
-  ['legal/PRIVACY_POLICY.md','**Last updated:** 22 October 2026','Updated recently.',/needs a "\*\*Last updated:\*\* <date>" line/],
+  ['legal/PRIVACY_POLICY.md','**Last updated:** 26 October 2026','Updated recently.',/needs a "\*\*Last updated:\*\* <date>" line/],
   ['legal/PRIVACY_POLICY.md','## 9. Katkee is for adults','> ## 9. Katkee is for adults',/unsupported Markdown/],
   ['website/src/pages/support.html','href="/terms#grievances"','href="/terms#grievance"',/link \/terms#grievance names no section on terms\.html/],
   ['website/site.json','"origin": "https://katkee.com"','"origin": "http://katkee.com"',/exact https:\/\/ origin/],

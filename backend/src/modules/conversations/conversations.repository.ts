@@ -1,5 +1,6 @@
 import { nullable, query, queryOne, type Row } from "../../db/psql";
 import { containsPattern } from "../../shared/validation";
+import { verifiedSql } from "../../shared/verified";
 
 export type ConversationKind = "direct" | "group";
 
@@ -81,6 +82,7 @@ export interface MemberRow {
   username: string;
   displayName: string;
   avatarMediaId: string | null;
+  verified: boolean;
   role: "admin" | "member";
   joinedAt: string;
 }
@@ -88,7 +90,7 @@ export interface MemberRow {
 /** The people in a conversation now, admins first, then by when they joined. */
 export async function listActiveMembers(conversationId: string): Promise<MemberRow[]> {
   const rows = await query(
-    `SELECT u.id, u.username, u.display_name, u.avatar_media_id, cm.role, cm.joined_at
+    `SELECT u.id, u.username, u.display_name, u.avatar_media_id, ${verifiedSql("u")} AS verified, cm.role, cm.joined_at
      FROM conversation_members cm JOIN users u ON u.id = cm.user_id
      WHERE cm.conversation_id = :'c' AND cm.left_at IS NULL
      ORDER BY cm.role = 'admin' DESC, cm.joined_at, u.username`,
@@ -96,7 +98,7 @@ export async function listActiveMembers(conversationId: string): Promise<MemberR
   );
   return rows.map((r) => ({
     userId: r.id as string, username: r.username as string, displayName: r.display_name as string,
-    avatarMediaId: (r.avatar_media_id as string | null) ?? null, role: r.role as MemberRow["role"], joinedAt: r.joined_at as string,
+    avatarMediaId: (r.avatar_media_id as string | null) ?? null, verified: r.verified === "t", role: r.role as MemberRow["role"], joinedAt: r.joined_at as string,
   }));
 }
 
@@ -476,7 +478,7 @@ export async function getReadState(conversationId: string, userId: string): Prom
   };
 }
 
-export interface PersonSummary { id: string; username: string; displayName: string; avatarMediaId: string | null }
+export interface PersonSummary { id: string; username: string; displayName: string; avatarMediaId: string | null; verified: boolean }
 
 export interface ConversationSummary {
   id: string;
@@ -513,6 +515,7 @@ function mapConversationSummaryRow(row: Row): ConversationSummary {
       username: row.other_username as string,
       displayName: row.other_display_name as string,
       avatarMediaId: (row.other_avatar_media_id as string | null) ?? null,
+      verified: row.other_verified === "t",
     },
     ...(group ? { group: {
       title: (row.title as string | null) ?? null,
@@ -545,15 +548,15 @@ export async function listConversationsForUser(userId: string, limit: number, of
   const rows = await query(
     `SELECT
        c.id, c.created_at, c.kind, c.title, me.muted,
-       ou.id AS other_user_id, ou.username AS other_username, ou.display_name AS other_display_name, ou.avatar_media_id AS other_avatar_media_id,
+       ou.id AS other_user_id, ou.username AS other_username, ou.display_name AS other_display_name, ou.avatar_media_id AS other_avatar_media_id, ${verifiedSql("ou")} AS other_verified,
        lm.id AS last_message_id, lm.sender_id AS last_message_sender_id, lm.body AS last_message_body, lm.event AS last_message_event,
        (SELECT username FROM users WHERE id = lm.sender_id) AS last_message_sender_username,
        lm.shared_story_id AS last_message_shared_story_id, lm.created_at AS last_message_created_at, lm.media_kind AS last_message_media_kind,
        (lm.created_at IS NOT NULL AND lm.created_at > COALESCE(cr.last_read_at, 'epoch')) AS is_unread,
        CASE WHEN c.kind = 'group' THEN (SELECT count(*) FROM conversation_members g WHERE g.conversation_id = c.id AND g.left_at IS NULL) END AS member_count,
        CASE WHEN c.kind = 'group' THEN (
-         SELECT coalesce(json_agg(json_build_object('id', p.id, 'username', p.username, 'displayName', p.display_name, 'avatarMediaId', p.avatar_media_id)), '[]'::json)
-         FROM (SELECT u.id, u.username, u.display_name, u.avatar_media_id FROM conversation_members g JOIN users u ON u.id = g.user_id
+         SELECT coalesce(json_agg(json_build_object('id', p.id, 'username', p.username, 'displayName', p.display_name, 'avatarMediaId', p.avatar_media_id, 'verified', p.verified)), '[]'::json)
+         FROM (SELECT u.id, u.username, u.display_name, u.avatar_media_id, ${verifiedSql("u")} AS verified FROM conversation_members g JOIN users u ON u.id = g.user_id
                WHERE g.conversation_id = c.id AND g.left_at IS NULL AND g.user_id <> :'user_id' ORDER BY g.joined_at, u.username LIMIT 3) p) END AS member_preview
      FROM conversation_members me
      JOIN conversations c ON c.id = me.conversation_id

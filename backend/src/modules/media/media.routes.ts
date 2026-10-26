@@ -36,7 +36,8 @@ export function toPublicMedia(media: MediaRecord, isOwner = true) {
  */
 async function requireAccessibleMedia(id: string, viewerId: string): Promise<MediaRecord> {
   const media = await mediaRepo.findMediaById(id, true);
-  if (!media || media.purgedAt) throw new HttpError(404, "Media not found.");
+  // An ID photo sent for verification is for admins only, from the moment it's attached.
+  if (!media || media.purgedAt || media.verificationDocument) throw new HttpError(404, "Media not found.");
   if (media.ownerId === viewerId) return media;
   if (media.status === "ready" && (await storiesService.canAccessMediaViaStory(id, viewerId))) return media;
   // Sent to the viewer (or by them) in a direct message.

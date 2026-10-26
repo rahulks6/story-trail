@@ -1,5 +1,6 @@
 import { query, queryOne,DatabaseError, type Row } from "../../db/psql";
 import {HttpError} from '../../http/errors';
+import { verifiedSql } from "../../shared/verified";
 import type {PublishStoryInput} from './dto';
 import type { StoryOverlay, DrawStroke, FilterKey, StoryCrop } from "./overlays";
 
@@ -302,13 +303,14 @@ export interface StoryViewerRow {
   username: string;
   displayName: string;
   avatarMediaId: string | null;
+  verified: boolean;
   viewedAt: string;
 }
 
 /** Owner-only (enforced in stories.service.ts) — the actual identities behind countViews' number. */
 export async function listViewers(storyId: string, limit: number, offset: number): Promise<StoryViewerRow[]> {
   const rows = await query(
-    `SELECT u.id, u.username, u.display_name, u.avatar_media_id, sv.viewed_at
+    `SELECT u.id, u.username, u.display_name, u.avatar_media_id, ${verifiedSql("u")} AS verified, sv.viewed_at
      FROM story_views sv
      JOIN users u ON u.id = sv.viewer_id
      WHERE sv.story_id = :'story_id'
@@ -321,6 +323,7 @@ export async function listViewers(storyId: string, limit: number, offset: number
     username: String(r.username),
     displayName: String(r.display_name),
     avatarMediaId: r.avatar_media_id ? String(r.avatar_media_id) : null,
+    verified: r.verified === "t",
     viewedAt: String(r.viewed_at),
   }));
 }

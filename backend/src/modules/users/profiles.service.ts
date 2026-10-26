@@ -18,6 +18,10 @@ export interface ProfileView {
   displayName: string;
   bio: string;
   avatarMediaId: string | null;
+  /** The verified badge (not while on hold after a rename). */
+  verified: boolean;
+  /** creator, public_figure, brand, news_media or organization; null unless verified. */
+  verifiedCategory: string | null;
   interests: string[];
   isPrivate: boolean;
   isSelf: boolean;
@@ -74,6 +78,8 @@ async function profileView(target: usersRepo.UserRecord | null, viewerId: string
     displayName: target.displayName,
     bio: target.bio,
     avatarMediaId: target.avatarMediaId,
+    verified: target.verified,
+    verifiedCategory: target.verifiedCategory,
     interests: target.interests,
     isPrivate: target.isPrivate,
     isSelf: target.id === viewerId,
@@ -140,7 +146,7 @@ export async function updateMyProfile(userId: string, input: UpdateProfileInput)
   if (input.avatarMediaId !== undefined) {
     if (input.avatarMediaId !== null) {
       const media = await import("../media/media.repository").then((repo) => repo.findMediaById(input.avatarMediaId!, true));
-      if (!media || media.ownerId !== userId || media.kind !== "photo" || media.status !== "ready") {
+      if (!media || media.ownerId !== userId || media.kind !== "photo" || media.status !== "ready" || media.verificationDocument) {
         throw new HttpError(400, "Choose a valid uploaded photo for your avatar.");
       }
     }
@@ -201,5 +207,19 @@ export async function deleteMyAccount(userId: string, password: string): Promise
 
   await usersRepo.softDeleteUser(userId);
   await refreshTokensRepo.revokeAllRefreshTokensForUser(userId);
+  await deleteVerificationQuietly(userId);
+}
+
+/**
+ * A verification request and its ID photo go as soon as the account does. If storage fails
+ * the account is still deleted; the 30-day account scrub (retention.ts) removes the rest.
+ */
+export async function deleteVerificationQuietly(userId: string): Promise<void> {
+  try {
+    const [{ deleteForAccount }, { mediaStorage }] = await Promise.all([import("../verification/verification.service"), import("../media/instance")]);
+    await deleteForAccount(mediaStorage, userId);
+  } catch (error) {
+    console.error(JSON.stringify({ event: "verification_delete_failed", error: error instanceof Error ? error.message : "unknown" }));
+  }
 }
 

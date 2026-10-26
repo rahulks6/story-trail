@@ -1,5 +1,6 @@
 import { containsPattern, escapeLike } from "../../shared/validation";
 import { nullable, query, queryOne } from "../../db/psql";
+import { verifiedSql } from "../../shared/verified";
 
 export interface UserRecord {
   id: string;
@@ -18,9 +19,14 @@ export interface UserRecord {
   /** Created after verification became required: the app asks for the code before anything else. */
   emailVerificationRequired: boolean;
   createdAt: string;
+  /** The verified badge shows (approved, not on hold after a rename). */
+  verified: boolean;
+  /** What the account is verified as; null unless `verified`. */
+  verifiedCategory: string | null;
 }
 
-const SELECT_COLUMNS = "id, username, email, password_hash, display_name, bio, avatar_media_id, interests_json, is_private, is_active, is_moderator, email_verified_at IS NOT NULL AS email_verified, email_verification_required, created_at";
+const SELECT_COLUMNS = "id, username, email, password_hash, display_name, bio, avatar_media_id, interests_json, is_private, is_active, is_moderator, email_verified_at IS NOT NULL AS email_verified, email_verification_required, created_at, " +
+  `${verifiedSql()} AS verified, CASE WHEN ${verifiedSql()} THEN verified_category END AS verified_category`;
 
 function parseInterests(json: string | null | undefined): string[] {
   try {
@@ -47,6 +53,8 @@ function mapRow(row: Record<string, string | null>): UserRecord {
     emailVerified: row.email_verified === "t",
     emailVerificationRequired: row.email_verification_required === "t",
     createdAt: row.created_at as string,
+    verified: row.verified === "t",
+    verifiedCategory: row.verified_category ?? null,
   };
 }
 
@@ -197,6 +205,7 @@ export interface UserSearchResult {
   username: string;
   displayName: string;
   avatarMediaId: string | null;
+  verified: boolean;
   bio: string;
   isPrivate: boolean;
   interests: string[];
@@ -223,7 +232,7 @@ export async function searchUsers(
   options: { followingOnly?: boolean } = {},
 ): Promise<UserSearchResult[]> {
   const escaped = escapeLike(searchTerm);
-  const columns = `u.id, u.username, u.display_name, u.avatar_media_id, u.bio, u.is_private, u.interests_json,
+  const columns = `u.id, u.username, u.display_name, u.avatar_media_id, ${verifiedSql("u")} AS verified, u.bio, u.is_private, u.interests_json,
               (vf.followee_id IS NOT NULL) AS is_following`;
   const from = `FROM users u LEFT JOIN follows vf ON vf.follower_id = :'exclude_id' AND vf.followee_id = u.id`;
   const visible = `u.deleted_at IS NULL AND u.is_active AND u.id <> :'exclude_id'
@@ -299,6 +308,7 @@ export async function searchUsers(
     username: row.username as string,
     displayName: row.display_name as string,
     avatarMediaId: (row.avatar_media_id as string | null) ?? null,
+    verified: row.verified === "t",
     bio: row.bio as string,
     isPrivate: row.is_private === "t",
     interests: parseInterests(row.interests_json),
@@ -322,6 +332,7 @@ export interface SuggestedPerson {
   username: string;
   displayName: string;
   avatarMediaId: string | null;
+  verified: boolean;
   isPrivate: boolean;
   reason: SuggestionReason;
   viewer: ListRelationship;
@@ -373,7 +384,7 @@ export async function suggestPeople(viewerId: string, limit: number): Promise<Su
      candidates AS (
        SELECT id FROM follows_you UNION SELECT id FROM mutual UNION SELECT id FROM shared UNION SELECT id FROM fresh
      )
-     SELECT u.id, u.username, u.display_name, u.avatar_media_id, u.is_private,
+     SELECT u.id, u.username, u.display_name, u.avatar_media_id, ${verifiedSql("u")} AS verified, u.is_private,
             (fy.id IS NOT NULL) AS follows_viewer, m.n AS mutual_count, m.via AS mutual_via,
             s.n AS shared_count, s.via AS shared_via
      FROM candidates c
@@ -407,6 +418,7 @@ export async function suggestPeople(viewerId: string, limit: number): Promise<Su
       username: row.username as string,
       displayName: row.display_name as string,
       avatarMediaId: (row.avatar_media_id as string | null) ?? null,
+      verified: row.verified === "t",
       isPrivate: row.is_private === "t",
       reason,
       viewer: { isFollowing: false, isFollowedBy: row.follows_viewer === "t", hasPendingRequestFromViewer: false },

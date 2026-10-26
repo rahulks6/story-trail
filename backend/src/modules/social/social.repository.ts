@@ -1,4 +1,5 @@
 import { nullable, query, queryOne, type Row } from "../../db/psql";
+import { verifiedSql } from "../../shared/verified";
 
 export interface Relationship {
   isFollowing: boolean; // viewer -> target
@@ -103,6 +104,7 @@ interface FollowRow {
   username: string;
   displayName: string;
   avatarMediaId: string | null;
+  verified: boolean;
   bio: string;
   isPrivate: boolean;
   followedAt: string;
@@ -114,6 +116,7 @@ function mapFollowRow(row: Row): FollowRow {
     username: row.username as string,
     displayName: row.display_name as string,
     avatarMediaId: (row.avatar_media_id as string | null) ?? null,
+    verified: row.verified === "t",
     bio: row.bio as string,
     isPrivate: row.is_private === "t",
     followedAt: row.followed_at as string,
@@ -122,7 +125,7 @@ function mapFollowRow(row: Row): FollowRow {
 
 export async function listFollowers(userId: string, limit: number, offset: number): Promise<FollowRow[]> {
   const rows = await query(
-    `SELECT u.id, u.username, u.display_name, u.avatar_media_id, u.bio, u.is_private, f.created_at AS followed_at
+    `SELECT u.id, u.username, u.display_name, u.avatar_media_id, ${verifiedSql("u")} AS verified, u.bio, u.is_private, f.created_at AS followed_at
      FROM follows f
      JOIN users u ON u.id = f.follower_id
      WHERE f.followee_id = :'user_id' AND u.deleted_at IS NULL
@@ -135,7 +138,7 @@ export async function listFollowers(userId: string, limit: number, offset: numbe
 
 export async function listFollowing(userId: string, limit: number, offset: number): Promise<FollowRow[]> {
   const rows = await query(
-    `SELECT u.id, u.username, u.display_name, u.avatar_media_id, u.bio, u.is_private, f.created_at AS followed_at
+    `SELECT u.id, u.username, u.display_name, u.avatar_media_id, ${verifiedSql("u")} AS verified, u.bio, u.is_private, f.created_at AS followed_at
      FROM follows f
      JOIN users u ON u.id = f.followee_id
      WHERE f.follower_id = :'user_id' AND u.deleted_at IS NULL
@@ -213,6 +216,7 @@ interface IncomingRequestRow {
   username: string;
   displayName: string;
   avatarMediaId: string | null;
+  verified: boolean;
   createdAt: string;
 }
 
@@ -222,7 +226,7 @@ export async function listIncomingRequests(
   offset: number,
 ): Promise<IncomingRequestRow[]> {
   const rows = await query(
-    `SELECT fr.id AS request_id, fr.requester_id, u.username, u.display_name, u.avatar_media_id, fr.created_at
+    `SELECT fr.id AS request_id, fr.requester_id, u.username, u.display_name, u.avatar_media_id, ${verifiedSql("u")} AS verified, fr.created_at
      FROM follow_requests fr
      JOIN users u ON u.id = fr.requester_id
      WHERE fr.target_id = :'target_id' AND fr.status = 'pending' AND u.deleted_at IS NULL
@@ -236,6 +240,7 @@ export async function listIncomingRequests(
     username: row.username as string,
     displayName: row.display_name as string,
     avatarMediaId: (row.avatar_media_id as string | null) ?? null,
+    verified: row.verified === "t",
     createdAt: row.created_at as string,
   }));
 }
@@ -261,12 +266,13 @@ interface BlockedUserRow {
   id: string;
   username: string;
   displayName: string;
+  verified: boolean;
   blockedAt: string;
 }
 
 export async function listBlocked(blockerId: string, limit: number, offset: number): Promise<BlockedUserRow[]> {
   const rows = await query(
-    `SELECT u.id, u.username, u.display_name, b.created_at AS blocked_at
+    `SELECT u.id, u.username, u.display_name, ${verifiedSql("u")} AS verified, b.created_at AS blocked_at
      FROM blocks b
      JOIN users u ON u.id = b.blocked_id
      WHERE b.blocker_id = :'blocker_id' AND u.deleted_at IS NULL
@@ -278,6 +284,7 @@ export async function listBlocked(blockerId: string, limit: number, offset: numb
     id: row.id as string,
     username: row.username as string,
     displayName: row.display_name as string,
+    verified: row.verified === "t",
     blockedAt: row.blocked_at as string,
   }));
 }
@@ -304,12 +311,13 @@ interface MutedUserRow {
   username: string;
   displayName: string;
   avatarMediaId: string | null;
+  verified: boolean;
   mutedAt: string;
 }
 
 export async function listMuted(muterId: string, limit: number, offset: number): Promise<MutedUserRow[]> {
   const rows = await query(
-    `SELECT u.id, u.username, u.display_name, u.avatar_media_id, m.created_at AS muted_at
+    `SELECT u.id, u.username, u.display_name, u.avatar_media_id, ${verifiedSql("u")} AS verified, m.created_at AS muted_at
      FROM mutes m
      JOIN users u ON u.id = m.muted_id
      WHERE m.muter_id = :'muter_id' AND u.deleted_at IS NULL
@@ -322,6 +330,7 @@ export async function listMuted(muterId: string, limit: number, offset: number):
     username: row.username as string,
     displayName: row.display_name as string,
     avatarMediaId: (row.avatar_media_id as string | null) ?? null,
+    verified: row.verified === "t",
     mutedAt: row.muted_at as string,
   }));
 }
@@ -333,6 +342,7 @@ export interface CloseFriendRow {
   username: string;
   displayName: string;
   avatarMediaId: string | null;
+  verified: boolean;
   addedAt: string;
 }
 
@@ -356,7 +366,7 @@ export async function countCloseFriends(ownerId: string): Promise<number> {
 
 export async function listCloseFriends(ownerId: string, limit: number, offset: number): Promise<CloseFriendRow[]> {
   const rows = await query(
-    `SELECT u.id, u.username, u.display_name, u.avatar_media_id, c.created_at AS added_at
+    `SELECT u.id, u.username, u.display_name, u.avatar_media_id, ${verifiedSql("u")} AS verified, c.created_at AS added_at
      FROM close_friends c
      JOIN users u ON u.id = c.friend_id
      WHERE c.owner_id = :'owner_id' AND u.deleted_at IS NULL
@@ -369,6 +379,7 @@ export async function listCloseFriends(ownerId: string, limit: number, offset: n
     username: row.username as string,
     displayName: row.display_name as string,
     avatarMediaId: (row.avatar_media_id as string | null) ?? null,
+    verified: row.verified === "t",
     addedAt: row.added_at as string,
   }));
 }

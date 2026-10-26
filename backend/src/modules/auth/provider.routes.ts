@@ -11,6 +11,7 @@ import {liveProviders,providerConfig,normalizePhone,type ProviderGateway} from '
 import * as identity from './provider.service';
 import * as storiesRepo from '../stories/stories.repository';
 import * as storiesService from '../stories/stories.service';
+import {deleteVerificationQuietly} from '../users/profiles.service';
 const authLimit=new RateLimiter(15*60000,30);
 function available(provider:'GOOGLE'|'PHONE'){if(!(provider==='GOOGLE'?providerConfig.googleEnabled:providerConfig.phoneEnabled))throw new HttpError(404,'Sign-in method unavailable.');}
 export function registerProviderAuthRoutes(router:Router,providers:ProviderGateway=liveProviders):void {
@@ -54,6 +55,7 @@ export function registerProviderAuthRoutes(router:Router,providers:ProviderGatew
   if(!result)throw new HttpError(401,'Reauthenticate before deleting your account.');
   // Live Stories go with the account, as with DELETE /users/me: nobody keeps seeing them for 24 hours.
   for(const story of await storiesRepo.listActiveStoriesForOwner(req.userId!))await storiesService.moderatorDeleteStory(story.id);
+  await deleteVerificationQuietly(req.userId!);
   sendJson(res,204,undefined);
  });
 }
