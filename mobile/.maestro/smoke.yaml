@@ -58,7 +58,12 @@ appId: com.katkee.app
 - tapOn: "Verify your email"
 - assertVisible: "Change email"
 - assertNotVisible: "Later"
-- tapOn: "Change email"
+- tapOn:
+    text: "Change email"
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible: "Change your email"
+    timeout: 15000
 - takeScreenshot: 04b-change-email
 # Tapping the title closes the keyboard (Android's "hide keyboard" acts as Back when it's already closed).
 - tapOn: "Change your email"
