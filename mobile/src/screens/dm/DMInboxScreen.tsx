@@ -17,6 +17,7 @@ import { actorName, groupEventText } from "../../models/groupEvents";
 import { EmptyState } from "../../components/EmptyState";
 import { Button } from "../../components/Form";
 import { Avatar } from "../../components/Avatar";
+import { VerifiedName } from "../../components/VerifiedBadge";
 import { GroupAvatar } from "../../components/GroupAvatar";
 import { Icon } from "../../components/Icon";
 
@@ -256,11 +257,12 @@ export function DMInboxScreen(): React.JSX.Element {
                   otherUsername: person?.username,
                   otherDisplayName: person?.displayName,
                   otherAvatarMediaId: person?.avatarMediaId ?? null,
+                  otherVerified: !!person?.verified,
                 })
           }
           onLongPress={() => setMenuFor(item)}
           accessibilityRole="button"
-          accessibilityLabel={`${name}${group ? `, group of ${group.memberCount}` : ""}${item.unread ? ", unread" : ""}${item.muted ? ", muted" : ""}`}
+          accessibilityLabel={`${name}${!group && person?.verified ? ", verified" : ""}${group ? `, group of ${group.memberCount}` : ""}${item.unread ? ", unread" : ""}${item.muted ? ", muted" : ""}`}
           accessibilityHint="Long press for options"
         >
           {group ? (
@@ -269,7 +271,7 @@ export function DMInboxScreen(): React.JSX.Element {
             <Avatar username={person.username} displayName={person.displayName} avatarMediaId={person.avatarMediaId} size={48} />
           ) : null}
           <View style={styles.rowText}>
-            <Text style={typography.bodyStrong} numberOfLines={1}>{name}</Text>
+            <VerifiedName name={name} verified={!group && !!person?.verified} style={typography.bodyStrong} />
             <Text style={[typography.caption, item.unread && styles.unreadPreview]} numberOfLines={1}>
               {previewText(item, user?.id)}
             </Text>

@@ -5,6 +5,7 @@ import { colors, radii, spacing, typography } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { addCloseFriend, getFollowers, listCloseFriends, removeCloseFriend, searchUsers } from "../../api/users";
 import { Avatar } from "../../components/Avatar";
+import { VerifiedName } from "../../components/VerifiedBadge";
 import { EmptyState } from "../../components/EmptyState";
 import { ListSkeleton } from "../../components/Skeleton";
 import { tapFeedback } from "../../utils/haptics";
@@ -14,6 +15,7 @@ interface Person {
   username: string;
   displayName: string;
   avatarMediaId?: string | null;
+  verified?: boolean;
 }
 
 const MAX_LIST = 1000;
@@ -158,7 +160,7 @@ export function CloseFriendsScreen(): React.JSX.Element {
             <View style={styles.row}>
               <Avatar username={person.username} displayName={person.displayName} avatarMediaId={person.avatarMediaId} size={44} />
               <View style={styles.names}>
-                <Text style={styles.displayName} numberOfLines={1}>{person.displayName}</Text>
+                <VerifiedName name={person.displayName} verified={person.verified} style={styles.displayName} />
                 <Text style={styles.username} numberOfLines={1}>@{person.username}</Text>
               </View>
               <Pressable

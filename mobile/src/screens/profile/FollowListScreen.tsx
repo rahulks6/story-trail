@@ -10,6 +10,7 @@ import { getFollowers, getFollowing, type FollowedUser } from "../../api/users";
 import { ApiError } from "../../api/client";
 import { EmptyState } from "../../components/EmptyState";
 import { Avatar } from "../../components/Avatar";
+import { VerifiedName } from "../../components/VerifiedBadge";
 
 type Props = NativeStackScreenProps<RootStackParamList, "FollowList">;
 
@@ -112,7 +113,7 @@ export function FollowListScreen({ route }: Props): React.JSX.Element {
         >
           <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} />
           <View style={styles.rowText}>
-            <Text style={typography.bodyStrong}>{item.displayName}</Text>
+            <VerifiedName name={item.displayName} verified={item.verified} style={typography.bodyStrong} />
             <Text style={typography.caption}>@{item.username}</Text>
           </View>
         </Pressable>

@@ -20,7 +20,7 @@ export type PushPermission = "granted" | "denied" | "undetermined" | "unavailabl
 
 const TOKEN_KEY = "katkee.push.device.v1";
 const ASKED_KEY = "katkee.push.asked.v1";
-const LINK = /^katkee:\/\/(conversation\/[0-9a-f-]{36}|story\/[0-9a-f-]{36}|user\/[a-z0-9_.]{3,30}|activity)\/?$/i;
+const LINK = /^katkee:\/\/(conversation\/[0-9a-f-]{36}|story\/[0-9a-f-]{36}|user\/[a-z0-9_.]{3,30}|activity|verification)\/?$/i;
 
 let firebase: { mod: MessagingModule; messaging: Messaging } | null | undefined;
 

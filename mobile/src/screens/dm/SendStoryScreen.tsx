@@ -12,6 +12,7 @@ import { groupName, listConversations, MAX_MESSAGE_LENGTH, newClientMessageId, o
 import { ApiError } from "../../api/client";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { Avatar } from "../../components/Avatar";
+import { VerifiedName } from "../../components/VerifiedBadge";
 import { GroupAvatar } from "../../components/GroupAvatar";
 import { Icon } from "../../components/Icon";
 import { Button } from "../../components/Form";
@@ -25,6 +26,8 @@ type Props = NativeStackScreenProps<RootStackParamList, "SendStory">;
 interface Target {
   key: string;
   name: string;
+  /** A person with the verified badge (never a group). */
+  verified?: boolean;
   detail: string;
   conversationId?: string;
   username?: string;
@@ -75,7 +78,7 @@ export function SendStoryScreen({ route, navigation }: Props): React.JSX.Element
             return { key: `c:${c.id}`, name, detail: `${c.group.memberCount} people`, conversationId: c.id, picture: <GroupAvatar members={c.group.members} size={44} /> };
           }
           const p = c.otherUser!;
-          return { key: `u:${p.username}`, name: p.displayName, detail: `@${p.username}`, conversationId: c.id, username: p.username, picture: <Avatar username={p.username} displayName={p.displayName} avatarMediaId={p.avatarMediaId ?? null} /> };
+          return { key: `u:${p.username}`, name: p.displayName, verified: p.verified, detail: `@${p.username}`, conversationId: c.id, username: p.username, picture: <Avatar username={p.username} displayName={p.displayName} avatarMediaId={p.avatarMediaId ?? null} /> };
         })),
       )
       .catch(() => setRecent([]));
@@ -92,7 +95,7 @@ export function SendStoryScreen({ route, navigation }: Props): React.JSX.Element
     setSearchFailed(false);
     searchUsers(search, accessToken)
       .then(({ results }) => {
-        if (!cancelled) setFound(results.filter((r) => r.id !== user?.id).map((r) => ({ key: `u:${r.username}`, name: r.displayName, detail: `@${r.username}`, username: r.username, picture: <Avatar username={r.username} displayName={r.displayName} avatarMediaId={r.avatarMediaId ?? null} /> })));
+        if (!cancelled) setFound(results.filter((r) => r.id !== user?.id).map((r) => ({ key: `u:${r.username}`, name: r.displayName, verified: r.verified, detail: `@${r.username}`, username: r.username, picture: <Avatar username={r.username} displayName={r.displayName} avatarMediaId={r.avatarMediaId ?? null} /> })));
       })
       .catch(() => { if (!cancelled) { setFound([]); setSearchFailed(true); } })
       .finally(() => { if (!cancelled) setSearching(false); });
@@ -178,10 +181,10 @@ export function SendStoryScreen({ route, navigation }: Props): React.JSX.Element
         renderItem={({ item }) => {
           const on = chosen.has(item.key);
           return (
-            <Pressable style={styles.row} onPress={() => toggle(item)} accessibilityRole="checkbox" accessibilityState={{ checked: on }} accessibilityLabel={`${item.name}, ${item.detail}`}>
+            <Pressable style={styles.row} onPress={() => toggle(item)} accessibilityRole="checkbox" accessibilityState={{ checked: on }} accessibilityLabel={`${item.name}${item.verified ? ", verified" : ""}, ${item.detail}`}>
               {item.picture}
               <View style={styles.rowText}>
-                <Text style={typography.bodyStrong} numberOfLines={1}>{item.name}</Text>
+                <VerifiedName name={item.name} verified={item.verified} style={typography.bodyStrong} />
                 <Text style={typography.caption} numberOfLines={1}>{item.detail}</Text>
               </View>
               <View style={[styles.check, on && styles.checkOn]}>{on ? <Icon name={ICONS.check} size={16} color={colors.onAccent} /> : null}</View>

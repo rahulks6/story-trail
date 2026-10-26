@@ -33,6 +33,7 @@ export type DeepLinkTarget =
   | { kind: "activity" }
   | { kind: "home" }
   | { kind: "followRequests" }
+  | { kind: "verification" }
   | { kind: "resetPassword"; email?: string; code?: string };
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -58,6 +59,8 @@ export function deepLinkTarget(path: string): DeepLinkTarget | null {
   // Festival greetings, streaks and reminders open Home (and its festival ring).
   if (/^home\/?$/i.test(rawPath)) return { kind: "home" };
   if (/^follow-requests\/?$/i.test(rawPath)) return { kind: "followRequests" };
+  // Verification notifications: Settings > Request verification.
+  if (/^verification\/?$/i.test(rawPath)) return { kind: "verification" };
   if (/^reset-password\/?$/i.test(rawPath)) {
     const query = new URLSearchParams(rawQuery);
     const email = query.get("email")?.trim().toLowerCase();
@@ -69,6 +72,17 @@ export function deepLinkTarget(path: string): DeepLinkTarget | null {
     };
   }
   return null;
+}
+
+/**
+ * Whether the app follows this link. Only profiles and Stories are katkee.com pages; a katkee.com
+ * address for one of the app's own screens (katkee.com/verification) is a web page, not the app.
+ */
+export function opensInApp(url: string): boolean {
+  const path = linkPath(url);
+  const target = path === null ? null : deepLinkTarget(path);
+  if (!target) return false;
+  return target.kind !== "verification" || url.toLowerCase().startsWith("katkee://");
 }
 
 /**

@@ -35,6 +35,7 @@ export interface Comment {
   username: string;
   displayName: string;
   avatarMediaId?: string | null;
+  verified?: boolean;
   body: string;
   createdAt: string;
 }

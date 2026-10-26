@@ -11,6 +11,7 @@ import { ApiError } from "../../api/client";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { EmptyState } from "../../components/EmptyState";
 import { Avatar } from "../../components/Avatar";
+import { VerifiedName } from "../../components/VerifiedBadge";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = NativeStackScreenProps<DMStackParamList, "NewChat">;
@@ -120,7 +121,7 @@ export function NewChatScreen({ navigation }: Props): React.JSX.Element {
             <Pressable accessibilityRole="button" style={styles.row} onPress={() => void onSelect(item)} disabled={opening !== null}>
               <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} />
               <View style={styles.rowText}>
-                <Text style={typography.bodyStrong}>{item.displayName}</Text>
+                <VerifiedName name={item.displayName} verified={item.verified} style={typography.bodyStrong} />
                 <Text style={typography.caption}>@{item.username}</Text>
               </View>
               {opening === item.username ? <ActivityIndicator color={colors.accent} /> : null}

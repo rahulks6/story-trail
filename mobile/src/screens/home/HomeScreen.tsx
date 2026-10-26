@@ -70,6 +70,7 @@ export function HomeScreen():React.JSX.Element {
  });return()=>subscription.remove();},[reloadQuietly]);
  const creators=useMemo(()=>feed?.map(e=>e.owner.username)??[],[feed]);
  const following=useMemo(()=>Object.fromEntries((feed??[]).map(e=>[e.owner.username,e.isFollowing])),[feed]);
+ const verified=useMemo(()=>Object.fromEntries((feed??[]).map(e=>[e.owner.username,!!e.owner.verified])),[feed]);
  // initial:false keeps Search's own first screen under the profile, so the Search tab still works after.
  // Over the Story: closing "Send to" comes back to the same Story.
  const openDM=useCallback(({storyId,ownerUsername}:{storyId:string;ownerUsername:string})=>navigation.navigate('SendStory',{storyId,ownerUsername}),[navigation]);
@@ -92,7 +93,7 @@ export function HomeScreen():React.JSX.Element {
    <Pressable onPress={reloadQuietly} disabled={refreshing} style={styles.emptyButton} accessibilityRole="button" accessibilityLabel="Refresh Stories"><Text style={styles.emptyButtonLabel}>{refreshing?'Refreshing…':'Refresh'}</Text></Pressable>
   </View>
  </ScrollView>{festivalButton}{activityButton}{uploads}</View>;
- return <View style={styles.root}><StoryFeed key={`${user?.id}:${retry}:${version}`} creators={creators} following={following} startIndex={0} sponsored={sponsored} onNeedMore={more} onRefresh={refresh}
+ return <View style={styles.root}><StoryFeed key={`${user?.id}:${retry}:${version}`} creators={creators} following={following} verified={verified} startIndex={0} sponsored={sponsored} onNeedMore={more} onRefresh={refresh}
   onCreate={()=>navigation.navigate('Create')} onFindPeople={()=>navigation.navigate('Search',{screen:'SearchHome'})}
   onOpenDM={openDM} onOpenProfile={openProfile}/>
   {!!error&&<View style={[styles.error,{top:insets.top+spacing.xl+40}]}><Text style={typography.caption}>{error}</Text><Pressable onPress={more} accessibilityRole="button"><Text style={typography.body}>Retry</Text></Pressable><Pressable onPress={refresh} accessibilityRole="button"><Text style={typography.body}>Refresh</Text></Pressable></View>}

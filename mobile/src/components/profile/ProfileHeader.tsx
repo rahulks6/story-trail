@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Avatar } from "../Avatar";
 import { Icon } from "../Icon";
+import { VerifiedBadgeSheet, VerifiedName } from "../VerifiedBadge";
 import { colors, radii, spacing, ICONS } from "../../theme";
 import { countLabel, formatCount } from "../../utils/formatCount";
 
@@ -21,6 +22,9 @@ interface Props {
   interests: string[];
   avatarMediaId: string | null;
   isPrivate: boolean;
+  /** The badge after the name; tapping it explains it, naming the category. */
+  verified?: boolean;
+  verifiedCategory?: string | null;
   /** An active Story: the amber ring shows, and tapping the photo opens it. */
   hasActiveStory: boolean;
   storyLabel: string;
@@ -44,9 +48,10 @@ const RING_SIZE = PHOTO_SIZE + (RING_WIDTH + RING_GAP) * 2;
  * Stories open only from the photo (spec sections 34 and 58); there is no grid of posts.
  */
 export function ProfileHeader({
-  username, displayName, bio, interests, avatarMediaId, isPrivate, hasActiveStory, storyLabel,
+  username, displayName, bio, interests, avatarMediaId, isPrivate, verified, verifiedCategory, hasActiveStory, storyLabel,
   onOpenStory, onAddStory, followsYou, stats, children,
 }: Props): React.JSX.Element {
+  const [badgeSheetOpen, setBadgeSheetOpen] = useState(false);
   const photo = (
     <View style={[styles.ring, hasActiveStory && styles.ringActive]}>
       <Avatar username={username} displayName={displayName} avatarMediaId={avatarMediaId} size={PHOTO_SIZE} />
@@ -95,7 +100,7 @@ export function ProfileHeader({
       </View>
 
       <View style={styles.identity}>
-        <Text style={styles.displayName} numberOfLines={1}>{displayName}</Text>
+        <VerifiedName name={displayName} verified={verified} style={styles.displayName} onPressBadge={() => setBadgeSheetOpen(true)} />
         <View style={styles.handleRow}>
           <Text style={styles.handle} numberOfLines={1}>@{username}</Text>
           {isPrivate ? (
@@ -116,6 +121,7 @@ export function ProfileHeader({
       </View>
 
       {children}
+      {verified ? <VerifiedBadgeSheet visible={badgeSheetOpen} category={verifiedCategory} onClose={() => setBadgeSheetOpen(false)} /> : null}
     </View>
   );
 }

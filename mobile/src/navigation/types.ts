@@ -18,7 +18,7 @@ export type SearchStackParamList = {
 export type DMStackParamList = {
   DMInbox: undefined;
   /** The names are filled in from the server when only the id is known (a notification's katkee://conversation/<id> link). */
-  Conversation: { conversationId: string; otherUsername?: string; otherDisplayName?: string; otherAvatarMediaId?: string | null; group?: boolean; title?: string };
+  Conversation: { conversationId: string; otherUsername?: string; otherDisplayName?: string; otherAvatarMediaId?: string | null; otherVerified?: boolean; group?: boolean; title?: string };
   /** Choose people for a new group (or, with `conversationId`, people to add to one). */
   NewGroup: { conversationId?: string };
   /** A group's people, name, Add people and Leave. */
@@ -66,7 +66,7 @@ export type RootStackParamList = {
    * not through this route — there's nothing to return to from there.
    * `startIndex` is which one to open on.
    */
-  StoryViewer: { creators: string[]; startIndex: number; initialStoryId?: string };
+  StoryViewer: { creators: string[]; startIndex: number; initialStoryId?: string; /** Which of `creators` have the verified badge. */ verifiedCreators?: string[] };
   /** katkee.com/s/<id> (Share sheet links) and katkee://story/<id>: resolves the owner, then opens StoryViewer. */
   StoryLink: { storyId: string };
   /** Sequential, view-only playback of one Highlight's items — see HighlightViewerScreen.tsx for why it's a separate, simpler viewer from StoryViewer. */
@@ -101,6 +101,8 @@ export type RootStackParamList = {
   About: undefined;
   /** Incoming, still-pending follow requests on a private account — accept/decline each one. */
   FollowRequests: undefined;
+  /** Settings > Request verification, and katkee://verification: the badge's status, or the form to ask for it. */
+  Verification: undefined;
   /** Accounts you've blocked — a real unblock action for each, not just a one-way door. */
   BlockedAccounts: undefined;
   /** Accounts you've muted — a real unmute action for each, not just a one-way door. */

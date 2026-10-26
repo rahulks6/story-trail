@@ -44,7 +44,7 @@ export interface StoryMusic {
 }
 
 export interface FeedEntry {
-  owner: { id: string; username: string; displayName: string; avatarMediaId?: string | null };
+  owner: { id: string; username: string; displayName: string; avatarMediaId?: string | null; verified?: boolean };
   stories: PublicStory[];
 }
 
@@ -142,6 +142,7 @@ export interface StoryViewer {
   username: string;
   displayName: string;
   avatarMediaId?: string | null;
+  verified?: boolean;
   viewedAt: string;
 }
 

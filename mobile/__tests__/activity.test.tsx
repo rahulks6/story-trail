@@ -129,3 +129,26 @@ test("rows end with what you'd do next: Follow back, Confirm or Delete a request
   expect(texts()).toContain("Accepted");
   expect(tree.root.findAll((n) => (n.type as unknown) === "Image" && n.props.source?.uri === "/media/md1/thumbnail")).not.toHaveLength(0);
 });
+
+test("verification updates have no actor: the badge instead of a photo, and they open Request verification", async () => {
+  const about = (id: string, status: string, h: number) => ({ ...follow(id, "x", h, false), type: "verification", actor: null, verification: { status, reason: null } });
+  list.mockResolvedValue({ notifications: [
+    about("v1", "approved", 1), about("v2", "denied", 2), about("v3", "removed", 3), about("v4", "restored", 4),
+    { ...follow("f1", "news_desk", 5, true), actor: { id: "u-n", username: "news_desk", displayName: "News Desk", verified: true } },
+  ] });
+  await render();
+  expect(texts()).toEqual(expect.arrayContaining([
+    "You're verified. Your badge now shows on your profile.",
+    "Your verification request wasn't approved.",
+    "Your verified badge was removed.",
+    "Your verified badge is showing again.",
+  ]));
+  expect(tree.root.findAll((n) => n.props.username === "" && n.props.displayName === "?")).toHaveLength(0);
+  // A verified actor's name carries the badge, inside the sentence.
+  expect(tree.root.findAll((n) => typeof n.type === "string" && n.props.accessibilityLabel === "Verified")).toHaveLength(1);
+  const labels = tree.root.findAll((n) => n.props.accessibilityRole === "button" && typeof n.props.onPress === "function").map((n) => n.props.accessibilityLabel);
+  expect(labels).toContainEqual(expect.stringMatching(/^News Desk started following you\. News Desk is verified\./));
+  const row = tree.root.find((n) => n.props.accessibilityRole === "button" && typeof n.props.onPress === "function" && /^Your verified badge was removed/.test(n.props.accessibilityLabel ?? ""));
+  await act(async () => row.props.onPress());
+  expect(mockNavigation.navigate).toHaveBeenCalledWith("Verification");
+});

@@ -64,6 +64,7 @@ export const ICONS = {minus:"minus",up:"up",down:"down",left:"left",right:"right
   "play": "play",
   "pause": "pause",
   "camera": "camera",
-  "mic": "mic"
+  "mic": "mic",
+  "verified": "verified"
 } as const;
 export type IconName = keyof typeof ICONS;

@@ -29,6 +29,8 @@ export function ProfileScreen(): React.JSX.Element {
   const [counts, setCounts] = useState<{ followerCount: number; followingCount: number; storyCount: number | null } | null>(null);
   const [, setHighlightCount] = useState<number | null>(null);
   const [hasActiveStory, setHasActiveStory] = useState(false);
+  // From the profile fetch, which is fresher than the signed-in account's copy (a badge put on hold).
+  const [badge, setBadge] = useState<{ verified: boolean; category: string | null } | null>(null);
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [refreshToken, setRefreshToken] = useState(0);
@@ -38,6 +40,7 @@ export function ProfileScreen(): React.JSX.Element {
     try {
       const { profile } = await getProfile(user.username, accessToken);
       setCounts({ followerCount: profile.followerCount, followingCount: profile.followingCount, storyCount: profile.storyCount ?? null });
+      setBadge({ verified: !!profile.verified, category: profile.verifiedCategory ?? null });
     } catch {
       // Non-fatal: the counts show dashes and the rest of the page still works.
     }
@@ -136,9 +139,11 @@ export function ProfileScreen(): React.JSX.Element {
           interests={user.interests ?? []}
           avatarMediaId={user.avatarMediaId}
           isPrivate={user.isPrivate}
+          verified={badge ? badge.verified : !!user.verified}
+          verifiedCategory={badge ? badge.category : user.verifiedCategory}
           hasActiveStory={hasActiveStory}
           storyLabel="Open your Story"
-          onOpenStory={() => navigation.navigate("StoryViewer", { creators: [user.username], startIndex: 0 })}
+          onOpenStory={() => navigation.navigate("StoryViewer", { creators: [user.username], startIndex: 0, ...(badge?.verified ? { verifiedCreators: [user.username] } : {}) })}
           onAddStory={() => navigation.navigate("Main", { screen: "Create" })}
           stats={[
             // Everyone sees how many Stories have been posted so far.

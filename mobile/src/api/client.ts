@@ -19,6 +19,9 @@ export interface PublicUser {
   avatarMediaId: string | null;
   interests: string[];
   isPrivate: boolean;
+  /** The verified badge, and what kind of account it confirms (absent from servers before the badge). */
+  verified?: boolean;
+  verifiedCategory?: string | null;
   /** False until the email is confirmed with a code (absent from older servers and caches). */
   emailVerified?: boolean;
   /** A new account whose email isn't verified yet: only the code screen is shown until it is. */

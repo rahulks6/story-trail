@@ -7,6 +7,7 @@ import { markOnboardingDone, useOnboarding } from "../../state/onboarding";
 import { followUser, getSuggestions, unfollowUser, updateMyProfile, type SuggestedPerson } from "../../api/users";
 import { ApiError } from "../../api/client";
 import { Avatar } from "../../components/Avatar";
+import { VerifiedName } from "../../components/VerifiedBadge";
 import { Banner, Button } from "../../components/Form";
 import { suggestionReasonText } from "../search/SearchScreen";
 import { tapFeedback } from "../../utils/haptics";
@@ -175,7 +176,7 @@ export function OnboardingScreen(): React.JSX.Element {
             <View style={styles.row}>
               <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} />
               <View style={styles.rowText}>
-                <Text style={styles.name} numberOfLines={1}>{item.displayName || item.username}</Text>
+                <VerifiedName name={item.displayName || item.username} verified={item.verified} style={styles.name} />
                 <Text style={styles.reason} numberOfLines={1}>{suggestionReasonText(item.reason)}</Text>
               </View>
               <Pressable

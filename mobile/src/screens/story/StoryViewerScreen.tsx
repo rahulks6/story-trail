@@ -15,13 +15,15 @@ type Props = NativeStackScreenProps<RootStackParamList, "StoryViewer">;
  */
 export function StoryViewerScreen({ route, navigation }: Props): React.JSX.Element {
   useMediaStatusBar();
-  const { creators, startIndex, initialStoryId } = route.params;
+  const { creators, startIndex, initialStoryId, verifiedCreators } = route.params;
+  const verified = React.useMemo(() => Object.fromEntries((verifiedCreators ?? []).map((username) => [username, true])), [verifiedCreators]);
 
   return (
     <StoryFeed
       creators={creators}
       startIndex={startIndex}
       initialStoryId={initialStoryId}
+      verified={verified}
       onClose={() => navigation.goBack()}
       onOpenDM={({ storyId, ownerUsername }) => navigation.navigate("SendStory", { storyId, ownerUsername })}
       onOpenProfile={(username) => {

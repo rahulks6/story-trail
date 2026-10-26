@@ -295,9 +295,11 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
         interests={profile.interests ?? []}
         avatarMediaId={profile.avatarMediaId}
         isPrivate={profile.isPrivate}
+        verified={!!profile.verified}
+        verifiedCategory={profile.verifiedCategory}
         hasActiveStory={hasActiveStory}
         storyLabel={`Open ${profile.displayName}'s Story`}
-        onOpenStory={() => rootNavigation.navigate("StoryViewer", { creators: [profile.username], startIndex: 0 })}
+        onOpenStory={() => rootNavigation.navigate("StoryViewer", { creators: [profile.username], startIndex: 0, ...(profile.verified ? { verifiedCreators: [profile.username] } : {}) })}
         followsYou={!profile.isSelf && profile.viewer.isFollowedBy}
         stats={[
           // Like the follower count, the number of Stories posted shows even on a private account.
