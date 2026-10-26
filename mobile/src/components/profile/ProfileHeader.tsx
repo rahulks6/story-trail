@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import type { ImageURISource } from "react-native";
 import { StyleSheet, Text, View } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Pressable } from "../Pressable";
@@ -6,6 +7,7 @@ import { Avatar } from "../Avatar";
 import { FadeInImage } from "../FadeInImage";
 import { coverFileUrl } from "../../api/users";
 import { useAuth } from "../../state/AuthContext";
+import { useProfilePhotoSource } from "../../hooks/useProfilePhotoSource";
 import { COVER_ASPECT } from "../../models/avatarCrop";
 import { Icon } from "../Icon";
 import { VerifiedBadgeSheet, VerifiedName } from "../VerifiedBadge";
@@ -60,11 +62,12 @@ const COVER_OVERLAP = Math.round(RING_SIZE * 0.45);
 /**
  * A profile's cover: decorative, so nothing happens on a tap. It fades in once loaded and fades
  * softly into the page at its foot (in the page's own colour, so it works in light and dark).
- * Until the image has an answer it holds its space, so the page doesn't jump; if it can't be
- * shown at all it goes, and the header looks as it does without a cover.
+ * Until the image has an answer it holds its space, so the page doesn't jump (also while a cover
+ * just saved is still being processed, and is asked for again); if it can't be shown at all it
+ * goes, and the header looks as it does without a cover.
  */
-function ProfileCover({ username, coverMediaId, accessToken, bleed, onUnavailable }: {
-  username: string; coverMediaId: string; accessToken: string; bleed: { sides: number; top: number }; onUnavailable: () => void;
+function ProfileCover({ source, bleed, onError }: {
+  source: ImageURISource | null; bleed: { sides: number; top: number }; onError: () => void;
 }): React.JSX.Element {
   return (
     <View
@@ -73,12 +76,7 @@ function ProfileCover({ username, coverMediaId, accessToken, bleed, onUnavailabl
       accessible={false}
       importantForAccessibility="no-hide-descendants"
     >
-      <FadeInImage
-        source={{ uri: coverFileUrl(username, coverMediaId), headers: { Authorization: `Bearer ${accessToken}` } }}
-        style={StyleSheet.absoluteFill}
-        resizeMode="cover"
-        onError={onUnavailable}
-      />
+      {source ? <FadeInImage source={source} style={StyleSheet.absoluteFill} resizeMode="cover" onError={onError} /> : null}
       <Svg style={styles.coverScrim} width="100%" height="100%" pointerEvents="none">
         <Defs>
           <LinearGradient id="profileCoverScrim" x1="0" y1="0" x2="0" y2="1">
@@ -104,9 +102,8 @@ export function ProfileHeader({
 }: Props): React.JSX.Element {
   const [badgeSheetOpen, setBadgeSheetOpen] = useState(false);
   const { accessToken } = useAuth();
-  const [coverFailed, setCoverFailed] = useState(false);
-  useEffect(() => setCoverFailed(false), [username, coverMediaId]);
-  const showCover = !!coverMediaId && !!accessToken && !coverFailed;
+  const cover = useProfilePhotoSource(coverMediaId ? coverFileUrl(username, coverMediaId) : null, coverMediaId, accessToken);
+  const showCover = !!coverMediaId && !!accessToken && !cover.failed;
   const photo = (
     <View style={[styles.ring, showCover && styles.ringOverCover, hasActiveStory && styles.ringActive]}>
       <Avatar username={username} displayName={displayName} avatarMediaId={avatarMediaId} size={PHOTO_SIZE} />
@@ -117,7 +114,7 @@ export function ProfileHeader({
       {/* The cover and the row that overlaps it: without a cover, just the row, as before. */}
       <View>
         {showCover ? (
-          <ProfileCover username={username} coverMediaId={coverMediaId!} accessToken={accessToken!} bleed={coverBleed} onUnavailable={() => setCoverFailed(true)} />
+          <ProfileCover source={cover.source} bleed={coverBleed} onError={cover.onError} />
         ) : null}
         <View style={[styles.topRow, showCover && styles.topRowOverCover]}>
           <View>
