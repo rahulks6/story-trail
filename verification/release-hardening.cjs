@@ -43,8 +43,9 @@ function service({media,taken=false,failure,linkRefusal}={}) {
   '../safety/links':{assertLinksAllowed:async(text,surface,author)=>{linkChecks.push({text,surface,author});if(linkRefusal)throw linkRefusal;}}
  });return {s,writes,linkChecks};
 }
+// A photo still processing is accepted (production hands every upload to the worker); a failed one isn't.
 test('avatar ownership, kind and readiness failures never write profile fields',async()=>{
- for(const media of [null,{ownerId:'other',kind:'photo',status:'ready'},{ownerId:'owner',kind:'video',status:'ready'},{ownerId:'owner',kind:'photo',status:'processing'}]) {
+ for(const media of [null,{ownerId:'other',kind:'photo',status:'ready'},{ownerId:'owner',kind:'video',status:'ready'},{ownerId:'owner',kind:'photo',status:'failed'}]) {
   const {s,writes}=service({media});await assert.rejects(s.updateMyProfile('owner',{avatarMediaId:'m',displayName:'New'}),e=>e.status===400);assert.equal(writes.length,0);
  }
 });
