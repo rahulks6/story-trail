@@ -32,6 +32,7 @@ import { storyPublished } from "../../state/storyChanges";
 import { AddToHighlightSheet } from "../../components/AddToHighlightSheet";
 
 const PHOTO_DURATION_MS = 5000;
+const SLOW_VIDEO_MS = 3000;
 const HOLD_DELAY_MS = 250;
 const SWIPE_CLOSE_THRESHOLD = 100;
 const TAP_MOVE_THRESHOLD = 10;
@@ -135,6 +136,10 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   // takes a while; the next Stories are fetched ahead, so it usually doesn't.
   const reveal = useRef(new Animated.Value(0)).current;
   const [slowLoad, setSlowLoad] = useState(false);
+  // Video: the lighter 480p copy after 720p failed or took too long to start, and whether
+  // playback is waiting on the network (a spinner instead of what looks like a frozen Story).
+  const [lowQuality, setLowQuality] = useState(false);
+  const [buffering, setBuffering] = useState(false);
   const [paused, setPaused] = useState(false);
   const [heartPulse] = useState(() => new Animated.Value(0));
 
@@ -303,7 +308,13 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
     }
     reveal.setValue(0);
     const t = setTimeout(() => setSlowLoad(true), 350);
-    return () => clearTimeout(t);
+    // A video that hasn't started after a few seconds is on a slow connection: the 480p copy is
+    // about a third of the size.
+    const slow = setTimeout(() => setLowQuality(true), SLOW_VIDEO_MS);
+    return () => {
+      clearTimeout(t);
+      clearTimeout(slow);
+    };
   }, [mediaReady, reveal]);
 
   // Fetch ahead: the next Stories' photos, and the next person's Stories and first photo, so
@@ -337,6 +348,8 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
     setMediaKind(null);
     setVideoDurationMs(null);
     setMediaReady(false);
+    setLowQuality(false);
+    setBuffering(false);
     setViewCount(null);
     if (!focused || !foreground || !currentStory || !accessToken) return;
     setLoadError(null);
@@ -668,9 +681,12 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   // Processed variants only: signed CDN URLs when present (no token sent), otherwise this API with the token.
   const authHeaders = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
   const delivery = currentStory.media ?? null;
-  const apiSource = (variant: "display" | "poster" | "video_720") => ({ uri: mediaFileUrl(currentStory.mediaId, variant), headers: authHeaders });
+  const apiSource = (variant: "display" | "poster" | "video_720" | "video_480") => ({ uri: mediaFileUrl(currentStory.mediaId, variant), headers: authHeaders });
   const imageSource = delivery?.imageUrl ? mediaSource(delivery.imageUrl, accessToken) : apiSource(mediaKind === "video" ? "poster" : "display");
-  const videoSource = delivery?.videos[0] ? mediaSource(delivery.videos[0].url, accessToken) : apiSource("video_720");
+  const videoVariant = lowQuality ? "video_480" : "video_720";
+  const deliveredVideo = delivery?.videos.find((v) => v.variant === videoVariant) ?? delivery?.videos[0];
+  const videoSource = deliveredVideo ? mediaSource(deliveredVideo.url, accessToken) : apiSource(videoVariant);
+  const hasLowQuality = delivery ? delivery.videos.some((v) => v.variant === "video_480") : true;
   const isOwnStory = authUser?.username === currentUsername;
   const highlightAdded = highlightAddedId === currentStory.id;
 
@@ -715,6 +731,15 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
 
   return (
     <Animated.View style={[styles.container, { transform: [{ translateY: dragY }] }]} onLayout={onContainerLayout}>
+      {/* A video's first frame shows at once, instead of black until the video itself has loaded. */}
+      {mediaKind === "video" && !mediaReady ? (
+        <Image
+          source={imageSource}
+          style={[StyleSheet.absoluteFill, mediaTransformStyle(detail?.crop ?? currentStory.crop, containerSize.width, containerSize.height)]}
+          resizeMode="cover"
+          accessibilityIgnoresInvertColors
+        />
+      ) : null}
       <Animated.View style={[StyleSheet.absoluteFill, { opacity: reveal }]} pointerEvents="none">
       {mediaKind === "video" ? (
         <Video
@@ -727,7 +752,12 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           paused={!playbackActive}
           onLoad={(meta) => { setVideoDurationMs(Math.max(meta.duration * 1000, 1000)); if(videoResume.current?.id===currentStory.id&&videoResume.current.seconds>0)videoRef.current?.seek(Math.min(videoResume.current.seconds,Math.max(0,meta.duration-0.1))); setMediaReady(true); }}
           onProgress={({ currentTime }) => { videoResume.current={id:currentStory.id,seconds:currentTime}; if (videoDurationMs) { progressValue.current = Math.min(1, currentTime * 1000 / videoDurationMs); progress.setValue(progressValue.current); } }}
-          onError={() => mediaFailed("Couldn't play this Story.")}
+          onBuffer={({ isBuffering }) => setBuffering(isBuffering)}
+          onError={() => {
+            // 720p first falls back to the smaller copy, from where it had got to.
+            if (!lowQuality && hasLowQuality) setLowQuality(true);
+            else mediaFailed("Couldn't play this Story.");
+          }}
           onEnd={() => {
             if (!playbackActive) return;
             videoResume.current=null;
@@ -812,7 +842,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           />
         </Animated.View>
       ) : null}
-      {slowLoad && !mediaReady && !loadError ? (
+      {((slowLoad && !mediaReady) || (buffering && mediaReady && playbackActive)) && !loadError ? (
         <View style={styles.loadingSpinner} pointerEvents="none">
           <ActivityIndicator color="#FFFFFF" size="large" />
         </View>

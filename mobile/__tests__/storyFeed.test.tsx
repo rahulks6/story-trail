@@ -1,6 +1,6 @@
 import React from "react";
 import { act, create, type ReactTestInstance, type ReactTestRenderer } from "react-test-renderer";
-import { AppState, Dimensions, Image, StyleSheet, Text } from "react-native";
+import { ActivityIndicator, AppState, Dimensions, Image, StyleSheet, Text } from "react-native";
 import * as usersApi from "../src/api/users";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StoryFeed } from "../src/screens/story/StoryFeed";
@@ -344,4 +344,52 @@ test("your own Story that's no longer active opens from your Archive", async () 
   });
   await settle();
   expect(onOpenArchived).toHaveBeenCalledWith("a-expired");
+});
+
+test("a video Story shows its first frame at once, spins while buffering, and drops to 480p when 720p fails or is slow", async () => {
+  const list = storiesApi.getUserActiveStories as jest.Mock;
+  const original = list.getMockImplementation()!;
+  const prefetch = jest.spyOn(Image, "prefetch").mockResolvedValue(true);
+  const video = (id: string) => ({
+    status: "ready", kind: "video", width: 1080, height: 1920, durationMs: 8000, thumbnailUrl: null, imageUrl: `https://cdn.test/${id}/poster`,
+    videos: [{ variant: "video_720", url: `https://cdn.test/${id}/720`, width: 720, height: 1280, bitrate: null }, { variant: "video_480", url: `https://cdn.test/${id}/480`, width: 480, height: 854, bitrate: null }],
+    urlsExpireAt: new Date(Date.now() + 3_600_000).toISOString(),
+  });
+  list.mockImplementation(async (username: string) => {
+    const result = await original(username);
+    return { stories: result.stories.map((st: { id: string }) => ({ ...st, media: video(st.id) })) };
+  });
+  try {
+    mockSession.user.username = "viewer";
+    await act(async () => {
+      tree = create(<SafeAreaProvider initialMetrics={metrics}><StoryFeed creators={["alice"]} startIndex={0} onOpenDM={jest.fn()} onOpenProfile={jest.fn()} /></SafeAreaProvider>);
+    });
+    await settle();
+    const player = () => tree.root.find((n) => (n.type as unknown) === "Video" && typeof n.props.onBuffer === "function");
+    const spinner = () => tree.root.findAll((n) => n.type === ActivityIndicator).length > 0;
+    // Before the video has loaded: its poster frame, not a black screen.
+    expect(tree.root.findAll((n) => n.type === Image && n.props.source?.uri === "https://cdn.test/a1/poster").length).toBeGreaterThan(0);
+    expect(player().props.source.uri).toBe("https://cdn.test/a1/720");
+    // 720p can't be played: the smaller copy instead of an error.
+    await act(async () => player().props.onError({}));
+    expect(player().props.source.uri).toBe("https://cdn.test/a1/480");
+    expect(texts()).not.toContain("Couldn't play this Story.");
+    await act(async () => player().props.onLoad({ duration: 8 }));
+    await settle();
+    expect(spinner()).toBe(false);
+    await act(async () => player().props.onBuffer({ isBuffering: true }));
+    expect(spinner()).toBe(true);
+    await act(async () => player().props.onBuffer({ isBuffering: false }));
+    expect(spinner()).toBe(false);
+
+    // The next Story starts on 720p again, and switches by itself when it doesn't start in time.
+    await act(async () => player().props.onEnd());
+    await settle();
+    expect(player().props.source.uri).toBe("https://cdn.test/a2/720");
+    await act(async () => { jest.advanceTimersByTime(3100); });
+    expect(player().props.source.uri).toBe("https://cdn.test/a2/480");
+  } finally {
+    list.mockImplementation(original);
+    prefetch.mockRestore();
+  }
 });

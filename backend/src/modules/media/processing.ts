@@ -295,15 +295,16 @@ export async function processVideo(
   if (transform && lutFile) await writeCubeFile(lutFile, transform);
 
   const variants: ProducedVariant[] = [];
-  // ffmpeg applies the rotation itself (autorotate), so filters work in oriented dimensions.
-  const encode = async (args: (filter: string) => string[], size: { width: number; height: number }) => {
+  // ffmpeg applies the rotation itself (autorotate), so filters work in oriented dimensions. An
+  // HDR source whose tone mapping fails is tried again as SDR before the video is refused.
+  const encode = async (args: (transfer: string | null) => string[]) => {
     try {
-      await run(tools.ffmpeg, args(videoFilter(size, hdrTransfer, lutFile)), tools.deadline);
+      await run(tools.ffmpeg, args(hdrTransfer), tools.deadline);
     } catch (error) {
       if (!(error instanceof ProcessFailure) || error.killed) throw error;
       if (hdrTransfer) {
         try {
-          await run(tools.ffmpeg, args(videoFilter(size, null, lutFile)), tools.deadline);
+          await run(tools.ffmpeg, args(null), tools.deadline);
           return;
         } catch (fallback) {
           if (!(fallback instanceof ProcessFailure) || fallback.killed) throw fallback;
@@ -315,32 +316,41 @@ export async function processVideo(
 
   const posterSize = fitInside(width, height, DISPLAY_BOX.width, DISPLAY_BOX.height);
   const posterFile = path.join(workDir, "poster.jpg");
-  await encode((filter) => ["-hide_banner", "-nostdin", "-y", ...SAFE_INPUT, "-i", input, "-map", "0:v:0", "-frames:v", "1",
-    "-vf", filter, "-map_metadata", "-1", "-q:v", "3", posterFile], posterSize);
+  await encode((transfer) => ["-hide_banner", "-nostdin", "-y", ...SAFE_INPUT, "-i", input, "-map", "0:v:0", "-frames:v", "1",
+    "-vf", videoFilter(posterSize, transfer, lutFile), "-map_metadata", "-1", "-q:v", "3", posterFile]);
   const posterStat = await fsp.stat(posterFile);
   variants.push({ name: "poster", file: posterFile, fileName: "poster.jpg", mimeType: "image/jpeg", ...posterSize, byteSize: posterStat.size });
   variants.push(await jpegVariant(sharp(posterFile, SHARP_INPUT), THUMB_BOX, 72, path.join(workDir, "thumb.jpg"), "thumbnail"));
 
-  for (const target of RENDITIONS) {
-    // Sources that are already small get one rendition at (at most) their own size.
-    if (target.name === "video_480" && Math.min(width, height) <= 540) continue;
-    const size = fitInside(width, height, target.shortMax, target.longMax);
-    const file = path.join(workDir, `${target.name}.mp4`);
-    await encode((filter) => [
-      "-hide_banner", "-nostdin", "-y", ...SAFE_INPUT, "-i", input,
-      "-map", "0:v:0", "-map", "0:a:0?", "-map_metadata", "-1", "-map_chapters", "-1", "-sn", "-dn",
-      "-vf", filter, "-fpsmax", "30",
-      "-c:v", "libx264", "-preset", "veryfast", "-profile:v", "high", "-crf", String(target.crf),
-      "-maxrate", `${target.maxrateK}k`, "-bufsize", `${target.maxrateK * 2}k`, "-g", "60",
-      ...(hasAudio ? ["-c:a", "aac", "-b:a", `${target.audioK}k`, "-ac", "2"] : []),
-      "-movflags", "+faststart", "-t", String(tools.maxSeconds + 0.5), "-f", "mp4", file,
-    ], size);
-    const out = await probe(file, tools);
-    const stat = await fsp.stat(file);
+  // Sources that are already small get one rendition at (at most) their own size.
+  const targets = RENDITIONS
+    .filter((target) => !(target.name === "video_480" && Math.min(width, height) <= 540))
+    .map((target) => ({ ...target, size: fitInside(width, height, target.shortMax, target.longMax), file: path.join(workDir, `${target.name}.mp4`) }));
+  // Every rendition comes from one decode of the source (split), not one decode each: decoding a
+  // phone's 1080p or 4K HEVC is most of the work, and the worker has one CPU.
+  await encode((transfer) => {
+    const branches = targets.map((t, i) => `[s${i}]${videoFilter(t.size, transfer, lutFile)}[o${i}]`);
+    const graph = targets.length > 1
+      ? `[0:v:0]split=${targets.length}${targets.map((_, i) => `[s${i}]`).join("")};${branches.join(";")}`
+      : `[0:v:0]${videoFilter(targets[0]!.size, transfer, lutFile)}[o0]`;
+    return [
+      "-hide_banner", "-nostdin", "-y", ...SAFE_INPUT, "-i", input, "-filter_complex", graph,
+      ...targets.flatMap((t, i) => [
+        "-map", `[o${i}]`, "-map", "0:a:0?", "-map_metadata", "-1", "-map_chapters", "-1", "-sn", "-dn", "-fpsmax", "30",
+        "-c:v", "libx264", "-preset", "veryfast", "-profile:v", "high", "-crf", String(t.crf),
+        "-maxrate", `${t.maxrateK}k`, "-bufsize", `${t.maxrateK * 2}k`, "-g", "60",
+        ...(hasAudio ? ["-c:a", "aac", "-b:a", `${t.audioK}k`, "-ac", "2"] : []),
+        "-movflags", "+faststart", "-t", String(tools.maxSeconds + 0.5), "-f", "mp4", t.file,
+      ]),
+    ];
+  });
+  for (const t of targets) {
+    const out = await probe(t.file, tools);
+    const stat = await fsp.stat(t.file);
     const stream = out.streams?.find((s) => s.codec_type === "video");
     variants.push({
-      name: target.name, file, fileName: `${target.name}.mp4`, mimeType: "video/mp4",
-      width: stream?.width ?? size.width, height: stream?.height ?? size.height, byteSize: stat.size,
+      name: t.name, file: t.file, fileName: `${t.name}.mp4`, mimeType: "video/mp4",
+      width: stream?.width ?? t.size.width, height: stream?.height ?? t.size.height, byteSize: stat.size,
       bitrate: Number(out.format?.bit_rate) || undefined,
     });
   }

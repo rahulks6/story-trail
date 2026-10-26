@@ -76,6 +76,8 @@ function clamp(n: number, min: number, max: number): number {
  * backend accepts JPEG/PNG only; videos are MP4. Device behavior still
  * needs physical-device acceptance (see docs/MANUAL_TEST_PLAN_CAMERA.md).
  */
+const VIDEO_BIT_RATE = 6_000_000;
+
 export function CameraScreen({ navigation }: Props): React.JSX.Element {
   useMediaStatusBar();
   const insets = useScreenInsets();
@@ -107,7 +109,9 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   // mid-session when the microphone answer arrives (a likely cause of "Camera unavailable").
   const [permissionsSettled, setPermissionsSettled] = useState(hasCameraPermission && hasMicPermission);
   const [audioEnabled, setAudioEnabled] = useState(hasMicPermission);
-  const videoOutput = useVideoOutput({ enableAudio: audioEnabled, fileType: "mp4" });
+  // 1080p at 6 Mbit/s: Stories are shown at 720p, and the phone's own default (often 15–20
+  // Mbit/s) makes a minute of video a 120 MB upload on mobile data.
+  const videoOutput = useVideoOutput({ enableAudio: audioEnabled, fileType: "mp4", targetBitRate: VIDEO_BIT_RATE });
   // A camera error first restarts the camera quietly; only repeated errors are shown.
   const outputs = useMemo(() => [photoOutput, videoOutput], [photoOutput, videoOutput]);
   const [cameraKey, setCameraKey] = useState(0);
