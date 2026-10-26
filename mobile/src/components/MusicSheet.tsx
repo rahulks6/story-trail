@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, FlatList, Modal, PanResponder, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, FlatList, Modal, PanResponder, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable } from "./Pressable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing, typography, ICONS } from "../theme";
 import { useAuth } from "../state/AuthContext";
@@ -79,7 +80,7 @@ export function MusicSheet({ visible, current, onClose, onChoose }: Props): Reac
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={() => (choosing && !current ? setChoosing(null) : onClose())}>
-      <Pressable style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
+      <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
       <KeyboardAvoider style={[styles.sheet, { paddingBottom: insets.bottom + spacing.md }]}>
         <View style={styles.handle} />
         {choosing ? (

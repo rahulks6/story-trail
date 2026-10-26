@@ -1,6 +1,7 @@
 import { Icon } from "../components/Icon";
 import React from "react";
-import { Pressable, Text } from "react-native";
+import { Text } from "react-native";
+import { Pressable } from "../components/Pressable";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { DMStackParamList } from "./types";
 import { colors, spacing, ICONS } from "../theme";

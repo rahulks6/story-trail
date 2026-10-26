@@ -1,5 +1,6 @@
 import React, { useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Image, Modal, PanResponder, Pressable, StyleSheet, Text, View, useWindowDimensions, type GestureResponderEvent } from "react-native";
+import { ActivityIndicator, Alert, Image, Modal, PanResponder, StyleSheet, Text, View, useWindowDimensions, type GestureResponderEvent } from "react-native";
+import { Pressable } from "./Pressable";
 import Svg, { Path } from "react-native-svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "./Icon";

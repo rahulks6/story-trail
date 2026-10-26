@@ -2,27 +2,8 @@ import { Icon } from "../../components/Icon";
 import { ThreadSkeleton } from "../../components/Skeleton";
 import { storyReplyLabel } from "../../models/storyReplies";
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Animated,
-  AppState,
-  FlatList,
-  Image,
-  Keyboard,
-  Linking,
-  Modal,
-  PanResponder,
-  PermissionsAndroid,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  useWindowDimensions,
-  View,
-  type ListRenderItem,
-} from "react-native";
+import { ActivityIndicator, Alert, Animated, AppState, FlatList, Image, Keyboard, Linking, Modal, PanResponder, PermissionsAndroid, Platform, StyleSheet, Text, TextInput, useWindowDimensions, View, type ListRenderItem } from "react-native";
+import { Pressable } from "../../components/Pressable";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -1488,7 +1469,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           next?.();
         }}
       >
-        <Pressable style={styles.reactBackdrop} onPress={() => setReactingTo(null)} accessibilityRole="button" accessibilityLabel="Close">
+        <Pressable pressEffect="none" style={styles.reactBackdrop} onPress={() => setReactingTo(null)} accessibilityRole="button" accessibilityLabel="Close">
           <View style={styles.reactCard}>
             <View style={styles.reactBar} accessibilityRole="menu">
               {MESSAGE_REACTIONS.map((emoji) => {
@@ -1605,7 +1586,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       />
       <Modal visible={pinsOpen && pins.length > 0} transparent animationType="slide" statusBarTranslucent onRequestClose={() => setPinsOpen(false)}>
         <View style={styles.sheetFill}>
-          <Pressable style={styles.sheetBackdrop} onPress={() => setPinsOpen(false)} accessibilityRole="button" accessibilityLabel="Close" />
+          <Pressable pressEffect="none" style={styles.sheetBackdrop} onPress={() => setPinsOpen(false)} accessibilityRole="button" accessibilityLabel="Close" />
           <View style={[styles.sheet, { paddingBottom: spacing.lg + insetsBottom }]} accessibilityViewIsModal>
             <Text style={styles.sheetTitle} accessibilityRole="header">Pinned messages</Text>
             {pins.map((pin) => {

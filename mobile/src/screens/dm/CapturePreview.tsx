@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Image, Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Image, Modal, StyleSheet, Text, View } from "react-native";
+import { Pressable } from "../../components/Pressable";
 import Video from "react-native-video";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing, ICONS } from "../../theme";

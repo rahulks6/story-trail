@@ -1,6 +1,7 @@
 import { Icon } from "./Icon";
 import React, { useMemo, useRef, useState } from "react";
-import { PanResponder, Pressable, StyleSheet, Text, View, type GestureResponderEvent } from "react-native";
+import { PanResponder, StyleSheet, Text, View, type GestureResponderEvent } from "react-native";
+import { Pressable } from "./Pressable";
 import { mediaColors as colors, radii, spacing, ICONS } from "../theme";
 import type { DrawStroke, DrawTool } from "../models/storyDraft";
 import { DrawingStrokes } from "./DrawingStrokes";

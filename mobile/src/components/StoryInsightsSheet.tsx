@@ -1,6 +1,7 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, FlatList, Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, Modal, StyleSheet, Text, View } from "react-native";
+import { Pressable } from "./Pressable";
 import { colors, radii, spacing, typography } from "../theme";
 import { timeAgo } from "../utils/serverTime";
 import { useAuth } from "../state/AuthContext";
@@ -86,7 +87,7 @@ export function StoryInsightsSheet({ visible, storyId, onClose }: Props): React.
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-      <Pressable style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
+      <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
       <View style={[styles.sheet, { paddingBottom: spacing.lg + bottomInset }]}>
         <View style={styles.handle} />
         <Text style={[typography.bodyStrong, styles.title]}>Insights</Text>

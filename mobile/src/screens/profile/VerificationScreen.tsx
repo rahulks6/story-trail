@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Image, Linking, PermissionsAndroid, Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Image, Linking, PermissionsAndroid, Platform, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable } from "../../components/Pressable";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { launchCamera, launchImageLibrary, type ImagePickerResponse } from "react-native-image-picker";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";

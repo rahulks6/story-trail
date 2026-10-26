@@ -1,18 +1,7 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  Keyboard,
-  Modal,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, FlatList, Keyboard, Modal, Platform, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable } from "./Pressable";
 import { colors, radii, spacing, typography, ICONS } from "../theme";
 import { useAuth } from "../state/AuthContext";
 import { deleteComment, listComments, postComment, type Comment } from "../api/engagement";
@@ -302,7 +291,7 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
   return (
     <>
       <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-        <Pressable style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
+        <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
         {/* The keyboard's room comes out of the sheet: it grows while the keyboard is up, so the list keeps space. */}
         <KeyboardAvoider style={[styles.sheet, keyboardShown && styles.sheetKeyboard, { paddingBottom: spacing.md + bottomInset }]}>
           <View style={styles.handle} />

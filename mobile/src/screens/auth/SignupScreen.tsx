@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, type TextInput } from "react-native";
+import { ScrollView, StyleSheet, Text, type TextInput } from "react-native";
+import { Pressable } from "../../components/Pressable";
 import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import { Banner, Button, TextField } from "../../components/Form";
 import { newPasswordProblem } from "../../utils/passwordRules";

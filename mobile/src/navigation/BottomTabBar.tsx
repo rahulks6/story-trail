@@ -1,11 +1,13 @@
 import { Icon } from "../components/Icon";
 import React, { useContext, useEffect } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import { Pressable } from "../components/Pressable";
 import { BottomTabBarHeightCallbackContext, type BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing, typography, ICONS } from "../theme";
 import { useDM } from "../state/DMContext";
+import { tapFeedback } from "../utils/haptics";
 
 const TAB_LABELS: Record<string, string> = {
   Home: "Home",
@@ -62,6 +64,7 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
         const onPress = () => {
           const event = navigation.emit({ type: "tabPress", target: route.key, canPreventDefault: true });
           if (event.defaultPrevented) return;
+          if (!isFocused) tapFeedback("select");
           // Messages always opens on the list of conversations; pick one to open the chat.
           if (route.name === "DM") navigation.navigate("DM", { screen: "DMInbox" });
           // Search always gets back to searching, even after a profile opened from elsewhere.

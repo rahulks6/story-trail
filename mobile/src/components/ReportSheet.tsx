@@ -1,6 +1,7 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useState } from "react";
-import { ActivityIndicator, Alert, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, Modal, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable } from "./Pressable";
 import { colors, radii, spacing, typography } from "../theme";
 import { useAuth } from "../state/AuthContext";
 import { createReport, reportDirectMessage, REPORT_REASONS, type ReportReason, type ReportTargetType } from "../api/moderation";
@@ -68,6 +69,7 @@ export function ReportSheet({ visible, targetType, targetId, conversationId, onC
     >
       <KeyboardAvoider style={styles.fill}>
         <Pressable
+          pressEffect="none"
           style={styles.backdrop}
           onPress={() => {
             reset();

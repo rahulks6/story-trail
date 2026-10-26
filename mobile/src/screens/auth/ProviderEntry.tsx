@@ -1,6 +1,7 @@
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 ﻿import React,{useEffect,useState} from 'react';
-import {ActivityIndicator,Alert,Modal,Platform,Pressable,ScrollView,StyleSheet,Text,TextInput,View} from 'react-native';
+import { ActivityIndicator, Alert, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable } from "../../components/Pressable";
 import {GoogleSignin,GoogleSigninButton,isSuccessResponse,isErrorWithCode,statusCodes} from '@react-native-google-signin/google-signin';
 import * as Keychain from 'react-native-keychain';
 import * as api from '../../api/providers';

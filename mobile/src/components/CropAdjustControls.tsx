@@ -1,6 +1,7 @@
 import {Icon} from "./Icon";
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import { Pressable } from "./Pressable";
 import { mediaColors as colors, radii, spacing } from "../theme";
 import { clampCrop, type StoryCrop } from "../models/storyDraft";
 

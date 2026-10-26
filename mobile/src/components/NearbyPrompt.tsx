@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, AppState, Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, AppState, Modal, StyleSheet, Text, View } from "react-native";
+import { Pressable } from "./Pressable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing, typography } from "../theme";
 import { useAuth } from "../state/AuthContext";
@@ -65,7 +66,7 @@ export function NearbyPrompt({ delayMs = 6000 }: { delayMs?: number }): React.JS
     <Modal visible transparent animationType="slide" onRequestClose={notNow}>
       <View style={styles.fill}>
         {/* Tapping outside means "Not now", like the other sheets' backdrops. */}
-        <Pressable style={styles.backdrop} onPress={notNow} accessibilityRole="button" accessibilityLabel="Close" />
+        <Pressable pressEffect="none" style={styles.backdrop} onPress={notNow} accessibilityRole="button" accessibilityLabel="Close" />
         <View style={[styles.sheet, { paddingBottom: spacing.lg + insets.bottom }]} accessibilityViewIsModal>
           <View style={styles.handle} />
           <View style={styles.rings} accessible={false}>

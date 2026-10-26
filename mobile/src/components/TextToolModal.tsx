@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Keyboard, Modal, PanResponder, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Keyboard, Modal, PanResponder, Platform, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable } from "./Pressable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { mediaColors as colors, radii, spacing, ICONS } from "../theme";
 import { Icon } from "./Icon";
@@ -115,7 +116,7 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
 
         <View style={styles.middle}>
           {/* Tapping the dimmed photo around the text places it, like Instagram. */}
-          <Pressable style={StyleSheet.absoluteFill} onPress={done} accessible={false} accessibilityRole="button" accessibilityLabel="Place the text" />
+          <Pressable pressEffect="none" style={StyleSheet.absoluteFill} onPress={done} accessible={false} accessibilityRole="button" accessibilityLabel="Place the text" />
           <View style={styles.slider} {...slider.panHandlers} accessible accessibilityRole="adjustable" accessibilityLabel="Text size"
             accessibilityValue={{ min: 0, max: 100, now: Math.round(sliderFraction * 100) }}
             accessibilityActions={[{ name: "increment" }, { name: "decrement" }]}

@@ -1,6 +1,7 @@
 import {Icon} from "../../components/Icon";
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, Image, Linking, Modal, ScrollView, PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, Linking, Modal, ScrollView, PanResponder, StyleSheet, Text, View } from "react-native";
+import { Pressable } from "../../components/Pressable";
 import Video from 'react-native-video';
 import { API_BASE_URL } from '../../api/client';
 import { adCtaAction, recordAd, reportAd, validateAd, type SponsoredPlacement } from '../../api/ads';

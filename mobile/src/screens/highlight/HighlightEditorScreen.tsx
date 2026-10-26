@@ -1,6 +1,7 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Alert, FlatList, Image, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from "react-native";
+import { ActivityIndicator, Alert, FlatList, Image, Modal, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from "react-native";
+import { Pressable } from "../../components/Pressable";
 import { usePreventRemove } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../navigation/types";
@@ -328,7 +329,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
       />
 
       <Modal visible={coverPickerOpen} transparent animationType="slide" onRequestClose={() => setCoverPickerOpen(false)}>
-        <Pressable style={styles.pickerBackdrop} onPress={() => setCoverPickerOpen(false)} accessibilityRole="button" accessibilityLabel="Close" />
+        <Pressable pressEffect="none" style={styles.pickerBackdrop} onPress={() => setCoverPickerOpen(false)} accessibilityRole="button" accessibilityLabel="Close" />
         <View style={[styles.picker, { paddingBottom: spacing.lg + bottomInset }]}>
           <Text style={styles.pickerTitle} accessibilityRole="header">Choose a cover</Text>
           <Text style={styles.sectionHint}>Any Story in this Highlight can be its cover.</Text>

@@ -1,6 +1,7 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useState } from "react";
-import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Modal, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable } from "./Pressable";
 import { colors, radii, spacing, typography } from "../theme";
 import { useAuth } from "../state/AuthContext";
 import { ApiError } from "../api/client";
@@ -60,6 +61,7 @@ export function DeleteAccountSheet({ visible, onClose }: Props): React.JSX.Eleme
     >
       <KeyboardAvoider style={styles.fill}>
         <Pressable
+          pressEffect="none"
           style={styles.backdrop}
           onPress={() => {
             if (!busy) {

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Pressable, ScrollView, Share, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, ScrollView, Share, StyleSheet, Text, View } from "react-native";
+import { Pressable } from "../../components/Pressable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing, typography, FORM_MAX_WIDTH } from "../../theme";
 import { useAuth } from "../../state/AuthContext";

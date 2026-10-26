@@ -3,7 +3,8 @@ import Svg, { Circle } from "react-native-svg";
 import { Icon } from "../../components/Icon";
 import { tapFeedback } from '../../utils/haptics';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {ActivityIndicator,Alert,AppState,Linking, PanResponder, Pressable, ScrollView, StyleSheet, Text, View, type GestureResponderEvent } from "react-native";
+import { ActivityIndicator, Alert, AppState, Linking, PanResponder, ScrollView, StyleSheet, Text, View, type GestureResponderEvent } from "react-native";
+import { Pressable } from "../../components/Pressable";
 import {useIsFocused} from '@react-navigation/native';
 import {
   Camera,

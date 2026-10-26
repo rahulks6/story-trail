@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ListSkeleton } from "../../components/Skeleton";
-import { ActivityIndicator, Image, Pressable, RefreshControl, ScrollView, SectionList, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Image, RefreshControl, ScrollView, SectionList, StyleSheet, Text, View } from "react-native";
+import { Pressable } from "../../components/Pressable";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../navigation/types";

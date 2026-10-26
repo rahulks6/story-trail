@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Animated, PanResponder, Pressable, StyleSheet, View } from "react-native";
+import { Animated, PanResponder, StyleSheet, View } from "react-native";
+import { Pressable } from "./Pressable";
 
 const LONG_PRESS_MS = 300;
 const MOVE_CANCEL_THRESHOLD = 8; // a touch that moves this far before the long-press timer fires is a scroll/tap, not a drag

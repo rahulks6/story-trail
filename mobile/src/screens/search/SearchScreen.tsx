@@ -1,7 +1,8 @@
 import { Icon } from "../../components/Icon";
 import { ListSkeleton } from "../../components/Skeleton";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable } from "../../components/Pressable";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import type { MainTabParamList, SearchStackParamList } from "../../navigation/types";

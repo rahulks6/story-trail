@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Modal, StyleSheet, Text, View } from "react-native";
+import { Pressable } from "./Pressable";
 import { colors, radii, spacing } from "../theme";
 import { ShareCancelled, ShareFailed, sharePhotoStory, shareVideoStory } from "../utils/shareStoryExternally";
 import { StoryShareCard, type ShareCardHandle, type ShareCardStory } from "./StoryShareCard";

@@ -1,7 +1,8 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {Icon} from "./Icon";
 import React from "react";
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { Modal, StyleSheet, Text, View } from "react-native";
+import { Pressable } from "./Pressable";
 import { colors, radii, spacing, typography } from "../theme";
 import { clampOverlayPosition, type Overlay } from "../models/storyDraft";
 
@@ -57,7 +58,7 @@ export function OverlayAdjustSheet({ overlay, onChange, onEditText, onEditLocati
 
   return (
     <Modal visible={overlay !== null} animationType="slide" transparent onRequestClose={onClose}>
-      <Pressable style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
+      <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
       <View style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]}>
         <View style={styles.handle} />
         <Text style={typography.caption}>Adjust</Text>

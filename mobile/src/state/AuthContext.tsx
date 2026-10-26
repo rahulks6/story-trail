@@ -1,5 +1,6 @@
 ﻿import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { AppState, Pressable, StyleSheet, Text, View } from "react-native";
+import { AppState, StyleSheet, Text, View } from "react-native";
+import { Pressable } from "../components/Pressable";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as authApi from "../api/auth";
 import { ApiError, setSessionHandler, type PublicUser } from "../api/client";

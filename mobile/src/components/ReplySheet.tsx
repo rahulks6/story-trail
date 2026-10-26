@@ -1,6 +1,7 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Modal, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable } from "./Pressable";
 import { colors, radii, spacing, typography, ICONS } from "../theme";
 import { Icon } from "./Icon";
 import { KeyboardAvoider } from "./KeyboardAvoider";
@@ -65,7 +66,7 @@ export function ReplySheet({ visible, storyId, ownerUsername, onClose, onSent }:
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-      <Pressable style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
+      <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
       <KeyboardAvoider style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]}>
         <View style={styles.handle} />
         <Text style={[typography.body, styles.title]}>Reply to @{ownerUsername}</Text>

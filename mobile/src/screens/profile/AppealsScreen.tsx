@@ -1,5 +1,6 @@
 import React,{useCallback,useState} from 'react';
-import {ActivityIndicator,Alert,Pressable,ScrollView,StyleSheet,Text,TextInput} from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput } from "react-native";
+import { Pressable } from "../../components/Pressable";
 import {apiPost} from '../../api/client';
 import {ProviderEntry} from '../auth/ProviderEntry';
 import {useHeaderHeight} from '@react-navigation/elements';

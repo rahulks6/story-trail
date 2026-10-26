@@ -1,5 +1,6 @@
 import React, { memo, useEffect, useState } from "react";
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable } from "./Pressable";
 import { colors, radii, spacing } from "../theme";
 import { FILTER_PREVIEWS, type FilterKey, type FilterPreview } from "../models/filterPreviews";
 import { filterKey, type FilterName } from "../models/storyDraft";

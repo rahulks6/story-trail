@@ -1,7 +1,8 @@
 import { useMediaStatusBar } from "../../hooks/useMediaStatusBar";
 import React,{useCallback,useEffect,useMemo,useRef,useState} from 'react';
 import {StorySkeleton} from '../../components/Skeleton';
-import {AppState,Pressable,RefreshControl,ScrollView,StyleSheet,Text,View} from 'react-native';
+import { AppState, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable } from "../../components/Pressable";
 import {useIsFocused,useNavigation,type CompositeNavigationProp} from '@react-navigation/native';
 import type {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';

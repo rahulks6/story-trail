@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import { Pressable } from "../Pressable";
 import { Avatar } from "../Avatar";
 import { Icon } from "../Icon";
 import { VerifiedBadgeSheet, VerifiedName } from "../VerifiedBadge";

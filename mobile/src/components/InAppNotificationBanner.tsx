@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { AccessibilityInfo, Animated, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
+import { AccessibilityInfo, Animated, PanResponder, StyleSheet, Text, View } from "react-native";
+import { Pressable } from "./Pressable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { onForegroundPush, type ForegroundNotice } from "../push/pushNotifications";
 import { deepLinkTarget, linkPath } from "../navigation/profileLinks";

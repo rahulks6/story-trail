@@ -1,7 +1,8 @@
 import { Icon } from "../../components/Icon";
 import { StorySkeleton } from "../../components/Skeleton";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Animated, AppState, Dimensions, Image, PanResponder, Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { ActivityIndicator, Alert, Animated, AppState, Dimensions, Image, PanResponder, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { Pressable } from "../../components/Pressable";
 import { useIsFocused } from "@react-navigation/native";
 import Video, {type VideoRef} from "react-native-video";
 import { mediaColors as colors, radii, spacing, mediaTypography as typography, ICONS } from "../../theme";

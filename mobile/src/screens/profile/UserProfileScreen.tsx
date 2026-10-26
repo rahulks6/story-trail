@@ -1,6 +1,7 @@
 import { showToast } from "../../components/Toast";
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Alert, Pressable, RefreshControl, ScrollView, Share, StyleSheet, Text, View } from "react-native";
+import { Alert, RefreshControl, ScrollView, Share, StyleSheet, Text, View } from "react-native";
+import { Pressable } from "../../components/Pressable";
 import Clipboard from "@react-native-clipboard/clipboard";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";

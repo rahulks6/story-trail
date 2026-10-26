@@ -1,8 +1,10 @@
 import React, { useRef } from "react";
-import { Modal, Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import { Modal, Platform, StyleSheet, Text, View } from "react-native";
+import { Pressable } from "./Pressable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing, ICONS } from "../theme";
 import { Icon } from "./Icon";
+import { tapFeedback } from "../utils/haptics";
 
 export interface SheetAction {
   label: string;
@@ -42,7 +44,7 @@ export function ActionSheet({ visible, title, groups, onClose }: Props): React.J
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose} onDismiss={runPending}>
       <View style={styles.fill}>
-        <Pressable style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
+        <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
         <View style={[styles.sheet, { paddingBottom: spacing.md + insets.bottom }]} accessibilityViewIsModal>
           <View style={styles.handle} />
           {title ? <Text style={styles.title} numberOfLines={1}>{title}</Text> : null}
@@ -52,7 +54,10 @@ export function ActionSheet({ visible, title, groups, onClose }: Props): React.J
                 <Pressable
                   key={action.label}
                   style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
-                  onPress={() => choose(action.onPress)}
+                  onPress={() => {
+                    tapFeedback("select");
+                    choose(action.onPress);
+                  }}
                   accessibilityRole="button"
                   accessibilityLabel={action.label}
                   accessibilityState={action.selected !== undefined ? { selected: action.selected } : undefined}

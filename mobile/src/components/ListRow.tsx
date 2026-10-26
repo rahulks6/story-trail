@@ -1,7 +1,8 @@
 import { Icon } from "./Icon";
 import type { IconName } from "../theme/icons";
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import { Pressable } from "./Pressable";
 import { colors, spacing, typography } from "../theme";
 
 interface Props {

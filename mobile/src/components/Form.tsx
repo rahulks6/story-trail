@@ -1,6 +1,8 @@
 import React, { forwardRef, useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View, type TextInputProps } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, TextInput, View, type TextInputProps } from "react-native";
+import { Pressable } from "./Pressable";
 import { colors, radii, spacing, typography } from "../theme";
+import { tapFeedback } from "../utils/haptics";
 
 interface TextFieldProps extends Omit<TextInputProps, "style"> {
   label: string;
@@ -72,16 +74,19 @@ export function Button({ label, onPress, disabled, busy, variant = "primary", ac
   const inactive = disabled || busy;
   return (
     <Pressable
-      onPress={onPress}
+      onPress={() => {
+        // A light tap under the finger for the screen's main action.
+        if (variant === "primary") tapFeedback("tap");
+        onPress();
+      }}
       disabled={inactive}
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityHint={accessibilityHint}
       accessibilityState={{ disabled: !!inactive, busy: !!busy }}
-      style={({ pressed }) => [
+      style={[
         styles.button,
         variant === "primary" ? styles.primary : variant === "text" ? styles.text : styles.secondary,
-        pressed && !inactive && styles.pressed,
         inactive && styles.disabled,
       ]}
     >
@@ -130,7 +135,6 @@ const styles = StyleSheet.create({
   secondary: { backgroundColor: colors.surfaceElevated, borderWidth: 1, borderColor: colors.border },
   text: { minHeight: 44, backgroundColor: "transparent" },
   // A slight press-in, so taps feel physical.
-  pressed: { opacity: 0.85, transform: [{ scale: 0.98 }] },
   disabled: { opacity: 0.5 },
   buttonLabel: { fontSize: 16, fontWeight: "700" },
   primaryLabel: { color: colors.onAccent },

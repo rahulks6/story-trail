@@ -13,6 +13,10 @@ jest.mock("@react-native-async-storage/async-storage", () => ({
 }));
 global.__mockStorage = mockStorage;
 
+// Screens' tests find buttons by their props; the app's Pressable adds an animated layer (its own
+// press feedback, tested in pressFeedback.test.tsx), so here it is React Native's own.
+jest.mock("../src/components/Pressable", () => ({ Pressable: require("react-native").Pressable }));
+
 jest.mock("react-native-safe-area-context", () => require("react-native-safe-area-context/jest/mock").default);
 
 // SVG primitives render as plain host elements (no native drawing in tests).

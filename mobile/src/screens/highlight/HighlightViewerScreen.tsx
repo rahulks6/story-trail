@@ -1,7 +1,8 @@
 import { useMediaStatusBar } from "../../hooks/useMediaStatusBar";
 import { Icon } from "../../components/Icon";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Animated, Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Animated, Image, StyleSheet, Text, View } from "react-native";
+import { Pressable } from "../../components/Pressable";
 import Video from "react-native-video";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
@@ -320,8 +321,8 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
       {close}
 
       <View style={styles.tapZones}>
-        <Pressable style={styles.tapZone} onPress={goPrevious} onLongPress={() => setHeld(true)} onPressOut={() => setHeld(false)} delayLongPress={200} accessibilityRole="button" accessibilityLabel="Previous item" />
-        <Pressable style={styles.tapZone} onPress={goNext} onLongPress={() => setHeld(true)} onPressOut={() => setHeld(false)} delayLongPress={200} accessibilityRole="button" accessibilityLabel="Next item" />
+        <Pressable pressEffect="none" style={styles.tapZone} onPress={goPrevious} onLongPress={() => setHeld(true)} onPressOut={() => setHeld(false)} delayLongPress={200} accessibilityRole="button" accessibilityLabel="Previous item" />
+        <Pressable pressEffect="none" style={styles.tapZone} onPress={goNext} onLongPress={() => setHeld(true)} onPressOut={() => setHeld(false)} delayLongPress={200} accessibilityRole="button" accessibilityLabel="Next item" />
       </View>
 
       {detail && containerSize.width > 0 ? (

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { Pressable } from "./Pressable";
 import Video, { type VideoRef } from "react-native-video";
 import { colors, radii, spacing, ICONS } from "../theme";
 import { Icon } from "./Icon";

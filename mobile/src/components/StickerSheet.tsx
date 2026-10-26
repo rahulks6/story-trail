@@ -1,7 +1,8 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {Icon} from "./Icon";
 import React, { useState } from "react";
-import { ActivityIndicator, Alert, FlatList, Linking, Modal, PermissionsAndroid, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, FlatList, Linking, Modal, PermissionsAndroid, Platform, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable } from "./Pressable";
 import Geolocation from "@react-native-community/geolocation";
 import { colors, radii, spacing, typography } from "../theme";
 import { useAuth } from "../state/AuthContext";
@@ -251,7 +252,7 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={close}>
-      <Pressable style={styles.backdrop} onPress={close} accessibilityRole="button" accessibilityLabel="Close" />
+      <Pressable pressEffect="none" style={styles.backdrop} onPress={close} accessibilityRole="button" accessibilityLabel="Close" />
       {/* Mention search's TextInput/FlatList sit inside this sheet — without
           keyboard avoidance, an opening keyboard would cover the results
           list the same way it used to cover TextToolModal's controls. */}

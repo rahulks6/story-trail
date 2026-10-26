@@ -1,6 +1,7 @@
 import { Icon } from "../../components/Icon";
 import React, { useCallback, useState } from "react";
-import { Pressable, RefreshControl, ScrollView, Share, StyleSheet, Text, View } from "react-native";
+import { RefreshControl, ScrollView, Share, StyleSheet, Text, View } from "react-native";
+import { Pressable } from "../../components/Pressable";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";

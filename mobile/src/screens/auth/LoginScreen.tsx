@@ -1,6 +1,7 @@
 import {ProviderEntry} from "./ProviderEntry";
 import React, { useRef, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View, type TextInput } from "react-native";
+import { ScrollView, StyleSheet, Text, View, type TextInput } from "react-native";
+import { Pressable } from "../../components/Pressable";
 import { BrandMark } from "../../components/BrandMark";
 import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import { Banner, Button, TextField } from "../../components/Form";
