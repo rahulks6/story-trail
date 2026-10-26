@@ -9,6 +9,7 @@ import { ConversationScreen } from "../screens/dm/ConversationScreen";
 import { NewGroupScreen } from "../screens/dm/NewGroupScreen";
 import { GroupInfoScreen } from "../screens/dm/GroupInfoScreen";
 import { NewChatScreen } from "../screens/dm/NewChatScreen";
+import { PUSH_TRANSITION } from "./transitions";
 
 const Stack = createNativeStackNavigator<DMStackParamList>();
 
@@ -16,6 +17,7 @@ export function DMStack(): React.JSX.Element {
   return (
     <Stack.Navigator
       screenOptions={{
+        ...PUSH_TRANSITION,
         headerStyle: { backgroundColor: colors.background },
         headerTintColor: colors.textPrimary,
         headerShadowVisible: false,

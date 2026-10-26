@@ -4,6 +4,7 @@ import type { SearchStackParamList } from "./types";
 import { colors } from "../theme";
 import { SearchScreen } from "../screens/search/SearchScreen";
 import { UserProfileScreen } from "../screens/profile/UserProfileScreen";
+import { PUSH_TRANSITION } from "./transitions";
 
 const Stack = createNativeStackNavigator<SearchStackParamList>();
 
@@ -11,6 +12,7 @@ export function SearchStack(): React.JSX.Element {
   return (
     <Stack.Navigator
       screenOptions={{
+        ...PUSH_TRANSITION,
         headerStyle: { backgroundColor: colors.background },
         headerTintColor: colors.textPrimary,
         headerShadowVisible: false,

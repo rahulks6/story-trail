@@ -44,6 +44,7 @@ import { UploadRunner } from "../state/UploadRunner";
 import { FeedbackScreen } from "../screens/profile/FeedbackScreen";
 import { SendStoryScreen } from "../screens/dm/SendStoryScreen";
 import { setCurrentScreen } from "../crashReporting";
+import { MEDIA_TRANSITION, PUSH_TRANSITION } from "./transitions";
 
 /** The screen on view, deepest navigator first (crash reports say where they happened). */
 export function focusedRouteName(state: { index?: number; routes: Array<{ name: string; state?: unknown }> } | undefined): string | undefined {
@@ -86,17 +87,17 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
   }
   const verifyFirst = justSignedUp && !!user?.email && user.emailVerified === false;
   return (
-    <Stack.Navigator initialRouteName={verifyFirst ? "VerifyEmail" : "Main"} screenOptions={{ headerShown: false, freezeOnBlur: true, headerBackButtonDisplayMode: "minimal" }}>
+    <Stack.Navigator initialRouteName={verifyFirst ? "VerifyEmail" : "Main"} screenOptions={{ ...PUSH_TRANSITION, headerShown: false, freezeOnBlur: true, headerBackButtonDisplayMode: "minimal" }}>
       <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
       <Stack.Screen name="AccountSecurity" component={AccountSecurityScreen} options={{headerShown:true,title:"Account security",headerStyle:{backgroundColor:colors.background},headerTintColor:colors.textPrimary}}/>
       <Stack.Screen name="Main" component={MainTabs} />
       <Stack.Screen name="Activity" component={ActivityScreen} />
       <Stack.Screen name="UploadQueue" component={UploadQueueScreen} options={{headerShown:true,title:'Story uploads',headerStyle:{backgroundColor:colors.background},headerTintColor:colors.textPrimary}}/>
       <Stack.Screen name="Appeals" component={AppealsScreen} options={{headerShown:true,title:'Account review',headerStyle:{backgroundColor:colors.background},headerTintColor:colors.textPrimary}}/>
-      <Stack.Screen name="StoryViewer" component={StoryViewerScreen} options={{ presentation: "fullScreenModal" }} />
+      <Stack.Screen name="StoryViewer" component={StoryViewerScreen} options={MEDIA_TRANSITION} />
       <Stack.Screen name="SendStory" component={SendStoryScreen} options={{ presentation: "modal", headerShown: true, title: "Send to", headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary, headerShadowVisible: false }} />
-      <Stack.Screen name="StoryLink" component={StoryLinkScreen} options={{ presentation: "fullScreenModal" }} />
-      <Stack.Screen name="HighlightViewer" component={HighlightViewerScreen} options={{ presentation: "fullScreenModal" }} />
+      <Stack.Screen name="StoryLink" component={StoryLinkScreen} options={MEDIA_TRANSITION} />
+      <Stack.Screen name="HighlightViewer" component={HighlightViewerScreen} options={MEDIA_TRANSITION} />
       <Stack.Screen
         name="HighlightEditor"
         component={HighlightEditorScreen}
@@ -133,7 +134,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
       <Stack.Screen
         name="ArchivedStoryViewer"
         component={ArchivedStoryViewerScreen}
-        options={{ presentation: "fullScreenModal" }}
+        options={MEDIA_TRANSITION}
       />
       <Stack.Screen
         name="EditProfile"
