@@ -26,3 +26,11 @@ export function topicsOf(interests: readonly string[]): Topic[] {
 
 /** The list as a JSON parameter for SQL that maps free-text interests onto topics. */
 export const TOPICS_JSON = JSON.stringify(TOPICS);
+
+/**
+ * Topics Katkee never learns from what someone watches: inferring them could reveal a special
+ * category of personal data (religion, under GDPR and India's DPDP Act). They still count when
+ * a person picks them as an interest, and creators can still tag a Story with them.
+ */
+export const NEVER_LEARNED: readonly Topic[] = ["Devotional"];
+export const NEVER_LEARNED_JSON = JSON.stringify(NEVER_LEARNED);

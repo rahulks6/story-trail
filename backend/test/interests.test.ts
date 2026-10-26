@@ -124,6 +124,17 @@ describe("learned interests", () => {
     assert.deepEqual(await scores(owner), {});
   });
 
+  it("never learn Devotional (it could reveal religion); picking it yourself still counts", async () => {
+    const owner = await person(["Devotional", "Music"]);
+    const viewer = await person();
+    const prayer = await story(owner, "Devotional");
+    await event(viewer, { eventType: "story_complete", storyId: prayer, creatorId: owner.id });
+    await client.post(`/api/v1/stories/${prayer}/like`, undefined, viewer.auth);
+    const untagged = await story(owner);
+    await event(viewer, { eventType: "story_complete", storyId: untagged, creatorId: owner.id });
+    assert.deepEqual(await scores(viewer), { Music: 1 }, "the owner's Music is learned from the untagged Story; Devotional never is");
+  });
+
   it("can move a topic only so far in a day", async () => {
     const owner = await person();
     const viewer = await person();

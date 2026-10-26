@@ -1,5 +1,5 @@
 import { query } from "../../db/psql";
-import { TOPICS_JSON, topicsOf, type Topic } from "../../shared/topics";
+import { NEVER_LEARNED_JSON, TOPICS_JSON, topicsOf, type Topic } from "../../shared/topics";
 import * as usersRepo from "../users/users.repository";
 import {
   TOPIC_DAILY_CAP,
@@ -50,6 +50,7 @@ export async function learnFromSignal(viewerId: string, signal: TopicSignal, tar
      INSERT INTO viewer_topic_affinity AS a (viewer_id, topic, score, updated_at, day, day_change)
      SELECT :'viewer', t.topic, sign(:'delta'::float8) * LEAST(abs(:'delta'::float8), :'cap'::float8), now(), current_date, LEAST(abs(:'delta'::float8), :'cap'::float8)
      FROM topics t
+     WHERE t.topic NOT IN (SELECT value FROM jsonb_array_elements_text(:'never'::jsonb))
      ON CONFLICT (viewer_id, topic) DO UPDATE SET
        score = CASE WHEN a.pinned_out_until > now() THEN 0
                     ELSE LEAST(GREATEST(${DECAYED("a")} + sign(:'delta'::float8) * LEAST(abs(:'delta'::float8), ${LEFT_TODAY}), :'min'::float8), :'max'::float8) END,
@@ -59,6 +60,7 @@ export async function learnFromSignal(viewerId: string, signal: TopicSignal, tar
        updated_at = now()`,
     {
       canon: TOPICS_JSON,
+      never: NEVER_LEARNED_JSON,
       story: target.storyId ?? "",
       creator: target.creatorId ?? "",
       viewer: viewerId,

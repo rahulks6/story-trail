@@ -96,7 +96,9 @@ more. It fades over time (it halves every 14 days), and how much one topic
 can change in a day is limited. The interests you chose count too, but we
 don't change them. We use what we learn only to order your Home: never to
 infer anything about you beyond what topics of Stories you enjoy, and never
-for Sponsored Stories, which use only the interests you chose.
+for Sponsored Stories, which use only the interests you chose. We never
+learn Devotional from your activity, because it could reveal your religion;
+it counts only if you choose it yourself.
 
 You can see the topics Katkee thinks you like, and remove any of them, in
 Settings, then Your interests. Removing a topic resets it and keeps it out
