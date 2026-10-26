@@ -12,6 +12,7 @@ import { findMediaById } from "./media.repository";
 import { MAX_AUDIO_BYTES, MAX_PHOTO_BYTES, MAX_VIDEO_BYTES } from "./validation";
 import { MediaRejectedError, processAudio, processPhoto, processVideo } from "./processing";
 import { claimMediaJob, closeMediaJob, extendLease, failMediaJob, finishMediaJob, SqsJobSignal, jobSignal, type MediaJob } from "./jobs";
+import { claimExportJob, processExportJob } from "./exports";
 
 /** Variants never change once written under a key, so caches may keep them. */
 export const VARIANT_CACHE_CONTROL = "public, max-age=31536000, immutable";
@@ -130,10 +131,18 @@ export class MediaWorker {
     return true;
   }
 
-  /** Processes due jobs until none are left (tests, one-off backfills). */
+  /** Prepares one due Story export for sharing (exports.ts). False when nothing was due. */
+  async runExportOnce(): Promise<boolean> {
+    const job = await claimExportJob(this.options.workerId, this.options.leaseSeconds);
+    if (!job) return false;
+    await processExportJob(job, this.options.store, this.options);
+    return true;
+  }
+
+  /** Processes due jobs, then due exports, until none are left (tests, one-off backfills). */
   async drain(): Promise<number> {
     let count = 0;
-    while (await this.runOnce()) count++;
+    while ((await this.runOnce()) || (await this.runExportOnce())) count++;
     return count;
   }
 
@@ -157,7 +166,8 @@ export class MediaWorker {
     while (this.running) {
       let worked = false;
       try {
-        worked = await this.runOnce();
+        // Uploads first: someone is waiting to post. Exports share the same NOTIFY wake-up.
+        worked = (await this.runOnce()) || (await this.runExportOnce());
       } catch (error) {
         (this.options.log ?? defaultLog)({ event: "media_worker_error", error: (error as Error).message });
         await this.idle(2000);

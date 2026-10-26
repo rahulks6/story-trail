@@ -40,13 +40,15 @@ export interface MediaRecord {
   effect: MediaEffect;
   /** A government ID attached to a verification request: admins only, never the media routes. */
   verificationDocument: boolean;
+  /** The drawn layer of a Story being shared to other apps (exports.ts): its owner's export only, never served. */
+  exportOverlay: boolean;
 }
 
 export type MediaEffect = "none" | "boomerang";
 
 export const MEDIA_COLUMNS =
   "id, owner_id, kind, mime_type, byte_size, width, height, duration_ms, checksum_sha256, storage_key, status, created_at, " +
-  "variants, processing_error, processing_error_retryable, processed_at, original_purged_at, purged_at, filter, effect, verification_document";
+  "variants, processing_error, processing_error_retryable, processed_at, original_purged_at, purged_at, filter, effect, verification_document, export_overlay";
 
 export function mapMediaRow(row: Record<string, string | null>): MediaRecord {
   let variants: MediaRecord["variants"] = {};
@@ -77,6 +79,7 @@ export function mapMediaRow(row: Record<string, string | null>): MediaRecord {
     filter: isFilterKey(row.filter) ? row.filter : "original",
     effect: row.effect === "boomerang" ? "boomerang" : "none",
     verificationDocument: row.verification_document === "t" || row.verification_document === "true",
+    exportOverlay: row.export_overlay === "t" || row.export_overlay === "true",
   };
 }
 
@@ -126,11 +129,15 @@ export async function findMediaByIds(ids: string[]): Promise<Map<string, MediaRe
   }));
 }
 
+/**
+ * `excludeModerated`: what a person may show or send (avatars, messages, feedback, the media
+ * routes). It also leaves out a share overlay (exports.ts), which is for its export only.
+ */
 export async function findMediaById(id: string, excludeModerated = false): Promise<MediaRecord | null> {
   if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
   const row = await queryOne(
     `SELECT ${MEDIA_COLUMNS}
-     FROM media WHERE id = :'id' ${excludeModerated ? `AND NOT EXISTS (SELECT 1 FROM stories WHERE media_id=media.id AND moderation_removed_at IS NOT NULL) AND NOT EXISTS (SELECT 1 FROM ad_creatives WHERE media_id=media.id AND review_status='REMOVED')` : ''}`,
+     FROM media WHERE id = :'id' ${excludeModerated ? `AND NOT export_overlay AND NOT EXISTS (SELECT 1 FROM stories WHERE media_id=media.id AND moderation_removed_at IS NOT NULL) AND NOT EXISTS (SELECT 1 FROM ad_creatives WHERE media_id=media.id AND review_status='REMOVED')` : ''}`,
     { id },
   );
   return row ? mapMediaRow(row) : null;

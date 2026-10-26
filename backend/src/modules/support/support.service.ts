@@ -142,7 +142,7 @@ export async function submitFeedback(userId: string, device: DeviceInfo, input: 
   if (input.screenshotMediaId) {
     // Only a photo you uploaded yourself.
     const media = await mediaRepo.findMediaById(input.screenshotMediaId, true);
-    if (!media || media.ownerId !== userId || media.kind !== "photo" || media.purgedAt || media.verificationDocument || (media.status !== "ready" && media.status !== "processing")) {
+    if (!media || media.ownerId !== userId || media.kind !== "photo" || media.purgedAt || media.verificationDocument || media.exportOverlay || (media.status !== "ready" && media.status !== "processing")) {
       throw new HttpError(422, "That screenshot can't be attached.", { screenshotMediaId: "Upload the screenshot first." });
     }
   }

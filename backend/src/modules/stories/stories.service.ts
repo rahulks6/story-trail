@@ -164,7 +164,7 @@ export async function publishStory(
     throw new HttpError(409,"This media is still processing. It will be published when it's ready.");
   }
   const media = await mediaRepo.findMediaById(input.mediaId);
-  if (!media || media.ownerId !== ownerId || media.verificationDocument) {
+  if (!media || media.ownerId !== ownerId || media.verificationDocument || media.exportOverlay) {
     throw new HttpError(404, "Media not found.");
   }
   if (media.kind === "audio") throw new HttpError(422, "A voice note can't be posted as a Story.");
@@ -214,11 +214,11 @@ export async function notifyMentionsQuietly(storyId: string): Promise<void> {
   }
 }
 
-/** Voice notes are for messages only, and a verification ID photo is never posted. */
+/** Voice notes are for messages only, and a verification ID photo or a share overlay is never posted. */
 async function assertNotSound(mediaId: string): Promise<void> {
   const media = await mediaRepo.findMediaById(mediaId);
   if (media?.kind === "audio") throw new HttpError(422, "A voice note can't be posted as a Story.");
-  if (media?.verificationDocument) throw new HttpError(404, "Story or media unavailable.");
+  if (media?.verificationDocument || media?.exportOverlay) throw new HttpError(404, "Story or media unavailable.");
 }
 
 /** Uploaded media that can't be processed; `retryable` says whether "Retry" can help. */

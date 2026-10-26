@@ -13,6 +13,8 @@
  *    the person registered with are kept apart in deleted_account_records until the account has
  *    been deleted for 180 days (India's IT Rules 2021, rule 3(1)(h)), then deleted;
  *  - verification ID photos: deleted 30 days after the request was decided or withdrawn;
+ *  - videos prepared for sharing to other apps: deleted 24 hours after they were asked for
+ *    (the overlay they were drawn with goes as soon as the video is ready);
  *  - originals (which may carry location metadata) deleted 30 days after processing;
  *    the stripped variants remain for Archive and Highlights;
  *  - expired security records (rate-limit windows, reset codes, challenges, tokens,
@@ -29,6 +31,7 @@ import { config } from "../../config/env";
 import { query, queryOne } from "../../db/psql";
 import { LocalObjectStore, type ObjectStore } from "./storage";
 import { MEDIA_COLUMNS, mapMediaRow, type MediaRecord } from "./media.repository";
+import { expiredExports } from "./exports";
 
 export interface RetentionReport {
   task: string;
@@ -348,6 +351,7 @@ export async function runRetention(store: ObjectStore): Promise<RetentionReport[
     await recorded("deleted_accounts", () => deletedAccounts(store, r.batchSize, r.deletedAccountDays, r.moderationEvidenceDays)),
     await recorded("processed_originals", () => processedOriginals(store, r.batchSize, r.originalMediaDays)),
     await recorded("verification_photos", () => verificationPhotos(store, r.batchSize, VERIFICATION_PHOTO_DAYS)),
+    await recorded("story_exports", () => expiredExports(store, r.batchSize)),
     await recorded("report_message_evidence", () => reportMessageEvidence(r.batchSize, r.moderationEvidenceDays)),
     await recorded("ad_campaign_completion", () => completeFinishedCampaigns()),
     await recorded("analytics_rollup", () => rollupAnalytics()),

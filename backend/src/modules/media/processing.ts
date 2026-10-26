@@ -358,6 +358,93 @@ export async function processVideo(
   return { width, height, durationMs: Math.round(seconds * 1000), checksumSha256: await sha256File(input), variants };
 }
 
+/** A shared Story video: 9:16 at 720p, the size the overlay is drawn at. */
+export const EXPORT_SIZE = { width: 720, height: 1280 };
+
+export interface ExportInput {
+  /** The Story's processed video (its filter is already in the pixels). */
+  video: string;
+  /** The app's drawing of the text, stickers, drawing and Katkee mark: a transparent PNG. */
+  overlay: string | null;
+  /** The Story's song (our own MP3s) and the part of it that plays. */
+  music: { file: string; startMs: number; durationMs: number } | null;
+  /** The creator turned the video's own sound off. */
+  audioMuted: boolean;
+  crop: { zoom: number; offsetX: number; offsetY: number };
+}
+
+/**
+ * The picture region a crop shows, in the 9:16 frame: the app scales the video to cover the screen
+ * and then zooms by `zoom` about the centre, panned by offset × the room the zoom made (see
+ * mobile/src/models/storyDraft.ts mediaTransformStyle), so offset 1 shows the left/top edge.
+ */
+export function cropRegion(crop: ExportInput["crop"], frame = EXPORT_SIZE): { width: number; height: number; x: number; y: number } {
+  const zoom = Math.min(Math.max(Number.isFinite(crop.zoom) ? crop.zoom : 1, 1), 4);
+  const clamp = (n: number) => Math.min(Math.max(Number.isFinite(n) ? n : 0, -1), 1);
+  const width = even(frame.width / zoom), height = even(frame.height / zoom);
+  return {
+    width, height,
+    x: Math.round(((frame.width - width) * (1 - clamp(crop.offsetX))) / 2),
+    y: Math.round(((frame.height - height) * (1 - clamp(crop.offsetY))) / 2),
+  };
+}
+
+/**
+ * Puts a Story video together for sharing outside Katkee: the video framed as the Story shows it,
+ * the overlay on top, the creator's sound (unless muted) mixed with the song, H.264/AAC MP4 with
+ * the index at the front so it plays while it downloads. Every input is ours (processed variants,
+ * our own PNG re-encode and catalogue MP3s), and each is still opened with its demuxer named.
+ */
+export async function composeStoryExport(input: ExportInput, output: string, tools: VideoTools): Promise<{ durationMs: number; byteSize: number }> {
+  const info = await probe(input.video, tools);
+  const seconds = Math.min(Number(info.format?.duration ?? 0), tools.maxSeconds + 0.5);
+  if (!Number.isFinite(seconds) || seconds <= 0) throw new MediaRejectedError("This Story's video couldn't be read.");
+  const hasSound = !input.audioMuted && (info.streams ?? []).some((s) => s.codec_type === "audio");
+  const { width: W, height: H } = EXPORT_SIZE;
+  const region = cropRegion(input.crop);
+
+  const args = ["-hide_banner", "-nostdin", "-y", ...SAFE_INPUT, "-i", input.video];
+  let next = 1;
+  const overlayIndex = input.overlay ? next++ : -1;
+  if (input.overlay) args.push("-protocol_whitelist", "file", "-f", "png_pipe", "-i", input.overlay);
+  const musicIndex = input.music ? next++ : -1;
+  if (input.music) {
+    args.push("-protocol_whitelist", "file", "-f", "mp3", "-ss", (input.music.startMs / 1000).toFixed(3), "-t", (input.music.durationMs / 1000).toFixed(3), "-i", input.music.file);
+  }
+
+  const graph = [
+    `[0:v:0]scale=${W}:${H}:force_original_aspect_ratio=increase:flags=lanczos,crop=${W}:${H},` +
+      `crop=${region.width}:${region.height}:${region.x}:${region.y},scale=${W}:${H}:flags=lanczos,setsar=1${input.overlay ? "[base]" : ",format=yuv420p[v]"}`,
+  ];
+  // A single picture: overlay keeps showing its last (only) frame for the whole video.
+  if (input.overlay) graph.push(`[${overlayIndex}:v]scale=${W}:${H},format=rgba[ov]`, "[base][ov]overlay=0:0:format=auto,format=yuv420p[v]");
+  let audioMap: string | null = null;
+  if (hasSound && input.music) {
+    graph.push(`[0:a:0]aresample=48000[a0]`, `[${musicIndex}:a:0]aresample=48000,apad[a1]`, "[a0][a1]amix=inputs=2:duration=first:normalize=0[a]");
+    audioMap = "[a]";
+  } else if (input.music) {
+    graph.push(`[${musicIndex}:a:0]aresample=48000,apad[a]`);
+    audioMap = "[a]";
+  } else if (hasSound) {
+    audioMap = "0:a:0";
+  }
+  args.push(
+    "-filter_complex", graph.join(";"), "-map", "[v]", ...(audioMap ? ["-map", audioMap] : []),
+    "-map_metadata", "-1", "-map_chapters", "-1", "-sn", "-dn", "-fpsmax", "30",
+    "-c:v", "libx264", "-preset", "veryfast", "-profile:v", "high", "-crf", "23", "-maxrate", "3000k", "-bufsize", "6000k", "-g", "60",
+    ...(audioMap ? ["-c:a", "aac", "-b:a", "128k", "-ac", "2"] : ["-an"]),
+    "-t", seconds.toFixed(3), "-movflags", "+faststart", "-f", "mp4", output,
+  );
+  try {
+    await run(tools.ffmpeg, args, tools.deadline);
+  } catch (error) {
+    if (!(error instanceof ProcessFailure) || error.killed) throw error;
+    throw new MediaRejectedError("We couldn't prepare this video.", error.stderr.trim().slice(-300));
+  }
+  const stat = await fsp.stat(output);
+  return { durationMs: Math.round(seconds * 1000), byteSize: stat.size };
+}
+
 /** Longest voice note. */
 export const MAX_AUDIO_SECONDS = 300;
 

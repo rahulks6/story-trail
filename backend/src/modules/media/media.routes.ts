@@ -8,6 +8,7 @@ import { mediaStorage } from "./instance";
 import type { MediaRecord } from "./media.repository";
 import { deliveryFor, parseVariant, sendMediaFile } from "./delivery";
 import * as uploads from "./uploads";
+import * as storyExports from "./exports";
 import * as storiesService from "../stories/stories.service";
 import { canAccessMediaViaMessage } from "../conversations/conversations.repository";
 
@@ -37,7 +38,7 @@ export function toPublicMedia(media: MediaRecord, isOwner = true) {
 async function requireAccessibleMedia(id: string, viewerId: string): Promise<MediaRecord> {
   const media = await mediaRepo.findMediaById(id, true);
   // An ID photo sent for verification is for admins only, from the moment it's attached.
-  if (!media || media.purgedAt || media.verificationDocument) throw new HttpError(404, "Media not found.");
+  if (!media || media.purgedAt || media.verificationDocument || media.exportOverlay) throw new HttpError(404, "Media not found.");
   if (media.ownerId === viewerId) return media;
   if (media.status === "ready" && (await storiesService.canAccessMediaViaStory(id, viewerId))) return media;
   // Sent to the viewer (or by them) in a direct message.
@@ -82,6 +83,34 @@ export function registerMediaRoutes(router: Router): void {
     },
     { rawBody: true },
   );
+
+  // Sharing your own Story to other apps (exports.ts): the transparent layer the app drew.
+  router.post(
+    "/api/v1/media/overlays",
+    async (req, res) => {
+      requireAuth(req);
+      const overlay = await storyExports.receiveOverlay(req, req.userId as string, mediaStorage);
+      sendJson(res, 201, { overlay });
+    },
+    { rawBody: true },
+  );
+
+  // Owner only, video Stories only (a photo Story is drawn on the phone).
+  router.post("/api/v1/stories/:id/export", async (req, res) => {
+    requireAuth(req);
+    const job = await storyExports.requestExport(req.userId as string, req.params.id as string, storyExports.parseExportInput(req.body));
+    sendJson(res, 202, { export: job });
+  });
+
+  router.get("/api/v1/stories/:id/export/:exportId", async (req, res) => {
+    requireAuth(req);
+    sendJson(res, 200, { export: await storyExports.getExport(req.userId as string, req.params.id as string, req.params.exportId as string) });
+  });
+
+  router.get("/api/v1/stories/:id/export/:exportId/file", async (req, res) => {
+    requireAuth(req);
+    await storyExports.sendExportFile(req, res, req.userId as string, req.params.id as string, req.params.exportId as string, mediaStorage);
+  });
 
   // Resumable direct-to-storage uploads (see uploads.ts).
   router.post("/api/v1/media/uploads", async (req, res) => {

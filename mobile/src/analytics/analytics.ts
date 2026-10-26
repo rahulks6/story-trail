@@ -5,10 +5,10 @@ import { appEnv } from "../config/env";
 
 /**
  * Product analytics (spec section 15): the few things only the app can see. These are
- * app sessions, JavaScript crashes, upload outcomes, Highlight and profile views, searches
- * and Stories started in the editor. Everything else (Stories, views, likes, comments,
- * follows, DMs, reports, ads) is counted on the server from what those features already
- * store, and daily active users come from the server too.
+ * app sessions, JavaScript crashes, upload outcomes, Highlight and profile views, searches,
+ * Stories started in the editor and your own Stories shared to other apps. Everything else
+ * (Stories, views, likes, comments, follows, DMs, reports, ads) is counted on the server from
+ * what those features already store, and daily active users come from the server too.
  *
  * Never on the critical path: track() only appends to a small queue saved on the phone.
  * Batches go out in the background, and a failed batch is retried later or dropped.
@@ -18,7 +18,7 @@ import { appEnv } from "../config/env";
  */
 export type AnalyticsEventName =
   | "app_session_started" | "app_crash" | "story_created" | "highlight_viewed"
-  | "profile_viewed" | "search_performed" | "upload_succeeded" | "upload_failed";
+  | "profile_viewed" | "search_performed" | "upload_succeeded" | "upload_failed" | "story_shared_external";
 export type AnalyticsProperties = Record<string, string | number | boolean>;
 
 interface QueuedEvent {

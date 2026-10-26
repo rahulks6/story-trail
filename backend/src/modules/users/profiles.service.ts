@@ -146,7 +146,7 @@ export async function updateMyProfile(userId: string, input: UpdateProfileInput)
   if (input.avatarMediaId !== undefined) {
     if (input.avatarMediaId !== null) {
       const media = await import("../media/media.repository").then((repo) => repo.findMediaById(input.avatarMediaId!, true));
-      if (!media || media.ownerId !== userId || media.kind !== "photo" || media.status !== "ready" || media.verificationDocument) {
+      if (!media || media.ownerId !== userId || media.kind !== "photo" || media.status !== "ready" || media.verificationDocument || media.exportOverlay) {
         throw new HttpError(400, "Choose a valid uploaded photo for your avatar.");
       }
     }

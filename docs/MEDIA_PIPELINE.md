@@ -59,6 +59,9 @@ for a file that can't be used, a prompt to choose another).
 | GET | `/api/v1/media/:id/file?variant=` | `display`, `thumbnail`, `poster`, `video_720`, `video_480`, `original` (owner only). CDN: 302 to a signed URL. |
 | POST | `/api/v1/stories` | 201 `{story}` or 202 `{publish: {state: "processing"}}`; 422 `media_failed` with `retryable`. |
 | GET | `/api/v1/stories/publish-requests/:requestId` | `processing` / `published` (+`storyId`) / `failed` (+`error`, `retryable`). |
+| POST | `/api/v1/media/overlays` | Raw 9:16 PNG (360-1080 wide) the app drew for a video shared to other apps: re-encoded with its transparency, never served, usable only by one export. 40 a day. |
+| POST | `/api/v1/stories/:id/export` | `{overlayMediaId \| null}`, owner only, video Stories only (photos are drawn on the phone), not deleted (expired is fine). 202 `{export: {id, status: "processing"}}`; 20 a day. The worker composites the 720×1280 H.264/AAC MP4 (crop, overlay, sound unless muted, song). |
+| GET | `/api/v1/stories/:id/export/:exportId` | `processing` / `ready` (+`url`: signed CDN URL, or `.../file` here without a CDN) / `failed` (+`error`). 404 once expired (24 h). |
 
 The original single-request endpoints (`POST /media/photos|videos`) remain for
 the Admin console and older builds: photos are processed before the response
@@ -115,6 +118,7 @@ and `CLOUDFRONT_PRIVATE_KEY` (see `backend/.env.prod.example`).
 | Accounts deleted | 30 days | media purged; username/email/name/bio/date of birth/password/sign-in links scrubbed; evidence held |
 | Registration details of deleted accounts (`deleted_account_records`) | 180 days after deletion | copied aside by the scrub, then deleted; India's IT Rules 2021, rule 3(1)(h) (`RETENTION_DELETED_ACCOUNT_RECORD_DAYS`) |
 | Originals (may carry location metadata) | 30 days after processing | variants remain for Archive/Highlights |
+| Videos prepared for sharing to other apps (`story_exports`) | 24 h | the overlay goes as soon as the video is ready (unused-media is the backstop) |
 | Expired security records, finished jobs, old security events (400 days), scratch files | continuous | |
 
 Every run is recorded in `retention_runs` (task, start, finish, items, error).

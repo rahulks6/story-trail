@@ -303,11 +303,11 @@ describe("retention", () => {
       await query(`DELETE FROM retention_runs`);
       const reports = await runRetentionIfDue(a, mediaStorage, 60);
       assert.ok(reports);
-      assert.deepEqual(reports!.map((r) => r.task), ["abandoned_uploads", "unused_media", "deleted_story_media", "removed_content_media", "deleted_accounts", "processed_originals", "verification_photos", "report_message_evidence", "ad_campaign_completion", "analytics_rollup", "analytics_raw_retention", "expired_records", "scratch_files"]);
+      assert.deepEqual(reports!.map((r) => r.task), ["abandoned_uploads", "unused_media", "deleted_story_media", "removed_content_media", "deleted_accounts", "processed_originals", "verification_photos", "story_exports", "report_message_evidence", "ad_campaign_completion", "analytics_rollup", "analytics_raw_retention", "expired_records", "scratch_files"]);
       assert.ok(reports!.every((r) => !r.error), JSON.stringify(reports));
       assert.equal(await runRetentionIfDue(a, mediaStorage, 60), null, "not again within the interval");
       const runs = await query(`SELECT task, finished_at FROM retention_runs`);
-      assert.equal(runs.length, 13);
+      assert.equal(runs.length, 14);
       assert.ok(runs.every((r) => r.finished_at !== null));
     } finally {
       await a.end();

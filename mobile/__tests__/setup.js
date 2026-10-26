@@ -117,6 +117,10 @@ jest.mock("react-native-image-picker", () => ({
 
 jest.mock("@dr.pogodin/react-native-fs", () => ({
   DocumentDirectoryPath: "/documents",
+  CachesDirectoryPath: "/caches",
+  moveFile: jest.fn(async () => undefined),
+  downloadFile: jest.fn(() => ({ jobId: 1, promise: Promise.resolve({ jobId: 1, statusCode: 200, bytesWritten: 1024 }) })),
+  stopDownload: jest.fn(),
   copyFile: jest.fn(async () => undefined),
   exists: jest.fn(async () => true),
   mkdir: jest.fn(async () => undefined),
@@ -124,6 +128,10 @@ jest.mock("@dr.pogodin/react-native-fs", () => ({
   stat: jest.fn(async () => ({ size: 1024 })),
   unlink: jest.fn(async () => undefined),
 }));
+
+// Sharing a file to other apps: the system share sheet, and the capture of a view to a file.
+jest.mock("react-native-share", () => ({ __esModule: true, default: { open: jest.fn(async () => ({ success: true, message: "" })) } }));
+jest.mock("react-native-view-shot", () => ({ __esModule: true, captureRef: jest.fn(async (_ref, options) => `file:///tmp/capture.${options?.format ?? "png"}`) }));
 
 jest.mock("react-native-keychain", () => {
   const items = new Map();
