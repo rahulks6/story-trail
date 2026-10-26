@@ -73,6 +73,59 @@ export interface Message {
   seenBy?: string[];
   /** A shared Story's card: whose, and whether it's still up (`mediaId` only then). */
   sharedStory?: { ownerUsername: string; ownerAvatarMediaId: string | null; mediaId: string | null; active: boolean } | null;
+  /** Sent on from another chat ("Forwarded"); older servers don't send it. */
+  forwarded?: boolean;
+}
+
+/** How many people and chats one Forward can reach (the server allows ten of each). */
+export const MAX_FORWARD_RECIPIENTS = 10;
+
+export type ForwardStatus = "sent" | "blocked" | "not_allowed";
+/** What happened for each person or chat a message was forwarded to. */
+export type ForwardResult =
+  | { userId: string; conversationId?: string; status: ForwardStatus; messageId?: string }
+  | { userId?: undefined; conversationId: string; status: ForwardStatus; messageId?: string };
+
+/** Sends a message on to people (a 1:1 opens if needed) and to chats you're in. */
+export function forwardMessage(
+  conversationId: string,
+  messageId: string,
+  to: { userIds: string[]; conversationIds: string[] },
+  accessToken: string,
+): Promise<{ results: ForwardResult[] }> {
+  return apiPost(`/api/v1/conversations/${conversationId}/messages/${messageId}/forward`, to, accessToken);
+}
+
+/** Pins per chat; pinning one more is refused with `code: "too_many_pins"`. */
+export const MAX_PINS = 3;
+
+export interface PinnedMessage {
+  messageId: string;
+  pinnedBy: { id: string; username: string };
+  pinnedAt: string;
+  message: Message;
+}
+
+/** The chat's pins you can see, latest first. */
+export function listPins(conversationId: string, accessToken: string): Promise<{ pins: PinnedMessage[] }> {
+  return apiGet(`/api/v1/conversations/${conversationId}/pins`, accessToken);
+}
+
+export function pinMessage(conversationId: string, messageId: string, accessToken: string): Promise<void> {
+  return apiPut(`/api/v1/conversations/${conversationId}/pins/${messageId}`, undefined, accessToken);
+}
+
+export function unpinMessage(conversationId: string, messageId: string, accessToken: string): Promise<void> {
+  return apiDelete(`/api/v1/conversations/${conversationId}/pins/${messageId}`, accessToken);
+}
+
+/** One line about a message for the pinned bar and list: its text, or what kind it is. */
+export function messagePreview(message: Pick<Message, "body" | "media" | "sharedStoryId">): string {
+  if (message.media?.kind === "photo") return "Photo";
+  if (message.media?.kind === "video") return "Video";
+  if (message.media?.kind === "audio") return "Voice message";
+  if (message.sharedStoryId) return "Story";
+  return message.body?.replace(/\s+/g, " ").trim() || "Message";
 }
 
 /** The start of a replied-to message: enough to show it above the reply. */

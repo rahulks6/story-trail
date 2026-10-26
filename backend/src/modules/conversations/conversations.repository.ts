@@ -1,4 +1,4 @@
-import { nullable, query, queryOne, type Row } from "../../db/psql";
+import { DatabaseError, nullable, query, queryOne, type Row } from "../../db/psql";
 import { containsPattern } from "../../shared/validation";
 import { verifiedSql } from "../../shared/verified";
 
@@ -160,6 +160,8 @@ export interface MessageRow {
    * someone allowed to see the Story (the media route checks), so `mediaId` reveals nothing.
    */
   sharedStory: { ownerUsername: string; ownerAvatarMediaId: string | null; mediaId: string | null; active: boolean } | null;
+  /** Sent on from another chat (Forward); who wrote the original isn't said. */
+  forwarded: boolean;
   createdAt: string;
   /** The sender's device id for the message; only ever shown to the sender (see conversations.service.ts). */
   clientMessageId?: string;
@@ -241,13 +243,14 @@ function mapMessageRow(row: Row): MessageRow {
     replyTo: parseQuote(row.reply_to_json),
     event: row.event ? ((typeof row.event === "string" ? JSON.parse(row.event) : row.event) as GroupEvent) : null,
     sharedStory: row.shared_story_json ? ((typeof row.shared_story_json === "string" ? JSON.parse(row.shared_story_json) : row.shared_story_json) as MessageRow["sharedStory"]) : null,
+    forwarded: row.forwarded === "t",
     createdAt: row.created_at as string,
     ...(row.client_message_id ? { clientMessageId: row.client_message_id as string } : {}),
   };
 }
 
 // The attached media's shape travels with the message, so a thread renders without a lookup per photo.
-const MESSAGE_COLUMNS = `id, conversation_id, sender_id, body, shared_story_id, created_at, client_message_id, reply_story_id, reply_kind, media_id, event,
+const MESSAGE_COLUMNS = `id, conversation_id, sender_id, body, shared_story_id, created_at, client_message_id, reply_story_id, reply_kind, media_id, event, forwarded,
   (SELECT json_build_object('id', md.id, 'kind', md.kind, 'width', md.width, 'height', md.height, 'durationMs', md.duration_ms)
      FROM media md WHERE md.id = messages.media_id AND md.purged_at IS NULL) AS media_json,
   (SELECT coalesce(json_agg(json_build_object('userId', r.user_id, 'emoji', r.emoji) ORDER BY r.created_at), '[]')
@@ -277,14 +280,16 @@ export async function createMessage(
   storyReply: { storyId: string; kind: StoryReplyKind } | null = null,
   mediaId: string | null = null,
   replyToMessageId: string | null = null,
+  forwarded = false,
 ): Promise<{ message: MessageRow; created: boolean }> {
   const row = await queryOne(
     `WITH m AS (
-       INSERT INTO messages (conversation_id, sender_id, body, shared_story_id, client_message_id, reply_story_id, reply_kind, media_id, reply_to_message_id)
+       INSERT INTO messages (conversation_id, sender_id, body, shared_story_id, client_message_id, reply_story_id, reply_kind, media_id, reply_to_message_id, forwarded)
        VALUES (:'conversation_id', :'sender_id', ${nullable("body")}, ${nullable("shared_story_id", "uuid")}, ${nullable("client_message_id")},
                ${nullable("reply_story_id", "uuid")}, ${nullable("reply_kind")}, ${nullable("media_id", "uuid")},
                -- Only ever a message in this same conversation.
-               (SELECT id FROM messages WHERE id = ${nullable("reply_to", "uuid")} AND conversation_id = :'conversation_id'))
+               (SELECT id FROM messages WHERE id = ${nullable("reply_to", "uuid")} AND conversation_id = :'conversation_id'),
+               :'forwarded'::boolean)
        ON CONFLICT (conversation_id, sender_id, client_message_id) WHERE client_message_id IS NOT NULL DO NOTHING
        RETURNING ${MESSAGE_COLUMNS}),
      conv AS (SELECT kind, title FROM conversations WHERE id = :'conversation_id'),
@@ -306,7 +311,7 @@ export async function createMessage(
       conversation_id: conversationId, sender_id: senderId, body: body ?? "",
       shared_story_id: sharedStoryId ?? "", client_message_id: clientMessageId ?? "",
       reply_story_id: storyReply?.storyId ?? "", reply_kind: storyReply?.kind ?? "", media_id: mediaId ?? "",
-      reply_to: replyToMessageId ?? "",
+      reply_to: replyToMessageId ?? "", forwarded: forwarded ? "true" : "false",
     },
   );
   if (row) {
@@ -343,14 +348,96 @@ export async function messageInConversation(conversationId: string, messageId: s
   return !!row;
 }
 
-/** Whether `viewerId` is in a conversation where this media was sent: they may see it. */
+/**
+ * Whether `viewerId` can see a message with this media: they're in its conversation now (a 1:1
+ * or a group), and it was sent in what they see of it (requireParticipant's `since`). A photo
+ * forwarded to them is theirs to open this way too, wherever it was first sent.
+ */
 export async function canAccessMediaViaMessage(mediaId: string, viewerId: string): Promise<boolean> {
   const row = await queryOne(
-    `SELECT 1 AS ok FROM messages m JOIN conversations c ON c.id = m.conversation_id
-     WHERE m.media_id = :'media' AND (c.user_a_id = :'viewer' OR c.user_b_id = :'viewer') LIMIT 1`,
+    `SELECT 1 AS ok FROM messages m
+     JOIN conversations c ON c.id = m.conversation_id
+     JOIN conversation_members cm ON cm.conversation_id = m.conversation_id AND cm.user_id = :'viewer' AND cm.left_at IS NULL
+     WHERE m.media_id = :'media'
+       AND m.created_at >= GREATEST(CASE WHEN c.kind = 'group' THEN cm.joined_at ELSE '-infinity' END, coalesce(cm.hidden_before, '-infinity'))
+     LIMIT 1`,
     { media: mediaId, viewer: viewerId },
   );
   return !!row;
+}
+
+/** A message the viewer can see (after `since`), to forward it; never a group's event line. */
+export async function findVisibleMessage(conversationId: string, messageId: string, since: string): Promise<(MessageRow & { mediaId: string | null }) | null> {
+  const row = await queryOne(
+    `SELECT ${MESSAGE_COLUMNS} FROM messages
+     WHERE id = :'m' AND conversation_id = :'c' AND event IS NULL AND created_at >= :'since'::timestamptz`,
+    { m: messageId, c: conversationId, since },
+  );
+  // media_id even once the media is gone (media is null then): a forward must not drop it silently.
+  return row ? { ...mapMessageRow(row), mediaId: (row.media_id as string | null) ?? null } : null;
+}
+
+export const MAX_PINS = 3;
+
+export interface PinRow {
+  messageId: string;
+  pinnedBy: { id: string; username: string };
+  pinnedAt: string;
+  message: MessageRow;
+}
+
+/**
+ * Pins a message the pinner can see, and tells everyone in the conversation. "too_many" when
+ * three are pinned already (migration 0058 enforces it); "not_found" when it isn't a message
+ * they can see. Pinning one that's already pinned changes nothing.
+ */
+export async function pinMessage(conversationId: string, messageId: string, userId: string, since: string): Promise<"pinned" | "not_found" | "too_many"> {
+  try {
+    const row = await queryOne(
+      `WITH m AS (SELECT id FROM messages WHERE id = :'m' AND conversation_id = :'c' AND event IS NULL AND created_at >= :'since'::timestamptz),
+       ins AS (INSERT INTO conversation_pins (conversation_id, message_id, pinned_by)
+               SELECT :'c', m.id, :'u' FROM m ON CONFLICT DO NOTHING RETURNING message_id),
+       n AS (SELECT pg_notify('realtime', json_build_object('u', ${ACTIVE_MEMBERS_JSON(":'c'")},
+               'e', json_build_object('type', 'pins_changed', 'conversationId', :'c'::uuid))::text) FROM ins)
+       SELECT (SELECT count(*) FROM m) AS found, (SELECT count(*) FROM n) AS notified`,
+      { c: conversationId, m: messageId, u: userId, since },
+    );
+    return Number(row?.found ?? 0) > 0 ? "pinned" : "not_found";
+  } catch (error) {
+    if (error instanceof DatabaseError && error.detail.includes("TOO_MANY_PINS")) return "too_many";
+    throw error;
+  }
+}
+
+/** Unpins a message the viewer can see (nothing happens if it wasn't pinned). */
+export async function unpinMessage(conversationId: string, messageId: string, since: string): Promise<void> {
+  await query(
+    `WITH gone AS (DELETE FROM conversation_pins p USING messages m
+                   WHERE p.conversation_id = :'c' AND p.message_id = :'m' AND m.id = p.message_id AND m.created_at >= :'since'::timestamptz
+                   RETURNING p.message_id)
+     SELECT pg_notify('realtime', json_build_object('u', ${ACTIVE_MEMBERS_JSON(":'c'")},
+              'e', json_build_object('type', 'pins_changed', 'conversationId', :'c'::uuid))::text) FROM gone`,
+    { c: conversationId, m: messageId, since },
+  );
+}
+
+/** A conversation's pins the viewer can see (messages after their `since`), latest pin first. */
+export async function listPins(conversationId: string, since: string): Promise<PinRow[]> {
+  const rows = await query(
+    `SELECT pm.*, p.pinned_at, pu.id AS pinned_by_id, pu.username AS pinned_by_username
+     FROM conversation_pins p
+     JOIN users pu ON pu.id = p.pinned_by
+     JOIN LATERAL (SELECT ${MESSAGE_COLUMNS} FROM messages WHERE messages.id = p.message_id AND messages.created_at >= :'since'::timestamptz) pm ON true
+     WHERE p.conversation_id = :'c'
+     ORDER BY p.pinned_at DESC, p.message_id`,
+    { c: conversationId, since },
+  );
+  return rows.map((r) => ({
+    messageId: r.id as string,
+    pinnedBy: { id: r.pinned_by_id as string, username: r.pinned_by_username as string },
+    pinnedAt: r.pinned_at as string,
+    message: mapMessageRow(r),
+  }));
 }
 
 export async function findMessageByClientId(conversationId: string, senderId: string, clientMessageId: string): Promise<MessageRow | null> {

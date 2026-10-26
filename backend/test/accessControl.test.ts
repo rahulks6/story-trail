@@ -272,6 +272,13 @@ describe("a conversation between two other people", () => {
     const r = `${c}/messages/${ids.message}/reaction`;
     refused(await attempt("PUT /api/v1/conversations/:id/messages/:messageId/reaction", r, stranger, { emoji: "❤️" }), "react", [404]);
     refused(await attempt("DELETE /api/v1/conversations/:id/messages/:messageId/reaction", r, stranger), "unreact", [404]);
+    const ownChat = (await request("POST", `/api/v1/users/${owner.username}/conversation`, undefined, stranger.auth)).body.conversation.id;
+    refused(await attempt("POST /api/v1/conversations/:id/messages/:messageId/forward", `${c}/messages/${ids.message}/forward`, stranger, { conversationIds: [ownChat] }), "forward", [404]);
+    refused(await attempt("GET /api/v1/conversations/:id/pins", `${c}/pins`, stranger), "pins", [404]);
+    refused(await attempt("PUT /api/v1/conversations/:id/pins/:messageId", `${c}/pins/${ids.message}`, stranger), "pin", [404]);
+    refused(await attempt("DELETE /api/v1/conversations/:id/pins/:messageId", `${c}/pins/${ids.message}`, stranger), "unpin", [404]);
+    assert.equal(await count(`conversation_pins WHERE conversation_id = :'c'`, { c: ids.conversation }), 0);
+    assert.equal(await count(`messages WHERE conversation_id = :'c'`, { c: ownChat }), 0, "nothing was forwarded");
     assert.equal(await count(`message_reactions WHERE message_id = :'m'`, { m: ids.message }), 0);
     assert.equal(await count(`messages WHERE conversation_id = :'c'`, { c: ids.conversation }), 1);
     assert.equal(await count(`report_message_evidence e JOIN reports r ON r.id = e.report_id WHERE r.reporter_id = :'s'`, { s: stranger.id }), 0);

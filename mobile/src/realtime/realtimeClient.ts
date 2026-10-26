@@ -24,6 +24,8 @@ export type RealtimeEvent =
   | { type: "reaction"; conversationId: string; messageId: string; userId: string; emoji: string | null }
   /** Someone unsent their message: it's gone for everyone. */
   | { type: "unsent"; conversationId: string; messageId: string }
+  /** Someone pinned or unpinned a message: an open chat reloads its pinned bar. */
+  | { type: "pins_changed"; conversationId: string }
   /** The other person is typing in this conversation (sent every few seconds while they do). */
   | { type: "typing"; conversationId: string; userId: string }
   /** Local: emitted on every (re)connect, and when the server says events may have been missed. */
@@ -243,6 +245,7 @@ export class RealtimeClient {
       case "reaction":
       case "typing":
       case "unsent":
+      case "pins_changed":
         this.options.onEvent(event as RealtimeEvent);
         return;
       default:

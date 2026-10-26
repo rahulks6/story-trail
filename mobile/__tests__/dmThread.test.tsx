@@ -33,6 +33,11 @@ jest.mock("../src/api/conversations", () => ({
   newClientMessageId: () => `m_test_${Math.random().toString(36).slice(2, 12)}`,
   getConversation: jest.fn(),
   markConversationRead: jest.fn(async () => undefined),
+  listPins: jest.fn(async () => ({ pins: [] })),
+  pinMessage: jest.fn(async () => undefined),
+  unpinMessage: jest.fn(async () => undefined),
+  MAX_PINS: 3,
+  messagePreview: jest.requireActual("../src/api/conversations").messagePreview,
   listMessages: jest.fn(async () => ({
     hasMore: false,
     messages: [
@@ -486,4 +491,73 @@ test("a shared Story is a card with its picture and owner, or says it's no longe
   expect(bubble("@alice: @bob's Story")).toBeTruthy();
   expect(bubble("@alice: @bob's Story, no longer available")).toBeTruthy();
   api.listMessages.mockImplementation(original);
+});
+
+test("long-press: Forward opens the picker for that message; a forwarded message says Forwarded", async () => {
+  const api = require("../src/api/conversations");
+  const original = api.listMessages.getMockImplementation();
+  api.listMessages.mockResolvedValue({ hasMore: false, messages: [
+    { id: "f1", conversationId: "c1", senderId: "u-alice", body: "ferry at 7", sharedStoryId: null, createdAt: "2026-10-06 09:02:00+00", forwarded: true },
+    { id: "m1", conversationId: "c1", senderId: "u-me", body: "hi", sharedStoryId: null, createdAt: "2026-10-06 09:00:00+00" },
+  ] });
+  await render();
+  const { Text } = require("react-native");
+  expect(tree.root.findAllByType(Text).filter((t: ReactTestInstance) => t.props.children === "Forwarded")).toHaveLength(1); // only on the forwarded one
+  await act(async () => bubble("@alice: Forwarded. ferry at 7").props.onLongPress());
+  expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Pin" && typeof n.props.onPress === "function")).toHaveLength(1);
+  await pressLabel("Forward");
+  // iOS: the screen opens once the menu has finished closing.
+  expect(mockNavigation.navigate).not.toHaveBeenCalledWith("ForwardMessage", expect.anything());
+  const { Modal } = require("react-native");
+  const menu = tree.root.findAllByType(Modal).find((m: ReactTestInstance) => typeof m.props.onDismiss === "function" && m.props.animationType === "fade" && m.props.transparent)!;
+  await act(async () => menu.props.onDismiss());
+  expect(mockNavigation.navigate).toHaveBeenCalledWith("ForwardMessage", { conversationId: "c1", messageId: "f1" });
+  api.listMessages.mockImplementation(original);
+  mockNavigation.navigate.mockClear();
+});
+
+test("pins: the bar shows the latest pin and how many; the list unpins; a fourth pin offers to replace the oldest", async () => {
+  const api = require("../src/api/conversations");
+  const { ApiError } = require("../src/api/client");
+  const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+  const pinOf = (id: string, message: object, at: string) => ({ messageId: id, pinnedBy: { id: "u-alice", username: "alice" }, pinnedAt: at, message: { id, conversationId: "c1", sharedStoryId: null, createdAt: at, ...message } });
+  const three = [
+    pinOf("m0", { senderId: "u-alice", body: null, media: { id: "md1", kind: "photo", width: 1, height: 1, durationMs: null } }, "2026-10-06 10:02:00+00"),
+    pinOf("v1", { senderId: "u-me", body: null, media: { id: "md2", kind: "audio", width: null, height: null, durationMs: 3000 } }, "2026-10-06 10:01:00+00"),
+    pinOf("x1", { senderId: "u-alice", body: "see you\nat the dock" }, "2026-10-06 10:00:00+00"),
+  ];
+  const bar = () => tree.root.find((n) => n.props.accessibilityHint === "Shows the pinned messages" && typeof n.props.onPress === "function");
+  api.listPins.mockResolvedValue({ pins: three });
+  await render();
+  expect(bar().props.accessibilityLabel).toBe("Pinned: Photo, 3 pinned messages");
+  await act(async () => bar().props.onPress());
+  const rows = tree.root.findAll((n) => typeof n.props.onPress === "function" && n.props.accessibilityHint === "Shows it in the chat, if it's loaded").map((n) => n.props.accessibilityLabel);
+  expect(rows).toEqual(["@alice: Photo", "You: Voice message", "@alice: see you at the dock"]);
+  api.listPins.mockResolvedValue({ pins: three.slice(1) });
+  await pressLabel("Unpin Photo");
+  expect(api.unpinMessage).toHaveBeenCalledWith("c1", "m0", "token");
+  expect(bar().props.accessibilityLabel).toBe("Pinned: Voice message, 2 pinned messages");
+
+  // Someone else pins: the bar follows (realtime), and the menu then says Unpin.
+  api.listPins.mockResolvedValue({ pins: [pinOf("m2", { senderId: "u-alice", body: "hello" }, "2026-10-06 11:00:00+00"), ...three.slice(1)] });
+  await act(async () => mockRealtime.handler!({ type: "pins_changed", conversationId: "c1" }));
+  expect(bar().props.accessibilityLabel).toBe("Pinned: hello, 3 pinned messages");
+  await act(async () => bubble("@alice: hello").props.onLongPress());
+  expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Unpin" && typeof n.props.onPress === "function")).toHaveLength(1);
+
+  // A fourth: the server says too_many_pins; Replace oldest unpins the oldest, then pins.
+  api.pinMessage.mockRejectedValueOnce(new ApiError(409, "You can pin up to 3 messages.", undefined, { code: "too_many_pins" }));
+  await act(async () => bubble("You: hi").props.onLongPress());
+  await pressLabel("Pin");
+  expect(alert.mock.calls.at(-1)![0]).toBe("Replace the oldest pin?");
+  api.unpinMessage.mockClear();
+  await act(async () => { await (alert.mock.calls.at(-1)![2] as Array<{ text: string; onPress?: () => Promise<void> }>).find((b) => b.text === "Replace oldest")!.onPress!(); });
+  expect(api.unpinMessage).toHaveBeenCalledWith("c1", "x1", "token");
+  expect(api.pinMessage).toHaveBeenLastCalledWith("c1", "m1", "token");
+
+  // Unsent: its pin goes with it.
+  await act(async () => mockRealtime.handler!({ type: "unsent", conversationId: "c1", messageId: "m2" }));
+  expect(bar().props.accessibilityLabel).toBe("Pinned: Voice message, 2 pinned messages");
+  api.listPins.mockResolvedValue({ pins: [] });
+  alert.mockRestore();
 });

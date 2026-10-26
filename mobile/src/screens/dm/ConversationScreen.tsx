@@ -56,6 +56,12 @@ import {
   unsendMessage,
   setConversationMuted,
   hideConversation,
+  listPins,
+  pinMessage,
+  unpinMessage,
+  messagePreview,
+  MAX_PINS,
+  type PinnedMessage,
   type Message,
   type MessageReaction,
   type QuotedMessage,
@@ -375,6 +381,13 @@ function MessageContent({ row, userId, nameOf, senderLabel, accessToken, showSta
   const quote = row.replyTo ? (
     <Quote quote={row.replyTo} userId={userId} nameOf={nameOf} mine={row.kind !== "sent" || row.senderId === userId} onPress={actions.onQuotePress} />
   ) : null;
+  // Sent on from another chat: a quiet line above the bubble, naming nobody.
+  const forwarded = row.kind === "sent" && row.forwarded ? (
+    <View style={styles.forwardedLabel}>
+      <Icon name={ICONS.forward} size={12} color={colors.textSecondary} />
+      <Text style={styles.forwardedText}>Forwarded</Text>
+    </View>
+  ) : null;
   if (row.kind === "media" || (row.kind === "sent" && row.media)) {
     const mineMedia = row.kind === "media" || row.senderId === userId;
     const kind = row.kind === "media" ? row.mediaKind : row.media!.kind;
@@ -387,6 +400,7 @@ function MessageContent({ row, userId, nameOf, senderLabel, accessToken, showSta
           <View style={[styles.bubbleColumn, mineMedia ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
             {senderLabel ? <Text style={styles.senderLabel} numberOfLines={1}>{senderLabel}</Text> : null}
             {quote}
+            {forwarded}
             <VoiceNoteBubble
               url={row.kind === "media" ? row.uri : mediaFileUrl(row.media!.id, "audio")}
               accessToken={accessToken}
@@ -413,9 +427,10 @@ function MessageContent({ row, userId, nameOf, senderLabel, accessToken, showSta
         <View style={[styles.bubbleColumn, mineMedia ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
           {senderLabel ? <Text style={styles.senderLabel} numberOfLines={1}>{senderLabel}</Text> : null}
           {quote}
+          {forwarded}
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={`${who}: ${kind === "video" ? "Video" : "Photo"}`}
+            accessibilityLabel={`${who}: ${forwarded ? "Forwarded " : ""}${kind === "video" ? "Video" : "Photo"}`}
             accessibilityHint={row.kind === "media" ? (failedMedia ? "Retry or delete" : undefined) : "Opens it full screen"}
             onPress={() => {
               if (row.kind === "media") actions.onPendingMediaPress(row);
@@ -458,12 +473,13 @@ function MessageContent({ row, userId, nameOf, senderLabel, accessToken, showSta
     ? (row.sharedStoryId ? (row.sharedStory ? `@${row.sharedStory.ownerUsername}'s Story${row.sharedStory.active ? "" : ", no longer available"}` : "Shared a Story") : replyLabel)
     : row.storyId ? "Shared a Story" : null;
   // Bubbles show who sent what by their side of the screen; a screen reader says it.
-  const spoken = [shared, row.body].filter(Boolean).join(". ");
+  const spoken = [forwarded ? "Forwarded" : null, shared, row.body].filter(Boolean).join(". ");
   return (
     <View style={[styles.bubbleRow, mine ? styles.bubbleRowMine : styles.bubbleRowTheirs]}>
       <View style={[styles.bubbleColumn, mine ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
         {senderLabel ? <Text style={styles.senderLabel} numberOfLines={1}>{senderLabel}</Text> : null}
         {quote}
+        {forwarded}
         <Pressable
           // A button only where a tap does something (retry, open the shared Story).
           accessibilityRole={row.kind === "pending" || openableStory ? "button" : undefined}
@@ -694,7 +710,7 @@ function accessRefused(what: "camera" | "photos"): void {
  */
 export function ConversationScreen({ route }: Props): React.JSX.Element {
   const { conversationId, otherUsername, otherDisplayName, otherAvatarMediaId, otherVerified, group: isGroupParam, title: groupTitleParam } = route.params;
-  const { top: insetsTop } = useSafeAreaInsets();
+  const { top: insetsTop, bottom: insetsBottom } = useSafeAreaInsets();
   const { width: windowWidth } = useWindowDimensions();
   // Media bubbles fit the 78% column on small phones too.
   const maxMediaSide = Math.min(230, Math.round(windowWidth * 0.62));
@@ -735,6 +751,15 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   const [viewing, setViewing] = useState<{ id?: string; uri?: string; kind: "photo" | "video" } | null>(null);
   // Which voice note is playing (one at a time).
   const [playingKey, setPlayingKey] = useState<string | null>(null);
+  /** The chat's pinned messages, latest first (the bar under the header), and the list of them. */
+  const [pins, setPins] = useState<PinnedMessage[]>([]);
+  const pinsRef = useRef<PinnedMessage[]>([]);
+  pinsRef.current = pins;
+  const [pinsOpen, setPinsOpen] = useState(false);
+  // The last pin unpinned closes the list (and a later pin doesn't open it again).
+  useEffect(() => { if (!pins.length) setPinsOpen(false); }, [pins.length]);
+  /** Forward opens a screen over the chat, so on iOS it waits for the message menu to finish closing. */
+  const afterMenu = useRef<(() => void) | null>(null);
   const focusedRef = useRef(true);
   const messagesRef = useRef<Message[] | null>(null);
   messagesRef.current = messages;
@@ -935,6 +960,18 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     await loadLatest();
   }, [catchUp, loadLatest]);
 
+  /** Pins change rarely: loaded with the thread and again whenever someone pins or unpins. */
+  const loadPins = useCallback(async () => {
+    const token = tokenRef.current;
+    if (!token) return;
+    try {
+      const { pins: latest } = await listPins(conversationId, token);
+      setPins(latest);
+    } catch {
+      // An older server has no pins, and offline the bar keeps what it showed.
+    }
+  }, [conversationId]);
+
   const typingRef = useRef<string | null>(null);
   const stopTyping = useCallback(() => {
     if (typingTimer.current) clearTimeout(typingTimer.current);
@@ -965,12 +1002,17 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   useRealtimeEvents((event) => {
     if (event.type === "resync") {
       void syncThread(); // reconnected: anything could have happened meanwhile
+      void loadPins();
+    } else if (event.type === "pins_changed" && event.conversationId === conversationId) {
+      void loadPins();
     } else if (event.type === "message" && event.conversationId === conversationId) {
       if (event.senderId === typingRef.current) stopTyping(); // what they were typing just arrived
       void catchUp();
       if (isGroup) void loadDetails(); // someone may have joined, left or renamed it
     } else if (event.type === "unsent" && event.conversationId === conversationId) {
       setMessages((current) => current?.filter((m) => m.id !== event.messageId) ?? current);
+      // Its pin went with it.
+      setPins((current) => (current.some((p) => p.messageId === event.messageId) ? current.filter((p) => p.messageId !== event.messageId) : current));
     } else if (event.type === "typing" && event.conversationId === conversationId && event.userId !== userId) {
       setTypingUserId(event.userId);
       typingRef.current = event.userId;
@@ -987,6 +1029,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     useCallback(() => {
       focusedRef.current = true;
       void syncThread();
+      void loadPins();
       if (isGroupRef.current) void loadDetailsRef.current(); // back from the group's info: names may have changed
       const interval = setInterval(() => {
         if (AppState.currentState === "active") void catchUp();
@@ -995,7 +1038,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         focusedRef.current = false;
         clearInterval(interval);
       };
-    }, [catchUp, connected, syncThread]),
+    }, [catchUp, connected, loadPins, syncThread]),
   );
 
   const loadOlder = useCallback(async () => {
@@ -1177,6 +1220,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           setMessages((current) => current?.filter((m) => m.id !== message.id) ?? current);
           try {
             await unsendMessage(conversationId, message.id, token);
+            setPins((current) => current.filter((p) => p.messageId !== message.id));
           } catch {
             setMessages((current) => (current ? mergeMessages(current, [message]) : current));
             Alert.alert("Couldn't unsend", "Check your connection and try again.");
@@ -1185,6 +1229,50 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       },
     ]);
   };
+
+  /** Three pins at most: pinning a fourth offers to take the oldest one's place. */
+  const replaceOldestPin = async (message: Message) => {
+    const token = tokenRef.current;
+    if (!token) return;
+    try {
+      const { pins: current } = await listPins(conversationId, token); // the oldest as it is now
+      const oldest = current[current.length - 1];
+      if (oldest) await unpinMessage(conversationId, oldest.messageId, token);
+      await pinMessage(conversationId, message.id, token);
+      showToast("Pinned");
+    } catch {
+      Alert.alert("Couldn't pin", "Check your connection and try again.");
+    }
+    void loadPins();
+  };
+  const togglePin = async (message: Message) => {
+    const token = tokenRef.current;
+    if (!token) return;
+    const pinned = pinsRef.current.some((p) => p.messageId === message.id);
+    try {
+      if (pinned) await unpinMessage(conversationId, message.id, token);
+      else await pinMessage(conversationId, message.id, token);
+      showToast(pinned ? "Unpinned" : "Pinned");
+      void loadPins();
+    } catch (error) {
+      if (!pinned && error instanceof ApiError && error.status === 409 && error.details?.code === "too_many_pins") {
+        Alert.alert("Replace the oldest pin?", `You can pin up to ${MAX_PINS} messages in a chat.`, [
+          { text: "Cancel", style: "cancel" },
+          { text: "Replace oldest", onPress: () => void replaceOldestPin(message) },
+        ]);
+        return;
+      }
+      Alert.alert(pinned ? "Couldn't unpin" : "Couldn't pin", error instanceof ApiError && error.status !== 404 && error.status !== 0 ? error.message : "Check your connection and try again.");
+    }
+  };
+  const forward = (message: Message) => {
+    const go = () => rootNavigation.navigate("ForwardMessage", { conversationId, messageId: message.id });
+    if (Platform.OS === "ios") afterMenu.current = go; // the menu's onDismiss runs it
+    setReactingTo(null);
+    if (Platform.OS !== "ios") go();
+  };
+  /** Who sent a pinned message, as its list says it. */
+  const authorOf = (senderId: string) => (senderId === userId ? "You" : nameOf(senderId) ? `@${nameOf(senderId)}` : "Someone");
 
   // The rows' handlers never change identity; they act on the screen's latest state.
   /** Brings a quoted message into view, if it's among the messages loaded so far. */
@@ -1327,6 +1415,20 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
 
   return (
     <KeyboardAvoider style={styles.container} topOffset={headerHeight}>
+      {pins.length ? (
+        // The latest pin, one line; a tap lists them all (each one can be shown or unpinned).
+        <Pressable
+          style={styles.pinBar}
+          onPress={() => setPinsOpen(true)}
+          accessibilityRole="button"
+          accessibilityLabel={`Pinned: ${messagePreview(pins[0]!.message)}${pins.length > 1 ? `, ${pins.length} pinned messages` : ""}`}
+          accessibilityHint="Shows the pinned messages"
+        >
+          <Icon name={ICONS.pin} size={16} color={colors.textSecondary} />
+          <Text style={styles.pinBarText} numberOfLines={1}>{messagePreview(pins[0]!.message)}</Text>
+          {pins.length > 1 ? <Text style={styles.pinBarCount}>{pins.length} pinned</Text> : null}
+        </Pressable>
+      ) : null}
       <FlatList
         ref={listRef}
         onScrollToIndexFailed={onScrollToIndexFailed}
@@ -1374,7 +1476,18 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           </Pressable>
         </View>
       </Modal>
-      <Modal visible={reactingTo !== null} transparent animationType="fade" statusBarTranslucent onRequestClose={() => setReactingTo(null)}>
+      <Modal
+        visible={reactingTo !== null}
+        transparent
+        animationType="fade"
+        statusBarTranslucent
+        onRequestClose={() => setReactingTo(null)}
+        onDismiss={() => {
+          const next = afterMenu.current;
+          afterMenu.current = null;
+          next?.();
+        }}
+      >
         <Pressable style={styles.reactBackdrop} onPress={() => setReactingTo(null)} accessibilityRole="button" accessibilityLabel="Close">
           <View style={styles.reactCard}>
             <View style={styles.reactBar} accessibilityRole="menu">
@@ -1404,6 +1517,12 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
                 <Text style={styles.menuText}>Reply</Text>
                 <Icon name={ICONS.reply} size={18} color={colors.textPrimary} />
               </Pressable>
+              {reactingTo && !reactingTo.event && (reactingTo.body || reactingTo.media || reactingTo.sharedStoryId) ? (
+                <Pressable style={styles.menuRow} onPress={() => forward(reactingTo)} accessibilityRole="button" accessibilityLabel="Forward">
+                  <Text style={styles.menuText}>Forward</Text>
+                  <Icon name={ICONS.forward} size={18} color={colors.textPrimary} />
+                </Pressable>
+              ) : null}
               {reactingTo?.body ? (
                 <Pressable
                   style={styles.menuRow}
@@ -1419,6 +1538,24 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
                   <Icon name={ICONS.copy} size={18} color={colors.textPrimary} />
                 </Pressable>
               ) : null}
+              {reactingTo ? (() => {
+                const pinned = pins.some((p) => p.messageId === reactingTo.id);
+                return (
+                  <Pressable
+                    style={styles.menuRow}
+                    onPress={() => {
+                      const target = reactingTo;
+                      setReactingTo(null);
+                      void togglePin(target);
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel={pinned ? "Unpin" : "Pin"}
+                  >
+                    <Text style={styles.menuText}>{pinned ? "Unpin" : "Pin"}</Text>
+                    <Icon name={ICONS.pin} size={18} color={colors.textPrimary} />
+                  </Pressable>
+                );
+              })() : null}
               {reactingTo && reactingTo.senderId === userId ? (
                 <Pressable
                   style={styles.menuRow}
@@ -1466,6 +1603,38 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           ],
         ]}
       />
+      <Modal visible={pinsOpen && pins.length > 0} transparent animationType="slide" statusBarTranslucent onRequestClose={() => setPinsOpen(false)}>
+        <View style={styles.sheetFill}>
+          <Pressable style={styles.sheetBackdrop} onPress={() => setPinsOpen(false)} accessibilityRole="button" accessibilityLabel="Close" />
+          <View style={[styles.sheet, { paddingBottom: spacing.lg + insetsBottom }]} accessibilityViewIsModal>
+            <Text style={styles.sheetTitle} accessibilityRole="header">Pinned messages</Text>
+            {pins.map((pin) => {
+              const preview = messagePreview(pin.message);
+              const author = authorOf(pin.message.senderId);
+              return (
+                <View key={pin.messageId} style={styles.pinRow}>
+                  <Pressable
+                    style={styles.pinRowText}
+                    onPress={() => {
+                      setPinsOpen(false);
+                      scrollToMessage(pin.messageId);
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${author}: ${preview}`}
+                    accessibilityHint="Shows it in the chat, if it's loaded"
+                  >
+                    <Text style={styles.pinRowAuthor} numberOfLines={1}>{author}</Text>
+                    <Text style={styles.pinRowBody} numberOfLines={3}>{preview}</Text>
+                  </Pressable>
+                  <Pressable style={styles.unpinButton} onPress={() => void togglePin(pin.message)} hitSlop={6} accessibilityRole="button" accessibilityLabel={`Unpin ${preview}`}>
+                    <Text style={styles.unpinText}>Unpin</Text>
+                  </Pressable>
+                </View>
+              );
+            })}
+          </View>
+        </View>
+      </Modal>
       <CapturePreview capture={capture} onCancel={onCancelCapture} onSend={onSendCapture} />
       <ReportSheet
         visible={reportingMessageId !== null}
@@ -1550,6 +1719,21 @@ const styles = StyleSheet.create({
   typingBubble: { borderRadius: radii.md, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, backgroundColor: colors.surfaceElevated },
   typingText: { color: colors.textSecondary, fontSize: 13, fontStyle: "italic" },
   replyLabel: { fontSize: 12, opacity: 0.75, marginBottom: 2 },
+  forwardedLabel: { flexDirection: "row", alignItems: "center", gap: 4, marginBottom: 2, marginHorizontal: spacing.xs },
+  forwardedText: { color: colors.textSecondary, fontSize: 12, fontStyle: "italic" },
+  pinBar: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xs + 2, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border, backgroundColor: colors.surface },
+  pinBarText: { flex: 1, color: colors.textPrimary, fontSize: 13 },
+  pinBarCount: { color: colors.textSecondary, fontSize: 12 },
+  sheetFill: { flex: 1, backgroundColor: "rgba(0,0,0,0.45)" },
+  sheetBackdrop: { flex: 1 },
+  sheet: { borderTopLeftRadius: radii.lg, borderTopRightRadius: radii.lg, backgroundColor: colors.surfaceElevated, paddingHorizontal: spacing.md, paddingTop: spacing.md },
+  sheetTitle: { color: colors.textPrimary, fontSize: 16, fontWeight: "700", marginBottom: spacing.xs },
+  pinRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.sm, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border },
+  pinRowText: { flex: 1, gap: 2 },
+  pinRowAuthor: { color: colors.textSecondary, fontSize: 12, fontWeight: "600" },
+  pinRowBody: { color: colors.textPrimary, fontSize: 15 },
+  unpinButton: { paddingHorizontal: spacing.sm, minHeight: 36, justifyContent: "center" },
+  unpinText: { color: colors.accent, fontSize: 14, fontWeight: "600" },
   reactionGlyph: { fontSize: 34, lineHeight: 42 },
   container: { flex: 1, backgroundColor: colors.background },
   centered: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background, padding: spacing.lg },

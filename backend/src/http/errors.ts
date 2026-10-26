@@ -5,6 +5,8 @@ export class HttpError extends Error {
     public readonly fieldErrors?: Record<string, string>,
     /** Response headers to send with the error, e.g. Retry-After on a 429. */
     public readonly headers?: Record<string, string>,
+    /** A machine-readable reason, for an app that offers a way out (e.g. "too_many_pins"). */
+    public readonly code?: string,
   ) {
     super(message);
     this.name = "HttpError";

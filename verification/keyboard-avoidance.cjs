@@ -14,6 +14,7 @@ const EXEMPT={
  'screens/dm/NewChatScreen.tsx':'search field at the top of the screen',
  'screens/dm/DMInboxScreen.tsx':'search field at the top of the screen',
  'screens/dm/SendStoryScreen.tsx':'search field at the top of the screen',
+ 'screens/dm/RecipientPicker.tsx':'search field at the top of Send to and Forward, which handle the keyboard',
  'screens/dm/GroupInfoScreen.tsx':'group name field at the top of the screen',
  'screens/profile/CloseFriendsScreen.tsx':'search field at the top of the screen',
  'screens/highlight/HighlightEditorScreen.tsx':'name field at the top of the screen',

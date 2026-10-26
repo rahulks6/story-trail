@@ -56,6 +56,9 @@ export function Icon({name,size,color,selected=false,style}: {name:IconName;size
   mention:'M16 8v7c0 3 6 2 6-4A10 10 0 1 0 18 20M16 10c-4-6-10 4-5 6 4 2 5-6 5-6',
   filter:'M3 6h5m5 0h8M3 12h11m5 0h2M3 18h3m5 0h10',
   alignLeft:'M4 6h16M4 10h10M4 14h16M4 18h10',alignCenter:'M4 6h16M7 10h10M4 14h16M7 18h10',alignRight:'M4 6h16M10 10h10M4 14h16M10 18h10',textBackground:'M3 4h18v16H3zM8 16l4-9 4 9M9.5 13h5',music:'M9 18V5l12-2v13',camera:'M3 8a2 2 0 0 1 2-2h2.5l1.5-2h6l1.5 2H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z',mic:'M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3ZM5 11a7 7 0 0 0 14 0M12 18v3',play:'M7 4v16l13-8Z',pause:'M8 5v14M16 5v14',
+  // Forward: an arrow bending on to the right. Pin: a push pin, upright.
+  forward:'M14 5l7 7-7 7M21 12H10a6 6 0 0 0-6 6v1',
+  pin:'M9 3h6M10 3v6l-4 4v2h12v-2l-4-4V3M12 15v6',
   // A rosette (eight scallops) with the tick cut out of it in the background's contrast colour.
   verified:'M12 1.8L15.2 4.2L19.2 4.8L19.8 8.8L22.2 12L19.8 15.2L19.2 19.2L15.2 19.8L12 22.2L8.8 19.8L4.8 19.2L4.2 15.2L1.8 12L4.2 8.8L4.8 4.8L8.8 4.2Z',
   chevron:'M9 5l7 7-7 7',minus:'M5 12h14',up:'M12 21V3m-7 7 7-7 7 7',down:'M12 3v18m-7-7 7 7 7-7',left:'M21 12H3m7-7-7 7 7 7',right:'M3 12h18m-7-7 7 7-7 7',
