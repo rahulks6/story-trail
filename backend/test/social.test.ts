@@ -5,6 +5,7 @@ import type { AddressInfo } from "node:net";
 import { buildApp } from "../src/app";
 import { authHeader, makeClient, uniqueUser } from "./helpers";
 import { buildTestPng } from "./fixtures";
+import { query } from "../src/db/psql";
 
 let client: ReturnType<typeof makeClient>;
 let baseUrl: string;
@@ -307,6 +308,26 @@ describe("follow requests — races and going public", () => {
     assert.equal(profile.followerCount, followers.length);
     assert.equal(profile.followingCount, 0);
     assert.equal(profile.followingCount, following.length);
+  });
+});
+
+describe("suspended accounts", () => {
+  it("can't be followed, requested or added to Close Friends (their profile is not found), but can still be unfollowed", async () => {
+    const alice = await signupUser();
+    const sam = await signupUser();
+    const pat = await signupUser();
+    await client.patch("/api/v1/users/me", { isPrivate: true }, authHeader(pat.accessToken));
+    await client.post(`/api/v1/users/${sam.input.username}/follow`, undefined, authHeader(alice.accessToken));
+    for (const user of [sam, pat]) {
+      const me = await client.get("/api/v1/auth/me", authHeader(user.accessToken));
+      await query(`UPDATE users SET is_active = false WHERE id = :'id'`, { id: me.body.user.id });
+    }
+    assert.equal((await client.get(`/api/v1/users/${pat.input.username}`, authHeader(alice.accessToken))).status, 404);
+    assert.equal((await client.post(`/api/v1/users/${pat.input.username}/follow`, undefined, authHeader(alice.accessToken))).status, 404);
+    assert.equal((await client.put(`/api/v1/close-friends/${sam.input.username}`, undefined, authHeader(alice.accessToken))).status, 404);
+    const followNew = await client.post(`/api/v1/users/${sam.input.username}/follow`, undefined, authHeader((await signupUser()).accessToken));
+    assert.equal(followNew.status, 404);
+    assert.equal((await client.delete(`/api/v1/users/${sam.input.username}/follow`, authHeader(alice.accessToken))).status, 204);
   });
 });
 

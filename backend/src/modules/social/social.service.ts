@@ -16,6 +16,9 @@ export type FollowResult = { status: "following" } | { status: "requested" };
 export async function follow(viewerId: string, targetUsername: string): Promise<FollowResult> {
   await enforceAction(viewerId, "follow"); // mass-follow protection
   const target = await requireOtherUser(targetUsername, viewerId);
+  // A suspended account's profile is "not found" (profiles.service.ts), so it can't be followed
+  // or sent a request either. Unfollowing, blocking and muting it still work.
+  if (!target.isActive) throw new HttpError(404, "User not found.");
 
   const blocked = await socialRepo.anyBlockBetween(viewerId, target.id);
   if (blocked) throw new HttpError(404, "User not found.");
@@ -108,7 +111,7 @@ export const MAX_CLOSE_FRIENDS = 1000;
 
 export async function addCloseFriend(viewerId: string, targetUsername: string): Promise<void> {
   const target = await requireOtherUser(targetUsername, viewerId);
-  if (await socialRepo.anyBlockBetween(viewerId, target.id)) throw new HttpError(404, "User not found.");
+  if (!target.isActive || await socialRepo.anyBlockBetween(viewerId, target.id)) throw new HttpError(404, "User not found.");
   if ((await socialRepo.countCloseFriends(viewerId)) >= MAX_CLOSE_FRIENDS) {
     throw new HttpError(409, `Close Friends can hold up to ${MAX_CLOSE_FRIENDS} people.`);
   }
