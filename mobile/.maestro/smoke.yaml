@@ -18,10 +18,13 @@ appId: com.katkee.app
     timeout: 60000
 - takeScreenshot: 01-login
 
-- tapOn: ".*Sign up.*"
+# A slow virtual iPhone can miss a tap during its first launch: tap again if nothing changed.
+- tapOn:
+    text: ".*Sign up.*"
+    retryTapIfNoChange: true
 - extendedWaitUntil:
     visible: "Create your account"
-    timeout: 15000
+    timeout: 30000
 - takeScreenshot: 02-signup
 # The keyboard is closed after each field (an iPhone number pad has no Return key and covers the
 # fields below it on a small screen).
