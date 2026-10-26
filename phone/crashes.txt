@@ -1,102 +1,97 @@
-10-26 16:34:49.629 D/AndroidRuntime( 3750): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-26 16:34:49.630 I/GCoreUlr( 1166): DispatchingService ignoring Intent { act=android.net.wifi.WIFI_STATE_CHANGED flg=0x4000010 (has extras) } because ULR inactive
-10-26 16:34:49.632 I/RoleService(  566): Granting default roles...
-10-26 16:34:49.633 W/Role    (  566): Default holder doesn't have required signing certificate: com.google.android.retaildemo:6547c73dee150c103980bfdffe55cc9a011d785dd694a5f99afd8205bcaf1f80
-10-26 16:34:49.633 E/RoleControllerServiceImpl(  566): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION
-10-26 16:34:49.634 W/Role    (  566): Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58
-10-26 16:34:49.634 I/AndroidRuntime( 3750): Using default boot image
-10-26 16:34:49.635 I/AndroidRuntime( 3750): Leaving lock profiling enabled
-10-26 16:34:49.643 E/RoleControllerServiceImpl(  566): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.WALLET
-10-26 16:34:49.644 I/app_process( 3750): Core platform API reporting enabled, enforcing=false
-10-26 16:34:49.645 E/RoleControllerServiceImpl(  566): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.devicelockcontroller, role: android.app.role.SYSTEM_FINANCED_DEVICE_CONTROLLER
-10-26 16:34:49.645 I/app_process( 3750): Using CollectorTypeCMC GC.
-10-26 16:34:49.656 I/Fitness ( 1166): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
-10-26 16:34:49.658 I/AiAiTextClassifier( 1487): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
-10-26 16:34:49.659 W/AiAiAutofill( 1487): Failed to set whitelist for augmented autofill service.
-10-26 16:34:49.659 W/AiAiAutofill( 1487): java.lang.SecurityException: caller is not user's Augmented Autofill Service
-10-26 16:34:49.659 W/AiAiAutofill( 1487): 	at android.view.autofill.AutofillManager.setAugmentedAutofillWhitelist(AutofillManager.java:2858)
-10-26 16:34:49.659 W/AiAiAutofill( 1487): 	at ema.c(PG:66)
-10-26 16:34:49.659 W/AiAiAutofill( 1487): 	at emw.h(PG:81)
-10-26 16:34:49.659 W/AiAiAutofill( 1487): 	at emw.j(PG:4)
-10-26 16:34:49.659 W/AiAiAutofill( 1487): 	at emw.i(PG:35)
-10-26 16:34:49.659 W/AiAiAutofill( 1487): 	at emy.a(PG:3)
-10-26 16:34:49.659 W/AiAiAutofill( 1487): 	at icx.run(PG:61)
-10-26 16:34:49.659 W/AiAiAutofill( 1487): 	at hqv.run(PG:11)
-10-26 16:34:49.659 W/AiAiAutofill( 1487): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
-10-26 16:34:49.659 W/AiAiAutofill( 1487): 	at wqm.a(PG:3)
-10-26 16:34:49.659 W/AiAiAutofill( 1487): 	at wpo.run(PG:21)
-10-26 16:34:49.659 W/AiAiAutofill( 1487): 	at wqn.run(PG:5)
-10-26 16:34:49.659 W/AiAiAutofill( 1487): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
-10-26 16:34:49.659 W/AiAiAutofill( 1487): 	at java.util.concurrent.FutureTask.run(FutureTask.java:264)
-10-26 16:34:49.659 W/AiAiAutofill( 1487): 	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:307)
-10-26 16:34:49.659 W/AiAiAutofill( 1487): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
-10-26 16:34:49.659 W/AiAiAutofill( 1487): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
-10-26 16:34:49.659 W/AiAiAutofill( 1487): 	at hqv.run(PG:221)
-10-26 16:34:49.659 W/AiAiAutofill( 1487): 	at java.lang.Thread.run(Thread.java:1012)
-10-26 16:34:49.670 I/AiAiTextClassifier( 1487): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
-10-26 16:34:49.671 I/AiAiTextClassifier( 1487): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
-10-26 16:34:49.672 I/AiAiTextClassifier( 1487): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
+10-26 22:09:43.341 D/AndroidRuntime( 3822): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-26 22:09:43.350 I/AndroidRuntime( 3822): Using default boot image
+10-26 22:09:43.350 I/AndroidRuntime( 3822): Leaving lock profiling enabled
+10-26 22:09:43.358 I/app_process( 3822): Core platform API reporting enabled, enforcing=false
+10-26 22:09:43.358 I/app_process( 3822): Using CollectorTypeCMC GC.
+10-26 22:09:43.387 I/Auth    ( 1425): [SupervisedAccountIntentOperation] onHandleIntent(): android.intent.action.PACKAGE_ADDED
+10-26 22:09:43.389 I/Auth    ( 1425): [SupervisedAccountIntentOperation] This operation is disabled
+10-26 22:09:43.389 W/A       ( 1603): Calling registerSyncInternal api failed.
+10-26 22:09:43.391 W/PackageManager( 1483): Failure retrieving text 0x7f130786 in package com.android.systemui
+10-26 22:09:43.391 W/PackageManager( 1483): android.content.res.Resources$NotFoundException: String resource ID #0x7f130786
+10-26 22:09:43.391 W/PackageManager( 1483): 	at android.content.res.Resources.getText(Resources.java:466)
+10-26 22:09:43.391 W/PackageManager( 1483): 	at android.app.ApplicationPackageManager.getText(ApplicationPackageManager.java:2405)
+10-26 22:09:43.391 W/PackageManager( 1483): 	at android.appwidget.AppWidgetProviderInfo.loadDescription(AppWidgetProviderInfo.java:484)
+10-26 22:09:43.391 W/PackageManager( 1483): 	at kml.a(PG:341)
+10-26 22:09:43.391 W/PackageManager( 1483): 	at kmg.b(PG:39)
+10-26 22:09:43.391 W/PackageManager( 1483): 	at aaer.g(PG:13)
+10-26 22:09:43.391 W/PackageManager( 1483): 	at kotlinx.coroutines.DispatchedTask.run(PG:114)
+10-26 22:09:43.391 W/PackageManager( 1483): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
+10-26 22:09:43.391 W/PackageManager( 1483): 	at wqm.a(PG:3)
+10-26 22:09:43.391 W/PackageManager( 1483): 	at wpo.run(PG:21)
+10-26 22:09:43.391 W/PackageManager( 1483): 	at wqn.run(PG:5)
+10-26 22:09:43.391 W/PackageManager( 1483): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
+10-26 22:09:43.391 W/PackageManager( 1483): 	at java.util.concurrent.FutureTask.run(FutureTask.java:264)
+10-26 22:09:43.391 W/PackageManager( 1483): 	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:307)
+10-26 22:09:43.391 W/PackageManager( 1483): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+10-26 22:09:43.391 W/PackageManager( 1483): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+10-26 22:09:43.391 W/PackageManager( 1483): 	at hqv.run(PG:221)
+10-26 22:09:43.391 W/PackageManager( 1483): 	at java.lang.Thread.run(Thread.java:1012)
+10-26 22:09:43.394 I/Blockstore( 1425): [DataStoreImpl] Clearing Blockstore Data for package dev.mobile.maestro [CONTEXT service_id=258 ]
+10-26 22:09:43.395 I/Blockstore( 1425): [DataStoreImpl] Keyless data not found or its IsLastInstallationData = false. [CONTEXT service_id=258 ]
+10-26 22:09:43.396 V/Backup  ( 1425): [PhotosPackagedAddedIO] Flag is disabled.
+10-26 22:09:43.398 I/Dck     ( 1425): disableDckSupport: false [CONTEXT service_id=289 ]
+10-26 22:09:43.399 I/Dck     ( 1425): doesDeviceHaveSupportedWirelessCapabilities: wccSysProp:0, wccMendel:3, deviceWccOverride:false [CONTEXT service_id=289 ]
 --
-10-26 16:34:49.885 D/AndroidRuntime( 3750): Calling main entry com.android.commands.am.Am
-10-26 16:34:49.888 D/UiAutomationConnection( 3750): Created on user UserHandle{0}
-10-26 16:34:49.892 I/ActivityManager(  566): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-10-26 16:34:49.896 W/GCM     ( 1166): Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package: flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
-10-26 16:34:49.896 W/NetworkScheduler( 1166): Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package: flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
-10-26 16:34:49.898 V/GrammaticalInflectionUtils(  566): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@d6ee371, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
-10-26 16:34:49.902 I/AppsFilter(  566): interaction: PackageSetting{dd5f26c com.android.microdroid.empty_payload/10190} -> PackageSetting{b5f7acd dev.mobile.maestro/10210} BLOCKED
-10-26 16:34:49.906 I/AppWidgetServiceImpl(  566): Received broadcast: android.intent.action.PACKAGE_UNSTOPPED on user 0
-10-26 16:34:49.906 I/AppWidgetServiceImpl(  566): Updating package stopped masked state for uid 10210 package dev.mobile.maestro isStopped false
-10-26 16:34:49.913 D/BoundBrokerSvc( 1166): onUnbind: Intent { act=com.google.android.gms.auth.proximity.devicesyncservice.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentBoundBrokerService }
-10-26 16:34:49.913 D/BoundBrokerSvc( 1166): onUnbind: Intent { act=com.google.android.gms.auth.proximity.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentBoundBrokerService }
-10-26 16:34:49.912 D/Zygote  (  376): Forked child process 3772
-10-26 16:34:49.917 I/Fitness ( 1166): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
-10-26 16:34:49.918 I/ActivityManager(  566): Start proc 3772:dev.mobile.maestro/u0a210 for added application dev.mobile.maestro
-10-26 16:34:49.921 I/Fitness ( 1166): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
-10-26 16:34:49.928 I/.mobile.maestro( 3772): Late-enabling -Xcheck:jni
-10-26 16:34:49.929 I/Fitness ( 1166): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
-10-26 16:34:49.943 I/.mobile.maestro( 3772): Using CollectorTypeCMC GC.
-10-26 16:34:49.944 W/.mobile.maestro( 3772): Unexpected CPU variant for x86: x86_64.
-10-26 16:34:49.944 W/.mobile.maestro( 3772): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
-10-26 16:34:49.947 I/adbd    (  451): jdwp connection from 3772
-10-26 16:34:49.953 D/nativeloader( 3772): Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
-10-26 16:34:49.956 W/binder:2373_1( 2373): type=1400 audit(0.0:40): avc:  denied  { read } for  name="u:object_r:system_adbd_prop:s0" dev="tmpfs" ino=318 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:system_adbd_prop:s0 tclass=file permissive=0 app=com.google.android.gms
-10-26 16:34:49.965 W/libc    ( 2373): Access denied finding property "persist.adb.tls_server.enable"
-10-26 16:34:49.965 W/libc    ( 2373): Access denied finding property "service.adb.tls.port"
-10-26 16:34:49.964 W/binder:2373_1( 2373): type=1400 audit(0.0:41): avc:  denied  { read } for  name="u:object_r:adbd_prop:s0" dev="tmpfs" ino=63 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:adbd_prop:s0 tclass=file permissive=0 app=com.google.android.gms
-10-26 16:34:49.982 W/gle.android.gms( 1316): ApkAssets: Deleting an ApkAssets object '<empty> and /system_ext/priv-app/GoogleServicesFramework/GoogleServicesFramework.apk' with 1 weak references
-10-26 16:34:49.983 W/gle.android.gms( 1316): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/YouTube/YouTube.apk' with 1 weak references
-10-26 16:34:49.985 W/gle.android.gms( 1316): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/Maps/Maps.apk' with 1 weak references
-10-26 16:34:49.992 W/.mobile.maestro( 3772): ClassLoaderContext shared library size mismatch. Expected=2, found=0 (PCL[]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]} | PCL[])
-10-26 16:34:49.993 W/.mobile.maestro( 3772): ClassLoaderContext classpath size mismatch. expected=0, found=1 (PCL[] | PCL[/system/framework/android.test.runner.jar*2496447986])
+10-26 22:09:43.716 D/AndroidRuntime( 3822): Calling main entry com.android.commands.am.Am
+10-26 22:09:43.718 I/AppWidgetServiceImpl(  558): getAppWidgetIds() 0
+10-26 22:09:43.719 D/UiAutomationConnection( 3822): Created on user UserHandle{0}
+10-26 22:09:43.719 I/AppWidgetServiceImpl(  558): getAppWidgetIds() 0
+10-26 22:09:43.721 I/BugleRcsEngine( 3586): RCS Configuration storage in Bugle is disabled by p/h flag, using ProvisioningEngineStateCacheUtil.getProvisioningConfigurationForGivenSimIfExist() [CONTEXT log_prefix="ProvisioningEngineDataRetriever" thread_id=61 ]
+10-26 22:09:43.724 I/ActivityManager(  558): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+10-26 22:09:43.725 I/BugleRcsEngine( 3586): Connected state: [1], networkType: [WIFI] [CONTEXT thread_id=59 ]
+10-26 22:09:43.728 I/ChimeraSrvcProxy( 1206): NullBinder for android.net.action.RECOMMEND_NETWORKS triggering remote TransactionTooLargeException due to Service without Chimera impl
+10-26 22:09:43.729 W/.gms.persistent( 1206): Large reply transaction of 1056768 bytes, interface descriptor , code 1
+10-26 22:09:43.731 E/RoleControllerServiceImpl(  558): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.devicelockcontroller, role: android.app.role.SYSTEM_FINANCED_DEVICE_CONTROLLER
+10-26 22:09:43.733 V/GrammaticalInflectionUtils(  558): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@43e88a5, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+10-26 22:09:43.736 I/AppsFilter(  558): interaction: PackageSetting{d301e11 com.android.microdroid.empty_payload/10195} -> PackageSetting{13ffd9e dev.mobile.maestro/10210} BLOCKED
+10-26 22:09:43.745 I/AppWidgetServiceImpl(  558): getInstalledProvidersForProfiles() 0
+10-26 22:09:43.745 D/Zygote  (  364): Forked child process 3864
+10-26 22:09:43.747 I/netd    (  360): tetherGetStats() -> {[]} <0.31ms>
+10-26 22:09:43.750 W/A       ( 1603): (REDACTED) Exception while fetching versionCode for package[%s].
+10-26 22:09:43.750 W/A       ( 1603): android.content.pm.PackageManager$NameNotFoundException: com.google.android.apps.tv.dreamx
+10-26 22:09:43.750 W/A       ( 1603): 	at android.app.ApplicationPackageManager.getPackageInfoAsUser(ApplicationPackageManager.java:273)
+10-26 22:09:43.750 W/A       ( 1603): 	at android.app.ApplicationPackageManager.getPackageInfo(ApplicationPackageManager.java:233)
+10-26 22:09:43.750 W/A       ( 1603): 	at android.app.ApplicationPackageManager.getPackageInfo(ApplicationPackageManager.java:227)
+10-26 22:09:43.750 W/A       ( 1603): 	at com.google.android.apps.gsa.staticplugins.t.c.a(PG:1276)
+10-26 22:09:43.750 W/A       ( 1603): 	at com.google.android.apps.gsa.staticplugins.t.i.a(PG:11)
+10-26 22:09:43.750 W/A       ( 1603): 	at com.google.android.libraries.gsa.h.a.f.a(PG:9)
+10-26 22:09:43.750 W/A       ( 1603): 	at com.google.common.util.concurrent.ds.a(PG:3)
+10-26 22:09:43.750 W/A       ( 1603): 	at com.google.common.util.concurrent.cu.run(PG:21)
+10-26 22:09:43.750 W/A       ( 1603): 	at com.google.common.util.concurrent.du.run(PG:5)
+10-26 22:09:43.750 W/A       ( 1603): 	at com.google.android.libraries.k.x.run(PG:3)
+10-26 22:09:43.750 W/A       ( 1603): 	at com.google.common.n.c.c.run(PG:50)
+10-26 22:09:43.750 W/A       ( 1603): 	at com.google.android.libraries.k.e.run(PG:8)
+10-26 22:09:43.750 W/A       ( 1603): 	at java.lang.Thread.run(Thread.java:1012)
+10-26 22:09:43.750 W/A       ( 1603): 	at com.google.android.libraries.k.d.b.run(PG:74)
 --
-10-26 16:38:19.035 I/AndroidRuntime( 3750): VM exiting with result code 0.
-10-26 16:38:19.037 I/netd    (  370): tetherGetStats() -> {[]} <2.72ms>
-10-26 16:38:19.049 V/ActivityManager(  566): Got obituary of 3772:dev.mobile.maestro
-10-26 16:38:19.050 I/Zygote  (  376): Process 3772 exited due to signal 9 (Killed)
-10-26 16:38:19.050 W/ActivityManager(  566): pid 566 system sent binder code 1 with flags 1 to frozen apps and got error -32
-10-26 16:38:19.051 W/MagnificationConnectionManager(  566): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-26 16:38:19.051 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.052 W/MagnificationConnectionManager(  566): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-26 16:38:19.052 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.052 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.052 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.052 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.052 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.052 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.052 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.052 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.052 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.052 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.052 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.052 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.052 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.052 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.053 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.054 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.054 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.054 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.054 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.054 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.054 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.054 W/IPCThreadState(  566): Sending oneway calls to frozen process.
-10-26 16:38:19.054 W/IPCThreadState(  566): Sending oneway calls to frozen process.
+10-26 22:13:34.016 I/AndroidRuntime( 3822): VM exiting with result code 0.
+10-26 22:13:34.017 D/android.hardware.audio@7.1-impl.ranchu(  369): threadLoop: entering standby, frames: 3854784
+10-26 22:13:34.020 I/netd    (  360): tetherGetStats() -> {[]} <0.31ms>
+10-26 22:13:34.167 I/init    (    0): ... started service 'artd' has pid 6077
+10-26 22:13:34.168 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 151 (/system/bin/servicemanager)
+10-26 22:13:34.034 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-26 22:13:34.035 W/MagnificationConnectionManager(  558): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-26 22:13:34.035 V/UiAutomationManager(  558): UiAutomation service owner died
+10-26 22:13:34.035 I/AiAiEcho( 1483): Settings changed for uri: content://settings/secure/accessibility_enabled
+10-26 22:13:34.035 I/AiAiEcho( 1483): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-26 22:13:34.035 I/AiAiEcho( 1483): EchoTargets: 
+10-26 22:13:34.035 I/AiAiEcho( 1483): Filtered by AiAi flag check: 
+10-26 22:13:34.035 I/AiAiEcho( 1483): [CONTEXT ratelimit_period="10 SECONDS" ]
+10-26 22:13:34.035 I/AiAiEcho( 1483): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+10-26 22:13:34.036 I/AiAiEcho( 1483): #remoteViewsTwiddler: feature disabled.
+10-26 22:13:34.036 I/AiAiEcho( 1483): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-26 22:13:34.036 I/AiAiEcho( 1483): EchoTargets: 
+10-26 22:13:34.036 I/AiAiEcho( 1483): Filtered by AiAi flag check: 
+10-26 22:13:34.036 I/AiAiEcho( 1483): [CONTEXT ratelimit_period="10 SECONDS" ]
+10-26 22:13:34.036 I/AiAiEcho( 1483): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+10-26 22:13:34.036 I/AiAiEcho( 1483): #remoteViewsTwiddler: feature disabled.
+10-26 22:13:34.037 I/AiAiEcho( 1483): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+10-26 22:13:34.037 I/AiAiEcho( 1483): #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+10-26 22:13:34.037 D/SsBaseTemplateCard( 1172): No text view can be set up
+10-26 22:13:34.037 D/SsBaseTemplateCard( 1172): Passed-in item info is null
+10-26 22:13:34.037 D/SsBaseTemplateCard( 1172): Passed-in item info is null
+10-26 22:13:34.037 D/SsBaseTemplateCard( 1172): Passed-in item info is null
+10-26 22:13:34.037 I/SsBaseTemplateCard( 1172): Secondary card pane is null
+10-26 22:13:34.174 I/init    (    0): Untracked pid 3822 exited with status 0
+10-26 22:13:34.175 I/init    (    0): Untracked pid 3822 did not have an associated service entry and will not be reaped
+10-26 22:13:34.043 W/PageIndicator(  906): Total number of pages invalid: 0. Assuming 1 page.
