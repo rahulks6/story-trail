@@ -1196,7 +1196,7 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: radii.pill,
     borderWidth: 2,
-    borderColor: colors.accent,
+    borderColor: colors.accentText,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.surface,

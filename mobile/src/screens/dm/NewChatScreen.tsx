@@ -105,7 +105,7 @@ export function NewChatScreen({ navigation }: Props): React.JSX.Element {
       </View>
 
       {error ? <Text style={styles.error}>{error}</Text> : null}
-      {loading ? <ActivityIndicator color={colors.accent} style={styles.spinner} /> : null}
+      {loading ? <ActivityIndicator color={colors.accentText} style={styles.spinner} /> : null}
 
       {searchFailed ? (
         <EmptyState icon="search" title="Couldn't search" message="Check your connection and try again." />
@@ -124,7 +124,7 @@ export function NewChatScreen({ navigation }: Props): React.JSX.Element {
                 <VerifiedName name={item.displayName} verified={item.verified} style={typography.bodyStrong} />
                 <Text style={typography.caption}>@{item.username}</Text>
               </View>
-              {opening === item.username ? <ActivityIndicator color={colors.accent} /> : null}
+              {opening === item.username ? <ActivityIndicator color={colors.accentText} /> : null}
             </Pressable>
           )}
         />

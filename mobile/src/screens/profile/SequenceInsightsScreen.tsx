@@ -60,7 +60,7 @@ export function SequenceInsightsScreen(): React.JSX.Element {
   if (insights === null) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={colors.accent} />
+        <ActivityIndicator color={colors.accentText} />
       </View>
     );
   }
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     gap: 2,
   },
-  cardValue: { color: colors.accent, fontSize: 28, fontWeight: "700" },
+  cardValue: { color: colors.accentText, fontSize: 28, fontWeight: "700" },
   cardLabel: { marginTop: spacing.xs },
   cardHint: { color: colors.textDisabled },
 });

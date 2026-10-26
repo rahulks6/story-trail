@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
   stepButton: { width: 44, height: 44, borderRadius: radii.md, backgroundColor: colors.surfaceElevated, alignItems: "center", justifyContent: "center" },
   stepIcon: { color: colors.textPrimary, fontSize: 20, fontWeight: "700" },
   secondaryButton: { paddingVertical: spacing.sm, alignSelf: "stretch", alignItems: "center", backgroundColor: colors.surfaceElevated, borderRadius: radii.md },
-  secondaryButtonLabel: { color: colors.accent, fontWeight: "700" },
+  secondaryButtonLabel: { color: colors.accentText, fontWeight: "700" },
   deleteButton: { paddingVertical: spacing.sm, alignSelf: "stretch", alignItems: "center", borderRadius: radii.md, backgroundColor: "rgba(237,82,70,0.08)" },
   deleteButtonLabel: { color: colors.danger, fontWeight: "700" },
   doneButton: { paddingVertical: spacing.sm, alignSelf: "stretch", alignItems: "center", backgroundColor: colors.accent, borderRadius: radii.md },

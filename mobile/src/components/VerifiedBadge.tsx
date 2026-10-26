@@ -10,7 +10,7 @@ import { Icon } from "./Icon";
  * it. With `onPress` it's a button (a profile's header opens what the badge means).
  */
 export function VerifiedBadge({ size = 16, onPress, style }: { size?: number; onPress?: () => void; style?: StyleProp<ViewStyle> }): React.JSX.Element {
-  const icon = <Icon name={ICONS.verified} size={size} color={colors.accent} />;
+  const icon = <Icon name={ICONS.verified} size={size} color={colors.accentText} />;
   if (onPress) {
     return (
       <Pressable onPress={onPress} hitSlop={10} style={[styles.badge, style]} accessibilityRole="button" accessibilityLabel="Verified" accessibilityHint="Shows what the badge means">
@@ -61,7 +61,7 @@ export function VerifiedBadgeSheet({ visible, category, onClose }: { visible: bo
         <View style={[styles.sheet, { paddingBottom: spacing.md + bottom }]} accessibilityViewIsModal>
           <View style={styles.handle} />
           <View style={styles.sheetIcon}>
-            <Icon name={ICONS.verified} size={40} color={colors.accent} />
+            <Icon name={ICONS.verified} size={40} color={colors.accentText} />
           </View>
           <Text style={styles.title} accessibilityRole="header">Verified</Text>
           <Text style={styles.body}>

@@ -13,13 +13,18 @@ export const darkPalette = {
   textSecondary: "#A3A3A3",
   textDisabled: "#5A5D61",
 
-  accent: "#FFC800", // Katkee amber — Story ring, primary CTA, Follow, Create, unread badges
+  accent: "#FFC800", // Katkee amber — fills: primary CTA, Follow, Create, unread badges, my chat bubbles
   accentPressed: "#E0AF00",
   onAccent: "#0B0B0B",
+  // The accent as text, icons, rings and borders. Amber in dark mode; deep gold in light mode,
+  // where amber can't be read on white.
+  accentText: "#FFC800",
+  onAccentText: "#0B0B0B",
 
   // Lightened from #E4483C (same hue) so red text reaches 4.5:1 on sheets and dark text on red
   // fills does too (verification/contrast.cjs). Story text/drawing colours are content and keep their red.
   danger: "#ED5246",
+  onDanger: "#0B0B0B",
   success: "#3FBF7F",
   like: "#FF3040", // a liked heart: red, as people expect from a like
 
@@ -37,11 +42,16 @@ export const lightPalette: Palette = {
   textSecondary: "#5C5F66",
   textDisabled: "#A0A4AB",
 
-  accent: "#8A5E00", // deep gold: Katkee's amber, dark enough to read on white
-  accentPressed: "#6F4B00",
-  onAccent: "#FFFFFF",
+  // Buttons are filled with Katkee's own amber and black text in both modes (deep gold fills read
+  // as brown); text and icons use the deep gold below.
+  accent: "#FFC800",
+  accentPressed: "#EDB900",
+  onAccent: "#0B0B0B",
+  accentText: "#8A5E00", // deep gold: Katkee's amber, dark enough to read on white
+  onAccentText: "#FFFFFF",
 
   danger: "#C5221F",
+  onDanger: "#FFFFFF",
   success: "#137333",
   like: "#E0245E", // a deeper red that holds up on white
 

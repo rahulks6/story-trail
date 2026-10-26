@@ -103,7 +103,7 @@ export function GroupInfoScreen({ navigation, route }: Props): React.JSX.Element
   if (!group) {
     return (
       <View style={styles.centered}>
-        {error ? <Text style={[typography.body, styles.muted]}>{error}</Text> : <ActivityIndicator color={colors.accent} />}
+        {error ? <Text style={[typography.body, styles.muted]}>{error}</Text> : <ActivityIndicator color={colors.accentText} />}
       </View>
     );
   }
@@ -132,7 +132,7 @@ export function GroupInfoScreen({ navigation, route }: Props): React.JSX.Element
             accessibilityLabel="Group name"
             accessibilityHint="Everyone in the group sees the new name"
           />
-          {saving ? <ActivityIndicator color={colors.accent} /> : null}
+          {saving ? <ActivityIndicator color={colors.accentText} /> : null}
           <Text style={styles.muted}>{group.members.length} of up to {MAX_GROUP_MEMBERS} people</Text>
           <View style={styles.card}>
             {group.members.length < MAX_GROUP_MEMBERS ? (

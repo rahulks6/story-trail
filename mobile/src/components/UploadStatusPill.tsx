@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   body: { gap: 4, flexShrink: 1, minWidth: 140 },
   label: { color: colors.textPrimary, fontSize: 13, fontWeight: "600" },
   failed: { color: colors.danger },
-  undo: { color: colors.accent, fontWeight: "700", fontSize: 13 },
+  undo: { color: colors.accentText, fontWeight: "700", fontSize: 13 },
   close: { padding: 2 },
   badge: { minWidth: 20, height: 20, paddingHorizontal: 5, borderRadius: 10, alignItems: "center", justifyContent: "center", backgroundColor: colors.danger },
   badgeText: { color: "#FFFFFF", fontSize: 12, fontWeight: "700" },

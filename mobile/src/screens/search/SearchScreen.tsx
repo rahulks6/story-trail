@@ -211,7 +211,7 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
           accessibilityLabel={`${label} @${item.username}`}
           accessibilityState={{ busy: pendingFollows.has(item.username) }}
           disabled={pendingFollows.has(item.username)}
-          hitSlop={4}
+          hitSlop={8}
           style={[styles.followButton, active ? styles.followButtonQuiet : styles.followButtonStrong]}
           onPress={() => void onFollowPress(item)}
         >
@@ -288,7 +288,7 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
         )
       ) : (
         <>
-          {loading ? <ActivityIndicator color={colors.accent} style={styles.spinner} /> : null}
+          {loading ? <ActivityIndicator color={colors.accentText} style={styles.spinner} /> : null}
           {error ? <Text style={styles.error}>{error}</Text> : null}
           {!loading && !error && results.length === 0 ? (
             <EmptyState
@@ -304,7 +304,7 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
               keyboardDismissMode="on-drag"
               onEndReached={loadMore}
               onEndReachedThreshold={0.5}
-              ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.accent} style={styles.spinner} /> : undefined}
+              ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.accentText} style={styles.spinner} /> : undefined}
             />
           )}
         </>
@@ -359,17 +359,19 @@ const styles = StyleSheet.create({
   },
   rowMain: { flex: 1, flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 44 },
   rowText: { flex: 1, gap: 2 },
+  // Compact, so a list of suggestions reads as people rather than a column of buttons; the touch
+  // area is larger than it looks (hitSlop).
   followButton: {
-    minHeight: 36,
-    minWidth: 96,
+    minHeight: 32,
+    minWidth: 88,
     paddingHorizontal: spacing.md,
-    borderRadius: radii.md,
+    borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
   },
   followButtonStrong: { backgroundColor: colors.accent },
   followButtonQuiet: { backgroundColor: colors.surfaceElevated, borderWidth: 1, borderColor: colors.border },
-  followLabel: { fontSize: 14, fontWeight: "700" },
+  followLabel: { fontSize: 13, fontWeight: "700" },
   followLabelStrong: { color: colors.onAccent },
   followLabelQuiet: { color: colors.textPrimary },
 });

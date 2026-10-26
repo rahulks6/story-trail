@@ -311,7 +311,7 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
           </Text>
 
           {loading ? (
-            <ActivityIndicator color={colors.accent} style={styles.spinner} />
+            <ActivityIndicator color={colors.accentText} style={styles.spinner} />
           ) : loadFailed ? (
             // Not "no comments": they couldn't be loaded.
             <View style={styles.emptyBox}>
@@ -335,7 +335,7 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
               keyboardShouldPersistTaps="handled"
               onEndReachedThreshold={0.3}
               onEndReached={() => void loadMore()}
-              ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.accent} style={styles.spinner} /> : undefined}
+              ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.accentText} style={styles.spinner} /> : undefined}
               renderItem={renderItem}
             />
           )}
@@ -407,6 +407,6 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     fontSize: 15,
   },
-  sendLabel: { color: colors.accent, fontWeight: "700", fontSize: 15 },
+  sendLabel: { color: colors.accentText, fontWeight: "700", fontSize: 15 },
   sendDisabled: { opacity: 0.4 },
 });

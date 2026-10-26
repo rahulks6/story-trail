@@ -162,7 +162,7 @@ export function SignInSecuritySection({ hasPassword }: { hasPassword: boolean })
             <Button label="Try again" variant="secondary" onPress={() => void load()} />
           </>
         ) : sessions === null ? (
-          <ActivityIndicator color={colors.accent} accessibilityLabel="Loading devices" />
+          <ActivityIndicator color={colors.accentText} accessibilityLabel="Loading devices" />
         ) : (
           <>
             {sessions.map((session) => (
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.xs },
   rowText: { flex: 1, gap: 2 },
   rowAction: { minWidth: 110 },
-  thisDevice: { color: colors.accent, fontSize: 13, fontWeight: "600" },
+  thisDevice: { color: colors.accentText, fontSize: 13, fontWeight: "600" },
   event: { gap: 2, paddingVertical: spacing.xs, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border },
-  attention: { color: colors.accent },
+  attention: { color: colors.accentText },
 });

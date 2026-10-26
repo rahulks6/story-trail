@@ -45,7 +45,7 @@ export function StoryLinkScreen({ navigation, route }: Props): React.JSX.Element
   if (!problem) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={colors.accent} size="large" accessibilityLabel="Opening Story" />
+        <ActivityIndicator color={colors.accentText} size="large" accessibilityLabel="Opening Story" />
       </View>
     );
   }

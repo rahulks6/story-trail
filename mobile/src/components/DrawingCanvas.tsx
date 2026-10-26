@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
   doneLabel: { color: colors.onAccent, fontWeight: "700" },
   colorRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   colorSwatch: { width: 28, height: 28, borderRadius: 14, borderWidth: 2, borderColor: "rgba(255,255,255,0.7)" },
-  colorSwatchActive: { borderColor: colors.accent, borderWidth: 3, transform: [{ scale: 1.2 }] },
+  colorSwatchActive: { borderColor: colors.accentText, borderWidth: 3, transform: [{ scale: 1.2 }] },
   sizeRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, marginLeft: "auto" },
   sizeStepper: { color: colors.textPrimary, fontSize: 20, paddingHorizontal: spacing.xs },
   sizePreview: { borderWidth: 1, borderColor: "rgba(255,255,255,0.4)" },

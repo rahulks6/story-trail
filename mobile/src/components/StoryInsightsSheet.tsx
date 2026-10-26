@@ -92,7 +92,7 @@ export function StoryInsightsSheet({ visible, storyId, onClose }: Props): React.
         <Text style={[typography.bodyStrong, styles.title]}>Insights</Text>
 
         {loading ? (
-          <ActivityIndicator color={colors.accent} style={{ marginTop: spacing.lg }} />
+          <ActivityIndicator color={colors.accentText} style={{ marginTop: spacing.lg }} />
         ) : error ? (
           <Text style={[typography.caption, styles.empty]}>{error}</Text>
         ) : !insights || insights.viewCount === 0 ? (

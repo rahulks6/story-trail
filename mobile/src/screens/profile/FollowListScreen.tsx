@@ -104,7 +104,7 @@ export function FollowListScreen({ route }: Props): React.JSX.Element {
       keyExtractor={(item) => item.id}
       onEndReachedThreshold={0.4}
       onEndReached={() => void loadMore()}
-      ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} /> : undefined}
+      ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.accentText} style={styles.footerSpinner} /> : undefined}
       renderItem={({ item }) => (
         <Pressable
           accessibilityRole="button"

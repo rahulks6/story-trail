@@ -27,7 +27,7 @@ export function AppealsScreen():React.JSX.Element {
    {selected&&<><TextInput style={styles.input} multiline maxLength={1000} value={reason} onChangeText={setReason} placeholder="Explain why this decision should be reviewed" placeholderTextColor={colors.textSecondary} accessibilityLabel="Appeal reason"/><Pressable accessibilityRole="button" style={styles.button} disabled={busy||!reason.trim()} onPress={submit}><Text style={styles.text}>Submit appeal</Text></Pressable></>}
    <Pressable accessibilityRole="button" style={styles.button} onPress={()=>{setAccess(null);setSelected(null);}}><Text style={styles.text}>Verify again</Text></Pressable>
   </>}
-  {!!error&&<Text accessibilityRole="alert" style={styles.error}>{error}</Text>}{busy&&<ActivityIndicator color={colors.accent}/>}
+  {!!error&&<Text accessibilityRole="alert" style={styles.error}>{error}</Text>}{busy&&<ActivityIndicator color={colors.accentText}/>}
  </ScrollView></KeyboardAvoider>;
 }
-const styles=StyleSheet.create({root:{flex:1,backgroundColor:colors.background},fill:{flex:1},content:{padding:24,gap:16},title:{color:colors.textPrimary,fontSize:24,fontWeight:'700'},text:{color:colors.textPrimary},input:{padding:14,minHeight:48,borderWidth:1,borderColor:colors.border,color:colors.textPrimary,borderRadius:8},button:{padding:14,minHeight:48,backgroundColor:colors.surfaceElevated,borderRadius:8,gap:6},selected:{borderWidth:1,borderColor:colors.accent},error:{color:colors.danger}});
+const styles=StyleSheet.create({root:{flex:1,backgroundColor:colors.background},fill:{flex:1},content:{padding:24,gap:16},title:{color:colors.textPrimary,fontSize:24,fontWeight:'700'},text:{color:colors.textPrimary},input:{padding:14,minHeight:48,borderWidth:1,borderColor:colors.border,color:colors.textPrimary,borderRadius:8},button:{padding:14,minHeight:48,backgroundColor:colors.surfaceElevated,borderRadius:8,gap:6},selected:{borderWidth:1,borderColor:colors.accentText},error:{color:colors.danger}});

@@ -317,7 +317,7 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
                 onChangeText={setMentionQuery}
                 autoFocus
               />
-              {mentionSearching ? <ActivityIndicator color={colors.accent} style={styles.spinner} /> : null}
+              {mentionSearching ? <ActivityIndicator color={colors.accentText} style={styles.spinner} /> : null}
               <FlatList
                 data={mentionResults}
                 keyExtractor={(u) => u.id}
@@ -351,7 +351,7 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
                 onChangeText={setLocationLabel}
               />
               <Pressable accessibilityRole="button" style={styles.secondaryButton} onPress={useCurrentLocation} disabled={locatingDevice}>
-                {locatingDevice ? <ActivityIndicator color={colors.accent} /> : <Text style={styles.secondaryButtonLabel}>Use current location</Text>}
+                {locatingDevice ? <ActivityIndicator color={colors.accentText} /> : <Text style={styles.secondaryButtonLabel}>Use current location</Text>}
               </Pressable>
               {locationError ? <Text style={styles.errorText}>{locationError}</Text> : null}
               <Pressable accessibilityRole="button" style={[styles.primaryButton, !locationLabel.trim() && styles.primaryButtonDisabled]} disabled={!locationLabel.trim()} onPress={addLocation}>
@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
   emojiCell: { flex: 1 / 6, aspectRatio: 1, alignItems: "center", justifyContent: "center" },
   emojiGlyph: { fontSize: 26 },
   stickerCell: { flex: 1 / 4, aspectRatio: 1, alignItems: "center", justifyContent: "center" },
-  stickerGlyph: { fontSize: 30, color: colors.accent },
+  stickerGlyph: { fontSize: 30, color: colors.accentText },
   input: {
     color: colors.textPrimary,
     backgroundColor: colors.surfaceElevated,
@@ -471,7 +471,7 @@ const styles = StyleSheet.create({
   resultUsername: { color: colors.textSecondary, fontSize: 12 },
   emptyText: { color: colors.textSecondary, textAlign: "center", marginTop: spacing.md },
   secondaryButton: { paddingVertical: spacing.sm, alignItems: "center" },
-  secondaryButtonLabel: { color: colors.accent, fontWeight: "600" },
+  secondaryButtonLabel: { color: colors.accentText, fontWeight: "600" },
   errorText: { color: colors.danger, textAlign: "center", marginBottom: spacing.xs },
   primaryButton: { backgroundColor: colors.accent, borderRadius: radii.md, paddingVertical: spacing.sm, alignItems: "center", marginTop: spacing.xs },
   primaryButtonDisabled: { opacity: 0.5 },

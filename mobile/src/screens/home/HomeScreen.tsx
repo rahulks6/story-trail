@@ -80,7 +80,7 @@ export function HomeScreen():React.JSX.Element {
   <Pressable onPress={refresh} style={styles.emptyButton} accessibilityRole="button"><Text style={styles.emptyButtonLabel}>Try again</Text></Pressable>
  </EmptyState>{festivalButton}{activityButton}</View>;
  // Pull down (or tap Refresh) to look again; Find people for someone to follow.
- if(!feed.length)return <View style={styles.root}><ScrollView contentContainerStyle={styles.emptyScroll} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={reloadQuietly} tintColor={colors.textPrimary} colors={[colors.accent]}/>}>
+ if(!feed.length)return <View style={styles.root}><ScrollView contentContainerStyle={styles.emptyScroll} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={reloadQuietly} tintColor={colors.textPrimary} colors={[colors.accentText]}/>}>
   {festival?<View style={styles.festivalCard}>
    <Text style={styles.festivalCardEmoji}>{festival.emoji}</Text>
    <Text style={styles.festivalCardTitle}>{festival.greeting}!</Text>

@@ -10,7 +10,7 @@ import type {IconName} from '../theme/icons';
 export function Icon({name,size,color,selected=false,style}: {name:IconName;size?:number;color?:string;selected?:boolean;style?:StyleProp<TextStyle>}): React.JSX.Element {
  const flat=StyleSheet.flatten(style)||{};
  const length=size??flat.fontSize??24;
- const ink=color??(selected?colors.accent:flat.color)??colors.textPrimary;
+ const ink=color??(selected?colors.accentText:flat.color)??colors.textPrimary;
  const filled=name==='liked'||name==='starFilled'||name==='verified'||(name==='home'&&selected);
  const paths:Partial<Record<IconName,string>>={
   home:'M4 10.5 12 3l8 7.5V21h-5v-7H9v7H4Z',
@@ -81,7 +81,7 @@ export function Icon({name,size,color,selected=false,style}: {name:IconName;size
     {key==='data'&&<><Path d="M4 6c0-5 16-5 16 0v13c0 5-16 5-16 0V6Zm0 0c0 5 16 5 16 0M4 12c0 5 16 5 16 0"/></>}
     {key==='camera'&&<Circle cx={12} cy={13} r={3.5}/>}
     {key==='music'&&<><Circle cx={6} cy={18} r={3}/><Circle cx={18} cy={16} r={3}/></>}
-    {key==='verified'&&<Path d="M8 12.2l2.8 2.8L16.2 9.4" stroke={colors.onAccent} strokeWidth={2.2} fill="none"/>}
+    {key==='verified'&&<Path d="M8 12.2l2.8 2.8L16.2 9.4" stroke={colors.onAccentText} strokeWidth={2.2} fill="none"/>}
     {key==='filter'&&<><Circle cx={10.5} cy={6} r={2.5}/><Circle cx={16.5} cy={12} r={2.5}/><Circle cx={8.5} cy={18} r={2.5}/></>}
    </G>
   </Svg>

@@ -111,7 +111,7 @@ export function AvatarCropper({ photo, onCancel, onDone }: Props): React.JSX.Ele
           </Pressable>
           <Text style={styles.title} accessibilityRole="header">Move and scale</Text>
           <Pressable onPress={() => void usePhoto()} hitSlop={8} disabled={working} accessibilityRole="button" accessibilityLabel="Use photo" accessibilityState={{ busy: working, disabled: working }}>
-            {working ? <ActivityIndicator color={colors.accent} /> : <Text style={[styles.barButton, styles.barPrimary]}>Use photo</Text>}
+            {working ? <ActivityIndicator color={colors.accentText} /> : <Text style={[styles.barButton, styles.barPrimary]}>Use photo</Text>}
           </Pressable>
         </View>
 
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
   bar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: spacing.lg, minHeight: 44 },
   barButton: { color: colors.textPrimary, fontSize: 16 },
-  barPrimary: { color: colors.accent, fontWeight: "700" },
+  barPrimary: { color: colors.accentText, fontWeight: "700" },
   title: { color: colors.textPrimary, fontSize: 17, fontWeight: "700" },
   middle: { flex: 1, alignItems: "center", justifyContent: "center", gap: spacing.lg },
   viewport: { overflow: "hidden", backgroundColor: colors.surface },

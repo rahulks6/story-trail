@@ -356,7 +356,7 @@ export function RootNavigator(): React.JSX.Element {
   if (status === "loading") {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background }}>
-        <ActivityIndicator color={colors.accent} size="large" />
+        <ActivityIndicator color={colors.accentText} size="large" />
       </View>
     );
   }
@@ -390,6 +390,6 @@ function navigationTheme(): Theme {
   return {
     ...base,
     dark: colorScheme() === "dark",
-    colors: { ...base.colors, primary: colors.accent, background: colors.background, card: colors.background, text: colors.textPrimary, border: colors.border, notification: colors.accent },
+    colors: { ...base.colors, primary: colors.accentText, background: colors.background, card: colors.background, text: colors.textPrimary, border: colors.border, notification: colors.accentText },
   };
 }

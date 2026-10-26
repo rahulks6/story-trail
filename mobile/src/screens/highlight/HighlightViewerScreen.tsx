@@ -240,7 +240,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
             </Pressable>
           </EmptyState>
         ) : (
-          <ActivityIndicator color={colors.accent} />
+          <ActivityIndicator color={colors.accentText} />
         )}
         {close}
       </View>
@@ -285,7 +285,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
         />
       ) : (
         <View style={styles.centered}>
-          {error ? <Text style={styles.errorText}>{error}</Text> : <ActivityIndicator color={colors.accent} />}
+          {error ? <Text style={styles.errorText}>{error}</Text> : <ActivityIndicator color={colors.accentText} />}
         </View>
       )}
 

@@ -205,7 +205,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
   if (loading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={colors.accent} />
+        <ActivityIndicator color={colors.accentText} />
       </View>
     );
   }
@@ -300,7 +300,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
         onEndReachedThreshold={0.4}
         onEndReached={() => void loadMoreArchive()}
         ListEmptyComponent={<Text style={typography.caption}>No Stories in your Archive yet.</Text>}
-        ListFooterComponent={archiveLoadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} /> : undefined}
+        ListFooterComponent={archiveLoadingMore ? <ActivityIndicator color={colors.accentText} style={styles.footerSpinner} /> : undefined}
         renderItem={({ item }) => {
           const order = selected.indexOf(item.id);
           const isSelected = order !== -1;
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
   pickerTitle: { ...typography.title, fontSize: 18, marginHorizontal: spacing.md, marginBottom: spacing.xs },
   pickerRow: { paddingHorizontal: spacing.md, paddingVertical: spacing.sm, gap: spacing.sm },
   pickerThumb: { width: 90, height: 121, borderRadius: radii.md, borderWidth: 3, borderColor: "transparent", backgroundColor: colors.surfaceElevated },
-  pickerThumbChosen: { borderColor: colors.accent },
+  pickerThumbChosen: { borderColor: colors.accentText },
   titleInput: {
     backgroundColor: colors.surface,
     borderRadius: radii.md,
@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "transparent",
   },
-  thumbSelected: { borderColor: colors.accent, opacity: 0.85 },
+  thumbSelected: { borderColor: colors.accentText, opacity: 0.85 },
   orderBadge: {
     position: "absolute",
     top: 4,

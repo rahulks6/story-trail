@@ -31,5 +31,5 @@ export function TermsNotice({ action }: { action: string }): React.JSX.Element {
 
 const styles = StyleSheet.create({
   text: { ...typography.caption, color: colors.textSecondary, textAlign: "center", lineHeight: 18 },
-  link: { color: colors.accent, fontWeight: "600" },
+  link: { color: colors.accentText, fontWeight: "600" },
 });

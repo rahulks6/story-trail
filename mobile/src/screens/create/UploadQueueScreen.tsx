@@ -36,7 +36,7 @@ export function UploadQueueScreen():React.JSX.Element {
  return <ScrollView style={styles.root} contentContainerStyle={styles.content}>
   <Text style={styles.title} accessibilityRole="header">Story uploads</Text>
   <Text style={styles.muted}>Stories share in the background while Katkee is open. Once one is processing it posts by itself, even if you close the app. Anything interrupted waits here to continue.</Text>
-  {jobs===null?<ActivityIndicator color={colors.accent}/>:!jobs.length?<Text style={styles.muted}>No pending uploads.</Text>:jobs.map(job=>{
+  {jobs===null?<ActivityIndicator color={colors.accentText}/>:!jobs.length?<Text style={styles.muted}>No pending uploads.</Text>:jobs.map(job=>{
    const active=uploadRunning(job.ownerId,job.id);const percent=uploadProgress(job.ownerId,job.id);
    const label=describe(job,active,percent);
    const canRetry=!active&&job.status!=='published'&&job.status!=='queued'&&job.status!=='processing'&&!needsNewFile(job);
@@ -46,7 +46,7 @@ export function UploadQueueScreen():React.JSX.Element {
     {job.status==='uploading'&&active?<View style={styles.track} accessibilityRole="progressbar" accessibilityValue={{min:0,max:100,now:Math.round((percent??0)*100)}}><View style={[styles.fill,{width:`${Math.round((percent??0)*100)}%`}]}/></View>:null}
     {!!job.error&&job.status==='failed'&&<Text style={styles.error}>{job.error}</Text>}
     {needsNewFile(job)&&<Text style={styles.muted}>Remove it and share the photo or video again, or choose a different one.</Text>}
-    {active&&job.status!=='uploading'?<ActivityIndicator color={colors.accent}/>:null}
+    {active&&job.status!=='uploading'?<ActivityIndicator color={colors.accentText}/>:null}
     <View style={styles.actions}>
      {canRetry&&<Pressable style={styles.button} onPress={()=>run(job)} accessibilityRole="button"><Text style={styles.text}>Retry</Text></Pressable>}
      {!active&&!job.cancelAfterPublish&&<Pressable style={styles.button} onPress={()=>remove(job)} accessibilityRole="button"><Text style={styles.text}>{job.status==='published'?'Dismiss':'Remove'}</Text></Pressable>}
@@ -56,4 +56,4 @@ export function UploadQueueScreen():React.JSX.Element {
   <Pressable style={styles.button} onPress={()=>void refresh()} accessibilityRole="button"><Text style={styles.text}>Refresh</Text></Pressable>
  </ScrollView>;
 }
-const styles=StyleSheet.create({root:{flex:1,backgroundColor:colors.background},content:{padding:20,gap:16},title:{fontSize:24,fontWeight:'700',color:colors.textPrimary},text:{color:colors.textPrimary},muted:{color:colors.textSecondary},status:{color:colors.textPrimary,fontWeight:'600'},done:{color:colors.accent},error:{color:colors.danger},card:{padding:16,gap:10,borderRadius:12,backgroundColor:colors.surface},track:{height:6,borderRadius:3,backgroundColor:colors.surfaceElevated,overflow:'hidden'},fill:{height:6,backgroundColor:colors.accent},actions:{flexDirection:'row',gap:10},button:{minHeight:48,paddingHorizontal:16,justifyContent:'center',backgroundColor:colors.surfaceElevated,borderRadius:8}});
+const styles=StyleSheet.create({root:{flex:1,backgroundColor:colors.background},content:{padding:20,gap:16},title:{fontSize:24,fontWeight:'700',color:colors.textPrimary},text:{color:colors.textPrimary},muted:{color:colors.textSecondary},status:{color:colors.textPrimary,fontWeight:'600'},done:{color:colors.accentText},error:{color:colors.danger},card:{padding:16,gap:10,borderRadius:12,backgroundColor:colors.surface},track:{height:6,borderRadius:3,backgroundColor:colors.surfaceElevated,overflow:'hidden'},fill:{height:6,backgroundColor:colors.accent},actions:{flexDirection:'row',gap:10},button:{minHeight:48,paddingHorizontal:16,justifyContent:'center',backgroundColor:colors.surfaceElevated,borderRadius:8}});

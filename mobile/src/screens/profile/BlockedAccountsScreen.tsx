@@ -64,7 +64,7 @@ export function BlockedAccountsScreen(): React.JSX.Element {
     if (loadFailed) return <LoadFailed message="Couldn't load your blocked accounts. Check your connection and try again." onRetry={() => void load()} />;
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={colors.accent} />
+        <ActivityIndicator color={colors.accentText} />
       </View>
     );
   }
@@ -90,7 +90,7 @@ export function BlockedAccountsScreen(): React.JSX.Element {
               </View>
             </View>
             {busy ? (
-              <ActivityIndicator color={colors.accent} />
+              <ActivityIndicator color={colors.accentText} />
             ) : (
               <Pressable accessibilityRole="button" style={styles.unblockButton} onPress={() => void onUnblock(item)}>
                 <Text style={styles.unblockLabel}>Unblock</Text>

@@ -64,7 +64,7 @@ export function MutedAccountsScreen(): React.JSX.Element {
     if (loadFailed) return <LoadFailed message="Couldn't load your muted accounts. Check your connection and try again." onRetry={() => void load()} />;
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={colors.accent} />
+        <ActivityIndicator color={colors.accentText} />
       </View>
     );
   }
@@ -90,7 +90,7 @@ export function MutedAccountsScreen(): React.JSX.Element {
               </View>
             </View>
             {busy ? (
-              <ActivityIndicator color={colors.accent} />
+              <ActivityIndicator color={colors.accentText} />
             ) : (
               <Pressable accessibilityRole="button" style={styles.unmuteButton} onPress={() => void onUnmute(item)}>
                 <Text style={styles.unmuteLabel}>Unmute</Text>

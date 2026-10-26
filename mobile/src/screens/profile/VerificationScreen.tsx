@@ -140,7 +140,7 @@ export function VerificationScreen({ navigation }: Props): React.JSX.Element {
       <LoadFailed message={loadError} onRetry={() => { setLoadError(null); void load(); }} />
     ) : (
       <View style={styles.loading} accessible accessibilityLabel="Loading">
-        <ActivityIndicator color={colors.accent} />
+        <ActivityIndicator color={colors.accentText} />
       </View>
     );
   }
@@ -241,7 +241,7 @@ function categoryDetail(category: string | null): string | undefined {
 function StatusCard({ title, body, detail, icon }: { title: string; body: string; detail?: string; icon?: boolean }): React.JSX.Element {
   return (
     <View style={styles.statusCard}>
-      {icon ? <Icon name={ICONS.verified} size={40} color={colors.accent} /> : null}
+      {icon ? <Icon name={ICONS.verified} size={40} color={colors.accentText} /> : null}
       <Text style={typography.title} accessibilityRole="header">{title}</Text>
       <Text style={styles.statusBody}>{body}</Text>
       {detail ? <Text style={styles.statusDetail}>{detail}</Text> : null}
@@ -451,7 +451,7 @@ function RequestForm({
         {errors.linksAll ? <Text style={styles.error}>{errors.linksAll}</Text> : null}
         {links.length < MAX_VERIFICATION_LINKS ? (
           <Pressable onPress={() => setLinks((current) => [...current, ""])} style={styles.addLink} hitSlop={6} accessibilityRole="button">
-            <Icon name={ICONS.add} size={18} color={colors.accent} />
+            <Icon name={ICONS.add} size={18} color={colors.accentText} />
             <Text style={styles.addLinkText}>Add a link</Text>
           </Pressable>
         ) : null}
@@ -513,13 +513,13 @@ const styles = StyleSheet.create({
   reasonMark: { width: 16, height: 16, borderRadius: 8, borderWidth: 2, borderColor: colors.textDisabled },
   reasonText: { ...typography.body, flex: 1 },
   fix: { minHeight: 36, justifyContent: "center", paddingHorizontal: spacing.sm },
-  fixText: { color: colors.accent, fontSize: 14, fontWeight: "600" },
+  fixText: { color: colors.accentText, fontSize: 14, fontWeight: "600" },
   links: { gap: spacing.sm },
   linkRow: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm },
   linkField: { flex: 1 },
   removeLink: { minHeight: 44, minWidth: 32, marginTop: 22, alignItems: "center", justifyContent: "center" },
   addLink: { flexDirection: "row", alignItems: "center", gap: spacing.xs, alignSelf: "flex-start", minHeight: 44 },
-  addLinkText: { color: colors.accent, fontSize: 15, fontWeight: "600" },
+  addLinkText: { color: colors.accentText, fontSize: 15, fontWeight: "600" },
   addPhoto: { flexDirection: "row", alignItems: "center", gap: spacing.sm, alignSelf: "flex-start", minHeight: 44, paddingHorizontal: spacing.md, borderRadius: radii.md, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface },
   addPhotoText: { color: colors.textPrimary, fontSize: 15, fontWeight: "600" },
   photoRow: { flexDirection: "row", alignItems: "center", gap: spacing.md },

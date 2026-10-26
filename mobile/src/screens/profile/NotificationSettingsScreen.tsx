@@ -110,7 +110,7 @@ export function NotificationSettingsScreen(): React.JSX.Element {
     if (loadFailed) return <LoadFailed message="Couldn't load your notification settings. Check your connection and try again." onRetry={load} />;
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={colors.accent} />
+        <ActivityIndicator color={colors.accentText} />
       </View>
     );
   }
@@ -121,7 +121,7 @@ export function NotificationSettingsScreen(): React.JSX.Element {
         <View style={styles.rowMain}>
           <Text style={[typography.body, disabled && styles.disabledLabel]}>{row.label}</Text>
           {pending.has(row.key) ? (
-            <ActivityIndicator color={colors.accent} />
+            <ActivityIndicator color={colors.accentText} />
           ) : (
             <Switch
               value={prefs[row.key]}
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   noticeText: { ...typography.caption, color: colors.textPrimary },
-  noticeAction: { color: colors.accent, fontWeight: "700" },
+  noticeAction: { color: colors.accentText, fontWeight: "700" },
   card: {
     backgroundColor: colors.surface,
     borderRadius: radii.md,

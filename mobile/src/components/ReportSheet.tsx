@@ -109,7 +109,7 @@ export function ReportSheet({ visible, targetType, targetId, conversationId, onC
                 multiline
               />
               <Pressable style={[styles.submitButton, busy && styles.submitButtonDisabled]} disabled={busy} onPress={onSubmit} accessibilityRole="button" accessibilityLabel="Submit report" accessibilityState={{ busy, disabled: busy }}>
-                {busy ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.submitLabel}>Submit report</Text>}
+                {busy ? <ActivityIndicator color={colors.onDanger} /> : <Text style={styles.submitLabel}>Submit report</Text>}
               </Pressable>
               <Pressable style={styles.backRow} onPress={() => setSelectedReason(null)} disabled={busy} accessibilityRole="button">
                 <Text style={typography.caption}>Choose a different reason</Text>
@@ -158,6 +158,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   submitButtonDisabled: { opacity: 0.6 },
-  submitLabel: { color: colors.onAccent, fontWeight: "700" },
+  submitLabel: { color: colors.onDanger, fontWeight: "700" },
   backRow: { paddingVertical: spacing.md, alignItems: "center" },
 });

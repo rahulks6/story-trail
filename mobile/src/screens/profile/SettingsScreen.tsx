@@ -159,7 +159,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
             <Text style={typography.body}>Private account</Text>
             <Text style={styles.switchHint}>Only followers you approve see your Stories.</Text>
           </View>
-          {togglingPrivacy ? <ActivityIndicator color={colors.accent} /> : <Switch value={isPrivate} onValueChange={onTogglePrivacy} accessibilityLabel="Private account" />}
+          {togglingPrivacy ? <ActivityIndicator color={colors.accentText} /> : <Switch value={isPrivate} onValueChange={onTogglePrivacy} accessibilityLabel="Private account" />}
         </View>
         <View style={styles.switchRow}>
           <View style={styles.switchLabelGroup}>
@@ -167,7 +167,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
             <Text style={styles.switchHint}>Uses your city-sized area, never your exact location.</Text>
           </View>
           {togglingNearby || nearbyOn === null ? (
-            <ActivityIndicator color={colors.accent} />
+            <ActivityIndicator color={colors.accentText} />
           ) : (
             <Switch value={nearbyOn} onValueChange={(next) => void onToggleNearby(next)} accessibilityLabel="Nearby Stories" />
           )}

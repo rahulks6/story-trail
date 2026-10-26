@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
   headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.sm },
   sectionTitle: { ...typography.bodyStrong, fontSize: 16 },
   reorderToggle: { paddingVertical: spacing.xs },
-  reorderToggleLabel: { ...typography.caption, color: colors.accent, fontWeight: "700" },
+  reorderToggleLabel: { ...typography.caption, color: colors.accentText, fontWeight: "700" },
   slot: { flex: 1 },
   card: {
     width: "100%",
@@ -249,13 +249,14 @@ const styles = StyleSheet.create({
   newSlot: { position: "absolute" },
   newCard: {
     width: "100%",
-    borderStyle: "dashed",
-    borderWidth: 1.5,
-    borderColor: colors.textDisabled,
+    // A quiet filled tile, like the covers beside it, rather than a dashed outline.
+    backgroundColor: colors.surface,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
     borderRadius: radii.md,
     alignItems: "center",
     justifyContent: "center",
   },
-  newGlyph: { color: colors.accent, fontSize: 28, fontWeight: "700" },
+  newGlyph: { color: colors.accentText, fontSize: 28, fontWeight: "700" },
   hint: { ...typography.caption, marginTop: spacing.xs },
 });

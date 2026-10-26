@@ -189,7 +189,7 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
     if (loadFailed) return <LoadFailed message="Couldn't load your Archive. Check your connection and try again." onRetry={() => void loadFirst()} />;
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={colors.accent} />
+        <ActivityIndicator color={colors.accentText} />
       </View>
     );
   }
@@ -206,7 +206,7 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
           onEndReachedThreshold={0.4}
           onEndReached={() => void onEndReached()}
           ListFooterComponent={
-            loadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} />
+            loadingMore ? <ActivityIndicator color={colors.accentText} style={styles.footerSpinner} />
               : moreFailed ? <View style={styles.footerSpinner}><Button label="Couldn't load more. Try again" variant="secondary" onPress={() => void onEndReached(true)} /></View>
               : undefined
           }
@@ -250,7 +250,7 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
           </Pressable>
           <Text style={typography.caption} accessibilityLiveRegion="polite">{selected.length ? `${selected.length} selected` : "Choose Stories"}</Text>
           <Pressable accessibilityRole="button" onPress={onCreateHighlight} disabled={!selected.length} hitSlop={8} style={[styles.actionButton, !selected.length && styles.actionDisabled]}>
-            <Icon name={ICONS.add} size={20} color={colors.accent} />
+            <Icon name={ICONS.add} size={20} color={colors.accentText} />
             <Text style={styles.actionCreate}>Highlight</Text>
           </Pressable>
         </View>
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
   },
   actionButton: { flexDirection: "row", alignItems: "center", gap: 6, minHeight: 44 },
   actionDisabled: { opacity: 0.4 },
-  headerAction: { color: colors.accent, fontSize: 16, fontWeight: "600" },
+  headerAction: { color: colors.accentText, fontSize: 16, fontWeight: "600" },
   actionDelete: { color: colors.danger, fontWeight: "600" },
-  actionCreate: { color: colors.accent, fontWeight: "700" },
+  actionCreate: { color: colors.accentText, fontWeight: "700" },
 });

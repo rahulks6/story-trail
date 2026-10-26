@@ -112,7 +112,7 @@ const OUTLINE_OFFSETS: Array<[number, number]> = [[-1, -1], [0, -1], [1, -1], [-
 const styles = StyleSheet.create({
   text: { fontWeight: "600", color: colors.textPrimary, includeFontPadding: false },
   outlineCopy: { position: "absolute", left: 0, right: 0, top: 0, bottom: 0 },
-  sticker: { color: colors.accent },
+  sticker: { color: colors.accentText },
   chip: {
     color: colors.onAccent,
     backgroundColor: colors.accent,

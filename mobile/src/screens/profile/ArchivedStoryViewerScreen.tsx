@@ -131,7 +131,7 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
   if (!detail) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={colors.accent} />
+        <ActivityIndicator color={colors.accentText} />
         <Pressable style={[styles.closeButton, { top: insets.top + spacing.sm + 10 }]} onPress={close} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close">
           <Icon style={styles.closeIcon} name={ICONS.close} />
         </Pressable>
@@ -166,7 +166,7 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
           resizeMode="cover"
         />
       ) : (
-        <ActivityIndicator color={colors.accent} style={styles.loadingSpinner} />
+        <ActivityIndicator color={colors.accentText} style={styles.loadingSpinner} />
       )}
 
       {containerSize.width > 0 ? (

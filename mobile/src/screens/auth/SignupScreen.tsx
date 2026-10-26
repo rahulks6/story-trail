@@ -165,5 +165,5 @@ const styles = StyleSheet.create({
   },
   title: { textAlign: "center", marginBottom: spacing.md },
   linkButton: { marginTop: spacing.lg, alignItems: "center", minHeight: 44, justifyContent: "center" },
-  linkAccent: { color: colors.accent, fontWeight: "600" },
+  linkAccent: { color: colors.accentText, fontWeight: "600" },
 });

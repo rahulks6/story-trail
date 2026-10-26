@@ -678,7 +678,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
                 cx={SHUTTER / 2}
                 cy={SHUTTER / 2}
                 r={RING_RADIUS}
-                stroke={mode === "boomerang" ? colors.accent : colors.danger}
+                stroke={mode === "boomerang" ? colors.accentText : colors.danger}
                 strokeWidth={5}
                 fill="none"
                 strokeDasharray={`${RING_LENGTH} ${RING_LENGTH}`}
@@ -722,8 +722,8 @@ const styles = StyleSheet.create({
   cameraLoading: { flex: 1 },
   topIcon: { color: colors.textPrimary, fontSize: 24, fontWeight: "600" },
   toolDisabled: { opacity: 0.4 },
-  timerLabel: { color: colors.accent, fontSize: 14, fontWeight: "700" },
-  topIconActive: { color: colors.accent },
+  timerLabel: { color: colors.accentText, fontSize: 14, fontWeight: "700" },
+  topIconActive: { color: colors.accentText },
   timerButton: { minWidth: 42, flexDirection: "row", gap: 2 },
   toolButton: { minWidth: 42, height: 42, paddingHorizontal: 9, borderRadius: 21, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0,0,0,0.35)" },
   zoomBadge: {
@@ -771,7 +771,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  captureButtonBoomerang: { borderColor: colors.accent },
+  captureButtonBoomerang: { borderColor: colors.accentText },
   captureButtonRecording: { borderColor: "rgba(255,255,255,0.35)" },
   shutterDisc: { width: SHUTTER - 18, height: SHUTTER - 18, borderRadius: (SHUTTER - 18) / 2, backgroundColor: colors.textPrimary },
   shutterDiscBoomerang: { backgroundColor: colors.accent },

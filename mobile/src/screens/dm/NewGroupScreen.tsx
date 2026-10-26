@@ -144,7 +144,7 @@ export function NewGroupScreen({ navigation, route }: Props): React.JSX.Element 
         <Text style={styles.count}>{adding ? "Choose people to add." : "Choose at least two people. You can add people you follow or who follow you."}</Text>
       )}
       {error ? <Text style={styles.error} accessibilityRole="alert">{error}</Text> : null}
-      {loading ? <ActivityIndicator color={colors.accent} style={styles.spinner} /> : null}
+      {loading ? <ActivityIndicator color={colors.accentText} style={styles.spinner} /> : null}
       <FlatList
         data={list}
         keyExtractor={(p) => p.id}

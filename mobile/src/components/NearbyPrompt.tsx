@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   },
   handle: { width: 40, height: 4, borderRadius: 2, backgroundColor: colors.border, alignSelf: "center", marginVertical: spacing.sm },
   rings: { alignSelf: "center", width: 88, height: 88, alignItems: "center", justifyContent: "center", marginVertical: spacing.md },
-  ring: { position: "absolute", borderRadius: radii.pill, borderWidth: 2, borderColor: colors.accent },
+  ring: { position: "absolute", borderRadius: radii.pill, borderWidth: 2, borderColor: colors.accentText },
   ringOuter: { width: 88, height: 88, opacity: 0.35 },
   ringMiddle: { width: 56, height: 56, opacity: 0.7 },
   dot: { width: 20, height: 20, borderRadius: radii.pill, backgroundColor: colors.accent },

@@ -94,7 +94,7 @@ export function RecipientPicker({ chosen, onToggle, emptyHint }: Props): React.J
           accessibilityLabel="Search people"
         />
       </View>
-      {searching || recent === null ? <ActivityIndicator color={colors.accent} style={styles.spinner} /> : null}
+      {searching || recent === null ? <ActivityIndicator color={colors.accentText} style={styles.spinner} /> : null}
       {searchFailed ? (
         <View style={styles.notice}>
           <Text style={styles.noticeText} accessibilityRole="alert">Couldn't search. Check your connection and try again.</Text>

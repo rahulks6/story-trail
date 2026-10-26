@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
   // The system's own font at ordinary weights: easy to read, nothing decorative.
   brand: { textAlign: "center", fontSize: 30, fontWeight: "700", marginTop: -spacing.xs },
   brandKat: { color: colors.textPrimary },
-  brandKee: { color: colors.accent },
+  brandKee: { color: colors.accentText },
   subtitle: { textAlign: "center", color: colors.textSecondary, fontSize: 15, fontWeight: "400", marginBottom: spacing.sm },
   loginButton: { marginTop: spacing.xs },
   forgot: { alignSelf: "center", minHeight: 44, justifyContent: "center" },
@@ -138,5 +138,5 @@ const styles = StyleSheet.create({
   signupText: { color: colors.textPrimary, fontSize: 15, fontWeight: "400" },
   appeal: { minHeight: 36, justifyContent: "center" },
   appealText: { color: colors.textSecondary, fontSize: 12, fontWeight: "400" },
-  linkAccent: { color: colors.accent, fontWeight: "600" },
+  linkAccent: { color: colors.accentText, fontWeight: "600" },
 });

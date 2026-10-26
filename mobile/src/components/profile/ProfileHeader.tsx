@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  ringActive: { borderColor: colors.accent },
+  ringActive: { borderColor: colors.accentText },
   addBadge: {
     position: "absolute",
     right: 2,

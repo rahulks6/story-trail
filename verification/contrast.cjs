@@ -24,8 +24,8 @@ function ratio(a,b){
 const TEXT=[
  ['textPrimary','background'],['textPrimary','surface'],['textPrimary','surfaceElevated'],
  ['textSecondary','background'],['textSecondary','surface'],['textSecondary','surfaceElevated'],
- ['accent','background'],['accent','surface'],['onAccent','accent'],['onAccent','accentPressed'],
- ['danger','background'],['danger','surface'],['danger','surfaceElevated'],['onAccent','danger'],['success','background'],
+ ['accentText','background'],['accentText','surface'],['onAccent','accent'],['onAccent','accentPressed'],['onAccentText','accentText'],
+ ['danger','background'],['danger','surface'],['danger','surfaceElevated'],['onDanger','danger'],['success','background'],
 ];
 
 /** A translucent tint over a surface, as the screen composites it. */
@@ -42,7 +42,7 @@ const TINTS=[
 ];
 
 test('the palette has the colours this check reads',()=>{
- for(const name of ['background','surface','surfaceElevated','textPrimary','textSecondary','accent','accentPressed','onAccent','danger','success']){
+ for(const name of ['background','surface','surfaceElevated','textPrimary','textSecondary','accent','accentPressed','onAccent','accentText','onAccentText','danger','onDanger','success']){
   assert.match(palette[name]??'',/^#[0-9A-Fa-f]{6}$/,name);
  }
 });

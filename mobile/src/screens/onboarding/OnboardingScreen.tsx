@@ -159,7 +159,7 @@ export function OnboardingScreen(): React.JSX.Element {
         }
         ListEmptyComponent={
           people === null ? (
-            <ActivityIndicator color={colors.accent} style={styles.loading} accessibilityLabel="Finding people" />
+            <ActivityIndicator color={colors.accentText} style={styles.loading} accessibilityLabel="Finding people" />
           ) : (
             <View style={styles.empty}>
               <Text style={styles.emptyTitle}>You're one of the first here</Text>
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.background },
   content: { flexGrow: 1, paddingHorizontal: spacing.xl, gap: spacing.md, width: "100%", maxWidth: FORM_MAX_WIDTH, alignSelf: "center" },
   header: { gap: spacing.md, marginBottom: spacing.sm },
-  stepLabel: { ...typography.caption, color: colors.accent, fontWeight: "700" },
+  stepLabel: { ...typography.caption, color: colors.accentText, fontWeight: "700" },
   body: { ...typography.body, color: colors.textSecondary },
   chips: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.sm },
   chip: { minHeight: 44, paddingHorizontal: spacing.lg, justifyContent: "center", borderRadius: radii.pill, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface },

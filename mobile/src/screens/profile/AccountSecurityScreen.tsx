@@ -24,7 +24,7 @@ export function AccountSecurityScreen():React.JSX.Element {
  return <KeyboardAvoider style={styles.root} topOffset={headerHeight}><ScrollView style={styles.fill} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
   {identities?<SignInSecuritySection hasPassword={identities.hasPassword}/>:null}
   <Text style={styles.title}>Sign-in methods</Text>
-  {identities?<Text style={styles.text}>{[...(identities.hasPassword?['Email and password']:[]),...identities.items.map(i=>i.provider)].join(', ')||'No linked provider'}</Text>:<ActivityIndicator color={colors.accent}/>}
+  {identities?<Text style={styles.text}>{[...(identities.hasPassword?['Email and password']:[]),...identities.items.map(i=>i.provider)].join(', ')||'No linked provider'}</Text>:<ActivityIndicator color={colors.accentText}/>}
   {error?<Text accessibilityRole="alert" style={styles.error}>{error}</Text>:null}
   {!ticket?<>
    <Text style={styles.text}>Verify your existing sign-in method before changing account access.</Text>
@@ -37,7 +37,7 @@ export function AccountSecurityScreen():React.JSX.Element {
    <Pressable accessibilityRole="button" disabled={busy} style={styles.button} onPress={remove}><Text style={styles.error}>Delete account</Text></Pressable>
    <Pressable accessibilityRole="button" style={styles.button} onPress={()=>setTicket(null)}><Text style={styles.text}>Verify again</Text></Pressable>
   </>}
-  {busy&&<ActivityIndicator color={colors.accent}/>}
+  {busy&&<ActivityIndicator color={colors.accentText}/>}
  </ScrollView></KeyboardAvoider>;
 }
 const styles=StyleSheet.create({root:{flex:1,backgroundColor:colors.background},fill:{flex:1},content:{padding:24,gap:16},title:{fontSize:24,fontWeight:'700',color:colors.textPrimary},text:{color:colors.textPrimary},error:{color:colors.danger},input:{borderWidth:1,borderColor:colors.border,padding:14,minHeight:48,color:colors.textPrimary},button:{minHeight:48,padding:14,backgroundColor:colors.surfaceElevated,borderRadius:8}});

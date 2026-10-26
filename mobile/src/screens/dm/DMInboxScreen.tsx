@@ -241,7 +241,7 @@ export function DMInboxScreen(): React.JSX.Element {
       onEndReached={() => void loadMore()}
       ListHeaderComponent={searchBox}
       ListEmptyComponent={<Text style={styles.noMatches}>No conversations match “{search}”.</Text>}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accentText} />}
       renderItem={({ item }) => {
         const group = item.kind === "group" && item.group ? item.group : null;
         const person = item.otherUser;

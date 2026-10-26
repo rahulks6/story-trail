@@ -1125,6 +1125,6 @@ const styles = StyleSheet.create({
   },
   uploadError: { ...typography.caption, color: colors.danger, textAlign: "center" },
   retryButton: { alignSelf: "center", marginTop: spacing.xs, paddingHorizontal: spacing.md, paddingVertical: 4 },
-  retryButtonLabel: { color: colors.accent, fontWeight: "700" },
+  retryButtonLabel: { color: colors.accentText, fontWeight: "700" },
   uploadButtonDisabled: { opacity: 0.7 },
 });

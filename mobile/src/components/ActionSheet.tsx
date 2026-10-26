@@ -58,7 +58,7 @@ export function ActionSheet({ visible, title, groups, onClose }: Props): React.J
                   accessibilityState={action.selected !== undefined ? { selected: action.selected } : undefined}
                 >
                   <Text style={[styles.rowLabel, action.destructive && styles.destructive]}>{action.label}</Text>
-                  {action.selected ? <Icon name={ICONS.check} size={20} color={colors.accent} style={styles.tick} /> : null}
+                  {action.selected ? <Icon name={ICONS.check} size={20} color={colors.accentText} style={styles.tick} /> : null}
                 </Pressable>
               ))}
             </View>

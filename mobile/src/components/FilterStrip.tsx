@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   strip: { gap: spacing.sm, paddingBottom: spacing.sm },
   item: { alignItems: "center", width: 58 },
   thumbFrame: { borderRadius: radii.md, borderWidth: 2, borderColor: "transparent", padding: 2 },
-  thumbFrameActive: { borderColor: colors.accent },
+  thumbFrameActive: { borderColor: colors.accentText },
   thumb: { width: 50, height: 66, borderRadius: radii.sm, overflow: "hidden" },
   loading: { backgroundColor: "rgba(255,255,255,0.12)" },
   swatchBase: { backgroundColor: "#5B6170" },

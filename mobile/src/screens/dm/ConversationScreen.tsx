@@ -1443,7 +1443,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         initialNumToRender={12}
         maxToRenderPerBatch={8}
         windowSize={7}
-        ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} /> : undefined}
+        ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.accentText} style={styles.footerSpinner} /> : undefined}
       />
       {/* Outside the inverted list: Android flips an inverted list on both axes, which mirrored this text. */}
       {rows.length === 0 ? (
@@ -1733,7 +1733,7 @@ const styles = StyleSheet.create({
   pinRowAuthor: { color: colors.textSecondary, fontSize: 12, fontWeight: "600" },
   pinRowBody: { color: colors.textPrimary, fontSize: 15 },
   unpinButton: { paddingHorizontal: spacing.sm, minHeight: 36, justifyContent: "center" },
-  unpinText: { color: colors.accent, fontSize: 14, fontWeight: "600" },
+  unpinText: { color: colors.accentText, fontSize: 14, fontWeight: "600" },
   reactionGlyph: { fontSize: 34, lineHeight: 42 },
   container: { flex: 1, backgroundColor: colors.background },
   centered: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background, padding: spacing.lg },
@@ -1753,7 +1753,8 @@ const styles = StyleSheet.create({
   bubbleMine: { backgroundColor: colors.accent },
   bubbleTheirs: { backgroundColor: colors.surfaceElevated },
   bubblePending: { opacity: 0.75 },
-  bubbleFailed: { backgroundColor: colors.danger, opacity: 1 },
+  // A failed message keeps its colours (readable) with a red edge; "Not sent · Tap to retry" says the rest.
+  bubbleFailed: { borderWidth: 1.5, borderColor: colors.danger, opacity: 1 },
   bubbleTextMine: { color: colors.onAccent, fontSize: 15 },
   bubbleTextTheirs: { color: colors.textPrimary, fontSize: 15 },
   statusCaption: { color: colors.textDisabled, fontSize: 11, marginTop: 2 },

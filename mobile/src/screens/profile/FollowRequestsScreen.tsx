@@ -72,7 +72,7 @@ export function FollowRequestsScreen(): React.JSX.Element {
     if (loadFailed) return <LoadFailed message="Couldn't load your follow requests. Check your connection and try again." onRetry={() => void load()} />;
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={colors.accent} />
+        <ActivityIndicator color={colors.accentText} />
       </View>
     );
   }
@@ -102,7 +102,7 @@ export function FollowRequestsScreen(): React.JSX.Element {
               </View>
             </Pressable>
             {busy ? (
-              <ActivityIndicator color={colors.accent} />
+              <ActivityIndicator color={colors.accentText} />
             ) : (
               <View style={styles.actions}>
                 <Pressable accessibilityRole="button" style={styles.declineButton} onPress={() => void onResolve(item, false)}>

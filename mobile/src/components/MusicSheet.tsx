@@ -111,7 +111,7 @@ export function MusicSheet({ visible, current, onClose, onChoose }: Props): Reac
               </ScrollView>
             ) : null}
             {tracks === null && !error ? (
-              <ActivityIndicator color={colors.accent} style={styles.spinner} />
+              <ActivityIndicator color={colors.accentText} style={styles.spinner} />
             ) : error ? (
               <Text style={styles.empty}>{error}</Text>
             ) : tracks!.length === 0 ? (
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
   clipTime: { color: colors.textPrimary, fontSize: 22, fontWeight: "700", textAlign: "center", marginBottom: spacing.md, fontVariant: ["tabular-nums"] },
   bar: { width: BAR_WIDTH, height: 56, alignSelf: "center", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 2 },
   wave: { width: 3, borderRadius: 2, backgroundColor: colors.textSecondary },
-  window: { position: "absolute", top: 0, bottom: 0, borderRadius: radii.sm, borderWidth: 3, borderColor: colors.accent, backgroundColor: "rgba(128,128,128,0.18)" },
+  window: { position: "absolute", top: 0, bottom: 0, borderRadius: radii.sm, borderWidth: 3, borderColor: colors.accentText, backgroundColor: "rgba(128,128,128,0.18)" },
   hint: { color: colors.textSecondary, textAlign: "center", fontSize: 13, marginTop: spacing.sm },
   lengths: { flexDirection: "row", justifyContent: "center", gap: spacing.sm, marginTop: spacing.lg },
   credit: { color: colors.textDisabled, fontSize: 12, textAlign: "center", marginTop: spacing.lg },

@@ -286,7 +286,7 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
       style={styles.screen}
       contentContainerStyle={styles.content}
       scrollEnabled={scrollEnabled}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} tintColor={colors.accent} />}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} tintColor={colors.accentText} />}
     >
       <ProfileHeader
         username={profile.username}

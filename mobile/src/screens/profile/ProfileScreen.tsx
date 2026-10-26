@@ -114,7 +114,7 @@ export function ProfileScreen(): React.JSX.Element {
       <ScrollView
         contentContainerStyle={styles.content}
         scrollEnabled={scrollEnabled}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} tintColor={colors.accent} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} tintColor={colors.accentText} />}
       >
         {user.email && user.emailVerified === false ? (
           // Until the email is confirmed: a gentle reminder, never a block.
@@ -204,12 +204,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: radii.md,
     borderWidth: 1,
-    borderColor: colors.accent,
+    borderColor: colors.accentText,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm + 4,
   },
   verifyText: { flex: 1, gap: 2 },
   verifyTitle: { ...typography.bodyStrong },
   verifyBody: { ...typography.caption },
-  verifyAction: { color: colors.accent, fontWeight: "700", fontSize: 15 },
+  verifyAction: { color: colors.accentText, fontWeight: "700", fontSize: 15 },
 });

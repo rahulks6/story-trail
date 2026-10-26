@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   tabIcon: { fontSize: 22, color: colors.textSecondary },
   tabLabel: { color: colors.textSecondary, fontSize: 11 },
   labelFocused: {
-    color: colors.accent,
+    color: colors.accentText,
     fontWeight: "700",
   },
   unreadBadge: {
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.accent,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: colors.accent,
+    shadowColor: colors.accentText,
     shadowOpacity: 0.4,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 4 },

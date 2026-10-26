@@ -105,7 +105,7 @@ export function DeleteAccountSheet({ visible, onClose }: Props): React.JSX.Eleme
                 accessibilityLabel="Permanently delete my account"
                 accessibilityState={{ busy, disabled: !password || busy }}
               >
-                {busy ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.destructiveLabel}>Permanently delete my account</Text>}
+                {busy ? <ActivityIndicator color={colors.onDanger} /> : <Text style={styles.destructiveLabel}>Permanently delete my account</Text>}
               </Pressable>
             </>
           )}
@@ -158,6 +158,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   disabled: { opacity: 0.6 },
-  destructiveLabel: { color: colors.onAccent, fontWeight: "700" },
+  destructiveLabel: { color: colors.onDanger, fontWeight: "700" },
   cancelRow: { paddingVertical: spacing.md, alignItems: "center" },
 });

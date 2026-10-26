@@ -516,7 +516,7 @@ export function ActivityScreen(): React.JSX.Element {
         <SectionList
           sections={sections}
           keyExtractor={(row) => row.key}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accentText} />}
           onEndReachedThreshold={0.4}
           onEndReached={() => void loadMore()}
           contentContainerStyle={{ paddingBottom: insets.bottom + spacing.md }}
@@ -539,7 +539,7 @@ export function ActivityScreen(): React.JSX.Element {
               >
                 {aboutBadge ? (
                   <View style={styles.badgeIcon}>
-                    <Icon name={ICONS.verified} size={28} color={colors.accent} />
+                    <Icon name={ICONS.verified} size={28} color={colors.accentText} />
                   </View>
                 ) : (
                   <Avatar username={actor?.username ?? ""} displayName={actor?.displayName ?? "?"} avatarMediaId={actor ? actor.avatarMediaId : null} />
@@ -562,7 +562,7 @@ export function ActivityScreen(): React.JSX.Element {
             );
           }}
           ListFooterComponent={
-            loadingMore ? <ActivityIndicator color={colors.accent} style={styles.footerSpinner} />
+            loadingMore ? <ActivityIndicator color={colors.accentText} style={styles.footerSpinner} />
               : moreFailed ? <View style={styles.footerRetry}><Button label="Couldn't load more. Try again" variant="secondary" onPress={() => void loadMore(true)} /></View>
               : undefined
           }
@@ -593,7 +593,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.sm,
   },
   headerStart: { flexDirection: "row", alignItems: "center", gap: spacing.md },
-  markAllRead: { color: colors.accent, fontSize: 13, fontWeight: "600" },
+  markAllRead: { color: colors.accentText, fontSize: 13, fontWeight: "600" },
   tabScroll: { flexGrow: 0, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border },
   tabBar: {
     flexDirection: "row",

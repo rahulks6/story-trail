@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
   scrollContent: { padding: spacing.md, paddingBottom: spacing.xxl },
   photoButton: { alignItems: "center", gap: spacing.sm, marginTop: spacing.sm },
   photo: { width: PHOTO_SIZE, height: PHOTO_SIZE, borderRadius: PHOTO_SIZE / 2 },
-  photoAction: { color: colors.accent, fontWeight: "700", fontSize: 15 },
+  photoAction: { color: colors.accentText, fontWeight: "700", fontSize: 15 },
   photoNote: { ...typography.caption, textAlign: "center", marginTop: spacing.xs },
   labelRow: { flexDirection: "row", alignItems: "flex-end", justifyContent: "space-between" },
   label: { ...typography.label, marginTop: spacing.md, marginBottom: spacing.xs },

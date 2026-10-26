@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   row: { flexGrow: 0, flexShrink: 0 },
   rowContent: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.sm },
   colorSwatch: { width: 32, height: 32, borderRadius: 16, borderWidth: 2, borderColor: "rgba(255,255,255,0.9)" },
-  colorSwatchActive: { borderColor: colors.accent, borderWidth: 3, transform: [{ scale: 1.15 }] },
+  colorSwatchActive: { borderColor: colors.accentText, borderWidth: 3, transform: [{ scale: 1.15 }] },
   styleChip: { minHeight: 38, paddingVertical: 6, justifyContent: "center", borderRadius: radii.pill, paddingHorizontal: spacing.md, backgroundColor: "rgba(0,0,0,0.45)" },
   styleChipActive: { backgroundColor: colors.textPrimary },
   styleChipLabel: { color: colors.textPrimary, fontSize: 15 },
