@@ -12,3 +12,7 @@ appId: com.katkee.app
       - inputText: ${PASSWORD}
       - runFlow: close-keyboard.yaml
       - tapOn: "Log in"
+      # iOS may offer to save the password; dismiss it so the walk-through carries on.
+      - tapOn:
+          text: "Not Now"
+          optional: true

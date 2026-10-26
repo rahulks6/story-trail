@@ -58,6 +58,19 @@ jobs:
             -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO build | tee xcodebuild.log | grep -E "error:|\*\* BUILD" || true
           test -d build/Build/Products/Release-iphonesimulator/KatkeeMobile.app
+          # Signed ad hoc with a Keychain group (the simulator needs no Apple account for this), so
+          # the app keeps its session across a reopen like on a real iPhone. Unsigned, every reopen
+          # lands on Log in, and iOS's "Save password?" sheet after it cut the test driver off.
+          cat > "$RUNNER_TEMP/sim.entitlements" <<'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>application-identifier</key><string>SIMULATOR.com.katkee.app</string>
+            <key>keychain-access-groups</key><array><string>SIMULATOR.com.katkee.app</string></array>
+          </dict></plist>
+          PLIST
+          sed -i '' 's/^          //' "$RUNNER_TEMP/sim.entitlements"
+          codesign --force --sign - --entitlements "$RUNNER_TEMP/sim.entitlements" --timestamp=none --deep build/Build/Products/Release-iphonesimulator/KatkeeMobile.app
           cd build/Build/Products/Release-iphonesimulator && zip -qr "$GITHUB_WORKSPACE/KatkeeMobile-simulator.zip" KatkeeMobile.app
 
       - name: Simulator app (for appetize.io)
