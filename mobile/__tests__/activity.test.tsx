@@ -130,6 +130,21 @@ test("rows end with what you'd do next: Follow back, Confirm or Delete a request
   expect(tree.root.findAll((n) => (n.type as unknown) === "Image" && n.props.source?.uri === "/media/md1/thumbnail")).not.toHaveLength(0);
 });
 
+test("a request already answered on another device isn't an error: the list shows how it stands now", async () => {
+  const users = require("../src/api/users");
+  const { ApiError } = jest.requireActual("../src/api/client");
+  const actor = { id: "u-cy", username: "cy", displayName: "cy" };
+  const request = (status: string) => ({ ...follow("r1", "cy", 3, false), type: "follow_request", actor, followRequest: { id: "req1", status } });
+  list.mockResolvedValueOnce({ notifications: [request("pending")] }).mockResolvedValue({ notifications: [request("accepted")] });
+  users.acceptFollowRequest.mockRejectedValueOnce(new ApiError(409, "This request has already been resolved."));
+  await render();
+  await act(async () => button("Confirm @cy").props.onPress());
+  for (let i = 0; i < 3; i++) await act(async () => { await Promise.resolve(); });
+  expect(texts()).not.toContain("This request has already been resolved.");
+  expect(texts()).toContain("Accepted");
+  expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Confirm @cy")).toHaveLength(0);
+});
+
 test("verification updates have no actor: the badge instead of a photo, and they open Request verification", async () => {
   const about = (id: string, status: string, h: number) => ({ ...follow(id, "x", h, false), type: "verification", actor: null, verification: { status, reason: null } });
   list.mockResolvedValue({ notifications: [
