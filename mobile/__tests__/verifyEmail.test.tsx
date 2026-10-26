@@ -1,6 +1,6 @@
 import React from "react";
 import { act, create, type ReactTestInstance, type ReactTestRenderer } from "react-test-renderer";
-import { Text, TextInput } from "react-native";
+import { AppState, Text, TextInput } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { VerifyEmailScreen } from "../src/screens/auth/VerifyEmailScreen";
 import * as authApi from "../src/api/auth";
@@ -11,6 +11,7 @@ const mockAuth = {
   user: { id: "u-me", email: "me@example.com", emailVerified: false, emailVerificationRequired: false },
   applyProfile: jest.fn(),
   logout: jest.fn(async () => undefined),
+  refreshUser: jest.fn(async () => undefined),
 };
 jest.mock("../src/state/AuthContext", () => ({ useAuth: () => mockAuth }));
 jest.mock("../src/api/auth", () => ({ sendEmailCode: jest.fn(async () => undefined), verifyEmail: jest.fn(), changeEmail: jest.fn() }));
@@ -118,4 +119,23 @@ describe("a new account, which must verify", () => {
     await act(async () => button("Log out").props.onPress());
     expect(mockAuth.logout).toHaveBeenCalled();
   });
+});
+
+test("a required check looks again when the app comes back, so verifying elsewhere lets you in", async () => {
+  const listeners: Array<(state: string) => void> = [];
+  const spy = jest.spyOn(AppState, "addEventListener").mockImplementation((_type, listener) => {
+    listeners.push(listener as (state: string) => void);
+    return { remove: jest.fn() } as never;
+  });
+  try {
+    await act(async () => tree.unmount());
+    mockAuth.user = { ...mockAuth.user, emailVerificationRequired: true };
+    await render();
+    await act(async () => listeners.forEach((l) => l("background")));
+    expect(mockAuth.refreshUser).not.toHaveBeenCalled();
+    await act(async () => listeners.forEach((l) => l("active")));
+    expect(mockAuth.refreshUser).toHaveBeenCalledTimes(1);
+  } finally {
+    spy.mockRestore();
+  }
 });

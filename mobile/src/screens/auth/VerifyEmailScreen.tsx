@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { AppState, ScrollView, StyleSheet, Text, View } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../../navigation/types";
@@ -23,7 +23,7 @@ const RESEND_SECONDS = 30;
  * and "Later" carries on into the app.
  */
 export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
-  const { user, accessToken, applyProfile, logout } = useAuth();
+  const { user, accessToken, applyProfile, logout, refreshUser } = useAuth();
   const required = !!user?.emailVerificationRequired;
   const [editingEmail, setEditingEmail] = useState(false);
   const [newEmail, setNewEmail] = useState("");
@@ -40,6 +40,16 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
     const timer = setTimeout(() => setCooldown((s) => s - 1), 1000);
     return () => clearTimeout(timer);
   }, [cooldown]);
+
+  // Coming back to the app (say, after verifying on another phone) checks again, so the screen
+  // goes away by itself once the account is verified.
+  useEffect(() => {
+    if (!required) return;
+    const subscription = AppState.addEventListener("change", (next) => {
+      if (next === "active") void refreshUser();
+    });
+    return () => subscription.remove();
+  }, [required, refreshUser]);
 
   const leave = () => {
     if (navigation.canGoBack()) navigation.goBack();

@@ -60,10 +60,24 @@ appId: com.katkee.app
 # Tapping the title closes the keyboard (Android's "hide keyboard" acts as Back when it's already closed).
 - tapOn: "Change your email"
 - tapOn: "Cancel"
-# Verified out of band (ci-verify.js), then reopened: the app now opens on Home.
+# Verified out of band (ci-verify.js); coming back to the app shows the next screen.
 - runScript: ci-verify.js
-- stopApp
-- launchApp
+# Android: reopened from cold. iPhone: to the home screen and back, without a cold start: the
+# unsigned simulator build can't keep its session in the Keychain, and signing back in brings
+# iOS's "Save password?" sheet, which cuts GitHub's virtual iPhone off from the test driver.
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - stopApp
+      - launchApp
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - pressKey: Home
+      - launchApp:
+          stopApp: false
 - extendedWaitUntil:
     visible: "(What are you into\\?|Forgot password\\?)"
     timeout: 30000
