@@ -79,8 +79,10 @@ export function NotificationSettingsScreen(): React.JSX.Element {
 
   const onToggle = async (key: keyof NotificationPreferences, value: boolean) => {
     if (!accessToken || !prefs) return;
-    const previous = prefs;
-    setPrefs({ ...prefs, [key]: value }); // optimistic
+    const previous = prefs[key];
+    // Only this switch changes, then and on the answer: two switches flipped quickly each keep
+    // their own state, whichever answer arrives first.
+    setPrefs((current) => (current ? { ...current, [key]: value } : current)); // optimistic
     setPending((current) => new Set(current).add(key));
     setToggleError((current) => (current === key ? null : current));
     try {
@@ -88,11 +90,11 @@ export function NotificationSettingsScreen(): React.JSX.Element {
       try {
         ({ preferences: saved } = await updateNotificationPreferences({ [key]: value }, accessToken));
       } catch {
-        setPrefs(previous);
+        setPrefs((current) => (current ? { ...current, [key]: previous } : current));
         setToggleError(key);
         return;
       }
-      setPrefs({ ...DEFAULTS, ...saved });
+      setPrefs((current) => (current ? { ...current, [key]: saved[key] ?? value } : current));
       if (key === "pushEnabled" && value && user && permission === "undetermined" && (await requestPushPermission())) {
         // The setting is saved either way; this device signs up for pushes again on its next launch.
         await registerForPush(user.id, accessToken).catch(() => undefined);
