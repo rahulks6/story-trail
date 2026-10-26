@@ -60,11 +60,12 @@ export async function anyBlockBetween(userIdA: string, userIdB: string): Promise
   return rows.length > 0;
 }
 
+/** The same people the followers and following lists show: a deleted account no longer counts. */
 export async function followCounts(userId: string): Promise<{ followers: number; following: number }> {
   const row = await queryOne(
     `SELECT
-       (SELECT COUNT(*) FROM follows WHERE followee_id = :'user_id') AS followers,
-       (SELECT COUNT(*) FROM follows WHERE follower_id = :'user_id') AS following`,
+       (SELECT COUNT(*) FROM follows f JOIN users u ON u.id = f.follower_id WHERE f.followee_id = :'user_id' AND u.deleted_at IS NULL) AS followers,
+       (SELECT COUNT(*) FROM follows f JOIN users u ON u.id = f.followee_id WHERE f.follower_id = :'user_id' AND u.deleted_at IS NULL) AS following`,
     { user_id: userId },
   );
   return {
@@ -206,8 +207,53 @@ export async function findFollowRequestById(id: string): Promise<FollowRequestRo
   return row ? mapFollowRequestRow(row) : null;
 }
 
-export async function resolveFollowRequest(id: string, status: "accepted" | "declined"): Promise<void> {
-  await query(`UPDATE follow_requests SET status = :'status', resolved_at = now() WHERE id = :'id'`, { id, status });
+/**
+ * Resolves a request that is still pending; false when it no longer is (resolved at the same
+ * moment by another tap or device, or withdrawn by the person who asked).
+ */
+export async function resolveFollowRequest(id: string, status: "declined"): Promise<boolean> {
+  const rows = await query(
+    `UPDATE follow_requests SET status = :'status', resolved_at = now() WHERE id = :'id' AND status = 'pending' RETURNING id`,
+    { id, status },
+  );
+  return rows.length > 0;
+}
+
+/**
+ * An account that goes public lets everyone who asked follow it, as anyone can now: each
+ * pending request is accepted and becomes a follow, so nobody stays "Requested" on a public page.
+ */
+export async function acceptAllPendingFollowRequests(targetId: string): Promise<void> {
+  await query(
+    `WITH r AS (
+       UPDATE follow_requests fr SET status = 'accepted', resolved_at = now()
+       FROM users u
+       WHERE fr.target_id = :'target_id' AND fr.status = 'pending' AND u.id = fr.requester_id AND u.deleted_at IS NULL
+       RETURNING fr.requester_id
+     )
+     INSERT INTO follows (follower_id, followee_id)
+     SELECT requester_id, :'target_id' FROM r
+     ON CONFLICT (follower_id, followee_id) DO NOTHING`,
+    { target_id: targetId },
+  );
+}
+
+/** Accepts a request that is still pending and makes the follow, in one statement; false when it no longer is. */
+export async function acceptPendingFollowRequest(id: string): Promise<boolean> {
+  const rows = await query(
+    `WITH r AS (
+       UPDATE follow_requests SET status = 'accepted', resolved_at = now()
+       WHERE id = :'id' AND status = 'pending'
+       RETURNING id, requester_id, target_id
+     ), f AS (
+       INSERT INTO follows (follower_id, followee_id)
+       SELECT requester_id, target_id FROM r
+       ON CONFLICT (follower_id, followee_id) DO NOTHING
+     )
+     SELECT id FROM r`,
+    { id },
+  );
+  return rows.length > 0;
 }
 
 interface IncomingRequestRow {

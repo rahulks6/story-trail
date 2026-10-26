@@ -57,15 +57,16 @@ async function requireOwnedPendingRequest(requestId: string, viewerId: string) {
 
 export async function acceptFollowRequest(viewerId: string, requestId: string): Promise<void> {
   const request = await requireOwnedPendingRequest(requestId, viewerId);
-  await socialRepo.createFollow(request.requesterId, request.targetId);
-  await socialRepo.resolveFollowRequest(requestId, "accepted");
+  // Only while still pending: a request withdrawn (or accepted on another device) in the
+  // meantime makes no follow and no second notification.
+  if (!(await socialRepo.acceptPendingFollowRequest(requestId))) throw new HttpError(409, "This request has already been resolved.");
   // "@target accepted your follow request" for the person who asked.
   await notificationsService.notifyFollowAccepted(request.targetId, request.requesterId);
 }
 
 export async function declineFollowRequest(viewerId: string, requestId: string): Promise<void> {
   await requireOwnedPendingRequest(requestId, viewerId);
-  await socialRepo.resolveFollowRequest(requestId, "declined");
+  if (!(await socialRepo.resolveFollowRequest(requestId, "declined"))) throw new HttpError(409, "This request has already been resolved.");
 }
 
 export async function block(viewerId: string, targetUsername: string): Promise<void> {

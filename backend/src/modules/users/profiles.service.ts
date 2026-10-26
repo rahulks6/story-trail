@@ -166,7 +166,9 @@ export async function updateMyProfile(userId: string, input: UpdateProfileInput)
     // Username, avatar, cover and the remaining profile fields share one UPDATE so
     // a failed change cannot leave the account half-updated. A replaced or removed photo is
     // then unused, and the retention job deletes it (media/retention.ts).
-    return await usersRepo.setProfile(userId, input);
+    const saved = await usersRepo.setProfile(userId, input);
+    if (current.isPrivate && !saved.isPrivate) await socialRepo.acceptAllPendingFollowRequests(userId);
+    return saved;
   } catch (error) {
     // The preflight uniqueness check is user-friendly, but the partial unique
     // index is still the final authority when two edits race.
