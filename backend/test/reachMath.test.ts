@@ -1,20 +1,10 @@
-// The pure parts of Phase 9 (reach and Home's mix): area cells, stage decisions and the
-// shuffled mix, checked with a fixed random source so every run is the same.
+// The pure parts of Phase 9 (reach and Home's order): area cells, stage decisions, and Home's
+// stable ranked mix.
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { AREA_CELL_RE, cellsAround, decodeGeohash, encodeGeohash } from "../src/modules/recommendations/geohash";
 import { DEFAULT_REACH, decideReach, reachSettings, stageEngagement, type StageStats } from "../src/modules/recommendations/reach";
-import { FOLLOWED_SHARE, mixFeed, weightedShuffle } from "../src/modules/recommendations/feed-mix";
-
-/** A seeded random source (mulberry32). */
-function seeded(seed: number): () => number {
-  return () => {
-    seed = (seed + 0x6d2b79f5) | 0;
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
+import { diversifyTopics, FOLLOWED_SHARE, MAX_TOPIC_RUN, mixFeed, rankOrder } from "../src/modules/recommendations/feed-mix";
 
 const none: StageStats = { impressions: 0, completions: 0, likes: 0, comments: 0, shares: 0, profileVisits: 0, follows: 0, notInterested: 0, quickSkips: 0 };
 const minutes = (n: number) => n * 60_000;
@@ -116,51 +106,74 @@ describe("Home's mix", () => {
   const followed = Array.from({ length: 30 }, (_, i) => `f${i}`);
   const fresh = Array.from({ length: 30 }, (_, i) => `n${i}`);
 
-  it("starts with someone you follow, keeps everyone exactly once, and is 60% people you follow in every five", () => {
+  it("starts with someone you follow, keeps everyone exactly once, and is 3 followed to 2 new in a fixed pattern", () => {
     assert.equal(FOLLOWED_SHARE, 0.6);
-    const random = seeded(7);
-    const arrangements = new Set<string>();
-    for (let run = 0; run < 200; run++) {
-      const mixed = mixFeed(followed, fresh, random);
-      assert.equal(mixed[0]!.startsWith("f"), true);
-      assert.equal(new Set(mixed).size, 60);
-      for (let block = 0; block < 10; block++) {
-        const five = mixed.slice(block * 5, block * 5 + 5);
-        assert.equal(five.filter((id) => id.startsWith("f")).length, 3, five.join());
-      }
-      arrangements.add(mixed.slice(0, 10).map((id) => id[0]).join(""));
+    const mixed = mixFeed(followed, fresh);
+    assert.equal(new Set(mixed).size, 60);
+    assert.equal(mixed.slice(0, 10).map((id) => id[0]).join(""), "ffnfnffnfn");
+    for (let block = 0; block < 10; block++) {
+      const five = mixed.slice(block * 5, block * 5 + 5);
+      assert.equal(five.filter((id) => id.startsWith("f")).length, 3, five.join());
     }
-    assert.ok(arrangements.size >= 8, "the arrangement varies");
+    assert.deepEqual(mixed.filter((id) => id.startsWith("f")), followed, "each list keeps its ranked order");
+    assert.deepEqual(mixed.filter((id) => id.startsWith("n")), fresh);
+    assert.deepEqual(mixFeed(followed, fresh), mixed, "the same lists, the same Home");
   });
 
-  it("never shows more than two new people in a row while people you follow are left", () => {
-    const random = seeded(11);
-    for (let run = 0; run < 200; run++) {
-      const mixed = mixFeed(followed.slice(0, 10), fresh, random);
-      let inARow = 0, followedSeen = 0;
-      for (const id of mixed) {
-        if (id.startsWith("f")) { followedSeen++; inARow = 0; } else if (followedSeen < 10) { inARow++; assert.ok(inARow <= 2); }
-      }
+  it("never shows more than one new person in a row while people you follow are left", () => {
+    const mixed = mixFeed(followed.slice(0, 10), fresh);
+    let inARow = 0, followedSeen = 0;
+    for (const id of mixed) {
+      if (id.startsWith("f")) { followedSeen++; inARow = 0; } else if (followedSeen < 10) { inARow++; assert.ok(inARow <= 1); }
     }
   });
 
   it("falls back to whichever list remains", () => {
-    assert.deepEqual(mixFeed([], ["a", "b"], seeded(1)), ["a", "b"]);
-    assert.deepEqual(mixFeed(["a", "b"], [], seeded(1)), ["a", "b"]);
+    assert.deepEqual(mixFeed([], ["a", "b"]), ["a", "b"]);
+    assert.deepEqual(mixFeed(["a", "b"], []), ["a", "b"]);
+    assert.deepEqual(mixFeed(["a", "b", "c", "d"], ["x"]), ["a", "b", "x", "c", "d"]);
+  });
+});
+
+describe("Home's ranked order", () => {
+  const item = (id: string, score: number, newestAt = "2026-10-26T10:00:00.000Z") => ({ owner: { id }, score, newestAt });
+
+  it("puts the best score first, the same way every time, whatever order the candidates came in", () => {
+    const items = [item("c", 0.2), item("a", 0.9), item("d", 0.05), item("b", 0.5)];
+    const order = rankOrder(items).map((i) => i.owner.id);
+    assert.deepEqual(order, ["a", "b", "c", "d"]);
+    for (let i = 0; i < 20; i++) {
+      const shuffled = [...items].sort((x, y) => ((x.owner.id.charCodeAt(0) * (i + 3)) % 7) - ((y.owner.id.charCodeAt(0) * (i + 3)) % 7));
+      assert.deepEqual(rankOrder(shuffled).map((x) => x.owner.id), order);
+    }
   });
 
-  it("shuffles differently each time while favouring better scores", () => {
-    const random = seeded(3);
-    const items = [{ id: "best", w: 10 }, { id: "ok", w: 2 }, { id: "low", w: 1 }];
-    const orders = new Set<string>();
-    let bestFirst = 0;
-    for (let run = 0; run < 1000; run++) {
-      const order = weightedShuffle(items, (i) => i.w, random).map((i) => i.id);
-      orders.add(order.join());
-      if (order[0] === "best") bestFirst++;
-    }
-    assert.ok(orders.size >= 4, "orders vary");
-    assert.ok(bestFirst > 700 && bestFirst < 950, `best first ${bestFirst}/1000`);
-    assert.deepEqual(weightedShuffle(items, (i) => i.w, seeded(5)), weightedShuffle(items, (i) => i.w, seeded(5)), "same seed, same order");
+  it("breaks equal scores by the newest Story, then by owner id", () => {
+    const order = rankOrder([item("z", 0.5, "2026-10-26T09:00:00.000Z"), item("y", 0.5, "2026-10-26T11:00:00.000Z"), item("b", 0.5, "2026-10-26T09:00:00.000Z")]);
+    assert.deepEqual(order.map((i) => i.owner.id), ["y", "b", "z"]);
+  });
+
+  it("doesn't swap neighbours over a tiny drift in score", () => {
+    const before = rankOrder([item("a", 0.495, "2026-10-26T09:00:00.000Z"), item("b", 0.496, "2026-10-26T11:00:00.000Z")]).map((i) => i.owner.id);
+    const after = rankOrder([item("a", 0.497, "2026-10-26T09:00:00.000Z"), item("b", 0.495, "2026-10-26T11:00:00.000Z")]).map((i) => i.owner.id);
+    assert.deepEqual(before, after);
+    assert.deepEqual(rankOrder([item("a", 0.5), item("b", 0.6)]).map((i) => i.owner.id), ["b", "a"], "a real difference still counts");
+  });
+
+  it("keeps your own Stories (an infinite score) first", () => {
+    assert.equal(rankOrder([item("x", 3), item("me", Infinity), item("y", 9)])[0]!.owner.id, "me");
+  });
+
+  it("allows at most three new people in a row on one topic while another topic is waiting", () => {
+    assert.equal(MAX_TOPIC_RUN, 3);
+    const topics = ["Food", "Food", "Food", "Food", "Food", "Travel", "Food", null, "Music"];
+    const items = topics.map((topic, i) => ({ id: `n${i}`, topic }));
+    const out = diversifyTopics(items, (i) => i.topic);
+    assert.deepEqual(out.map((i) => i.id), ["n0", "n1", "n2", "n5", "n3", "n4", "n6", "n7", "n8"]);
+    assert.equal(new Set(out).size, items.length, "nobody lost or repeated");
+    const only = diversifyTopics([{ topic: "Food" }, { topic: "Food" }, { topic: "Food" }, { topic: "Food" }], (i) => i.topic);
+    assert.equal(only.length, 4, "with nothing else waiting, the run continues");
+    const untagged = [{ id: 1, topic: null }, { id: 2, topic: null }, { id: 3, topic: null }, { id: 4, topic: null }, { id: 5, topic: "Art" }];
+    assert.deepEqual(diversifyTopics(untagged, (i) => i.topic).map((i) => i.id), [1, 2, 3, 4, 5], "no topic is no run");
   });
 });

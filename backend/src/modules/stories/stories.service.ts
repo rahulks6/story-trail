@@ -50,6 +50,8 @@ export interface PublicStory {
   media: MediaDelivery | null;
   /** The song that plays, which part, and the credit its licence asks for; null without one. */
   music: StoryMusicView | null;
+  /** The topic its owner gave it (shared/topics.ts), or null. */
+  topic: string | null;
 }
 
 export interface StoryMusicView {
@@ -127,6 +129,7 @@ async function toPublicStory(story: StoryRecord, viewerId: string, preloaded?: M
     crop: story.crop,
     media: media ? deliveryFor(media, story.ownerId === viewerId) : null,
     music: musicView(story, track),
+    topic: story.topic,
   };
 }
 
@@ -194,6 +197,7 @@ export async function publishStory(
     crop: input.crop,
     music: input.music ?? null,
     festival: (await taggableFestival(input.festival)) ?? null,
+    topic: input.topic ?? null,
   });
   await notifyMentionsQuietly(story.id);
   return toPublicStory(story, ownerId);

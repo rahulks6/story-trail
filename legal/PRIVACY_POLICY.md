@@ -45,6 +45,9 @@ shares, and the direct messages you send (including photos and videos, and
 Stories you share into a conversation). A photo or video you send in a message
 can be opened only by you and the person you sent it to.
 
+If you give a Story a topic (such as Food or Cricket) in its settings, we
+store it with the Story and use it to order Home.
+
 If you add a song to a Story, we record which song from Katkee's music
 library and which part of it plays. The songs are openly licensed and credited
 on the Story; choosing one tells us nothing else about you.
@@ -75,12 +78,30 @@ is shown on that Story.
 
 ### Activity used to rank Home and Story reach
 We record views, how much of a Story was watched, likes, comments, shares,
-profile visits, follows, quick skips, and "Not interested". We use them, and
-the interests you chose on your profile (people you don't follow who share
-your interests appear higher on your Home), for three things:
+profile visits, follows, quick skips, "Not interested" and "Show more like
+this". We use them, and the interests you chose on your profile, for three
+things:
 - to order your Home;
 - to decide how far a public Story reaches beyond its owner's followers;
 - to give creators aggregate Insights.
+
+### Interests we learn from your activity
+To order your Home, Katkee also works out which topics you seem to like,
+from the same list of topics you can choose on your profile. When you watch
+a Story for a while or to the end, watch it again, like it, comment, share
+it, visit its owner's profile or tap "Show more like this", the Story's topic (or, if it has none, the
+interests its owner chose) counts a little more for you; a quick skip or
+"Not interested" counts against it. This is a score per topic, nothing
+more. It fades over time (it halves every 14 days), and how much one topic
+can change in a day is limited. The interests you chose count too, but we
+don't change them. We use what we learn only to order your Home: never to
+infer anything about you beyond what topics of Stories you enjoy, and never
+for Sponsored Stories, which use only the interests you chose.
+
+You can see the topics Katkee thinks you like, and remove any of them, in
+Settings, then Your interests. Removing a topic resets it and keeps it out
+for 30 days. Nobody else can see your learned interests, not even the
+people whose Stories you watch.
 
 A Story's view count is public. Only the Story's owner can see who viewed it.
 
@@ -175,6 +196,7 @@ message is kept as evidence for the moderator.
 - **Blocking**: hides your content from someone and theirs from you, both
   ways, at once.
 - **Your area and time zone**: never shown to anyone.
+- **Interests we learn**: only you see them (Settings, then Your interests).
 - **Verification ID photo**: only staff who review verification requests,
   each view recorded in the audit log.
 
@@ -229,6 +251,9 @@ recorded in an audit log that can't be edited.
 - **A video of your Story prepared for sharing to another app**: deleted
   24 hours after you asked for it.
 - **Your area**: see above.
+- **Interests we learn**: each topic fades over time and is deleted 180 days
+  after it last changed; all of them are deleted at once when you delete
+  your account.
 - **Raw analytics events**: deleted after 90 days; only daily totals that
   identify nobody remain.
 - **Crash reports**: deleted after 90 days.
@@ -253,6 +278,8 @@ In the app you can:
 - edit your profile;
 - make your account private;
 - turn Nearby Stories on or off (Settings, then Privacy);
+- see and remove the interests Katkee has learned (Settings, then Your
+  interests);
 - turn notification types on or off;
 - block, mute, report, or delete your own Stories and comments;
 - **delete your account** (Settings, then Delete account).
@@ -287,8 +314,8 @@ object to our use of it, to restrict it, and to withdraw any consent at any
 time. The legal bases we rely on:
 - **Contract**: running your account, Stories, Highlights, messages and
   notifications, which you asked for by signing up (Article 6(1)(b)).
-- **Legitimate interests**: ordering Home and how far public Stories
-  reach, choosing Sponsored Stories from the interests you chose, keeping
+- **Legitimate interests**: ordering Home (including the interests we learn)
+  and how far public Stories reach, choosing Sponsored Stories from the interests you chose, keeping
   Katkee safe (rate limits, link checks, moderation), security records,
   and our own analytics, which identify nobody once counted
   (Article 6(1)(f)). You can object to any of these; for Sponsored Stories,

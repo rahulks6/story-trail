@@ -36,6 +36,7 @@ import { OnboardingScreen } from "../screens/onboarding/OnboardingScreen";
 import { needsOnboarding, OnboardingProvider } from "../state/onboarding";
 import { BlockedAccountsScreen } from "../screens/profile/BlockedAccountsScreen";
 import { MutedAccountsScreen } from "../screens/profile/MutedAccountsScreen";
+import { YourInterestsScreen } from "../screens/profile/YourInterestsScreen";
 import { CloseFriendsScreen } from "../screens/profile/CloseFriendsScreen";
 import { FollowListScreen } from "../screens/profile/FollowListScreen";
 import { VerificationScreen } from "../screens/profile/VerificationScreen";
@@ -232,6 +233,17 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         options={{
           headerShown: true,
           title: "Muted accounts",
+          headerStyle: { backgroundColor: colors.background },
+          headerTintColor: colors.textPrimary,
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="YourInterests"
+        component={YourInterestsScreen}
+        options={{
+          headerShown: true,
+          title: "Your interests",
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,

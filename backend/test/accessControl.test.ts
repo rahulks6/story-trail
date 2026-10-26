@@ -400,6 +400,18 @@ describe("Story replies and Close Friends", () => {
   });
 });
 
+describe("learned interests", () => {
+  it("removing a topic touches only your own; nobody can read or reset someone else's", async () => {
+    await query(`INSERT INTO viewer_topic_affinity (viewer_id, topic, score) VALUES (:'owner', 'Food', 7) ON CONFLICT DO NOTHING`, { owner: owner.id });
+    const reset = await attempt("DELETE /api/v1/me/interests/learned/:topic", "/api/v1/me/interests/learned/Food", stranger);
+    assert.equal(reset.status, 204, "a stranger may reset their own");
+    assert.equal(await count(`viewer_topic_affinity WHERE viewer_id = :'owner' AND score = 7`, { owner: owner.id }), 1, "the owner's is untouched");
+    refused(await attempt("DELETE /api/v1/me/interests/learned/:topic", "/api/v1/me/interests/learned/Food", null), "without sign-in", [401]);
+    const theirs = await request("GET", "/api/v1/me/interests", undefined, stranger.auth);
+    assert.deepEqual(theirs.body.learned, [], "and only ever sees their own");
+  });
+});
+
 describe("coverage", () => {
   it("every route that takes an id or a username was tried above", () => {
     const parameterized = server.routes().filter((r) => r.path.includes("/:")).map((r) => `${r.method} ${r.path}`);

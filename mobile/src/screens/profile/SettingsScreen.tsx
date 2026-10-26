@@ -186,6 +186,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
       <Text style={styles.sectionHeader}>Stories</Text>
       <View style={styles.card}>
         <ListRow label="Uploads" icon={ICONS.create} onPress={() => navigation.navigate("UploadQueue")} />
+        <ListRow label="Your interests" icon={ICONS.like} onPress={() => navigation.navigate("YourInterests")} />
         <ListRow
           label="Clear saved drafts"
           icon={ICONS.trash}

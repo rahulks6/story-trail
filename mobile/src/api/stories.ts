@@ -28,6 +28,8 @@ export interface PublicStory {
   media?: MediaDelivery | null;
   /** The song that plays with the Story, which part of it, and its credit. */
   music?: StoryMusic | null;
+  /** The topic its owner gave it (models/topics.ts); null or absent for none. */
+  topic?: string | null;
 }
 
 export interface StoryMusic {
@@ -69,6 +71,10 @@ export interface PublishStoryInput {
   crop?: StoryCrop;
   /** A song from the catalogue and which part of it plays. */
   music?: { trackId: string; startMs: number; durationMs: number } | null;
+  /** A current festival's slug: adds the Story to that festival's ring. */
+  festival?: string;
+  /** One topic from models/topics.ts; left out for none. */
+  topic?: string;
 }
 
 /**

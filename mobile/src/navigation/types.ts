@@ -111,6 +111,8 @@ export type RootStackParamList = {
   MutedAccounts: undefined;
   /** Your Close Friends list: who sees Stories shared with Close Friends. */
   CloseFriends: undefined;
+  /** Settings > Your interests: what Katkee has learned you like (removable) and the interests you chose. */
+  YourInterests: undefined;
   /** A profile's real follower or following list — the count on a profile has looked tappable since Phase 1, but never was until now. */
   FollowList: { username: string; mode: "followers" | "following" };
 };

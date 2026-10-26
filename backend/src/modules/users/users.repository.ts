@@ -185,9 +185,10 @@ export async function setActive(id: string, isActive: boolean): Promise<void> {
  * soft-deleted row here already does.
  */
 export async function softDeleteUser(id: string): Promise<void> {
-  // The approximate area (Phase 9) isn't evidence of anything, so it goes at once.
+  // The approximate area (Phase 9) and learned interests aren't evidence of anything, so they go at once.
   await query(
-    `WITH u AS (UPDATE users SET deleted_at = now() WHERE id = :'id' RETURNING id)
+    `WITH u AS (UPDATE users SET deleted_at = now() WHERE id = :'id' RETURNING id),
+     t AS (DELETE FROM viewer_topic_affinity WHERE viewer_id IN (SELECT id FROM u))
      DELETE FROM user_areas WHERE user_id IN (SELECT id FROM u)`,
     { id },
   );

@@ -48,10 +48,10 @@ async function setArea(who: Person, cell: string | null, timeZone: string | null
   assert.equal(res.status, 200, JSON.stringify(res.body));
 }
 
-async function publish(owner: Person, audience: "public" | "followers" = "public"): Promise<string> {
+async function publish(owner: Person, audience: "public" | "followers" = "public", topic?: string): Promise<string> {
   const upload = await fetch(`${baseUrl}/api/v1/media/photos`, { method: "POST", headers: { "Content-Type": "image/png", ...owner.auth }, body: buildTestPng(4, 4) });
   const media = (await upload.json()) as { media: { id: string } };
-  const res = await client.post("/api/v1/stories", { mediaId: media.media.id, caption: "", audience, allowComments: "everyone", allowSharing: true }, owner.auth);
+  const res = await client.post("/api/v1/stories", { mediaId: media.media.id, caption: "", audience, allowComments: "everyone", allowSharing: true, ...(topic ? { topic } : {}) }, owner.auth);
   assert.equal(res.status, 201, JSON.stringify(res.body));
   return res.body.story.id as string;
 }
@@ -76,16 +76,6 @@ async function setStage(story: string, stage: number, options: { held?: boolean;
      ON CONFLICT (story_id) DO UPDATE SET stage = EXCLUDED.stage, held = EXCLUDED.held, stage_impressions = EXCLUDED.stage_impressions`,
     { story, stage, held: options.held ?? false, impressions: options.impressions ?? 0 },
   );
-}
-
-/** A seeded random source (mulberry32). */
-function seeded(seed: number): () => number {
-  return () => {
-    seed = (seed + 0x6d2b79f5) | 0;
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
 }
 
 const reachRow = (story: string) =>
@@ -278,7 +268,7 @@ describe("the reach evaluator", () => {
 });
 
 describe("Home's mix", () => {
-  it("tends to put new people nearby before new people further away", async () => {
+  it("puts new people nearby before new people further away, the same way on every load", async () => {
     const viewer = await person();
     await setArea(viewer, home, "Asia/Kolkata");
     const near = await person();
@@ -287,21 +277,26 @@ describe("Home's mix", () => {
     await setArea(far, delhi, "Asia/Kolkata");
     await setStage(await publish(near), 3);
     await setStage(await publish(far), 3);
-    // A fixed random source and many loads: about 62% expected with the nearby boost (1.6
-    // against 1), 50% without it; the bounds sit over 3 standard deviations from both.
-    const random = seeded(2026);
-    let nearFirst = 0;
-    const runs = 800;
-    for (let i = 0; i < runs; i++) {
-      const order = (await getRankedHomeFeed(viewer.id, random)).map((e) => e.owner.id);
-      assert.ok(order.includes(near.id) && order.includes(far.id));
-      if (order.indexOf(near.id) < order.indexOf(far.id)) nearFirst++;
-    }
-    console.log(`# nearby first in ${nearFirst} of ${runs}`);
-    assert.ok(nearFirst / runs > 0.56 && nearFirst / runs < 0.7, `nearby first in ${nearFirst} of ${runs}`);
+    const first = (await getRankedHomeFeed(viewer.id)).map((e) => e.owner.id);
+    assert.ok(first.indexOf(near.id) >= 0 && first.indexOf(near.id) < first.indexOf(far.id));
+    for (let i = 0; i < 5; i++) assert.deepEqual((await getRankedHomeFeed(viewer.id)).map((e) => e.owner.id), first, `load ${i + 2}`);
   });
 
-  it("starts with someone you follow, then 3 people you follow to 2 new people in every five, differently each time", async () => {
+  it("puts a new person on a topic you like ahead of a nearer one, and nearness decides between equals", async () => {
+    const viewer = await person();
+    await setArea(viewer, home, "Asia/Kolkata");
+    assert.equal((await client.patch("/api/v1/users/me", { interests: ["Cricket"] }, viewer.auth)).status, 200);
+    const near = await person();
+    await setArea(near, nextDoor, "Asia/Kolkata");
+    const far = await person();
+    await setArea(far, delhi, "Asia/Kolkata");
+    await setStage(await publish(near), 3);
+    await setStage(await publish(far, "public", "Cricket"), 3);
+    const order = (await getRankedHomeFeed(viewer.id)).map((e) => e.owner.id);
+    assert.ok(order.indexOf(far.id) >= 0 && order.indexOf(far.id) < order.indexOf(near.id), "interest first");
+  });
+
+  it("starts with someone you follow, then followed, followed, new, followed, new in every five, the same on each refresh", async () => {
     const viewer = await person();
     for (let i = 0; i < 10; i++) {
       const followed = await person();
@@ -312,17 +307,14 @@ describe("Home's mix", () => {
     await publish(viewer);
     const following = new Set((await query(`SELECT followee_id FROM follows WHERE follower_id = :'id'`, { id: viewer.id })).map((r) => r.followee_id as string));
     const orders = new Set<string>();
-    for (let load = 0; load < 8; load++) {
+    for (let load = 0; load < 4; load++) {
       const owners = await homeOwners(viewer);
       assert.equal(owners[0], viewer.id, "your own Story first");
       const rest = owners.slice(1);
-      assert.ok(following.has(rest[0]!), "then someone you follow");
-      for (let block = 0; block < 3; block++) {
-        const five = rest.slice(block * 5, block * 5 + 5);
-        assert.equal(five.filter((id) => following.has(id)).length, 3, `load ${load}, places ${block * 5 + 1}-${block * 5 + 5}`);
-      }
+      assert.equal(new Set(owners).size, owners.length, "each person once");
+      assert.equal(rest.slice(0, 15).map((id) => (following.has(id) ? "f" : "n")).join(""), "ffnfnffnfnffnfn", `load ${load}`);
       orders.add(rest.join());
     }
-    assert.ok(orders.size >= 2, "a different order on each refresh");
+    assert.equal(orders.size, 1, "nothing changed, so Home didn't either");
   });
 });

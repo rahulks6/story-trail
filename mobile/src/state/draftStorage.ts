@@ -26,6 +26,8 @@ export interface SavedDraft {
   audience: "public" | "followers" | "close_friends";
   mimeType: string;
   savedAt: string;
+  /** The Story's topic (models/topics.ts), when one was picked. */
+  topic?: string;
 }
 
 export async function savePendingDraft(ownerId: string, mediaUri: string, saved: SavedDraft): Promise<void> {

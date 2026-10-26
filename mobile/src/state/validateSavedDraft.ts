@@ -1,4 +1,5 @@
 import type { SavedDraft } from "./draftStorage";
+import { isTopic } from "../models/topics";
 
 const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === "object" && !Array.isArray(v);
 const number = (v: unknown): v is number => typeof v === "number" && Number.isFinite(v);
@@ -9,6 +10,7 @@ const member = (v: unknown, values: string[]) => text(v) && values.includes(v);
 export function isSavedDraft(value: unknown, mediaUri: string): value is SavedDraft {
   if (!record(value) || !record(value.draft)) return false;
   if (!member(value.audience, ["public", "followers", "close_friends"]) || !text(value.mimeType) || !text(value.savedAt) || !Number.isFinite(Date.parse(value.savedAt))) return false;
+  if (value.topic !== undefined && !isTopic(value.topic)) return false;
   const d = value.draft, source = d.sourceMedia, crop = d.crop;
   if (!record(source) || source.uri !== mediaUri || !member(source.kind, ["photo", "video"])) return false;
   if (![source.width, source.height].every(v => v === null || (number(v) && v > 0))) return false;

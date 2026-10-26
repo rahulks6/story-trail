@@ -129,6 +129,8 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   // Who can comment and share, remembered from your last Story (Story settings sheet).
   const [settings, setSettings] = useState<StorySettings>(DEFAULT_STORY_SETTINGS);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  // This Story's topic (Story settings sheet): chosen for each Story, never remembered for the next.
+  const [topic, setTopic] = useState<string | null>(null);
   useEffect(() => {
     void loadStorySettings().then((saved) => {
       setSettings(saved);
@@ -274,6 +276,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         setDraft(saved.draft);
         setAudience(saved.audience);
         if (saved.audience !== "close_friends") setSettings((current) => ({ ...current, visibility: saved.audience as StoryVisibility }));
+        setTopic(saved.topic ?? null);
       }
       setRestored(true);
     });
@@ -287,13 +290,13 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
     if (!restored || !user) return;
     const timer = setTimeout(() => {
       if (hasMeaningfulEdits(draft)) {
-        void savePendingDraft(user.id, mediaUri, { draft, audience, mimeType, savedAt: new Date().toISOString() });
+        void savePendingDraft(user.id, mediaUri, { draft, audience, mimeType, savedAt: new Date().toISOString(), ...(topic ? { topic } : {}) });
       } else {
         void clearPendingDraft(user.id, mediaUri);
       }
     }, 800);
     return () => clearTimeout(timer);
-  }, [restored, draft, audience, mediaUri, mimeType, user?.id]);
+  }, [restored, draft, audience, topic, mediaUri, mimeType, user?.id]);
 
   const onContainerLayout = (e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
@@ -614,6 +617,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           ...(music ? { music: { trackId: music.track.id, startMs: music.startMs, durationMs: music.durationMs } } : {}),
           // Public festival Stories join the festival's ring on Home.
           ...(festival && joinFestival && target === "public" ? { festival: festival.slug } : {}),
+          ...(topic ? { topic } : {}),
         },
         boomerang ? "boomerang" : undefined,
       );
@@ -902,9 +906,9 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             hitSlop={8}
             style={styles.visibility}
             accessibilityRole="button"
-            accessibilityLabel={`Story settings: ${storySettingsSummary({ ...settings, visibility: storyAudience }, festival && joinFestival && storyAudience === "public" ? festival.name : null)}`}
+            accessibilityLabel={`Story settings: ${storySettingsSummary({ ...settings, visibility: storyAudience }, festival && joinFestival && storyAudience === "public" ? festival.name : null, topic)}`}
           >
-            <Text style={styles.visibilityLabel} numberOfLines={1}>{storySettingsSummary({ ...settings, visibility: storyAudience }, festival && joinFestival && storyAudience === "public" ? festival.name : null)}</Text>
+            <Text style={styles.visibilityLabel} numberOfLines={1}>{storySettingsSummary({ ...settings, visibility: storyAudience }, festival && joinFestival && storyAudience === "public" ? festival.name : null, topic)}</Text>
             <Icon name={ICONS.chevron} size={14} color={colors.textPrimary} />
           </Pressable>
 
@@ -977,6 +981,8 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         festival={festival}
         joinFestival={joinFestival}
         onJoinFestival={setJoinFestival}
+        topic={topic}
+        onTopicChange={setTopic}
       />
       <TextToolModal
         // Starts fresh each time it opens: new text, or the text being edited.

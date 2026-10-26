@@ -701,7 +701,7 @@ Details, measurements and tests: `docs/phases/PHASE_9_REACH_AND_HOME.md`.
 | POST | `/api/v1/media/videos` | Bearer | Raw binary body (`Content-Type: video/mp4` or `video/quicktime`) → `{media}`; validates the ISO-BMFF container, 200 MiB max |
 | GET | `/api/v1/media/:id` | Bearer | Owner, or anyone permitted to view a Story built from this media (see below) |
 | GET | `/api/v1/media/:id/file` | Bearer | Same access rule; streams the original bytes back, byte-for-byte |
-| POST | `/api/v1/stories` | Bearer | `{mediaId, caption, audience, allowComments, allowSharing}` → `{story}`; media must be your own, `ready`, and not already published |
+| POST | `/api/v1/stories` | Bearer | `{mediaId, caption, audience, allowComments, allowSharing, topic?}` → `{story}`; media must be your own, `ready`, and not already published. `topic` is one of the topics in `src/shared/topics.ts` (any case; stored by its listed name) or absent/null; `story.topic` is the topic or `null` |
 | GET | `/api/v1/stories/:id` | Bearer | Owner always; others need it active + visible per audience/privacy/block rules; includes `likeCount`/`commentCount`/`viewerHasLiked` |
 | DELETE | `/api/v1/stories/:id` | Bearer, owner-only | Soft-deletes; gone even to the owner afterward (unlike natural expiry) |
 | POST | `/api/v1/stories/:id/view` | Bearer | Records a view once per viewer; the owner's own view never counts |
@@ -717,11 +717,13 @@ Details, measurements and tests: `docs/phases/PHASE_9_REACH_AND_HOME.md`.
 | GET | `/api/v1/stories/:id/comments` | Bearer | Paginated, oldest first; only needs Story view access, not comment-post permission |
 | DELETE | `/api/v1/comments/:id` | Bearer | The comment's author, or the Story's owner (moderation), can delete it |
 | POST | `/api/v1/stories/:id/share` | Bearer | Records a share event; 403 if the Story's `allowSharing` is false |
-| GET | `/api/v1/stories/feed/home` | Bearer | Your own Stories first, then (Phase 9) people you follow mixed with new people whose public Stories have earned reach to you: 3 of every 5 places are people you follow, the first always one; a weighted shuffle on every refresh, nearer new people weighted up. `?limit&cursor` pages keep the refresh's order |
+| GET | `/api/v1/stories/feed/home` | Bearer | Your own Stories first, then (Phase 9) people you follow mixed with new people whose public Stories have earned reach to you: 3 of every 5 places are people you follow, the first always one; a stable ranked order (no shuffle: it changes only when Stories or signals do) in the fixed pattern followed, followed, new, followed, new; people you follow by closeness then your interests, new people by your interests then nearness, at most three new people in a row on one topic (see `recommendation.service.ts`). `?limit&cursor` pages keep the refresh's order |
 | GET | `/api/v1/users/me/area` | Bearer | Your approximate area for Nearby Stories: `{area: {cell, timeZone, updatedAt} | null}`. Owner-only, never cached |
 | PUT | `/api/v1/users/me/area` | Bearer | `{cell?, timeZone?}`: a 4-character geohash (or `null` to clear it) and an IANA time zone (stored under its canonical name). A field left out keeps what is stored. Never coordinates |
 | DELETE | `/api/v1/users/me/area` | Bearer | → 204 |
-| POST | `/api/v1/events` | Bearer | `{eventType, creatorId?, storyId?, valueMs?}` → 204; validates required fields per type and that any `storyId`/`creatorId` is real and visible to you — see `events.dto.ts` for the full type list |
+| POST | `/api/v1/events` | Bearer | `{eventType, creatorId?, storyId?, valueMs?}` → 204; validates required fields per type and that any `storyId`/`creatorId` is real and visible to you — see `events.dto.ts` for the full type list (`more_like_this` needs `storyId`). Story events also update your learned interests (`topic-affinity.repository.ts`) |
+| GET | `/api/v1/me/interests` | Bearer | `{chosen: string[], learned: [{topic, strength: "high"\|"medium"}]}`: your profile interests and up to 5 learned topics, strongest first, never a score. Yours only, never cached |
+| DELETE | `/api/v1/me/interests/learned/:topic` | Bearer | → 204; resets that learned topic to 0 and keeps it out for 30 days; 404 for a name that isn't a topic |
 | GET | `/api/v1/notifications` | Bearer | Paginated (`?limit&offset`), newest first; each row denormalizes its actor/Story/comment/follow-request |
 | GET | `/api/v1/notifications/unread-count` | Bearer | → `{count}` |
 | POST | `/api/v1/notifications/read-all` | Bearer | Marks every unread notification for the caller read → 204 |

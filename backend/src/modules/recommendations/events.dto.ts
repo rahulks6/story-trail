@@ -19,7 +19,9 @@ export type EventType =
   | "profile_visit"
   | "follow_after_story"
   | "repeat_creator_visit"
-  | "not_interested";
+  | "not_interested"
+  /** "Show more like this" from a Story's More menu. */
+  | "more_like_this";
 
 /** Which of creator_id/story_id each event type needs — enforced so a client can't send a meaningless half-formed event. */
 const REQUIRES_STORY_ID: ReadonlySet<EventType> = new Set([
@@ -31,6 +33,7 @@ const REQUIRES_STORY_ID: ReadonlySet<EventType> = new Set([
   "story_previous",
   "story_replay",
   "comment_open",
+  "more_like_this",
 ]);
 
 const REQUIRES_CREATOR_ID: ReadonlySet<EventType> = new Set([
@@ -65,6 +68,7 @@ const ALL_EVENT_TYPES: EventType[] = [
   "follow_after_story",
   "repeat_creator_visit",
   "not_interested",
+  "more_like_this",
 ];
 
 export interface RecordEventInput {

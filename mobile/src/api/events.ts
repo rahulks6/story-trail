@@ -19,7 +19,9 @@ export type EventType =
   | "profile_visit"
   | "follow_after_story"
   | "repeat_creator_visit"
-  | "not_interested";
+  | "not_interested"
+  /** "Show more like this" from a Story's More menu (needs storyId). */
+  | "more_like_this";
 
 export interface RecordEventInput {
   eventType: EventType;

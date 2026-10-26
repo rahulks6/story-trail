@@ -12,8 +12,8 @@ export function registerRecommendationRoutes(router: Router): void {
     requireAuth(req);
     const q=parseQueryString(req.url??"");
     const result=q.limit!==undefined||q.cursor!==undefined?await homePage(req.userId!,parsePagination(q).limit,q.cursor):{feed:await recommendationService.getRankedHomeFeed(req.userId!)};
-    // Which interests matched is for ranking only; it doesn't leave the server.
-    const feed=result.feed.map(({sharedInterests:_shared,...entry})=>entry);
+    // Which topics ranked an entry where is for ranking only; it doesn't leave the server.
+    const feed=result.feed.map(({ranking:_ranking,...entry})=>entry);
     sendJson(res,200,{...result,feed,...(adsEnabled()?{sponsoredEnabled:true}:{})});
   });
 }

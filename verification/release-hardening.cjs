@@ -16,7 +16,7 @@ const verified=()=>load('backend/src/shared/verified.ts');
 const usernamePolicy=()=>load('backend/src/modules/users/username-policy.ts',{'../../shared/validation':{USERNAME_RE:/^[a-z0-9_.]{3,30}$/},'../../shared/verified':verified()});
 test('draft restore, count and deletion are isolated across accounts and legacy keys',async()=>{
  const data=new Map(),storage={getItem:async k=>data.get(k)??null,setItem:async(k,v)=>data.set(k,v),removeItem:async k=>data.delete(k),getAllKeys:async()=>[...data.keys()],removeMany:async keys=>keys.forEach(k=>data.delete(k))};
- const validator=load('mobile/src/state/validateSavedDraft.ts');
+ const validator=load('mobile/src/state/validateSavedDraft.ts',{'../models/topics':load('mobile/src/models/topics.ts')});
  const d=load('mobile/src/state/draftStorage.ts',{'@react-native-async-storage/async-storage':{default:storage},'./validateSavedDraft':validator});
  const a='11111111-1111-4111-8111-111111111111',b='22222222-2222-4222-8222-222222222222',uri='file:///same.jpg';
  data.set('katkee.draft.'+uri,JSON.stringify({draft:{caption:'legacy'}}));
@@ -27,7 +27,7 @@ test('draft restore, count and deletion are isolated across accounts and legacy 
  assert.equal(await d.countPendingDrafts(a),1);await d.clearAllPendingDrafts(a);assert.equal(await d.countPendingDrafts(a),0);assert.equal(await d.countPendingDrafts(b),1);
 });
 test('corrupted and mismatched saved drafts cannot enter the editor',()=>{
- const {isSavedDraft}=load('mobile/src/state/validateSavedDraft.ts');
+ const {isSavedDraft}=load('mobile/src/state/validateSavedDraft.ts',{'../models/topics':load('mobile/src/models/topics.ts')});
  const good={audience:'public',mimeType:'image/jpeg',savedAt:'2026-10-03T00:00:00Z',draft:{sourceMedia:{uri:'file:///photo.jpg',kind:'photo',width:null,height:null},filter:'Original',overlays:[],drawing:[],caption:'hello',audioMuted:false,crop:{zoom:1,offsetX:0,offsetY:0}}};
  assert.equal(isSavedDraft(good,'file:///photo.jpg'),true);
  assert.equal(isSavedDraft(good,'file:///other.jpg'),false);

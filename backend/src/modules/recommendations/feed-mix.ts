@@ -1,62 +1,76 @@
 /**
- * Home's order (Phase 9): a different shuffle on every refresh, mixing people you follow with
- * new people. Pure, with the random source passed in so tests can fix it.
+ * Home's order: a stable ranked list, best match first, mixing people you follow with new
+ * people. No randomness: the same Stories and signals give the same order on every refresh.
+ * Pure, so tests can check it directly.
  */
 
 /**
- * Each five places hold three people you follow and two new people, arranged at random, so
- * Home is 60% people you follow (while any are left) without a fixed pattern.
+ * Each five places hold three people you follow and two new people, always in this order
+ * (followed, followed, new, followed, new), so Home is 60% people you follow while any are left
+ * and starts with someone you follow.
  */
-const BLOCK: readonly boolean[] = [true, true, true, false, false];
+const BLOCK: readonly boolean[] = [true, true, false, true, false];
 export const FOLLOWED_SHARE = BLOCK.filter(Boolean).length / BLOCK.length;
-/** Never more than this many new people in a row while people you follow are left. */
-const MAX_NEW_IN_A_ROW = 2;
+/** A new person's run of one topic is broken after this many in a row when another topic is waiting. */
+export const MAX_TOPIC_RUN = 3;
 
 /**
- * A random order that still favours better items: each item's chance of coming earlier grows
- * with its weight (Efraimidis-Spirakis sampling), so the order changes every time without
- * burying what is most likely to be good.
+ * Scores within about 2% of each other count as equal, so tiny drifts (a Story getting a few
+ * minutes older) don't swap neighbours between refreshes; equal scores fall back to the
+ * newest Story, then the owner's id.
  */
-export function weightedShuffle<T>(items: readonly T[], weight: (item: T) => number, random: () => number): T[] {
-  return items
-    .map((item) => ({ item, key: Math.log(Math.max(random(), Number.MIN_VALUE)) / Math.max(weight(item), 1e-9) }))
-    .sort((a, b) => b.key - a.key)
-    .map((entry) => entry.item);
+function scoreBucket(score: number): number {
+  if (score === Infinity) return Infinity;
+  return Math.round(Math.log(Math.max(score, 1e-9)) * 50);
 }
 
-/** A random arrangement of the next five places; the first place of all is someone you follow. */
-function nextBlock(random: () => number, isFirst: boolean, newAtEnd: number): boolean[] {
-  for (;;) {
-    const block = [...BLOCK];
-    for (let i = block.length - 1; i > 0; i--) {
-      const j = Math.floor(random() * (i + 1));
-      [block[i], block[j]] = [block[j]!, block[i]!];
-    }
-    const leadingNew = block.indexOf(true);
-    if (isFirst && leadingNew !== 0) continue;
-    if (newAtEnd + leadingNew > MAX_NEW_IN_A_ROW) continue;
-    return block;
-  }
+export interface Rankable {
+  owner: { id: string };
+  score: number;
+  /** ISO time of the creator's newest Story. */
+  newestAt: string;
+}
+
+/** Best first; deterministic for equal scores. */
+export function rankOrder<T extends Rankable>(items: readonly T[]): T[] {
+  return [...items].sort(
+    (a, b) =>
+      scoreBucket(b.score) - scoreBucket(a.score) ||
+      (a.newestAt < b.newestAt ? 1 : a.newestAt > b.newestAt ? -1 : 0) ||
+      (a.owner.id < b.owner.id ? -1 : a.owner.id > b.owner.id ? 1 : 0),
+  );
 }
 
 /**
- * Interleaves people you follow with new people, 3 to 2 in every five places, starting with
- * someone you follow when there is anyone. When either list runs out, the rest of the other
- * follows.
+ * Keeps the ranked order but never puts more than MAX_TOPIC_RUN items with the same primary
+ * topic in a row while an item on another topic (or none) is still waiting: the best such item
+ * moves up. Items without a topic never form a run.
  */
-export function mixFeed<T>(followed: readonly T[], discovery: readonly T[], random: () => number): T[] {
+export function diversifyTopics<T>(ranked: readonly T[], topicOf: (item: T) => string | null): T[] {
+  const left = [...ranked];
   const out: T[] = [];
-  let f = 0, d = 0, newInARow = 0, block: boolean[] = [];
-  // Blocks apply only while both lists have someone left, so their rules can always be met.
-  while (f < followed.length && d < discovery.length) {
-    if (block.length === 0) block = nextBlock(random, out.length === 0, newInARow);
-    if (block.shift()) {
-      out.push(followed[f++]!);
-      newInARow = 0;
-    } else {
-      out.push(discovery[d++]!);
-      newInARow++;
+  while (left.length > 0) {
+    const last = out.slice(-MAX_TOPIC_RUN).map(topicOf);
+    const run = last.length === MAX_TOPIC_RUN && last[0] !== null && last.every((t) => t === last[0]) ? last[0] : null;
+    let pick = 0;
+    if (run !== null && topicOf(left[0]!) === run) {
+      const other = left.findIndex((item) => topicOf(item) !== run);
+      if (other >= 0) pick = other;
     }
+    out.push(left.splice(pick, 1)[0]!);
+  }
+  return out;
+}
+
+/**
+ * Interleaves people you follow with new people in the fixed pattern above, each list in its
+ * own ranked order. When either list runs out, the rest of the other follows.
+ */
+export function mixFeed<T>(followed: readonly T[], discovery: readonly T[]): T[] {
+  const out: T[] = [];
+  let f = 0, d = 0, place = 0;
+  while (f < followed.length && d < discovery.length) {
+    out.push(BLOCK[place++ % BLOCK.length] ? followed[f++]! : discovery[d++]!);
   }
   return [...out, ...followed.slice(f), ...discovery.slice(d)];
 }

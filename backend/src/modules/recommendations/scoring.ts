@@ -44,15 +44,6 @@ const FRESHNESS_FLOOR = 0.3;
  * track record, converging to no boost (1.0) rather than ever penalizing
  * established creators.
  */
-/**
- * People who chose the same interests on their profiles: each shared interest raises a new
- * person's place on Home, up to four (2.2x), so Home leans towards what the viewer likes
- * without filling up with one topic.
- */
-export function interestBoost(sharedInterests: number): number {
-  return 1 + 0.3 * Math.min(Math.max(sharedInterests, 0), 4);
-}
-
 export function explorationMultiplier(lifetimeImpressions: number): number {
   if (lifetimeImpressions < 20) return 3.0;
   if (lifetimeImpressions < 100) return 2.0;
@@ -125,4 +116,90 @@ export function storyQuality(signals: StoryQualitySignals): number {
   const rate = engagementScore / Math.max(signals.viewCount, 1) / maxPossiblePerView;
   const smoothed = bayesianSmooth(rate * signals.viewCount, signals.viewCount, 0.05, 10);
   return Math.min(Math.max(smoothed, 0.05), 1);
+}
+
+/**
+ * Learned interests (topic-affinity.repository.ts). What a viewer does with a Story moves
+ * their score for the Story's topics (its own topic, or its owner's profile interests when it
+ * has none) by these amounts; impressions and plain navigation move nothing. Creator-level
+ * signals (a profile visit, a quick skip, "Not interested") use the creator's topics.
+ */
+export const TOPIC_SIGNALS = {
+  qualified_view: 0.5,
+  story_complete: 1,
+  story_replay: 1,
+  profile_visit: 1,
+  like: 1,
+  comment: 2,
+  share: 2,
+  more_like_this: 4,
+  quick_skip: -1,
+  not_interested: -3,
+} as const;
+export type TopicSignal = keyof typeof TOPIC_SIGNALS;
+
+/** A watch shorter than this counts as a quick skip of that Story. */
+export const QUICK_SKIP_MS = 1000;
+/** How far one topic can move in a day, all signals together, so a burst can't take over Home. */
+export const TOPIC_DAILY_CAP = 10;
+export const TOPIC_HALF_LIFE_DAYS = 14;
+/** Stored scores stay within these bounds. */
+export const TOPIC_SCORE_MIN = -20;
+export const TOPIC_SCORE_MAX = 100;
+
+/** A learned score as it is now: it halves every 14 days since it was last updated. */
+export function decayedTopicScore(score: number, updatedAt: Date, now: Date = new Date()): number {
+  const days = Math.max(now.getTime() - updatedAt.getTime(), 0) / 86_400_000;
+  return score * Math.pow(0.5, days / TOPIC_HALF_LIFE_DAYS);
+}
+
+/** The interests a viewer chose (a fixed +1 each, never decaying) and their learned scores, already decayed. */
+export interface TopicProfile {
+  chosen: readonly string[];
+  learned: ReadonlyMap<string, number>;
+}
+
+/** Only the viewer's strongest topics count; the rest weigh nothing. */
+const TOP_TOPICS = 8;
+/** A viewer with only a few weak signals doesn't get full weight on them: scores are divided by at least this. */
+const NORMALIZE_FLOOR = 2;
+
+/**
+ * Each topic's weight for this viewer, -1..1: chosen interests (+1 each) plus learned scores;
+ * the strongest few positive ones divided by the strongest (or the floor), and disliked
+ * (negative) topics divided the same way down to -1.
+ */
+export function topicWeights(profile: TopicProfile): Map<string, number> {
+  const combined = new Map<string, number>();
+  for (const topic of profile.chosen) combined.set(topic, (combined.get(topic) ?? 0) + 1);
+  for (const [topic, score] of profile.learned) combined.set(topic, (combined.get(topic) ?? 0) + score);
+  const positive = [...combined].filter(([, s]) => s > 0).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, TOP_TOPICS);
+  const negative = [...combined].filter(([, s]) => s < 0);
+  const top = Math.max(positive[0]?.[1] ?? 0, NORMALIZE_FLOOR);
+  const bottom = Math.max(...negative.map(([, s]) => -s), NORMALIZE_FLOOR);
+  return new Map([...positive.map(([t, s]) => [t, s / top] as const), ...negative.map(([t, s]) => [t, s / bottom] as const)]);
+}
+
+/** New people: a Story on the viewer's strongest topic ranks up to 2.2x, one on a disliked topic down to 0.8x. */
+const DISCOVERY_RANGE = { up: 1.2, down: 0.2 };
+/** People you follow: closeness comes first, so interest moves them far less (0.9-1.3x). */
+const FOLLOWED_RANGE = { up: 0.3, down: 0.1 };
+
+/**
+ * How well a creator's Stories match what the viewer likes, as a multiplier on their score.
+ * The best-matching topic counts (a topic the viewer has no weight for counts as 0, so only
+ * Stories whose every topic is disliked rank lower); with no topics it is 1.
+ */
+export function interestMatch(weights: ReadonlyMap<string, number>, topics: readonly string[], following: boolean): number {
+  if (topics.length === 0) return 1;
+  const best = Math.max(...topics.map((t) => weights.get(t) ?? 0));
+  const range = following ? FOLLOWED_RANGE : DISCOVERY_RANGE;
+  return best >= 0 ? 1 + range.up * Math.min(best, 1) : 1 + range.down * Math.max(best, -1);
+}
+
+/** How a learned score is shown in Settings (never the score itself); weak ones aren't shown. */
+export function topicStrength(score: number): "high" | "medium" | null {
+  if (score >= 5) return "high";
+  if (score >= 1.5) return "medium";
+  return null;
 }

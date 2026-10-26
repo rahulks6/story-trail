@@ -1,6 +1,9 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { bayesianSmooth, creatorAffinity, explorationMultiplier, freshness, interestBoost, storyQuality } from "../src/modules/recommendations/scoring";
+import {
+  bayesianSmooth, creatorAffinity, decayedTopicScore, explorationMultiplier, freshness, interestMatch, storyQuality,
+  TOPIC_HALF_LIFE_DAYS, TOPIC_SIGNALS, topicStrength, topicWeights,
+} from "../src/modules/recommendations/scoring";
 
 describe("bayesianSmooth", () => {
   it("pulls a small sample toward the prior", () => {
@@ -119,10 +122,62 @@ describe("storyQuality", () => {
   });
 });
 
-describe("interestBoost", () => {
-  it("raises a new person who shares interests, a little more for each, up to four", () => {
-    assert.equal(interestBoost(0), 1);
-    assert.ok(interestBoost(1) > 1 && interestBoost(2) > interestBoost(1));
-    assert.equal(interestBoost(9), interestBoost(4));
+describe("learned interests", () => {
+  const day = 86_400_000;
+
+  it("halve every 14 days since they were last updated", () => {
+    const at = new Date("2026-10-01T00:00:00Z");
+    assert.equal(decayedTopicScore(8, at, at), 8);
+    assert.ok(Math.abs(decayedTopicScore(8, at, new Date(at.getTime() + 14 * day)) - 4) < 1e-9);
+    assert.ok(Math.abs(decayedTopicScore(8, at, new Date(at.getTime() + 28 * day)) - 2) < 1e-9);
+    assert.ok(Math.abs(decayedTopicScore(-4, at, new Date(at.getTime() + 14 * day)) + 2) < 1e-9, "dislikes fade too");
+    assert.equal(decayedTopicScore(8, at, new Date(at.getTime() - day)), 8, "a clock behind never grows a score");
+    assert.equal(TOPIC_HALF_LIFE_DAYS, 14);
+  });
+
+  it("weigh chosen interests as a small fixed prior and learned ones by how strong they are", () => {
+    const chosenOnly = topicWeights({ chosen: ["Food", "Travel"], learned: new Map() });
+    assert.equal(chosenOnly.get("Food"), 0.5, "one chosen interest alone isn't full weight");
+    const learned = topicWeights({ chosen: ["Food"], learned: new Map([["Cricket", 9], ["Food", 1], ["Pets", -6]]) });
+    assert.equal(learned.get("Cricket"), 1, "the strongest topic is 1");
+    assert.ok(Math.abs(learned.get("Food")! - 2 / 9) < 1e-9, "prior plus learned, divided by the strongest");
+    assert.equal(learned.get("Pets"), -1);
+    assert.equal(learned.has("Art"), false);
+    const many = topicWeights({ chosen: [], learned: new Map(Array.from({ length: 12 }, (_, i) => [`T${i}`, 12 - i] as [string, number])) });
+    assert.equal([...many.values()].filter((w) => w > 0).length, 8, "only the strongest eight count");
+  });
+
+  it("match a Story's topics within the old range for new people, and much less for people you follow", () => {
+    const weights = topicWeights({ chosen: [], learned: new Map([["Cricket", 10], ["Food", 5], ["Pets", -10]]) });
+    assert.ok(Math.abs(interestMatch(weights, ["Cricket"], false) - 2.2) < 1e-9);
+    assert.ok(Math.abs(interestMatch(weights, ["Food"], false) - 1.6) < 1e-9);
+    assert.equal(interestMatch(weights, ["Art"], false), 1, "a topic the viewer has no weight for changes nothing");
+    assert.equal(interestMatch(weights, [], false), 1, "nor does a Story without topics");
+    assert.ok(Math.abs(interestMatch(weights, ["Pets"], false) - 0.8) < 1e-9, "a disliked topic ranks a little lower");
+    assert.equal(interestMatch(weights, ["Pets", "Art"], false), 1, "unless something else about it is neutral");
+    assert.equal(interestMatch(weights, ["Pets", "Cricket"], false), interestMatch(weights, ["Cricket"], false), "the best topic counts");
+    assert.ok(Math.abs(interestMatch(weights, ["Cricket"], true) - 1.3) < 1e-9, "closeness comes first for people you follow");
+    assert.ok(interestMatch(weights, ["Pets"], true) >= 0.9);
+  });
+
+  it("never let interest outweigh following someone", () => {
+    const base = { isFollowing: false, profileVisits: 0, meaningfulReplies: 0, distinctEngagementDays: 0, qualifiedViews: 0, storyCompletions: 0, sequenceContinuations: 0, impressions: 10 };
+    const weights = topicWeights({ chosen: [], learned: new Map([["Cricket", 10], ["Food", 1]]) });
+    const followedOffTopic = creatorAffinity({ ...base, isFollowing: true, distinctEngagementDays: 3 }) * interestMatch(weights, ["Food"], true);
+    const followedOnTopic = creatorAffinity({ ...base, isFollowing: true }) * interestMatch(weights, ["Cricket"], true);
+    assert.ok(followedOffTopic > followedOnTopic, "someone you're close to stays ahead of a closer topic match");
+  });
+
+  it("move a topic by fixed, documented amounts", () => {
+    assert.ok(TOPIC_SIGNALS.more_like_this > TOPIC_SIGNALS.comment && TOPIC_SIGNALS.comment > TOPIC_SIGNALS.like && TOPIC_SIGNALS.like > 0);
+    assert.equal(TOPIC_SIGNALS.comment, TOPIC_SIGNALS.share);
+    assert.ok(TOPIC_SIGNALS.not_interested < TOPIC_SIGNALS.quick_skip && TOPIC_SIGNALS.quick_skip < 0);
+  });
+
+  it("show as high or medium, never as a score, and not at all when weak", () => {
+    assert.equal(topicStrength(12), "high");
+    assert.equal(topicStrength(2), "medium");
+    assert.equal(topicStrength(0.5), null);
+    assert.equal(topicStrength(-3), null);
   });
 });

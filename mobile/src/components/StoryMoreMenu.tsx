@@ -12,6 +12,8 @@ interface Props {
   visible: boolean;
   storyId: string;
   isOwnStory: boolean;
+  /** Shared with everyone: only then is "Show more like this" offered. */
+  isPublic?: boolean;
   otherUsername: string | null;
   otherUserId: string | null;
   onClose: () => void;
@@ -22,9 +24,10 @@ interface Props {
 
 /**
  * The Story's More menu, as the app's other action sheets. Your own Story: Insights, Delete.
- * Someone else's: Not interested (they're no longer recommended), Mute, Report, Block.
+ * Someone else's: Show more like this (public Stories: Home leans towards its topic), Not
+ * interested (they're no longer recommended), Mute, Report, Block.
  */
-export function StoryMoreMenu({ visible, storyId, isOwnStory, otherUsername, otherUserId, onClose, onDeleted, onOpenInsights }: Props): React.JSX.Element {
+export function StoryMoreMenu({ visible, storyId, isOwnStory, isPublic = false, otherUsername, otherUserId, onClose, onDeleted, onOpenInsights }: Props): React.JSX.Element {
   const { accessToken } = useAuth();
   const [reportOpen, setReportOpen] = useState(false);
 
@@ -54,6 +57,16 @@ export function StoryMoreMenu({ visible, storyId, isOwnStory, otherUsername, oth
       await recordEvent({ eventType: "not_interested", creatorId: otherUserId }, accessToken);
       showToast("You'll see fewer Stories like this");
       onDeleted(); // this creator won't be recommended again: nothing more to show here
+    } catch {
+      Alert.alert("Couldn't save that", "Check your connection and try again.");
+    }
+  };
+
+  const onMoreLikeThis = async () => {
+    if (!accessToken) return;
+    try {
+      await recordEvent({ eventType: "more_like_this", storyId, ...(otherUserId ? { creatorId: otherUserId } : {}) }, accessToken);
+      showToast("You'll see more Stories like this");
     } catch {
       Alert.alert("Couldn't save that", "Check your connection and try again.");
     }
@@ -94,6 +107,7 @@ export function StoryMoreMenu({ visible, storyId, isOwnStory, otherUsername, oth
     ? [[...(onOpenInsights ? [{ label: "View insights", onPress: onOpenInsights }] : []), { label: "Delete Story", destructive: true, onPress: onDelete }]]
     : [
         [
+          ...(isPublic ? [{ label: "Show more like this", onPress: () => void onMoreLikeThis() }] : []),
           { label: "Not interested", onPress: () => void onNotInterested() },
           { label: `Mute @${otherUsername ?? ""}`, onPress: () => void onMute() },
         ],

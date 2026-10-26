@@ -163,6 +163,7 @@ describe("retention", () => {
     await query(`INSERT INTO analytics_active_days (day, platform, user_id) VALUES (current_date - 40, 'ios', :'id') ON CONFLICT DO NOTHING`, { id: user.id });
     await query(`INSERT INTO analytics_events (id, user_id, name, platform, occurred_at) VALUES (gen_random_uuid(), :'id', 'app_session_started', 'ios', now() - interval '35 days')`, { id: user.id });
     await query(`INSERT INTO user_areas (user_id, cell, time_zone) VALUES (:'id', 'tdr1', 'Asia/Calcutta')`, { id: user.id });
+    await query(`INSERT INTO viewer_topic_affinity (viewer_id, topic, score) VALUES (:'id', 'Food', 3)`, { id: user.id });
     await query(`INSERT INTO crash_reports (user_id, client_report_id, fingerprint, kind, name, message, platform, occurred_at)
                  VALUES (:'id', 'crash-before-delete-01', 'f', 'fatal', 'Error', 'boom', 'ios', now())`, { id: user.id });
     await query(`INSERT INTO app_feedback (user_id, body, platform) VALUES (:'id', 'the camera froze', 'ios')`, { id: user.id });
@@ -175,6 +176,7 @@ describe("retention", () => {
     for (const table of ["auth_identities", "refresh_tokens", "auth_security_events", "analytics_events", "analytics_active_days", "username_changes", "user_areas", "crash_reports", "app_feedback"]) {
       assert.equal((await queryOne(`SELECT count(*) AS n FROM ${table} WHERE user_id = :'id'`, { id: user.id }))?.n, "0", table);
     }
+    assert.equal((await queryOne(`SELECT count(*) AS n FROM viewer_topic_affinity WHERE viewer_id = :'id'`, { id: user.id }))?.n, "0", "learned interests");
     assert.equal((await queryOne(`SELECT birth_date FROM users WHERE id = :'id'`, { id: user.id }))?.birth_date, null);
     assert.notEqual(await purgedAt(normal), null);
     assert.notEqual(await purgedAt(avatar), null);
@@ -243,6 +245,13 @@ describe("retention", () => {
        VALUES (:'stale', 'tdr1', 'Asia/Calcutta', now() - interval '31 days'), (:'recent', 'tdr1', 'Asia/Calcutta', now() - interval '29 days')`,
       { stale: stale.id, recent: recent.id },
     );
+    // Learned interests untouched for 180 days have decayed to nothing; a removed topic's pin stays until it ends.
+    await query(
+      `INSERT INTO viewer_topic_affinity (viewer_id, topic, score, updated_at, pinned_out_until)
+       VALUES (:'stale', 'Food', 4, now() - interval '181 days', NULL), (:'stale', 'Art', 0, now() - interval '181 days', now() + interval '1 day'),
+              (:'recent', 'Food', 4, now() - interval '179 days', NULL)`,
+      { stale: stale.id, recent: recent.id },
+    );
     const gone = await publish(owner.token, await photo(owner.token));
     const live = await publish(owner.token, await photo(owner.token));
     await query(`UPDATE stories SET expires_at = now() - interval '2 days' WHERE id = :'id'`, { id: gone });
@@ -251,6 +260,10 @@ describe("retention", () => {
     assert.deepEqual(
       (await query(`SELECT user_id FROM user_areas WHERE user_id = :'stale' OR user_id = :'recent'`, { stale: stale.id, recent: recent.id })).map((r) => r.user_id),
       [recent.id],
+    );
+    assert.deepEqual(
+      (await query(`SELECT viewer_id || ':' || topic AS k FROM viewer_topic_affinity WHERE viewer_id IN (:'stale', :'recent') ORDER BY k`, { stale: stale.id, recent: recent.id })).map((r) => r.k),
+      [`${recent.id}:Food`, `${stale.id}:Art`].sort(),
     );
     assert.deepEqual(
       (await query(`SELECT story_id FROM story_reach WHERE story_id = :'gone' OR story_id = :'live'`, { gone, live })).map((r) => r.story_id),

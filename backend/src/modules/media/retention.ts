@@ -222,6 +222,8 @@ export async function deletedAccounts(store: ObjectStore, batch: number, days: n
        a AS (DELETE FROM auth_identities WHERE user_id IN (SELECT id FROM u)),
        h AS (DELETE FROM username_changes WHERE user_id IN (SELECT id FROM u)),
        ar AS (DELETE FROM user_areas WHERE user_id IN (SELECT id FROM u)),
+       -- Already deleted when the account was (users.repository.ts); this is the backstop.
+       ta AS (DELETE FROM viewer_topic_affinity WHERE viewer_id IN (SELECT id FROM u)),
        t AS (DELETE FROM refresh_tokens WHERE user_id IN (SELECT id FROM u)),
        e AS (DELETE FROM auth_security_events WHERE user_id IN (SELECT id FROM u)),
        p AS (DELETE FROM password_reset_requests WHERE user_id IN (SELECT id FROM u)),
@@ -283,6 +285,8 @@ export async function expiredRecords(): Promise<number> {
   total += await deleteWhere("home_feed_snapshots", "expires_at < now() - interval '1 hour'");
   // Approximate areas count for 30 days after the app last sent them (reach.repository.ts).
   total += await deleteWhere("user_areas", "updated_at < now() - interval '30 days'");
+  // A learned interest untouched for 180 days has decayed to almost nothing (half-life 14 days).
+  total += await deleteWhere("viewer_topic_affinity", "updated_at < now() - interval '180 days' AND (pinned_out_until IS NULL OR pinned_out_until < now())");
   total += await deleteWhere("story_reach", "story_id IN (SELECT id FROM stories WHERE expires_at < now() - interval '1 day')");
   total += await deleteWhere("refresh_tokens", "expires_at < now() - interval '7 days'");
   total += await deleteWhere("admin_sessions", "absolute_expires_at < now() - interval '1 day'");

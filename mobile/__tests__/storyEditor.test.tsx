@@ -118,6 +118,37 @@ describe("sharing from the editor, like Instagram", () => {
     await press("Share to Close Friends");
     expect(enqueue.mock.calls[0]![4]).toMatchObject({ audience: "close_friends" });
   });
+
+  it("gives this Story one topic from Story settings, shows it in the summary, and doesn't carry it to the next Story", async () => {
+    const enqueue = jest.spyOn(uploadQueue, "enqueueUpload").mockResolvedValue({} as never);
+    jest.spyOn(usersApi, "listCloseFriends").mockResolvedValue({ closeFriends: [], limit: 1, offset: 0 });
+    await open();
+    await press("Story settings: Everyone · Comments on");
+    const chips = () => tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && n.props.accessibilityRole === "radio" && n.props.accessibilityState && ["No topic", "Food", "Travel"].includes(n.props.accessibilityLabel));
+    expect(chips().filter((c) => c.props.accessibilityState.checked).map((c) => c.props.accessibilityLabel)).toEqual(["No topic"]);
+    await press("Travel");
+    await press("Food");
+    expect(chips().filter((c) => c.props.accessibilityState.checked).map((c) => c.props.accessibilityLabel)).toEqual(["Food"]);
+    expect(tree.root.findAll((n: ReactTestInstance) => n.props.accessibilityLabel === "Story settings: Everyone · Comments on · Food").length).toBeGreaterThan(0);
+    await press("Share to Your story, everyone");
+    expect(enqueue.mock.calls[0]![4]).toMatchObject({ audience: "public", topic: "Food" });
+    await act(async () => tree.unmount());
+    enqueue.mockClear();
+    await open();
+    await press("Story settings: Everyone · Comments on");
+    await press("Share to Your story, everyone");
+    expect(enqueue.mock.calls[0]![4]).not.toHaveProperty("topic");
+  });
+
+  it("keeps a topic with a saved draft, and refuses a stored topic the app doesn't know", () => {
+    const { isSavedDraft } = require("../src/state/validateSavedDraft");
+    const { createEmptyDraft } = require("../src/models/storyDraft");
+    const draft = createEmptyDraft({ uri: "file:///v.mp4", kind: "video", width: 1080, height: 1920 });
+    const saved = { draft, audience: "public", mimeType: "video/mp4", savedAt: new Date().toISOString() };
+    expect(isSavedDraft(saved, "file:///v.mp4")).toBe(true);
+    expect(isSavedDraft({ ...saved, topic: "Food" }, "file:///v.mp4")).toBe(true);
+    expect(isSavedDraft({ ...saved, topic: "Knitting" }, "file:///v.mp4")).toBe(false);
+  });
 });
 
 describe("placing text and stickers", () => {

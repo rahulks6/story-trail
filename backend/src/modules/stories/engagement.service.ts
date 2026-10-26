@@ -11,6 +11,7 @@ import { getStoryForViewer } from "./stories.service";
 import { enforceAction } from "../safety/limits";
 import { assertLinksAllowed } from "../safety/links";
 import { queryOne } from "../../db/psql";
+import { learnQuietly } from "../recommendations/events.service";
 
 export async function likeStory(viewerId: string, storyId: string): Promise<void> {
   const story = await getStoryForViewer(storyId, viewerId); // access check — reused, not re-implemented
@@ -18,6 +19,8 @@ export async function likeStory(viewerId: string, storyId: string): Promise<void
   const isNewLike = await likesRepo.likeStory(storyId, viewerId);
   if (isNewLike) {
     await notificationsService.notifyLike(viewerId, story.ownerId, storyId);
+    // What Home learns you like (recommendations/topic-affinity.repository.ts); never your own Story.
+    if (story.ownerId !== viewerId) await learnQuietly(viewerId, "like", { storyId });
   }
 }
 
@@ -65,6 +68,7 @@ export async function createComment(viewerId: string, storyId: string, body: str
   const comment = await commentsRepo.createComment(storyId, viewerId, body);
   await notificationsService.notifyComment(viewerId, story.ownerId, storyId, comment.id);
   await notificationsService.notifyMentions(viewerId, storyId, comment.id, body);
+  if (story.ownerId !== viewerId) await learnQuietly(viewerId, "comment", { storyId });
   return comment;
 }
 
@@ -102,4 +106,5 @@ export async function shareStory(viewerId: string, storyId: string): Promise<voi
     throw new HttpError(403, "Sharing is disabled on this Story.");
   }
   await sharesRepo.recordShare(storyId, viewerId);
+  if (story.ownerId !== viewerId) await learnQuietly(viewerId, "share", { storyId });
 }

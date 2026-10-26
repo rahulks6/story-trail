@@ -1,6 +1,7 @@
 import { ValidationError } from "../auth/dto";
 import type { Audience, CommentSetting } from "./stories.repository";
 import type { StoryOverlay, DrawStroke, StoryCrop } from "./overlays";
+import { canonicalTopic, TOPICS, type Topic } from "../../shared/topics";
 import { OVERLAY_TYPES, TEXT_STYLES, STICKER_IDS, DATETIME_MODES, DRAW_TOOLS, FILTER_NAMES, MAX_CROP_ZOOM } from "./overlays";
 
 const MAX_CAPTION_LENGTH = 280;
@@ -23,6 +24,8 @@ export interface PublishStoryInput {
   music?: { trackId: string; startMs: number; durationMs: number } | null;
   /** A current festival's slug (festivals table): adds the Story to that festival's ring. */
   festival?: string;
+  /** One topic from the topic list (shared/topics.ts); without one, the owner's interests stand in. */
+  topic?: Topic;
 }
 
 function parseMusic(raw: unknown, errors: Record<string, string>): PublishStoryInput["music"] {
@@ -213,6 +216,13 @@ export function parsePublishStoryInput(body: unknown): PublishStoryInput {
     else festival = b.festival;
   }
 
+  let topic: Topic | undefined;
+  if (b.topic !== undefined && b.topic !== null && b.topic !== "") {
+    const known = canonicalTopic(b.topic);
+    if (!known) errors.topic = `topic must be one of: ${TOPICS.join(", ")}.`;
+    else topic = known;
+  }
+
   if (Object.keys(errors).length > 0) throw new ValidationError(errors);
   return {
     mediaId,
@@ -228,6 +238,8 @@ export function parsePublishStoryInput(body: unknown): PublishStoryInput {
     crop: parseCrop(b.crop),
     ...(music ? { music } : {}),
     ...(festival ? { festival } : {}),
+    // Left out when absent, so an older app's retried publish hashes as it always did.
+    ...(topic ? { topic } : {}),
   };
 }
 

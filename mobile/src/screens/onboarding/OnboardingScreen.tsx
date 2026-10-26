@@ -12,13 +12,10 @@ import { VerifiedName } from "../../components/VerifiedBadge";
 import { Banner, Button } from "../../components/Form";
 import { suggestionReasonText } from "../search/SearchScreen";
 import { tapFeedback } from "../../utils/haptics";
+import { TOPICS } from "../../models/topics";
 
-/** What people can pick from; the same words appear on profiles and in "Also into …". */
-export const INTEREST_CHOICES = [
-  "Festivals", "Food", "Travel", "Music", "Bollywood", "Cricket", "Fashion", "Dance",
-  "Devotional", "Fitness", "Movies", "Photography", "Art", "Comedy", "Gaming", "Tech",
-  "Books", "Nature", "Football", "Cars", "Pets", "Startups",
-];
+/** What people can pick from; the same words appear on profiles, in "Also into …" and as Story topics. */
+export const INTEREST_CHOICES = TOPICS;
 export const MAX_INTERESTS = 5;
 
 type FollowState = "none" | "following" | "requested" | "busy";

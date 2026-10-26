@@ -1095,6 +1095,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         visible={moreOpen}
         storyId={currentStory.id}
         isOwnStory={isOwnStory}
+        isPublic={currentStory.audience === "public"}
         otherUsername={isOwnStory ? null : (currentUsername ?? null)}
         otherUserId={isOwnStory ? null : currentStory.ownerId}
         onClose={() => setMoreOpen(false)}
