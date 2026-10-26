@@ -1,100 +1,97 @@
-10-22 11:40:21.688 D/AndroidRuntime( 4162): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-22 11:40:21.690 I/PhenotypeBackgroundRecv( 1339): Successfully updated snapshot for com.google.android.gms.icing.mdd#com.google.android.inputmethod.latin
-10-22 11:40:21.691 I/PhenotypeModule( 1339): PhenotypeModule.receiveBroadcast():563 onReceive() urgent = false
-10-22 11:40:21.691 I/PhenotypeBackgroundRecv( 1339): Successfully updated snapshot for com.google.android.libraries.performance.primes#com.google.android.inputmethod.latin
-10-22 11:40:21.694 I/AndroidRuntime( 4162): Using default boot image
-10-22 11:40:21.694 I/AndroidRuntime( 4162): Leaving lock profiling enabled
-10-22 11:40:21.695 I/PhenotypeModule( 1339): PhenotypeModule.receiveBroadcast():563 onReceive() urgent = false
-10-22 11:40:21.700 I/app_process( 4162): Core platform API reporting enabled, enforcing=false
-10-22 11:40:21.701 I/app_process( 4162): Using CollectorTypeCMC GC.
-10-22 11:40:21.705 E/Bugle   ( 3424): MobileConfigurationRetriever: The mobileConfigurationDataId cannot be removed as it is not present in the configurationCache
-10-22 11:40:21.707 D/PrefCtrlListHelper( 1098): Could not find Context-only controller for pref: com.android.settings.security.EncryptionStatusPreferenceController
-10-22 11:40:21.707 D/PrefCtrlListHelper( 1098): Could not find Context-only controller for pref: com.android.settings.security.CredentialManagementAppPreferenceController
-10-22 11:40:21.707 W/PrefCtrlListHelper( 1098): encryption_and_credentials_encryption_status already has a controller
-10-22 11:40:21.708 D/PrefCtrlListHelper( 1098): Could not find Context-only controller for pref: com.android.settings.regionalpreferences.TemperatureUnitCategoryController
-10-22 11:40:21.708 D/PrefCtrlListHelper( 1098): Could not find Context-only controller for pref: com.android.settings.security.MemtagPreferenceController
-10-22 11:40:21.708 D/PrefCtrlListHelper( 1098): Could not find Context-only controller for pref: com.android.settings.security.MemtagFooterPreferenceController
-10-22 11:40:21.708 W/SettingsPrefController( 1098): Skipping updateNonIndexableKeys, key already in list. com.android.settings.security.MemtagFooterPreferenceController@e6077cb
-10-22 11:40:21.708 V/SettingsSearchProvider( 1098): com.android.settings.search.BaseSearchIndexProvider@9511bc7 tried to add an empty non-indexable key
-10-22 11:40:21.710 E/Bugle   ( 3424): MobileConfigurationRetriever: The mobileConfigurationDataId cannot be removed as it is not present in the configurationCache
-10-22 11:40:21.710 E/Bugle   ( 3424): MobileConfigurationRetriever: The mobileConfigurationDataId cannot be removed as it is not present in the configurationCache
-10-22 11:40:21.710 E/Bugle   ( 3424): MobileConfigurationRetriever: The mobileConfigurationDataId cannot be removed as it is not present in the configurationCache
-10-22 11:40:21.712 D/PrefCtrlListHelper( 1098): Could not find Context-only controller for pref: com.android.settings.development.snooplogger.SnoopLoggerFiltersPreferenceController
-10-22 11:40:21.713 V/SettingsSearchProvider( 1098): com.android.settings.development.snooplogger.SnoopLoggerFiltersDashboard$1@dedef92 tried to add an empty non-indexable key
-10-22 11:40:21.714 I/BugleRcsProvisioning( 3424): RcsProvisioningTrigger: onMobileConfigurationUpdated for simId: redacted-pii:sim_id[chars:20,last3:897]
-10-22 11:40:21.715 I/BugleRcsProvisioning( 3424): RcsProvisioningTrigger: onMobileConfigurationUpdatedWithoutReprovisionCampaign
-10-22 11:40:21.715 I/BugleRcsProvisioning( 3424): RcsProvisioningTrigger: updateAvailabilityForAllSimsAsync : hint = MOBILE_CONFIGURATION_UPDATE logTriggerEvent = true
-10-22 11:40:21.715 I/Bugle   ( 3424): RcsAvailabilityUtilForProvisioningEngineV2: updateAvailabilityForRcsProvisioningIdAsync, hint: MOBILE_CONFIGURATION_UPDATE
-10-22 11:40:21.715 I/RcsAvailabilityUpdaterL( 3424): updateAvailabilityForRcsProvisioningIdAsync: scheduling updateAvailabilityForRcsProvisioningId call. Hint: MOBILE_CONFIGURATION_UPDATE, enableWelcomePopupWithoutGoogleTos: false, reshowSuccessPopup: false
-10-22 11:40:21.718 D/PrefCtrlListHelper( 1098): Could not find Context-only controller for pref: com.android.settings.accessibility.AvailableHearingDevicePreferenceController
-10-22 11:40:21.718 D/PrefCtrlListHelper( 1098): Could not find Context-only controller for pref: com.android.settings.connecteddevice.AddDevicePreferenceController
-10-22 11:40:21.718 D/PrefCtrlListHelper( 1098): Could not find Context-only controller for pref: com.android.settings.accessibility.SavedHearingDevicePreferenceController
-10-22 11:40:21.718 D/PrefCtrlListHelper( 1098): Could not find Context-only controller for pref: com.android.settings.accessibility.HearingAidAudioRoutingPreferenceController
-10-22 11:40:21.718 D/PrefCtrlListHelper( 1098): Could not find Context-only controller for pref: com.android.settings.accessibility.HearingAidCompatibilityPreferenceController
-10-22 11:40:21.718 D/PrefCtrlListHelper( 1098): Could not find Context-only controller for pref: com.android.settings.accessibility.HearingDeviceFooterPreferenceController
-10-22 11:40:21.719 D/PrefCtrlListHelper( 1098): Could not find Context-only controller for pref: com.android.settings.applications.specialaccess.DataSaverController
-10-22 11:40:21.720 D/PrefCtrlListHelper( 1098): Could not find Context-only controller for pref: com.android.settings.gestures.SystemNavigationPreferenceController
+10-26 09:08:44.580 D/AndroidRuntime( 3937): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-26 09:08:44.583 I/AndroidRuntime( 3937): Using default boot image
+10-26 09:08:44.583 I/AndroidRuntime( 3937): Leaving lock profiling enabled
+10-26 09:08:44.584 I/app_process( 3937): Core platform API reporting enabled, enforcing=false
+10-26 09:08:44.585 I/app_process( 3937): Using CollectorTypeCMC GC.
+10-26 09:08:44.586 D/OomAdjuster(  558): Not killing cached processes
+10-26 09:08:44.592 W/MagnificationConnectionManager(  558): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-26 09:08:44.593 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-26 09:08:44.593 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-26 09:08:44.594 W/PackageManager(  558): Failed registering loading progress callback. Package is fully loaded.
+10-26 09:08:44.595 D/PackageUpdatedTask( 1232): Package updated: mOp=ADD packages=[dev.mobile.maestro.test]
+10-26 09:08:44.597 I/AiAiEcho( 1478): AppFetcherImplV2 updateApps package:[dev.mobile.maestro.test], userId:[0], reason:[package is added.].
+10-26 09:08:44.604 W/GCM     ( 1164): Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package: flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
+10-26 09:08:44.611 I/AppWidgetServiceImpl(  558): getInstalledProvidersForProfiles() 0
+10-26 09:08:44.621 D/BaseIconCache( 1232): Default icon returned for dev.mobile.maestro.test
+10-26 09:08:44.622 W/NetworkScheduler( 1164): Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package: flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
+10-26 09:08:44.647 D/SessionCommitReceiver( 1232): Removing PromiseIcon for package: dev.mobile.maestro.test, install reason: 0, alreadyAddedPromiseIcon: false
+10-26 09:08:44.655 I/Fitness ( 1164): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+10-26 09:08:44.660 I/AppWidgetServiceImpl(  558): Received broadcast: android.intent.action.PACKAGE_ADDED on user 0
+10-26 09:08:44.662 I/SdkSandboxManager(  558): No SDKs used. Skipping SDK data reconcilation for CallingInfo{mUid=10211, mPackageName='dev.mobile.maestro.test, mAppProcessToken='null'}
+10-26 09:08:44.665 I/GsaVoiceInteractionSrv( 1514): (REDACTED) O received %s
+10-26 09:08:44.672 D/TransparencyService(  558): Not an update. Skipping...
+10-26 09:08:44.674 E/AppOps  (  558): attributionTag VCN not declared in manifest of android
+10-26 09:08:44.681 D/CarrierSvcBindHelper( 1073): onPackageAdded: dev.mobile.maestro.test
+10-26 09:08:44.681 D/CarrierSvcBindHelper( 1073): No carrier app for: 0
+10-26 09:08:44.681 I/PermissionControllerServiceImpl(  919): Updating user sensitive for uid 10211
+10-26 09:08:44.688 I/SafetyLabelChangedBroadcastReceiver(  919): received broadcast packageName: dev.mobile.maestro.test, current user: UserHandle{0}, packageChangeEvent: NEW_INSTALL, intent user: UserHandle{0}
+10-26 09:08:44.701 E/SmsApplication( 1073): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
+10-26 09:08:44.701 W/AppOpService(  558): Ignored setUidMode call for runtime permission app op: uid = 10134, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+10-26 09:08:44.701 D/nativeloader( 3937): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+10-26 09:08:44.707 D/FileUtils(  558): Rounded bytes from 4110737408 to 8000000000
+10-26 09:08:44.712 D/nativeloader( 3937): Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+10-26 09:08:44.712 D/app_process( 3937): u_setTimeZoneFilesDirectory("/apex/com.android.tzdata/etc/tz/versioned/8/icu") succeeded. 
 --
-10-22 11:40:21.991 D/AndroidRuntime( 4162): Calling main entry com.android.commands.am.Am
-10-22 11:40:21.993 D/UiAutomationConnection( 4162): Created on user UserHandle{0}
-10-22 11:40:21.998 I/ActivityManager(  557): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-10-22 11:40:21.998 E/CellBroadcastUtils( 1087): getDefaultCellBroadcastReceiverPackageName: no package found
-10-22 11:40:21.999 W/AppOpService(  557): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_SMS, mode = allow, callingUid = 1001, oldMode = allow
-10-22 11:40:22.001 I/PermissionControllerServiceImpl(  919): Updating user sensitive for uid 10211
-10-22 11:40:22.001 W/AppOpService(  557): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_SMS, mode = allow, callingUid = 1001, oldMode = allow
-10-22 11:40:22.003 I/HandwritingSuperpacks( 1339): HandwritingSuperpacks.register():273 register(): version '86', url 'https://dl.google.com/handwriting/models/handwriting_release.superpack_manifest.20231127.json' [ONLINE]
-10-22 11:40:22.004 W/AppOpService(  557): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_WAP_PUSH, mode = allow, callingUid = 1001, oldMode = allow
-10-22 11:40:22.004 W/AppOpService(  557): Ignored setUidMode call for runtime permission app op: uid = 1001, code = SEND_SMS, mode = allow, callingUid = 1001, oldMode = allow
-10-22 11:40:22.004 W/AppOpService(  557): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
-10-22 11:40:22.011 V/GrammaticalInflectionUtils(  557): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@170ae9c, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
-10-22 11:40:22.011 D/ImsResolver( 1087): maybeAddedImsService, packageName: dev.mobile.maestro.test
-10-22 11:40:22.013 I/DelightKLPDownloader( 1339): DelightKLPDownloader.downloadKLPInternal():185 downloading KLP for en_840
-10-22 11:40:22.014 I/ManifestedDataDownloader( 1339): ManifestedDataDownloader.download():57 downloading manifest https://www.gstatic.com/android/keyboard/dictionarypack/2024070918/metadata.json-perlang/en-840.json?v=2024071002
-10-22 11:40:22.014 I/DataFileManager( 1339): DataFileManager.removeDataWithoutNotify():219 removing data en-US delight
-10-22 11:40:22.015 I/AppsFilter(  557): interaction: PackageSetting{da98d1a com.android.microdroid.empty_payload/10207} -> PackageSetting{7181b71 dev.mobile.maestro/10210} BLOCKED
-10-22 11:40:22.032 D/EGL_emulation( 1197): app_time_stats: avg=650.88ms min=36.96ms max=961.02ms count=3
-10-22 11:40:22.039 I/ExplicitHealthCheckController(  557): Explicit health check service is connected ComponentInfo{com.google.android.ext.services/android.ext.services.watchdog.ExplicitHealthCheckServiceImpl}
-10-22 11:40:22.039 I/ExplicitHealthCheckController(  557): Service initialized, syncing requests
-10-22 11:40:22.039 I/PackageWatchdog(  557): Syncing health check requests for packages: {com.google.android.ext.services}
-10-22 11:40:22.039 D/ExplicitHealthCheckController(  557): Getting health check supported packages
-10-22 11:40:22.044 I/ExplicitHealthCheckController(  557): Explicit health check supported packages [PackageConfig{com.google.android.networkstack, 86400000}]
-10-22 11:40:22.044 D/PackageWatchdog(  557): Received supported packages [PackageConfig{com.google.android.networkstack, 86400000}]
-10-22 11:40:22.044 I/PackageWatchdog(  557): Updated health check state for package com.google.android.ext.services: INACTIVE -> PASSED
-10-22 11:40:22.044 I/PackageWatchdog(  557): Syncing state, reason: updated health check supported packages [PackageConfig{com.google.android.networkstack, 86400000}]
-10-22 11:40:22.044 D/ExplicitHealthCheckController(  557): Getting health check requested packages
-10-22 11:40:22.044 I/PackageWatchdog(  557): Syncing health check requests for packages: {}
-10-22 11:40:22.044 D/ExplicitHealthCheckController(  557): Getting health check supported packages
-10-22 11:40:22.045 I/ExplicitHealthCheckController(  557): Explicit health check supported packages [PackageConfig{com.google.android.networkstack, 86400000}]
-10-22 11:40:22.045 D/PackageWatchdog(  557): Received supported packages [PackageConfig{com.google.android.networkstack, 86400000}]
+10-26 09:08:44.768 D/AndroidRuntime( 3937): Calling main entry com.android.commands.am.Am
+10-26 09:08:44.769 D/TrafficStats( 2148): tagSocket(129) with statsTag=0x1809, statsUid=-1
+10-26 09:08:44.774 D/TrafficStats( 2148): tagSocket(129) with statsTag=0x1809, statsUid=-1
+10-26 09:08:44.775 D/ShortcutService(  558): received package broadcast intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package: flg=0x4000010 (has extras) }
+10-26 09:08:44.775 D/ShortcutService(  558): adding package: dev.mobile.maestro.test userId0
+10-26 09:08:44.775 D/ShortcutService(  558): handlePackageAdded: dev.mobile.maestro.test user=0
+10-26 09:08:44.775 D/ShortcutService(  558): rescanPackageIfNeeded 0@dev.mobile.maestro.test, forceRescan=true , isNewApp=true
+10-26 09:08:44.775 D/ShortcutService(  558): Package dev.mobile.maestro.test has 0 manifest shortcut(s), and 0 share target(s)
+10-26 09:08:44.776 D/TrafficStats( 2148): tagSocket(129) with statsTag=0x1809, statsUid=-1
+10-26 09:08:44.776 D/UiAutomationConnection( 3937): Created on user UserHandle{0}
+10-26 09:08:44.786 I/AppWidgetServiceImpl(  558): Received broadcast: android.intent.action.PACKAGE_CHANGED on user 0
+10-26 09:08:44.786 D/ShortcutService(  558): received package broadcast intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 (has extras) }
+10-26 09:08:44.786 D/ShortcutService(  558): changing package: dev.mobile.maestro.test userId0
+10-26 09:08:44.786 D/ShortcutService(  558): handlePackageChanged: dev.mobile.maestro.test user=0
+10-26 09:08:44.786 D/ShortcutService(  558): rescanPackageIfNeeded 0@dev.mobile.maestro.test, forceRescan=true , isNewApp=true
+10-26 09:08:44.786 D/ShortcutService(  558): Package dev.mobile.maestro.test has 0 manifest shortcut(s), and 0 share target(s)
+10-26 09:08:44.789 I/resolv  (  356): GetAddrInfoHandler::run: {100 786532 100 983140 10143 0}
+10-26 09:08:44.790 I/resolv  (  356): res_nmkquery: (QUERY, IN, A)
+10-26 09:08:44.791 I/resolv  (  356): res_nmkquery: (QUERY, IN, AAAA)
+10-26 09:08:44.791 I/ActivityManager(  558): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+10-26 09:08:44.802 I/PermissionControllerServiceImpl(  919): Updating user sensitive for uid 10211
+10-26 09:08:44.805 D/ImsResolver( 1073): maybeAddedImsService, packageName: dev.mobile.maestro.test
+10-26 09:08:44.808 V/GrammaticalInflectionUtils(  558): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@27f75f6, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+10-26 09:08:44.813 I/resolv  (  356): res_nsend: used send_dg 272 terrno: 0
+10-26 09:08:44.813 I/resolv  (  356): doQuery: rcode=0, ancount=8, return value=272
+10-26 09:08:44.815 I/resolv  (  356): res_nsend: used send_dg 176 terrno: 0
+10-26 09:08:44.815 I/resolv  (  356): doQuery: rcode=0, ancount=8, return value=176
+10-26 09:08:44.818 D/TrafficStats( 1312): tagSocket(171) with statsTag=0x30004901, statsUid=10143
+10-26 09:08:44.827 I/AppsFilter(  558): interaction: PackageSetting{7dd6651 com.android.microdroid.empty_payload/10188} -> PackageSetting{fa73dc5 dev.mobile.maestro/10210} BLOCKED
+10-26 09:08:44.833 I/netd    (  356): tetherGetStats() -> {[]} <0.47ms>
+10-26 09:08:44.837 D/ActivityManager(  558): freezing 2828 com.google.android.onetimeinitializer
 --
-10-22 11:44:06.376 I/AndroidRuntime( 4162): VM exiting with result code 0.
-10-22 11:44:06.526 I/servicemanager(    0): Caller(pid=557,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
-10-22 11:44:06.536 I/init    (    0): starting service 'artd'...
-10-22 11:44:06.389 I/netd    (  361): tetherGetStats() -> {[]} <5.39ms>
-10-22 11:44:06.394 E/IPCThreadState(  557): Binder transaction failure. id: 480773, BR_*: 29189, error: -3 (No such process)
-10-22 11:44:06.394 W/ActivityManager(  557): pid 557 system sent binder code 1 with flags 1 to frozen apps and got error -32
-10-22 11:44:06.395 W/MagnificationConnectionManager(  557): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-22 11:44:06.395 V/UiAutomationManager(  557): UiAutomation service owner died
-10-22 11:44:06.547 I/binder_alloc(    0): 4178: binder_alloc_buf, no vma
-10-22 11:44:06.548 I/binder  (    0): cannot allocate buffer: vma cleared, target dead or dying
-10-22 11:44:06.548 I/binder  (    0): 557:638 transaction async to 4178:0 failed 480773/29189/-3, size 192-0 line 3544
-10-22 11:44:06.552 I/init    (    0): ... started service 'artd' has pid 6034
-10-22 11:44:06.553 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 150 (/system/bin/servicemanager)
-10-22 11:44:06.399 W/IPCThreadState(  557): Sending oneway calls to frozen process.
-10-22 11:44:06.399 W/IPCThreadState(  557): Sending oneway calls to frozen process.
-10-22 11:44:06.557 I/init    (    0): Untracked pid 4162 exited with status 0
-10-22 11:44:06.558 I/init    (    0): Untracked pid 4162 did not have an associated service entry and will not be reaped
-10-22 11:44:06.403 W/IPCThreadState(  557): Sending oneway calls to frozen process.
-10-22 11:44:06.403 W/IPCThreadState(  557): Sending oneway calls to frozen process.
-10-22 11:44:06.403 W/IPCThreadState(  557): Sending oneway calls to frozen process.
-10-22 11:44:06.403 W/IPCThreadState(  557): Sending oneway calls to frozen process.
-10-22 11:44:06.403 W/IPCThreadState(  557): Sending oneway calls to frozen process.
-10-22 11:44:06.403 W/IPCThreadState(  557): Sending oneway calls to frozen process.
-10-22 11:44:06.403 W/IPCThreadState(  557): Sending oneway calls to frozen process.
-10-22 11:44:06.403 W/IPCThreadState(  557): Sending oneway calls to frozen process.
-10-22 11:44:06.403 W/IPCThreadState(  557): Sending oneway calls to frozen process.
-10-22 11:44:06.403 W/IPCThreadState(  557): Sending oneway calls to frozen process.
-10-22 11:44:06.403 W/IPCThreadState(  557): Sending oneway calls to frozen process.
-10-22 11:44:06.403 W/IPCThreadState(  557): Sending oneway calls to frozen process.
-10-22 11:44:06.403 W/IPCThreadState(  557): Sending oneway calls to frozen process.
-10-22 11:44:06.403 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+10-26 09:13:13.768 I/AndroidRuntime( 3937): VM exiting with result code 0.
+10-26 09:13:13.922 I/init    (    0): starting service 'artd'...
+10-26 09:13:13.776 I/netd    (  356): tetherGetStats() -> {[]} <3.16ms>
+10-26 09:13:13.779 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-26 09:13:13.779 W/MagnificationConnectionManager(  558): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-26 09:13:13.779 V/UiAutomationManager(  558): UiAutomation service owner died
+10-26 09:13:13.780 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-26 09:13:13.780 I/AiAiEcho( 1478): Settings changed for uri: content://settings/secure/accessibility_enabled
+10-26 09:13:13.780 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-26 09:13:13.933 I/binder  (    0): undelivered transaction 454452, process died.
+10-26 09:13:13.782 I/AiAiEcho( 1478): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-26 09:13:13.782 I/AiAiEcho( 1478): EchoTargets: 
+10-26 09:13:13.782 I/AiAiEcho( 1478): Filtered by AiAi flag check: 
+10-26 09:13:13.782 I/AiAiEcho( 1478): [CONTEXT ratelimit_period="10 SECONDS" ]
+10-26 09:13:13.782 I/AiAiEcho( 1478): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+10-26 09:13:13.783 I/AiAiEcho( 1478): #remoteViewsTwiddler: feature disabled.
+10-26 09:13:13.783 I/AiAiEcho( 1478): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-26 09:13:13.783 I/AiAiEcho( 1478): EchoTargets: 
+10-26 09:13:13.783 I/AiAiEcho( 1478): Filtered by AiAi flag check: 
+10-26 09:13:13.783 I/AiAiEcho( 1478): [CONTEXT ratelimit_period="10 SECONDS" ]
+10-26 09:13:13.783 I/AiAiEcho( 1478): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+10-26 09:13:13.783 I/AiAiEcho( 1478): #remoteViewsTwiddler: feature disabled.
+10-26 09:13:13.783 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-26 09:13:13.784 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-26 09:13:13.784 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-26 09:13:13.784 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-26 09:13:13.784 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-26 09:13:13.784 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-26 09:13:13.784 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-26 09:13:13.784 I/AiAiEcho( 1478): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+10-26 09:13:13.787 I/AiAiEcho( 1478): #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
