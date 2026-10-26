@@ -43,6 +43,9 @@ export interface PublicUser {
   emailVerified: boolean;
   /** A new account whose email isn't verified yet: the app shows only the code screen. */
   emailVerificationRequired: boolean;
+  /** The verified badge (Settings > Request verification); see modules/verification. */
+  verified: boolean;
+  verifiedCategory: string | null;
 }
 
 function toPublicUser(user: usersRepo.UserRecord): PublicUser {
@@ -57,6 +60,8 @@ function toPublicUser(user: usersRepo.UserRecord): PublicUser {
     isPrivate: user.isPrivate,
     emailVerified: user.emailVerified,
     emailVerificationRequired: user.emailVerificationRequired && !!user.email && !user.emailVerified,
+    verified: user.verified,
+    verifiedCategory: user.verifiedCategory,
   };
 }
 

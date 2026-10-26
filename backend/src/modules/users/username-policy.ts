@@ -18,6 +18,7 @@
  * (migration 0037), so concurrent sign-ups and renames can't slip past it.
  */
 import { USERNAME_RE } from "../../shared/validation";
+import { CHECK_MARK_MESSAGE, hasCheckMark } from "../../shared/verified";
 
 export type UsernameProblem = { reason: "invalid" | "reserved" | "not_allowed"; message: string };
 
@@ -85,6 +86,8 @@ export function cleanUsername(raw: unknown): string {
 
 /** Why a name can't be chosen, or null when the rules allow it (availability is separate). */
 export function usernameProblem(username: string): UsernameProblem | null {
+  // The format already excludes them; this just says why (the verified badge is the only tick).
+  if (hasCheckMark(username)) return { reason: "invalid", message: CHECK_MARK_MESSAGE };
   if (!USERNAME_RE.test(username) || username.startsWith(".") || username.endsWith(".") || username.includes("..")) {
     return { reason: "invalid", message: USERNAME_MESSAGES.invalid };
   }

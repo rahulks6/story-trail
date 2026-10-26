@@ -6,6 +6,15 @@ const { test } = require('node:test');
 const ts = require('../backend/node_modules/typescript');
 
 const root = path.resolve(__dirname, '..');
+/** The check-mark rule for names: pure, no imports. */
+function loadVerified() {
+  const filename = path.join(root, 'backend/src/shared/verified.ts');
+  const compiled = ts.transpileModule(fs.readFileSync(filename, 'utf8'), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS } });
+  const module = { exports: {} };
+  vm.runInNewContext(compiled.outputText, { module, exports: module.exports }, { filename });
+  return module.exports;
+}
+
 function loadDto() {
   const filename = path.join(root, 'backend/src/modules/users/dto.ts');
   const compiled = ts.transpileModule(fs.readFileSync(filename, 'utf8'), {
@@ -25,6 +34,7 @@ function loadDto() {
       if (name === '../auth/dto') return { ValidationError };
       if (name === '../../shared/validation') return { USERNAME_RE: /^[a-z0-9_.]{3,30}$/ };
       if (name === './profiles.service') return {};
+      if (name === '../../shared/verified') return loadVerified();
       throw new Error(`Unexpected dependency: ${name}`);
     },
   }, { filename });

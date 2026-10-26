@@ -129,7 +129,8 @@ export interface MediaDelivery {
 /** URLs for everything a client needs to show this media. Call only after authorizing the viewer. */
 export function deliveryFor(media: MediaRecord, isOwner: boolean, nowMs = Date.now()): MediaDelivery {
   const base = { status: media.status, kind: media.kind, width: media.width, height: media.height, durationMs: media.durationMs };
-  if (media.status !== "ready" || media.purgedAt) {
+  // A verification ID photo has no URLs: only the admin route streams it (verification.routes.ts).
+  if (media.status !== "ready" || media.purgedAt || media.verificationDocument) {
     return { ...base, thumbnailUrl: null, imageUrl: null, videos: [], urlsExpireAt: null };
   }
   let expiresAt: string | null = null;

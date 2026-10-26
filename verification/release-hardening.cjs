@@ -11,7 +11,9 @@ class HttpError extends Error {constructor(status,message){super(message);this.s
 class DatabaseError extends Error {constructor(detail){super(detail);this.detail=detail;}}
 class ValidationError extends Error {constructor(fieldErrors){super('Validation failed');this.fieldErrors=fieldErrors;}}
 // The username rules (pure, no I/O), loaded for real wherever a module under test uses them.
-const usernamePolicy=()=>load('backend/src/modules/users/username-policy.ts',{'../../shared/validation':{USERNAME_RE:/^[a-z0-9_.]{3,30}$/}});
+// The check-mark rule for names (pure, no imports).
+const verified=()=>load('backend/src/shared/verified.ts');
+const usernamePolicy=()=>load('backend/src/modules/users/username-policy.ts',{'../../shared/validation':{USERNAME_RE:/^[a-z0-9_.]{3,30}$/},'../../shared/verified':verified()});
 test('draft restore, count and deletion are isolated across accounts and legacy keys',async()=>{
  const data=new Map(),storage={getItem:async k=>data.get(k)??null,setItem:async(k,v)=>data.set(k,v),removeItem:async k=>data.delete(k),getAllKeys:async()=>[...data.keys()],removeMany:async keys=>keys.forEach(k=>data.delete(k))};
  const validator=load('mobile/src/state/validateSavedDraft.ts');
@@ -71,6 +73,6 @@ test('profile link parser accepts only valid profile paths',()=>{
  for(const p of ['user/a','user/a%2fb','admin/reset','user/rahul?token=x','user/../admin','user/rahul/extra'])assert.equal(parse(p),null);
 });
 test('email signup reserves official-looking usernames',()=>{
- const d=load('backend/src/modules/auth/dto.ts',{'../../shared/validation':{EMAIL_RE:/^[^@]+@[^@]+\.[^@]+$/,USERNAME_RE:/^[a-z0-9_.]{3,30}$/},'../users/username-policy':usernamePolicy(),'./age':load('backend/src/modules/auth/age.ts')});
+ const d=load('backend/src/modules/auth/dto.ts',{'../../shared/validation':{EMAIL_RE:/^[^@]+@[^@]+\.[^@]+$/,USERNAME_RE:/^[a-z0-9_.]{3,30}$/},'../users/username-policy':usernamePolicy(),'./age':load('backend/src/modules/auth/age.ts'),'../../shared/verified':verified()});
  for(const username of ['ADMIN','katkee','support','moderator','superadmin'])assert.throws(()=>d.parseSignupInput({username,email:'u@site.com',password:'12345678',displayName:'User'}),e=>!!e.fieldErrors.username);
 });

@@ -12,6 +12,7 @@
  *  - deleted accounts: media purged and profile/sign-in data scrubbed after 30 days; the details
  *    the person registered with are kept apart in deleted_account_records until the account has
  *    been deleted for 180 days (India's IT Rules 2021, rule 3(1)(h)), then deleted;
+ *  - verification ID photos: deleted 30 days after the request was decided or withdrawn;
  *  - originals (which may carry location metadata) deleted 30 days after processing;
  *    the stripped variants remain for Archive and Highlights;
  *  - expired security records (rate-limit windows, reset codes, challenges, tokens,
@@ -38,6 +39,8 @@ export interface RetentionReport {
 /** Arbitrary constant naming the retention leader lock. */
 const RETENTION_LOCK = 7315220001;
 const OPEN_REPORT = `r.status IN ('OPEN', 'UNDER_REVIEW', 'APPEALED')`;
+/** An ID photo's lifetime after the decision (the Privacy Policy and Help Center say 30 days). */
+export const VERIFICATION_PHOTO_DAYS = 30;
 
 function objectKeys(media: MediaRecord): string[] {
   const keys = Object.values(media.variants).map((v) => v?.key).filter((k): k is string => !!k);
@@ -69,6 +72,32 @@ async function purgeReferenced(store: ObjectStore, media: MediaRecord): Promise<
   );
 }
 
+/**
+ * A verification ID photo: its stored objects, then the row itself, recording on the request
+ * when it went (nothing else may reference it; see verification.service.ts).
+ */
+export async function deleteVerificationPhoto(store: ObjectStore, media: MediaRecord): Promise<void> {
+  await store.deleteObjects(objectKeys(media));
+  await query(
+    `WITH r AS (UPDATE verification_requests SET id_media_id = NULL, id_deleted_at = now() WHERE id_media_id = :'id')
+     DELETE FROM media WHERE id = :'id' AND verification_document`,
+    { id: media.id },
+  );
+}
+
+/** ID photos sent for verification go `days` after the decision or withdrawal. */
+export async function verificationPhotos(store: ObjectStore, batch: number, days: number): Promise<number> {
+  const rows = await query(
+    `SELECT ${MEDIA_COLUMNS.split(", ").map((c) => `m.${c}`).join(", ")}
+     FROM verification_requests r JOIN media m ON m.id = r.id_media_id
+     WHERE r.status <> 'pending' AND r.decided_at < now() - make_interval(days => :'days'::integer)
+     ORDER BY r.decided_at LIMIT :'batch'`,
+    { days, batch },
+  );
+  for (const row of rows) await deleteVerificationPhoto(store, mapMediaRow(row));
+  return rows.length;
+}
+
 async function purgeAll(store: ObjectStore, sql: string, params: Record<string, string | number>): Promise<number> {
   const rows = await query(sql, params);
   for (const row of rows) await purgeReferenced(store, mapMediaRow(row));
@@ -98,6 +127,7 @@ export async function unusedMedia(store: ObjectStore, batch: number, minAgeHours
        AND NOT EXISTS (SELECT 1 FROM stories s WHERE s.media_id = m.id)
        AND NOT EXISTS (SELECT 1 FROM users u WHERE u.avatar_media_id = m.id)
        AND NOT EXISTS (SELECT 1 FROM ad_creatives c WHERE c.media_id = m.id)
+       AND NOT m.verification_document
        AND NOT EXISTS (SELECT 1 FROM story_publish_requests r WHERE r.media_id = m.id AND r.state = 'waiting')
      ORDER BY m.created_at LIMIT :'batch'`,
     { hours: minAgeHours, batch },
@@ -197,6 +227,8 @@ export async function deletedAccounts(store: ObjectStore, batch: number, days: n
        ae AS (DELETE FROM analytics_events WHERE user_id IN (SELECT id FROM u)),
        ad AS (DELETE FROM analytics_active_days WHERE user_id IN (SELECT id FROM u)),
        fb AS (DELETE FROM app_feedback WHERE user_id IN (SELECT id FROM u)),
+       -- Already deleted when the account was (verification.service.ts); this is the backstop.
+       vr AS (DELETE FROM verification_requests WHERE user_id IN (SELECT id FROM u)),
        cr AS (DELETE FROM crash_reports WHERE user_id IN (SELECT id FROM u))
        SELECT count(*) AS n FROM u`,
       { id },
@@ -315,6 +347,7 @@ export async function runRetention(store: ObjectStore): Promise<RetentionReport[
     await recorded("removed_content_media", () => removedContentMedia(store, r.batchSize, r.moderationEvidenceDays)),
     await recorded("deleted_accounts", () => deletedAccounts(store, r.batchSize, r.deletedAccountDays, r.moderationEvidenceDays)),
     await recorded("processed_originals", () => processedOriginals(store, r.batchSize, r.originalMediaDays)),
+    await recorded("verification_photos", () => verificationPhotos(store, r.batchSize, VERIFICATION_PHOTO_DAYS)),
     await recorded("report_message_evidence", () => reportMessageEvidence(r.batchSize, r.moderationEvidenceDays)),
     await recorded("ad_campaign_completion", () => completeFinishedCampaigns()),
     await recorded("analytics_rollup", () => rollupAnalytics()),

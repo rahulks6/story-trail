@@ -6,6 +6,7 @@
 import { EMAIL_RE } from "../../shared/validation";
 import { usernameProblem } from "../users/username-policy";
 import { birthDateProblem } from "./age";
+import { CHECK_MARK_MESSAGE, hasCheckMark } from "../../shared/verified";
 
 export class ValidationError extends Error {
   constructor(public readonly fieldErrors: Record<string, string>) {
@@ -46,6 +47,8 @@ export function parseSignupInput(body: unknown): SignupInput {
   }
   if (displayName.length < 1 || displayName.length > 60) {
     errors.displayName = "Display name must be 1-60 characters.";
+  } else if (hasCheckMark(displayName)) {
+    errors.displayName = CHECK_MARK_MESSAGE;
   }
   const birthDateIssue = birthDateProblem(birthDate);
   if (birthDateIssue) {

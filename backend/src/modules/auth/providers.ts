@@ -1,6 +1,7 @@
 ﻿import {OAuth2Client} from 'google-auth-library';
 import {parsePhoneNumberFromString, type CountryCode} from 'libphonenumber-js/max';
 import {HttpError} from '../../http/errors';
+import {withoutCheckMarks} from '../../shared/verified';
 export const providerConfig={
  googleEnabled:process.env.GOOGLE_AUTH_ENABLED==='true',
  googleAudiences:(process.env.GOOGLE_CLIENT_IDS??'').split(',').map(s=>s.trim()).filter(Boolean),
@@ -30,7 +31,7 @@ export const liveProviders:ProviderGateway={
   try {
    const ticket=await google.verifyIdToken({idToken,audience:providerConfig.googleAudiences});const p=ticket.getPayload();
    if(!p?.sub||!['accounts.google.com','https://accounts.google.com'].includes(p.iss))throw Error('Invalid identity');
-   return {subject:p.sub,email:p.email_verified&&p.email?p.email:null,displayName:p.name?.slice(0,60)??''};
+   return {subject:p.sub,email:p.email_verified&&p.email?p.email:null,displayName:withoutCheckMarks(p.name??'').slice(0,60)};
   }catch{throw new HttpError(401,'Google sign-in could not be verified. Try again.');}
  },
  async sendPhone(phone){const data=await twilio('Verifications',{To:phone,Channel:'sms'});if(typeof data.sid!=='string'||data.status!=='pending')throw new HttpError(503,'Unable to send a verification code.');return data.sid;},

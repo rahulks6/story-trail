@@ -99,7 +99,7 @@ async function resolveOverlaysForViewer(overlays: StoryOverlay[], viewerId: stri
     }
     resolved.push({
       ...overlay,
-      properties: { userId: mentioned.id, username: mentioned.username, displayName: mentioned.displayName },
+      properties: { userId: mentioned.id, username: mentioned.username, displayName: mentioned.displayName, verified: mentioned.verified },
     });
   }
   return resolved;
@@ -164,7 +164,7 @@ export async function publishStory(
     throw new HttpError(409,"This media is still processing. It will be published when it's ready.");
   }
   const media = await mediaRepo.findMediaById(input.mediaId);
-  if (!media || media.ownerId !== ownerId) {
+  if (!media || media.ownerId !== ownerId || media.verificationDocument) {
     throw new HttpError(404, "Media not found.");
   }
   if (media.kind === "audio") throw new HttpError(422, "A voice note can't be posted as a Story.");
@@ -214,10 +214,11 @@ export async function notifyMentionsQuietly(storyId: string): Promise<void> {
   }
 }
 
-/** Voice notes are for messages only. */
+/** Voice notes are for messages only, and a verification ID photo is never posted. */
 async function assertNotSound(mediaId: string): Promise<void> {
   const media = await mediaRepo.findMediaById(mediaId);
   if (media?.kind === "audio") throw new HttpError(422, "A voice note can't be posted as a Story.");
+  if (media?.verificationDocument) throw new HttpError(404, "Story or media unavailable.");
 }
 
 /** Uploaded media that can't be processed; `retryable` says whether "Retry" can help. */
@@ -418,7 +419,7 @@ export async function listUserActiveStories(username: string, viewerId: string):
 }
 
 export interface FeedEntry {
-  owner: { id: string; username: string; displayName: string; avatarMediaId: string | null };
+  owner: { id: string; username: string; displayName: string; avatarMediaId: string | null; verified: boolean };
   stories: PublicStory[];
 }
 
@@ -439,7 +440,7 @@ export async function getFollowingFeed(viewerId: string): Promise<FeedEntry[]> {
     const stories = ownerId === viewerId ? all : await visibleToFollower(all, ownerId, viewerId);
     if (stories.length === 0) continue;
     entries.push({
-      owner: { id: owner.id, username: owner.username, displayName: owner.displayName, avatarMediaId: owner.avatarMediaId },
+      owner: { id: owner.id, username: owner.username, displayName: owner.displayName, avatarMediaId: owner.avatarMediaId, verified: owner.verified },
       stories: await toPublicStories(stories, viewerId),
     });
   }
@@ -504,6 +505,7 @@ export interface StoryViewer {
   username: string;
   displayName: string;
   avatarMediaId: string | null;
+  verified: boolean;
   viewedAt: string;
 }
 

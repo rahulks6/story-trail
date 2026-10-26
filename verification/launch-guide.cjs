@@ -79,7 +79,7 @@ test('the sign-up request in Part 15 is one the API accepts, once the placeholde
  const body=JSON.parse(/-d '(\{"username"[^']+\})'/.exec(guide)[1]);
  assert.deepEqual(Object.keys(body).sort(),['birthDate','displayName','email','password','username']);
  const validation=load('backend/src/shared/validation.ts',{'../http/errors':{HttpError:class HttpError extends Error{}}});
- const policy=load('backend/src/modules/users/username-policy.ts',{'../../shared/validation':validation});
+ const policy=load('backend/src/modules/users/username-policy.ts',{'../../shared/validation':validation,'../../shared/verified':load('backend/src/shared/verified.ts')});
  assert.equal(policy.usernameProblem(body.username),null,`${body.username} is refused by the username rules`);
  assert.equal(body.birthDate,'YYYY-MM-DD','a placeholder the reader replaces');
  const {birthDateProblem}=load('backend/src/modules/auth/age.ts');

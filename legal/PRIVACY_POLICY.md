@@ -1,6 +1,6 @@
 # Katkee Privacy Policy
 
-**Last updated:** 22 October 2026
+**Last updated:** 26 October 2026
 
 This policy explains what Katkee collects, how we use it, who can see it, how long we keep it
 and the choices you have. It covers the Katkee apps for iPhone and Android, the website at
@@ -114,6 +114,19 @@ you choose to attach one, with your username, app version, phone model
 and system version. Only Katkee staff who handle support can see it. We
 use it to answer you and to improve Katkee.
 
+### Verification requests (optional)
+If you ask for a verified badge (Settings > Request verification), we
+collect the category you choose, your full name as it appears on your ID,
+the links you add, and a **photo of a government-issued ID**. We use them
+only to check that the account really is you, or the brand or organisation
+it represents, and to decide on the badge. Only Katkee staff who review
+verification requests can see the ID photo; it is never shown to anyone
+else, including other users, and every time staff open it, it is recorded
+in our audit log. The ID photo is deleted 30 days after we approve or deny
+the request, or after you withdraw it, and at once if you delete your
+account. Whether you're verified, and as what (for example "Creator"), is
+shown on your profile.
+
 ### Reports
 If you report a Story, comment, message or account, we keep a record of the
 report, what it was about, and how a moderator resolved it. A reported
@@ -162,6 +175,8 @@ message is kept as evidence for the moderator.
 - **Blocking**: hides your content from someone and theirs from you, both
   ways, at once.
 - **Your area and time zone**: never shown to anyone.
+- **Verification ID photo**: only staff who review verification requests,
+  each view recorded in the audit log.
 
 ## 5. Service providers
 
@@ -215,6 +230,10 @@ recorded in an audit log that can't be edited.
 - **Raw analytics events**: deleted after 90 days; only daily totals that
   identify nobody remain.
 - **Crash reports**: deleted after 90 days.
+- **Verification ID photo**: deleted 30 days after the request is approved,
+  denied or withdrawn, and at once if you delete your account. The request
+  itself (category, name and links) is kept while your account exists, so
+  we can review your badge.
 - **Feedback**: kept until we've dealt with it, then deleted after 180
   days. Deleting your account deletes your feedback and crash reports.
 - **Security records**: up to 400 days.

@@ -1,4 +1,5 @@
 import { query, queryOne, type Row } from "../../db/psql";
+import { verifiedSql } from "../../shared/verified";
 
 export interface CommentRecord {
   id: string;
@@ -7,6 +8,7 @@ export interface CommentRecord {
   username: string;
   displayName: string;
   avatarMediaId: string | null;
+  verified: boolean;
   body: string;
   createdAt: string;
 }
@@ -19,6 +21,7 @@ function mapRow(row: Row): CommentRecord {
     username: row.username as string,
     displayName: row.display_name as string,
     avatarMediaId: (row.avatar_media_id as string | null) ?? null,
+    verified: row.verified === "t",
     body: row.body as string,
     createdAt: row.created_at as string,
   };
@@ -32,7 +35,7 @@ export async function createComment(storyId: string, userId: string, body: strin
        RETURNING id, story_id, user_id, body, created_at
      )
      SELECT inserted.id, inserted.story_id, inserted.user_id, inserted.body, inserted.created_at,
-            u.username, u.display_name, u.avatar_media_id
+            u.username, u.display_name, u.avatar_media_id, ${verifiedSql("u")} AS verified
      FROM inserted JOIN users u ON u.id = inserted.user_id`,
     { story_id: storyId, user_id: userId, body },
   );
@@ -43,7 +46,7 @@ export async function createComment(storyId: string, userId: string, body: strin
 /** Oldest first. Never comments from someone the viewer blocked or who blocked them, or from a suspended account. */
 export async function listComments(storyId: string, limit: number, offset: number, viewerId = ""): Promise<CommentRecord[]> {
   const rows = await query(
-    `SELECT c.id, c.story_id, c.user_id, c.body, c.created_at, u.username, u.display_name, u.avatar_media_id
+    `SELECT c.id, c.story_id, c.user_id, c.body, c.created_at, u.username, u.display_name, u.avatar_media_id, ${verifiedSql("u")} AS verified
      FROM story_comments c
      JOIN users u ON u.id = c.user_id
      WHERE c.story_id = :'story_id' AND c.deleted_at IS NULL AND u.deleted_at IS NULL AND u.is_active

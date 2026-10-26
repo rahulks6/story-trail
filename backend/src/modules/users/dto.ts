@@ -1,6 +1,7 @@
 import { ValidationError } from "../auth/dto";
 import type { UpdateProfileInput } from "./profiles.service";
 import { USERNAME_RE } from "../../shared/validation";
+import { CHECK_MARK_MESSAGE, hasCheckMark } from "../../shared/verified";
 
 const MAX_BIO_LENGTH = 150;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -15,7 +16,9 @@ export function parseUpdateProfileInput(body: unknown): UpdateProfileInput {
     const username = typeof b.username === "string" ? b.username.trim().toLowerCase() : "";
     // Format and the original reserved names, as always. The full username rules apply when
     // the name changes (profiles.service.ts), so a name chosen before them still saves unchanged.
-    if (!USERNAME_RE.test(username) || RESERVED_USERNAMES.has(username)) {
+    if (hasCheckMark(username)) {
+      errors.username = CHECK_MARK_MESSAGE;
+    } else if (!USERNAME_RE.test(username) || RESERVED_USERNAMES.has(username)) {
       errors.username = "Username must be 3-30 characters using lowercase letters, numbers, dots or underscores.";
     } else {
       result.username = username;
@@ -25,6 +28,9 @@ export function parseUpdateProfileInput(body: unknown): UpdateProfileInput {
   if (b.displayName !== undefined) {
     if (typeof b.displayName !== "string" || b.displayName.trim().length < 1 || b.displayName.trim().length > 60) {
       errors.displayName = "Display name must be 1-60 characters.";
+    } else if (hasCheckMark(b.displayName)) {
+      // Only the verified badge may look like a check mark next to a name.
+      errors.displayName = CHECK_MARK_MESSAGE;
     } else {
       result.displayName = b.displayName.trim();
     }

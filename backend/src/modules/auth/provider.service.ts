@@ -7,6 +7,7 @@ import {findUserById} from '../users/users.repository';
 import {providerConfig,type VerifiedGoogle} from './providers';
 import {USERNAME_MESSAGES,usernameProblem} from '../users/username-policy';
 import {BIRTH_DATE_MESSAGES,birthDateProblem} from './age';
+import {CHECK_MARK_MESSAGE,hasCheckMark} from '../../shared/verified';
 export const opaque=()=>randomBytes(32).toString('hex');
 export const hash=(v:string)=>createHash('sha256').update(v).digest('hex');
 export const phoneHash=(v:string)=>createHmac('sha256',providerConfig.phoneSecret).update(v).digest('hex');
@@ -33,6 +34,7 @@ export async function complete(proof:string,username:unknown,name:unknown,birthD
  const birthDate=typeof birthDateInput==='string'?birthDateInput.trim():birthDateInput;
  if(username!==undefined){const problem=typeof username==='string'?usernameProblem(username):{message:USERNAME_MESSAGES.invalid};if(problem)throw new HttpError(422,problem.message);}
  if(name!==undefined&&(typeof name!=='string'||name.length>60))throw new HttpError(422,'Display name must be at most 60 characters.');
+ if(typeof name==='string'&&hasCheckMark(name))throw new HttpError(422,CHECK_MARK_MESSAGE,{displayName:CHECK_MARK_MESSAGE});
  if(birthDate!==undefined){
   const problem=birthDateProblem(birthDate);
   // Someone under 18 is turned away with nothing kept: the verified sign-in (their Google email

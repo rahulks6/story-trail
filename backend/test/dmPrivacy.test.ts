@@ -43,7 +43,8 @@ const ADMIN_GETS = [
   "/api/v1/admin/history", "/api/v1/admin/appeals", "/api/v1/admin/audit", "/api/v1/admin/audit/verify",
   "/api/v1/admin/security-alerts", "/api/v1/admin/admins", "/api/v1/admin/advertisers", "/api/v1/admin/campaigns",
   "/api/v1/admin/ad-interest-categories", "/api/v1/admin/campaigns/:campaignId/analytics", "/api/v1/admin/campaigns/:campaignId/preview", "/api/v1/admin/ad-settings",
-  "/api/v1/admin/media/:mediaId", "/api/v1/admin/safety/blocked-domains", "/api/v1/admin/festivals", "/api/v1/admin/analytics", "/api/v1/admin/crashes", "/api/v1/admin/feedback", "/api/v1/admin/feedback/:feedbackId/screenshot", "/api/v1/moderation/reports", "/api/v1/ads/placements", "/api/v1/ads/deliveries/:deliveryId",
+  "/api/v1/admin/media/:mediaId", "/api/v1/admin/safety/blocked-domains", "/api/v1/admin/festivals", "/api/v1/admin/analytics", "/api/v1/admin/crashes", "/api/v1/admin/feedback", "/api/v1/admin/feedback/:feedbackId/screenshot", "/api/v1/admin/verification", "/api/v1/admin/verification/requests/:requestId",
+  "/api/v1/admin/verification/requests/:requestId/id-photo", "/api/v1/admin/verification/users/:userId/avatar", "/api/v1/moderation/reports", "/api/v1/ads/placements", "/api/v1/ads/deliveries/:deliveryId",
   "/api/v1/ads/deliveries/:deliveryId/media",
 ];
 
@@ -61,7 +62,7 @@ describe("DM privacy", () => {
     await query(`INSERT INTO admin_grants(user_id, role, permissions) VALUES (:'id', 'SUPER_ADMIN', '[]'::jsonb)`, { id: operator.id });
     const headers = await adminSignIn(base, operator.email, operator.password);
     const ids: Record<string, string> = {
-      reportId: report.body.report.id, username: sender.username, userId: sender.id, mediaId: randomUUID(), campaignId: randomUUID(), deliveryId: randomUUID(), feedbackId: randomUUID(),
+      reportId: report.body.report.id, username: sender.username, userId: sender.id, mediaId: randomUUID(), campaignId: randomUUID(), deliveryId: randomUUID(), feedbackId: randomUUID(), requestId: randomUUID(),
     };
     const crawled: string[] = [];
     for (const route of ADMIN_GETS) {

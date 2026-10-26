@@ -27,7 +27,7 @@ async function assertNotBlocked(userIdA: string, userIdB: string): Promise<void>
 export interface ConversationWithOtherUser {
   id: string;
   createdAt: string;
-  otherUser: { id: string; username: string; displayName: string; avatarMediaId: string | null };
+  otherUser: { id: string; username: string; displayName: string; avatarMediaId: string | null; verified: boolean };
 }
 
 /** Find-or-create the 1:1 conversation with `targetUsername`, denied the same way a blocked profile 404s. */
@@ -43,7 +43,7 @@ export async function openConversationWith(viewerId: string, targetUsername: str
   return {
     id: conversation.id,
     createdAt: conversation.createdAt,
-    otherUser: { id: target.id, username: target.username, displayName: target.displayName, avatarMediaId: target.avatarMediaId },
+    otherUser: { id: target.id, username: target.username, displayName: target.displayName, avatarMediaId: target.avatarMediaId, verified: target.verified },
   };
 }
 
@@ -111,7 +111,7 @@ export async function getConversation(viewerId: string, conversationId: string, 
     kind: "direct",
     muted: conversation.muted,
     createdAt: conversation.createdAt,
-    otherUser: { id: other.id, username: other.username, displayName: other.displayName, avatarMediaId: other.avatarMediaId },
+    otherUser: { id: other.id, username: other.username, displayName: other.displayName, avatarMediaId: other.avatarMediaId, verified: other.verified },
   };
 }
 
@@ -146,7 +146,7 @@ export async function sendMessage(viewerId: string, conversationId: string, inpu
   if (input.mediaId) {
     // Only your own upload, and only once it's been received (it may still be processing).
     const media = await mediaRepo.findMediaById(input.mediaId, true);
-    if (!media || media.ownerId !== viewerId || media.purgedAt || (media.status !== "ready" && media.status !== "processing")) {
+    if (!media || media.ownerId !== viewerId || media.purgedAt || media.verificationDocument || (media.status !== "ready" && media.status !== "processing")) {
       throw new HttpError(422, "That photo or video can't be sent.", { mediaId: "Upload the photo or video first." });
     }
   }

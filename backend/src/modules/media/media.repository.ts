@@ -38,13 +38,15 @@ export interface MediaRecord {
   filter: FilterKey;
   /** A video effect built while processing: "boomerang", or "none". */
   effect: MediaEffect;
+  /** A government ID attached to a verification request: admins only, never the media routes. */
+  verificationDocument: boolean;
 }
 
 export type MediaEffect = "none" | "boomerang";
 
 export const MEDIA_COLUMNS =
   "id, owner_id, kind, mime_type, byte_size, width, height, duration_ms, checksum_sha256, storage_key, status, created_at, " +
-  "variants, processing_error, processing_error_retryable, processed_at, original_purged_at, purged_at, filter, effect";
+  "variants, processing_error, processing_error_retryable, processed_at, original_purged_at, purged_at, filter, effect, verification_document";
 
 export function mapMediaRow(row: Record<string, string | null>): MediaRecord {
   let variants: MediaRecord["variants"] = {};
@@ -74,6 +76,7 @@ export function mapMediaRow(row: Record<string, string | null>): MediaRecord {
     purgedAt: row.purged_at ?? null,
     filter: isFilterKey(row.filter) ? row.filter : "original",
     effect: row.effect === "boomerang" ? "boomerang" : "none",
+    verificationDocument: row.verification_document === "t" || row.verification_document === "true",
   };
 }
 

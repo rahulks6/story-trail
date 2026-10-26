@@ -172,7 +172,81 @@ async function analyticsPage(c) {
         [...data.retention].reverse().map(x => [x.cohortDay, count(x.cohortSize), retained(x.d1, x.d1Rate), retained(x.d7, x.d7Rate), retained(x.d30, x.d30Rate)]))
         : el('p', 'No signups in this period yet.', 'muted'));
 }
-const sections = [['Dashboard', 'reports.read'], ['Analytics', 'analytics.read'], ['Crashes', 'crashes.read'], ['Feedback', 'feedback.read'], ['Reports', 'reports.read'], ['Moderation', 'moderation.history.read'], ['Users', 'users.view'], ['Ads', 'ads.analytics.read'], ['Appeals', 'reports.review'], ['Admins', 'admins.read'], ['Audit Logs', 'audit.read'], ['Security', 'security.alerts.read'], ['Link safety', 'safety.settings.manage'], ['Festivals', 'safety.settings.manage'], ['Settings', 'ads.analytics.read']];
+/** An image only an admin session may fetch (same-origin), shown from a blob URL. */
+async function privateImage(url, alt, cls) {
+    const r = await fetch(url, { credentials: 'same-origin' });
+    if (!r.ok) throw Error(r.status === 404 ? 'Not available.' : 'Could not load the image.');
+    const src = URL.createObjectURL(await r.blob()); objectUrls.push(src);
+    const img = el('img', undefined, cls); img.src = src; img.alt = alt;
+    return img;
+}
+const VERIFICATION_CATEGORIES = { creator: 'Creator', public_figure: 'Public figure', brand: 'Brand or business', news_media: 'News or media', organization: 'Government or organisation' };
+/** A reason the person is shown (deny, remove), then the action. */
+function reasonForm(box, label, submit, action) {
+    const f = el('form', undefined, 'card');
+    const input = field(f, 'reason', label, 'textarea');
+    input.maxLength = 500;
+    f.append(button(submit, async () => { const reason = input.value.trim(); if (!reason) throw Error('Write the reason the person will see.'); await action(reason); }));
+    box.append(f);
+    input.focus();
+}
+function accountFields(box, u) {
+    const days = Math.floor((Date.now() - Date.parse(u.joinedAt)) / 86400000);
+    fields(box, { Username: '@' + u.username, Name: u.displayName, 'Account age': days + ' days (joined ' + new Date(u.joinedAt).toLocaleDateString() + ')', Followers: u.followers, 'Email verified': u.emailVerified ? 'Yes' : 'No', State: u.active ? u.state : 'SUSPENDED' });
+}
+async function verificationPage(c) {
+    const search = sessionStorage.getItem('katkee.verificationSearch') || '';
+    const data = await api('verification?search=' + encodeURIComponent(search));
+    c.replaceChildren();
+    const head = card();
+    head.append(el('p', 'The badge means the account really is the person, brand or organisation it says, and that they are notable. Approve only when the ID and the links match the profile. ID photos are private: each view is recorded in the audit log, and they are deleted 30 days after the decision.', 'muted'));
+    c.append(head, el('h2', 'Waiting for review (oldest first)'));
+    if (!data.pending.length) c.append(el('p', 'No requests waiting.', 'muted'));
+    for (const r of data.pending) {
+        const box = card('@' + r.user.username + ' · ' + (VERIFICATION_CATEGORIES[r.category] || r.category));
+        if (r.user.hasAvatar) box.append(await privateImage('/api/v1/admin/verification/users/' + r.user.id + '/avatar', 'Profile photo of @' + r.user.username, 'avatar').catch(() => el('span')));
+        fields(box, { 'Name on ID': r.fullName, Sent: new Date(r.createdAt).toLocaleString() });
+        actions(box).append(button('Review', async () => {
+            const d = (await api('verification/requests/' + r.id)).request;
+            const detail = el('div');
+            accountFields(detail, d.user);
+            fields(detail, { Category: VERIFICATION_CATEGORIES[d.category] || d.category, 'Full name (as on the ID)': d.fullName, 'Reports (90 days)': d.user.reports90d, 'Upheld reports (90 days)': d.user.upheldReports90d, 'Earlier requests': d.user.previousRequests });
+            const links = el('ul');
+            // Shown as text and opened in a new tab without the console as referrer or opener.
+            for (const url of d.links) { const li = el('li'), a = el('a', url); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; li.append(a); links.append(li); }
+            detail.append(el('h3', 'Links'), links);
+            const a = actions(detail);
+            if (d.hasIdPhoto) a.append(button('Show ID photo', async () => { detail.append(await privateImage('/api/v1/admin/verification/requests/' + d.id + '/id-photo', 'ID photo sent by @' + d.user.username, 'screenshot')); }, true));
+            a.append(button('Approve', async () => { if (!confirm('Verify @' + d.user.username + ' as ' + (VERIFICATION_CATEGORIES[d.category] || d.category) + '?')) return; await api('verification/requests/' + d.id + '/approve', 'POST', {}); message('Approved. @' + d.user.username + ' is verified.'); await render(); }),
+                button('Deny', () => reasonForm(detail, 'Why it was not approved (shown to the person)', 'Deny request', async (reason) => { await api('verification/requests/' + d.id + '/deny', 'POST', { reason }); message('Denied.'); await render(); }), true));
+            box.replaceChildren(el('h2', '@' + d.user.username + ' · ' + (VERIFICATION_CATEGORIES[d.category] || d.category)), detail);
+        }));
+        c.append(box);
+    }
+    c.append(el('h2', 'On hold after a name change'));
+    if (!data.held.length) c.append(el('p', 'No badges on hold.', 'muted'));
+    for (const u of data.held) {
+        const box = card('@' + u.username);
+        accountFields(box, u);
+        fields(box, { 'Approved as': u.previous ? '@' + u.previous.username + ' · ' + u.previous.displayName : '—', 'Now': '@' + u.username + ' · ' + u.displayName, 'On hold since': new Date(u.holdAt).toLocaleString() });
+        actions(box).append(button('Restore', async () => { if (!confirm('Show the badge again for @' + u.username + '?')) return; await api('verification/users/' + u.id + '/restore', 'POST', {}); message('Badge restored.'); await render(); }),
+            button('Remove badge', () => reasonForm(box, 'Why the badge was removed (shown to the person)', 'Remove badge', async (reason) => { await api('verification/users/' + u.id + '/remove', 'POST', { reason }); message('Badge removed.'); await render(); }), true));
+        c.append(box);
+    }
+    c.append(el('h2', 'Verified accounts'));
+    const find = el('form', undefined, 'toolbar');
+    const q = el('input'); q.type = 'search'; q.value = search; q.placeholder = 'Username starts with…'; q.setAttribute('aria-label', 'Search verified accounts');
+    find.append(q, button('Search', () => { sessionStorage.setItem('katkee.verificationSearch', q.value.trim()); return render(); }, true));
+    c.append(find);
+    if (!data.verified.length) c.append(el('p', 'No verified accounts found.', 'muted'));
+    for (const u of data.verified) {
+        const box = card('@' + u.username + ' · ' + (VERIFICATION_CATEGORIES[u.verifiedCategory] || u.verifiedCategory));
+        fields(box, { Name: u.displayName, Followers: u.followers });
+        actions(box).append(button('Remove badge', () => reasonForm(box, 'Why the badge was removed (shown to the person)', 'Remove badge', async (reason) => { await api('verification/users/' + u.id + '/remove', 'POST', { reason }); message('Badge removed.'); await render(); }), true));
+        c.append(box);
+    }
+}
+const sections = [['Dashboard', 'reports.read'], ['Analytics', 'analytics.read'], ['Crashes', 'crashes.read'], ['Feedback', 'feedback.read'], ['Verification', 'verification.review'], ['Reports', 'reports.read'], ['Moderation', 'moderation.history.read'], ['Users', 'users.view'], ['Ads', 'ads.analytics.read'], ['Appeals', 'reports.review'], ['Admins', 'admins.read'], ['Audit Logs', 'audit.read'], ['Security', 'security.alerts.read'], ['Link safety', 'safety.settings.manage'], ['Festivals', 'safety.settings.manage'], ['Settings', 'ads.analytics.read']];
 async function render() { const version = ++renderVersion; for (const url of objectUrls)
     URL.revokeObjectURL(url); objectUrls = []; $('title').textContent = page; const c = $('content'); c.replaceChildren(el('p', 'Loading…', 'muted')); for (const n of $('navigation').children)
     n.setAttribute('aria-current', n.textContent === page ? 'page' : 'false'); try {
@@ -190,6 +264,10 @@ async function render() { const version = ++renderVersion; for (const url of obj
     }
     if (page === 'Analytics') {
         await analyticsPage(c);
+        return;
+    }
+    if (page === 'Verification') {
+        await verificationPage(c);
         return;
     }
     if (page === 'Security') {
