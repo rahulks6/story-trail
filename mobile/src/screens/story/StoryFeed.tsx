@@ -3,6 +3,7 @@ import { StorySkeleton } from "../../components/Skeleton";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Alert, Animated, AppState, Dimensions, Image, PanResponder, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { Pressable } from "../../components/Pressable";
+import { isLongCaption, StoryBottomScrim, StoryCaption } from "../../components/StoryCaption";
 import { useIsFocused } from "@react-navigation/native";
 import Video, {type VideoRef} from "react-native-video";
 import { mediaColors as colors, radii, spacing, mediaTypography as typography, ICONS } from "../../theme";
@@ -189,7 +190,8 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   const currentStory = staleStory ? null : listedStory;
 
   const sheetOpen = commentsOpen || shareOpen || sharingOut || moreOpen || insightsOpen || replyOpen || highlightOpen;
-  const playbackActive = focused && foreground && !paused && !sheetOpen && !caughtUp && !loadError && !currentAd;
+  // Reading a long caption holds the Story, like Instagram.
+  const playbackActive = focused && foreground && !paused && !sheetOpen && !captionExpanded && !caughtUp && !loadError && !currentAd;
   // How far the current Story's bar has got (0-1). The bar animates on the native side, so this is
   // kept from elapsed time (and the video's own progress), not read back every frame.
   const progressValue = useRef(0);
@@ -731,7 +733,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   const railRoom = windowHeight - (insets.top + spacing.lg + 40 + (currentStory.music ? 34 : 0)) - (BOTTOM_BAR_HEIGHT + spacing.xl * 2 + insets.bottom);
   const railContent = railButtons * 34 + (isOwnStory ? 2 : 3) * 20 * Math.min(fontScale, 1.3);
   const railGap = Math.max(spacing.xs, Math.min(spacing.lg + 2, Math.floor((railRoom - railContent) / Math.max(1, railButtons - 1))));
-  const longCaption = currentStory.caption.length > 90 || currentStory.caption.split("\n").length > 3;
+  const longCaption = isLongCaption(currentStory.caption);
   // Holding to pause shows just the Story, like Instagram.
   const chrome = paused ? styles.chromeHidden : null;
 
@@ -861,6 +863,9 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         <Icon style={styles.heartBurstIcon} name={ICONS.liked} />
       </Animated.View>
 
+      {/* Under the caption and comment bar, so they read on any photo. */}
+      <StoryBottomScrim height={BOTTOM_BAR_HEIGHT + insets.bottom + (currentStory.caption ? 180 : 110)} deep={captionExpanded} style={chrome} />
+
       <View
         style={[styles.progressRow, chrome, { top: insets.top + spacing.sm }]}
         accessible
@@ -976,14 +981,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
             </View>
           ) : null}
           {currentStory.caption ? (
-            longCaption ? (
-              // Three lines, then tap to read the rest.
-              <Pressable onPress={() => setCaptionExpanded((open) => !open)} accessibilityRole="button" accessibilityHint={captionExpanded ? "Shows less of the caption" : "Shows the whole caption"}>
-                <Text style={styles.caption} numberOfLines={captionExpanded ? undefined : 3}>{currentStory.caption}</Text>
-              </Pressable>
-            ) : (
-              <Text style={styles.caption} numberOfLines={3}>{currentStory.caption}</Text>
-            )
+            <StoryCaption text={currentStory.caption} expanded={captionExpanded} onToggle={() => setCaptionExpanded((open) => !open)} />
           ) : null}
         </View>
       ) : null}
@@ -1220,7 +1218,6 @@ const styles = StyleSheet.create({
   },
   username: { color: colors.textPrimary, fontWeight: "700", fontSize: 15, flexShrink: 1, textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 3 },
   usernameRow: { flexShrink: 1 },
-  caption: { color: colors.textPrimary, marginTop: 2 },
   closeButton: { position: "absolute", top: spacing.xl, right: spacing.md },
   closeFriendsBadge: { flexDirection: "row", alignItems: "center", gap: 3, alignSelf: "flex-start", backgroundColor: colors.success, borderRadius: radii.pill, paddingHorizontal: spacing.sm, paddingVertical: 2, marginTop: 4 },
   closeFriendsBadgeText: { color: colors.onAccent, fontSize: 11, fontWeight: "700" },

@@ -52,6 +52,8 @@ type Props = NativeStackScreenProps<CreateStackParamList, "StoryEditor">;
 type Audience = "public" | "followers" | "close_friends";
 
 const TRASH_ZONE_SIZE = 80;
+/** The server's caption limit. */
+const CAPTION_MAX = 280;
 /**
  * Long edge of the editor's filtered photo preview, in pixels: the screen's own height in pixels,
  * at most 1080 (more is never seen, and each pass works through every pixel).
@@ -129,6 +131,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   // Who can comment and share, remembered from your last Story (Story settings sheet).
   const [settings, setSettings] = useState<StorySettings>(DEFAULT_STORY_SETTINGS);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [captionFocused, setCaptionFocused] = useState(false);
   // This Story's topic (Story settings sheet): chosen for each Story, never remembered for the next.
   const [topic, setTopic] = useState<string | null>(null);
   useEffect(() => {
@@ -891,16 +894,29 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             </View>
           ) : null}
 
-          <TextInput
-            style={styles.captionInput}
-            accessibilityLabel="Caption"
-            placeholder="Add a caption…"
-            placeholderTextColor="rgba(255,255,255,0.5)"
-            value={draft.caption}
-            onChangeText={(text) => setDraft((d) => ({ ...d, caption: text }))}
-            maxLength={280}
-            returnKeyType="done"
-          />
+          <View style={[styles.captionField, captionFocused && styles.captionFieldFocused]}>
+            <TextInput
+              style={styles.captionInput}
+              accessibilityLabel="Caption"
+              placeholder="Write a caption…"
+              placeholderTextColor="rgba(255,255,255,0.55)"
+              selectionColor={colors.accent}
+              cursorColor={colors.accent}
+              value={draft.caption}
+              onChangeText={(text) => setDraft((d) => ({ ...d, caption: text }))}
+              onFocus={() => setCaptionFocused(true)}
+              onBlur={() => setCaptionFocused(false)}
+              maxLength={CAPTION_MAX}
+              multiline
+              // Return closes the keyboard (a caption is short), the way Instagram's does.
+              submitBehavior="blurAndSubmit"
+              returnKeyType="done"
+              maxFontSizeMultiplier={1.4}
+            />
+            {captionFocused && draft.caption.length >= CAPTION_MAX - 40 ? (
+              <Text style={styles.captionCount} accessibilityLiveRegion="polite">{CAPTION_MAX - draft.caption.length}</Text>
+            ) : null}
+          </View>
 
           {/* One quiet line for who can see, comment and share; the choices are in a sheet. */}
           <Pressable
@@ -1108,13 +1124,28 @@ const styles = StyleSheet.create({
   filterToastLabel: { color: colors.textPrimary, fontSize: 18, fontWeight: "700" },
   bottomArea: { position: "absolute", bottom: spacing.xl, left: 0, right: 0 },
   bottomAreaContent: { gap: spacing.sm, paddingHorizontal: spacing.md },
-  captionInput: {
-    color: colors.textPrimary,
-    backgroundColor: "rgba(0,0,0,0.35)",
-    borderRadius: radii.md,
+  captionField: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    borderRadius: radii.lg,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "rgba(255,255,255,0.22)",
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    minHeight: 46,
   },
+  captionFieldFocused: { borderColor: "rgba(255,255,255,0.55)", backgroundColor: "rgba(0,0,0,0.65)" },
+  captionInput: {
+    flex: 1,
+    color: "#FFFFFF",
+    fontSize: 15,
+    lineHeight: 21,
+    fontWeight: "500",
+    paddingVertical: spacing.sm + 3,
+    maxHeight: 21 * 4 + spacing.sm * 2 + 6,
+    textAlignVertical: "center",
+  },
+  captionCount: { color: "rgba(255,255,255,0.6)", fontSize: 12, fontVariant: ["tabular-nums"], paddingBottom: spacing.sm + 5, marginLeft: spacing.sm },
   uploadError: { ...typography.caption, color: colors.danger, textAlign: "center" },
   retryButton: { alignSelf: "center", marginTop: spacing.xs, paddingHorizontal: spacing.md, paddingVertical: 4 },
   retryButtonLabel: { color: colors.accentText, fontWeight: "700" },

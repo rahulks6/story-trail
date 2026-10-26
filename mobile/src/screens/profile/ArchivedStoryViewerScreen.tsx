@@ -4,6 +4,7 @@ import { Icon } from "../../components/Icon";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Animated, Image, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "../../components/Pressable";
+import { StoryBottomScrim, StoryCaption } from "../../components/StoryCaption";
 import Video from "react-native-video";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
@@ -49,6 +50,7 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
   const [videoDurationMs, setVideoDurationMs] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [addOpen, setAddOpen] = useState(false);
+  const [captionOpen, setCaptionOpen] = useState(false);
   const [added, setAdded] = useState<string | null>(null);
   const [containerSize, onContainerLayout] = useContainerLayout();
   const progress = useRef(new Animated.Value(0)).current;
@@ -59,7 +61,7 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
   // Plays only while on screen, in the foreground, and not while choosing a Highlight.
   const focused = useIsFocused();
   const foreground = useAppForeground();
-  const active = focused && foreground && !addOpen;
+  const active = focused && foreground && !addOpen && !captionOpen;
 
   useEffect(() => {
     if (!accessToken) return;
@@ -191,7 +193,14 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
         />
       </View>
 
-      {detail.caption ? <Text style={[styles.caption, { bottom: spacing.xl * 3 + insets.bottom }]}>{detail.caption}</Text> : null}
+      {detail.caption ? (
+        <>
+          <StoryBottomScrim height={spacing.xl * 3 + insets.bottom + 160} deep={captionOpen} />
+          <View style={[styles.caption, { bottom: spacing.xl * 3 + insets.bottom }]}>
+            <StoryCaption text={detail.caption} expanded={captionOpen} onToggle={() => setCaptionOpen((open) => !open)} />
+          </View>
+        </>
+      ) : null}
 
       <Pressable
         onPress={() => {
@@ -239,7 +248,6 @@ const styles = StyleSheet.create({
     bottom: spacing.xl,
     left: spacing.md,
     right: spacing.xxl * 2,
-    color: "#fff",
   },
   closeButton: { position: "absolute", top: spacing.xl + 10, right: spacing.md, padding: spacing.xs },
   closeIcon: { color: "#fff", fontSize: 20 },
