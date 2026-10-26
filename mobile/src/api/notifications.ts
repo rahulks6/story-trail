@@ -5,7 +5,8 @@ import { apiGet, apiPatch, apiPost } from "./client";
  * NotificationRecord — see the note atop client.ts about keeping these in
  * lockstep by hand until there's a shared types package.
  */
-export type NotificationType = "like" | "comment" | "follow" | "follow_request" | "follow_accepted" | "mention";
+/** `verification`: your badge was approved, denied, removed or restored (no actor). */
+export type NotificationType = "like" | "comment" | "follow" | "follow_request" | "follow_accepted" | "mention" | "verification";
 
 export interface NotificationRecord {
   id: string;
@@ -13,10 +14,12 @@ export interface NotificationRecord {
   createdAt: string;
   readAt: string | null;
   /** `followedByYou`: you follow them (or asked to); Activity offers Follow back only when not. */
-  actor: { id: string; username: string; displayName: string; avatarMediaId?: string | null; followedByYou?: boolean } | null;
+  actor: { id: string; username: string; displayName: string; avatarMediaId?: string | null; followedByYou?: boolean; verified?: boolean } | null;
   story: { id: string; mediaId: string } | null;
   comment: { id: string; body: string } | null;
   followRequest: { id: string; status: string } | null;
+  /** Only on a `verification` notification. */
+  verification?: { status: "approved" | "denied" | "removed" | "restored"; reason: string | null } | null;
 }
 
 export function listNotifications(

@@ -12,6 +12,7 @@ import { profileChanged } from "../../state/storyChanges";
 import { updateMyProfile } from "../../api/users";
 import { uploadPhoto } from "../../api/media";
 import { ApiError } from "../../api/client";
+import { hasTickLikeCharacter, NAME_TICK_ERROR } from "../../api/verification";
 import { usernameCheckText, usernameRefused, useUsernameAvailability } from "../../hooks/useUsernameAvailability";
 import { Avatar } from "../../components/Avatar";
 import { ActionSheet } from "../../components/ActionSheet";
@@ -73,7 +74,9 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
   const availability = useUsernameAvailability(username, accessToken, user?.username);
   const availabilityLine = usernameCheckText(availability);
   const nameMissing = displayName.trim().length === 0;
-  const canSave = username.trim().length >= 3 && !nameMissing && !saving && !!accessToken && !usernameRefused(availability);
+  // A tick in a name would pass for the verified badge (the server refuses it too).
+  const nameHasTick = hasTickLikeCharacter(displayName);
+  const canSave = username.trim().length >= 3 && !nameMissing && !nameHasTick && !saving && !!accessToken && !usernameRefused(availability);
   const dirty =
     username !== original.username || displayName !== original.displayName || bio !== original.bio ||
     interests.join("\n") !== original.interests.join("\n") || photo.kind !== "unchanged";
@@ -239,7 +242,7 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
           <Text style={styles.counter}>{displayName.length}/{MAX_DISPLAY_NAME_LENGTH}</Text>
         </View>
         <TextInput
-          style={[styles.input, nameMissing && styles.inputError]}
+          style={[styles.input, (nameMissing || nameHasTick) && styles.inputError]}
           value={displayName}
           onChangeText={setDisplayName}
           placeholder="Your name"
@@ -248,6 +251,7 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
           accessibilityLabel="Display name"
         />
         {nameMissing ? <Text style={[styles.hint, styles.unavailable]}>Enter your name.</Text> : null}
+        {nameHasTick ? <Text style={[styles.hint, styles.unavailable]} accessibilityLiveRegion="polite">{NAME_TICK_ERROR}</Text> : null}
 
         <View style={styles.labelRow}>
           <Text style={styles.label}>Bio</Text>

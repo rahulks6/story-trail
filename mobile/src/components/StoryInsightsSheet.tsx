@@ -6,6 +6,7 @@ import { timeAgo } from "../utils/serverTime";
 import { useAuth } from "../state/AuthContext";
 import { getStoryInsights, getStoryViewers, type StoryInsights, type StoryViewer } from "../api/stories";
 import { Avatar } from "./Avatar";
+import { VerifiedName } from "./VerifiedBadge";
 
 interface Props {
   visible: boolean;
@@ -116,7 +117,7 @@ export function StoryInsightsSheet({ visible, storyId, onClose }: Props): React.
               renderItem={({ item }) => (
                 <View style={styles.row}>
                   <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} size={28} />
-                  <Text style={typography.bodyStrong}>@{item.username}</Text>
+                  <VerifiedName name={`@${item.username}`} verified={item.verified} style={typography.bodyStrong} containerStyle={styles.viewerName} />
                   <Text style={[typography.caption, styles.viewedAt]}>{timeAgo(item.viewedAt)}</Text>
                 </View>
               )}
@@ -157,4 +158,5 @@ const styles = StyleSheet.create({
   list: { maxHeight: 280 },
   row: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.xs },
   viewedAt: { marginLeft: "auto", color: colors.textDisabled },
+  viewerName: { flexShrink: 1 },
 });

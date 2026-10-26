@@ -70,6 +70,7 @@ import { tapFeedback } from "../../utils/haptics";
 import { launchCamera, launchImageLibrary, type Asset, type ImagePickerResponse } from "react-native-image-picker";
 import Video from "react-native-video";
 import { Avatar } from "../../components/Avatar";
+import { VerifiedName } from "../../components/VerifiedBadge";
 import { mediaFileUrl } from "../../api/stories";
 import { MAX_DM_VIDEO_BYTES, newPendingMedia, newVoiceNote } from "./sendMedia";
 import { CapturePreview, type Capture } from "./CapturePreview";
@@ -692,7 +693,7 @@ function accessRefused(what: "camera" | "photos"): void {
  * pages use message-id cursors, which don't shift as new messages arrive.
  */
 export function ConversationScreen({ route }: Props): React.JSX.Element {
-  const { conversationId, otherUsername, otherDisplayName, otherAvatarMediaId, group: isGroupParam, title: groupTitleParam } = route.params;
+  const { conversationId, otherUsername, otherDisplayName, otherAvatarMediaId, otherVerified, group: isGroupParam, title: groupTitleParam } = route.params;
   const { top: insetsTop } = useSafeAreaInsets();
   const { width: windowWidth } = useWindowDimensions();
   // Media bubbles fit the 78% column on small phones too.
@@ -758,6 +759,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           otherUsername: conversation.otherUser.username,
           otherDisplayName: conversation.otherUser.displayName,
           otherAvatarMediaId: conversation.otherUser.avatarMediaId ?? null,
+          otherVerified: !!conversation.otherUser.verified,
         });
       }
     } catch (error: unknown) {
@@ -816,12 +818,12 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           style={styles.header}
           hitSlop={6}
           accessibilityRole="button"
-          accessibilityLabel={otherUsername ? `${otherDisplayName ?? otherUsername}, @${otherUsername}` : "Conversation"}
+          accessibilityLabel={otherUsername ? `${otherDisplayName ?? otherUsername}${otherVerified ? ", verified" : ""}, @${otherUsername}` : "Conversation"}
           accessibilityHint="Opens their profile"
         >
           {otherUsername ? <Avatar username={otherUsername} displayName={otherDisplayName ?? otherUsername} avatarMediaId={otherAvatarMediaId ?? null} size={34} /> : null}
           <View style={styles.headerNames}>
-            <Text style={styles.headerName} numberOfLines={1}>{otherDisplayName ?? otherUsername ?? ""}</Text>
+            <VerifiedName name={otherDisplayName ?? otherUsername ?? ""} verified={otherVerified} style={styles.headerName} />
             {otherUsername ? <Text style={styles.headerUsername} numberOfLines={1}>@{otherUsername}</Text> : null}
           </View>
         </Pressable>
@@ -832,7 +834,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         </Pressable>
       ),
     });
-  }, [conversationId, group, groupTitleParam, isGroup, navigation, openProfile, otherAvatarMediaId, otherDisplayName, otherUsername, userId]);
+  }, [conversationId, group, groupTitleParam, isGroup, navigation, openProfile, otherAvatarMediaId, otherDisplayName, otherUsername, otherVerified, userId]);
 
   // Unsent messages for this thread, kept in sync with the persisted outbox.
   useEffect(() => {

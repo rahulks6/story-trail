@@ -42,7 +42,8 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
         <!-- katkee://user/<username>, katkee://story/<id> (Share sheet), katkee://reset-password (reset email),
-             katkee://conversation/<id>, katkee://activity and katkee://home (push notifications). -->
+             katkee://conversation/<id>, katkee://activity, katkee://home and katkee://verification
+             (push notifications). -->
         <intent-filter>
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
@@ -54,6 +55,7 @@
             <data android:scheme="katkee" android:host="activity" />
             <data android:scheme="katkee" android:host="follow-requests" />
             <data android:scheme="katkee" android:host="home" />
+            <data android:scheme="katkee" android:host="verification" />
         </intent-filter>
         <!-- Shared profiles and Stories: https://katkee.com/u/<username> and /s/<id> (App Links).
              Android checks katkee.com/.well-known/assetlinks.json for this app's signing key, then

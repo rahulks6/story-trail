@@ -137,6 +137,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
       <Text style={[styles.sectionHeader, styles.firstHeader]}>Account</Text>
       <View style={styles.card}>
         <ListRow label="Account and sign-in" icon={ICONS.profile} onPress={() => navigation.navigate("AccountSecurity")} />
+        <ListRow label="Request verification" icon={ICONS.verified} onPress={() => navigation.navigate("Verification")} />
         <ListRow label="Notifications" icon={ICONS.notifications} onPress={() => navigation.navigate("NotificationSettings")} />
         <ListRow label="Appearance" icon={ICONS.settings} detail={APPEARANCE_LABELS[appearanceChoice()]} onPress={() => setAppearanceOpen(true)} />
       </View>

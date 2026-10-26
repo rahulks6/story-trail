@@ -10,6 +10,7 @@ import { addGroupMembers, createGroup, groupName, MAX_GROUP_MEMBERS, MAX_GROUP_T
 import { ApiError } from "../../api/client";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { Avatar } from "../../components/Avatar";
+import { VerifiedName } from "../../components/VerifiedBadge";
 import { Icon } from "../../components/Icon";
 import { Button } from "../../components/Form";
 import { KeyboardAvoider } from "../../components/KeyboardAvoider";
@@ -157,11 +158,11 @@ export function NewGroupScreen({ navigation, route }: Props): React.JSX.Element 
               onPress={() => toggle(item)}
               accessibilityRole="checkbox"
               accessibilityState={{ checked: on }}
-              accessibilityLabel={`${item.displayName}, @${item.username}`}
+              accessibilityLabel={`${item.displayName}${item.verified ? ", verified" : ""}, @${item.username}`}
             >
               <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId ?? null} />
               <View style={styles.rowText}>
-                <Text style={typography.bodyStrong} numberOfLines={1}>{item.displayName}</Text>
+                <VerifiedName name={item.displayName} verified={item.verified} style={typography.bodyStrong} />
                 <Text style={typography.caption} numberOfLines={1}>@{item.username}</Text>
               </View>
               <View style={[styles.check, on && styles.checkOn]}>{on ? <Icon name={ICONS.check} size={16} color={colors.onAccent} /> : null}</View>

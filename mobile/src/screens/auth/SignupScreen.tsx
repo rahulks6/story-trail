@@ -11,6 +11,7 @@ import { colors, spacing, typography, FORM_MAX_WIDTH } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { usernameCheckText, usernameRefused, useUsernameAvailability } from "../../hooks/useUsernameAvailability";
 import { TermsNotice } from "../../components/TermsNotice";
+import { hasTickLikeCharacter, NAME_TICK_ERROR } from "../../api/verification";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Signup">;
 
@@ -34,7 +35,9 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
   // Katkee is for people 18 and older; the server checks again (backend/src/modules/auth/age.ts).
   const birthDate = birthDateToIso(birth);
   const birthProblem = birthDateFieldProblem(birth);
-  const complete = !!displayName.trim() && !!username && !!email && !!birthDate && !birthDateProblem(birthDate) && !!password &&
+  // A tick in a name would pass for the verified badge.
+  const nameProblem = hasTickLikeCharacter(displayName) ? NAME_TICK_ERROR : undefined;
+  const complete = !!displayName.trim() && !nameProblem && !!username && !!email && !!birthDate && !birthDateProblem(birthDate) && !!password &&
     !passwordProblem && !usernameRefused(availability);
 
   const onSubmit = async () => {
@@ -66,7 +69,7 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
 
         <TextField
           label="Display name"
-          error={fieldErrors?.displayName}
+          error={nameProblem ?? fieldErrors?.displayName}
           autoCapitalize="words"
           autoComplete="name"
           textContentType="name"

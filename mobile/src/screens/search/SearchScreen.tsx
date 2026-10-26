@@ -16,6 +16,7 @@ import { ApiError } from "../../api/client";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { EmptyState } from "../../components/EmptyState";
 import { Avatar } from "../../components/Avatar";
+import { VerifiedName } from "../../components/VerifiedBadge";
 
 type Props = NativeStackScreenProps<SearchStackParamList, "SearchHome">;
 
@@ -195,13 +196,13 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
       <View style={styles.row}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`${item.displayName}, @${item.username}`}
+          accessibilityLabel={`${item.displayName}${item.verified ? ", verified" : ""}, @${item.username}`}
           style={styles.rowMain}
           onPress={() => navigation.navigate("UserProfile", { username: item.username })}
         >
           <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId ?? null} />
           <View style={styles.rowText}>
-            <Text style={typography.bodyStrong} numberOfLines={1}>{item.displayName}</Text>
+            <VerifiedName name={item.displayName} verified={item.verified} style={typography.bodyStrong} />
             <Text style={typography.caption} numberOfLines={1}>{subtitle}</Text>
           </View>
         </Pressable>

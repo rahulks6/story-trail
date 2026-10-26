@@ -64,3 +64,10 @@ test("what counts as already on screen", () => {
   expect(isAboutCurrentScreen("katkee://activity", { name: "Home" })).toBe(false);
   expect(isAboutCurrentScreen(null, { name: "Home" })).toBe(false);
 });
+
+test("festival, streak and follow-request pushes open their screens when tapped", () => {
+  const { notificationLink } = jest.requireActual("../src/push/pushNotifications");
+  expect(notificationLink({ data: { url: "katkee://home" } })).toBe("katkee://home");
+  expect(notificationLink({ data: { url: "katkee://follow-requests" } })).toBe("katkee://follow-requests");
+  expect(notificationLink({ data: { url: "https://evil.example/home" } })).toBeNull();
+});

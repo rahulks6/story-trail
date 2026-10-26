@@ -20,6 +20,7 @@ import { ApiError } from "../api/client";
 import { ReportSheet } from "./ReportSheet";
 import { KeyboardAvoider } from "./KeyboardAvoider";
 import { Avatar } from "./Avatar";
+import { VerifiedName } from "./VerifiedBadge";
 import { Icon } from "./Icon";
 import { timeAgo } from "../utils/serverTime";
 import { tapFeedback } from "../utils/haptics";
@@ -70,7 +71,7 @@ const CommentRow = React.memo(function CommentRow({ item, onOptions, onOpenProfi
       onLongPress={() => onOptions(item)}
       delayLongPress={350}
       accessibilityRole="text"
-      accessibilityLabel={`@${item.username}: ${item.body}. ${timeAgo(item.createdAt)}`}
+      accessibilityLabel={`@${item.username}${item.verified ? ", verified" : ""}: ${item.body}. ${timeAgo(item.createdAt)}`}
       accessibilityActions={item.pending ? undefined : [{ name: "options", label: "Comment options" }]}
       onAccessibilityAction={() => onOptions(item)}
     >
@@ -78,11 +79,10 @@ const CommentRow = React.memo(function CommentRow({ item, onOptions, onOpenProfi
         <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId ?? null} size={34} />
       </Pressable>
       <View style={styles.rowBody}>
-        <Text style={styles.meta}>
-          <Text style={styles.username} onPress={() => onOpenProfile(item.username)}>{item.username}</Text>
-          {"  "}
+        <View style={styles.meta}>
+          <VerifiedName name={item.username} verified={item.verified} style={styles.username} containerStyle={styles.metaName} onPress={() => onOpenProfile(item.username)} />
           <Text style={styles.time}>{ago}</Text>
-        </Text>
+        </View>
         <Text style={styles.body}>{item.body}</Text>
       </View>
       {!item.pending ? (
@@ -225,7 +225,7 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
     const tempId = `pending-${Date.now()}`;
     const temp: Row = {
       id: tempId, storyId, userId: me.id, username: me.username, displayName: me.displayName ?? me.username,
-      avatarMediaId: me.avatarMediaId ?? null, body, createdAt: new Date().toISOString(), pending: true,
+      avatarMediaId: me.avatarMediaId ?? null, verified: me.verified, body, createdAt: new Date().toISOString(), pending: true,
     };
     setComments((prev) => [...prev, temp]);
     setError(null);
@@ -380,7 +380,8 @@ const styles = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm, paddingVertical: spacing.sm },
   rowPending: { opacity: 0.55 },
   rowBody: { flex: 1 },
-  meta: { marginBottom: 2 },
+  meta: { flexDirection: "row", alignItems: "center", gap: spacing.sm, marginBottom: 2 },
+  metaName: { flexShrink: 1 },
   username: { color: colors.textPrimary, fontWeight: "700", fontSize: 13 },
   time: { color: colors.textDisabled, fontSize: 12 },
   body: { color: colors.textPrimary, fontSize: 15, lineHeight: 20 },

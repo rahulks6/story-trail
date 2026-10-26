@@ -14,6 +14,7 @@ import {
 import { EmptyState } from "../../components/EmptyState";
 import { LoadFailed } from "../../components/LoadFailed";
 import { Avatar } from "../../components/Avatar";
+import { VerifiedName } from "../../components/VerifiedBadge";
 
 const PAGE_SIZE = 30;
 
@@ -96,7 +97,7 @@ export function FollowRequestsScreen(): React.JSX.Element {
             >
               <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} />
               <View style={styles.rowText}>
-                <Text style={typography.bodyStrong}>{item.displayName}</Text>
+                <VerifiedName name={item.displayName} verified={item.verified} style={typography.bodyStrong} />
                 <Text style={typography.caption}>@{item.username}</Text>
               </View>
             </Pressable>

@@ -30,6 +30,7 @@ import { serverTimeMs, timeAgo } from "../../utils/serverTime";
 import { followUser } from "../../api/users";
 import { storyPublished } from "../../state/storyChanges";
 import { AddToHighlightSheet } from "../../components/AddToHighlightSheet";
+import { VerifiedName } from "../../components/VerifiedBadge";
 
 const PHOTO_DURATION_MS = 5000;
 const SLOW_VIDEO_MS = 3000;
@@ -72,6 +73,8 @@ export interface StoryFeedProps {
   onOpenProfile: (username: string) => void;
   /** Home's feed knows whom you follow: creators you don't get a Follow button beside their name. */
   following?: Record<string, boolean>;
+  /** Creators with the verified badge, by username (their name in the header shows it). */
+  verified?: Record<string, boolean>;
   /**
    * `initialStoryId` is one of your own Stories that's no longer active (a notification or link
    * to it after its 24 hours): open it from your Archive instead of starting somewhere else.
@@ -99,7 +102,7 @@ let viewerMuted = false;
 /** The comment box (or your Story's Activity button) along the bottom. */
 const BOTTOM_BAR_HEIGHT = 46;
 
-export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpenDM, onOpenProfile, onOpenArchived, onRefresh, onNeedMore, onCreate, onFindPeople, sponsored = [], following }: StoryFeedProps): React.JSX.Element {
+export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpenDM, onOpenProfile, onOpenArchived, onRefresh, onNeedMore, onCreate, onFindPeople, sponsored = [], following, verified }: StoryFeedProps): React.JSX.Element {
   // Overlays clear the status bar / notch; the bottom ones also the home indicator when no tab bar is below.
   const insets = useScreenInsets();
   const { user: authUser, accessToken } = useAuth();
@@ -924,7 +927,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           <View style={styles.avatarRing}>
             <Avatar username={currentUsername ?? ""} size={30} />
           </View>
-          <Text style={styles.username} numberOfLines={1}>{currentUsername}</Text>
+          <VerifiedName name={currentUsername ?? ""} verified={!!currentUsername && !!verified?.[currentUsername]} style={styles.username} containerStyle={styles.usernameRow} />
           <Text style={styles.postedAgo}>{timeAgo(currentStory.createdAt).replace(" ago", "")}</Text>
         </Pressable>
         {showFollow ? (
@@ -1199,6 +1202,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   username: { color: colors.textPrimary, fontWeight: "700", fontSize: 15, flexShrink: 1, textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 3 },
+  usernameRow: { flexShrink: 1 },
   caption: { color: colors.textPrimary, marginTop: 2 },
   closeButton: { position: "absolute", top: spacing.xl, right: spacing.md },
   closeFriendsBadge: { flexDirection: "row", alignItems: "center", gap: 3, alignSelf: "flex-start", backgroundColor: colors.success, borderRadius: radii.pill, paddingHorizontal: spacing.sm, paddingVertical: 2, marginTop: 4 },

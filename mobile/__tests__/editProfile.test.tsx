@@ -267,6 +267,16 @@ describe("Save and Discard", () => {
     expect(saveButton().props.disabled).toBe(false);
   });
 
+  test("a name can't include a check mark (it would pass for the verified badge)", async () => {
+    await render();
+    await type("Display name", "Me Now \u2714");
+    expect(texts()).toContain("Names can't include check marks.");
+    expect(saveButton().props.disabled).toBe(true);
+    await type("Display name", "Me Now");
+    expect(texts()).not.toContain("Names can't include check marks.");
+    expect(saveButton().props.disabled).toBe(false);
+  });
+
   test("Save with nothing changed just closes", async () => {
     await render();
     await act(async () => saveButton().props.onPress());

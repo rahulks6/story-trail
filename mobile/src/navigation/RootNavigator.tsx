@@ -6,7 +6,7 @@ import { ActivityIndicator, Linking, View } from "react-native";
 import { createNavigationContainerRef, DarkTheme, DefaultTheme, NavigationContainer, type LinkingOptions, type Theme } from "@react-navigation/native";
 import { InAppNotificationBanner } from "../components/InAppNotificationBanner";
 import { colorScheme } from "../theme/colors";
-import { deepLinkTarget, LINK_PREFIXES, linkPath } from "./profileLinks";
+import { deepLinkTarget, LINK_PREFIXES, linkPath, opensInApp } from "./profileLinks";
 import { initialNotificationLink, onNotificationOpened } from "../push/pushNotifications";
 import { usePushRegistration } from "../push/usePushRegistration";
 import { useAreaSync } from "../state/nearby";
@@ -38,6 +38,7 @@ import { BlockedAccountsScreen } from "../screens/profile/BlockedAccountsScreen"
 import { MutedAccountsScreen } from "../screens/profile/MutedAccountsScreen";
 import { CloseFriendsScreen } from "../screens/profile/CloseFriendsScreen";
 import { FollowListScreen } from "../screens/profile/FollowListScreen";
+import { VerificationScreen } from "../screens/profile/VerificationScreen";
 import { ActivityScreen } from "../screens/activity/ActivityScreen";
 import { UploadRunner } from "../state/UploadRunner";
 import { FeedbackScreen } from "../screens/profile/FeedbackScreen";
@@ -245,6 +246,17 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         }}
       />
       <Stack.Screen
+        name="Verification"
+        component={VerificationScreen}
+        options={{
+          headerShown: true,
+          title: "Request verification",
+          headerStyle: { backgroundColor: colors.background },
+          headerTintColor: colors.textPrimary,
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen
         name="FollowList"
         component={FollowListScreen}
         options={({ route }) => ({
@@ -287,7 +299,7 @@ export function RootNavigator(): React.JSX.Element {
     const subscription = Linking.addEventListener("url", ({url}) => {
       const path = linkPath(url);
       const target = path === null ? null : deepLinkTarget(path);
-      if (target && target.kind !== "resetPassword") pendingLink.current = url;
+      if (target && target.kind !== "resetPassword" && opensInApp(url)) pendingLink.current = url;
     });
     return () => subscription.remove();
   }, [status]);
@@ -296,12 +308,12 @@ export function RootNavigator(): React.JSX.Element {
     getInitialURL: async () => {
       const url = pendingLink.current ?? await Linking.getInitialURL() ?? await initialNotificationLink();
       pendingLink.current = null;
-      return url;
+      return url && opensInApp(url) ? url : null;
     },
     // Links opened from outside, plus taps on push notifications while the app runs.
     subscribe: listener => {
       openLink.current = listener;
-      const links = Linking.addEventListener("url", ({ url }) => listener(url));
+      const links = Linking.addEventListener("url", ({ url }) => { if (opensInApp(url)) listener(url); });
       const stopNotifications = onNotificationOpened(listener);
       return () => {
         links.remove();
@@ -323,6 +335,7 @@ export function RootNavigator(): React.JSX.Element {
       if (target?.kind === "activity") return { routes: [{ name: "Main" }, { name: "Activity" }] };
       if (target?.kind === "home") return { routes: [{ name: "Main", state: { routes: [{ name: "Home" }] } }] };
       if (target?.kind === "followRequests") return { routes: [{ name: "Main" }, { name: "FollowRequests" }] };
+      if (target?.kind === "verification") return { routes: [{ name: "Main" }, { name: "Settings" }, { name: "Verification" }] };
       return undefined;
     },
   }), []);

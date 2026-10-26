@@ -5,7 +5,7 @@ import { apiDelete, apiGet, apiPatch, apiPost, apiPut } from "./client";
  * see the note atop client.ts about keeping these in lockstep by hand
  * until there's a shared types package.
  */
-export interface PersonSummary { id: string; username: string; displayName: string; avatarMediaId?: string | null }
+export interface PersonSummary { id: string; username: string; displayName: string; avatarMediaId?: string | null; verified?: boolean }
 
 /** A line in a group's thread about the group itself ("@asha added @dev"). */
 export type GroupEvent =
@@ -105,7 +105,7 @@ export function removeMessageReaction(conversationId: string, messageId: string,
 export interface ConversationWithOtherUser {
   id: string;
   createdAt: string;
-  otherUser: { id: string; username: string; displayName: string; avatarMediaId?: string | null };
+  otherUser: { id: string; username: string; displayName: string; avatarMediaId?: string | null; verified?: boolean };
 }
 
 export function openConversation(username: string, accessToken: string): Promise<{ conversation: ConversationWithOtherUser }> {
@@ -117,6 +117,7 @@ export interface GroupMember {
   username: string;
   displayName: string;
   avatarMediaId: string | null;
+  verified?: boolean;
   role: "admin" | "member";
   joinedAt: string;
 }

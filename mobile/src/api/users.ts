@@ -14,6 +14,9 @@ export interface ProfileView {
   interests: string[];
   isPrivate: boolean;
   isSelf: boolean;
+  /** The verified badge (not shown while it's on hold), and its category (null unless verified). */
+  verified?: boolean;
+  verifiedCategory?: string | null;
   followerCount: number;
   followingCount: number;
   /** Stories posted so far (not deleted, expired included); missing from a server before release r3. */
@@ -44,6 +47,7 @@ export interface SearchResult {
   bio: string;
   isPrivate?: boolean;
   interests?: string[];
+  verified?: boolean;
   viewer?: ListRelationship;
 }
 
@@ -60,6 +64,7 @@ export interface SuggestedPerson {
   displayName: string;
   avatarMediaId: string | null;
   isPrivate: boolean;
+  verified?: boolean;
   reason: SuggestionReason;
   viewer: ListRelationship;
 }
@@ -139,6 +144,7 @@ export interface BlockedUser {
   id: string;
   username: string;
   displayName: string;
+  verified?: boolean;
   blockedAt: string;
 }
 
@@ -158,6 +164,7 @@ export interface MutedUser {
   username: string;
   displayName: string;
   avatarMediaId?: string | null;
+  verified?: boolean;
   mutedAt: string;
 }
 
@@ -179,6 +186,7 @@ export interface FollowedUser {
   avatarMediaId?: string | null;
   bio: string;
   isPrivate: boolean;
+  verified?: boolean;
   followedAt: string;
 }
 
@@ -188,6 +196,7 @@ export interface IncomingFollowRequest {
   username: string;
   displayName: string;
   avatarMediaId?: string | null;
+  verified?: boolean;
   createdAt: string;
 }
 
@@ -241,6 +250,7 @@ export interface CloseFriend {
   username: string;
   displayName: string;
   avatarMediaId?: string | null;
+  verified?: boolean;
   addedAt: string;
 }
 

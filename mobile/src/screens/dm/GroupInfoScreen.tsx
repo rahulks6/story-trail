@@ -8,6 +8,7 @@ import { useAuth } from "../../state/AuthContext";
 import { getConversation, leaveGroup, setConversationMuted, MAX_GROUP_MEMBERS, MAX_GROUP_TITLE, removeGroupMember, renameGroup, type GroupDetails } from "../../api/conversations";
 import { ApiError } from "../../api/client";
 import { Avatar } from "../../components/Avatar";
+import { VerifiedName } from "../../components/VerifiedBadge";
 import { GroupAvatar } from "../../components/GroupAvatar";
 import { ListRow } from "../../components/ListRow";
 import { Banner } from "../../components/Form";
@@ -152,7 +153,7 @@ export function GroupInfoScreen({ navigation, route }: Props): React.JSX.Element
           <View style={styles.member}>
             <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} size={40} />
             <View style={styles.memberText}>
-              <Text style={typography.bodyStrong} numberOfLines={1}>{me ? `${item.displayName} (you)` : item.displayName}</Text>
+              <VerifiedName name={me ? `${item.displayName} (you)` : item.displayName} verified={item.verified} style={typography.bodyStrong} />
               <Text style={typography.caption} numberOfLines={1}>@{item.username}{item.role === "admin" ? " · Admin" : ""}</Text>
             </View>
             {admin && !me ? (

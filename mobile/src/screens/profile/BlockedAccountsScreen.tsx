@@ -7,6 +7,7 @@ import { listBlockedUsers, unblockUser, type BlockedUser } from "../../api/users
 import { EmptyState } from "../../components/EmptyState";
 import { LoadFailed } from "../../components/LoadFailed";
 import { Avatar } from "../../components/Avatar";
+import { VerifiedName } from "../../components/VerifiedBadge";
 
 const PAGE_SIZE = 30;
 
@@ -84,7 +85,7 @@ export function BlockedAccountsScreen(): React.JSX.Element {
             <View style={styles.identity}>
               <Avatar username={item.username} displayName={item.displayName} avatarMediaId={null} />
               <View style={styles.rowText}>
-                <Text style={typography.bodyStrong}>{item.displayName}</Text>
+                <VerifiedName name={item.displayName} verified={item.verified} style={typography.bodyStrong} />
                 <Text style={typography.caption}>@{item.username}</Text>
               </View>
             </View>

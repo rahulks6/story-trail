@@ -20,6 +20,7 @@ import { getStoryOwnerUsername, mediaFileUrl } from "../../api/stories";
 import { acceptFollowRequest, declineFollowRequest, followUser } from "../../api/users";
 import { ApiError } from "../../api/client";
 import { Avatar } from "../../components/Avatar";
+import { VerifiedBadge } from "../../components/VerifiedBadge";
 import { EmptyState } from "../../components/EmptyState";
 import { Banner, Button } from "../../components/Form";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
@@ -57,9 +58,27 @@ function isToday(isoDate: string): boolean {
   );
 }
 
+/** About your own badge: no actor, and it opens Settings > Request verification. */
+function verificationMessage(notification: NotificationRecord): string {
+  switch (notification.verification?.status) {
+    case "approved":
+      return "You're verified. Your badge now shows on your profile.";
+    case "denied":
+      return "Your verification request wasn't approved.";
+    case "removed":
+      return "Your verified badge was removed.";
+    case "restored":
+      return "Your verified badge is showing again.";
+    default:
+      return "There's an update on your verification request.";
+  }
+}
+
 function messageFor(notification: NotificationRecord): string {
   const name = notification.actor?.displayName ?? "Someone";
   switch (notification.type) {
+    case "verification":
+      return verificationMessage(notification);
     case "like":
       return `${name} liked your Story.`;
     case "comment":
@@ -332,6 +351,11 @@ export function ActivityScreen(): React.JSX.Element {
       }
     }
 
+    if (notification.type === "verification") {
+      navigation.navigate("Verification");
+      return;
+    }
+
     // Requests are answered on the Follow requests screen.
     if (notification.type === "follow_request") {
       navigation.navigate("FollowRequests");
@@ -500,6 +524,9 @@ export function ActivityScreen(): React.JSX.Element {
           renderItem={({ item: row }) => {
             const actor = row.kind === "grouped-like" ? row.firstActor : row.notification.actor;
             const message = row.kind === "grouped-like" ? messageForGroup(row) : messageFor(row.notification);
+            const aboutBadge = row.kind === "single" && row.notification.type === "verification";
+            // The badge goes right after the actor's name, which starts the sentence.
+            const badgeAfter = actor?.verified && message.startsWith(actor.displayName) ? actor.displayName.length : 0;
             const createdAt = row.kind === "grouped-like" ? row.createdAt : row.notification.createdAt;
             const unread = row.kind === "grouped-like" ? row.anyUnread : row.notification.readAt === null;
             const ago = timeAgo(createdAt);
@@ -508,12 +535,24 @@ export function ActivityScreen(): React.JSX.Element {
                 style={styles.row}
                 onPress={() => void onPressRow(row)}
                 accessibilityRole="button"
-                accessibilityLabel={[message.replace(/\.$/, ""), ago, unread ? "Unread" : ""].filter(Boolean).join(". ")}
+                accessibilityLabel={[message.replace(/\.$/, ""), badgeAfter ? `${actor?.displayName} is verified` : "", ago, unread ? "Unread" : ""].filter(Boolean).join(". ")}
               >
-                <Avatar username={actor?.username ?? ""} displayName={actor?.displayName ?? "?"} avatarMediaId={actor ? actor.avatarMediaId : null} />
+                {aboutBadge ? (
+                  <View style={styles.badgeIcon}>
+                    <Icon name={ICONS.verified} size={28} color={colors.accent} />
+                  </View>
+                ) : (
+                  <Avatar username={actor?.username ?? ""} displayName={actor?.displayName ?? "?"} avatarMediaId={actor ? actor.avatarMediaId : null} />
+                )}
                 <View style={styles.rowText}>
                   <Text style={typography.body} numberOfLines={2}>
-                    {message}
+                    {badgeAfter ? (
+                      <>
+                        {message.slice(0, badgeAfter)}
+                        <VerifiedBadge size={15} style={styles.inlineBadge} />
+                        {message.slice(badgeAfter)}
+                      </>
+                    ) : message}
                   </Text>
                   <Text style={typography.caption}>{ago}</Text>
                 </View>
@@ -582,6 +621,9 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
   rowText: { flex: 1, gap: 2 },
+  // Same footprint as an Avatar, so the text lines up with the other rows.
+  badgeIcon: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: colors.surfaceElevated },
+  inlineBadge: { marginRight: 2, transform: [{ translateY: 2 }] },
   unreadDot: {
     width: 8,
     height: 8,

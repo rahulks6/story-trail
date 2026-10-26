@@ -9,6 +9,7 @@ import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { searchUsers, type SearchResult } from "../api/users";
 import { STICKER_GLYPHS } from "./OverlayBody";
 import { KeyboardAvoider } from "./KeyboardAvoider";
+import { VerifiedName } from "./VerifiedBadge";
 import {
   STICKER_IDS,
   type Overlay,
@@ -322,9 +323,9 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
                     style={styles.resultRow}
                     onPress={() => addMention(item)}
                     accessibilityRole="button"
-                    accessibilityLabel={`Mention ${item.displayName}, @${item.username}`}
+                    accessibilityLabel={`Mention ${item.displayName}${item.verified ? ", verified" : ""}, @${item.username}`}
                   >
-                    <Text style={typography.body}>{item.displayName}</Text>
+                    <VerifiedName name={item.displayName} verified={item.verified} style={typography.body} />
                     <Text style={styles.resultUsername}>@{item.username}</Text>
                   </Pressable>
                 )}
