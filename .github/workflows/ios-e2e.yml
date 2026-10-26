@@ -110,13 +110,27 @@ jobs:
             echo "$TYPE" > "$OUT/$size/device.txt"
             xcrun simctl io "$UDID" recordVideo --codec=h264 --force "$OUT/$size/walkthrough.mp4" &
             REC=$!
-            PASSWORD="E2e-$(openssl rand -hex 8)"
-            USERNAME="e2e_ios_${RUN}_${size}"
-            echo "$USERNAME support+e2e-${RUN}-${size}@katkee.com $PASSWORD" >> "$RUNNER_TEMP/accounts"
-            ( cd "$OUT/$size" && maestro --device "$UDID" test "$FLOW" \
-                -e USERNAME="$USERNAME" -e EMAIL="support+e2e-${RUN}-${size}@katkee.com" -e PASSWORD="$PASSWORD" \
-                -e OIDC_URL="$ACTIONS_ID_TOKEN_REQUEST_URL" -e OIDC_TOKEN="$ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-                --format junit --output "$OUT/$size/report.xml" --test-output-dir "$OUT/$size/maestro" ) || status=1
+            # GitHub's virtual iPhones sometimes stall (a black screen, or the test driver losing the
+            # device) on a step the same build passes on the other device. One more attempt, with a
+            # new account, before a device counts as failed; both attempts' results are kept.
+            passed=0
+            for attempt in 1 2; do
+              PASSWORD="E2e-$(openssl rand -hex 8)"
+              USERNAME="e2e_ios_${RUN}_${size}${attempt}"
+              EMAIL="support+e2e-${RUN}-${size}${attempt}@katkee.com"
+              echo "$USERNAME $EMAIL $PASSWORD" >> "$RUNNER_TEMP/accounts"
+              TRY="$OUT/$size/attempt-$attempt"
+              mkdir -p "$TRY"
+              if ( cd "$TRY" && maestro --device "$UDID" test "$FLOW" \
+                  -e USERNAME="$USERNAME" -e EMAIL="$EMAIL" -e PASSWORD="$PASSWORD" \
+                  -e OIDC_URL="$ACTIONS_ID_TOKEN_REQUEST_URL" -e OIDC_TOKEN="$ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+                  --format junit --output "$TRY/report.xml" --test-output-dir "$TRY/maestro" ); then
+                passed=1
+                break
+              fi
+              echo "$size: attempt $attempt failed"
+            done
+            [ "$passed" = 1 ] || status=1
             kill -INT "$REC" || true
             sleep 3
             xcrun simctl spawn "$UDID" log show --last 15m --predicate 'process == "KatkeeMobile"' --style compact > "$OUT/$size/app-log.txt" 2>/dev/null || true
