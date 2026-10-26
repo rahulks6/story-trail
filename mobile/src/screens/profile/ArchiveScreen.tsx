@@ -2,7 +2,7 @@ import { AddToHighlightSheet } from "../../components/AddToHighlightSheet";
 import { Icon } from "../../components/Icon";
 import { showToast } from "../../components/Toast";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Alert, Image, SectionList, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { ActivityIndicator, Alert, SectionList, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { Pressable } from "../../components/Pressable";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -15,6 +15,7 @@ import { LoadFailed } from "../../components/LoadFailed";
 import { Button } from "../../components/Form";
 import { ApiError } from "../../api/client";
 import { serverDate } from "../../utils/serverTime";
+import { FadeInImage } from "../../components/FadeInImage";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Archive">;
 
@@ -227,7 +228,7 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
                     onLongPress={() => toggle(story.id)}
                     style={[styles.thumbWrapper, { width: thumbSize, height: thumbSize }]}
                   >
-                    <Image source={{ uri: mediaFileUrl(story.mediaId, "thumbnail"), headers: authHeaders }} style={styles.thumb} resizeMode="cover" />
+                    <FadeInImage source={{ uri: mediaFileUrl(story.mediaId, "thumbnail"), headers: authHeaders }} style={styles.thumb} resizeMode="cover" />
                     {isSelected ? (
                       <View style={styles.selectedOverlay}>
                         <View style={styles.selectedCheck}>

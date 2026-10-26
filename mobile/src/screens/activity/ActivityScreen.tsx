@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ListSkeleton } from "../../components/Skeleton";
-import { ActivityIndicator, Image, RefreshControl, ScrollView, SectionList, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, RefreshControl, ScrollView, SectionList, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "../../components/Pressable";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -26,6 +26,7 @@ import { EmptyState } from "../../components/EmptyState";
 import { Banner, Button } from "../../components/Form";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
 import { serverDate, timeAgo } from "../../utils/serverTime";
+import { FadeInImage } from "../../components/FadeInImage";
 
 const PAGE_SIZE = 20;
 
@@ -394,7 +395,7 @@ export function ActivityScreen(): React.JSX.Element {
   const authHeaders = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
   const trailing = (row: ActivityRow): React.ReactNode => {
     if (row.kind === "grouped-like") {
-      return <Image source={{ uri: mediaFileUrl(row.storyMediaId, "thumbnail"), headers: authHeaders }} style={styles.thumb} accessibilityIgnoresInvertColors />;
+      return <FadeInImage source={{ uri: mediaFileUrl(row.storyMediaId, "thumbnail"), headers: authHeaders }} style={styles.thumb} accessibilityIgnoresInvertColors />;
     }
     const n = row.notification;
     if (n.type === "follow_request" && n.followRequest) {
@@ -425,7 +426,7 @@ export function ActivityScreen(): React.JSX.Element {
       );
     }
     if (n.story?.mediaId) {
-      return <Image source={{ uri: mediaFileUrl(n.story.mediaId, "thumbnail"), headers: authHeaders }} style={styles.thumb} accessibilityIgnoresInvertColors />;
+      return <FadeInImage source={{ uri: mediaFileUrl(n.story.mediaId, "thumbnail"), headers: authHeaders }} style={styles.thumb} accessibilityIgnoresInvertColors />;
     }
     return null;
   };

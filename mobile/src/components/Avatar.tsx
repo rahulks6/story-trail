@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, View, type StyleProp, type ViewStyle } from "react-native";
+import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from "react-native";
 import { avatarFileUrl } from "../api/users";
 import { useAuth } from "../state/AuthContext";
 import { colors, radii } from "../theme";
+import { FadeInImage } from "./FadeInImage";
 
 interface Props {
   username: string;
@@ -32,7 +33,7 @@ export function Avatar({ username, displayName, avatarMediaId, size = 44, style 
   return (
     <View style={[styles.circle, round, style]} accessible={false} importantForAccessibility="no-hide-descendants">
       {showPhoto ? (
-        <Image
+        <FadeInImage
           source={{ uri: avatarFileUrl(username, avatarMediaId), headers: { Authorization: `Bearer ${accessToken}` } }}
           style={round}
           onError={() => setFailed(true)}

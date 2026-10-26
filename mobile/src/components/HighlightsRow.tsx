@@ -1,6 +1,6 @@
 import { Icon } from "./Icon";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Alert, Image, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { Alert, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { Pressable } from "./Pressable";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -12,6 +12,7 @@ import { ActionSheet } from "./ActionSheet";
 import { tapFeedback } from "../utils/haptics";
 import { mediaFileUrl } from "../api/stories";
 import { DraggableGrid } from "./DraggableGrid";
+import { FadeInImage } from "./FadeInImage";
 
 interface Props {
   username: string;
@@ -192,7 +193,7 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
           <View style={styles.slot}>
             <View style={[styles.card, { height: coverHeight }]}>
               {highlight.coverMediaId ? (
-                <Image
+                <FadeInImage
                   source={{ uri: mediaFileUrl(highlight.coverMediaId, "thumbnail"), headers: authHeaders }}
                   style={styles.coverImage}
                   resizeMode="cover"

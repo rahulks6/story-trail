@@ -87,7 +87,7 @@ async function renderFeed(username = "viewer", creators = ["alice", "bob"]): Pro
   await settle();
 }
 // The Story's photo (playback starts when it loads), not the creator's avatar beside it.
-const storyImage = () => tree.root.find((n) => n.type === Image && typeof n.props.onLoad === "function");
+const storyImage = () => tree.root.find((n) => n.type === Image && typeof n.props.onLoad === "function" && !String(n.props.source?.uri).includes("/avatar/"));
 const texts = () => tree.root.findAllByType(Text).map((t) => [t.props.children].flat().join(""));
 const surface = () => tree.root.find((n) => typeof n.type === "string" && n.props.accessibilityLabel === "Story");
 const touch = (x: number, y: number) => ({
