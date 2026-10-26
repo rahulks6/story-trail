@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import type { Overlay } from "../models/storyDraft";
-import { contrastOn, neonCore, neonRadius, textStyleLook } from "./textLook";
+import { contrastOn, neonCore, neonRadius, textStyleLook, tightTextFits } from "./textLook";
 import { mediaColors as colors, radii } from "../theme";
 
 export /** Text wraps within this fraction of the container's own width (spec: "auto-wrap ... text") rather than growing indefinitely off-canvas. */
@@ -49,7 +49,7 @@ export function OverlayBody({
       const glow = neonRadius(fontSize);
       const textStyle = [
         styles.text,
-        { color: neon ? neonCore(properties.color) : properties.color, fontSize, textAlign: properties.align },
+        { color: neon ? neonCore(properties.color) : properties.color, fontSize, textAlign: properties.align, includeFontPadding: !tightTextFits(properties.text) },
         textStyleLook(properties.style, properties.color, fontSize),
         // Room for the glow, which Android cuts off at the text's edges.
         neon && { padding: glow },
@@ -110,7 +110,7 @@ export { textStyleLook };
 const OUTLINE_OFFSETS: Array<[number, number]> = [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]];
 
 const styles = StyleSheet.create({
-  text: { fontWeight: "600", color: colors.textPrimary, includeFontPadding: false },
+  text: { fontWeight: "600", color: colors.textPrimary },
   outlineCopy: { position: "absolute", left: 0, right: 0, top: 0, bottom: 0 },
   sticker: { color: colors.accentText },
   chip: {

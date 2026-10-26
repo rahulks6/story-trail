@@ -113,6 +113,30 @@ describe("camera microphone", () => {
     expect(alert.mock.calls.at(-1)![0]).toBe("Video too large");
     expect(navigation.replace).not.toHaveBeenCalled();
   });
+
+  const pick = async (asset: Record<string, unknown>) => {
+    g.__picker.result = { assets: [asset] };
+    await act(async () => { tree = create(screen()); });
+    await flush();
+    await act(async () => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === "Choose from gallery").props.onPress());
+  };
+
+  it("says a video is too long before it's edited (the server refuses it only after the upload)", async () => {
+    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+    await pick({ uri: "file:///long.mp4", type: "video/mp4", fileSize: 50 * 1024 * 1024, duration: 95 });
+    expect(alert.mock.calls.at(-1)![0]).toBe("Video too long");
+    expect(navigation.replace).not.toHaveBeenCalled();
+    await act(async () => tree.unmount());
+    await pick({ uri: "file:///ok.mp4", type: "video/mp4", fileSize: 50 * 1024 * 1024, duration: 60.2 });
+    expect(navigation.replace).toHaveBeenCalledWith("StoryEditor", expect.objectContaining({ mediaUri: "file:///ok.mp4", kind: "video" }));
+  });
+
+  it("says an Android HEIC photo isn't supported before it's edited", async () => {
+    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+    await pick({ uri: "content://media/1", type: "image/heic", fileSize: 3 * 1024 * 1024 });
+    expect(alert.mock.calls.at(-1)![0]).toBe("Photo format not supported");
+    expect(navigation.replace).not.toHaveBeenCalled();
+  });
 });
 
 describe("location sticker when location is off", () => {

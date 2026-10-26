@@ -338,6 +338,16 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
       );
       return;
     }
+    // The server turns these away only after the whole file is uploaded: say so before editing.
+    if (kind === "video" && typeof asset.duration === "number" && asset.duration > MAX_RECORDING_SECONDS + 0.5) {
+      Alert.alert("Video too long", `Stories can be up to ${MAX_RECORDING_SECONDS} seconds. Trim the video or choose a shorter one.`);
+      return;
+    }
+    // Android hands over HEIC photos as they are ("compatible" converts them on iOS only).
+    if (kind === "photo" && /^image\/hei[cf]/i.test(asset.type ?? "")) {
+      Alert.alert("Photo format not supported", "HEIC photos aren't supported yet. Choose a JPEG, or set your camera to save JPEG photos.");
+      return;
+    }
     goToEditor(asset.uri, kind, asset.width ?? null, asset.height ?? null, asset.type);
     }catch{if(activeRef.current)Alert.alert('Could not open gallery','Check photo access in Settings and try again.');}
   }, [goToEditor]);

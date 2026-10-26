@@ -523,6 +523,33 @@ describe("Camera + Editor: overlays, filter, and drawing survive publish", () =>
     assert.equal(res.body.story.overlays[0].id, "good");
   });
 
+  it("keeps whole emoji: skin tones, flags and ZWJ families, and never cuts one in half", async () => {
+    const owner = await signupUser();
+    const mediaId = await uploadPhoto(owner.accessToken);
+    const emoji = (id: string, value: string) => ({ id, type: "emoji", x: 0.5, y: 0.5, scale: 1, rotation: 0, zIndex: 1, properties: { emoji: value } });
+    const family = "👨‍👩‍👧‍👦", england = "🏴󠁧󠁢󠁥󠁮󠁧󠁿";
+    const overlays = [
+      emoji("family", family), emoji("flag", "🇮🇳"), emoji("england", england), emoji("tone", "👍🏽"), emoji("coder", "👩🏽‍💻"),
+      emoji("two", "🎉🔥"), emoji("long", "x".repeat(40)),
+      // 279 letters then an emoji: the 280-unit limit falls inside the emoji.
+      { id: "text", type: "text", x: 0.5, y: 0.5, scale: 1, rotation: 0, zIndex: 2, properties: { text: "a".repeat(279) + "😀" } },
+      { id: "place", type: "location", x: 0.5, y: 0.5, scale: 1, rotation: 0, zIndex: 3, properties: { label: "b".repeat(99) + "🌴" } },
+    ];
+    const res = await publishStory(owner.accessToken, mediaId, { overlays });
+    assert.equal(res.status, 201);
+    const byId = Object.fromEntries((res.body.story.overlays as { id: string; properties: Record<string, string> }[]).map((o) => [o.id, o.properties]));
+    assert.equal(byId.family!.emoji, family);
+    assert.equal(byId.flag!.emoji, "🇮🇳");
+    assert.equal(byId.england!.emoji, england);
+    assert.equal(byId.tone!.emoji, "👍🏽");
+    assert.equal(byId.coder!.emoji, "👩🏽‍💻");
+    assert.equal(byId.two!.emoji, "🎉", "one emoji per sticker");
+    assert.equal(byId.long!.emoji, "x");
+    assert.equal(byId.text!.text, "a".repeat(279));
+    assert.equal(byId.place!.label, "b".repeat(99));
+    for (const p of Object.values(byId)) assert.doesNotMatch(Object.values(p).join(""), /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/, "no half emoji");
+  });
+
   it("resolves a mention to the mentioned user's live username, unresolved by whoever posted it", async () => {
     const owner = await signupUser();
     const mentioned = await signupUser();

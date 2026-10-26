@@ -56,6 +56,30 @@ function clamp(n: number, min: number, max: number): number {
   return Math.min(Math.max(n, min), max);
 }
 
+const graphemes = new Intl.Segmenter(undefined, { granularity: "grapheme" });
+/** Longest single emoji kept: a ZWJ family is 11 UTF-16 units, a subdivision flag 14. */
+const MAX_EMOJI_LENGTH = 32;
+
+/**
+ * At most `max` UTF-16 units, cut between characters: a plain slice could split an emoji's
+ * surrogate pair (shown as "�"), a flag, or a ZWJ sequence like a family or a skin tone.
+ */
+function clipText(text: string, max: number): string {
+  if (text.length <= max) return text;
+  let end = 0;
+  for (const { segment } of graphemes.segment(text)) {
+    if (end + segment.length > max) break;
+    end += segment.length;
+  }
+  return text.slice(0, end);
+}
+
+/** The first character of `text` as people see it (one emoji, with its skin tone, flag or ZWJ parts). */
+function firstGrapheme(text: string): string {
+  for (const { segment } of graphemes.segment(text)) return segment;
+  return "";
+}
+
 /**
  * Every overlay is trusted client geometry (x/y/scale/rotation) clamped to
  * a sane range, plus type-specific `properties` validated per type. Bad or
@@ -85,7 +109,7 @@ function parseOverlay(raw: unknown, index: number): StoryOverlay | null {
 
   switch (type) {
     case "text": {
-      const text = typeof properties.text === "string" ? properties.text.slice(0, MAX_CAPTION_LENGTH) : "";
+      const text = typeof properties.text === "string" ? clipText(properties.text, MAX_CAPTION_LENGTH) : "";
       if (text.trim().length === 0) return null;
       const style: (typeof TEXT_STYLES)[number] =
         typeof properties.style === "string" && TEXT_STYLES.includes(properties.style as (typeof TEXT_STYLES)[number])
@@ -101,8 +125,9 @@ function parseOverlay(raw: unknown, index: number): StoryOverlay | null {
       return { id, type: "text", x, y, scale, rotation, zIndex, properties: { text, style, color, backgroundColor, align, fontSize } };
     }
     case "emoji": {
-      const emoji = typeof properties.emoji === "string" ? properties.emoji.slice(0, 8) : "";
-      if (emoji.length === 0) return null;
+      // One emoji, whole: slicing to 8 units cut families, flags and skin tones in half.
+      const emoji = typeof properties.emoji === "string" ? firstGrapheme(properties.emoji.trim()) : "";
+      if (emoji.length === 0 || emoji.length > MAX_EMOJI_LENGTH) return null;
       return { id, type: "emoji", x, y, scale, rotation, zIndex, properties: { emoji } };
     }
     case "mention": {
@@ -111,7 +136,7 @@ function parseOverlay(raw: unknown, index: number): StoryOverlay | null {
       return { id, type: "mention", x, y, scale, rotation, zIndex, properties: { userId } };
     }
     case "location": {
-      const label = typeof properties.label === "string" ? properties.label.trim().slice(0, 100) : "";
+      const label = typeof properties.label === "string" ? clipText(properties.label.trim(), 100) : "";
       if (label.length === 0) return null;
       return { id, type: "location", x, y, scale, rotation, zIndex, properties: { label } };
     }
@@ -120,8 +145,8 @@ function parseOverlay(raw: unknown, index: number): StoryOverlay | null {
         typeof properties.mode === "string" && DATETIME_MODES.includes(properties.mode as (typeof DATETIME_MODES)[number])
           ? (properties.mode as (typeof DATETIME_MODES)[number])
           : "datetime";
-      const value = typeof properties.value === "string" ? properties.value.slice(0, 40) : new Date().toISOString();
-      const display = typeof properties.display === "string" ? properties.display.slice(0, 40) : value;
+      const value = typeof properties.value === "string" ? clipText(properties.value, 40) : new Date().toISOString();
+      const display = typeof properties.display === "string" ? clipText(properties.display, 40) : value;
       return { id, type: "datetime", x, y, scale, rotation, zIndex, properties: { mode, value, display } };
     }
     case "sticker": {

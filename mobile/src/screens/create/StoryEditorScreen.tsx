@@ -274,6 +274,8 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
       if (cancelled) return;
       if (saved && hasMeaningfulEdits(saved.draft)) {
         setDraft(saved.draft);
+        // New objects go in front of the restored ones (they started at 1, behind them).
+        nextZIndex.current = Math.max(nextZIndex.current, ...saved.draft.overlays.map((o) => o.zIndex + 1));
         setAudience(saved.audience);
         if (saved.audience !== "close_friends") setSettings((current) => ({ ...current, visibility: saved.audience as StoryVisibility }));
         setTopic(saved.topic ?? null);

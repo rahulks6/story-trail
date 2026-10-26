@@ -11,6 +11,7 @@ import { getMyArchivedStories, mediaFileUrl, type PublicStory } from "../../api/
 import { createHighlight, deleteHighlight, getHighlightDetail, setHighlightCover, updateHighlight } from "../../api/highlights";
 import { ApiError } from "../../api/client";
 import { DraggableGrid } from "../../components/DraggableGrid";
+import { firstCharacter } from "../../utils/firstCharacter";
 
 type Props = NativeStackScreenProps<RootStackParamList, "HighlightEditor">;
 
@@ -235,7 +236,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
             <Image source={{ uri: mediaFileUrl(coverStory.mediaId, "thumbnail"), headers: authHeaders }} style={styles.coverPreviewImage} resizeMode="cover" />
           ) : (
             <View style={styles.coverPreviewEmpty}>
-              <Text style={styles.coverPreviewInitial}>{cleanTitle(title).charAt(0).toUpperCase() || "?"}</Text>
+              <Text style={styles.coverPreviewInitial}>{firstCharacter(cleanTitle(title)).toUpperCase() || "?"}</Text>
             </View>
           )}
           {selectedStories.length > 0 ? (

@@ -46,6 +46,15 @@ export function fontLook(style: TextStyle): RNTextStyle {
   return look;
 }
 
+/**
+ * Whether Story text can sit tight on its label (Android's includeFontPadding off). Only Latin
+ * letters fit in the Story fonts' own height: an emoji (drawn from the emoji font, which is
+ * taller) or a script such as Hindi with marks above the line was cut off at the top and bottom.
+ */
+export function tightTextFits(text: string): boolean {
+  return /^[\u0000-ɏ -⁯₠-₿]*$/.test(text);
+}
+
 /** Neon's glow radius for text of `fontSize`: Android draws no blur wider than 25. */
 export function neonRadius(fontSize: number): number {
   return Math.min(25, Math.max(6, fontSize * 0.4));
