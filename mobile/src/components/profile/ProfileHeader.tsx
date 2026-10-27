@@ -60,8 +60,8 @@ const RING_SIZE = PHOTO_SIZE + (RING_WIDTH + RING_GAP) * 2;
 const COVER_OVERLAP = Math.round(RING_SIZE * 0.45);
 
 /**
- * A profile's cover: decorative, so nothing happens on a tap. It fades in once loaded and fades
- * softly into the page at its foot (in the page's own colour, so it works in light and dark).
+ * A profile's cover: decorative, so nothing happens on a tap. It fades in once loaded, and only
+ * its very foot softens towards the page (in the page's own colour, so it works in light and dark).
  * Until the image has an answer it holds its space, so the page doesn't jump (also while a cover
  * just saved is still being processed, and is asked for again); if it can't be shown at all it
  * goes, and the header looks as it does without a cover.
@@ -80,8 +80,10 @@ function ProfileCover({ source, bleed, onError }: {
       <Svg style={styles.coverScrim} width="100%" height="100%" pointerEvents="none">
         <Defs>
           <LinearGradient id="profileCoverScrim" x1="0" y1="0" x2="0" y2="1">
+            {/* Eased, and never solid: the photo stays clear and only its edge softens. */}
             <Stop offset="0" stopColor={colors.background} stopOpacity={0} />
-            <Stop offset="1" stopColor={colors.background} stopOpacity={1} />
+            <Stop offset="0.6" stopColor={colors.background} stopOpacity={0.18} />
+            <Stop offset="1" stopColor={colors.background} stopOpacity={0.6} />
           </LinearGradient>
         </Defs>
         <Rect x="0" y="0" width="100%" height="100%" fill="url(#profileCoverScrim)" />
@@ -217,7 +219,7 @@ const styles = StyleSheet.create({
   container: { width: "100%", gap: spacing.md },
   // Full width (past the page's padding), three times as wide as it is tall.
   cover: { aspectRatio: COVER_ASPECT, backgroundColor: colors.surfaceElevated, overflow: "hidden" },
-  coverScrim: { position: "absolute", left: 0, right: 0, bottom: 0, height: "45%" },
+  coverScrim: { position: "absolute", left: 0, right: 0, bottom: 0, height: "22%" },
   topRow: { flexDirection: "row", alignItems: "center", gap: spacing.md },
   // The photo rides up over the cover's foot. The counts start below the cover, so large text
   // grows the row downwards and never runs over the banner.
