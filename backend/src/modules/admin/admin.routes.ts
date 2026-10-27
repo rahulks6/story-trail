@@ -8,7 +8,7 @@ import { config } from "../../config/env";
 import { body, password, text, uuid, integer, confirmation, permissions } from "./policy";
 import { adminLogin, confirmEnrollment, cookie, enabled, hash, regenerateBackupCodes, reauthenticate, requireAdmin, resetAdminMfa, startEnrollment, verifyLoginMfa } from "./security";
 import { rows, one, moderate, manageAdmin } from "./admin.service";
-import { addNote, coverForAdmin, listAppeals, removeCover, reportDetail, reportMessages, reviewAppeal } from "./moderation-admin";
+import { addNote, listAppeals, profilePhotoForAdmin, removeProfilePhoto, reportDetail, reportMessages, reviewAppeal } from "./moderation-admin";
 import { parseReportStatus } from "../moderation/moderation.repository";
 import { mediaStorage } from "../media/instance";
 import { receiveUpload } from "../media/media.service";
@@ -99,10 +99,12 @@ export function registerAdminRoutes(router: Router): void {
     router.post('/api/v1/admin/reports/:id/claim', async (req, res) => { const p = await requireAdmin(req, 'reports.review'); const b = body(req.body); confirmation(b.confirmed); const result = await one(`WITH r AS(UPDATE reports SET status='UNDER_REVIEW',version=version+1,updated_at=now(),reviewed_by=:'actor' WHERE id=:'id' AND status='OPEN' AND version=:'version' RETURNING *),audit AS(INSERT INTO admin_audit(actor_id,action,target_id) SELECT :'actor','REPORT_UNDER_REVIEW',id FROM r) SELECT to_jsonb(r) AS data FROM r`, { id: uuid(req.params.id), actor: p.userId, version: integer(b.version, 1, 2147483647) }); if (!result)
         throw new HttpError(409, 'Report already claimed or resolved. Refresh state.'); sendJson(res, 200, result); });
     router.post('/api/v1/admin/moderate', async (req, res) => { const p = await requireAdmin(req, undefined, false, true); sendJson(res, 200, await moderate(p, body(req.body))); });
-    router.get('/api/v1/admin/users', async (req, res) => { await requireAdmin(req, 'users.view'); const q = parseQueryString(req.url ?? ''); const page = parsePagination(q); sendJson(res, 200, { items: await rows(`SELECT jsonb_build_object('id',id,'username',username,'displayName',display_name,'state',moderation_state,'active',is_active,'hasCover',cover_media_id IS NOT NULL) AS data FROM users WHERE deleted_at IS NULL AND (username::text ILIKE :'pattern' OR id::text=:'search') ORDER BY username LIMIT :'limit' OFFSET :'offset'`, { ...page, pattern: containsPattern((q.search ?? '').slice(0, 100)), search: (q.search ?? '').slice(0, 100) }), ...page }); });
-    // A profile's cover photo (part of the profile, so in scope when the account is reported).
-    router.get('/api/v1/admin/users/:id/cover', async (req, res) => { const p = await requireAdmin(req); const media = await coverForAdmin(p, req.params.id!); res.setHeader('Cache-Control', 'no-store'); await sendMediaFile(req, res, media, 'display', false, mediaStorage, { redirect: false }); });
-    router.post('/api/v1/admin/users/:id/cover/remove', async (req, res) => { const p = await requireAdmin(req, 'content.remove', false, true); sendJson(res, 200, await removeCover(p, req.params.id!, body(req.body))); });
+    router.get('/api/v1/admin/users', async (req, res) => { await requireAdmin(req, 'users.view'); const q = parseQueryString(req.url ?? ''); const page = parsePagination(q); sendJson(res, 200, { items: await rows(`SELECT jsonb_build_object('id',id,'username',username,'displayName',display_name,'state',moderation_state,'active',is_active,'hasAvatar',avatar_media_id IS NOT NULL,'hasCover',cover_media_id IS NOT NULL) AS data FROM users WHERE deleted_at IS NULL AND (username::text ILIKE :'pattern' OR id::text=:'search') ORDER BY username LIMIT :'limit' OFFSET :'offset'`, { ...page, pattern: containsPattern((q.search ?? '').slice(0, 100)), search: (q.search ?? '').slice(0, 100) }), ...page }); });
+    // A profile's photo and cover (part of the profile, so in scope when the account is reported).
+    for (const which of ['avatar', 'cover'] as const) {
+        router.get(`/api/v1/admin/users/:id/${which}`, async (req, res) => { const p = await requireAdmin(req); const media = await profilePhotoForAdmin(p, req.params.id!, which); res.setHeader('Cache-Control', 'no-store'); await sendMediaFile(req, res, media, 'display', false, mediaStorage, { redirect: false }); });
+        router.post(`/api/v1/admin/users/:id/${which}/remove`, async (req, res) => { const p = await requireAdmin(req, 'content.remove', false, true); sendJson(res, 200, await removeProfilePhoto(p, req.params.id!, which, body(req.body))); });
+    }
     router.get('/api/v1/admin/history', async (req, res) => { await requireAdmin(req, 'moderation.history.read'); const q = parseQueryString(req.url ?? ''); const page = parsePagination(q); sendJson(res, 200, { items: await rows(`SELECT to_jsonb(a) AS data FROM moderation_actions a WHERE (:'target'='' OR target_id::text=:'target') ORDER BY created_at DESC LIMIT :'limit' OFFSET :'offset'`, { ...page, target: q.target ?? '' }), ...page }); });
     // Filterable by action (prefix match, e.g. MODERATION_), actor, target and time range.
     router.get('/api/v1/admin/audit', async (req, res) => {

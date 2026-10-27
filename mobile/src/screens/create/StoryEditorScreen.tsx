@@ -1014,6 +1014,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         }}
         onDone={addOrUpdateText}
         canvasHeight={containerSize.height}
+        canvasWidth={containerSize.width}
       />
       <MusicSheet visible={musicSheetVisible} current={music} onClose={() => setMusicSheetVisible(false)} onChoose={setMusic} />
       <StickerSheet

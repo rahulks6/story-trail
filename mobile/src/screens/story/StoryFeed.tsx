@@ -784,6 +784,10 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       ) : null}
       </Animated.View>
 
+      {/* Over the photo but under the creator's text and stickers, so the caption and comment bar
+          read on any photo while what the creator placed keeps its own colours. */}
+      <StoryBottomScrim height={BOTTOM_BAR_HEIGHT + insets.bottom + (currentStory.caption ? 180 : 110)} deep={captionExpanded} style={chrome} />
+
       {/*
         The tap/double-tap/hold/swipe recognizer, as its own layer rather
         than on the outer container: a screen reader collapses whatever
@@ -862,9 +866,6 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       >
         <Icon style={styles.heartBurstIcon} name={ICONS.liked} />
       </Animated.View>
-
-      {/* Under the caption and comment bar, so they read on any photo. */}
-      <StoryBottomScrim height={BOTTOM_BAR_HEIGHT + insets.bottom + (currentStory.caption ? 180 : 110)} deep={captionExpanded} style={chrome} />
 
       <View
         style={[styles.progressRow, chrome, { top: insets.top + spacing.sm }]}

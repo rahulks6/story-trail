@@ -172,6 +172,9 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
         <ActivityIndicator color={colors.accentText} style={styles.loadingSpinner} />
       )}
 
+      {/* Under the creator's text and stickers, so only the caption gets the fade. */}
+      {detail.caption ? <StoryBottomScrim height={spacing.xl * 3 + insets.bottom + 160} deep={captionOpen} /> : null}
+
       {containerSize.width > 0 ? (
         <StoryOverlayLayer
           overlays={detail.overlays}
@@ -194,12 +197,9 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
       </View>
 
       {detail.caption ? (
-        <>
-          <StoryBottomScrim height={spacing.xl * 3 + insets.bottom + 160} deep={captionOpen} />
-          <View style={[styles.caption, { bottom: spacing.xl * 3 + insets.bottom }]}>
-            <StoryCaption text={detail.caption} expanded={captionOpen} onToggle={() => setCaptionOpen((open) => !open)} />
-          </View>
-        </>
+        <View style={[styles.caption, { bottom: spacing.xl * 3 + insets.bottom }]}>
+          <StoryCaption text={detail.caption} expanded={captionOpen} onToggle={() => setCaptionOpen((open) => !open)} />
+        </View>
       ) : null}
 
       <Pressable

@@ -203,4 +203,39 @@ describe("moderation", () => {
     // Nothing else on the profile changed.
     assert.equal((await client.get("/api/v1/auth/me", authHeader(alice.token))).body.user.displayName, alice.displayName);
   });
+
+  it("an admin takes a rule-breaking profile photo off the same way, leaving the cover and the rest", async () => {
+    const [alice, moderator, viewerOnly] = [await signup(), await signup(), await signup()];
+    const [avatar, cover] = [await uploadPhoto(alice.token), await uploadPhoto(alice.token)];
+    assert.equal((await client.patch("/api/v1/users/me", { avatarMediaId: avatar, coverMediaId: cover }, authHeader(alice.token))).status, 200);
+    await query(`INSERT INTO admin_grants(user_id, role, permissions) VALUES (:'id', 'ADMIN', '["users.view", "content.remove"]'::jsonb)`, { id: moderator.id });
+    await query(`INSERT INTO admin_grants(user_id, role, permissions) VALUES (:'id', 'ADMIN', '["users.view"]'::jsonb)`, { id: viewerOnly.id });
+    const admin = await adminSignIn(baseUrl, moderator.email, moderator.password);
+    const viewer = await adminSignIn(baseUrl, viewerOnly.email, viewerOnly.password);
+
+    const users = (await (await fetch(`${baseUrl}/api/v1/admin/users?search=${alice.username}`, { headers: viewer })).json()) as { items: Array<{ hasAvatar: boolean }> };
+    assert.equal(users.items[0]?.hasAvatar, true);
+    const image = await fetch(`${baseUrl}/api/v1/admin/users/${alice.id}/avatar`, { headers: viewer });
+    assert.equal(image.status, 200);
+    await image.arrayBuffer();
+
+    const remove = (headers: Record<string, string>, body: Record<string, unknown>) =>
+      fetch(`${baseUrl}/api/v1/admin/users/${alice.id}/avatar/remove`, { method: "POST", headers: { ...headers, "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    assert.equal((await remove(viewer, { reason: "Offensive", confirmed: true })).status, 403, "users.view alone can't remove it");
+    assert.equal((await remove(admin, { reason: "Offensive" })).status, 422, "needs explicit confirmation");
+    const done = await remove(admin, { reason: "Offensive profile photo", confirmed: true });
+    assert.equal(done.status, 200);
+    assert.deepEqual(await done.json(), { userId: alice.id, mediaId: avatar });
+    assert.equal((await remove(admin, { reason: "Again", confirmed: true })).status, 404, "nothing left to remove");
+
+    const audit = await queryOne(`SELECT actor_id, metadata FROM admin_audit WHERE action = 'USER_AVATAR_REMOVED' AND target_id = :'id'`, { id: alice.id });
+    assert.equal(audit?.actor_id, moderator.id);
+    assert.deepEqual(JSON.parse(String(audit?.metadata)), { mediaId: avatar, reason: "Offensive profile photo" });
+    const profile = (await client.get(`/api/v1/users/${alice.username}`, authHeader(viewerOnly.token))).body.profile;
+    assert.equal(profile.avatarMediaId, null);
+    assert.equal(profile.coverMediaId, cover, "the cover stays");
+    const file = await fetch(`${baseUrl}/api/v1/users/${alice.username}/avatar/file`, { headers: authHeader(viewerOnly.token) });
+    await file.arrayBuffer();
+    assert.equal(file.status, 404);
+  });
 });

@@ -7,6 +7,7 @@ import { Icon } from "./Icon";
 import { contrastOn, neonCore, neonRadius, STYLE_LABELS, TEXT_STYLES, textStyleLook, tightTextFits } from "./textLook";
 import type { TextOverlayProperties, TextStyle } from "../models/storyDraft";
 import { tapFeedback } from "../utils/haptics";
+import { TEXT_MAX_WIDTH_FRACTION } from "./OverlayBody";
 
 const COLORS = ["#FFFFFF", "#000000", "#F5B400", "#FF8A00", "#E4483C", "#FF5DA2", "#A45CFF", "#3E7BFF", "#2EC4E6", "#3FBF7F", "#9A6B4F", "#8E8E93"];
 const ALIGNS: TextOverlayProperties["align"][] = ["center", "left", "right"];
@@ -28,6 +29,8 @@ interface Props {
   onDone: (text: string, properties: TextOverlayProperties) => void;
   /** The Story canvas's height, so the text is previewed at the size it will have on the photo. */
   canvasHeight?: number;
+  /** And its width, so lines break while typing exactly where they will on the Story. */
+  canvasWidth?: number;
 }
 
 /**
@@ -36,7 +39,7 @@ interface Props {
  * the slider on the left sets the size; "A" puts the text on a label in the chosen colour. Tapping
  * anywhere outside the text, or Done, places it. Nothing typed just closes.
  */
-export function TextToolModal({ visible, initialText, initialProperties, onCancel, onDone, canvasHeight }: Props): React.JSX.Element {
+export function TextToolModal({ visible, initialText, initialProperties, onCancel, onDone, canvasHeight, canvasWidth }: Props): React.JSX.Element {
   const [text, setText] = useState(initialText ?? "");
   const [style, setStyle] = useState<TextStyle>(initialProperties?.style ?? "Clean");
   const hadBackground = initialProperties?.backgroundColor != null;
@@ -82,6 +85,8 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
   const alignIcon = align === "left" ? ICONS.alignLeft : align === "right" ? ICONS.alignRight : ICONS.alignCenter;
   // The preview is the size it will be on a full-screen Story.
   const previewSize = Math.round(size * (canvasHeight && canvasHeight > 0 ? canvasHeight : 760));
+  // The Story wraps text at this width (OverlayBody), label padding and Neon's glow room included.
+  const wrapWidth = canvasWidth && canvasWidth > 0 ? canvasWidth * TEXT_MAX_WIDTH_FRACTION + (neon ? neonRadius(previewSize) * 2 : 0) : undefined;
 
   return (
     <Modal visible={visible} animationType="fade" transparent statusBarTranslucent navigationBarTranslucent onRequestClose={done}>
@@ -127,7 +132,7 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
             <View style={styles.sliderTrack} />
             <View style={[styles.sliderThumb, { top: (1 - sliderFraction) * (SLIDER_HEIGHT - 22) }]} />
           </View>
-          <View style={[styles.inputBox, hasBackground && { backgroundColor: color, borderRadius: previewSize * 0.28, paddingHorizontal: previewSize * 0.35, paddingVertical: previewSize * 0.12 }, { alignSelf: align === "left" ? "flex-start" : align === "right" ? "flex-end" : "center" }]}>
+          <View style={[styles.inputBox, wrapWidth !== undefined && { maxWidth: wrapWidth, paddingHorizontal: 0, paddingVertical: 0 }, hasBackground && { backgroundColor: color, borderRadius: previewSize * 0.3, paddingHorizontal: previewSize * 0.35, paddingVertical: previewSize * 0.12 }, { alignSelf: align === "left" ? "flex-start" : align === "right" ? "flex-end" : "center" }]}>
             <TextInput
               allowFontScaling={false}
               autoFocus

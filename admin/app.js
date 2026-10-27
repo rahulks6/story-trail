@@ -190,12 +190,13 @@ function reasonForm(box, label, submit, action) {
     box.append(f);
     input.focus();
 }
-/** A profile's cover photo: look at it, and take it off the profile (audit-logged with the reason). */
-function coverActions(box, a, user) {
-    a.append(button('Show cover photo', async () => { box.append(await privateImage('/api/v1/admin/users/' + user.id + '/cover', 'Cover photo of @' + user.username, 'cover')); }, true));
+/** A profile's photo or cover: look at it, and take it off the profile (audit-logged with the reason). */
+function photoActions(box, a, user, which) {
+    const label = which === 'avatar' ? 'profile photo' : 'cover photo';
+    a.append(button('Show ' + label, async () => { box.append(await privateImage('/api/v1/admin/users/' + user.id + '/' + which, label[0].toUpperCase() + label.slice(1) + ' of @' + user.username, which === 'avatar' ? 'profile-photo' : 'cover')); }, true));
     if (has('content.remove'))
-        a.append(button('Remove cover photo', () => { const reason = prompt('Reason for removing the cover photo (kept in the audit log)'); if (reason)
-            return mutate('users/' + user.id + '/cover/remove', { reason }, 'Remove the cover photo from @' + user.username + '\'s profile?'); }, true));
+        a.append(button('Remove ' + label, () => { const reason = prompt('Reason for removing the ' + label + ' (kept in the audit log)'); if (reason)
+            return mutate('users/' + user.id + '/' + which + '/remove', { reason }, 'Remove the ' + label + ' from @' + user.username + '\'s profile?'); }, true));
 }
 function accountFields(box, u) {
     const days = Math.floor((Date.now() - Date.parse(u.joinedAt)) / 86400000);
@@ -458,8 +459,10 @@ async function renderItems(container, items) { if (!items.length) {
             if (has(perm))
                 a.append(button(label, () => { const reason = prompt('Reason for this account action'); if (reason)
                     return mutate('moderate', { targetType: 'user', targetId: item.id, action, reason }, label + ' this account?'); }, true));
+        if (item.hasAvatar)
+            photoActions(box, a, item, 'avatar');
         if (item.hasCover)
-            coverActions(box, a, item);
+            photoActions(box, a, item, 'cover');
     }
     if (page === 'Moderation' && ['remove'].includes(item.action) && item.target_type !== 'ad' && has('content.restore'))
         a.append(button('Restore content', () => { const reason = prompt('Reason for restoring content'); if (reason)
@@ -490,9 +493,14 @@ async function review(id) { const version = ++renderVersion; const data = await 
     fields(box, data.target);
     if (data.target.mediaId)
         await preview(box, '/api/v1/admin/evidence/' + id, data.target.caption || '', 'Reported content');
-    // A reported profile includes its cover photo.
-    if (data.report.target_type === 'user' && data.target.hasCover && has('reports.review'))
-        coverActions(box, actions(box), data.target);
+    // A reported profile includes its photo and cover.
+    if (data.report.target_type === 'user' && (data.target.hasAvatar || data.target.hasCover) && has('reports.review')) {
+        const a = actions(box);
+        if (data.target.hasAvatar)
+            photoActions(box, a, data.target, 'avatar');
+        if (data.target.hasCover)
+            photoActions(box, a, data.target, 'cover');
+    }
 } if (data.evidence && data.evidence.messages > 0) {
     // Messages the reporter attached; opening them is recorded in the audit log.
     const dm = el('div', undefined, 'notice');

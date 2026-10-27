@@ -27,7 +27,7 @@ export async function reportDetail(p: Principal, reportId: string): Promise<Reco
   const preview = await one(`SELECT data FROM (
     SELECT 'story' AS type, s.id, jsonb_build_object('id', s.id, 'username', u.username, 'caption', s.caption, 'mediaId', s.media_id, 'deleted', s.deleted_at IS NOT NULL) AS data FROM stories s JOIN users u ON u.id = s.owner_id
     UNION ALL SELECT 'comment', c.id, jsonb_build_object('id', c.id, 'username', u.username, 'body', c.body, 'deleted', c.deleted_at IS NOT NULL) FROM story_comments c JOIN users u ON u.id = c.user_id
-    UNION ALL SELECT 'user', u.id, jsonb_build_object('id', u.id, 'username', u.username, 'bio', u.bio, 'state', u.moderation_state, 'hasCover', u.cover_media_id IS NOT NULL) FROM users u
+    UNION ALL SELECT 'user', u.id, jsonb_build_object('id', u.id, 'username', u.username, 'bio', u.bio, 'state', u.moderation_state, 'hasAvatar', u.avatar_media_id IS NOT NULL, 'hasCover', u.cover_media_id IS NOT NULL) FROM users u
     UNION ALL SELECT 'ad', c.id, jsonb_build_object('id', c.id, 'caption', c.caption, 'mediaId', c.media_id, 'destination', c.destination, 'state', c.review_status) FROM ad_creatives c
   ) targets WHERE type = :'type' AND id = :'target'`, { type, target });
   const creator = await one(`SELECT jsonb_build_object(
@@ -92,37 +92,46 @@ export async function reportMessages(p: Principal, reportId: string): Promise<Re
   return items;
 }
 
+/** The two photos on a profile: the round profile photo and the cover behind it. */
+export type ProfilePhoto = "avatar" | "cover";
+const PHOTO: Record<ProfilePhoto, { column: string; label: string; audit: string }> = {
+  avatar: { column: "avatar_media_id", label: "profile photo", audit: "USER_AVATAR_REMOVED" },
+  cover: { column: "cover_media_id", label: "cover photo", audit: "USER_COVER_REMOVED" },
+};
+
 /**
- * A profile's cover photo is part of the profile: reporting the account covers it. Moderators
- * reviewing reports, or anyone who can view accounts, may look at it.
+ * A profile's photos are part of the profile: reporting the account covers them. Moderators
+ * reviewing reports, or anyone who can view accounts, may look at them.
  */
-export async function coverForAdmin(p: Principal, userId: string): Promise<MediaRecord> {
+export async function profilePhotoForAdmin(p: Principal, userId: string, which: ProfilePhoto): Promise<MediaRecord> {
   if (p.role !== "SUPER_ADMIN" && !p.permissions.includes("reports.read") && !p.permissions.includes("users.view")) {
     throw new HttpError(403, "Permission denied.");
   }
   const row = await queryOne(
-    `SELECT ${MEDIA_COLUMNS.split(", ").map((c) => `m.${c}`).join(", ")} FROM users u JOIN media m ON m.id = u.cover_media_id WHERE u.id = :'id'`,
+    `SELECT ${MEDIA_COLUMNS.split(", ").map((c) => `m.${c}`).join(", ")} FROM users u JOIN media m ON m.id = u.${PHOTO[which].column} WHERE u.id = :'id'`,
     { id: uuid(userId) },
   );
   const media = row ? mapMediaRow(row) : null;
-  if (!media || media.purgedAt) throw new HttpError(404, "No cover photo.");
+  if (!media || media.purgedAt) throw new HttpError(404, `No ${PHOTO[which].label}.`);
   return media;
 }
 
 /**
- * Takes a cover photo off a profile (`content.remove`), written to the audit log with the reason.
- * The account keeps everything else; the photo, now unused, is deleted by the retention job.
+ * Takes a profile photo or cover off a profile (`content.remove`), written to the audit log with
+ * the reason. The account keeps everything else (a removed profile photo shows the initial); the
+ * photo, now unused, is deleted by the retention job.
  */
-export async function removeCover(p: Principal, userId: string, input: Record<string, unknown>): Promise<Record<string, unknown>> {
+export async function removeProfilePhoto(p: Principal, userId: string, which: ProfilePhoto, input: Record<string, unknown>): Promise<Record<string, unknown>> {
   authorize(p, "content.remove");
   confirmation(input.confirmed);
-  const removed = await one(`WITH target AS (SELECT id, cover_media_id FROM users WHERE id = :'id' AND cover_media_id IS NOT NULL FOR UPDATE),
-      u AS (UPDATE users SET cover_media_id = NULL FROM target WHERE users.id = target.id RETURNING users.id, target.cover_media_id AS media_id),
+  const { column, label, audit } = PHOTO[which];
+  const removed = await one(`WITH target AS (SELECT id, ${column} AS media_id FROM users WHERE id = :'id' AND ${column} IS NOT NULL FOR UPDATE),
+      u AS (UPDATE users SET ${column} = NULL FROM target WHERE users.id = target.id RETURNING users.id, target.media_id),
       audit AS (INSERT INTO admin_audit (actor_id, action, target_id, metadata)
-                SELECT :'actor', 'USER_COVER_REMOVED', u.id, jsonb_build_object('mediaId', u.media_id, 'reason', :'reason') FROM u)
+                SELECT :'actor', '${audit}', u.id, jsonb_build_object('mediaId', u.media_id, 'reason', :'reason') FROM u)
     SELECT jsonb_build_object('userId', id, 'mediaId', media_id) AS data FROM u`,
     { id: uuid(userId), actor: p.userId, reason: text(input.reason, 500) });
-  if (!removed) throw new HttpError(404, "This account has no cover photo.");
+  if (!removed) throw new HttpError(404, `This account has no ${label}.`);
   return removed;
 }
 
