@@ -200,7 +200,7 @@ Under **Grow users**, **Store presence**, **Main store listing**:
 | Field | Katkee |
 |---|---|
 | App name (30 characters) | Katkee |
-| Short description (80) | Share Stories that disappear in 24 hours. Keep the best as Highlights. |
+| Short description (80) | See `docs/STORE_LISTING_ASO.md` (written for search) |
 | App icon (512 x 512, 32-bit PNG) | `brand/store/google-play-icon-512.png` |
 | Feature graphic (1024 x 500) | `brand/store/google-play-feature-graphic-1024x500.png` |
 | Phone screenshots (2 to 8) | From the release build on a phone: Home, a creator page, Create, Messages, Activity. Real screens only |
@@ -208,7 +208,9 @@ Under **Grow users**, **Store presence**, **Main store listing**:
 | Contact email | support@katkee.com |
 | Website | https://katkee.com |
 
-Full description (up to 4,000 characters):
+Full description (up to 4,000 characters): use the newer, search-friendly text in
+`docs/STORE_LISTING_ASO.md`, which covers chats, voice notes, festivals and interests. The text
+below is the original.
 
 ```
 Katkee is Stories, and nothing else.
