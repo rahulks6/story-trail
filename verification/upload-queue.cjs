@@ -47,7 +47,7 @@ function fixture(opts={}){
    return opts.processing?{publish:{state:'processing',requestId:input.requestId,mediaId:input.mediaId}}:{story:{id:'same-story'}};},
   getPublishRequest:async()=>{calls.polls++;return {publish:pollAnswers.shift()??{state:'processing'}};}};
  const fastTimers={setTimeout:fn=>setTimeout(fn,0),clearTimeout};
- function load(){return loadModule(queueCode,{'@react-native-async-storage/async-storage':storage,'@dr.pogodin/react-native-fs':native,'../api/client':{ApiError},'../api/media':media,'../api/stories':story,'../utils/base64':base64,'./storyChanges':{storyPublished(){storyChanges++;}},'../analytics/analytics':{track(name,properties){events.push({name,...properties});}}},fastTimers);}
+ function load(){return loadModule(queueCode,{'@react-native-async-storage/async-storage':storage,'@dr.pogodin/react-native-fs':native,'../api/client':{ApiError},'../api/media':media,'../api/stories':story,'../utils/base64':base64,'./storyChanges':{storyPublished(){storyChanges++;}},'../utils/reviewPrompt':{noteStoryPosted:async()=>false},'../analytics/analytics':{track(name,properties){events.push({name,...properties});}}},fastTimers);}
  return {load,store,files,calls,server,partCount,events,session:()=>session,logoutDuringUpload(){duringUpload=()=>{session=null;};},get storyChanges(){return storyChanges;},
   succeedPublish(){failResponse=false;},setPolls(list){pollAnswers.splice(0,pollAnswers.length,...list);},setPublishError(e){opts.publishError=e;},
   clearFailures(){failPart.clear();}};

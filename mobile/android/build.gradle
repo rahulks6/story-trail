@@ -9,6 +9,10 @@ buildscript {
         targetSdkVersion = 36
         ndkVersion = "27.1.12297006"
         kotlinVersion = "2.2.0"
+        // react-native-in-app-review: Google Play's in-app review sheet (and the Play services
+        // version the app already resolves).
+        playReviewVersion = "2.0.2"
+        playServicesVersion = "18.9.0"
     }
     repositories {
         google()

@@ -5,6 +5,7 @@ import {abortUploadSession,completeUploadSession,createUploadSession,getUploadSe
 import {deleteStory,getPublishRequest,publishStory,type PublishStoryInput} from '../api/stories';
 import {base64ToBytes} from '../utils/base64';
 import {storyPublished} from './storyChanges';
+import {noteStoryPosted} from '../utils/reviewPrompt';
 import {track} from '../analytics/analytics';
 
 /**
@@ -199,6 +200,8 @@ export function runUpload(ownerId:string,id:string,session:()=>{ownerId:string;t
     if(job.networkFailure||job.autoRetries)job=await persist({...job,networkFailure:undefined,autoRetries:undefined,failedAt:undefined});
     track('upload_succeeded',{mediaKind:job.kind,durationMs:Math.min(3_600_000,Date.now()-attemptStarted)});
     storyPublished();
+    // A good moment to ask for a rating (the third Story, then rarely): see reviewPrompt.ts.
+    void noteStoryPosted();
     await RNFS.unlink(file(ownerId,id)).catch(()=>undefined);
    }
   }catch(e){
