@@ -1,98 +1,98 @@
-10-27 20:44:00.602 D/AndroidRuntime( 3959): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-27 20:44:00.608 D/EGL_emulation(  905): app_time_stats: avg=26722.74ms min=26722.74ms max=26722.74ms count=1
-10-27 20:44:00.611 I/AndroidRuntime( 3959): Using default boot image
-10-27 20:44:00.612 I/AndroidRuntime( 3959): Leaving lock profiling enabled
-10-27 20:44:00.623 W/Looper  ( 1209): Handler (angj) {59d0c1e} sendMessageAtTime() called with no mQueue
-10-27 20:44:00.623 W/Looper  ( 1209): java.lang.RuntimeException: Handler (angj) {59d0c1e} sendMessageAtTime() called with no mQueue
-10-27 20:44:00.623 W/Looper  ( 1209): 	at angj.sendMessageAtTime(:com.google.android.gms@242335041@24.23.35 (190800-646585959):21)
-10-27 20:44:00.623 W/Looper  ( 1209): 	at android.os.Handler.sendMessageDelayed(Handler.java:706)
-10-27 20:44:00.623 W/Looper  ( 1209): 	at android.os.Handler.post(Handler.java:436)
-10-27 20:44:00.623 W/Looper  ( 1209): 	at android.app.LoadedApk$ReceiverDispatcher.performReceive(LoadedApk.java:1905)
-10-27 20:44:00.623 W/Looper  ( 1209): 	at android.app.LoadedApk$ReceiverDispatcher$InnerReceiver.performReceive(LoadedApk.java:1721)
-10-27 20:44:00.623 W/Looper  ( 1209): 	at android.app.ActivityThread$ApplicationThread.scheduleRegisteredReceiver(ActivityThread.java:1470)
-10-27 20:44:00.623 W/Looper  ( 1209): 	at android.app.IApplicationThread$Stub.onTransact(IApplicationThread.java:743)
-10-27 20:44:00.623 W/Looper  ( 1209): 	at android.os.Binder.execTransactInternal(Binder.java:1505)
-10-27 20:44:00.623 W/Looper  ( 1209): 	at android.os.Binder.execTransact(Binder.java:1444)
-10-27 20:44:00.634 D/ControlsListingControllerImpl(  905): ServiceConfig reloaded, count: 0
-10-27 20:44:00.634 D/ControlsListingControllerImpl(  905): ServiceConfig reloaded, count: 0
-10-27 20:44:00.653 W/s.nexuslauncher( 3514): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/Drive/Drive.apk' with 1 weak references
-10-27 20:44:00.653 W/s.nexuslauncher( 3514): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/Velvet/Velvet.apk' with 1 weak references
-10-27 20:44:00.654 W/s.nexuslauncher( 3514): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/DocumentsUIGoogle/DocumentsUIGoogle.apk' with 1 weak references
-10-27 20:44:00.654 W/s.nexuslauncher( 3514): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/GoogleDialer/GoogleDialer.apk' with 1 weak references
-10-27 20:44:00.654 W/s.nexuslauncher( 3514): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/YouTube/YouTube.apk' with 1 weak references
-10-27 20:44:00.654 W/s.nexuslauncher( 3514): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/CalendarGooglePrebuilt/CalendarGooglePrebuilt.apk' with 1 weak references
-10-27 20:44:00.655 W/s.nexuslauncher( 3514): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/PrebuiltGmail/PrebuiltGmail.apk' with 1 weak references
-10-27 20:44:00.658 W/s.nexuslauncher( 3514): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/Maps/Maps.apk' with 1 weak references
-10-27 20:44:00.658 W/s.nexuslauncher( 3514): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~_jieVx-uEY_krtmDSqOdeg==/com.android.chrome-yf8mqlwt5x_IA-TfLgSUBg==/Chrome.apk' with 1 weak references
-10-27 20:44:00.658 W/s.nexuslauncher( 3514): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~BHXXVF6HMBMYUaeQ7dD_uQ==/com.google.android.trichromelibrary_636771938-oTG4nk7XiRRPhJqPwRB1kg==/TrichromeLibrary.apk' with 1 weak references
-10-27 20:44:00.658 W/s.nexuslauncher( 3514): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/PrebuiltBugle/PrebuiltBugle.apk' with 1 weak references
-10-27 20:44:00.659 W/s.nexuslauncher( 3514): ApkAssets: Deleting an ApkAssets object '<empty> and /system_ext/priv-app/SettingsGoogle/SettingsGoogle.apk' with 1 weak references
-10-27 20:44:00.659 W/s.nexuslauncher( 3514): ApkAssets: Deleting an ApkAssets object '/product/overlay/SettingsGoogle__sdk_gphone64_x86_64__auto_generated_rro_product.apk' with 1 weak references
-10-27 20:44:00.659 W/s.nexuslauncher( 3514): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/SettingsIntelligenceGooglePrebuilt/SettingsIntelligenceGooglePrebuilt.apk' with 1 weak references
-10-27 20:44:00.660 W/s.nexuslauncher( 3514): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/WellbeingPrebuilt/WellbeingPrebuilt.apk' with 1 weak references
-10-27 20:44:00.682 I/app_process( 3959): Core platform API reporting enabled, enforcing=false
-10-27 20:44:00.683 I/app_process( 3959): Using CollectorTypeCMC GC.
+10-28 10:47:21.138 D/AndroidRuntime( 3821): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-28 10:47:21.139 W/Role    (  558): Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58
+10-28 10:47:21.141 I/AndroidRuntime( 3821): Using default boot image
+10-28 10:47:21.141 I/AndroidRuntime( 3821): Leaving lock profiling enabled
+10-28 10:47:21.145 D/TrafficStats( 1563): tagSocket(194) with statsTag=0x3c010301, statsUid=-1
+10-28 10:47:21.152 I/app_process( 3821): Core platform API reporting enabled, enforcing=false
+10-28 10:47:21.152 I/app_process( 3821): Using CollectorTypeCMC GC.
+10-28 10:47:21.159 I/Checkin ( 1563): [AndroidCheckinProtoModule] Checkin reason type: 1 attempt count: 1.
+10-28 10:47:21.187 D/TrafficStats( 1563): tagSocket(197) with statsTag=0x3c010301, statsUid=-1
+10-28 10:47:21.211 D/TrafficStats( 1563): tagSocket(197) with statsTag=0x3c010301, statsUid=-1
+10-28 10:47:21.227 W/MagnificationConnectionManager(  558): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-28 10:47:21.228 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:47:21.229 D/PackageUpdatedTask( 1165): Package updated: mOp=UPDATE packages=[com.google.android.googlequicksearchbox]
+10-28 10:47:21.230 I/AiAiEcho( 1415): AppFetcherImpl onPackageChanged com.google.android.googlequicksearchbox.
+10-28 10:47:21.230 W/MagnificationConnectionManager(  558): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-28 10:47:21.231 I/AiAiEcho( 1415): AppFetcherImpl onPackageChanged com.google.android.apps.messaging.
+10-28 10:47:21.231 W/MagnificationConnectionManager(  558): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-28 10:47:21.235 W/MagnificationConnectionManager(  558): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-28 10:47:21.235 I/CredentialManager(  558): CredentialManagerServiceImpl constructed for: com.google.android.gms/.auth.api.credentials.credman.service.PasswordAndPasskeyService
+10-28 10:47:21.235 I/CredentialManager(  558): newServiceInfoLocked, mInfo null, com.google.android.gms/com.google.android.gms.auth.api.credentials.credman.service.PasswordAndPasskeyService
+10-28 10:47:21.236 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:47:21.238 I/AiAiEcho( 1415): AppIndexer Package:[com.google.android.googlequicksearchbox] UserProfile:[0] Enabled:[true].
+10-28 10:47:21.238 I/AiAiEcho( 1415): AppFetcherImplV2 updateApps package:[com.google.android.googlequicksearchbox], userId:[0], reason:[package is updated.].
+10-28 10:47:21.238 I/AiAiEcho( 1415): AppIndexer Package:[com.google.android.apps.messaging] UserProfile:[0] Enabled:[true].
+10-28 10:47:21.242 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:47:21.242 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:47:21.244 I/AiAiEcho( 1415): AppFetcherImpl onPackageChanged com.google.android.gms.
+10-28 10:47:21.244 I/AiAiEcho( 1415): AppFetcherImplV2 updateApps package:[com.google.android.apps.messaging], userId:[0], reason:[package is updated.].
+10-28 10:47:21.256 W/ChimeraUtils( 1563): Module com.google.android.gms.container missing resource null(0)
+10-28 10:47:21.259 I/AiAiEcho( 1415): AppIndexer Package:[com.google.android.gms] UserProfile:[0] Enabled:[true].
+10-28 10:47:21.260 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:47:21.262 I/AiAiEcho( 1415): AppFetcherImplV2 updateApps package:[com.google.android.gms], userId:[0], reason:[package is updated.].
+10-28 10:47:21.263 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:47:21.271 W/IPCThreadState(  558): Sending oneway calls to frozen process.
 --
-10-27 20:44:01.135 D/AndroidRuntime( 3959): Calling main entry com.android.commands.am.Am
-10-27 20:44:01.137 W/AllAppsList( 3514): updatePromiseInstallInfo: no Activities matched updated package, removing all apps from package=dev.mobile.maestro.test
-10-27 20:44:01.138 D/UiAutomationConnection( 3959): Created on user UserHandle{0}
-10-27 20:44:01.143 I/AiAiEcho( 1385): AppIndexer Package:[dev.mobile.maestro.test] UserProfile:[0] Enabled:[true].
-10-27 20:44:01.143 I/AiAiEcho( 1385): AppFetcherImplV2 updateApps package:[dev.mobile.maestro.test], userId:[0], reason:[package is updated.].
-10-27 20:44:01.152 I/PhenotypeResourceReader( 1209): unable to find any Phenotype resource metadata for com.google.android.gms.supervision
-10-27 20:44:01.176 I/ActivityManager(  556): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-10-27 20:44:01.176 I/Checkin ( 1425): [CheckinRequestProcessor] updateCheckinIdTokenFileFromResponse, Reading existing AID
-10-27 20:44:01.177 I/NetworkScheduler.Stats( 1209): Task com.google.android.gms/com.google.android.gms.notifications.registration.service.NotificationsRegistrationTaskBoundService finished executing. cause:5 result: 1 elapsed_millis: 4029 uptime_millis: 4029 exec_start_elapsed_seconds: 81 [CONTEXT service_id=218 ]
-10-27 20:44:01.181 D/ShortcutService(  556): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=null
-10-27 20:44:01.190 I/Checkin ( 1425): [CheckinRequestProcessor] Default Task : Checkin Succeeded: https://android.googleapis.com/checkin (fragment #1).
-10-27 20:44:01.202 V/GrammaticalInflectionUtils(  556): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@718d9bc, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
-10-27 20:44:01.204 I/PhenotypeResourceReader( 1209): unable to find any Phenotype resource metadata for com.android.settings
-10-27 20:44:01.212 I/AppsFilter(  556): interaction: PackageSetting{54118a2 com.android.microdroid.empty_payload/10198} -> PackageSetting{8560c5 dev.mobile.maestro/10210} BLOCKED
-10-27 20:44:01.216 I/AppWidgetServiceImpl(  556): getInstalledProvidersForProfiles() 0
-10-27 20:44:01.220 D/InetDiagMessage(  556): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
-10-27 20:44:01.220 D/InetDiagMessage(  556): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
-10-27 20:44:01.220 D/InetDiagMessage(  556): Destroyed live tcp sockets for uids={2000} in 0ms
-10-27 20:44:01.222 W/ParceledListSlice(  556): Element #25 is 19764 bytes.
-10-27 20:44:01.229 W/ParceledListSlice(  556): Element #26 is 19800 bytes.
-10-27 20:44:01.231 W/ParceledListSlice(  556): Element #27 is 19644 bytes.
-10-27 20:44:01.231 W/ParceledListSlice(  556): Element #28 is 19552 bytes.
-10-27 20:44:01.231 W/ParceledListSlice(  556): Element #29 is 19664 bytes.
-10-27 20:44:01.228 D/Zygote  (  358): Forked child process 3976
-10-27 20:44:01.241 W/PackageManager( 1385): Failure retrieving text 0x7f130786 in package com.android.systemui
-10-27 20:44:01.241 W/PackageManager( 1385): android.content.res.Resources$NotFoundException: String resource ID #0x7f130786
-10-27 20:44:01.241 W/PackageManager( 1385): 	at android.content.res.Resources.getText(Resources.java:466)
-10-27 20:44:01.241 W/PackageManager( 1385): 	at android.app.ApplicationPackageManager.getText(ApplicationPackageManager.java:2405)
-10-27 20:44:01.241 W/PackageManager( 1385): 	at android.appwidget.AppWidgetProviderInfo.loadDescription(AppWidgetProviderInfo.java:484)
-10-27 20:44:01.241 W/PackageManager( 1385): 	at kml.a(PG:341)
-10-27 20:44:01.241 W/PackageManager( 1385): 	at kmg.b(PG:39)
+10-28 10:47:21.643 D/AndroidRuntime( 3821): Calling main entry com.android.commands.am.Am
+10-28 10:47:21.647 D/UiAutomationConnection( 3821): Created on user UserHandle{0}
+10-28 10:47:21.660 I/PackageWatchdog(  558): Syncing state, reason: observing new packages
+10-28 10:47:21.660 I/PackageWatchdog(  558): Not pruning observers, elapsed time: 0ms
+10-28 10:47:21.660 I/PackageWatchdog(  558): Cancelling state sync, nothing to sync
+10-28 10:47:21.660 D/PackageWatchdog(  558): rescue-party-observer added the following packages to monitor [com.google.android.providers.media.module, android]
+10-28 10:47:21.660 I/PackageWatchdog(  558): Syncing state, reason: updated observers
+10-28 10:47:21.660 I/PackageWatchdog(  558): Not pruning observers, elapsed time: 0ms
+10-28 10:47:21.660 I/PackageWatchdog(  558): Saving observer state to file
+10-28 10:47:21.675 D/PickerSyncLockManager( 1416): Trying to acquire lock com.android.providers.media.photopicker.sync.CloseableReentrantLock@51173fd[Unlocked]. Lock Name = CLOUD_PROVIDER_LOCK. Threads that may be waiting to acquire this lock = []
+10-28 10:47:21.676 D/CloseableReentrantLock( 1416): Successfully acquired lock com.android.providers.media.photopicker.sync.CloseableReentrantLock@51173fd[Locked by thread fg]. Lock Name = CLOUD_PROVIDER_LOCK. Threads that may be waiting to acquire this lock = []
+10-28 10:47:21.676 D/CloseableReentrantLock( 1416): Successfully released lock com.android.providers.media.photopicker.sync.CloseableReentrantLock@51173fd[Unlocked]. Lock Name = CLOUD_PROVIDER_LOCK. Threads that may be waiting to acquire this lock = []
+10-28 10:47:21.676 D/PickerDataLayer( 1416): Cloud provider allowlist was changed, and the current cloud provider is no longer on the allowlist. Allowlist: [] Current Provider: null
+10-28 10:47:21.676 D/PickerSyncLockManager( 1416): Trying to acquire lock com.android.providers.media.photopicker.sync.CloseableReentrantLock@51173fd[Unlocked]. Lock Name = CLOUD_PROVIDER_LOCK. Threads that may be waiting to acquire this lock = []
+10-28 10:47:21.676 D/CloseableReentrantLock( 1416): Successfully acquired lock com.android.providers.media.photopicker.sync.CloseableReentrantLock@51173fd[Locked by thread fg]. Lock Name = CLOUD_PROVIDER_LOCK. Threads that may be waiting to acquire this lock = []
+10-28 10:47:21.676 D/CloseableReentrantLock( 1416): Successfully released lock com.android.providers.media.photopicker.sync.CloseableReentrantLock@51173fd[Unlocked]. Lock Name = CLOUD_PROVIDER_LOCK. Threads that may be waiting to acquire this lock = []
+10-28 10:47:21.678 I/MediaProvider( 1416): Changed PhotoPickerActivity component state to STATE_ENABLED ( 1 )
+10-28 10:47:21.678 E/RoleControllerServiceImpl(  558): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.devicelockcontroller, role: android.app.role.SYSTEM_FINANCED_DEVICE_CONTROLLER
+10-28 10:47:21.679 I/EGL_emulation( 2140): Opening libGLESv1_CM_emulation.so
+10-28 10:47:21.679 I/EGL_emulation( 2140): Opening libGLESv2_emulation.so
+10-28 10:47:21.681 D/PackageManager(  558): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+10-28 10:47:21.681 D/PackageManager(  558): Clear ephemeral installer activity
+10-28 10:47:21.692 I/PackageWatchdog(  558): Syncing health check requests for packages: {com.google.android.providers.media.module, android}
+10-28 10:47:21.693 I/ExplicitHealthCheckController(  558): Service not ready to get health check supported packages. Binding...
+10-28 10:47:21.698 I/MediaProvider( 1416): Changed PhotoPickerGetContentActivity component state to STATE_ENABLED ( 1 )
+10-28 10:47:21.701 I/MediaProvider( 1416): Changed PhotoPickerUserSelectActivity component state to STATE_ENABLED ( 1 )
+10-28 10:47:21.702 I/MediaApplication( 1416): PhotoPickerSettingsActivity is now disabled.
+10-28 10:47:21.703 I/TranscodeHelper( 1416): Empty transcode compat stale
+10-28 10:47:21.704 I/TranscodeHelper( 1416): Parsed 0 packages from resource
+10-28 10:47:21.705 I/TranscodeHelper( 1416): Parsed 8 packages from device config
+10-28 10:47:21.706 D/PickerSyncLockManager( 1416): Trying to acquire lock com.android.providers.media.photopicker.sync.CloseableReentrantLock@51173fd[Unlocked]. Lock Name = CLOUD_PROVIDER_LOCK. Threads that may be waiting to acquire this lock = []
 --
-10-27 20:47:37.780 I/AndroidRuntime( 3959): VM exiting with result code 0.
-10-27 20:47:37.784 I/AppsFilter(  556): interaction: PackageSetting{23bf362 com.android.microdroid.empty_payload/10198} -> PackageSetting{ec39e97 dev.mobile.maestro/10210} BLOCKED
-10-27 20:47:37.789 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-27 20:47:37.790 W/MagnificationConnectionManager(  556): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-27 20:47:37.790 V/UiAutomationManager(  556): UiAutomation service owner died
-10-27 20:47:37.790 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-27 20:47:37.790 I/AiAiEcho( 1385): Settings changed for uri: content://settings/secure/accessibility_enabled
-10-27 20:47:37.790 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-27 20:47:37.790 I/AiAiEcho( 1385): Predicting[0]:  [CONTEXT sampling_count=5 ]
-10-27 20:47:37.791 I/AiAiEcho( 1385): EchoTargets: 
-10-27 20:47:37.791 I/AiAiEcho( 1385): Filtered by AiAi flag check: 
-10-27 20:47:37.791 I/AiAiEcho( 1385): [CONTEXT ratelimit_period="10 SECONDS" ]
-10-27 20:47:37.791 I/AiAiEcho( 1385): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
-10-27 20:47:37.791 I/AiAiEcho( 1385): #remoteViewsTwiddler: feature disabled.
-10-27 20:47:37.791 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-27 20:47:37.791 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-27 20:47:37.791 I/AiAiEcho( 1385): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
-10-27 20:47:37.791 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-27 20:47:37.792 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-27 20:47:37.792 I/netd    (  354): tetherGetStats() -> {[]} <0.72ms>
-10-27 20:47:37.793 W/PageIndicator(  905): Total number of pages invalid: 0. Assuming 1 page.
-10-27 20:47:37.793 I/AiAiEcho( 1385): Predicting[0]:  [CONTEXT sampling_count=5 ]
-10-27 20:47:37.793 I/AiAiEcho( 1385): EchoTargets: 
-10-27 20:47:37.793 I/AiAiEcho( 1385): Filtered by AiAi flag check: 
-10-27 20:47:37.793 I/AiAiEcho( 1385): [CONTEXT ratelimit_period="10 SECONDS" ]
-10-27 20:47:37.793 I/AiAiEcho( 1385): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
-10-27 20:47:37.793 I/AiAiEcho( 1385): #remoteViewsTwiddler: feature disabled.
-10-27 20:47:37.794 I/AiAiEcho( 1385): #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
-10-27 20:47:37.794 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-27 20:47:37.795 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-27 20:47:37.795 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+10-28 10:51:07.386 I/AndroidRuntime( 3821): VM exiting with result code 0.
+10-28 10:51:07.516 I/servicemanager(    0): Caller(pid=558,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+10-28 10:51:07.391 I/netd    (  360): tetherGetStats() -> {[]} <2.44ms>
+10-28 10:51:07.533 I/init    (    0): starting service 'artd'...
+10-28 10:51:07.409 V/ActivityManager(  558): Got obituary of 3857:dev.mobile.maestro
+10-28 10:51:07.410 W/ActivityManager(  558): pid 558 system sent binder code 1 with flags 1 to frozen apps and got error -32
+10-28 10:51:07.411 W/MagnificationConnectionManager(  558): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-28 10:51:07.411 W/MagnificationConnectionManager(  558): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-28 10:51:07.411 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.411 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.411 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.411 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.412 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.412 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.412 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.412 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.412 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.412 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.412 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.412 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.412 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.413 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.413 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.413 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.413 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.413 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.413 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.413 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.416 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.419 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-28 10:51:07.422 W/IPCThreadState(  558): Sending oneway calls to frozen process.
