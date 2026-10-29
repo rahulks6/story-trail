@@ -235,7 +235,10 @@ export async function deletedAccounts(store: ObjectStore, batch: number, days: n
        fb AS (DELETE FROM app_feedback WHERE user_id IN (SELECT id FROM u)),
        -- Already deleted when the account was (verification.service.ts); this is the backstop.
        vr AS (DELETE FROM verification_requests WHERE user_id IN (SELECT id FROM u)),
-       cr AS (DELETE FROM crash_reports WHERE user_id IN (SELECT id FROM u))
+       cr AS (DELETE FROM crash_reports WHERE user_id IN (SELECT id FROM u)),
+       -- The invite link stops working with the account; who joined from whose link goes now.
+       ic AS (DELETE FROM invite_codes WHERE user_id IN (SELECT id FROM u)),
+       ir AS (DELETE FROM invite_redemptions WHERE invitee_id IN (SELECT id FROM u) OR inviter_id IN (SELECT id FROM u))
        SELECT count(*) AS n FROM u`,
       { id },
     );

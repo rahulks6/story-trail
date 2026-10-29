@@ -11,6 +11,7 @@ import { platformOf } from "./activity";
 export const ANALYTICS_EVENTS = [
   "app_session_started", "app_crash", "story_created", "highlight_viewed",
   "profile_viewed", "search_performed", "upload_succeeded", "upload_failed", "story_shared_external",
+  "invite_shared", "invite_link_opened", "contacts_checked",
 ] as const;
 export type AnalyticsEventName = (typeof ANALYTICS_EVENTS)[number];
 
@@ -21,6 +22,8 @@ type PropertyRule =
 
 const MEDIA_KIND: PropertyRule = { kind: "enum", values: ["photo", "video"] };
 const ATTEMPTS: PropertyRule = { kind: "int", min: 1, max: 100 };
+/** Where Invite friends was tapped (mobile/src/state/invites.ts). */
+const INVITE_SOURCES = ["settings", "home", "search", "messages", "onboarding", "contacts"] as const;
 
 /**
  * The only properties ever stored: booleans, bounded numbers and fixed choices. No ids of
@@ -42,6 +45,12 @@ const PROPERTIES: Record<AnalyticsEventName, Record<string, PropertyRule>> = {
   },
   // Your own Story sent to another app as a picture or video (which app is never known).
   story_shared_external: { kind: MEDIA_KIND },
+  // Your invite link handed to the share sheet, and from where (never whom it went to).
+  invite_shared: { from: { kind: "enum", values: INVITE_SOURCES } },
+  // An invite link opened in the app; who joined from one is counted from invite_redemptions.
+  invite_link_opened: { signedIn: { kind: "boolean" } },
+  // Contacts on Katkee ran: how many accounts it found. Never the contacts or the accounts.
+  contacts_checked: { found: { kind: "int", min: 0, max: 10_000 } },
 };
 
 export const MAX_EVENTS_PER_BATCH = 50;

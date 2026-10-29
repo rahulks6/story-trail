@@ -17,8 +17,16 @@
       "linkPath": "%LINK_PATH%"
     }
   },
+  "invite": {
+    "file": "invite.html",
+    "markers": {
+      "appLink": "%INVITE_APP_LINK%",
+      "linkPath": "%INVITE_PATH%",
+      "headline": "%INVITE_HEADLINE%"
+    }
+  },
   "assets": {
-    "site.51ef041823.css": "text/css; charset=utf-8",
+    "site.66df80a9bd.css": "text/css; charset=utf-8",
     "katkee-icon.483d838bba.svg": "image/svg+xml",
     "social-card.5e7e0ce26c.png": "image/png"
   },

@@ -47,6 +47,7 @@ export async function complete(proof:string,username:unknown,name:unknown,birthD
   if(!row?.id)throw new HttpError(401,'Verification expired.');
   // Google only hands over an email it has verified, so an account using that email needs no code.
   await query(`UPDATE users u SET email_verified_at=coalesce(u.email_verified_at,now()) FROM auth_provider_proofs p WHERE p.token_hash=:'hash' AND p.provider='GOOGLE' AND u.id=:'id' AND u.email=p.verified_email`,{hash:proofToken(proof),id:row.id});
+  await keepContactKey(proofToken(proof));
   const user=await getPublicUserById(row.id);const tokens=await issueTokenPair(row.id,client.userAgent);await recordLoginSuccess(row.id,(await findUserById(row.id))?.email??null,client);console.info(JSON.stringify({event:'provider_login_succeeded'}));return {user,tokens};
  }catch(e){identityError(e);}
 }
@@ -54,5 +55,13 @@ export async function resultFor(proof:string,client:ClientContext){
  const row=await queryOne(`SELECT i.user_id FROM auth_provider_proofs p JOIN auth_identities i ON i.provider=p.provider AND i.subject=p.subject WHERE p.token_hash=:'hash'`,{hash:hash(proof)});
  if(row)return complete(proof,undefined,undefined,undefined,client);
  return {onboardingRequired:true as const,proof,expiresIn:300};
+}
+/**
+ * A phone just proved by code: its contacts key (growth/contacts.ts) moves onto the sign-in
+ * identity, so friends with this number can find the account (unless it turns that off). Phones
+ * linked before contact matching existed get theirs here, at their next phone sign-in.
+ */
+export async function keepContactKey(proofHash:string):Promise<void>{
+ await query(`UPDATE auth_identities i SET contact_key=p.contact_key FROM auth_provider_proofs p WHERE p.token_hash=:'hash' AND p.provider='PHONE' AND p.contact_key IS NOT NULL AND i.provider='PHONE' AND i.subject=p.subject`,{hash:proofHash});
 }
 export async function reauthTicket(userId:string){const ticket=opaque();await query(`INSERT INTO auth_reauth_tickets(token_hash,user_id) VALUES(:'hash',:'user')`,{hash:hash(ticket),user:userId});return {reauthTicket:ticket,expiresIn:300};}

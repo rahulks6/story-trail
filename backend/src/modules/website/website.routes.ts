@@ -9,6 +9,12 @@
  * page is the same for every link and never looks anything up, so it can't reveal whether an
  * account exists or is private, or whether a Story has expired.
  *
+ * Invite links are katkee.com/i/<code> (Settings > Invite friends). Their page does look the code
+ * up, to say whose invite it is ("Asha invited you to Katkee"): that's the point of sending it.
+ * It shows only the inviter's display name, and a link that doesn't work (unknown code, or an
+ * inviter who deleted their account or was suspended) gets the same page with a plain "You're
+ * invited", so the page can't be used to find out more.
+ *
  * - Read once into memory, with brotli and gzip copies of the text files. Pages are cached for
  *   ten minutes and revalidated with ETags; content-hashed assets are immutable.
  * - Strict headers: the pages run no scripts at all, can't be framed, and load nothing from
@@ -26,6 +32,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { config } from "../../config/env";
 import type { KatkeeRequest, Router } from "../../http/router";
 import { pickEncoding } from "../admin/console-assets";
+import { INVITE_CODE_RE, inviterForCode } from "../growth/invites";
 
 /** No scripts, no inline styles, nothing from other origins, no framing. */
 export const WEBSITE_CSP = [
@@ -50,12 +57,16 @@ interface Website {
   notFound: WebsiteFile;
   /** The "Open in Katkee" page, with the markers each request's own link replaces. */
   openInApp: { template: string; markers: OpenMarkers } | null;
+  /** The invite page, with the markers each invite link's own values replace. */
+  invite: { template: string; markers: InviteMarkers } | null;
 }
 interface OpenMarkers { appLink: string; linkPath: string }
+interface InviteMarkers { appLink: string; linkPath: string; headline: string }
 interface Manifest {
   pages: Record<string, string>;
   notFound: string;
   openInApp?: { file: string; markers: OpenMarkers };
+  invite?: { file: string; markers: InviteMarkers };
   assets: Record<string, string>;
   files: Record<string, { file: string; type: string }>;
 }
@@ -103,6 +114,9 @@ export function loadWebsite(root: string): Website | null {
       notFound: load(root, safe(manifest.notFound), HTML, "no-cache"),
       openInApp: manifest.openInApp
         ? { template: fs.readFileSync(path.join(root, safe(manifest.openInApp.file)), "utf8"), markers: manifest.openInApp.markers }
+        : null,
+      invite: manifest.invite
+        ? { template: fs.readFileSync(path.join(root, safe(manifest.invite.file)), "utf8"), markers: manifest.invite.markers }
         : null,
     };
   }
@@ -172,6 +186,21 @@ export function sharedLink(target: string): { appLink: string; linkPath: string 
   return null;
 }
 
+/** For "/i/<code>": the code (lower-case) and the app's katkee:// link, or null for anything else. */
+export function inviteLinkTarget(target: string): { code: string; appLink: string; linkPath: string } | null {
+  const pathname = target.split("?")[0]!;
+  const raw = /^\/i\/([^/]+)\/?$/.exec(pathname)?.[1];
+  if (raw === undefined) return null;
+  const code = raw.toLowerCase();
+  if (!INVITE_CODE_RE.test(code)) return null;
+  return { code, appLink: `katkee://invite/${code}`, linkPath: `i/${code}` };
+}
+
+/** The invite page's headline (also its title, so chat link previews name the friend). */
+export function inviteHeadline(inviterName: string | null): string {
+  return inviterName ? `${inviterName} invited you to Katkee` : "You're invited to Katkee";
+}
+
 const escapeHtml = (value: string) =>
   value.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
@@ -182,6 +211,14 @@ function openPage(open: NonNullable<Website["openInApp"]>, link: { appLink: stri
   return prepare(Buffer.from(html), HTML, PAGE_CACHE, 5);
 }
 
+function invitePage(invite: NonNullable<Website["invite"]>, link: { appLink: string; linkPath: string }, headline: string): WebsiteFile {
+  const html = invite.template
+    .split(invite.markers.appLink).join(escapeHtml(link.appLink))
+    .split(invite.markers.linkPath).join(escapeHtml(link.linkPath))
+    .split(invite.markers.headline).join(escapeHtml(headline));
+  return prepare(Buffer.from(html), HTML, PAGE_CACHE, 5);
+}
+
 function sendNotFound(req: IncomingMessage, res: ServerResponse, site: Website): void {
   send(req, res, site.notFound, 404);
 }
@@ -189,7 +226,7 @@ function sendNotFound(req: IncomingMessage, res: ServerResponse, site: Website):
 export function registerWebsiteRoutes(router: Router): void {
   const site = website();
   if (!site) return;
-  const both = (route: string, handler: (req: IncomingMessage, res: ServerResponse) => void) => {
+  const both = (route: string, handler: (req: IncomingMessage, res: ServerResponse) => void | Promise<void>) => {
     router.get(route, handler);
     router.add("HEAD", route, handler);
   };
@@ -206,6 +243,17 @@ export function registerWebsiteRoutes(router: Router): void {
         send(req, res, openPage(open, link));
       });
     }
+  }
+  const invite = site.invite;
+  if (invite) {
+    both("/i/:code", async (req, res) => {
+      const link = inviteLinkTarget(req.url ?? "");
+      if (!link) return sendNotFound(req, res, site);
+      // A database hiccup still shows the page (with the plain headline): it works without a name.
+      const inviter = await inviterForCode(link.code).catch(() => null);
+      res.setHeader("X-Robots-Tag", "noindex");
+      send(req, res, invitePage(invite, link, inviteHeadline(inviter?.displayName ?? null)));
+    });
   }
   both("/assets/:file", (req, res) => {
     const asset = site.assets.get((req as KatkeeRequest).params.file ?? "");
@@ -264,7 +312,8 @@ export function websiteGate(req: IncomingMessage, res: ServerResponse): boolean 
       res.end();
       return true;
     }
-    const known = site.pages.has(pathname) || site.files.has(pathname) || pathname.startsWith("/assets/") || (!!site.openInApp && sharedLink(target) !== null);
+    const known = site.pages.has(pathname) || site.files.has(pathname) || pathname.startsWith("/assets/") || (!!site.openInApp && sharedLink(target) !== null)
+      || (!!site.invite && inviteLinkTarget(target) !== null);
     if (known && readOnly) return false;
     if (known) {
       websiteHeaders(res);
@@ -276,7 +325,7 @@ export function websiteGate(req: IncomingMessage, res: ServerResponse): boolean 
     sendNotFound(req, res, site);
     return true;
   }
-  if (readOnly && (site.pages.has(pathname) || (!!site.openInApp && sharedLink(target) !== null))) {
+  if (readOnly && (site.pages.has(pathname) || (!!site.openInApp && sharedLink(target) !== null) || (!!site.invite && inviteLinkTarget(target) !== null))) {
     redirect(res, `https://${siteHost}${target}`);
     return true;
   }
