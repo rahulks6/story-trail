@@ -1,0 +1,97 @@
+10-29 14:19:46.395 D/AndroidRuntime( 4205): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-29 14:19:46.398 I/AndroidRuntime( 4205): Using default boot image
+10-29 14:19:46.398 I/AndroidRuntime( 4205): Leaving lock profiling enabled
+10-29 14:19:46.400 D/ImsResolver( 1073): maybeAddedImsService, packageName: dev.mobile.maestro.test
+10-29 14:19:46.403 I/app_process( 4205): Core platform API reporting enabled, enforcing=false
+10-29 14:19:46.403 I/app_process( 4205): Using CollectorTypeCMC GC.
+10-29 14:19:46.419 W/Role    (  555): Default holder doesn't have required signing certificate: com.google.android.retaildemo:6547c73dee150c103980bfdffe55cc9a011d785dd694a5f99afd8205bcaf1f80
+10-29 14:19:46.466 E/RoleControllerServiceImpl(  555): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION
+10-29 14:19:46.467 W/Role    (  555): Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58
+10-29 14:19:46.469 W/MagnificationConnectionManager(  555): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-29 14:19:46.470 W/PackageManager(  555): Failed registering loading progress callback. Package is fully loaded.
+10-29 14:19:46.471 I/AiAiEcho( 1488): AppFetcherImplV2 updateApps package:[dev.mobile.maestro.test], userId:[0], reason:[package is added.].
+10-29 14:19:46.480 D/PackageUpdatedTask( 3873): Package updated: mOp=ADD packages=[dev.mobile.maestro.test]
+10-29 14:19:46.487 D/WM-DelayedWorkTracker( 1482): Scheduling work a00df880-95c1-4109-b1fa-ca468c1cdb60
+10-29 14:19:46.488 D/WM-GreedyScheduler( 1482): Starting tracking for a00df880-95c1-4109-b1fa-ca468c1cdb60
+10-29 14:19:46.488 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-29 14:19:46.488 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-29 14:19:46.506 I/Icing   ( 1302): Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
+10-29 14:19:46.512 I/AppWidgetServiceImpl(  555): getInstalledProvidersForProfiles() 0
+10-29 14:19:46.512 D/ShortcutService(  555): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=null
+10-29 14:19:46.520 D/WM-ConstraintTracker( 1482): BatteryNotLowTracker: initial state = true
+10-29 14:19:46.521 D/WM-BrdcstRcvrCnstrntTrc( 1482): BatteryNotLowTracker: registering receiver
+10-29 14:19:46.531 D/WM-GreedyScheduler( 1482): Constraints met: Scheduling work ID WorkGenerationalId(workSpecId=a00df880-95c1-4109-b1fa-ca468c1cdb60, generation=0)
+10-29 14:19:46.536 D/WM-Processor( 1482): Processor: processing WorkGenerationalId(workSpecId=a00df880-95c1-4109-b1fa-ca468c1cdb60, generation=0)
+10-29 14:19:46.539 D/BaseIconCache( 3873): Default icon returned for dev.mobile.maestro.test
+10-29 14:19:46.574 D/nativeloader( 4205): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+10-29 14:19:46.586 I/AppWidgetServiceImpl(  555): getInstalledProvidersForProfiles() 0
+10-29 14:19:46.593 W/ParceledListSlice(  555): Element #25 is 19764 bytes.
+10-29 14:19:46.593 W/ParceledListSlice(  555): Element #26 is 19800 bytes.
+10-29 14:19:46.604 D/nativeloader( 4205): Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+10-29 14:19:46.604 D/app_process( 4205): u_setTimeZoneFilesDirectory("/apex/com.android.tzdata/etc/tz/versioned/8/icu") succeeded. 
+10-29 14:19:46.604 D/app_process( 4205): I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt75l.dat
+10-29 14:19:46.604 W/ParceledListSlice(  555): Element #27 is 19644 bytes.
+--
+10-29 14:19:46.701 D/AndroidRuntime( 4205): Calling main entry com.android.commands.am.Am
+10-29 14:19:46.702 D/PackageUpdatedTask( 3873): Package updated: mOp=UPDATE packages=[dev.mobile.maestro.test]
+10-29 14:19:46.715 D/UiAutomationConnection( 4205): Created on user UserHandle{0}
+10-29 14:19:46.716 D/ControlsListingControllerImpl(  903): ServiceConfig reloaded, count: 0
+10-29 14:19:46.720 E/RoleControllerServiceImpl(  555): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.WALLET
+10-29 14:19:46.721 I/A       ( 1631): (REDACTED) disposing SearchServiceClient after timeout %s
+10-29 14:19:46.723 W/AllAppsList( 3873): updatePromiseInstallInfo: no Activities matched updated package, removing all apps from package=dev.mobile.maestro.test
+10-29 14:19:46.733 I/GsaVoiceInteractionSrv( 1514): (REDACTED) O received %s
+10-29 14:19:46.735 D/ControlsListingControllerImpl(  903): ServiceConfig reloaded, count: 0
+10-29 14:19:46.735 I/AiAiEcho( 1488): EchoSearch: WidgetFetcherImpl is initialized with [33] widgets [reason=package added for userId: 0]
+10-29 14:19:46.737 D/PickerSyncController( 1482):    Latest ID/Gen=1409:af29172b-2fae-487e-93e8-960f0afb4b48:external_primary/17
+10-29 14:19:46.737 D/PickerSyncController( 1482):    Cached ID/Gen=1409:af29172b-2fae-487e-93e8-960f0afb4b48:external_primary/9
+10-29 14:19:46.737 D/PickerSyncController( 1482):    RESULT=SyncRequestParams{type=MEDIA_INCREMENTAL, gen=9, latest=Bundle[{last_media_sync_generation=17, media_collection_id=1409:af29172b-2fae-487e-93e8-960f0afb4b48:external_primary}], pageSize=1000}
+10-29 14:19:46.739 I/PickerSyncController( 1482): Executing SyncAdd. isLocal: true. authority: com.android.providers.media.photopicker
+10-29 14:19:46.739 D/PickerSyncLockManager( 1482): Trying to acquire lock com.android.providers.media.photopicker.sync.CloseableReentrantLock@d8312b6[Unlocked]. Lock Name = CLOUD_PROVIDER_LOCK. Threads that may be waiting to acquire this lock = [] with timeout.
+10-29 14:19:46.739 D/CloseableReentrantLock( 1482): Successfully acquired lock com.android.providers.media.photopicker.sync.CloseableReentrantLock@d8312b6[Locked by thread pool-3-thread-2]. Lock Name = CLOUD_PROVIDER_LOCK. Threads that may be waiting to acquire this lock = []
+10-29 14:19:46.739 D/CloseableReentrantLock( 1482): Successfully released lock com.android.providers.media.photopicker.sync.CloseableReentrantLock@d8312b6[Unlocked]. Lock Name = CLOUD_PROVIDER_LOCK. Threads that may be waiting to acquire this lock = []
+10-29 14:19:46.740 D/ExternalDbFacade( 1482): Token received for queryMedia = null
+10-29 14:19:46.760 D/PickerSyncLockManager( 1482): Trying to acquire lock com.android.providers.media.photopicker.sync.CloseableReentrantLock@d8312b6[Unlocked]. Lock Name = CLOUD_PROVIDER_LOCK. Threads that may be waiting to acquire this lock = [] with timeout.
+10-29 14:19:46.761 D/CloseableReentrantLock( 1482): Successfully acquired lock com.android.providers.media.photopicker.sync.CloseableReentrantLock@d8312b6[Locked by thread pool-3-thread-2]. Lock Name = CLOUD_PROVIDER_LOCK. Threads that may be waiting to acquire this lock = []
+10-29 14:19:46.761 D/PickerSyncController( 1482): Saving next page token: 1793283278000|1000000016 for key: local_provider:media_add:resume
+10-29 14:19:46.761 D/CloseableReentrantLock( 1482): Successfully released lock com.android.providers.media.photopicker.sync.CloseableReentrantLock@d8312b6[Unlocked]. Lock Name = CLOUD_PROVIDER_LOCK. Threads that may be waiting to acquire this lock = []
+10-29 14:19:46.762 W/LegacyVoicePolicyManage( 2262): The requested voice is not available for this app identifier
+10-29 14:19:46.763 W/LegacyVoicePolicyManage( 2262): The requested voice is not available for this app identifier
+10-29 14:19:46.763 W/LegacyVoicePolicyManage( 2262): The requested voice is not available for this app identifier
+10-29 14:19:46.763 W/LegacyVoicePolicyManage( 2262): The requested voice is not available for this app identifier
+10-29 14:19:46.763 W/LegacyVoicePolicyManage( 2262): The requested voice is not available for this app identifier
+10-29 14:19:46.763 W/LegacyVoicePolicyManage( 2262): The requested voice is not available for this app identifier
+10-29 14:19:46.763 W/LegacyVoicePolicyManage( 2262): The requested voice is not available for this app identifier
+10-29 14:19:46.763 W/LegacyVoicePolicyManage( 2262): The requested voice is not available for this app identifier
+10-29 14:19:46.763 W/LegacyVoicePolicyManage( 2262): The requested voice is not available for this app identifier
+--
+10-29 14:25:14.491 I/AndroidRuntime( 4205): VM exiting with result code 0.
+10-29 14:25:14.502 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-29 14:25:14.503 W/MagnificationConnectionManager(  555): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-29 14:25:14.503 I/AiAiEcho( 1488): Settings changed for uri: content://settings/secure/accessibility_enabled
+10-29 14:25:14.504 V/UiAutomationManager(  555): UiAutomation service owner died
+10-29 14:25:14.505 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-29 14:25:14.505 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+10-29 14:25:14.509 I/AiAiEcho( 1488): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-29 14:25:14.509 I/AiAiEcho( 1488): EchoTargets: 
+10-29 14:25:14.509 I/AiAiEcho( 1488): Filtered by AiAi flag check: 
+10-29 14:25:14.509 I/AiAiEcho( 1488): [CONTEXT ratelimit_period="10 SECONDS" ]
+10-29 14:25:14.662 I/init    (    0): ... started service 'artd' has pid 6594
+10-29 14:25:14.663 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 149 (/system/bin/servicemanager)
+10-29 14:25:14.509 I/AiAiEcho( 1488): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+10-29 14:25:14.509 I/AiAiEcho( 1488): #remoteViewsTwiddler: feature disabled.
+10-29 14:25:14.510 I/AiAiEcho( 1488): Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-29 14:25:14.510 I/AiAiEcho( 1488): EchoTargets: 
+10-29 14:25:14.510 I/AiAiEcho( 1488): Filtered by AiAi flag check: 
+10-29 14:25:14.510 I/AiAiEcho( 1488): [CONTEXT ratelimit_period="10 SECONDS" ]
+10-29 14:25:14.510 I/AiAiEcho( 1488): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+10-29 14:25:14.510 I/AiAiEcho( 1488): #remoteViewsTwiddler: feature disabled.
+10-29 14:25:14.510 I/AiAiEcho( 1488): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+10-29 14:25:14.510 I/AiAiEcho( 1488): #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+10-29 14:25:14.512 D/SsBaseTemplateCard( 3873): No text view can be set up
+10-29 14:25:14.513 D/SsBaseTemplateCard( 3873): Passed-in item info is null
+10-29 14:25:14.513 D/SsBaseTemplateCard( 3873): Passed-in item info is null
+10-29 14:25:14.513 D/SsBaseTemplateCard( 3873): Passed-in item info is null
+10-29 14:25:14.513 I/SsBaseTemplateCard( 3873): Secondary card pane is null
+10-29 14:25:14.514 I/Zygote  (  361): Process 4218 exited due to signal 9 (Killed)
+10-29 14:25:14.516 I/adbd    (  438): Remote process closed the socket (on MSG_PEEK)
+10-29 14:25:14.517 W/PageIndicator(  903): Total number of pages invalid: 0. Assuming 1 page.
