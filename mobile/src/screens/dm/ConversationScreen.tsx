@@ -203,6 +203,8 @@ interface RowProps {
   userId: string | undefined;
   /** "username" for a person in this conversation (undefined if not known: they left). */
   nameOf: (userId: string) => string | undefined;
+  /** How a person is named in a quote: their name ("Meera"), else "@username" (undefined if not known). */
+  labelOf: (userId: string) => string | undefined;
   /** In a group: the sender's name above the first of their messages in a run. */
   senderLabel?: string;
   accessToken: string | null | undefined;
@@ -283,8 +285,8 @@ function SwipeToReply({ enabled, onReply, children }: { enabled: boolean; onRepl
 }
 
 /** The message a reply answers, above the reply: who wrote it and how it started. A tap goes to it. */
-function Quote({ quote, userId, nameOf, mine, onPress }: { quote: QuotedMessage; userId: string | undefined; nameOf: RowProps["nameOf"]; mine: boolean; onPress: (id: string) => void }): React.JSX.Element {
-  const author = quote.senderId === userId ? "You" : nameOf(quote.senderId) ? `@${nameOf(quote.senderId)}` : "Them";
+function Quote({ quote, userId, labelOf, mine, onPress }: { quote: QuotedMessage; userId: string | undefined; labelOf: RowProps["labelOf"]; mine: boolean; onPress: (id: string) => void }): React.JSX.Element {
+  const author = quote.senderId === userId ? "You" : labelOf(quote.senderId) ?? "Them";
   const snippet = quoteSnippet(quote);
   return (
     <Pressable
@@ -331,7 +333,7 @@ const MessageRow = memo(function MessageRow(props: RowProps): React.JSX.Element 
   );
 });
 
-function MessageContent({ row, userId, nameOf, senderLabel, accessToken, showStatus, playing, maxMediaSide, actions }: RowProps): React.JSX.Element {
+function MessageContent({ row, userId, nameOf, labelOf, senderLabel, accessToken, showStatus, playing, maxMediaSide, actions }: RowProps): React.JSX.Element {
   const canReport = row.kind === "sent" && row.senderId !== userId;
   const otherUsername = row.kind === "sent" && row.senderId !== userId ? nameOf(row.senderId) : undefined;
   // A double tap hearts a stored message; a single tap that also does something (open a photo
@@ -360,7 +362,7 @@ function MessageContent({ row, userId, nameOf, senderLabel, accessToken, showSta
     return <Text style={styles.eventLine} accessibilityRole="text">{text}</Text>;
   }
   const quote = row.replyTo ? (
-    <Quote quote={row.replyTo} userId={userId} nameOf={nameOf} mine={row.kind !== "sent" || row.senderId === userId} onPress={actions.onQuotePress} />
+    <Quote quote={row.replyTo} userId={userId} labelOf={labelOf} mine={row.kind !== "sent" || row.senderId === userId} onPress={actions.onQuotePress} />
   ) : null;
   // Sent on from another chat: a quiet line above the bubble, naming nobody.
   const forwarded = row.kind === "sent" && row.forwarded ? (
@@ -785,6 +787,12 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   /** "username" for someone in this conversation. */
   const members = useMemo(() => new Map((group?.members ?? []).map((m) => [m.userId, m])), [group]);
   const nameOf = useCallback((id: string): string | undefined => members.get(id)?.username ?? (!isGroup && id !== userId ? otherUsername : undefined), [isGroup, members, otherUsername, userId]);
+  const labelOf = useCallback((id: string): string | undefined => {
+    const display = members.get(id)?.displayName ?? (!isGroup && id !== userId ? otherDisplayName : undefined);
+    if (display?.trim()) return display;
+    const username = nameOf(id);
+    return username ? `@${username}` : undefined;
+  }, [isGroup, members, nameOf, otherDisplayName, userId]);
 
   // The header: who you're talking to, with their photo; a tap opens their profile. `initial: false`
   // keeps the Search tab's own first screen under it (a first visit creates that stack).
@@ -1348,9 +1356,8 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   }, []);
   const replyPreview = useMemo(() => {
     if (!replyingTo) return null;
-    const name = nameOf(replyingTo.senderId);
-    return { author: replyingTo.senderId === userId ? "yourself" : name ? `@${name}` : "them", snippet: quoteSnippet(quoteOf(replyingTo)) };
-  }, [nameOf, replyingTo, userId]);
+    return { author: replyingTo.senderId === userId ? "yourself" : labelOf(replyingTo.senderId) ?? "them", snippet: quoteSnippet(quoteOf(replyingTo)) };
+  }, [labelOf, replyingTo, userId]);
 
   // A status caption only ever makes sense under the single most recent
   // message *you* sent — same convention as iMessage/WhatsApp. If the
@@ -1380,6 +1387,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         row={item}
         userId={userId}
         nameOf={nameOf}
+        labelOf={labelOf}
         senderLabel={senderLabel}
         accessToken={accessToken}
         showStatus={key === statusRowKey}
@@ -1388,7 +1396,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         actions={actions}
       />
     );
-  }, [accessToken, actions, isGroup, maxMediaSide, members, nameOf, playingKey, rows, statusRowKey, userId]);
+  }, [accessToken, actions, isGroup, maxMediaSide, members, nameOf, labelOf, playingKey, rows, statusRowKey, userId]);
 
   if (messages === null) {
     return (

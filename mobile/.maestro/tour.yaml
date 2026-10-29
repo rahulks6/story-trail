@@ -161,15 +161,16 @@ appId: com.katkee.app
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: t18-profile
+# A photo Story plays for about 5 seconds and then closes by itself: screenshot at once.
 - tapOn:
     text: "Open your Story"
     optional: true
-- waitForAnimationToEnd:
-    timeout: 3000
+    waitToSettleTimeoutMs: 500
 - takeScreenshot: t19-own-story
 - tapOn:
     text: ".*views.*|Activity.*"
     optional: true
+    waitToSettleTimeoutMs: 500
 - waitForAnimationToEnd:
     timeout: 3000
 - takeScreenshot: t20-story-insights
@@ -253,7 +254,7 @@ appId: com.katkee.app
     timeout: 2000
 - takeScreenshot: t31-message-menu
 - tapOn:
-    text: "❤️"
+    text: "React ❤️"
     optional: true
 - waitForAnimationToEnd:
     timeout: 2000

@@ -5,7 +5,8 @@ import { Pressable } from "../../components/Pressable";
 import { usePreventRemove } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../navigation/types";
-import { colors, radii, spacing, typography } from "../../theme";
+import { colors, radii, spacing, typography, ICONS } from "../../theme";
+import { Icon } from "../../components/Icon";
 import { useAuth } from "../../state/AuthContext";
 import { getMyArchivedStories, mediaFileUrl, type PublicStory } from "../../api/stories";
 import { createHighlight, deleteHighlight, getHighlightDetail, setHighlightCover, updateHighlight } from "../../api/highlights";
@@ -236,7 +237,15 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
             <Image source={{ uri: mediaFileUrl(coverStory.mediaId, "thumbnail"), headers: authHeaders }} style={styles.coverPreviewImage} resizeMode="cover" />
           ) : (
             <View style={styles.coverPreviewEmpty}>
-              <Text style={styles.coverPreviewInitial}>{firstCharacter(cleanTitle(title)).toUpperCase() || "?"}</Text>
+              {/* The name's first letter once there is one; until then, a hint to choose Stories. */}
+              {firstCharacter(cleanTitle(title)) ? (
+                <Text style={styles.coverPreviewInitial}>{firstCharacter(cleanTitle(title)).toUpperCase()}</Text>
+              ) : (
+                <>
+                  <Icon name={ICONS.gallery} size={26} color={colors.textSecondary} />
+                  <Text style={styles.coverPreviewHint}>Cover</Text>
+                </>
+              )}
             </View>
           )}
           {selectedStories.length > 0 ? (
@@ -385,6 +394,7 @@ const styles = StyleSheet.create({
   coverPreviewImage: { width: "100%", height: "100%" },
   coverPreviewEmpty: { flex: 1, alignItems: "center", justifyContent: "center" },
   coverPreviewInitial: { color: colors.textSecondary, fontSize: 28, fontWeight: "700" },
+  coverPreviewHint: { color: colors.textSecondary, fontSize: 12, fontWeight: "600", marginTop: 4 },
   coverPreviewBadge: { position: "absolute", left: 0, right: 0, bottom: 0, paddingVertical: 4, backgroundColor: "rgba(0,0,0,0.6)" },
   coverPreviewBadgeText: { color: "#FFFFFF", fontSize: 11, fontWeight: "700", textAlign: "center" },
   headerFields: { flex: 1 },
