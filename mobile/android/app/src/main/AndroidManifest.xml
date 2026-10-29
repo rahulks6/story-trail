@@ -78,5 +78,17 @@
       <meta-data
         android:name="com.google.firebase.messaging.default_notification_icon"
         android:resource="@drawable/ic_notification" />
+      <!-- emoji2 would otherwise start EmojiCompat with the downloadable font before
+           MainApplication.onCreate, and the first configuration wins. The provider stays for
+           androidx.startup's other initialisers. -->
+      <provider
+        android:name="androidx.startup.InitializationProvider"
+        android:authorities="${applicationId}.androidx-startup"
+        android:exported="false"
+        tools:node="merge">
+        <meta-data
+          android:name="androidx.emoji2.text.EmojiCompatInitializer"
+          tools:node="remove" />
+      </provider>
     </application>
 </manifest>

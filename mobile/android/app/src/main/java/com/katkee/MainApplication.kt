@@ -4,6 +4,8 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
+import androidx.emoji2.bundled.BundledEmojiCompatConfig
+import androidx.emoji2.text.EmojiCompat
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
@@ -17,6 +19,8 @@ class MainApplication : Application(), ReactApplication {
       context = applicationContext,
       packageList =
         PackageList(this).packages.apply {
+          // Text that measures and draws emoji the system font lacks (EmojiTextPackage.kt).
+          add(0, EmojiTextPackage())
           // Reloads the app when its appearance (light or dark) changes.
           add(AppRestartPackage())
         },
@@ -25,6 +29,11 @@ class MainApplication : Application(), ReactApplication {
 
   override fun onCreate() {
     super.onCreate()
+    // Before any view exists: AppCompat text views and inputs only use EmojiCompat when it is
+    // configured as they are created. The bundled font, not the downloadable one, because the
+    // phones that need it most are the ones with old or missing Google Play services
+    // (the manifest removes androidx.startup's downloadable-font initialiser).
+    EmojiCompat.init(BundledEmojiCompatConfig(this))
     createNotificationChannels()
     loadReactNative(this)
   }
