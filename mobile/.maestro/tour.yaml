@@ -1,0 +1,364 @@
+# The full feature tour, run on an Android emulator by .github/workflows/android-e2e.yml with
+# flow=tour: sign up, onboarding, post a Story from the gallery with text, a sticker and a caption,
+# watch it, edit the profile, find and follow a second test account, chat with it (reply, react,
+# reply to a message), Activity, Archive, Highlights and every Settings page. A screenshot at each
+# step, so the screens can be reviewed for polish as well as for working. Steps that depend on
+# the emulator (the system photo picker) are optional, so one surprise doesn't hide the rest.
+appId: com.katkee.app
+---
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "Log in"
+    timeout: 60000
+- takeScreenshot: t01-login
+- tapOn:
+    text: ".*Sign up.*"
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible: "Create your account"
+    timeout: 30000
+- tapOn: "Display name"
+- inputText: "Riya Tester"
+- runFlow: close-keyboard.yaml
+- tapOn: "Username"
+- inputText: ${USERNAME}
+- runFlow: close-keyboard.yaml
+- tapOn: "Email"
+- inputText: ${EMAIL}
+- runFlow: close-keyboard.yaml
+- tapOn: "Date of birth"
+- inputText: "01011995"
+- runFlow: close-keyboard.yaml
+- tapOn: "Password"
+- inputText: ${PASSWORD}
+- runFlow: close-keyboard.yaml
+- takeScreenshot: t02-signup
+- scrollUntilVisible:
+    element: "Sign up"
+    optional: true
+- tapOn: "Sign up"
+- extendedWaitUntil:
+    visible: "Verify your email"
+    timeout: 45000
+- takeScreenshot: t03-verify
+- runScript: ci-verify.js
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "(What are you into\\?|Forgot password\\?)"
+    timeout: 30000
+- runFlow: login-if-needed.yaml
+
+# Onboarding
+- extendedWaitUntil:
+    visible: "What are you into?"
+    timeout: 30000
+- tapOn: "Cricket"
+- tapOn: "Food"
+- tapOn: "Festivals"
+- takeScreenshot: t04-interests
+- tapOn: "Next.*"
+- extendedWaitUntil:
+    visible: "People to follow"
+    timeout: 20000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: t05-people
+- tapOn: "(Done|Start using Katkee)"
+- extendedWaitUntil:
+    visible: "(Home|Not now)"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "Not now"
+    timeout: 15000
+    optional: true
+- takeScreenshot: t06-nearby-offer
+- tapOn:
+    text: "Not now"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: t07-home
+
+# Create a Story from the gallery: text, sticker, caption, share
+- tapOn: "Create a Story"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: t08-camera
+- tapOn: "Choose from gallery"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: t09-picker
+# Android's photo picker: the newest photo is the tour's own.
+- tapOn:
+    text: "Photo taken.*"
+    index: 0
+    optional: true
+- tapOn:
+    id: ".*icon_thumbnail"
+    index: 0
+    optional: true
+- extendedWaitUntil:
+    visible: "Your story"
+    timeout: 20000
+    optional: true
+- takeScreenshot: t10-editor
+- tapOn:
+    text: "Add text"
+    optional: true
+- inputText: "Golden hour"
+- takeScreenshot: t11-text-tool
+- tapOn:
+    text: "Done"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: t12-editor-text
+- tapOn:
+    text: "Add sticker, emoji, mention, location, or date and time"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: t13-sticker-sheet
+- pressKey: Back
+- tapOn:
+    text: "Caption"
+    optional: true
+- inputText: "First Story on Katkee"
+- runFlow: close-keyboard.yaml
+- takeScreenshot: t14-editor-caption
+- tapOn:
+    text: "Story settings.*"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: t15-story-settings
+- pressKey: Back
+- tapOn:
+    text: "Your story"
+    optional: true
+- extendedWaitUntil:
+    visible: "Home"
+    timeout: 30000
+    optional: true
+- takeScreenshot: t16-posting
+- swipe:
+    direction: DOWN
+    duration: 400
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 8000
+- takeScreenshot: t17-posted
+
+# Profile, your Story, Edit profile
+- tapOn: "Profile"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: t18-profile
+- tapOn:
+    text: ".*profile photo.*"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: t19-own-story
+- tapOn:
+    text: ".*views.*|Activity.*"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: t20-story-insights
+- pressKey: Back
+- pressKey: Back
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 10000
+    optional: true
+- tapOn:
+    text: "Edit profile"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: t21-edit-profile
+- tapOn:
+    text: "Bio"
+    optional: true
+- inputText: "Chai, cricket and golden hours"
+- runFlow: close-keyboard.yaml
+- takeScreenshot: t22-edit-profile-bio
+- tapOn:
+    text: "Save profile changes"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: t23-profile-saved
+
+# Search, someone's profile, Follow
+- tapOn: "Search"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: t24-search
+- tapOn: "Search people"
+- inputText: ${PARTNER_USERNAME}
+- waitForAnimationToEnd:
+    timeout: 5000
+- runFlow: close-keyboard.yaml
+- takeScreenshot: t25-search-results
+- tapOn:
+    text: ".*Partner.*"
+    index: 0
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: t26-user-profile
+- tapOn:
+    text: "Follow"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: t27-following
+- pressKey: Back
+
+# Messages: a real chat (the second account writes first)
+- runScript: partner-dm.js
+- tapOn: "Messages"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: t28-inbox
+- tapOn:
+    text: ".*Partner.*"
+    index: 0
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: t29-chat
+- tapOn:
+    text: "Message"
+    optional: true
+- inputText: "Yes! Looks amazing"
+- tapOn:
+    text: "Send"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: t30-chat-sent
+- longPressOn:
+    text: ".*chai one.*"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: t31-message-menu
+- tapOn:
+    text: "❤️"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: t32-reacted
+- longPressOn:
+    text: ".*Welcome to Katkee.*"
+    optional: true
+- tapOn:
+    text: "Reply"
+    optional: true
+- inputText: "Thank you"
+- tapOn:
+    text: "Send"
+    optional: true
+- runFlow: close-keyboard.yaml
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: t33-replied
+- tapOn:
+    text: "Chat options"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: t34-chat-options
+- pressKey: Back
+- pressKey: Back
+- tapOn:
+    text: "New message"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: t35-new-message
+- pressKey: Back
+
+# Activity (the heart on Home)
+- tapOn: "Home"
+- tapOn:
+    text: "Activity"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: t36-activity
+- pressKey: Back
+
+# Archive, Highlights
+- tapOn: "Profile"
+- tapOn:
+    text: "Archive"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: t37-archive
+- pressKey: Back
+- tapOn:
+    text: "New"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: t38-new-highlight
+- pressKey: Back
+- tapOn:
+    text: "Discard"
+    optional: true
+
+# Settings and every page under it
+- tapOn: "Settings"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: t39-settings
+- tapOn:
+    text: "Notifications"
+    optional: true
+- takeScreenshot: t40-notifications
+- pressKey: Back
+- tapOn:
+    text: "Your interests"
+    optional: true
+- takeScreenshot: t41-your-interests
+- pressKey: Back
+- tapOn:
+    text: "Close Friends"
+    optional: true
+- takeScreenshot: t42-close-friends
+- pressKey: Back
+- scrollUntilVisible:
+    element: "Blocked accounts"
+    optional: true
+- takeScreenshot: t43-settings-middle
+- tapOn:
+    text: "Request verification"
+    optional: true
+- takeScreenshot: t44-verification
+- pressKey: Back
+- scrollUntilVisible:
+    element: "Log out"
+    optional: true
+- takeScreenshot: t45-settings-bottom
+- tapOn:
+    text: "Send feedback"
+    optional: true
+- takeScreenshot: t46-feedback
+- pressKey: Back
+- tapOn:
+    text: "About"
+    optional: true
+- takeScreenshot: t47-about
+- pressKey: Back

@@ -7,6 +7,11 @@ name: Android emulator test
 # last step deletes it again.
 on:
   workflow_dispatch:
+    inputs:
+      flow:
+        description: "smoke (every main screen, phone + tablet) or tour (every feature, phone)"
+        required: false
+        default: smoke
 
 concurrency:
   group: android-e2e-${{ github.ref }}
@@ -74,7 +79,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        size: [phone, tablet]
+        size: ${{ inputs.flow == 'tour' && fromJSON('["phone"]') || fromJSON('["phone", "tablet"]') }}
     steps:
       - uses: actions/checkout@v5
 
@@ -104,7 +109,7 @@ jobs:
           profile: ${{ matrix.size == 'phone' && 'pixel_7' || 'pixel_tablet' }}
           disable-animations: true
           emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
-          script: bash .github/scripts/android-walkthrough.sh ${{ matrix.size }}
+          script: bash .github/scripts/android-walkthrough.sh ${{ matrix.size }} ${{ inputs.flow || 'smoke' }}
 
       - name: Delete the test account
         if: always()
@@ -139,7 +144,7 @@ jobs:
           git clone -q --depth 1 -b ci/android-e2e-results \
             "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" "$R" 2>/dev/null \
             || { mkdir -p "$R" && git -C "$R" init -q -b ci/android-e2e-results; }
-          rm -rf "$R/${{ matrix.size }}"
+          rm -rf "$R/${{ matrix.size }}" "$R/tour"
           (cd android-e2e && find . -type f \( -name '*.png' -o -name '*.txt' -o -name '*.xml' -o -name '*.json' -o -name '*.log' \) -size -20M -exec rsync -R {} "$R/" \;)
           cd "$R"
           echo "Run ${{ github.run_id }} on ${{ github.sha }}" > "RUN-${{ matrix.size }}.txt"
