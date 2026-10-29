@@ -213,7 +213,11 @@ export async function deleteMyAccount(userId: string, password: string): Promise
 
   const valid = await verifyPassword(password, current.passwordHash);
   if (!valid) throw new HttpError(401, "Incorrect password.");
+  await removeAccount(userId);
+}
 
+/** Deletes an account the way deleting it from Settings does (the password already checked). */
+export async function removeAccount(userId: string): Promise<void> {
   const activeStories = await storiesRepo.listActiveStoriesForOwner(userId);
   for (const story of activeStories) {
     await storiesService.moderatorDeleteStory(story.id);

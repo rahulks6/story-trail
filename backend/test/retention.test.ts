@@ -15,7 +15,7 @@ import { mediaStorage } from "../src/modules/media/instance";
 import { MediaWorker } from "../src/modules/media/worker";
 import {
   abandonedUploads, deletedAccounts, deletedStoryMedia, expiredRecords, processedOriginals, removedContentMedia,
-  runRetentionIfDue, scratchFiles, unusedMedia,
+  runRetentionIfDue, scratchFiles, testAccounts, unusedMedia,
 } from "../src/modules/media/retention";
 import { ADULT_BIRTH_DATE, authHeader, makeClient, uniqueUser } from "./helpers";
 import { clientUploadId, createUploadSession, jpegWithGps, makeVideo, putPart, uploadDirect, type UploadPlanPart } from "./mediaHelpers";
@@ -316,15 +316,37 @@ describe("retention", () => {
       await query(`DELETE FROM retention_runs`);
       const reports = await runRetentionIfDue(a, mediaStorage, 60);
       assert.ok(reports);
-      assert.deepEqual(reports!.map((r) => r.task), ["abandoned_uploads", "unused_media", "deleted_story_media", "removed_content_media", "deleted_accounts", "processed_originals", "verification_photos", "story_exports", "report_message_evidence", "ad_campaign_completion", "analytics_rollup", "analytics_raw_retention", "expired_records", "scratch_files"]);
+      assert.deepEqual(reports!.map((r) => r.task), ["abandoned_uploads", "unused_media", "deleted_story_media", "removed_content_media", "test_accounts", "deleted_accounts", "processed_originals", "verification_photos", "story_exports", "report_message_evidence", "ad_campaign_completion", "analytics_rollup", "analytics_raw_retention", "expired_records", "scratch_files"]);
       assert.ok(reports!.every((r) => !r.error), JSON.stringify(reports));
       assert.equal(await runRetentionIfDue(a, mediaStorage, 60), null, "not again within the interval");
       const runs = await query(`SELECT task, finished_at FROM retention_runs`);
-      assert.equal(runs.length, 14);
+      assert.equal(runs.length, 15);
       assert.ok(runs.every((r) => r.finished_at !== null));
     } finally {
       await a.end();
       await b.end();
     }
+  });
+});
+
+describe("leftover walk-through test accounts", () => {
+  it("are deleted once they're 6 hours old; real accounts and fresh test accounts stay", async () => {
+    const stale = await signup();
+    const fresh = await signup();
+    const real = await signup();
+    const tag = randomUUID().slice(0, 8);
+    await query(`UPDATE users SET email = :'email', created_at = now() - interval '7 hours' WHERE id = :'id'`, { id: stale.id, email: `support+e2e-and-${tag}-phone@katkee.com` });
+    await query(`UPDATE users SET email = :'email' WHERE id = :'id'`, { id: fresh.id, email: `support+e2e-${tag}-small1@katkee.com` });
+    await query(`UPDATE users SET created_at = now() - interval '7 hours' WHERE id = :'id'`, { id: real.id });
+    const story = await publish(stale.token, await photo(stale.token));
+
+    assert.ok((await testAccounts(200)) >= 1);
+    const state = async (id: string) => (await queryOne(`SELECT deleted_at IS NOT NULL AS deleted FROM users WHERE id = :'id'`, { id }))?.deleted;
+    assert.equal(await state(stale.id), "t");
+    assert.equal(await state(fresh.id), "f");
+    assert.equal(await state(real.id), "f");
+    // Gone like a Settings deletion: signed out, and its Story taken down.
+    assert.notEqual((await client.get("/api/v1/auth/me", authHeader(stale.token))).status, 200);
+    assert.notEqual((await queryOne(`SELECT deleted_at FROM stories WHERE id = :'id'`, { id: story }))?.deleted_at, null);
   });
 });

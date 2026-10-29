@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Keyboard, Modal, PanResponder, Platform, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Dimensions, Keyboard, Modal, PanResponder, Platform, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Pressable } from "./Pressable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { mediaColors as colors, radii, spacing, ICONS } from "../theme";
@@ -206,7 +206,10 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
 function useKeyboardHeight(): number {
   const [height, setHeight] = useState(0);
   useEffect(() => {
-    const show = Keyboard.addListener(Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow", (e) => setHeight(e.endCoordinates.height));
+    // Measured from the bottom of the screen (where the keyboard's top edge is), not its own
+    // height: on Android that leaves out the navigation bar under it, which hid the style row.
+    const show = Keyboard.addListener(Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow", (e) =>
+      setHeight(Math.max(e.endCoordinates.height, Dimensions.get("screen").height - e.endCoordinates.screenY)));
     const hide = Keyboard.addListener(Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide", () => setHeight(0));
     return () => { show.remove(); hide.remove(); };
   }, []);

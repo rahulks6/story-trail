@@ -1,0 +1,11 @@
+# Goes back until the tab bar shows again (never past it, so the tour can't leave Katkee).
+appId: com.katkee.app
+---
+- repeat:
+    times: 4
+    while:
+      notVisible: "Messages"
+    commands:
+      - pressKey: Back
+      - waitForAnimationToEnd:
+          timeout: 2000

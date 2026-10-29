@@ -330,6 +330,25 @@ export async function reportMessageEvidence(batchSize: number, days: number): Pr
   return rows.length;
 }
 
+/**
+ * The walk-through test accounts (.github/scripts/*-walkthrough.sh: support+e2e-...@katkee.com)
+ * delete themselves when a run ends. A run that was cancelled or lost its runner can't, and its
+ * accounts would then show up in other people's suggestions and Home. Any still here after
+ * `hours` are deleted the way Settings deletes an account.
+ */
+export async function testAccounts(batchSize: number, hours = 6): Promise<number> {
+  const rows = await query(
+    `SELECT id FROM users
+     WHERE deleted_at IS NULL AND email ILIKE 'support+e2e-%@katkee.com'
+       AND created_at < now() - make_interval(hours => :'hours'::integer)
+     ORDER BY created_at LIMIT :'limit'`,
+    { hours, limit: batchSize },
+  );
+  const { removeAccount } = await import("../users/profiles.service");
+  for (const row of rows) await removeAccount(String(row.id));
+  return rows.length;
+}
+
 /** Work directories left behind by crashed processing or interrupted uploads. */
 export async function scratchFiles(store: ObjectStore, maxAgeMs = 24 * 3600 * 1000): Promise<number> {
   let removed = store instanceof LocalObjectStore ? await store.sweepScratch(maxAgeMs) : 0;
@@ -353,6 +372,7 @@ export async function runRetention(store: ObjectStore): Promise<RetentionReport[
     await recorded("unused_media", () => unusedMedia(store, r.batchSize, r.unusedMediaHours)),
     await recorded("deleted_story_media", () => deletedStoryMedia(store, r.batchSize, r.deletedStoryDays)),
     await recorded("removed_content_media", () => removedContentMedia(store, r.batchSize, r.moderationEvidenceDays)),
+    await recorded("test_accounts", () => testAccounts(r.batchSize)),
     await recorded("deleted_accounts", () => deletedAccounts(store, r.batchSize, r.deletedAccountDays, r.moderationEvidenceDays)),
     await recorded("processed_originals", () => processedOriginals(store, r.batchSize, r.originalMediaDays)),
     await recorded("verification_photos", () => verificationPhotos(store, r.batchSize, VERIFICATION_PHOTO_DAYS)),

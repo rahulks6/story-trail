@@ -162,7 +162,7 @@ appId: com.katkee.app
     timeout: 5000
 - takeScreenshot: t18-profile
 - tapOn:
-    text: ".*profile photo.*"
+    text: "Open your Story"
     optional: true
 - waitForAnimationToEnd:
     timeout: 3000
@@ -173,8 +173,7 @@ appId: com.katkee.app
 - waitForAnimationToEnd:
     timeout: 3000
 - takeScreenshot: t20-story-insights
-- pressKey: Back
-- pressKey: Back
+- runFlow: back-to-tabs.yaml
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 10000
@@ -222,7 +221,7 @@ appId: com.katkee.app
 - waitForAnimationToEnd:
     timeout: 3000
 - takeScreenshot: t27-following
-- pressKey: Back
+- runFlow: back-to-tabs.yaml
 
 # Messages: a real chat (the second account writes first)
 - runScript: partner-dm.js
@@ -279,15 +278,14 @@ appId: com.katkee.app
 - waitForAnimationToEnd:
     timeout: 2000
 - takeScreenshot: t34-chat-options
-- pressKey: Back
-- pressKey: Back
+- runFlow: back-to-tabs.yaml
 - tapOn:
     text: "New message"
     optional: true
 - waitForAnimationToEnd:
     timeout: 3000
 - takeScreenshot: t35-new-message
-- pressKey: Back
+- runFlow: back-to-tabs.yaml
 
 # Activity (the heart on Home)
 - tapOn: "Home"
@@ -297,7 +295,7 @@ appId: com.katkee.app
 - waitForAnimationToEnd:
     timeout: 3000
 - takeScreenshot: t36-activity
-- pressKey: Back
+- runFlow: back-to-tabs.yaml
 
 # Archive, Highlights
 - tapOn: "Profile"
@@ -307,14 +305,14 @@ appId: com.katkee.app
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: t37-archive
-- pressKey: Back
+- runFlow: back-to-tabs.yaml
 - tapOn:
     text: "New"
     optional: true
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: t38-new-highlight
-- pressKey: Back
+- runFlow: back-to-tabs.yaml
 - tapOn:
     text: "Discard"
     optional: true
