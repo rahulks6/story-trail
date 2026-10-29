@@ -1,97 +1,106 @@
-10-29 15:25:04.726 D/AndroidRuntime( 3756): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-29 15:25:04.732 I/AndroidRuntime( 3756): Using default boot image
-10-29 15:25:04.736 I/AndroidRuntime( 3756): Leaving lock profiling enabled
-10-29 15:25:04.737 I/system_server(  556): Background concurrent mark compact GC freed 14MB AllocSpace bytes, 40(792KB) LOS objects, 45% free, 28MB/52MB, paused 47.625ms,51.246ms total 826.410ms
-10-29 15:25:04.739 W/system_server(  556): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/InputDevices/InputDevices.apk' with 1 weak references
-10-29 15:25:04.740 W/system_server(  556): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/LatinIMEGooglePrebuilt/LatinIMEGooglePrebuilt.apk' with 1 weak references
-10-29 15:25:04.740 W/system_server(  556): ApkAssets: Deleting an ApkAssets object '<empty> and /system_ext/app/AccessibilityMenu/AccessibilityMenu.apk' with 1 weak references
-10-29 15:25:04.740 W/system_server(  556): ApkAssets: Deleting an ApkAssets object '/product/overlay/AccessibilityMenu__sdk_gphone64_x86_64__auto_generated_rro_product.apk' with 1 weak references
-10-29 15:25:04.740 W/system_server(  556): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/PrebuiltBugle/PrebuiltBugle.apk' with 1 weak references
-10-29 15:25:04.741 W/system_server(  556): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/GoogleTTS/GoogleTTS.apk' with 1 weak references
-10-29 15:25:04.741 W/system_server(  556): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~jrslsmMeHPHjrE32qLVXzw==/dev.mobile.maestro--UFB0rylwclDf_ZsaDhBNg==/base.apk' with 1 weak references
-10-29 15:25:04.741 W/system_server(  556): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/talkback/talkback.apk' with 1 weak references
-10-29 15:25:04.741 W/system_server(  556): ApkAssets: Deleting an ApkAssets object '/vendor/overlay/EmulatorTalkBackOverlay/EmulatorTalkBackOverlay.apk' with 1 weak references
-10-29 15:25:04.742 W/system_server(  556): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/PrebuiltGmail/PrebuiltGmail.apk' with 1 weak references
-10-29 15:25:04.742 W/system_server(  556): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/Drive/Drive.apk' with 1 weak references
-10-29 15:25:04.742 W/system_server(  556): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/CalendarGooglePrebuilt/CalendarGooglePrebuilt.apk' with 1 weak references
-10-29 15:25:04.750 I/app_process( 3756): Core platform API reporting enabled, enforcing=false
-10-29 15:25:04.750 I/app_process( 3756): Using CollectorTypeCMC GC.
-10-29 15:25:04.762 D/ShortcutService(  556): Saving package item com.google.android.gms to /data/system_ce/0/shortcut_service/packages/com.google.android.gms.xml
-10-29 15:25:04.774 W/SemanticLocation( 1231): [MDD] ModelBundleMetadata: File not found: java.io.FileNotFoundException: /data/user/0/com.google.android.gms/files/model_bundle_metadata.pb: open failed: ENOENT (No such file or directory) [CONTEXT service_id=173 ]
-10-29 15:25:04.774 W/SemanticLocation( 1231): java.io.FileNotFoundException: /data/user/0/com.google.android.gms/files/model_bundle_metadata.pb: open failed: ENOENT (No such file or directory)
-10-29 15:25:04.774 W/SemanticLocation( 1231): 	at libcore.io.IoBridge.open(IoBridge.java:574)
-10-29 15:25:04.774 W/SemanticLocation( 1231): 	at java.io.FileInputStream.<init>(FileInputStream.java:179)
-10-29 15:25:04.774 W/SemanticLocation( 1231): 	at android.app.ContextImpl.openFileInput(ContextImpl.java:774)
-10-29 15:25:04.774 W/SemanticLocation( 1231): 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:251)
-10-29 15:25:04.774 W/SemanticLocation( 1231): 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:251)
-10-29 15:25:04.774 W/SemanticLocation( 1231): 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:251)
-10-29 15:25:04.774 W/SemanticLocation( 1231): 	at ddho.k(:com.google.android.gms@242335041@24.23.35 (190800-646585959):5)
-10-29 15:25:04.774 W/SemanticLocation( 1231): 	at ddhd.c(:com.google.android.gms@242335041@24.23.35 (190800-646585959):65)
-10-29 15:25:04.774 W/SemanticLocation( 1231): 	at ddhd.<init>(:com.google.android.gms@242335041@24.23.35 (190800-646585959):16)
-10-29 15:25:04.774 W/SemanticLocation( 1231): 	at ddov.j(:com.google.android.gms@242335041@24.23.35 (190800-646585959):18)
-10-29 15:25:04.774 W/SemanticLocation( 1231): 	at ddov.h(:com.google.android.gms@242335041@24.23.35 (190800-646585959):184)
-10-29 15:25:04.774 W/SemanticLocation( 1231): 	at ddov.b(:com.google.android.gms@242335041@24.23.35 (190800-646585959):8)
+10-29 15:57:48.459 D/AndroidRuntime( 3760): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-29 15:57:48.459 W/PackageManager(  558): Failed registering loading progress callback. Package is fully loaded.
+10-29 15:57:48.459 D/PackageUpdatedTask( 1121): Package updated: mOp=ADD packages=[dev.mobile.maestro.test]
+10-29 15:57:48.460 I/ExplicitHealthCheckController(  558): Service not ready to get health check supported packages. Binding...
+10-29 15:57:48.460 W/MagnificationConnectionManager(  558): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-29 15:57:48.462 W/MagnificationConnectionManager(  558): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-29 15:57:48.462 I/AppWidgetServiceImpl(  558): getInstalledProvidersForProfiles() 0
+10-29 15:57:48.465 I/AiAiEcho( 1426): AppFetcherImplV2 updateApps package:[dev.mobile.maestro.test], userId:[0], reason:[package is added.].
+10-29 15:57:48.466 D/BaseIconCache( 1121): Default icon returned for dev.mobile.maestro.test
+10-29 15:57:48.467 V/GrammaticalInflectionUtils(  558): AttributionSource: AttributionSource { uid = 10188, packageName = null, attributionTag = null, token = android.os.Binder@e230d3, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+10-29 15:57:48.472 I/AndroidRuntime( 3760): Using default boot image
+10-29 15:57:48.472 I/AndroidRuntime( 3760): Leaving lock profiling enabled
+10-29 15:57:48.476 I/RegisterSyncOperation( 1180): Register sync called by com.google.android.googlequicksearchbox, syncing since something changed [CONTEXT service_id=51 ]
+10-29 15:57:48.484 I/app_process( 3760): Core platform API reporting enabled, enforcing=false
+10-29 15:57:48.484 I/app_process( 3760): Using CollectorTypeCMC GC.
+10-29 15:57:48.485 I/AiAiEcho( 1426): AppFetcherImpl onPackageChanged dev.mobile.maestro.test.
+10-29 15:57:48.487 I/Fitness ( 1180): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+10-29 15:57:48.490 I/HeterodyneSyncer( 1180): Removed 0 invalid users [CONTEXT service_id=51 ]
+10-29 15:57:48.490 D/PackageUpdatedTask( 1121): Package updated: mOp=UPDATE packages=[dev.mobile.maestro.test]
+10-29 15:57:48.498 I/ExplicitHealthCheckController(  558): Explicit health check service is bound
+10-29 15:57:48.507 D/Zygote  (  364): Forked child process 3773
+10-29 15:57:48.510 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-29 15:57:48.518 I/ActivityManager(  558): Start proc 3773:com.google.android.ext.services/u0a188 for service {com.google.android.ext.services/android.ext.services.watchdog.ExplicitHealthCheckServiceImpl}
+10-29 15:57:48.518 W/AllAppsList( 1121): updatePromiseInstallInfo: no Activities matched updated package, removing all apps from package=dev.mobile.maestro.test
+10-29 15:57:48.520 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-29 15:57:48.526 I/RoleService(  558): Granting default roles...
+10-29 15:57:48.528 W/Role    (  558): Default holder doesn't have required signing certificate: com.google.android.retaildemo:6547c73dee150c103980bfdffe55cc9a011d785dd694a5f99afd8205bcaf1f80
+10-29 15:57:48.529 E/RoleControllerServiceImpl(  558): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION
+10-29 15:57:48.531 W/Role    (  558): Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58
+10-29 15:57:48.539 I/PhenotypeResourceReader( 1180): unable to find any Phenotype resource metadata for com.google.android.modulemetadata
+10-29 15:57:48.541 I/PackageWatchdog(  558): Saving observer state to file
+10-29 15:57:48.546 I/id.ext.services( 3773): Using CollectorTypeCMC GC.
+10-29 15:57:48.547 W/id.ext.services( 3773): Unexpected CPU variant for x86: x86_64.
+10-29 15:57:48.547 W/id.ext.services( 3773): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
+10-29 15:57:48.551 E/id.ext.services( 3773): Not starting debugger since process cannot load the jdwp agent.
+10-29 15:57:48.559 D/nativeloader( 3773): Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+10-29 15:57:48.580 I/cr_CronetUrlRequestContext( 1383): destroyNativeStreamLocked org.chromium.net.impl.CronetBidirectionalStream@4928893
+10-29 15:57:48.585 E/RoleControllerServiceImpl(  558): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.WALLET
+10-29 15:57:48.600 E/RoleControllerServiceImpl(  558): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.devicelockcontroller, role: android.app.role.SYSTEM_FINANCED_DEVICE_CONTROLLER
+10-29 15:57:48.617 W/A       ( 1529): (REDACTED) Can't format flag %s to integer.
+10-29 15:57:48.617 W/A       ( 1529): (REDACTED) Can't format flag %s to integer.
+10-29 15:57:48.617 W/A       ( 1529): (REDACTED) Can't format flag %s to integer.
 --
-10-29 15:25:05.291 D/AndroidRuntime( 3756): Calling main entry com.android.commands.am.Am
-10-29 15:25:05.298 I/AiAiEcho( 1461): Settings changed for uri: content://settings/secure/facelock_liveliness_recognition_threshold
-10-29 15:25:05.302 D/UiAutomationConnection( 3756): Created on user UserHandle{0}
-10-29 15:25:05.312 I/TapAndPay( 1231): Disabling TapAndPay HCE service [CONTEXT service_id=79 ]
-10-29 15:25:05.314 W/Pay     ( 1497): Active account was null, notification task will be cancelled. [CONTEXT service_id=198 ]
-10-29 15:25:05.314 W/Pay     ( 1497): [eMoney txn sync] exiting without init: active tapandpay account not found! [CONTEXT service_id=198 ]
-10-29 15:25:05.350 I/AiAiEcho( 1461): Settings changed for uri: content://settings/secure/autofill_field_classification
-10-29 15:25:05.351 I/AiAiEcho( 1461): Settings changed for uri: content://settings/secure/dropbox:data_app_crash
-10-29 15:25:05.351 I/AiAiEcho( 1461): Settings changed for uri: content://settings/secure/lockscreen.options
-10-29 15:25:05.351 I/AiAiEcho( 1461): Settings changed for uri: content://settings/secure/ssl_session_cache
-10-29 15:25:05.371 I/AiAiEcho( 1461): Settings changed for uri: content://settings/secure/dropbox:data_app_wtf
-10-29 15:25:05.371 I/AiAiEcho( 1461): Settings changed for uri: content://settings/secure/send_action_app_error
-10-29 15:25:05.371 I/AiAiEcho( 1461): Settings changed for uri: content://settings/secure/dropbox:data_app_anr
-10-29 15:25:05.371 I/AiAiEcho( 1461): Settings changed for uri: content://settings/secure/facelock_max_center_movement
-10-29 15:25:05.373 I/Blockstore( 1497): [DataStoreImpl] Keyless data not found or its IsLastInstallationData = false. [CONTEXT service_id=258 ]
-10-29 15:25:05.375 W/PackageManager(  556): Failed registering loading progress callback. Package is fully loaded.
-10-29 15:25:05.379 W/SearchServiceCore( 1568): Abort, client detached.
-10-29 15:25:05.379 W/SearchServiceCore( 1568): Abort, client detached.
-10-29 15:25:05.379 W/SearchServiceCore( 1568): Abort, client detached.
-10-29 15:25:05.379 W/SearchServiceCore( 1568): Abort, client detached.
-10-29 15:25:05.381 I/CertBlacklister(  556): Certificate blacklist changed, updating...
-10-29 15:25:05.389 I/PackageParsing( 1497): Parse times for '/data/user_de/0/com.google.android.gms/app_chimera/m/00000004/DynamiteModulesC.apk': parse=191ms, update_cache=0 ms
-10-29 15:25:05.402 I/CertBlacklister(  556): Certificate blacklist updated
-10-29 15:25:05.413 W/SemanticLocation( 1231): [MDD] ModelBundleMetadata: File not found: java.io.FileNotFoundException: /data/user/0/com.google.android.gms/files/model_bundle_metadata.pb: open failed: ENOENT (No such file or directory) [CONTEXT service_id=173 ]
-10-29 15:25:05.413 W/SemanticLocation( 1231): java.io.FileNotFoundException: /data/user/0/com.google.android.gms/files/model_bundle_metadata.pb: open failed: ENOENT (No such file or directory)
-10-29 15:25:05.413 W/SemanticLocation( 1231): 	at libcore.io.IoBridge.open(IoBridge.java:574)
-10-29 15:25:05.413 W/SemanticLocation( 1231): 	at java.io.FileInputStream.<init>(FileInputStream.java:179)
-10-29 15:25:05.413 W/SemanticLocation( 1231): 	at android.app.ContextImpl.openFileInput(ContextImpl.java:774)
-10-29 15:25:05.413 W/SemanticLocation( 1231): 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:251)
-10-29 15:25:05.413 W/SemanticLocation( 1231): 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:251)
-10-29 15:25:05.413 W/SemanticLocation( 1231): 	at android.content.ContextWrapper.openFileInput(ContextWrapper.java:251)
+10-29 15:57:48.781 D/AndroidRuntime( 3760): Calling main entry com.android.commands.am.Am
+10-29 15:57:48.784 D/UiAutomationConnection( 3760): Created on user UserHandle{0}
+10-29 15:57:48.784 D/TrafficStats( 1383): tagSocket(215) with statsTag=0x30004901, statsUid=10143
+10-29 15:57:48.788 I/ActivityManager(  558): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+10-29 15:57:48.789 I/ExplicitHealthCheckController(  558): Explicit health check requested packages []
+10-29 15:57:48.789 I/ExplicitHealthCheckController(  558): No more health check requests, unbinding...
+10-29 15:57:48.792 I/PackageWatchdog(  558): Saving observer state to file
+10-29 15:57:48.792 I/ExplicitHealthCheckController(  558): Explicit health check supported packages [PackageConfig{com.google.android.networkstack, 86400000}]
+10-29 15:57:48.795 D/ShortcutService(  558): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=null
+10-29 15:57:48.799 I/AiAiEcho( 1426): AppIndexer Package:[dev.mobile.maestro.test] UserProfile:[0] Enabled:[true].
+10-29 15:57:48.799 I/AiAiEcho( 1426): AppFetcherImplV2 updateApps package:[dev.mobile.maestro.test], userId:[0], reason:[package is updated.].
+10-29 15:57:48.802 I/AppWidgetServiceImpl(  558): getInstalledProvidersForProfiles() 0
+10-29 15:57:48.803 W/ParceledListSlice(  558): Element #25 is 19764 bytes.
+10-29 15:57:48.804 W/ParceledListSlice(  558): Element #26 is 19800 bytes.
+10-29 15:57:48.804 W/ParceledListSlice(  558): Element #27 is 19644 bytes.
+10-29 15:57:48.804 W/ParceledListSlice(  558): Element #28 is 19552 bytes.
+10-29 15:57:48.804 W/ParceledListSlice(  558): Element #29 is 19664 bytes.
+10-29 15:57:48.806 W/PackageManager( 1426): Failure retrieving text 0x7f130786 in package com.android.systemui
+10-29 15:57:48.806 W/PackageManager( 1426): android.content.res.Resources$NotFoundException: String resource ID #0x7f130786
+10-29 15:57:48.806 W/PackageManager( 1426): 	at android.content.res.Resources.getText(Resources.java:466)
+10-29 15:57:48.806 W/PackageManager( 1426): 	at android.app.ApplicationPackageManager.getText(ApplicationPackageManager.java:2405)
+10-29 15:57:48.806 W/PackageManager( 1426): 	at android.appwidget.AppWidgetProviderInfo.loadDescription(AppWidgetProviderInfo.java:484)
+10-29 15:57:48.806 W/PackageManager( 1426): 	at kml.a(PG:341)
+10-29 15:57:48.806 W/PackageManager( 1426): 	at kmg.b(PG:39)
+10-29 15:57:48.806 W/PackageManager( 1426): 	at aaer.g(PG:13)
+10-29 15:57:48.806 W/PackageManager( 1426): 	at kotlinx.coroutines.DispatchedTask.run(PG:114)
+10-29 15:57:48.806 W/PackageManager( 1426): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
+10-29 15:57:48.806 W/PackageManager( 1426): 	at wqm.a(PG:3)
+10-29 15:57:48.806 W/PackageManager( 1426): 	at wpo.run(PG:21)
+10-29 15:57:48.806 W/PackageManager( 1426): 	at wqn.run(PG:5)
+10-29 15:57:48.806 W/PackageManager( 1426): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
 --
-10-29 15:34:55.440 I/AndroidRuntime( 3756): VM exiting with result code 0.
-10-29 15:34:55.453 V/ActivityManager(  556): Got obituary of 3790:dev.mobile.maestro
-10-29 15:34:55.454 I/Zygote  (  356): Process 3790 exited due to signal 9 (Killed)
-10-29 15:34:55.628 I/binder_alloc(    0): 3790: binder_alloc_buf, no vma
-10-29 15:34:55.629 W/binder_debug(    0): 88 callbacks suppressed
-10-29 15:34:55.629 I/binder  (    0): cannot allocate buffer: vma cleared, target dead or dying
-10-29 15:34:55.630 I/binder  (    0): 556:1953 transaction async to 3790:0 failed 766876/29189/-3, size 192-0 line 3544
-10-29 15:34:55.456 E/IPCThreadState(  556): Binder transaction failure. id: 766876, BR_*: 29189, error: -3 (No such process)
-10-29 15:34:55.457 W/ActivityManager(  556): pid 556 system sent binder code 1 with flags 1 to frozen apps and got error -32
-10-29 15:34:55.466 I/libprocessgroup(  556): Removed cgroup /sys/fs/cgroup/uid_10210/pid_3790
-10-29 15:34:55.466 I/adbd    (  434): Remote process closed the socket (on MSG_PEEK)
-10-29 15:34:55.466 W/MagnificationConnectionManager(  556): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-29 15:34:55.467 I/AiAiEcho( 1461): Settings changed for uri: content://settings/secure/accessibility_enabled
-10-29 15:34:55.468 V/UiAutomationManager(  556): UiAutomation service owner died
-10-29 15:34:55.640 I/init    (    0): ... started service 'artd' has pid 6398
-10-29 15:34:55.645 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 142 (/system/bin/servicemanager)
-10-29 15:34:55.471 W/MagnificationConnectionManager(  556): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-10-29 15:34:55.471 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-10-29 15:34:55.471 I/AiAiEcho( 1461): Predicting[0]:  [CONTEXT sampling_count=5 ]
-10-29 15:34:55.471 I/AiAiEcho( 1461): EchoTargets: 
-10-29 15:34:55.471 I/AiAiEcho( 1461): Filtered by AiAi flag check: 
-10-29 15:34:55.471 I/AiAiEcho( 1461): [CONTEXT ratelimit_period="10 SECONDS" ]
-10-29 15:34:55.471 I/AiAiEcho( 1461): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
-10-29 15:34:55.471 I/AiAiEcho( 1461): #remoteViewsTwiddler: feature disabled.
-10-29 15:34:55.472 I/AiAiEcho( 1461): Predicting[0]:  [CONTEXT sampling_count=5 ]
-10-29 15:34:55.472 I/AiAiEcho( 1461): EchoTargets: 
-10-29 15:34:55.472 I/AiAiEcho( 1461): Filtered by AiAi flag check: 
-10-29 15:34:55.472 I/AiAiEcho( 1461): [CONTEXT ratelimit_period="10 SECONDS" ]
-10-29 15:34:55.472 I/AiAiEcho( 1461): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
-10-29 15:34:55.472 I/AiAiEcho( 1461): #remoteViewsTwiddler: feature disabled.
-10-29 15:34:55.472 I/AiAiEcho( 1461): Settings changed for uri: content://settings/secure/accessibility_enabled
+10-29 16:07:00.636 I/AndroidRuntime( 3760): VM exiting with result code 0.
+10-29 16:07:00.637 D/InetDiagMessage(  558): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+10-29 16:07:00.638 D/InetDiagMessage(  558): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+10-29 16:07:00.638 D/InetDiagMessage(  558): Destroyed live tcp sockets for uids={10210} in 17ms
+10-29 16:07:00.639 D/InetDiagMessage(  558): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+10-29 16:07:00.639 D/InetDiagMessage(  558): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+10-29 16:07:00.639 D/InetDiagMessage(  558): Destroyed live tcp sockets for uids={20210} in 1ms
+10-29 16:07:00.642 E/MDD     ( 6415): DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.apps.messaging/files/datadownload/shared/public/datadownloadfile_1793290007573
+10-29 16:07:00.644 I/netd    (  360): tetherGetStats() -> {[]} <0.31ms>
+10-29 16:07:00.654 D/dasx    ( 6415): Starting download: https://c.tenor.com/y25c2zUkFkAAAAAk/tenor.gif
+10-29 16:07:00.654 V/dasx    ( 6415): Is http uri, downloading (uri: https://c.tenor.com/y25c2zUkFkAAAAAk/tenor.gif)
+10-29 16:07:00.657 D/dasx    ( 6415): Starting download: https://c.tenor.com/V39OfMM4jVgAAAAk/tenor.gif
+10-29 16:07:00.657 V/dasx    ( 6415): Is http uri, downloading (uri: https://c.tenor.com/V39OfMM4jVgAAAAk/tenor.gif)
+10-29 16:07:00.757 I/servicemanager(    0): Caller(pid=558,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+10-29 16:07:00.782 I/init    (    0): starting service 'artd'...
+10-29 16:07:00.670 W/IPCThreadState(  558): Sending oneway calls to frozen process.
+10-29 16:07:00.671 W/MagnificationConnectionManager(  558): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-29 16:07:00.671 V/UiAutomationManager(  558): UiAutomation service owner died
+10-29 16:07:00.672 I/AiAiEcho( 1426): Settings changed for uri: content://settings/secure/accessibility_enabled
+10-29 16:07:00.674 E/MDD     ( 6415): DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.apps.messaging/files/datadownload/shared/public/datadownloadfile_1793290007574
+10-29 16:07:00.676 E/MDD     ( 6415): DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.apps.messaging/files/datadownload/shared/public/datadownloadfile_1793290007575
+10-29 16:07:00.678 D/dasx    ( 6415): Starting download: https://c.tenor.com/D4X6pNTepakAAAAk/tenor.gif
+10-29 16:07:00.678 V/dasx    ( 6415): Is http uri, downloading (uri: https://c.tenor.com/D4X6pNTepakAAAAk/tenor.gif)
+10-29 16:07:00.680 V/ActivityManager(  558): Got obituary of 3799:dev.mobile.maestro
+10-29 16:07:00.681 I/adbd    (  441): Remote process closed the socket (on MSG_PEEK)
+10-29 16:07:00.682 D/dasx    ( 6415): Starting download: https://c.tenor.com/qhhyoFydZ0sAAAAk/tenor.gif
+10-29 16:07:00.682 V/dasx    ( 6415): Is http uri, downloading (uri: https://c.tenor.com/qhhyoFydZ0sAAAAk/tenor.gif)
+10-29 16:07:00.685 I/Zygote  (  364): Process 3799 exited due to signal 9 (Killed)
+10-29 16:07:00.797 I/binder  (    0): undelivered transaction 791230, process died.
+10-29 16:07:00.802 I/init    (    0): ... started service 'artd' has pid 6612
+10-29 16:07:00.806 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 148 (/system/bin/servicemanager)
