@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites>
+  <testsuite name="Test Suite" device="katkee-small - iOS 26.5 - D69CE1C5-D22A-4F68-ABB8-2905ADB5E5D2" tests="1" failures="0" time="238.57" timestamp="2026-10-29T15:48:20">
+    <testcase id="smoke" name="smoke" classname="smoke" file="/Users/runner/work/story-trail/story-trail/mobile/.maestro/smoke.yaml" time="238.058" timestamp="2026-10-29T15:48:20" status="SUCCESS"/>
+  </testsuite>
+</testsuites>

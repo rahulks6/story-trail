@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites>
+  <testsuite name="Test Suite" device="katkee-large - iOS 26.5 - FFD926AA-6FD9-4A1E-9280-41E4BCF4F32C" tests="1" failures="1" time="134.884" timestamp="2026-10-29T16:02:24">
+    <testcase id="smoke" name="smoke" classname="smoke" file="/Users/runner/work/story-trail/story-trail/mobile/.maestro/smoke.yaml" time="134.619" timestamp="2026-10-29T16:02:25" status="ERROR">
+      <failure>Assertion is false: "Change your email" is visible</failure>
+    </testcase>
+  </testsuite>
+</testsuites>
