@@ -303,7 +303,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
       ) : null}
 
       <Text style={styles.sectionLabel}>Your Archive</Text>
-      <FlatList
+      <FlatList keyboardShouldPersistTaps="handled"
         data={archive ?? []}
         numColumns={3}
         keyExtractor={(item) => item.id}

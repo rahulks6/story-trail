@@ -113,7 +113,7 @@ export function NewChatScreen({ navigation }: Props): React.JSX.Element {
       ) : !loading && debouncedQuery && results.length === 0 ? (
         <EmptyState icon="search" title="No one found" message={`No people match "${debouncedQuery}".`} />
       ) : (
-        <FlatList
+        <FlatList keyboardShouldPersistTaps="handled"
           data={debouncedQuery ? results : suggested}
           ListHeaderComponent={!debouncedQuery && suggested.length ? <Text style={styles.section}>People you follow</Text> : undefined}
           keyExtractor={(item) => item.id}

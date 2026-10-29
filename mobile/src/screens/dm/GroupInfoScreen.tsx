@@ -112,7 +112,7 @@ export function GroupInfoScreen({ navigation, route }: Props): React.JSX.Element
   const others = group.members.filter((m) => m.userId !== user?.id);
   const admin = group.role === "admin";
   return (
-    <FlatList
+    <FlatList keyboardShouldPersistTaps="handled"
       style={styles.container}
       contentContainerStyle={styles.content}
       data={group.members}

@@ -1310,6 +1310,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     onLongPress: (row) => {
       if (row.kind !== "sent") return;
       tapFeedback("tap");
+      Keyboard.dismiss();
       setReactingTo(row);
     },
     onReactionsPress: (row) => {
@@ -1440,6 +1441,10 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         contentContainerStyle={styles.listContent}
         data={rows}
         inverted
+        // With the keyboard up (just after sending), a tap or long-press on a message still works
+        // the first time, like WhatsApp; scrolling the chat lowers the keyboard.
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         keyExtractor={rowKey}
         onEndReachedThreshold={0.4}
         onEndReached={onEndReached}

@@ -89,7 +89,7 @@ export function ReportSheet({ visible, targetType, targetId, conversationId, onC
 
           {selectedReason === null ? (
             // Eleven reasons don't fit on small phones: they scroll inside the sheet.
-            <ScrollView style={styles.reasons} bounces={false}>
+            <ScrollView keyboardShouldPersistTaps="handled" style={styles.reasons} bounces={false}>
               {REPORT_REASONS.map((reason) => (
                 <Pressable key={reason.value} style={styles.row} onPress={() => setSelectedReason(reason.value)} accessibilityRole="button">
                   <Text style={typography.body}>{reason.label}</Text>

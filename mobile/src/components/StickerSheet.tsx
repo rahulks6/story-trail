@@ -296,7 +296,7 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
             </View>
           ) : null}
           {tab === "emoji" ? (
-            <FlatList
+            <FlatList keyboardShouldPersistTaps="handled"
               data={EMOJI_SET}
               keyExtractor={(e) => e}
               numColumns={6}
@@ -319,7 +319,7 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
                 autoFocus
               />
               {mentionSearching ? <ActivityIndicator color={colors.accentText} style={styles.spinner} /> : null}
-              <FlatList
+              <FlatList keyboardShouldPersistTaps="handled"
                 data={mentionResults}
                 keyExtractor={(u) => u.id}
                 renderItem={({ item }) => (
@@ -411,7 +411,7 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
           ) : null}
 
           {tab === "stickers" ? (
-            <FlatList
+            <FlatList keyboardShouldPersistTaps="handled"
               data={STICKER_IDS}
               keyExtractor={(s) => s}
               numColumns={4}
