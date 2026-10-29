@@ -1,8 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <testsuites>
-  <testsuite name="Test Suite" device="test" tests="1" failures="1" time="325.41" timestamp="2026-10-29T14:19:49">
-    <testcase id="tour" name="tour" classname="tour" file="/home/runner/work/story-trail/story-trail/mobile/.maestro/tour.yaml" time="325.347" timestamp="2026-10-29T14:19:49" status="ERROR">
-      <failure>Element not found: Text matching regex: Search</failure>
-    </testcase>
+  <testsuite name="Test Suite" device="test" tests="1" failures="0" time="590.39" timestamp="2026-10-29T14:53:42">
+    <testcase id="tour" name="tour" classname="tour" file="/home/runner/work/story-trail/story-trail/mobile/.maestro/tour.yaml" time="590.306" timestamp="2026-10-29T14:53:42" status="SUCCESS"/>
   </testsuite>
 </testsuites>
