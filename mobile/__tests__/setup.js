@@ -160,3 +160,15 @@ jest.mock("@react-native-google-signin/google-signin", () => {
     statusCodes: {},
   };
 });
+
+// Contacts (react-native-contacts): what the address book holds and what the phone answers are set
+// per test through global.__contacts. Virtual, so tests run before `npm install` adds the library.
+global.__contacts = { permission: "undefined", afterRequest: "authorized", list: [] };
+jest.mock("react-native-contacts", () => {
+  const api = {
+    checkPermission: jest.fn(async () => global.__contacts.permission),
+    requestPermission: jest.fn(async () => { global.__contacts.permission = global.__contacts.afterRequest; return global.__contacts.permission; }),
+    getAllWithoutPhotos: jest.fn(async () => global.__contacts.list),
+  };
+  return { __esModule: true, default: api, ...api };
+}, { virtual: true });

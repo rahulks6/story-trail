@@ -62,6 +62,8 @@ export interface StoryFeedProps {
   /** Home's end of the feed: somewhere to go next (post a Story, find people to follow). */
   onCreate?: () => void;
   onFindPeople?: () => void;
+  /** Home's end of the feed: share your invite link, so friends' Stories fill it next time. */
+  onInvite?: () => void;
   sponsored?: SponsoredPlacement[];
   /**
    * Present only when this feed was pushed on top of something to return
@@ -104,7 +106,7 @@ let viewerMuted = false;
 /** The comment box (or your Story's Activity button) along the bottom. */
 const BOTTOM_BAR_HEIGHT = 46;
 
-export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpenDM, onOpenProfile, onOpenArchived, onRefresh, onNeedMore, onCreate, onFindPeople, sponsored = [], following, verified }: StoryFeedProps): React.JSX.Element {
+export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpenDM, onOpenProfile, onOpenArchived, onRefresh, onNeedMore, onCreate, onFindPeople, onInvite, sponsored = [], following, verified }: StoryFeedProps): React.JSX.Element {
   // Overlays clear the status bar / notch; the bottom ones also the home indicator when no tab bar is below.
   const insets = useScreenInsets();
   const { user: authUser, accessToken } = useAuth();
@@ -664,6 +666,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         <View style={styles.endActions}>
           {onCreate ? <Pressable onPress={onCreate} style={[styles.endButton, styles.endButtonPrimary]} accessibilityRole="button"><Text style={[styles.endButtonLabel, styles.endButtonPrimaryLabel]}>Post a Story</Text></Pressable> : null}
           {onFindPeople ? <Pressable onPress={onFindPeople} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>Find people</Text></Pressable> : null}
+          {onInvite ? <Pressable onPress={onInvite} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>Invite friends</Text></Pressable> : null}
         </View>
         {onRefresh ? <Pressable onPress={onRefresh} hitSlop={8} style={styles.endLink} accessibilityRole="button"><Text style={styles.endLinkLabel}>Check for new Stories</Text></Pressable> : null}
       </EmptyState>

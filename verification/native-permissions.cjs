@@ -15,6 +15,8 @@ const RULES=[
  // for without this.
  {name:'saving to photos',uses:/from "react-native-share"/,ios:['NSPhotoLibraryAddUsageDescription']},
  {name:'notifications',uses:/@react-native-firebase\/messaging/,android:['android.permission.POST_NOTIFICATIONS']},
+ // Contacts on Katkee reads the address book (react-native-contacts) after its explainer.
+ {name:'contacts',uses:/require\("react-native-contacts"\)|from "react-native-contacts"/,android:['android.permission.READ_CONTACTS'],ios:['NSContactsUsageDescription']},
 ];
 
 function sources(dir,out=[]){
@@ -58,6 +60,17 @@ test('location is approximate only: precise location is never declared or reques
  for(const text of code)assert.doesNotMatch(text,/ACCESS_FINE_LOCATION|enableHighAccuracy:\s*true|requestAlwaysAuthorization/);
  assert.match(plist,/<key>NSLocationDefaultAccuracyReduced<\/key>\s*<true\/>/,'iOS asks for approximate location');
  assert.doesNotMatch(plist,/NSLocationAlwaysAndWhenInUseUsageDescription|NSLocationAlwaysUsageDescription/);
+});
+
+test('contacts are read only, and only after the explainer asks',()=>{
+ // A library could add WRITE_CONTACTS in the merged manifest: it is removed at merge time.
+ assert.match(manifest,/<uses-permission android:name="android\.permission\.WRITE_CONTACTS" tools:node="remove" \/>/);
+ assert.doesNotMatch(manifest,/<uses-permission android:name="android\.permission\.(WRITE_CONTACTS|GET_ACCOUNTS)"(?! tools:node="remove")/);
+ const reader=fs.readFileSync(path.join(mobile,'src/state/contacts.ts'),'utf8');
+ for(const call of ['addContact','updateContact','deleteContact','openContactForm','writePhotoToPath','getAll()','getPhotoForId'])assert.ok(!reader.includes(call),`never ${call}`);
+ // Only ContactsFinder (the explainer's Continue button) asks for the permission.
+ const askers=sources(path.join(mobile,'src')).filter(f=>/requestContactsAccess\(/.test(fs.readFileSync(f,'utf8'))).map(f=>path.relative(mobile,f)).sort();
+ assert.deepEqual(askers,['src/components/ContactsFinder.tsx','src/state/contacts.ts']);
 });
 
 test('no shared-storage or photo-library permission reaches the store build',()=>{
