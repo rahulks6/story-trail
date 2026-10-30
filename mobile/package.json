@@ -30,6 +30,7 @@
     "react-native-haptic-feedback": "3.0.0",
     "react-native-image-picker": "8.2.1",
     "react-native-in-app-review": "4.4.2",
+    "react-native-incall-manager": "4.3.0",
     "react-native-keychain": "10.0.0",
     "react-native-nitro-image": "0.15.2",
     "react-native-nitro-modules": "0.37.1",
@@ -40,7 +41,8 @@
     "react-native-svg": "15.15.5",
     "react-native-video": "6.19.3",
     "react-native-view-shot": "6.2.1",
-    "react-native-vision-camera": "5.2.3"
+    "react-native-vision-camera": "5.2.3",
+    "react-native-webrtc": "124.0.8"
   },
   "devDependencies": {
     "@babel/core": "7.29.7",
