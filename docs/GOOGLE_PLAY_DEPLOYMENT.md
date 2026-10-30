@@ -186,8 +186,15 @@ under 18, the Families policy doesn't apply.
 | App activity: Other user-generated content (captions, comments, feedback sent from Settings) | Yes | Optional | App functionality |
 | App info and performance: Crash logs (crash reports to Katkee's own server: the error, its trace, the screen, phone model and app version); Diagnostics | Yes | Required | App functionality, Analytics |
 | Device or other IDs (the push token) | Yes | Optional | App functionality |
+| Contacts (hashed emails and phone numbers, only when the person chooses Find friends from your contacts) | Yes, **processed ephemerally** (matched in the request and never stored) | Optional | App functionality |
 
 If Sponsored Stories stay off, remove "Advertising or marketing".
+
+**Contacts** (`READ_CONTACTS`): read only after the in-app explainer and the person's Continue,
+hashed on the phone, sent in batches and never stored on the server (`backend/src/modules/growth`).
+Play's form counts hashed data sent off the phone as collected; tick "processed ephemerally".
+Play's Permissions declaration doesn't cover contacts, but reviewers may ask: the explainer is in
+Settings, then Friends, then Contacts on Katkee.
 
 **Account deletion**: Play asks for a web page where people can ask to delete their account.
 Enter `https://katkee.com/delete-account`. It gives the in-app steps, the email route, and what
