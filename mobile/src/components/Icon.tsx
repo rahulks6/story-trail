@@ -61,6 +61,12 @@ export function Icon({name,size,color,selected=false,style}: {name:IconName;size
   pin:'M9 3h6M10 3v6l-4 4v2h12v-2l-4-4V3M12 15v6',
   // A rosette (eight scallops) with the tick cut out of it in the background's contrast colour.
   verified:'M12 1.8L15.2 4.2L19.2 4.8L19.8 8.8L22.2 12L19.8 15.2L19.2 19.2L15.2 19.8L12 22.2L8.8 19.8L4.8 19.2L4.2 15.2L1.8 12L4.2 8.8L4.8 4.8L8.8 4.2Z',
+  // Calls: a handset; a video camera; the handset laid down (hang up); mic and camera struck through.
+  call:'M5 3h3l2 5-2.5 1.5a11 11 0 0 0 7 7L16 14l5 2v3a2 2 0 0 1-2 2A17 17 0 0 1 3 5a2 2 0 0 1 2-2Z',
+  video:'M3 7h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Zm13 4 6-4v10l-6-4',
+  endCall:'M2 14.5c5.5-5 14.5-5 20 0l-2.5 3-4-1.5v-3a12 12 0 0 0-7 0v3l-4 1.5Z',
+  micOff:'M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3ZM5 11a7 7 0 0 0 14 0M12 18v3M3 3l18 18',
+  videoOff:'M3 7h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Zm13 4 6-4v10l-6-4M2 3l20 18',
   chevron:'M9 5l7 7-7 7',minus:'M5 12h14',up:'M12 21V3m-7 7 7-7 7 7',down:'M12 3v18m-7-7 7 7 7-7',left:'M21 12H3m7-7-7 7 7 7',right:'M3 12h18m-7-7 7 7-7 7',
  };
  const alias:Partial<Record<IconName,IconName>>={activity:'like',liked:'like',clear:'close',send:'share',changeCover:'gallery',starFilled:'star'};

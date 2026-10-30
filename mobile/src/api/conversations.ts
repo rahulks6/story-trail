@@ -242,7 +242,7 @@ export function listConversations(
 }
 
 /** One of your conversations by id (a push notification's link carries only the id). */
-export function getConversation(conversationId: string, accessToken: string): Promise<{ conversation: (ConversationWithOtherUser & { kind?: "direct"; muted?: boolean }) | GroupDetails }> {
+export function getConversation(conversationId: string, accessToken: string): Promise<{ conversation: (ConversationWithOtherUser & { kind?: "direct"; muted?: boolean; /** Voice and video calls work in this chat (absent from servers before calls). */ callsAvailable?: boolean }) | GroupDetails }> {
   return apiGet(`/api/v1/conversations/${encodeURIComponent(conversationId)}?groups=1`, accessToken);
 }
 

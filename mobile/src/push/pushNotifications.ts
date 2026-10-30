@@ -27,7 +27,7 @@ export type PushPermission = "granted" | "denied" | "undetermined" | "unavailabl
 
 const TOKEN_KEY = "katkee.push.device.v1";
 const ASKED_KEY = "katkee.push.asked.v1";
-const LINK = /^katkee:\/\/(conversation\/[0-9a-f-]{36}|story\/[0-9a-f-]{36}|user\/[a-z0-9_.]{3,30}|activity|home|follow-requests|verification)\/?$/i;
+const LINK = /^katkee:\/\/(conversation\/[0-9a-f-]{36}|call\/[0-9a-f-]{36}|story\/[0-9a-f-]{36}|user\/[a-z0-9_.]{3,30}|activity|home|follow-requests|verification)\/?$/i;
 
 let firebase: { mod: MessagingModule; messaging: Messaging } | null | undefined;
 
@@ -49,7 +49,7 @@ export function notificationLink(message: RemoteMessage): string | null {
   return typeof url === "string" && LINK.test(url) ? url : null;
 }
 
-const androidNeedsRuntimePermission = () => Platform.OS === "android" && Number(Platform.Version) >= 33;
+const androidNeedsRuntimePermission =() => Platform.OS === "android" && Number(Platform.Version) >= 33;
 
 export async function pushPermission(): Promise<PushPermission> {
   const fb = messagingOrNull();

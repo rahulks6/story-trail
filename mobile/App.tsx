@@ -6,6 +6,7 @@ import { NotificationsProvider } from "./src/state/NotificationsContext";
 import { DMProvider } from "./src/state/DMContext";
 import { RealtimeProvider } from "./src/state/RealtimeContext";
 import { RootNavigator } from "./src/navigation/RootNavigator";
+import { CallProvider } from "./src/calls/CallContext";
 import { ErrorBoundary } from "./src/components/ErrorBoundary";
 import { ToastHost } from "./src/components/Toast";
 import { colorScheme } from "./src/theme/colors";
@@ -22,8 +23,11 @@ export default function App(): React.JSX.Element {
           <RealtimeProvider>
             <NotificationsProvider>
               <DMProvider>
-                <RootNavigator />
-                <ToastHost />
+                {/* Calls show over every screen (and the call screen over the app's own toasts). */}
+                <CallProvider>
+                  <RootNavigator />
+                  <ToastHost />
+                </CallProvider>
               </DMProvider>
             </NotificationsProvider>
           </RealtimeProvider>

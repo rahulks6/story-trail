@@ -3,6 +3,7 @@ import { AccessibilityInfo, Animated, PanResponder, StyleSheet, Text, View } fro
 import { Pressable } from "./Pressable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { onForegroundPush, type ForegroundNotice } from "../push/pushNotifications";
+import { callIdFromLink } from "../navigation/profileLinks";
 import { deepLinkTarget, linkPath } from "../navigation/profileLinks";
 import { colors, radii, spacing, typography } from "../theme";
 import { tapFeedback } from "../utils/haptics";
@@ -51,6 +52,8 @@ export function InAppNotificationBanner({ currentRoute, open }: Props): React.JS
   useEffect(() => {
     const stop = onForegroundPush((next) => {
       if (isAboutCurrentScreen(next.url, routeRef.current())) return;
+      // A ringing call brings up the full call screen instead (calls/CallContext.tsx).
+      if (callIdFromLink(next.url)) return;
       setNotice(next);
       tapFeedback("tap");
       AccessibilityInfo.announceForAccessibility?.(`${next.title}. ${next.body}`);

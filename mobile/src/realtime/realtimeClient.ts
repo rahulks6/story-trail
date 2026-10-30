@@ -28,6 +28,10 @@ export type RealtimeEvent =
   | { type: "pins_changed"; conversationId: string }
   /** The other person is typing in this conversation (sent every few seconds while they do). */
   | { type: "typing"; conversationId: string; userId: string }
+  /** A call you're on changed state (ids only; the details come from GET /calls/:id). */
+  | { type: "call"; callId: string; conversationId: string; callerId: string; calleeId: string; media: "audio" | "video"; state: "ringing" | "active" | "ended"; reason: string | null; ringing: boolean }
+  /** The other phone on your call sent signals after `seq`: fetch them. */
+  | { type: "call_signal"; callId: string; seq: number }
   /** Local: emitted on every (re)connect, and when the server says events may have been missed. */
   | { type: "resync" };
 
@@ -246,6 +250,8 @@ export class RealtimeClient {
       case "typing":
       case "unsent":
       case "pins_changed":
+      case "call":
+      case "call_signal":
         this.options.onEvent(event as RealtimeEvent);
         return;
       default:

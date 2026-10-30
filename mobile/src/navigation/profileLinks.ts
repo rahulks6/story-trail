@@ -86,6 +86,14 @@ export function opensInApp(url: string): boolean {
 }
 
 /**
+ * A ringing call's link (katkee://call/<id>, from its push): the call screen opens it, not the
+ * navigator. Null for any other link.
+ */
+export function callIdFromLink(url: string | null | undefined): string | null {
+  return /^katkee:\/\/call\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\/?$/i.exec(url ?? "")?.[1]?.toLowerCase() ?? null;
+}
+
+/**
  * The link Share profile sends: the account ID keeps it working after a rename. It opens the
  * app where it's installed, and katkee.com's "Open in Katkee" page anywhere else.
  */
