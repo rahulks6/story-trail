@@ -235,7 +235,12 @@ export async function deletedAccounts(store: ObjectStore, batch: number, days: n
        fb AS (DELETE FROM app_feedback WHERE user_id IN (SELECT id FROM u)),
        -- Already deleted when the account was (verification.service.ts); this is the backstop.
        vr AS (DELETE FROM verification_requests WHERE user_id IN (SELECT id FROM u)),
-       cr AS (DELETE FROM crash_reports WHERE user_id IN (SELECT id FROM u))
+       cr AS (DELETE FROM crash_reports WHERE user_id IN (SELECT id FROM u)),
+       -- What they did with Story stickers, and their collab invitations (migrations 0062, 0063).
+       sq AS (DELETE FROM story_question_responses WHERE responder_id IN (SELECT id FROM u)),
+       sv AS (DELETE FROM story_sticker_votes WHERE voter_id IN (SELECT id FROM u)),
+       sr AS (DELETE FROM story_countdown_reminders WHERE user_id IN (SELECT id FROM u)),
+       sc AS (DELETE FROM story_collaborators WHERE user_id IN (SELECT id FROM u))
        SELECT count(*) AS n FROM u`,
       { id },
     );

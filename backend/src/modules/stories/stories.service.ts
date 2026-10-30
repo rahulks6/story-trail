@@ -24,6 +24,11 @@ import * as musicRepo from "../music/music.repository";
 import * as notificationsService from "../notifications/notifications.service";
 import { trackUrl, validateStoryMusic } from "../music/music.service";
 import type { MusicTrack } from "../music/music.repository";
+import * as stickersService from "./stickers.service";
+import * as collabService from "./collab.service";
+import * as collabRepo from "./collab.repository";
+import type { CollabRecord } from "./collab.repository";
+import type { CollabView } from "./collab.service";
 
 export interface PublicStory {
   id: string;
@@ -52,6 +57,8 @@ export interface PublicStory {
   music: StoryMusicView | null;
   /** The topic its owner gave it (shared/topics.ts), or null. */
   topic: string | null;
+  /** A Collab Story's two creators (collab.service.ts says who sees a waiting invitation); null otherwise. */
+  collab: CollabView | null;
 }
 
 export interface StoryMusicView {
@@ -107,9 +114,17 @@ async function resolveOverlaysForViewer(overlays: StoryOverlay[], viewerId: stri
   return resolved;
 }
 
-async function toPublicStory(story: StoryRecord, viewerId: string, preloaded?: MediaRecord | null, tracks?: Map<string, MusicTrack>): Promise<PublicStory> {
+async function toPublicStory(
+  story: StoryRecord,
+  viewerId: string,
+  preloaded?: MediaRecord | null,
+  tracks?: Map<string, MusicTrack>,
+  collabs?: Map<string, CollabRecord>,
+): Promise<PublicStory> {
   const media = preloaded === undefined ? await mediaRepo.findMediaById(story.mediaId) : preloaded;
   const track = story.music ? (tracks ?? (await musicRepo.findTracksByIds([story.music.trackId]))).get(story.music.trackId) : null;
+  const collab = collabs ? collabs.get(story.id) : await collabRepo.findCollab(story.id);
+  const overlays = await stickersService.resolveStickersForViewer(await resolveOverlaysForViewer(story.overlays, viewerId), story, viewerId);
   return {
     id: story.id,
     ownerId: story.ownerId,
@@ -120,7 +135,7 @@ async function toPublicStory(story: StoryRecord, viewerId: string, preloaded?: M
     allowSharing: story.allowSharing,
     createdAt: story.createdAt,
     expiresAt: story.expiresAt,
-    overlays: await resolveOverlaysForViewer(story.overlays, viewerId),
+    overlays,
     drawing: story.drawing,
     // The pixels win: media processed with a filter is reported with that filter.
     filter: media && media.filter !== "original" ? media.filter : story.filter,
@@ -130,19 +145,21 @@ async function toPublicStory(story: StoryRecord, viewerId: string, preloaded?: M
     media: media ? deliveryFor(media, story.ownerId === viewerId) : null,
     music: musicView(story, track),
     topic: story.topic,
+    collab: collabService.collabViewFor(collab, viewerId),
   };
 }
 
-/** Lists: one media query for every Story instead of one each. */
+/** Lists: one media (and collab) query for every Story instead of one each. */
 async function toPublicStories(stories: StoryRecord[], viewerId: string): Promise<PublicStory[]> {
-  const [media, tracks] = await Promise.all([
+  const [media, tracks, collabs] = await Promise.all([
     mediaRepo.findMediaByIds(stories.map((s) => s.mediaId)),
     musicRepo.findTracksByIds(stories.flatMap((s) => (s.music ? [s.music.trackId] : []))),
+    collabRepo.findCollabs(stories.map((s) => s.id)),
   ]);
-  return Promise.all(stories.map((s) => toPublicStory(s, viewerId, media.get(s.mediaId) ?? null, tracks)));
+  return Promise.all(stories.map((s) => toPublicStory(s, viewerId, media.get(s.mediaId) ?? null, tracks, collabs)));
 }
 
-function isActive(story: StoryRecord): boolean {
+export function isActive(story: StoryRecord): boolean {
   return story.deletedAt === null && new Date(story.expiresAt).getTime() > Date.now();
 }
 
@@ -159,6 +176,7 @@ export async function publishStory(
 ): Promise<PublicStory> {
   await assertCanContribute(ownerId);
   await assertLinksAllowed(captionText(input), "caption", ownerId);
+  await assertStickersAndCollab(ownerId, input);
   // The song must be in the catalogue; the part that plays is kept within it.
   if (input.music) input = { ...input, music: await validateStoryMusic(input.music) };
   if(input.requestId){
@@ -199,13 +217,41 @@ export async function publishStory(
     festival: (await taggableFestival(input.festival)) ?? null,
     topic: input.topic ?? null,
   });
+  // The media worker's publish adds the invitation in SQL (migration 0063); this path, here.
+  if (input.collaboratorId) await collabRepo.invite(story.id, input.collaboratorId);
   await notifyMentionsQuietly(story.id);
   return toPublicStory(story, ownerId);
 }
 
-/** Mention notifications never stand in the way of the Story itself. */
-/** After every publish (now, or when processed media finishes): mentions, then followers' pushes. */
+/**
+ * Before a publish is accepted: every link sticker passes the link-safety policy, and the
+ * collaborator (if any) is someone the owner may invite. Both are refused with a reason the
+ * editor can show, rather than the Story quietly posting without them.
+ */
+async function assertStickersAndCollab(ownerId: string, input: PublishStoryInput): Promise<void> {
+  await stickersService.assertStickerLinksAllowed(input.overlays ?? [], ownerId);
+  if (input.collaboratorId) await collabService.assertCanInvite(ownerId, input.collaboratorId);
+}
+
+/**
+ * After every publish (now, or when processed media finishes), each step on its own so none
+ * stands in the way of the Story itself or of the others: the "Add Yours" chain, the collab
+ * invitation, mentions, then followers' pushes. Each is safe to repeat (a retried publish).
+ */
 export async function notifyMentionsQuietly(storyId: string): Promise<void> {
+  const story = await storiesRepo.findStoryById(storyId).catch(() => null);
+  if (story) {
+    try {
+      await stickersService.linkAddYours(story);
+    } catch (err) {
+      console.error("add yours chain link failed", storyId, err);
+    }
+    try {
+      await collabService.sendInvitation(story);
+    } catch (err) {
+      console.error("collab invitation failed", storyId, err);
+    }
+  }
   try {
     await notificationsService.notifyStoryMentions(storyId);
   } catch (err) {
@@ -245,6 +291,7 @@ export async function requestPublish(ownerId: string, input: PublishStoryInput, 
   if (!input.requestId) return { state: "published", story: await publishStory(ownerId, input, options) };
   await assertCanContribute(ownerId);
   await assertNotSound(input.mediaId);
+  await assertStickersAndCollab(ownerId, input);
   if (input.music) input = { ...input, music: await validateStoryMusic(input.music) };
   // The hash is of what the app sent, so a retry after a festival ends still matches its request.
   const hash = createHash("sha256").update(JSON.stringify(input)).digest("hex");
@@ -295,9 +342,27 @@ async function checkStoryAccess(
   viewerId: string,
   options: { ignoreExpiry?: boolean } = {},
 ): Promise<PublicStory> {
+  return toPublicStory(await authorizeStoryAccess(storyId, viewerId, options), viewerId);
+}
+
+/**
+ * The rule itself, without building the response: the stored Story, or the same refusal
+ * viewing it would get. Sticker votes and answers (stickers.service.ts) go through here.
+ *
+ * Collab Stories: the invited person may see it while deciding (blocks with the owner still
+ * apply); a live collab adds the collaborator's followers to a followers-only audience and
+ * hides the Story from anyone blocked by, or blocking, the collaborator. The owner's private
+ * account still gates everyone else.
+ */
+export async function authorizeStoryAccess(
+  storyId: string,
+  viewerId: string,
+  options: { ignoreExpiry?: boolean } = {},
+): Promise<StoryRecord> {
+  if (!/^[0-9a-f-]{36}$/i.test(storyId)) throw new HttpError(404, "Story not found.");
   const story = await storiesRepo.findStoryById(storyId);
   if (!story || story.deletedAt !== null) throw new HttpError(404, "Story not found.");
-  if (story.ownerId === viewerId) return toPublicStory(story, viewerId);
+  if (story.ownerId === viewerId) return story;
 
   if (!options.ignoreExpiry && !isActive(story)) throw new HttpError(404, "Story not found.");
 
@@ -307,19 +372,36 @@ async function checkStoryAccess(
   const blocked = await socialRepo.anyBlockBetween(viewerId, owner.id);
   if (blocked) throw new HttpError(404, "Story not found.");
 
+  const collab = await collabRepo.findCollab(story.id);
+  if (collab && collab.collaborator.id === viewerId && collab.status !== "declined") return story;
+  if (collab?.live && (await socialRepo.anyBlockBetween(viewerId, collab.collaborator.id))) throw new HttpError(404, "Story not found.");
+
   const relationship = await socialRepo.getRelationship(viewerId, owner.id);
   const accountGatesEverything = owner.isPrivate && !relationship.isFollowing;
   if (accountGatesEverything) throw new HttpError(403, "This account is private.");
-  if (story.audience === "followers" && !relationship.isFollowing) {
+  const followsCollaborator =
+    story.audience === "followers" && !relationship.isFollowing && !!collab?.live && (await socialRepo.getRelationship(viewerId, collab.collaborator.id)).isFollowing;
+  const isFollowing = relationship.isFollowing || followsCollaborator;
+  if (story.audience === "followers" && !isFollowing) {
     throw new HttpError(403, "This Story is visible to followers only.");
   }
   // A Close Friends Story doesn't exist for anyone who isn't on the list.
   const isCloseFriend = story.audience === "close_friends" && (await isCloseFriendOf(owner.id, viewerId));
-  if (!audienceAllows(story.audience, { isFollowing: relationship.isFollowing, isCloseFriend })) {
+  if (!audienceAllows(story.audience, { isFollowing, isCloseFriend })) {
     throw new HttpError(404, "Story not found.");
   }
 
-  return toPublicStory(story, viewerId);
+  return story;
+}
+
+/** Whether `viewerId` may see this active Story (lists: a collaborator's ring). */
+async function mayView(story: StoryRecord, viewerId: string): Promise<boolean> {
+  try {
+    await authorizeStoryAccess(story.id, viewerId);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /** Owner can always fetch their own (even expired, as the foundation Archive/Highlights use) — anyone else needs an active, visible Story. */
@@ -397,7 +479,38 @@ export async function canAccessMediaViaStory(mediaId: string, viewerId: string):
 
 export async function listMyActiveStories(ownerId: string): Promise<PublicStory[]> {
   const stories = await storiesRepo.listActiveStoriesForOwner(ownerId);
-  return toPublicStories(stories, ownerId);
+  return toPublicStories(withCollabs(stories, await collabStoriesInRing(ownerId)), ownerId);
+}
+
+/** Active Stories `ringOwnerId` is the live collaborator on: they show in their ring too. */
+async function collabStoriesInRing(ringOwnerId: string): Promise<StoryRecord[]> {
+  const ids = await collabRepo.listActiveCollabStoryIds(ringOwnerId);
+  const stories = await Promise.all(ids.map((id) => storiesRepo.findStoryById(id)));
+  return stories.filter((s): s is StoryRecord => !!s && isActive(s));
+}
+
+/** One ring, oldest first: the person's own Stories and the collabs they're part of. */
+function withCollabs(own: StoryRecord[], collabs: StoryRecord[]): StoryRecord[] {
+  const seen = new Set(own.map((s) => s.id));
+  return [...own, ...collabs.filter((s) => !seen.has(s.id))].sort((a, b) => (a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0));
+}
+
+/**
+ * A ring as `viewerId` may see it. The ring owner's own Stories keep the quick rule (the
+ * caller has checked the account gates); a Story with a collaborator — someone else's in this
+ * ring, or this person's own with a collab — takes the full per-Story rule, since the other
+ * creator's blocks, privacy and followers count too.
+ */
+async function visibleRing(ringOwnerId: string, viewerId: string, own: StoryRecord[], quick: (s: StoryRecord) => boolean): Promise<StoryRecord[]> {
+  const collabs = await collabRepo.findCollabs(own.map((s) => s.id));
+  const keep: StoryRecord[] = [];
+  for (const story of own) {
+    if (collabs.has(story.id) ? await mayView(story, viewerId) : quick(story)) keep.push(story);
+  }
+  const theirs = await collabStoriesInRing(ringOwnerId);
+  const shared: StoryRecord[] = [];
+  for (const story of theirs) if (story.ownerId === viewerId || (await mayView(story, viewerId))) shared.push(story);
+  return withCollabs(keep, shared);
 }
 
 export async function listUserActiveStories(username: string, viewerId: string): Promise<PublicStory[]> {
@@ -418,7 +531,7 @@ export async function listUserActiveStories(username: string, viewerId: string):
 
   const stories = await storiesRepo.listActiveStoriesForOwner(owner.id);
   const isCloseFriend = stories.some((s) => s.audience === "close_friends") && (await isCloseFriendOf(owner.id, viewerId));
-  const visible = stories.filter((s) => audienceAllows(s.audience, { isFollowing: relationship.isFollowing, isCloseFriend }));
+  const visible = await visibleRing(owner.id, viewerId, stories, (s) => audienceAllows(s.audience, { isFollowing: relationship.isFollowing, isCloseFriend }));
   return toPublicStories(visible, viewerId);
 }
 
@@ -440,8 +553,10 @@ export async function getFollowingFeed(viewerId: string): Promise<FeedEntry[]> {
     if (!owner || !owner.isActive) continue;
     const all = await storiesRepo.listActiveStoriesForOwner(ownerId);
     // Everyone listed here is followed by the viewer (or is the viewer); Close Friends Stories
-    // still need the viewer on the owner's list.
-    const stories = ownerId === viewerId ? all : await visibleToFollower(all, ownerId, viewerId);
+    // still need the viewer on the owner's list. Collabs join both creators' rings.
+    const stories = ownerId === viewerId
+      ? withCollabs(all, await collabStoriesInRing(ownerId))
+      : await visibleRing(ownerId, viewerId, await visibleToFollower(all, ownerId, viewerId), () => true);
     if (stories.length === 0) continue;
     entries.push({
       owner: { id: owner.id, username: owner.username, displayName: owner.displayName, avatarMediaId: owner.avatarMediaId, verified: owner.verified },

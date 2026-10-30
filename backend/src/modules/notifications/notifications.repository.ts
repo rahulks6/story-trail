@@ -1,7 +1,10 @@
 import { nullable, query, queryOne, type Row } from "../../db/psql";
 import { verifiedSql } from "../../shared/verified";
 
-export type NotificationType = "like" | "comment" | "follow" | "follow_request" | "follow_accepted" | "mention" | "verification";
+export type NotificationType =
+  | "like" | "comment" | "follow" | "follow_request" | "follow_accepted" | "mention" | "verification"
+  /** Collab Stories (migration 0063): an invitation to answer, and the owner told it was accepted. */
+  | "collab_invite" | "collab_accepted";
 
 /** What happened to the recipient's own verified badge (modules/verification). */
 export type VerificationOutcome = "approved" | "denied" | "removed" | "restored";
@@ -17,6 +20,8 @@ export interface NotificationRecord {
   followRequest: { id: string; status: string } | null;
   /** Type "verification" only (no actor): the outcome, and the reason shown for a denial or removal. */
   verification: { status: VerificationOutcome; reason: string | null } | null;
+  /** Type "collab_invite" only: where the invitation stands now ("withdrawn" once the owner took it back). */
+  collab: { status: "pending" | "accepted" | "declined" | "withdrawn" } | null;
 }
 
 function mapRow(row: Row): NotificationRecord {
@@ -34,6 +39,9 @@ function mapRow(row: Row): NotificationRecord {
     verification: row.verification_status
       ? { status: row.verification_status as VerificationOutcome, reason: (row.verification_reason as string | null) ?? null }
       : null,
+    collab: row.type === "collab_invite"
+      ? { status: ((row.collab_status as string | null) ?? "withdrawn") as "pending" | "accepted" | "declined" | "withdrawn" }
+      : null,
   };
 }
 
@@ -46,7 +54,8 @@ const SELECT_COLUMNS = `
   s.id AS story_id, s.media_id AS story_media_id,
   c.id AS comment_id, c.body AS comment_body,
   fr.id AS follow_request_id, fr.status AS follow_request_status,
-  n.verification_status, n.verification_reason
+  n.verification_status, n.verification_reason,
+  (SELECT sc.status FROM story_collaborators sc WHERE sc.story_id = n.story_id AND sc.user_id = n.recipient_id) AS collab_status
 `;
 
 const JOINS = `
@@ -186,6 +195,11 @@ export async function createNotification(input: {
            AND o.story_id IS NOT DISTINCT FROM ${nullable("story_id", "uuid")}
            AND o.created_at > now() - interval '7 days'))
          -- A Story's mention stickers notify each person once, however often publishing is retried.
+         -- A collab invitation (or its acceptance) is said once per Story, however often it's retried.
+         AND NOT (:'type' IN ('collab_invite', 'collab_accepted') AND EXISTS (
+           SELECT 1 FROM notifications o
+           WHERE o.recipient_id = :'recipient_id' AND o.type = :'type'
+             AND o.story_id IS NOT DISTINCT FROM ${nullable("story_id", "uuid")}))
          AND NOT (:'type' = 'mention' AND ${nullable("comment_id", "uuid")} IS NULL AND EXISTS (
            SELECT 1 FROM notifications o
            WHERE o.recipient_id = :'recipient_id' AND o.type = 'mention' AND o.comment_id IS NULL
