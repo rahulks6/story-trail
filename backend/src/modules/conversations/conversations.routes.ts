@@ -8,6 +8,7 @@ import { reportLimiter } from "../moderation/moderation.routes";
 import { HttpError } from "../../http/errors";
 import * as conversationsService from "./conversations.service";
 import * as groupsService from "./groups.service";
+import { callsAvailableWith } from "../calls/calls.service";
 
 /** An app that shows group chats says so (?groups=1); older apps never see one. */
 const wantsGroups = (params: Record<string, string | undefined>) => params.groups === "1";
@@ -37,7 +38,13 @@ export function registerConversationsRoutes(router: Router): void {
   router.get("/api/v1/conversations/:id", async (req, res) => {
     requireAuth(req);
     const conversation = await conversationsService.getConversation(req.userId as string, req.params.id as string, wantsGroups(parseQueryString(req.url ?? "")));
-    sendJson(res, 200, { conversation });
+    // A 1:1 chat says whether its voice and video call buttons work (calls on, no block, account active).
+    if (conversation.kind === "group") {
+      sendJson(res, 200, { conversation });
+      return;
+    }
+    const callsAvailable = await callsAvailableWith(req.userId as string, conversation.otherUser.id);
+    sendJson(res, 200, { conversation: { ...conversation, callsAvailable } });
   });
 
   // Group chats (groups.service.ts).

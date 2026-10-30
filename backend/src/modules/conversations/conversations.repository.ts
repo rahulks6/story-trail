@@ -169,13 +169,18 @@ export interface MessageRow {
 
 export type StoryReplyKind = "reply" | "reaction";
 
-/** A line in a group's thread about the group itself. `userIds` are who was added or removed. */
+/**
+ * A line in a group's thread about the group itself (`userIds` are who was added or removed), or
+ * a 1:1 call's line, written when the call ends (src/modules/calls): sent by the caller, with how
+ * it ended and, for a call that was talked on, how long it lasted.
+ */
 export type GroupEvent =
   | { type: "created"; title: string | null }
   | { type: "added"; userIds: string[] }
   | { type: "removed"; userIds: string[] }
   | { type: "left" }
-  | { type: "renamed"; title: string | null };
+  | { type: "renamed"; title: string | null }
+  | { type: "call"; callId: string; media: "audio" | "video"; outcome: "completed" | "missed" | "cancelled" | "declined" | "busy" | "failed"; durationSeconds: number | null };
 export interface MessageMedia {
   id: string;
   kind: "photo" | "video" | "audio";

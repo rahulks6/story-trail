@@ -105,6 +105,8 @@ describe("DM privacy", () => {
     const dmTable = /\b(FROM|JOIN|INTO|UPDATE)\s+(messages|conversations|conversation_reads)\b/i;
     const readers = files.filter((f) => dmTable.test(fs.readFileSync(f, "utf8"))).map((f) => path.relative(src, f)).sort();
     assert.deepEqual(readers, [
+      // A call's line in the chat ("Missed voice call"): written as an event, never read back.
+      "modules/calls/calls.repository.ts",
       "modules/conversations/conversations.repository.ts",
       // Group membership, and who sent a reported message: never a message's body.
       "modules/conversations/groups.repository.ts",
@@ -115,6 +117,8 @@ describe("DM privacy", () => {
     assert.ok(!/\bm\.body\b|messages\.body|SELECT\s+body/i.test(dispatcher), "the dispatcher never reads message bodies");
     const groups = fs.readFileSync(path.join(src, "modules/conversations/groups.repository.ts"), "utf8");
     assert.ok(!/\bbody\b/i.test(groups), "group membership code never reads message bodies");
+    const calls = fs.readFileSync(path.join(src, "modules/calls/calls.repository.ts"), "utf8");
+    assert.ok(!/\bbody\b|FROM\s+messages|JOIN\s+messages/i.test(calls), "calls only write their line, never read messages");
 
     const adminAndAds = files.filter((f) => /modules\/(admin|ads|recommendations|moderation|analytics)\//.test(f));
     assert.ok(adminAndAds.length >= 5);

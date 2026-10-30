@@ -1,6 +1,6 @@
 /**
  * Worker service: processes uploads, sends push notifications, judges how far public Stories
- * reach, and runs scheduled retention.
+ * reach, ends calls nobody answered, and runs scheduled retention.
  *
  *   node dist/src/worker.js
  *
@@ -21,6 +21,7 @@ import { providersFromConfig } from "./modules/push/dispatcher";
 import { ReachWorker } from "./modules/recommendations/reach-worker";
 import { ReturnReasonsWorker } from "./modules/reminders/return-reasons";
 import { reachSettings } from "./modules/recommendations/reach";
+import { CallTimeoutWorker } from "./modules/calls/call-timeouts";
 
 export function createReachWorker(): ReachWorker {
   return new ReachWorker({
@@ -72,7 +73,10 @@ if (require.main === module) {
   const reasons = config.returnReasons.enabled
     ? new ReturnReasonsWorker({ everyMs: config.returnReasons.everyMinutes * 60_000, log: (e) => console.info(JSON.stringify(e)) })
     : null;
-  Promise.all([worker.start(), push.start(), reach?.start(), reasons?.start()])
+  const calls = config.calls.enabled
+    ? new CallTimeoutWorker({ everyMs: 5000, log: (event) => console.log(JSON.stringify({ ts: new Date().toISOString(), ...event })) })
+    : null;
+  Promise.all([worker.start(), push.start(), reach?.start(), reasons?.start(), calls?.start()])
     .then(() => console.log(JSON.stringify({
       ts: new Date().toISOString(), event: "worker_started", store: mediaStorage.kind, queue: config.media.queue.driver,
       pushProviders: [...providersFromConfig().keys()],
@@ -83,7 +87,7 @@ if (require.main === module) {
     });
   const shutdown = () => {
     // Finishes the job in hand; an interrupted job is retried after its lease expires.
-    void Promise.all([worker.stop(), push.stop(), reach?.stop(), reasons?.stop()]).then(closeDatabase).finally(() => process.exit(0));
+    void Promise.all([worker.stop(), push.stop(), reach?.stop(), reasons?.stop(), calls?.stop()]).then(closeDatabase).finally(() => process.exit(0));
   };
   process.on("SIGTERM", shutdown);
   process.on("SIGINT", shutdown);

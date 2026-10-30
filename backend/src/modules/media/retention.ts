@@ -303,6 +303,10 @@ export async function expiredRecords(): Promise<number> {
   total += await deleteWhere("realtime_tickets", "expires_at < now() - interval '1 hour'");
   total += await deleteWhere("push_outbox", "status IN ('sent', 'failed', 'skipped') AND finished_at < now() - interval '30 days'");
   total += await deleteWhere("push_devices", "disabled_at < now() - interval '90 days'");
+  // Calls (migration 0068): signaling is deleted when a call ends; anything a crash left behind
+  // goes here. A call's record is kept 90 days for safety reports; its line in the chat stays.
+  total += await deleteWhere("call_signals", "created_at < now() - interval '1 day'");
+  total += await deleteWhere("calls", "state = 'ended' AND ended_at < now() - interval '90 days'");
   // What was sent (return-reasons.ts) is only needed while it limits the next push.
   total += await deleteWhere("push_sent", "sent_at < now() - interval '30 days'");
   return total;
