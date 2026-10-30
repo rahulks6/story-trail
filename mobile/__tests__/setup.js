@@ -148,13 +148,23 @@ jest.mock("react-native-keychain", () => {
   };
 });
 
+jest.mock("@invertase/react-native-apple-authentication", () => {
+  const React = require("react");
+  const AppleButton = (props) => React.createElement("AppleButton", props);
+  AppleButton.Style = { WHITE: "White", BLACK: "Black" };
+  AppleButton.Type = { SIGN_IN: "SignIn", CONTINUE: "Continue" };
+  return {
+    AppleButton,
+    appleAuth: { isSupported: true, performRequest: jest.fn(), Error: { CANCELED: "1001" }, Operation: { LOGIN: 1 }, Scope: { EMAIL: 0, FULL_NAME: 1 } },
+  };
+});
 jest.mock("@react-native-clipboard/clipboard", () => require("@react-native-clipboard/clipboard/jest/clipboard-mock.js"));
 jest.mock("@react-native-community/geolocation", () => ({ getCurrentPosition: jest.fn(), requestAuthorization: jest.fn() }));
 jest.mock("@react-native-google-signin/google-signin", () => {
   const React = require("react");
   return {
     GoogleSignin: { configure: jest.fn(), hasPlayServices: jest.fn(async () => true), signIn: jest.fn(), signOut: jest.fn() },
-    GoogleSigninButton: (props) => React.createElement("GoogleSigninButton", props),
+    GoogleSigninButton: Object.assign((props) => React.createElement("GoogleSigninButton", props), { Size: { Wide: 1 }, Color: { Dark: 0 } }),
     isSuccessResponse: () => false,
     isErrorWithCode: () => false,
     statusCodes: {},
