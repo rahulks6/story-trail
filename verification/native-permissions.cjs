@@ -15,6 +15,12 @@ const RULES=[
  // for without this.
  {name:'saving to photos',uses:/from "react-native-share"/,ios:['NSPhotoLibraryAddUsageDescription']},
  {name:'notifications',uses:/@react-native-firebase\/messaging/,android:['android.permission.POST_NOTIFICATIONS']},
+ // Calls: WebRTC opens the camera and microphone and routes call audio.
+ {name:'calls',uses:/require\("react-native-webrtc"\)/,android:['android.permission.CAMERA','android.permission.RECORD_AUDIO','android.permission.MODIFY_AUDIO_SETTINGS'],ios:['NSCameraUsageDescription','NSMicrophoneUsageDescription']},
+ // Earpiece/loudspeaker, Bluetooth headsets and the proximity sensor's screen-off wake lock.
+ {name:'call audio',uses:/require\("react-native-incall-manager"\)/,android:['android.permission.MODIFY_AUDIO_SETTINGS','android.permission.BLUETOOTH_CONNECT','android.permission.WAKE_LOCK']},
+ // The ongoing-call foreground service (OngoingCallService.kt): Android 14 refuses one without its type's permission.
+ {name:'ongoing call',uses:/KatkeeOngoingCall/,android:['android.permission.FOREGROUND_SERVICE','android.permission.FOREGROUND_SERVICE_MICROPHONE','android.permission.FOREGROUND_SERVICE_CAMERA']},
 ];
 
 function sources(dir,out=[]){
@@ -50,7 +56,23 @@ test('every native capability the app uses is declared on Android and iOS',()=>{
 test('the check is not vacuous: the app does use these capabilities, and a missing declaration is caught',()=>{
  for(const rule of RULES)assert.ok(code.some(t=>rule.uses.test(t)),`no code uses ${rule.name} any more; drop or update the rule`);
  assert.deepEqual(missingDeclarations(code,manifest.replace(/<uses-permission android:name="android.permission.VIBRATE" \/>/,''),plist),['vibration: AndroidManifest.xml lacks android.permission.VIBRATE']);
- assert.deepEqual(missingDeclarations(code,manifest,plist.replace(/<key>NSCameraUsageDescription<\/key>\s*<string>[^<]*<\/string>/,'')),['camera: Info.plist lacks a NSCameraUsageDescription explanation']);
+ assert.deepEqual(missingDeclarations(code,manifest,plist.replace(/<key>NSCameraUsageDescription<\/key>\s*<string>[^<]*<\/string>/,'')),['camera: Info.plist lacks a NSCameraUsageDescription explanation','calls: Info.plist lacks a NSCameraUsageDescription explanation']);
+ assert.deepEqual(missingDeclarations(code,manifest.replace(/<uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" \/>/,''),plist),['ongoing call: AndroidManifest.xml lacks android.permission.FOREGROUND_SERVICE_MICROPHONE']);
+});
+
+test('calls keep going in the background, and only what they need is declared for it',()=>{
+ // Android: the service exists with exactly the types its permissions cover.
+ assert.match(manifest,/<service\s+android:name="\.OngoingCallService"\s+android:exported="false"\s+android:foregroundServiceType="microphone\|camera"\s*\/>/);
+ assert.ok(fs.existsSync(path.join(mobile,'android/app/src/main/java/com/katkee/OngoingCallService.kt')));
+ assert.match(fs.readFileSync(path.join(mobile,'android/app/src/main/java/com/katkee/MainApplication.kt'),'utf8'),/add\(OngoingCallPackage\(\)\)/);
+ // Bluetooth below Android 12 only through the legacy permission, never location-based scanning.
+ assert.match(manifest,/<uses-permission android:name="android\.permission\.BLUETOOTH" android:maxSdkVersion="30" \/>/);
+ assert.doesNotMatch(manifest,/BLUETOOTH_SCAN|BLUETOOTH_ADMIN|USE_FULL_SCREEN_INTENT|MANAGE_OWN_CALLS|FOREGROUND_SERVICE_PHONE_CALL/);
+ // iOS: the audio background mode only; "voip" needs PushKit and CallKit, which the app doesn't use.
+ const modes=/<key>UIBackgroundModes<\/key>\s*<array>([\s\S]*?)<\/array>/.exec(plist)?.[1]??'';
+ assert.deepEqual([...modes.matchAll(/<string>([^<]+)<\/string>/g)].map(m=>m[1]),['audio']);
+ assert.match(plist,/NSMicrophoneUsageDescription<\/key><string>[^<]*calls/);
+ assert.match(plist,/NSCameraUsageDescription<\/key><string>[^<]*video calls/);
 });
 
 test('location is approximate only: precise location is never declared or requested',()=>{
