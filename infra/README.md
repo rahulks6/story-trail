@@ -58,10 +58,11 @@ production if it cannot write there.
    | `adminConsoleEnabled` | `true` | |
    | `adminOrigin` | `https://api.katkee.com` | Defaults to the API origin. |
    | `adminAllowedCidrs` | `203.0.113.0/24` | Optional WAF allowlist for `/admin` and `/api/v1/admin`. |
-   | `providers` | `fcm,apns,phone,safeBrowsing` | Only after their secrets are filled in (section 3). |
+   | `providers` | `fcm,apns,phone,apple,safeBrowsing` | Only after their secrets are filled in (section 3). |
    | `apnsBundleId` | `com.katkee.app` | Needed with `apns`. The iOS bundle ID (`mobile/build-config.json`). |
    | `twilioVerifyServiceSid`, `phoneAuthCountries` | `VA…`, `IN` | Needed with `phone`. |
    | `googleClientIds` | `…apps.googleusercontent.com` | Turns Google sign-in on. |
+   | `appleClientIds` | `com.katkee.app` | With `apple` (Sign in with Apple). The default is the iOS bundle ID. |
    | `features` | `ads,sponsoredStories,adReporting` | Off unless listed. |
    | `analyticsTimeZone` | `Asia/Kolkata` | The default. Fix it before launch (docs/ANALYTICS.md). |
    | `databaseInstanceType` | `t4g.medium` | The default. |
@@ -89,6 +90,7 @@ production if it cannot write there.
    aws secretsmanager put-secret-value --secret-id katkee/production/FCM_SERVICE_ACCOUNT_JSON --secret-string file://firebase-service-account.json
    # Direct APNs: APNS_KEY_ID, APNS_TEAM_ID, APNS_PRIVATE_KEY (the .p8 file)
    # Phone sign-in: TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN
+   # Sign in with Apple: APPLE_TEAM_ID, APPLE_KEY_ID, APPLE_PRIVATE_KEY (its own .p8 key, docs/PROVIDER_AUTH_ROLLOUT.md)
    # Link checks: SAFE_BROWSING_API_KEY. Not checked at startup, so verify it after enabling.
    ```
 3. **Build and push the images.** Run these from `backend/`; the Admin console sources are a

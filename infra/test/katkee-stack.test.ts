@@ -286,8 +286,9 @@ describe("configuration the API reads", () => {
     assert.equal(on.APNS_BUNDLE_ID, "com.katkee.app");
     assert.deepEqual([on.PHONE_AUTH_ENABLED, on.PHONE_AUTH_COUNTRIES, on.TWILIO_VERIFY_SERVICE_SID], ["true", "IN", "VA0123456789abcdef0123456789abcdef"]);
     assert.deepEqual([on.GOOGLE_AUTH_ENABLED, on.GOOGLE_CLIENT_IDS], ["true", "1234-abc.apps.googleusercontent.com"]);
+    assert.deepEqual([on.APPLE_AUTH_ENABLED, on.APPLE_CLIENT_IDS], ["true", "com.katkee.app"]);
     const off = envOf(container(synth(settings()).template, "api"));
-    for (const key of ["APNS_BUNDLE_ID", "PHONE_AUTH_ENABLED", "GOOGLE_AUTH_ENABLED", "TWILIO_VERIFY_SERVICE_SID"]) assert.equal(off[key], undefined, key);
+    for (const key of ["APNS_BUNDLE_ID", "PHONE_AUTH_ENABLED", "GOOGLE_AUTH_ENABLED", "APPLE_AUTH_ENABLED", "TWILIO_VERIFY_SERVICE_SID"]) assert.equal(off[key], undefined, key);
   });
 });
 
@@ -387,6 +388,7 @@ describe("modes and settings", () => {
       [{ migrationImageTag: "v2;rm" }, /v2;rm is not a Docker image tag/],
       [{ providers: { fcm: false, safeBrowsing: false, googleClientIds: [], phone: { verifyServiceSid: "service", countries: ["IN"] } } }, /Twilio Verify service SID/],
       [{ providers: { fcm: false, safeBrowsing: false, googleClientIds: [], phone: { verifyServiceSid: "VA0123456789abcdef0123456789abcdef", countries: ["India"] } } }, /ISO country codes/],
+      [{ providers: { fcm: false, safeBrowsing: false, googleClientIds: [], apple: { clientIds: [] } } }, /appleClientIds must be the iOS bundle ID/],
       [{ monthlyBudgetUsd: Number.NaN }, /monthlyBudgetUsd/],
       [{ databaseHost: "db.example.com" }, /databaseHost must be an RDS endpoint in ap-south-1/],
       [{ websiteDomainName: "https://katkee.example" }, /websiteDomainName must be a host name/],

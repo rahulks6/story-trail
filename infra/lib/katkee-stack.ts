@@ -74,6 +74,8 @@ export interface KatkeeSettings {
     safeBrowsing: boolean;
     /** Google sign-in: the OAuth client IDs whose tokens the API accepts. Empty turns it off. */
     googleClientIds: string[];
+    /** Sign in with Apple: the client IDs (the iOS bundle ID) whose identity tokens the API accepts. */
+    apple?: { clientIds: string[] } | undefined;
   };
   features: { ads: boolean; sponsoredStories: boolean; adReporting: boolean };
   /** First deploy only: create everything but run no tasks until secrets and images are in place. */
@@ -97,6 +99,8 @@ export const PROVIDER_CREDENTIALS = {
   fcm: ["FCM_SERVICE_ACCOUNT_JSON"],
   apns: ["APNS_KEY_ID", "APNS_TEAM_ID", "APNS_PRIVATE_KEY"],
   phone: ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN"],
+  // The Sign in with Apple key (.p8): signs the client secret for Apple's token and revoke endpoints.
+  apple: ["APPLE_TEAM_ID", "APPLE_KEY_ID", "APPLE_PRIVATE_KEY"],
   safeBrowsing: ["SAFE_BROWSING_API_KEY"],
 } as const;
 
@@ -139,6 +143,7 @@ export function validateSettings(s: KatkeeSettings): void {
     if (!/^VA[0-9a-f]{32}$/i.test(s.providers.phone.verifyServiceSid)) problems.push("twilioVerifyServiceSid must be a Twilio Verify service SID (VA...)");
     if (!s.providers.phone.countries.length || s.providers.phone.countries.some((c) => !/^[A-Z]{2}$/.test(c))) problems.push("phoneAuthCountries must be ISO country codes such as IN");
   }
+  if (s.providers.apple && (!s.providers.apple.clientIds.length || s.providers.apple.clientIds.some((id) => !/^[A-Za-z0-9.-]+$/.test(id)))) problems.push("appleClientIds must be the iOS bundle ID, such as com.katkee.app");
   if (!Number.isFinite(s.monthlyBudgetUsd) || s.monthlyBudgetUsd <= 0) problems.push("monthlyBudgetUsd must be a positive number");
   if (problems.length) throw new Error(`Katkee settings: ${problems.join("; ")}.`);
 }
@@ -349,7 +354,7 @@ export class KatkeeStack extends Stack {
     };
     // The app's settings (backend/src/config/env.ts). Credentials come from Secrets Manager
     // below, never as plain values in the template.
-    const { apns, phone } = s.providers;
+    const { apns, phone, apple } = s.providers;
     const appEnvironment: Record<string, string> = {
       ...databaseEnvironment,
       EMAIL_PROVIDER: "ses",
@@ -371,6 +376,7 @@ export class KatkeeStack extends Stack {
       ...(apns ? { APNS_BUNDLE_ID: apns.bundleId } : {}),
       ...(phone ? { PHONE_AUTH_ENABLED: "true", PHONE_AUTH_COUNTRIES: phone.countries.join(","), TWILIO_VERIFY_SERVICE_SID: phone.verifyServiceSid } : {}),
       ...(s.providers.googleClientIds.length ? { GOOGLE_AUTH_ENABLED: "true", GOOGLE_CLIENT_IDS: s.providers.googleClientIds.join(",") } : {}),
+      ...(apple ? { APPLE_AUTH_ENABLED: "true", APPLE_CLIENT_IDS: apple.clientIds.join(",") } : {}),
     };
     const fromSecret = (name: string) => ecs.Secret.fromSecretsManager(providerSecrets.get(name)!);
     const enabledCredentials = [
@@ -378,6 +384,7 @@ export class KatkeeStack extends Stack {
       ...(s.providers.fcm ? PROVIDER_CREDENTIALS.fcm : []),
       ...(apns ? PROVIDER_CREDENTIALS.apns : []),
       ...(phone ? PROVIDER_CREDENTIALS.phone : []),
+      ...(apple ? PROVIDER_CREDENTIALS.apple : []),
       ...(s.providers.safeBrowsing ? PROVIDER_CREDENTIALS.safeBrowsing : []),
     ];
     const appSecrets: Record<string, ecs.Secret> = {

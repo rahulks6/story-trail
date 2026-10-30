@@ -23,6 +23,7 @@
 import { completeFinishedCampaigns } from "../ads/ads.service";
 import { purgeRawAnalytics, rollupAnalytics } from "../analytics/rollup";
 import { CRASH_RETENTION_DAYS, RESOLVED_FEEDBACK_RETENTION_DAYS } from "../support/support.service";
+import { revokeAppleGrants } from "../auth/apple";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -200,6 +201,9 @@ export async function deletedAccounts(store: ObjectStore, batch: number, days: n
        LIMIT :'batch'`, { id, evidence: evidenceDays, batch });
     for (const row of media) await purgeReferenced(store, mapMediaRow(row));
     if (media.length === batch) continue; // more next run; scrub once everything is gone
+    // A Sign in with Apple authorisation Apple didn't revoke when the account was deleted gets one
+    // more try before the identity goes (auth/apple.ts).
+    await revokeAppleGrants(id);
     // Every part of one statement sees the account as it was before the scrub, so `kept` copies
     // the registration details (and sign-in identities) that `u` and `a` remove.
     await query(
@@ -282,6 +286,7 @@ export async function expiredRecords(): Promise<number> {
   total += await deleteWhere("admin_login_challenges", "expires_at < now() - interval '1 day'");
   total += await deleteWhere("auth_provider_proofs", "expires_at < now() - interval '1 day'");
   total += await deleteWhere("auth_reauth_tickets", "expires_at < now() - interval '1 day'");
+  total += await deleteWhere("auth_apple_nonces", "expires_at < now() - interval '1 day'");
   total += await deleteWhere("auth_phone_challenges", "created_at < now() - interval '2 days'");
   total += await deleteWhere("home_feed_snapshots", "expires_at < now() - interval '1 hour'");
   // Approximate areas count for 30 days after the app last sent them (reach.repository.ts).

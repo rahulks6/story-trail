@@ -42,6 +42,7 @@ export const everything = (): KatkeeSettings => settings({
     phone: { verifyServiceSid: "VA0123456789abcdef0123456789abcdef", countries: ["IN"] },
     safeBrowsing: true,
     googleClientIds: ["1234-abc.apps.googleusercontent.com"],
+    apple: { clientIds: ["com.katkee.app"] },
   },
 });
 
