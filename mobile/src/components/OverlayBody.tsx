@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import type { Overlay } from "../models/storyDraft";
 import { contrastOn, neonCore, neonRadius, textStyleLook, tightTextFits } from "./textLook";
 import { mediaColors as colors, radii } from "../theme";
+import { InteractiveSticker, type StickerInteraction } from "./InteractiveSticker";
 
 export /** Text wraps within this fraction of the container's own width (spec: "auto-wrap ... text") rather than growing indefinitely off-canvas. */
 const TEXT_MAX_WIDTH_FRACTION = 0.8;
@@ -34,13 +35,23 @@ export function OverlayBody({
   containerWidth,
   containerHeight,
   onMentionPress,
+  interaction,
 }: {
   overlay: Overlay;
   containerWidth: number;
   containerHeight: number;
   onMentionPress?: (username: string) => void;
+  /** While watching: polls, quizzes, questions, countdowns, links and Add Yours take taps. */
+  interaction?: StickerInteraction;
 }): React.JSX.Element {
   switch (overlay.type) {
+    case "poll":
+    case "quiz":
+    case "question":
+    case "countdown":
+    case "link":
+    case "addYours":
+      return <InteractiveSticker overlay={overlay} containerWidth={containerWidth} interaction={interaction} />;
     case "text": {
       const { properties } = overlay;
       const fontSize = properties.fontSize * containerHeight;

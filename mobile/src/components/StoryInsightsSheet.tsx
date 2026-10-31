@@ -1,6 +1,6 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, FlatList, Modal, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, Modal, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "./Pressable";
 import { colors, radii, spacing, typography } from "../theme";
 import { timeAgo } from "../utils/serverTime";
@@ -8,11 +8,17 @@ import { useAuth } from "../state/AuthContext";
 import { getStoryInsights, getStoryViewers, type StoryInsights, type StoryViewer } from "../api/stories";
 import { Avatar } from "./Avatar";
 import { VerifiedName } from "./VerifiedBadge";
+import { StickerResults } from "./StickerResults";
+import type { Overlay } from "../models/storyDraft";
 
 interface Props {
   visible: boolean;
   storyId: string;
   onClose: () => void;
+  /** The Story's stickers as the owner sees them (results attached): their responses show here. */
+  overlays?: Overlay[];
+  /** Shares an answer to a question sticker to a new Story (the question and answer, not who sent it). */
+  onShareAnswer?: (prompt: string, answer: string) => void;
 }
 
 function StatRow({ label, value }: { label: string; value: string }): React.JSX.Element {
@@ -36,7 +42,8 @@ function StatRow({ label, value }: { label: string; value: string }): React.JSX.
  * function's own comment on "following" meaning *current* relationship,
  * not relationship-at-view-time).
  */
-export function StoryInsightsSheet({ visible, storyId, onClose }: Props): React.JSX.Element {
+export function StoryInsightsSheet({ visible, storyId, onClose, overlays = [], onShareAnswer }: Props): React.JSX.Element {
+  const stickers = <StickerResults storyId={storyId} overlays={overlays} onShareAnswer={onShareAnswer} />;
   // Clears Android's navigation bar and the iPhone home indicator.
   const bottomInset = useSafeAreaInsets().bottom;
   const { accessToken } = useAuth();
@@ -97,7 +104,10 @@ export function StoryInsightsSheet({ visible, storyId, onClose }: Props): React.
         ) : error ? (
           <Text style={[typography.caption, styles.empty]}>{error}</Text>
         ) : !insights || insights.viewCount === 0 ? (
-          <Text style={[typography.caption, styles.empty]}>No views yet.</Text>
+          <ScrollView style={styles.list}>
+            <Text style={[typography.caption, styles.empty]}>No views yet.</Text>
+            {stickers}
+          </ScrollView>
         ) : (
           <>
             <View style={styles.stats}>
@@ -115,6 +125,8 @@ export function StoryInsightsSheet({ visible, storyId, onClose }: Props): React.
               onEndReachedThreshold={0.5}
               onEndReached={() => void loadMoreViewers()}
               style={styles.list}
+              // Poll and quiz results, answers, reminders: above who watched, like Instagram's activity.
+              ListHeaderComponent={stickers}
               renderItem={({ item }) => (
                 <View style={styles.row}>
                   <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} size={28} />
@@ -156,7 +168,7 @@ const styles = StyleSheet.create({
   statRow: { width: "30%", gap: 2 },
   statLabel: { color: colors.textSecondary },
   viewersHeader: { marginTop: spacing.sm, marginBottom: spacing.xs },
-  list: { maxHeight: 280 },
+  list: { maxHeight: 420 },
   row: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.xs },
   viewedAt: { marginLeft: "auto", color: colors.textDisabled },
   viewerName: { flexShrink: 1 },

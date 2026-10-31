@@ -20,7 +20,11 @@ import {
   type DateTimeOverlayProperties,
   type StickerOverlayProperties,
   type TextOverlayProperties,
+  type InteractiveProperties,
+  type InteractiveType,
+  isInteractive,
 } from "../models/storyDraft";
+import { InteractiveStickerForm } from "./InteractiveStickerForm";
 
 /** Location was turned off for Katkee for good: only Settings can turn it back on. */
 function offerLocationSettings(): void {
@@ -30,9 +34,11 @@ function offerLocationSettings(): void {
   ]);
 }
 
-export type StickerTab = "emoji" | "mention" | "location" | "datetime" | "stickers";
+export type StickerTab = "interactive" | "emoji" | "mention" | "location" | "datetime" | "stickers";
 
 const TABS: { key: StickerTab; label: string }[] = [
+  // Polls, quizzes, questions, countdowns, links and Add Yours (InteractiveStickerForm).
+  { key: "interactive", label: "Interactive" },
   { key: "emoji", label: "Emoji" },
   { key: "mention", label: "Mention" },
   { key: "location", label: "Location" },
@@ -59,7 +65,8 @@ export type StickerAddPayload =
   | { type: "mention"; properties: MentionOverlayProperties }
   | { type: "location"; properties: LocationOverlayProperties }
   | { type: "datetime"; properties: DateTimeOverlayProperties }
-  | { type: "sticker"; properties: StickerOverlayProperties };
+  | { type: "sticker"; properties: StickerOverlayProperties }
+  | { type: InteractiveType; properties: InteractiveProperties };
 
 interface Props {
   visible: boolean;
@@ -78,7 +85,9 @@ interface Props {
   editingOverlay?: Overlay | null;
   /** The tab it opens on (the editor's @ button opens straight on Mention). */
   initialTab?: StickerTab;
-  onEditDone?: (id: string, properties: LocationOverlayProperties | DateTimeOverlayProperties) => void;
+  onEditDone?: (id: string, properties: LocationOverlayProperties | DateTimeOverlayProperties | InteractiveProperties) => void;
+  /** Interactive sticker kinds already on the Story: one of each. */
+  usedInteractiveTypes?: string[];
 }
 
 /**
@@ -89,7 +98,7 @@ interface Props {
  * `onAdd` → DraggableCanvasObject path text already uses; this sheet only
  * ever hands back type-specific `properties`, never geometry.
  */
-export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay, onEditDone, initialTab }: Props): React.JSX.Element {
+export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay, onEditDone, initialTab, usedInteractiveTypes = [] }: Props): React.JSX.Element {
   // Clears Android's navigation bar and the iPhone home indicator.
   const bottomInset = useSafeAreaInsets().bottom;
   const { accessToken } = useAuth();
@@ -105,6 +114,7 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
   React.useEffect(() => {
     if (!visible) return;
     if (!editingOverlay && initialTab) setTab(initialTab);
+    if (editingOverlay && isInteractive(editingOverlay)) setTab("interactive");
     if (editingOverlay?.type === "location") {
       setTab("location");
       setLocationLabel(editingOverlay.properties.label);
@@ -259,7 +269,7 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
       <KeyboardAvoider style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]} behavior="padding">
         <View style={styles.handle} />
         {editingOverlay ? (
-          <Text style={styles.editingHeader}>Editing {editingOverlay.type === "location" ? "location" : "date/time"}</Text>
+          <Text style={styles.editingHeader}>Editing {editingOverlay.type === "location" ? "location" : editingOverlay.type === "datetime" ? "date/time" : "sticker"}</Text>
         ) : (
           <View style={styles.tabRow}>
             {TABS.map((t) => (
@@ -277,6 +287,19 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
         )}
 
         <View style={styles.body}>
+          {tab === "interactive" ? (
+            <InteractiveStickerForm
+              // A fresh form each time the sheet opens, or another sticker is edited.
+              key={editingOverlay?.id ?? "new"}
+              editing={editingOverlay && isInteractive(editingOverlay) ? (editingOverlay as Extract<Overlay, { type: InteractiveType }>) : null}
+              usedTypes={usedInteractiveTypes}
+              onDone={(type, properties) => {
+                if (editingOverlay && onEditDone) onEditDone(editingOverlay.id, properties);
+                else onAdd({ type, properties });
+                close();
+              }}
+            />
+          ) : null}
           {tab === "emoji" && festival ? (
             <View style={styles.festivalRow}>
               <Pressable

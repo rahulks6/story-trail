@@ -18,7 +18,9 @@ import { appEnv } from "../config/env";
  */
 export type AnalyticsEventName =
   | "app_session_started" | "app_crash" | "story_created" | "highlight_viewed"
-  | "profile_viewed" | "search_performed" | "upload_succeeded" | "upload_failed" | "story_shared_external";
+  | "profile_viewed" | "search_performed" | "upload_succeeded" | "upload_failed" | "story_shared_external"
+  // A Story's link sticker opened (never which link), and "Add yours" tapped on someone's Story.
+  | "story_link_opened" | "add_yours_tapped";
 export type AnalyticsProperties = Record<string, string | number | boolean>;
 
 interface QueuedEvent {

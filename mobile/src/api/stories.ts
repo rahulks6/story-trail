@@ -30,6 +30,23 @@ export interface PublicStory {
   music?: StoryMusic | null;
   /** The topic its owner gave it (models/topics.ts); null or absent for none. */
   topic?: string | null;
+  /** A Collab Story's two creators (a waiting invitation shows only to the two of them); null otherwise. */
+  collab?: StoryCollab | null;
+}
+
+export interface CollabPerson {
+  id: string;
+  username: string;
+  displayName: string;
+  avatarMediaId: string | null;
+  verified: boolean;
+}
+
+/** Mirrors backend stories/collab.service.ts's CollabView. */
+export interface StoryCollab {
+  status: "pending" | "accepted" | "declined";
+  owner: CollabPerson;
+  collaborator: CollabPerson;
 }
 
 export interface StoryMusic {
@@ -75,6 +92,8 @@ export interface PublishStoryInput {
   festival?: string;
   /** One topic from models/topics.ts; left out for none. */
   topic?: string;
+  /** Collab Stories: the one person invited to share it (someone who follows you or whom you follow). */
+  collaboratorId?: string;
 }
 
 /**

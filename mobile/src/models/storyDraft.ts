@@ -58,6 +58,84 @@ export interface StickerOverlayProperties {
   stickerId: StickerId;
 }
 
+/**
+ * Interactive stickers (backend stories/stickers.service.ts). The creator sets what's before
+ * the `?` fields; the optional ones are attached by the server for each viewer on read (results
+ * once you've answered, whether you asked to be reminded, the chain's size) and never sent.
+ */
+export const INTERACTIVE_TYPES = ["poll", "quiz", "question", "countdown", "link", "addYours"] as const;
+export type InteractiveType = (typeof INTERACTIVE_TYPES)[number];
+export const MIN_OPTIONS = 2;
+export const MAX_OPTIONS = 4;
+export const MAX_OPTION_LENGTH = 40;
+export const MAX_QUESTION_LENGTH = 80;
+export const MAX_COUNTDOWN_TITLE_LENGTH = 40;
+export const MAX_ANSWER_LENGTH = 300;
+
+/** A poll or quiz as one viewer sees it once they've answered (and the owner always). */
+export interface VoteResults {
+  counts: number[];
+  total: number;
+  viewerChoice: number | null;
+}
+
+export interface PollOverlayProperties {
+  question: string;
+  options: string[];
+  results?: VoteResults | null;
+}
+
+export interface QuizOverlayProperties {
+  question: string;
+  options: string[];
+  /** Always set while editing; from the server only for the owner or after you've answered. */
+  correctIndex?: number;
+  results?: VoteResults | null;
+}
+
+export interface QuestionOverlayProperties {
+  prompt: string;
+  viewerAnswered?: boolean;
+  responseCount?: number;
+}
+
+export interface CountdownOverlayProperties {
+  title: string;
+  /** ISO time the countdown ends. */
+  endsAt: string;
+  viewerReminded?: boolean;
+  reminderCount?: number;
+}
+
+export interface LinkOverlayProperties {
+  url: string;
+  label: string | null;
+}
+
+export interface AddYoursOverlayProperties {
+  prompt: string;
+  /** The chain this Story joins (posting from someone's "Add yours"), or, on read, its own chain. */
+  chainId?: string;
+  participants?: number;
+  recent?: { username: string; avatarMediaId: string | null }[];
+}
+
+export function isInteractive(overlay: Pick<Overlay, "type">): boolean {
+  return (INTERACTIVE_TYPES as readonly string[]).includes(overlay.type);
+}
+
+/** The host a link sticker shows ("shop.example.com"), so people see where it goes. */
+export function linkHost(url: string): string {
+  const match = /^https?:\/\/([^/?#]+)/i.exec(url);
+  return (match?.[1] ?? url).replace(/^www\./i, "").toLowerCase();
+}
+
+/** What a typed address becomes: https:// added when no scheme was given. */
+export function normalizeLinkInput(text: string): string {
+  const trimmed = text.trim();
+  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+}
+
 interface OverlayBase {
   id: string;
   x: number;
@@ -73,7 +151,22 @@ export type Overlay =
   | (OverlayBase & { type: "mention"; properties: MentionOverlayProperties })
   | (OverlayBase & { type: "location"; properties: LocationOverlayProperties })
   | (OverlayBase & { type: "datetime"; properties: DateTimeOverlayProperties })
-  | (OverlayBase & { type: "sticker"; properties: StickerOverlayProperties });
+  | (OverlayBase & { type: "sticker"; properties: StickerOverlayProperties })
+  | (OverlayBase & { type: "poll"; properties: PollOverlayProperties })
+  | (OverlayBase & { type: "quiz"; properties: QuizOverlayProperties })
+  | (OverlayBase & { type: "question"; properties: QuestionOverlayProperties })
+  | (OverlayBase & { type: "countdown"; properties: CountdownOverlayProperties })
+  | (OverlayBase & { type: "link"; properties: LinkOverlayProperties })
+  | (OverlayBase & { type: "addYours"; properties: AddYoursOverlayProperties });
+
+/** The content part of an interactive sticker the editor can change in place. */
+export type InteractiveProperties =
+  | PollOverlayProperties
+  | QuizOverlayProperties
+  | QuestionOverlayProperties
+  | CountdownOverlayProperties
+  | LinkOverlayProperties
+  | AddYoursOverlayProperties;
 
 export type DrawTool = "pen" | "marker" | "highlighter" | "eraser";
 

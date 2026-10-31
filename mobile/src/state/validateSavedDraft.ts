@@ -5,6 +5,8 @@ const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v ===
 const number = (v: unknown): v is number => typeof v === "number" && Number.isFinite(v);
 const text = (v: unknown): v is string => typeof v === "string";
 const member = (v: unknown, values: string[]) => text(v) && values.includes(v);
+/** A poll's or quiz's 2-4 options, each some text. */
+const options = (v: unknown) => Array.isArray(v) && v.length >= 2 && v.length <= 4 && v.every(text);
 
 /** Storage is untrusted input: reject incomplete drafts before rendering them. */
 export function isSavedDraft(value: unknown, mediaUri: string): value is SavedDraft {
@@ -28,6 +30,12 @@ export function isSavedDraft(value: unknown, mediaUri: string): value is SavedDr
       case "location": return text(p.label);
       case "datetime": return member(p.mode, ["date", "time", "datetime"]) && text(p.value) && text(p.display);
       case "sticker": return member(p.stickerId, ["spark", "heart-line", "star-outline", "wave", "flame", "confetti", "ring", "bolt"]);
+      case "poll": return text(p.question) && options(p.options);
+      case "quiz": return text(p.question) && options(p.options) && number(p.correctIndex) && Number.isInteger(p.correctIndex) && p.correctIndex >= 0 && p.correctIndex < (p.options as unknown[]).length;
+      case "question": return text(p.prompt);
+      case "countdown": return text(p.title) && text(p.endsAt) && Number.isFinite(Date.parse(p.endsAt));
+      case "link": return text(p.url) && /^https?:\/\//i.test(p.url) && (p.label === null || text(p.label));
+      case "addYours": return text(p.prompt) && (p.chainId === undefined || text(p.chainId));
       default: return false;
     }
   });

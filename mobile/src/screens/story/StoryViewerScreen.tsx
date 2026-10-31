@@ -34,6 +34,8 @@ export function StoryViewerScreen({ route, navigation }: Props): React.JSX.Eleme
         });
       }}
       onOpenArchived={(storyId) => navigation.replace("ArchivedStoryViewer", { storyId })}
+      onOpenCreate={() => navigation.navigate("Main", { screen: "Create" })}
+      onOpenStory={(username, storyId) => navigation.push("StoryViewer", { creators: [username], startIndex: 0, initialStoryId: storyId })}
     />
   );
 }
