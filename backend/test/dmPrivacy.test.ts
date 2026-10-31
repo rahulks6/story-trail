@@ -39,7 +39,7 @@ async function signup() {
 const ADMIN_GETS = [
   "/api/v1/admin/session", "/api/v1/admin/dashboard", "/api/v1/admin/reports", "/api/v1/admin/reports/:reportId",
   "/api/v1/admin/reports/:reportId/messages",
-  "/api/v1/admin/evidence/:reportId", "/api/v1/admin/users", "/api/v1/admin/users?search=:username", "/api/v1/admin/users?search=:userId", "/api/v1/admin/users/:userId/cover",
+  "/api/v1/admin/evidence/:reportId", "/api/v1/admin/users", "/api/v1/admin/users?search=:username", "/api/v1/admin/users?search=:userId", "/api/v1/admin/users/:userId/cover", "/api/v1/admin/users/:userId/avatar",
   "/api/v1/admin/history", "/api/v1/admin/appeals", "/api/v1/admin/audit", "/api/v1/admin/audit/verify",
   "/api/v1/admin/security-alerts", "/api/v1/admin/admins", "/api/v1/admin/advertisers", "/api/v1/admin/campaigns",
   "/api/v1/admin/ad-interest-categories", "/api/v1/admin/campaigns/:campaignId/analytics", "/api/v1/admin/campaigns/:campaignId/preview", "/api/v1/admin/ad-settings",
