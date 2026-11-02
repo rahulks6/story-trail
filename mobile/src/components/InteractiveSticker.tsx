@@ -9,6 +9,7 @@ import { serverTimeMs } from "../utils/serverTime";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { linkHost, type Overlay, type VoteResults } from "../models/storyDraft";
 import type { VoteOutcome } from "../api/stickers";
+import { t } from "../i18n";
 
 type InteractiveOverlay = Extract<Overlay, { type: "poll" | "quiz" | "question" | "countdown" | "link" | "addYours" }>;
 
@@ -92,7 +93,7 @@ function PollOrQuiz({ overlay, u, interaction }: { overlay: Extract<Overlay, { t
     <Animated.View style={[styles.card, { width: 270 * u, padding: 12 * u, borderRadius: 18 * u, transform: [{ translateX: shake }] }]}>
       {quiz ? (
         <View style={[styles.quizBadge, { borderRadius: 8 * u, paddingHorizontal: 8 * u, paddingVertical: 2 * u, marginBottom: 8 * u }]}>
-          <Text allowFontScaling={false} style={[styles.quizBadgeText, { fontSize: 11 * u }]}>QUIZ</Text>
+          <Text allowFontScaling={false} style={[styles.quizBadgeText, { fontSize: 11 * u }]}>{t("interactiveSticker.quiz")}</Text>
         </View>
       ) : null}
       {question ? <Text allowFontScaling={false} style={[styles.cardTitle, { fontSize: 17 * u, marginBottom: 10 * u }]}>{question}</Text> : null}
@@ -132,7 +133,7 @@ function PollOrQuiz({ overlay, u, interaction }: { overlay: Extract<Overlay, { t
         })}
       </View>
       {results && interaction?.isOwner ? (
-        <Text allowFontScaling={false} style={[styles.meta, { fontSize: 12 * u, marginTop: 8 * u }]}>{results.total === 1 ? "1 vote" : `${results.total} votes`}</Text>
+        <Text allowFontScaling={false} style={[styles.meta, { fontSize: 12 * u, marginTop: 8 * u }]}>{results.total === 1 ? t("common.n1Vote") : t("interactiveSticker.totalVotes", { total: results.total })}</Text>
       ) : null}
     </Animated.View>
   );
@@ -154,7 +155,7 @@ function QuestionCard({ overlay, u, interaction }: { overlay: Extract<Overlay, {
         accessibilityLabel={owner ? `${count} answers to ${overlay.properties.prompt}` : `Answer: ${overlay.properties.prompt}`}
       >
         <Text allowFontScaling={false} style={[styles.answerHint, { fontSize: 14 * u }]}>
-          {owner ? (count === 1 ? "1 answer" : `${count} answers`) : answered ? "Sent. Answer again?" : "Type something…"}
+          {owner ? (count === 1 ? t("interactiveSticker.n1Answer") : t("interactiveSticker.countAnswers", { count })) : answered ? t("interactiveSticker.sentAnswerAgain") : t("common.typeSomething")}
         </Text>
       </Pressable>
     </View>
@@ -192,13 +193,13 @@ function CountdownCard({ overlay, u, interaction }: { overlay: Extract<Overlay, 
   const pad = (n: number) => String(n).padStart(2, "0");
   const units: Array<[string, number]> = [["days", left.days], ["hours", left.hours], ["min", left.minutes], ["sec", left.seconds]];
   const owner = !!interaction?.isOwner;
-  const spoken = left.over ? "ended" : `${left.days} days, ${left.hours} hours, ${left.minutes} minutes left`;
+  const spoken = left.over ? "ended" : t("interactiveSticker.daysDaysHoursHoursMinutes", { days: left.days, hours: left.hours, minutes: left.minutes });
   return (
     <View style={[styles.card, styles.center, { width: 270 * u, padding: 14 * u, borderRadius: 18 * u }]}>
       <Text allowFontScaling={false} style={[styles.cardTitle, styles.centerText, { fontSize: 17 * u, marginBottom: 8 * u }]}>{overlay.properties.title}</Text>
       <View style={[styles.digits, { gap: 6 * u }]} accessible accessibilityLabel={`${overlay.properties.title}: ${spoken}`}>
         {left.over ? (
-          <Text allowFontScaling={false} style={[styles.ended, { fontSize: 22 * u }]}>It's time!</Text>
+          <Text allowFontScaling={false} style={[styles.ended, { fontSize: 22 * u }]}>{t("interactiveSticker.itsTime")}</Text>
         ) : units.map(([label, value]) => (
           <View key={label} style={[styles.digitBox, { borderRadius: 10 * u, paddingVertical: 6 * u, minWidth: 50 * u }]}>
             <Text allowFontScaling={false} style={[styles.digit, { fontSize: 24 * u }]}>{pad(value)}</Text>
@@ -208,7 +209,7 @@ function CountdownCard({ overlay, u, interaction }: { overlay: Extract<Overlay, 
       </View>
       {owner ? (
         <Text allowFontScaling={false} style={[styles.meta, { fontSize: 12 * u, marginTop: 8 * u }]}>
-          {(overlay.properties.reminderCount ?? 0) === 1 ? "1 reminder set" : `${overlay.properties.reminderCount ?? 0} reminders set`}
+          {(overlay.properties.reminderCount ?? 0) === 1 ? t("interactiveSticker.n1ReminderSet") : t("interactiveSticker.remindercountRemindersSet", { reminderCount: overlay.properties.reminderCount ?? 0 })}
         </Text>
       ) : !left.over ? (
         <Pressable
@@ -220,7 +221,7 @@ function CountdownCard({ overlay, u, interaction }: { overlay: Extract<Overlay, 
           accessibilityLabel={reminded ? "Reminder on. Tap to turn it off" : "Remind me when it ends"}
         >
           <Icon name={reminded ? "check" : "notifications"} size={15 * u} color={reminded ? colors.onAccent : colors.background} />
-          <Text allowFontScaling={false} style={[styles.remindText, reminded && styles.remindTextOn, { fontSize: 14 * u }]}>{reminded ? "Reminder on" : "Remind me"}</Text>
+          <Text allowFontScaling={false} style={[styles.remindText, reminded && styles.remindTextOn, { fontSize: 14 * u }]}>{reminded ? t("interactiveSticker.reminderOn") : t("interactiveSticker.remindMe")}</Text>
         </Pressable>
       ) : null}
     </View>
@@ -263,7 +264,7 @@ function AddYoursCard({ overlay, u, interaction }: { overlay: Extract<Overlay, {
     <View style={[styles.card, styles.center, { width: 260 * u, padding: 14 * u, borderRadius: 18 * u }]}>
       <View style={[styles.addYoursBadge, { borderRadius: radii.pill, paddingHorizontal: 10 * u, paddingVertical: 3 * u, marginBottom: 8 * u, gap: 4 * u }]}>
         <Icon name="add" size={12 * u} color={colors.onAccent} />
-        <Text allowFontScaling={false} style={[styles.addYoursBadgeText, { fontSize: 11 * u }]}>ADD YOURS</Text>
+        <Text allowFontScaling={false} style={[styles.addYoursBadgeText, { fontSize: 11 * u }]}>{t("common.addYours2")}</Text>
       </View>
       <Text allowFontScaling={false} style={[styles.cardTitle, styles.centerText, { fontSize: 18 * u, marginBottom: 10 * u }]}>{prompt}</Text>
       <Pressable
@@ -281,7 +282,7 @@ function AddYoursCard({ overlay, u, interaction }: { overlay: Extract<Overlay, {
             </View>
           ))}
         </View>
-        <Text allowFontScaling={false} style={[styles.meta, { fontSize: 13 * u }]}>{count === 0 ? "Be the first" : count === 1 ? "1 participant" : `${count} participants`}</Text>
+        <Text allowFontScaling={false} style={[styles.meta, { fontSize: 13 * u }]}>{count === 0 ? t("interactiveSticker.beTheFirst") : count === 1 ? t("common.n1Participant") : t("interactiveSticker.countParticipants", { count })}</Text>
       </Pressable>
       {interaction && !interaction.isOwner ? (
         <Animated.View style={{ transform: [{ scale: pulse }] }}>
@@ -290,10 +291,10 @@ function AddYoursCard({ overlay, u, interaction }: { overlay: Extract<Overlay, {
             style={[styles.addYoursButton, { borderRadius: radii.pill, paddingHorizontal: 18 * u, minHeight: 38 * u, gap: 6 * u }]}
             accessibilityRole="button"
             accessibilityLabel={`Add yours: ${prompt}`}
-            accessibilityHint="Opens the camera with this prompt on your Story"
+            accessibilityHint={t("interactiveSticker.opensTheCameraWithThis")}
           >
             <Icon name="camera" size={16 * u} color={colors.onAccent} />
-            <Text allowFontScaling={false} style={[styles.addYoursButtonText, { fontSize: 15 * u }]}>Add yours</Text>
+            <Text allowFontScaling={false} style={[styles.addYoursButtonText, { fontSize: 15 * u }]}>{t("common.addYours")}</Text>
           </Pressable>
         </Animated.View>
       ) : null}

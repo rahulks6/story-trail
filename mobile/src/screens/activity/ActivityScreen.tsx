@@ -29,6 +29,7 @@ import { Banner, Button } from "../../components/Form";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
 import { serverDate, timeAgo } from "../../utils/serverTime";
 import { FadeInImage } from "../../components/FadeInImage";
+import { t } from "../../i18n";
 
 const PAGE_SIZE = 20;
 
@@ -36,9 +37,9 @@ type ActivityTab = "all" | "like" | "comment" | "follow" | "mention";
 
 // Three, not five: fewer chips, each easy to tap. "Comments" includes mentions (both are people talking to you).
 const TABS: Array<{ key: ActivityTab; label: string }> = [
-  { key: "all", label: "All" },
-  { key: "follow", label: "Follows" },
-  { key: "comment", label: "Comments" },
+  { key: "all", get label() { return t("common.all"); } },
+  { key: "follow", get label() { return t("common.follows"); } },
+  { key: "comment", get label() { return t("common.comments"); } },
 ];
 
 /** A `follow_request` reads as the same relationship-y thing a `follow` does — the "Follows" tab covers both rather than needing a 5th tab. */
@@ -67,44 +68,44 @@ function isToday(isoDate: string): boolean {
 function verificationMessage(notification: NotificationRecord): string {
   switch (notification.verification?.status) {
     case "approved":
-      return "You're verified. Your badge now shows on your profile.";
+      return t("activity.youreVerifiedYourBadgeNow");
     case "denied":
-      return "Your verification request wasn't approved.";
+      return t("activity.yourVerificationRequestWasntApproved");
     case "removed":
-      return "Your verified badge was removed.";
+      return t("activity.yourVerifiedBadgeWasRemoved");
     case "restored":
-      return "Your verified badge is showing again.";
+      return t("activity.yourVerifiedBadgeIsShowing");
     default:
-      return "There's an update on your verification request.";
+      return t("activity.theresAnUpdateOnYour");
   }
 }
 
 function messageFor(notification: NotificationRecord): string {
-  const name = notification.actor?.displayName ?? "Someone";
+  const name = notification.actor?.displayName ?? t("common.someone");
   switch (notification.type) {
     case "verification":
       return verificationMessage(notification);
     case "like":
-      return `${name} liked your Story.`;
+      return t("activity.nameLikedYourStory", { name });
     case "comment":
       return `${name} commented: "${notification.comment?.body ?? ""}"`;
     case "follow":
-      return `${name} started following you.`;
+      return t("activity.nameStartedFollowingYou", { name });
     case "follow_request":
-      return `${name} requested to follow you.`;
+      return t("activity.nameRequestedToFollowYou", { name });
     case "follow_accepted":
-      return `${name} accepted your follow request.`;
+      return t("activity.nameAcceptedYourFollowRequest", { name });
     case "invite_joined":
-      return `${name} joined Katkee from your invite.`;
+      return t("activity.nameJoinedKatkeeFromYour", { name });
     case "mention":
       // A mention sticker on their Story, or @you in a comment.
-      return notification.comment ? `${name} mentioned you in a comment.` : `${name} mentioned you in their Story.`;
+      return notification.comment ? t("activity.nameMentionedYouInA", { name }) : t("activity.nameMentionedYouInTheir", { name });
     case "collab_invite":
-      return `${name} invited you to a collab Story.`;
+      return t("activity.nameInvitedYouToA", { name });
     case "collab_accepted":
-      return `${name} accepted your collab Story.`;
+      return t("activity.nameAcceptedYourCollabStory", { name });
     default:
-      return `${name} did something.`;
+      return t("activity.nameDidSomething", { name });
   }
 }
 
@@ -133,7 +134,7 @@ type ActivityRow = GroupedLikeRow | SingleRow;
 function messageForGroup(row: GroupedLikeRow): string {
   const [first, second] = row.actorNames;
   if (row.totalCount <= 1) return `${first ?? "Someone"} liked your Story.`;
-  if (row.totalCount === 2) return `${first} and ${second} liked your Story.`;
+  if (row.totalCount === 2) return t("activity.firstAndSecondLikedYour", { first, second });
   const others = row.totalCount - 2;
   return `${first}, ${second} and ${others} other${others === 1 ? "" : "s"} liked your Story.`;
 }
@@ -156,7 +157,7 @@ function groupNotifications(notifications: NotificationRecord[]): ActivityRow[] 
     if (notification.type === "like" && notification.story) {
       const storyId = notification.story.id;
       const existingIndex = groupIndexByStoryId.get(storyId);
-      const actorName = notification.actor?.displayName ?? "Someone";
+      const actorName = notification.actor?.displayName ?? t("common.someone");
       if (existingIndex !== undefined) {
         const group = rows[existingIndex] as GroupedLikeRow;
         if (notification.readAt === null) {
@@ -225,7 +226,7 @@ export function ActivityScreen(): React.JSX.Element {
       setLoadError(null);
       void refreshUnreadCount();
     } catch {
-      setLoadError("Couldn't load your activity. Check your connection and try again.");
+      setLoadError(t("activity.couldntLoadYourActivityCheck"));
     }
   }, [accessToken, refreshUnreadCount]);
 
@@ -295,8 +296,8 @@ export function ActivityScreen(): React.JSX.Element {
     const today = tabFiltered.filter((n) => isToday(n.createdAt));
     const earlier = tabFiltered.filter((n) => !isToday(n.createdAt));
     return [
-      ...(today.length ? [{ title: "Today", data: groupNotifications(today) }] : []),
-      ...(earlier.length ? [{ title: "Earlier", data: groupNotifications(earlier) }] : []),
+      ...(today.length ? [{ title: t("common.today"), data: groupNotifications(today) }] : []),
+      ...(earlier.length ? [{ title: t("common.earlier"), data: groupNotifications(earlier) }] : []),
     ];
   }, [tabFiltered]);
 
@@ -394,7 +395,7 @@ export function ActivityScreen(): React.JSX.Element {
       const status = await followUser(username, accessToken);
       setFollowedBack((m) => ({ ...m, [username]: status.status === "requested" ? "requested" : "following" }));
     } catch (e) {
-      setLoadError(e instanceof ApiError ? e.message : "Couldn't follow. Check your connection and try again.");
+      setLoadError(e instanceof ApiError ? e.message : t("activity.couldntFollowCheckYourConnection"));
     }
   };
   const answer = async (requestId: string, accept: boolean) => {
@@ -409,7 +410,7 @@ export function ActivityScreen(): React.JSX.Element {
         void loadFirstPage();
         return;
       }
-      setLoadError(e instanceof ApiError ? e.message : "Couldn't answer that request. Check your connection and try again.");
+      setLoadError(e instanceof ApiError ? e.message : t("activity.couldntAnswerThatRequestCheck"));
     }
   };
   // Collab invitations answered here, by Story (Accept puts the Story in your ring too).
@@ -426,7 +427,7 @@ export function ActivityScreen(): React.JSX.Element {
         void loadFirstPage();
         return;
       }
-      setLoadError(e instanceof ApiError ? e.message : "Couldn't answer that invitation. Check your connection and try again.");
+      setLoadError(e instanceof ApiError ? e.message : t("activity.couldntAnswerThatInvitationCheck"));
     }
   };
   const authHeaders = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
@@ -437,15 +438,15 @@ export function ActivityScreen(): React.JSX.Element {
     const n = row.notification;
     if (n.type === "follow_request" && n.followRequest) {
       const done = answered[n.followRequest.id] ?? (n.followRequest.status !== "pending" ? (n.followRequest.status as "accepted" | "declined") : undefined);
-      if (done) return <Text style={styles.trailingNote}>{done === "accepted" ? "Accepted" : "Deleted"}</Text>;
+      if (done) return <Text style={styles.trailingNote}>{done === "accepted" ? t("activity.accepted") : t("activity.deleted")}</Text>;
       const id = n.followRequest.id;
       return (
         <View style={styles.trailingButtons}>
           <Pressable onPress={() => void answer(id, true)} style={[styles.smallButton, styles.smallButtonPrimary]} accessibilityRole="button" accessibilityLabel={`Confirm @${n.actor?.username ?? ""}`}>
-            <Text style={styles.smallButtonPrimaryText}>Confirm</Text>
+            <Text style={styles.smallButtonPrimaryText}>{t("common.confirm")}</Text>
           </Pressable>
           <Pressable onPress={() => void answer(id, false)} style={styles.smallButton} accessibilityRole="button" accessibilityLabel={`Delete @${n.actor?.username ?? ""}'s request`}>
-            <Text style={styles.smallButtonText}>Delete</Text>
+            <Text style={styles.smallButtonText}>{t("common.delete")}</Text>
           </Pressable>
         </View>
       );
@@ -455,15 +456,15 @@ export function ActivityScreen(): React.JSX.Element {
       const answeredHere = collabAnswered[storyId] as "accepted" | "declined" | undefined;
       const status = answeredHere ?? n.collab?.status ?? "withdrawn";
       if (status !== "pending") {
-        return <Text style={styles.trailingNote}>{status === "accepted" ? "Accepted" : status === "declined" ? "Declined" : "Withdrawn"}</Text>;
+        return <Text style={styles.trailingNote}>{status === "accepted" ? t("activity.accepted") : status === "declined" ? t("common.declined") : t("activity.withdrawn")}</Text>;
       }
       return (
         <View style={styles.trailingButtons}>
           <Pressable onPress={() => void answerCollab(storyId, true)} style={[styles.smallButton, styles.smallButtonPrimary]} accessibilityRole="button" accessibilityLabel={`Accept @${n.actor?.username ?? ""}'s collab invitation`}>
-            <Text style={styles.smallButtonPrimaryText}>Accept</Text>
+            <Text style={styles.smallButtonPrimaryText}>{t("common.accept")}</Text>
           </Pressable>
           <Pressable onPress={() => void answerCollab(storyId, false)} style={styles.smallButton} accessibilityRole="button" accessibilityLabel={`Decline @${n.actor?.username ?? ""}'s collab invitation`}>
-            <Text style={styles.smallButtonText}>Decline</Text>
+            <Text style={styles.smallButtonText}>{t("common.decline")}</Text>
           </Pressable>
         </View>
       );
@@ -473,9 +474,9 @@ export function ActivityScreen(): React.JSX.Element {
       const state = followedBack[n.actor.username];
       if (n.actor.followedByYou && !state) return null;
       const username = n.actor.username;
-      const label = n.type === "invite_joined" ? "Follow" : "Follow back";
+      const label = n.type === "invite_joined" ? t("common.follow") : t("common.followBack");
       return state ? (
-        <Text style={styles.trailingNote}>{state === "requested" ? "Requested" : "Following"}</Text>
+        <Text style={styles.trailingNote}>{state === "requested" ? t("common.requested") : t("common.following")}</Text>
       ) : (
         <Pressable onPress={() => void followBack(username)} style={[styles.smallButton, styles.smallButtonPrimary]} accessibilityRole="button" accessibilityLabel={n.type === "invite_joined" ? `Follow @${username}` : `Follow @${username} back`}>
           <Text style={styles.smallButtonPrimaryText}>{label}</Text>
@@ -505,15 +506,15 @@ export function ActivityScreen(): React.JSX.Element {
     <View style={[styles.header, { paddingTop: insets.top + spacing.md }]}>
       <View style={styles.headerStart}>
         {navigation.canGoBack() ? (
-          <Pressable onPress={() => navigation.goBack()} hitSlop={12} accessibilityRole="button" accessibilityLabel="Back">
+          <Pressable onPress={() => navigation.goBack()} hitSlop={12} accessibilityRole="button" accessibilityLabel={t("common.back")}>
             <Icon name={ICONS.back} size={24} color={colors.textPrimary} />
           </Pressable>
         ) : null}
-        <Text style={typography.title}>Activity</Text>
+        <Text style={typography.title}>{t("common.activity")}</Text>
       </View>
       {unreadInList ? (
         <Pressable onPress={onMarkAllRead} hitSlop={8} accessibilityRole="button">
-          <Text style={styles.markAllRead}>Mark all read</Text>
+          <Text style={styles.markAllRead}>{t("activity.markAllRead")}</Text>
         </Pressable>
       ) : null}
     </View>
@@ -527,11 +528,11 @@ export function ActivityScreen(): React.JSX.Element {
         {loadError ? (
           <>
             <Text style={[typography.body, styles.loadError]}>{loadError}</Text>
-            <Button label="Try again" onPress={() => void loadFirstPage()} />
+            <Button label={t("common.tryAgain")} onPress={() => void loadFirstPage()} />
           </>
         ) : (
           <View style={StyleSheet.absoluteFill}>
-            <ListSkeleton label="Loading activity" />
+            <ListSkeleton label={t("activity.loadingActivity")} />
           </View>
         )}
       </View>
@@ -543,7 +544,7 @@ export function ActivityScreen(): React.JSX.Element {
     return (
       <View style={styles.container}>
         {header}
-        <EmptyState icon="activity" title="No activity yet" message="Likes, comments, and follows will show up here." />
+        <EmptyState icon="activity" title={t("activity.noActivityYet")} message={t("activity.likesCommentsAndFollowsWill")} />
       </View>
     );
   }
@@ -594,7 +595,7 @@ export function ActivityScreen(): React.JSX.Element {
                 style={styles.row}
                 onPress={() => void onPressRow(row)}
                 accessibilityRole="button"
-                accessibilityLabel={[message.replace(/\.$/, ""), badgeAfter ? `${actor?.displayName} is verified` : "", ago, unread ? "Unread" : ""].filter(Boolean).join(". ")}
+                accessibilityLabel={[message.replace(/\.$/, ""), badgeAfter ? t("activity.displaynameIsVerified", { displayName: actor?.displayName ?? "" }) : "", ago, unread ? t("activity.unread") : ""].filter(Boolean).join(". ")}
               >
                 {aboutBadge ? (
                   <View style={styles.badgeIcon}>
@@ -622,7 +623,7 @@ export function ActivityScreen(): React.JSX.Element {
           }}
           ListFooterComponent={
             loadingMore ? <ActivityIndicator color={colors.accentText} style={styles.footerSpinner} />
-              : moreFailed ? <View style={styles.footerRetry}><Button label="Couldn't load more. Try again" variant="secondary" onPress={() => void loadMore(true)} /></View>
+              : moreFailed ? <View style={styles.footerRetry}><Button label={t("activity.couldntLoadMoreTryAgain")} variant="secondary" onPress={() => void loadMore(true)} /></View>
               : undefined
           }
         />

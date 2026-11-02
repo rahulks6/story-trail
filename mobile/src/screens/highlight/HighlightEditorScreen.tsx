@@ -13,6 +13,7 @@ import { createHighlight, deleteHighlight, getHighlightDetail, setHighlightCover
 import { ApiError } from "../../api/client";
 import { DraggableGrid } from "../../components/DraggableGrid";
 import { firstCharacter } from "../../utils/firstCharacter";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "HighlightEditor">;
 
@@ -61,9 +62,9 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
     (cleanTitle(title) !== initial.title || selected.join() !== initial.selected.join() || coverStoryId !== initialCoverStoryId);
   // Back button, Android back and the iOS swipe all come through here while changes are unsaved.
   usePreventRemove(dirty, ({ data }) => {
-    Alert.alert("Discard changes?", isEditing ? "Your changes to this Highlight won't be saved." : "This Highlight won't be created.", [
-      { text: "Keep editing", style: "cancel" },
-      { text: "Discard", style: "destructive", onPress: () => navigation.dispatch(data.action) },
+    Alert.alert(t("common.discardChanges"), isEditing ? t("highlightEditor.yourChangesToThisHighlight") : t("highlightEditor.thisHighlightWontBeCreated"), [
+      { text: t("common.keepEditing"), style: "cancel" },
+      { text: t("common.discard"), style: "destructive", onPress: () => navigation.dispatch(data.action) },
     ]);
   });
   // Leave only once the guard above has seen the save.
@@ -101,7 +102,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
           setInitial({ title: existing.highlight.title, selected: existing.highlight.items.map((item) => item.storyId) });
         }
       } catch {
-        if (!cancelled) setError("Couldn't load your Stories — try again.");
+        if (!cancelled) setError(t("highlightEditor.couldntLoadYourStoriesTry"));
       } finally {
         if (!cancelled) {
           setLoading(false);
@@ -174,13 +175,13 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
           try {
             await setHighlightCover(highlight.id, coverStoryId, accessToken);
           } catch {
-            Alert.alert("Highlight created", "Couldn't set the cover. You can change it from your profile.");
+            Alert.alert(t("highlightEditor.highlightCreated"), t("highlightEditor.couldntSetTheCoverYou"));
           }
         }
       }
       setDone("saved");
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "That didn't save — try again.");
+      setError(err instanceof ApiError ? err.message : t("highlightEditor.thatDidntSaveTryAgain"));
     } finally {
       setSaving(false);
     }
@@ -188,17 +189,17 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
 
   const onDelete = () => {
     if (!accessToken || !isEditing) return;
-    Alert.alert("Delete Highlight?", "This removes the Highlight — the Stories in it stay in your Archive.", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("highlightEditor.deleteHighlight"), t("highlightEditor.thisRemovesTheHighlightThe"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Delete",
+        text: t("common.delete"),
         style: "destructive",
         onPress: async () => {
           try {
             await deleteHighlight(highlightId, accessToken);
             setDone("deleted");
           } catch {
-            setError("Couldn't delete — try again.");
+            setError(t("highlightEditor.couldntDeleteTryAgain"));
           }
         },
       },
@@ -231,7 +232,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
           disabled={selectedStories.length === 0}
           style={styles.coverPreview}
           accessibilityRole="button"
-          accessibilityLabel="Change cover"
+          accessibilityLabel={t("common.changeCover")}
         >
           {coverStory ? (
             <Image source={{ uri: mediaFileUrl(coverStory.mediaId, "thumbnail"), headers: authHeaders }} style={styles.coverPreviewImage} resizeMode="cover" />
@@ -243,22 +244,22 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
               ) : (
                 <>
                   <Icon name={ICONS.gallery} size={26} color={colors.textSecondary} />
-                  <Text style={styles.coverPreviewHint}>Cover</Text>
+                  <Text style={styles.coverPreviewHint}>{t("highlightEditor.cover")}</Text>
                 </>
               )}
             </View>
           )}
           {selectedStories.length > 0 ? (
             <View style={styles.coverPreviewBadge}>
-              <Text style={styles.coverPreviewBadgeText}>Change cover</Text>
+              <Text style={styles.coverPreviewBadgeText}>{t("common.changeCover")}</Text>
             </View>
           ) : null}
         </Pressable>
         <View style={styles.headerFields}>
-          <Text style={styles.fieldLabel}>Name</Text>
+          <Text style={styles.fieldLabel}>{t("common.name")}</Text>
           <TextInput
             style={styles.titleInput}
-            placeholder="e.g. Travel"
+            placeholder={t("highlightEditor.eGTravel")}
             placeholderTextColor={colors.textDisabled}
             value={title}
             onChangeText={setTitle}
@@ -266,7 +267,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
             maxLength={MAX_TITLE_LENGTH}
             autoCapitalize="words"
             returnKeyType="done"
-            accessibilityLabel="Highlight name"
+            accessibilityLabel={t("highlightEditor.highlightName")}
           />
           <Text style={styles.counter}>{cleanTitle(title).length}/{MAX_TITLE_LENGTH}</Text>
         </View>
@@ -275,7 +276,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
 
       {selectedStories.length > 0 ? (
         <>
-          <Text style={styles.sectionLabel}>In this Highlight · hold and drag to reorder</Text>
+          <Text style={styles.sectionLabel}>{t("highlightEditor.inThisHighlightHoldAnd")}</Text>
           <View style={styles.selectedStrip}>
             <DraggableGrid
               data={selectedStories}
@@ -302,7 +303,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
         </>
       ) : null}
 
-      <Text style={styles.sectionLabel}>Your Archive</Text>
+      <Text style={styles.sectionLabel}>{t("highlightEditor.yourArchive")}</Text>
       <FlatList keyboardShouldPersistTaps="handled"
         data={archive ?? []}
         numColumns={3}
@@ -310,7 +311,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
         contentContainerStyle={styles.grid}
         onEndReachedThreshold={0.4}
         onEndReached={() => void loadMoreArchive()}
-        ListEmptyComponent={<Text style={typography.caption}>No Stories in your Archive yet.</Text>}
+        ListEmptyComponent={<Text style={typography.caption}>{t("highlightEditor.noStoriesInYourArchive")}</Text>}
         ListFooterComponent={archiveLoadingMore ? <ActivityIndicator color={colors.accentText} style={styles.footerSpinner} /> : undefined}
         renderItem={({ item }) => {
           const order = selected.indexOf(item.id);
@@ -339,10 +340,10 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
       />
 
       <Modal visible={coverPickerOpen} transparent animationType="slide" onRequestClose={() => setCoverPickerOpen(false)}>
-        <Pressable pressEffect="none" style={styles.pickerBackdrop} onPress={() => setCoverPickerOpen(false)} accessibilityRole="button" accessibilityLabel="Close" />
+        <Pressable pressEffect="none" style={styles.pickerBackdrop} onPress={() => setCoverPickerOpen(false)} accessibilityRole="button" accessibilityLabel={t("common.close")} />
         <View style={[styles.picker, { paddingBottom: spacing.lg + bottomInset }]}>
-          <Text style={styles.pickerTitle} accessibilityRole="header">Choose a cover</Text>
-          <Text style={styles.sectionHint}>Any Story in this Highlight can be its cover.</Text>
+          <Text style={styles.pickerTitle} accessibilityRole="header">{t("highlightEditor.chooseACover")}</Text>
+          <Text style={styles.sectionHint}>{t("highlightEditor.anyStoryInThisHighlight")}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.pickerRow}>
             {selectedStories.map((story) => {
               const chosen = coverStory?.id === story.id;
@@ -368,13 +369,13 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
       <View style={[styles.footer, { paddingBottom: spacing.md + bottomInset }]}>
         {isEditing ? (
           <Pressable accessibilityRole="button" style={styles.deleteButton} onPress={onDelete}>
-            <Text style={styles.deleteLabel}>Delete Highlight</Text>
+            <Text style={styles.deleteLabel}>{t("common.deleteHighlight")}</Text>
           </Pressable>
         ) : (
           <View />
         )}
         <Pressable accessibilityRole="button" style={[styles.saveButton, !canSave && styles.saveButtonDisabled]} disabled={!canSave} onPress={onSave}>
-          {saving ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.saveLabel}>{isEditing ? "Save" : "Create"}</Text>}
+          {saving ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.saveLabel}>{isEditing ? t("common.save") : t("highlightEditor.create")}</Text>}
         </Pressable>
       </View>
     </View>

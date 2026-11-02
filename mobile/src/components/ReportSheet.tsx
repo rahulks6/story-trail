@@ -7,6 +7,7 @@ import { useAuth } from "../state/AuthContext";
 import { createReport, reportDirectMessage, REPORT_REASONS, type ReportReason, type ReportTargetType } from "../api/moderation";
 import { ApiError } from "../api/client";
 import { KeyboardAvoider } from "./KeyboardAvoider";
+import { t } from "../i18n";
 
 interface Props {
   visible: boolean;
@@ -49,9 +50,9 @@ export function ReportSheet({ visible, targetType, targetId, conversationId, onC
       }
       reset();
       onClose();
-      Alert.alert("Thanks for letting us know", "Our moderation team will review this.");
+      Alert.alert(t("reportSheet.thanksForLettingUsKnow"), t("reportSheet.ourModerationTeamWillReview"));
     } catch (err) {
-      Alert.alert(err instanceof ApiError ? err.message : "That didn't go through — try again.");
+      Alert.alert(err instanceof ApiError ? err.message : t("reportSheet.thatDidntGoThroughTry"));
     } finally {
       setBusy(false);
     }
@@ -76,15 +77,13 @@ export function ReportSheet({ visible, targetType, targetId, conversationId, onC
             onClose();
           }}
           accessibilityRole="button"
-          accessibilityLabel="Close"
+          accessibilityLabel={t("common.close")}
         />
         <View style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]}>
           <View style={styles.handle} />
-          <Text style={[typography.bodyStrong, styles.title]}>Report {targetType === "user" ? "profile" : targetType}</Text>
+          <Text style={[typography.bodyStrong, styles.title]}>{t("common.report")}{" "}{targetType === "user" ? t("reportSheet.profile") : targetType}</Text>
           {targetType === "message" ? (
-            <Text style={[typography.caption, styles.disclosure]}>
-              This message and the 9 messages before it will be shared with Katkee's safety team. Nothing else from this conversation is shared.
-            </Text>
+            <Text style={[typography.caption, styles.disclosure]}>{t("reportSheet.thisMessageAndThe9")}</Text>
           ) : null}
 
           {selectedReason === null ? (
@@ -103,18 +102,18 @@ export function ReportSheet({ visible, targetType, targetId, conversationId, onC
               </Text>
               <TextInput
                 style={styles.detailsInput}
-                accessibilityLabel="Details (optional)"
-                placeholder="Anything else we should know? (optional)"
+                accessibilityLabel={t("reportSheet.detailsOptional")}
+                placeholder={t("reportSheet.anythingElseWeShouldKnow")}
                 placeholderTextColor={colors.textDisabled}
                 value={details}
                 onChangeText={setDetails}
                 multiline
               />
-              <Pressable style={[styles.submitButton, busy && styles.submitButtonDisabled]} disabled={busy} onPress={onSubmit} accessibilityRole="button" accessibilityLabel="Submit report" accessibilityState={{ busy, disabled: busy }}>
-                {busy ? <ActivityIndicator color={colors.onDanger} /> : <Text style={styles.submitLabel}>Submit report</Text>}
+              <Pressable style={[styles.submitButton, busy && styles.submitButtonDisabled]} disabled={busy} onPress={onSubmit} accessibilityRole="button" accessibilityLabel={t("reportSheet.submitReport")} accessibilityState={{ busy, disabled: busy }}>
+                {busy ? <ActivityIndicator color={colors.onDanger} /> : <Text style={styles.submitLabel}>{t("reportSheet.submitReport")}</Text>}
               </Pressable>
               <Pressable style={styles.backRow} onPress={() => setSelectedReason(null)} disabled={busy} accessibilityRole="button">
-                <Text style={typography.caption}>Choose a different reason</Text>
+                <Text style={typography.caption}>{t("reportSheet.chooseADifferentReason")}</Text>
               </Pressable>
             </>
           )}

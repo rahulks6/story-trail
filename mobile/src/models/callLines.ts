@@ -1,5 +1,6 @@
 import type { GroupEvent } from "../api/conversations";
 import { formatCallDuration } from "../calls/callMachine";
+import { t } from "../i18n";
 
 export type CallEvent = Extract<GroupEvent, { type: "call" }>;
 
@@ -9,20 +10,20 @@ export type CallEvent = Extract<GroupEvent, { type: "call" }>;
  * went ("Voice call · No answer"). `mine`: the reader placed the call.
  */
 export function callLineText(event: CallEvent, mine: boolean): string {
-  const kind = event.media === "video" ? "Video call" : "Voice call";
+  const kind = event.media === "video" ? t("callLines.videoCall") : t("callLines.voiceCall");
   switch (event.outcome) {
     case "completed":
       return event.durationSeconds !== null ? `${kind} · ${formatCallDuration(event.durationSeconds)}` : kind;
     case "declined":
-      return `${kind} · Declined`;
+      return t("callLines.kindDeclined", { kind });
     case "failed":
-      return `${kind} · Couldn't connect`;
+      return t("callLines.kindCouldntConnect", { kind });
     case "busy":
-      return mine ? `${kind} · On another call` : `Missed ${kind.toLowerCase()}`;
+      return mine ? t("callLines.kindOnAnotherCall", { kind }) : t("callLines.missedKind", { kind: kind.toLowerCase() });
     case "missed":
-      return mine ? `${kind} · No answer` : `Missed ${kind.toLowerCase()}`;
+      return mine ? t("callLines.kindNoAnswer", { kind }) : t("callLines.missedKind", { kind: kind.toLowerCase() });
     case "cancelled":
-      return mine ? `${kind} · Cancelled` : `Missed ${kind.toLowerCase()}`;
+      return mine ? t("callLines.kindCancelled", { kind }) : t("callLines.missedKind", { kind: kind.toLowerCase() });
     default:
       return kind;
   }

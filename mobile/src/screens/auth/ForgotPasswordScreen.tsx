@@ -9,6 +9,7 @@ import { colors, spacing, typography, FORM_MAX_WIDTH } from "../../theme";
 import { forgotPassword } from "../../api/auth";
 import { ApiError } from "../../api/client";
 import { Banner, Button, TextField } from "../../components/Form";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "ForgotPassword">;
 
@@ -25,7 +26,7 @@ export function ForgotPasswordScreen({ navigation, route }: Props): React.JSX.El
   const submit = async () => {
     const trimmed = email.trim().toLowerCase();
     if (!EMAIL_RE.test(trimmed)) {
-      setError("Enter the email address you signed up with.");
+      setError(t("forgotPassword.enterTheEmailAddressYou"));
       return;
     }
     setBusy(true);
@@ -34,7 +35,7 @@ export function ForgotPasswordScreen({ navigation, route }: Props): React.JSX.El
       await forgotPassword(trimmed);
       navigation.navigate("ResetPassword", { email: trimmed });
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Couldn't send the code. Check your connection and try again.");
+      setError(e instanceof ApiError ? e.message : t("forgotPassword.couldntSendTheCodeCheck"));
     } finally {
       setBusy(false);
     }
@@ -44,13 +45,11 @@ export function ForgotPasswordScreen({ navigation, route }: Props): React.JSX.El
     <KeyboardAvoider style={styles.root}>
       {/* The header is see-through: keep the content clear of it and of the bottom inset. */}
       <ScrollView contentContainerStyle={[styles.content, { paddingTop: headerHeight + spacing.md, paddingBottom: insets.bottom + spacing.xl }]} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
-        <Text style={typography.displayLarge} accessibilityRole="header">
-          Reset your password
-        </Text>
-        <Text style={styles.body}>Enter the email you use for Katkee. We'll send a 6-digit code to set a new password.</Text>
+        <Text style={typography.displayLarge} accessibilityRole="header">{t("forgotPassword.resetYourPassword")}</Text>
+        <Text style={styles.body}>{t("forgotPassword.enterTheEmailYouUse")}</Text>
         {error ? <Banner text={error} /> : null}
         <TextField
-          label="Email"
+          label={t("common.email")}
           value={email}
           onChangeText={(text) => {
             setEmail(text);
@@ -65,9 +64,9 @@ export function ForgotPasswordScreen({ navigation, route }: Props): React.JSX.El
           onSubmitEditing={() => void submit()}
           autoFocus
         />
-        <Button label="Send code" onPress={() => void submit()} busy={busy} disabled={!email.trim()} />
-        <Button label="I already have a code" variant="secondary" onPress={() => navigation.navigate("ResetPassword", { email: email.trim().toLowerCase() })} />
-        <Text style={styles.note}>Signed up with Google or your phone number? Go back and use that option instead — no password is needed.</Text>
+        <Button label={t("common.sendCode")} onPress={() => void submit()} busy={busy} disabled={!email.trim()} />
+        <Button label={t("forgotPassword.iAlreadyHaveACode")} variant="secondary" onPress={() => navigation.navigate("ResetPassword", { email: email.trim().toLowerCase() })} />
+        <Text style={styles.note}>{t("forgotPassword.signedUpWithGoogleOr")}</Text>
       </ScrollView>
     </KeyboardAvoider>
   );

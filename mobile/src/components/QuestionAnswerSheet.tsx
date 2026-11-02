@@ -9,6 +9,7 @@ import { ApiError } from "../api/client";
 import { answerQuestion } from "../api/stickers";
 import { MAX_ANSWER_LENGTH } from "../models/storyDraft";
 import { tapFeedback } from "../utils/haptics";
+import { t } from "../i18n";
 
 interface Props {
   visible: boolean;
@@ -47,7 +48,7 @@ export function QuestionAnswerSheet({ visible, storyId, sticker, ownerUsername, 
       onSent();
       onClose();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Couldn't send. Check your connection and try again.");
+      setError(err instanceof ApiError ? err.message : t("questionAnswerSheet.couldntSendCheckYourConnection"));
     } finally {
       setBusy(false);
     }
@@ -55,16 +56,16 @@ export function QuestionAnswerSheet({ visible, storyId, sticker, ownerUsername, 
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-      <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
+      <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel={t("common.close")} />
       <KeyboardAvoider style={[styles.sheet, { paddingBottom: spacing.lg + bottomInset }]} behavior="padding">
         <View style={styles.handle} />
         <Text style={[typography.bodyStrong, styles.prompt]}>{sticker?.prompt ?? ""}</Text>
-        <Text style={[typography.caption, styles.privacy]}>Only @{ownerUsername} sees your answer.</Text>
+        <Text style={[typography.caption, styles.privacy]}>{t("questionAnswerSheet.onlyOwnerusernameSeesYourAnswer", { ownerUsername })}</Text>
         <TextInput
           style={styles.input}
           value={text}
           onChangeText={setText}
-          placeholder="Type your answer…"
+          placeholder={t("questionAnswerSheet.typeYourAnswer")}
           placeholderTextColor={colors.textDisabled}
           maxLength={MAX_ANSWER_LENGTH}
           multiline
@@ -79,7 +80,7 @@ export function QuestionAnswerSheet({ visible, storyId, sticker, ownerUsername, 
           accessibilityRole="button"
           accessibilityState={{ disabled: busy || text.trim().length === 0, busy }}
         >
-          {busy ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.sendLabel}>Send</Text>}
+          {busy ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.sendLabel}>{t("common.send")}</Text>}
         </Pressable>
       </KeyboardAvoider>
     </Modal>

@@ -10,25 +10,26 @@ import {
 } from "../../api/notifications";
 import { LoadFailed } from "../../components/LoadFailed";
 import { pushPermission, registerForPush, requestPushPermission, type PushPermission } from "../../push/pushNotifications";
+import { t } from "../../i18n";
 
 type Row = { key: keyof NotificationPreferences; label: string };
 
 const PUSH_ROWS: Row[] = [
-  { key: "pushEnabled", label: "Push notifications" },
-  { key: "messagesEnabled", label: "New messages" },
+  { key: "pushEnabled", get label() { return t("notificationSettings.pushNotifications"); } },
+  { key: "messagesEnabled", get label() { return t("notificationSettings.newMessages"); } },
 ];
 
 const ACTIVITY_ROWS: Row[] = [
-  { key: "likesEnabled", label: "Likes" },
-  { key: "commentsEnabled", label: "Comments" },
-  { key: "followsEnabled", label: "Follows" },
-  { key: "mentionsEnabled", label: "Mentions" },
+  { key: "likesEnabled", get label() { return t("common.likes"); } },
+  { key: "commentsEnabled", get label() { return t("common.comments"); } },
+  { key: "followsEnabled", get label() { return t("common.follows"); } },
+  { key: "mentionsEnabled", get label() { return t("notificationSettings.mentions"); } },
 ];
 
 const STORY_ROWS: Row[] = [
-  { key: "storiesEnabled", label: "New Stories from people you follow" },
-  { key: "milestonesEnabled", label: "Views on your Stories" },
-  { key: "remindersEnabled", label: "Festivals, streaks and reminders" },
+  { key: "storiesEnabled", get label() { return t("notificationSettings.newStoriesFromPeopleYou"); } },
+  { key: "milestonesEnabled", get label() { return t("notificationSettings.viewsOnYourStories"); } },
+  { key: "remindersEnabled", get label() { return t("notificationSettings.festivalsStreaksAndReminders"); } },
 ];
 
 const DEFAULTS: NotificationPreferences = {
@@ -110,7 +111,7 @@ export function NotificationSettingsScreen(): React.JSX.Element {
   };
 
   if (!prefs) {
-    if (loadFailed) return <LoadFailed message="Couldn't load your notification settings. Check your connection and try again." onRetry={load} />;
+    if (loadFailed) return <LoadFailed message={t("notificationSettings.couldntLoadYourNotificationSettings")} onRetry={load} />;
     return (
       <View style={styles.centered}>
         <ActivityIndicator color={colors.accentText} />
@@ -135,24 +136,24 @@ export function NotificationSettingsScreen(): React.JSX.Element {
           )}
         </View>
         {toggleError === row.key ? (
-          <Text accessibilityRole="alert" style={styles.rowError}>Couldn't save that change. Check your connection and try again.</Text>
+          <Text accessibilityRole="alert" style={styles.rowError}>{t("notificationSettings.couldntSaveThatChangeCheck")}</Text>
         ) : null}
       </View>
     ));
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.container}>
-      <Text style={styles.sectionTitle}>Push notifications</Text>
+      <Text style={styles.sectionTitle}>{t("notificationSettings.pushNotifications")}</Text>
       {permission === "denied" && prefs.pushEnabled ? (
         <View style={styles.notice}>
-          <Text style={styles.noticeText}>Notifications are turned off for Katkee in your phone's settings.</Text>
+          <Text style={styles.noticeText}>{t("notificationSettings.notificationsAreTurnedOffFor")}</Text>
           <Pressable onPress={() => void Linking.openSettings()} accessibilityRole="button" hitSlop={8}>
-            <Text style={styles.noticeAction}>Open settings</Text>
+            <Text style={styles.noticeAction}>{t("notificationSettings.openSettings")}</Text>
           </Pressable>
         </View>
       ) : null}
       {permission === "unavailable" ? (
-        <Text style={styles.hint}>This build of the app can't receive push notifications. Activity and messages still update while the app is open.</Text>
+        <Text style={styles.hint}>{t("notificationSettings.thisBuildOfTheApp")}</Text>
       ) : null}
       <View style={styles.card}>
         {renderRows(PUSH_ROWS.slice(0, 1))}
@@ -160,14 +161,14 @@ export function NotificationSettingsScreen(): React.JSX.Element {
       <View style={[styles.card, styles.cardSpacing]}>
         {renderRows(PUSH_ROWS.slice(1), !prefs.pushEnabled)}
       </View>
-      <Text style={styles.hint}>Message notifications say who wrote to you, never what they wrote.</Text>
+      <Text style={styles.hint}>{t("notificationSettings.messageNotificationsSayWhoWrote")}</Text>
 
-      <Text style={styles.sectionTitle}>Stories</Text>
+      <Text style={styles.sectionTitle}>{t("common.stories")}</Text>
       <View style={styles.card}>{renderRows(STORY_ROWS, !prefs.pushEnabled)}</View>
-      <Text style={styles.hint}>At most one notification a day for each person you follow, and never more than five a day in all.</Text>
+      <Text style={styles.hint}>{t("notificationSettings.atMostOneNotificationA")}</Text>
 
-      <Text style={styles.sectionTitle}>Activity</Text>
-      <Text style={styles.hint}>Choose which activity on your Stories and comments notifies you.</Text>
+      <Text style={styles.sectionTitle}>{t("common.activity")}</Text>
+      <Text style={styles.hint}>{t("notificationSettings.chooseWhichActivityOnYour")}</Text>
       <View style={styles.card}>{renderRows(ACTIVITY_ROWS)}</View>
     </ScrollView>
   );

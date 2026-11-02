@@ -10,6 +10,7 @@ import {
   AVATAR_OUTPUT_SIZE, COVER_ASPECT, COVER_OUTPUT_HEIGHT, COVER_OUTPUT_WIDTH,
 } from "../models/avatarCrop";
 import { cropPhoto } from "../utils/cropPhoto";
+import { t } from "../i18n";
 
 export interface PickedPhoto {
   uri: string;
@@ -106,7 +107,7 @@ export function AvatarCropper({ photo, onCancel, onDone, kind = "avatar" }: Prop
       setCrop(null);
       onDone(uri);
     } catch {
-      Alert.alert("Couldn't use this photo", "Try another photo.");
+      Alert.alert(t("avatarCropper.couldntUseThisPhoto"), t("avatarCropper.tryAnotherPhoto"));
     } finally {
       setWorking(false);
     }
@@ -119,12 +120,12 @@ export function AvatarCropper({ photo, onCancel, onDone, kind = "avatar" }: Prop
     <Modal visible animationType="slide" onRequestClose={close}>
       <View style={[styles.screen, { paddingTop: insets.top + spacing.sm, paddingBottom: insets.bottom + spacing.md }]}>
         <View style={styles.bar}>
-          <Pressable onPress={close} hitSlop={8} accessibilityRole="button" accessibilityLabel="Cancel">
-            <Text style={styles.barButton}>Cancel</Text>
+          <Pressable onPress={close} hitSlop={8} accessibilityRole="button" accessibilityLabel={t("common.cancel")}>
+            <Text style={styles.barButton}>{t("common.cancel")}</Text>
           </Pressable>
-          <Text style={styles.title} accessibilityRole="header">Move and scale</Text>
-          <Pressable onPress={() => void usePhoto()} hitSlop={8} disabled={working} accessibilityRole="button" accessibilityLabel="Use photo" accessibilityState={{ busy: working, disabled: working }}>
-            {working ? <ActivityIndicator color={colors.accentText} /> : <Text style={[styles.barButton, styles.barPrimary]}>Use photo</Text>}
+          <Text style={styles.title} accessibilityRole="header">{t("avatarCropper.moveAndScale")}</Text>
+          <Pressable onPress={() => void usePhoto()} hitSlop={8} disabled={working} accessibilityRole="button" accessibilityLabel={t("avatarCropper.usePhoto")} accessibilityState={{ busy: working, disabled: working }}>
+            {working ? <ActivityIndicator color={colors.accentText} /> : <Text style={[styles.barButton, styles.barPrimary]}>{t("avatarCropper.usePhoto")}</Text>}
           </Pressable>
         </View>
 
@@ -133,7 +134,7 @@ export function AvatarCropper({ photo, onCancel, onDone, kind = "avatar" }: Prop
             style={[styles.viewport, { width: viewport, height: viewportHeight }, kind === "cover" && styles.banner]}
             {...responder.panHandlers}
             accessible
-            accessibilityLabel="Photo: drag to move it, pinch to zoom"
+            accessibilityLabel={t("avatarCropper.photoDragToMoveIt")}
           >
             <Image source={{ uri: photo.uri }} style={[styles.photo, layout]} resizeMode="stretch" />
             {kind === "avatar" ? (
@@ -144,12 +145,12 @@ export function AvatarCropper({ photo, onCancel, onDone, kind = "avatar" }: Prop
             {/* The frame: everything inside it is the photo or cover you get. */}
             <View pointerEvents="none" style={[styles.circle, { width: viewport, height: viewportHeight, borderRadius: kind === "avatar" ? r : radii.sm }]} />
           </View>
-          <Text style={styles.hint}>Drag to move. Pinch to zoom.</Text>
+          <Text style={styles.hint}>{t("avatarCropper.dragToMovePinchTo")}</Text>
           <View style={styles.zoomRow}>
-            <Pressable style={styles.zoomButton} onPress={() => zoomBy(1 / 1.25)} accessibilityRole="button" accessibilityLabel="Zoom out">
+            <Pressable style={styles.zoomButton} onPress={() => zoomBy(1 / 1.25)} accessibilityRole="button" accessibilityLabel={t("common.zoomOut")}>
               <Icon name={ICONS.minus} size={20} color={colors.textPrimary} />
             </Pressable>
-            <Pressable style={styles.zoomButton} onPress={() => zoomBy(1.25)} accessibilityRole="button" accessibilityLabel="Zoom in">
+            <Pressable style={styles.zoomButton} onPress={() => zoomBy(1.25)} accessibilityRole="button" accessibilityLabel={t("common.zoomIn")}>
               <Icon name={ICONS.add} size={20} color={colors.textPrimary} />
             </Pressable>
           </View>

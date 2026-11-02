@@ -18,15 +18,16 @@ import {
   type InteractiveType,
   type Overlay,
 } from "../models/storyDraft";
+import { t } from "../i18n";
 
 /** The six interactive stickers, in the order Instagram's tray puts them. */
 const KINDS: Array<{ type: InteractiveType; label: string; icon: "check" | "help" | "comment" | "timer" | "attach" | "add"; hint: string }> = [
-  { type: "poll", label: "Poll", icon: "check", hint: "Ask a question with 2 to 4 choices" },
-  { type: "quiz", label: "Quiz", icon: "help", hint: "A question with one right answer" },
-  { type: "question", label: "Questions", icon: "comment", hint: "Let people send you answers privately" },
-  { type: "countdown", label: "Countdown", icon: "timer", hint: "Count down to a moment; people can get a reminder" },
-  { type: "link", label: "Link", icon: "attach", hint: "A link people can open" },
-  { type: "addYours", label: "Add Yours", icon: "add", hint: "Start a prompt others post their own Stories to" },
+  { type: "poll", get label() { return t("common.poll"); }, icon: "check", get hint() { return t("interactiveStickerForm.askAQuestionWith2"); } },
+  { type: "quiz", get label() { return t("common.quiz"); }, icon: "help", get hint() { return t("interactiveStickerForm.aQuestionWithOneRight"); } },
+  { type: "question", get label() { return t("interactiveStickerForm.questions"); }, icon: "comment", get hint() { return t("interactiveStickerForm.letPeopleSendYouAnswers"); } },
+  { type: "countdown", get label() { return t("interactiveStickerForm.countdown"); }, icon: "timer", get hint() { return t("interactiveStickerForm.countDownToAMoment"); } },
+  { type: "link", get label() { return t("interactiveStickerForm.link"); }, icon: "attach", get hint() { return t("interactiveStickerForm.aLinkPeopleCanOpen"); } },
+  { type: "addYours", get label() { return t("interactiveStickerForm.addYours"); }, icon: "add", get hint() { return t("interactiveStickerForm.startAPromptOthersPost"); } },
 ];
 
 interface Props {
@@ -69,7 +70,7 @@ export function InteractiveStickerForm({ editing, usedTypes, onDone }: Props): R
   const choose = (next: InteractiveType) => {
     setType(next);
     setError(null);
-    if (next === "question" && !question) setQuestion("Ask me anything");
+    if (next === "question" && !question) setQuestion(t("interactiveStickerForm.askMeAnything"));
   };
 
   const filledOptions = options.map((o) => o.trim());
@@ -104,7 +105,7 @@ export function InteractiveStickerForm({ editing, usedTypes, onDone }: Props): R
           const checked = await checkStickerLink(normalizeLinkInput(url), accessToken);
           onDone(type, { url: checked.url, label: label.trim() || null });
         } catch (e) {
-          setError(e instanceof ApiError ? e.message : "Couldn't check that link. Check your connection and try again.");
+          setError(e instanceof ApiError ? e.message : t("interactiveStickerForm.couldntCheckThatLinkCheck"));
         } finally {
           setChecking(false);
         }
@@ -150,7 +151,7 @@ export function InteractiveStickerForm({ editing, usedTypes, onDone }: Props): R
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.form}>
       <View style={styles.formHeader}>
         {!editing ? (
-          <Pressable onPress={() => setType(null)} hitSlop={10} accessibilityRole="button" accessibilityLabel="Back to stickers">
+          <Pressable onPress={() => setType(null)} hitSlop={10} accessibilityRole="button" accessibilityLabel={t("interactiveStickerForm.backToStickers")}>
             <Icon name="back" size={20} color={colors.textPrimary} />
           </Pressable>
         ) : null}
@@ -213,10 +214,10 @@ export function InteractiveStickerForm({ editing, usedTypes, onDone }: Props): R
           {options.length < MAX_OPTIONS ? (
             <Pressable onPress={() => setOptions((all) => [...all, ""])} style={styles.addOption} accessibilityRole="button">
               <Icon name="add" size={16} color={colors.accentText} />
-              <Text style={styles.addOptionLabel}>Add option</Text>
+              <Text style={styles.addOptionLabel}>{t("interactiveStickerForm.addOption")}</Text>
             </Pressable>
           ) : null}
-          {type === "quiz" ? <Text style={styles.hint}>Tap the circle beside the right answer.</Text> : null}
+          {type === "quiz" ? <Text style={styles.hint}>{t("interactiveStickerForm.tapTheCircleBesideThe")}</Text> : null}
         </View>
       ) : null}
 
@@ -227,17 +228,16 @@ export function InteractiveStickerForm({ editing, usedTypes, onDone }: Props): R
             value={title}
             onChangeText={setTitle}
             maxLength={MAX_COUNTDOWN_TITLE_LENGTH}
-            placeholder="Name your countdown"
+            placeholder={t("interactiveStickerForm.nameYourCountdown")}
             placeholderTextColor={colors.textDisabled}
-            accessibilityLabel="Countdown name"
+            accessibilityLabel={t("interactiveStickerForm.countdownName")}
             autoFocus={!editing}
           />
-          <Text style={styles.when} accessibilityLiveRegion="polite">
-            Ends {endsAt.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })} at {endsAt.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}
+          <Text style={styles.when} accessibilityLiveRegion="polite">{t("interactiveStickerForm.ends")}{" "}{endsAt.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}{" "}{t("interactiveStickerForm.at")}{" "}{endsAt.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}
           </Text>
           {(["day", "hour", "minute"] as const).map((unit) => (
             <View key={unit} style={styles.stepperRow}>
-              <Text style={styles.stepperLabel}>{unit === "day" ? "Day" : unit === "hour" ? "Hour" : "Minute"}</Text>
+              <Text style={styles.stepperLabel}>{unit === "day" ? t("common.day") : unit === "hour" ? t("common.hour") : t("common.minute")}</Text>
               <Pressable style={styles.stepper} onPress={() => adjust(unit, -1)} accessibilityRole="button" accessibilityLabel={`Earlier by one ${unit === "minute" ? "5 minutes" : unit}`}>
                 <Icon name="minus" size={16} color={colors.textPrimary} />
               </Pressable>
@@ -246,7 +246,7 @@ export function InteractiveStickerForm({ editing, usedTypes, onDone }: Props): R
               </Pressable>
             </View>
           ))}
-          {endsAt.getTime() <= Date.now() ? <Text style={styles.error}>Pick a time in the future.</Text> : null}
+          {endsAt.getTime() <= Date.now() ? <Text style={styles.error}>{t("interactiveStickerForm.pickATimeInThe")}</Text> : null}
         </View>
       ) : null}
 
@@ -261,7 +261,7 @@ export function InteractiveStickerForm({ editing, usedTypes, onDone }: Props): R
             autoCapitalize="none"
             autoCorrect={false}
             keyboardType="url"
-            accessibilityLabel="Web address"
+            accessibilityLabel={t("interactiveStickerForm.webAddress")}
             autoFocus={!editing}
           />
           <TextInput
@@ -269,11 +269,11 @@ export function InteractiveStickerForm({ editing, usedTypes, onDone }: Props): R
             value={label}
             onChangeText={setLabel}
             maxLength={40}
-            placeholder="Sticker text (optional)"
+            placeholder={t("interactiveStickerForm.stickerTextOptional")}
             placeholderTextColor={colors.textDisabled}
-            accessibilityLabel="Sticker text"
+            accessibilityLabel={t("interactiveStickerForm.stickerText")}
           />
-          <Text style={styles.hint}>People see where the link goes before it opens.</Text>
+          <Text style={styles.hint}>{t("interactiveStickerForm.peopleSeeWhereTheLink")}</Text>
         </View>
       ) : null}
 
@@ -285,7 +285,7 @@ export function InteractiveStickerForm({ editing, usedTypes, onDone }: Props): R
         accessibilityRole="button"
         accessibilityState={{ disabled: !ready || checking, busy: checking }}
       >
-        {checking ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.doneLabel}>{editing ? "Save" : "Add to Story"}</Text>}
+        {checking ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.doneLabel}>{editing ? t("common.save") : t("common.addToStory")}</Text>}
       </Pressable>
     </ScrollView>
   );

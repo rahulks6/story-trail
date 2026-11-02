@@ -10,10 +10,11 @@ import { showToast } from "../../components/Toast";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { getMyInterests, removeLearnedInterest, type MyInterests } from "../../api/interests";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "YourInterests">;
 
-const STRENGTH_LABELS = { high: "Strong", medium: "Some" } as const;
+const STRENGTH_LABELS = { get high() { return t("yourInterests.strong"); }, get medium() { return t("yourInterests.some"); } } as const;
 
 /**
  * Settings > Your interests: what Home orders your Stories by. The topics Katkee has learned you
@@ -48,16 +49,16 @@ export function YourInterestsScreen({ navigation }: Props): React.JSX.Element {
     try {
       await removeLearnedInterest(topic, accessToken);
       setInterests((current) => (current ? { ...current, learned: current.learned.filter((l) => l.topic !== topic) } : current));
-      showToast(`Removed ${topic}`);
+      showToast(t("yourInterests.removedTopic", { topic }));
     } catch {
-      Alert.alert("Couldn't remove that", "Check your connection and try again.");
+      Alert.alert(t("yourInterests.couldntRemoveThat"), t("yourInterests.checkYourConnectionAndTry"));
     } finally {
       setRemoving(null);
     }
   };
 
   if (interests === null) {
-    if (loadFailed) return <LoadFailed message="Couldn't load your interests. Check your connection and try again." onRetry={() => void load()} />;
+    if (loadFailed) return <LoadFailed message={t("yourInterests.couldntLoadYourInterestsCheck")} onRetry={() => void load()} />;
     return (
       <View style={styles.centered}>
         <ActivityIndicator color={colors.accentText} />
@@ -67,12 +68,10 @@ export function YourInterestsScreen({ navigation }: Props): React.JSX.Element {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={[styles.sectionHeader, styles.firstHeader]} accessibilityRole="header">What Katkee thinks you like</Text>
-      <Text style={styles.hint}>
-        Learned from the Stories you watch, like and comment on, and used to order your Home. Only you can see this. Removing a topic keeps it out for 30 days.
-      </Text>
+      <Text style={[styles.sectionHeader, styles.firstHeader]} accessibilityRole="header">{t("yourInterests.whatKatkeeThinksYouLike")}</Text>
+      <Text style={styles.hint}>{t("yourInterests.learnedFromTheStoriesYou")}</Text>
       {interests.learned.length === 0 ? (
-        <Text style={styles.empty}>Nothing yet. Topics you enjoy will show up here as you watch Stories.</Text>
+        <Text style={styles.empty}>{t("yourInterests.nothingYetTopicsYouEnjoy")}</Text>
       ) : (
         <View style={styles.chips}>
           {interests.learned.map(({ topic, strength }) => (
@@ -91,9 +90,9 @@ export function YourInterestsScreen({ navigation }: Props): React.JSX.Element {
         </View>
       )}
 
-      <Text style={styles.sectionHeader} accessibilityRole="header">Interests you chose</Text>
+      <Text style={styles.sectionHeader} accessibilityRole="header">{t("yourInterests.interestsYouChose")}</Text>
       {interests.chosen.length === 0 ? (
-        <Text style={styles.empty}>You haven't chosen any interests.</Text>
+        <Text style={styles.empty}>{t("yourInterests.youHaventChosenAnyInterests")}</Text>
       ) : (
         <View style={styles.chips}>
           {interests.chosen.map((topic) => (
@@ -104,7 +103,7 @@ export function YourInterestsScreen({ navigation }: Props): React.JSX.Element {
         </View>
       )}
       <Pressable style={styles.link} onPress={() => navigation.navigate("EditProfile")} accessibilityRole="button">
-        <Text style={styles.linkText}>Edit in Edit profile</Text>
+        <Text style={styles.linkText}>{t("yourInterests.editInEditProfile")}</Text>
       </Pressable>
     </ScrollView>
   );

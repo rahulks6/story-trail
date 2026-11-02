@@ -1,4 +1,5 @@
 import { API_BASE_URL, ApiError, apiGet, apiPost, authenticatedFetch, readApiResponse, withRequestTimeout } from "./client";
+import { t } from "../i18n";
 
 export type MediaStatus = "uploading" | "processing" | "ready" | "failed";
 
@@ -113,10 +114,10 @@ export function uploadPart(url: string, body: ArrayBuffer, onProgress?: (sentByt
     if (onProgress && xhr.upload) xhr.upload.onprogress = (event) => onProgress(event.loaded);
     xhr.onload = () => {
       if (xhr.status >= 200 && xhr.status < 300) resolve();
-      else reject(new PartUploadError(xhr.status, xhr.status === 403 ? "The upload link expired." : `Upload failed (${xhr.status}).`));
+      else reject(new PartUploadError(xhr.status, xhr.status === 403 ? t("media.theUploadLinkExpired") : t("media.uploadFailedStatus", { status: xhr.status })));
     };
-    xhr.onerror = () => reject(new PartUploadError(0, "Upload interrupted. Check your connection."));
-    xhr.ontimeout = () => reject(new PartUploadError(0, "Upload timed out. Check your connection."));
+    xhr.onerror = () => reject(new PartUploadError(0, t("media.uploadInterruptedCheckYourConnection")));
+    xhr.ontimeout = () => reject(new PartUploadError(0, t("media.uploadTimedOutCheckYour")));
     xhr.send(body);
   });
 }
@@ -129,7 +130,7 @@ async function fileUriToBlob(uri: string): Promise<Blob> {
   return withRequestTimeout(async signal => {
     const response = await fetch(uri, { signal });
     const blob = await response.blob();
-    if (!blob.size) throw new Error("The selected file is empty.");
+    if (!blob.size) throw new Error(t("media.theSelectedFileIsEmpty"));
     return blob;
   }, 30_000);
 }
@@ -144,7 +145,7 @@ async function uploadBlob(path: string, blob: Blob, mimeType: string, accessToke
   });
   const json = await readApiResponse<{media: UploadedMedia}>(res);
   if (!json.media || typeof json.media.id !== 'string' || !json.media.id) {
-    throw new ApiError(res.status, 'The upload response is incomplete. Please try again.');
+    throw new ApiError(res.status, t("media.theUploadResponseIsIncomplete"));
   }
   return json.media;
  }, 180_000);
@@ -152,18 +153,18 @@ async function uploadBlob(path: string, blob: Blob, mimeType: string, accessToke
 
 export async function uploadPhoto(localUri: string, mimeType: string, accessToken: string): Promise<UploadedMedia> {
   const blob = await fileUriToBlob(localUri);
-  return uploadBlob("/api/v1/media/photos", blob, mimeType, accessToken);
+  return uploadBlob(t("media.apiV1MediaPhotos"), blob, mimeType, accessToken);
 }
 
 /** A voice note (M4A/AAC) for a direct message. */
 export async function uploadAudio(localUri: string, accessToken: string): Promise<UploadedMedia> {
   const blob = await fileUriToBlob(localUri);
-  return uploadBlob("/api/v1/media/audio", blob, "audio/mp4", accessToken);
+  return uploadBlob(t("media.apiV1MediaAudio"), blob, "audio/mp4", accessToken);
 }
 
 export async function uploadVideo(localUri: string, mimeType: string, accessToken: string): Promise<UploadedMedia> {
   const blob = await fileUriToBlob(localUri);
-  return uploadBlob("/api/v1/media/videos", blob, mimeType, accessToken);
+  return uploadBlob(t("media.apiV1MediaVideos"), blob, mimeType, accessToken);
 }
 
 /**
@@ -180,7 +181,7 @@ export async function uploadStoryOverlay(localUri: string, accessToken: string):
       signal,
     });
     const json = await readApiResponse<{ overlay: { id: string } }>(res);
-    if (!json.overlay || typeof json.overlay.id !== "string") throw new ApiError(res.status, "The upload response is incomplete. Please try again.");
+    if (!json.overlay || typeof json.overlay.id !== "string") throw new ApiError(res.status, t("media.theUploadResponseIsIncomplete"));
     return json.overlay;
   }, 60_000);
 }

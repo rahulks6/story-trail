@@ -14,6 +14,7 @@ import { usernameCheckText, usernameRefused, useUsernameAvailability } from "../
 import { TermsNotice } from "../../components/TermsNotice";
 import { hasTickLikeCharacter, NAME_TICK_ERROR } from "../../api/verification";
 import { usePendingInviter } from "../../state/invites";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Signup">;
 
@@ -68,12 +69,12 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
       >
-        <Text style={[typography.title, styles.title]} accessibilityRole="header">Create your account</Text>
+        <Text style={[typography.title, styles.title]} accessibilityRole="header">{t("common.createYourAccount")}</Text>
         {inviter ? <Banner tone="info" text={`${inviter.displayName} (@${inviter.username}) invited you to Katkee.`} /> : null}
         {error ? <Banner text={error} /> : null}
 
         <TextField
-          label="Display name"
+          label={t("common.displayName")}
           error={nameProblem ?? fieldErrors?.displayName}
           autoCapitalize="words"
           autoComplete="name"
@@ -87,7 +88,7 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
         />
         <TextField
           ref={usernameInput}
-          label="Username"
+          label={t("common.username")}
           error={fieldErrors?.username ?? (availabilityLine?.tone === "error" ? availabilityLine.text : undefined)}
           hint={availabilityLine && availabilityLine.tone !== "error" ? availabilityLine.text : "3–30 characters: lowercase letters, numbers, dots and underscores."}
           hintTone={availabilityLine?.tone === "success" ? "success" : availabilityLine ? "info" : undefined}
@@ -104,7 +105,7 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
         />
         <TextField
           ref={emailInput}
-          label="Email"
+          label={t("common.email")}
           error={fieldErrors?.email}
           autoCapitalize="none"
           autoCorrect={false}
@@ -119,10 +120,10 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
         />
         <TextField
           ref={birthInput}
-          label="Date of birth"
+          label={t("signup.dateOfBirth")}
           error={fieldErrors?.birthDate ?? birthProblem}
-          hint="Day, month, then year (DD/MM/YYYY). It confirms your age and is never shown on your profile."
-          placeholder="DD/MM/YYYY"
+          hint={t("signup.dayMonthThenYearDd")}
+          placeholder={t("signup.ddMmYyyy")}
           keyboardType="number-pad"
           autoComplete="off"
           textContentType="none"
@@ -135,9 +136,9 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
         />
         <TextField
           ref={passwordInput}
-          label="Password"
+          label={t("common.password")}
           error={fieldErrors?.password ?? passwordProblem}
-          hint="At least 8 characters."
+          hint={t("common.atLeast8Characters")}
           secureTextEntry
           autoComplete="new-password"
           textContentType="newPassword"
@@ -147,12 +148,11 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
           onChangeText={change(setPassword)}
         />
 
-        <Button label="Sign up" onPress={() => void onSubmit()} disabled={!complete} busy={submitting} />
-        <TermsNotice action="signing up" />
+        <Button label={t("common.signUp")} onPress={() => void onSubmit()} disabled={!complete} busy={submitting} />
+        <TermsNotice action={t("signup.signingUp")} />
 
         <Pressable style={styles.linkButton} onPress={() => navigation.navigate("Login")} accessibilityRole="button">
-          <Text style={typography.body}>
-            Already have an account? <Text style={styles.linkAccent}>Log in</Text>
+          <Text style={typography.body}>{t("signup.alreadyHaveAnAccount")}{" "}<Text style={styles.linkAccent}>{t("common.logIn")}</Text>
           </Text>
         </Pressable>
       </ScrollView>

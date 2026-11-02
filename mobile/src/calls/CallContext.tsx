@@ -11,6 +11,7 @@ import { CallController } from "./CallController";
 import { callReducer, IDLE, isLive, type CallAction, type CallState } from "./callMachine";
 import { webRtc, type StreamLike } from "./webrtc";
 import { CallScreen } from "./CallScreen";
+import { t } from "../i18n";
 
 /** How long "Call ended" (or "Declined", "No answer") stays up before the screen closes. */
 const ENDED_SCREEN_MS = 1_600;
@@ -60,13 +61,13 @@ async function callPermissions(media: CallMedia): Promise<boolean> {
 
 function permissionRefused(media: CallMedia): void {
   Alert.alert(
-    media === "video" ? "Allow camera and microphone" : "Allow microphone",
+    media === "video" ? t("callContext.allowCameraAndMicrophone") : t("callContext.allowMicrophone"),
     media === "video"
-      ? "To make video calls, allow Katkee to use the camera and microphone in your phone's Settings."
-      : "To make calls, allow Katkee to use the microphone in your phone's Settings.",
+      ? t("callContext.toMakeVideoCallsAllow")
+      : t("callContext.toMakeCallsAllowKatkee"),
     [
-      { text: "Not now", style: "cancel" },
-      { text: "Open Settings", onPress: () => void Linking.openSettings().catch(() => undefined) },
+      { text: t("common.notNow"), style: "cancel" },
+      { text: t("common.openSettings"), onPress: () => void Linking.openSettings().catch(() => undefined) },
     ],
   );
 }
@@ -115,7 +116,7 @@ export function CallProvider({ children }: { children: React.ReactNode }): React
   const startCall = useCallback((conversationId: string, media: CallMedia, peer: CallPerson | null) => {
     if (busy()) {
       if (stateRef.current.minimized) dispatch({ type: "restore" });
-      else showToast("You're already on a call.");
+      else showToast(t("callContext.youreAlreadyOnACall"));
       return;
     }
     tapFeedback("tap");
@@ -127,7 +128,7 @@ export function CallProvider({ children }: { children: React.ReactNode }): React
       if (busy()) return;
       const created = newController();
       if (!created) {
-        showToast("Calls aren't available on this phone yet.");
+        showToast(t("callContext.callsArentAvailableOnThis"));
         return;
       }
       await created.place(conversationId, media, peer);

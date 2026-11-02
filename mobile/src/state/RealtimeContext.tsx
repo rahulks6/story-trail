@@ -5,6 +5,7 @@ import { createRealtimeTicket } from "../api/realtime";
 import { RealtimeClient, type RealtimeEvent } from "../realtime/realtimeClient";
 import { flushOutbox, loadOutbox } from "./dmOutbox";
 import { useAuth } from "./AuthContext";
+import { t } from "../i18n";
 
 interface RealtimeContextValue {
   /** True while the live connection is open; screens poll less while it is. */
@@ -47,7 +48,7 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }): R
       baseUrl: API_BASE_URL,
       createTicket: async () => {
         const token = tokenRef.current;
-        if (!token) throw Object.assign(new Error("Signed out."), { status: 401 });
+        if (!token) throw Object.assign(new Error(t("common.signedOut")), { status: 401 });
         return (await createRealtimeTicket(token)).ticket;
       },
       onEvent: (event) => {

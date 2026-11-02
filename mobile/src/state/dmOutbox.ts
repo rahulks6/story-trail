@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ApiError } from "../api/client";
 import { MAX_MESSAGE_LENGTH, newClientMessageId, sendMessage, type Message } from "../api/conversations";
+import { t } from "../i18n";
 
 /**
  * The DM outbox. Every message is saved on the phone with its own id before it is
@@ -146,11 +147,11 @@ export async function enqueueMessage(
   keyFor(userId);
   const body = input.body?.trim() || null;
   const storyId = input.storyId ?? null;
-  if (!body && !storyId) throw new Error("Write a message first.");
-  if (body && body.length > MAX_MESSAGE_LENGTH) throw new Error(`Messages can be up to ${MAX_MESSAGE_LENGTH} characters.`);
+  if (!body && !storyId) throw new Error(t("dmOutbox.writeAMessageFirst"));
+  if (body && body.length > MAX_MESSAGE_LENGTH) throw new Error(t("dmOutbox.messagesCanBeUpTo", { MAX_MESSAGE_LENGTH }));
   await loadOutbox(userId);
   if ((entriesByUser.get(userId) ?? []).length >= MAX_UNSENT) {
-    throw new Error("Too many messages are waiting to send. Check your connection, then try again.");
+    throw new Error(t("dmOutbox.tooManyMessagesAreWaiting"));
   }
   const message: OutboxMessage = {
     clientMessageId: newClientMessageId(),
@@ -174,7 +175,7 @@ function isPermanent(error: unknown): boolean {
 
 function errorText(error: unknown): string {
   if (error instanceof ApiError && error.message) return error.message;
-  return "Not sent yet. It will send when you're back online.";
+  return t("dmOutbox.notSentYetItWill");
 }
 
 /**

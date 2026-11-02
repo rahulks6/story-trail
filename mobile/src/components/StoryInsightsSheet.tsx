@@ -10,6 +10,7 @@ import { Avatar } from "./Avatar";
 import { VerifiedName } from "./VerifiedBadge";
 import { StickerResults } from "./StickerResults";
 import type { Overlay } from "../models/storyDraft";
+import { t } from "../i18n";
 
 interface Props {
   visible: boolean;
@@ -82,7 +83,7 @@ export function StoryInsightsSheet({ visible, storyId, onClose, overlays = [], o
       setViewers(fetchedViewers);
       setViewersDone(fetchedViewers.length < VIEWERS_PAGE);
     } catch {
-      setError("Couldn't load Insights.");
+      setError(t("storyInsightsSheet.couldntLoadInsights"));
     } finally {
       setLoading(false);
     }
@@ -94,10 +95,10 @@ export function StoryInsightsSheet({ visible, storyId, onClose, overlays = [], o
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-      <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
+      <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel={t("common.close")} />
       <View style={[styles.sheet, { paddingBottom: spacing.lg + bottomInset }]}>
         <View style={styles.handle} />
-        <Text style={[typography.bodyStrong, styles.title]}>Insights</Text>
+        <Text style={[typography.bodyStrong, styles.title]}>{t("common.insights")}</Text>
 
         {loading ? (
           <ActivityIndicator color={colors.accentText} style={{ marginTop: spacing.lg }} />
@@ -105,20 +106,20 @@ export function StoryInsightsSheet({ visible, storyId, onClose, overlays = [], o
           <Text style={[typography.caption, styles.empty]}>{error}</Text>
         ) : !insights || insights.viewCount === 0 ? (
           <ScrollView style={styles.list}>
-            <Text style={[typography.caption, styles.empty]}>No views yet.</Text>
+            <Text style={[typography.caption, styles.empty]}>{t("storyInsightsSheet.noViewsYet")}</Text>
             {stickers}
           </ScrollView>
         ) : (
           <>
             <View style={styles.stats}>
-              <StatRow label="Views" value={String(insights.viewCount)} />
-              <StatRow label="Completed" value={`${insights.completionRate}%`} />
-              <StatRow label="Following" value={`${insights.followingViewRate}%`} />
-              <StatRow label="Discovery" value={`${insights.discoveryViewRate}%`} />
-              <StatRow label="Visited your profile" value={`${insights.profileVisitRate}%`} />
+              <StatRow label={t("storyInsightsSheet.views")} value={String(insights.viewCount)} />
+              <StatRow label={t("storyInsightsSheet.completed")} value={`${insights.completionRate}%`} />
+              <StatRow label={t("common.following")} value={`${insights.followingViewRate}%`} />
+              <StatRow label={t("storyInsightsSheet.discovery")} value={`${insights.discoveryViewRate}%`} />
+              <StatRow label={t("storyInsightsSheet.visitedYourProfile")} value={`${insights.profileVisitRate}%`} />
             </View>
 
-            <Text style={[typography.label, styles.viewersHeader]}>Viewed by {Math.max(insights.viewCount, viewers.length)}</Text>
+            <Text style={[typography.label, styles.viewersHeader]}>{t("storyInsightsSheet.viewedByViewcount", { viewCount: Math.max(insights.viewCount, viewers.length) })}</Text>
             <FlatList
               data={viewers}
               keyExtractor={(v) => v.id}

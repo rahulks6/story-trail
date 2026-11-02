@@ -6,6 +6,7 @@ import { mediaColors as colors, radii, spacing, ICONS } from "../theme";
 import type { DrawStroke, DrawTool } from "../models/storyDraft";
 import { DrawingStrokes } from "./DrawingStrokes";
 import { tapFeedback } from "../utils/haptics";
+import { t } from "../i18n";
 
 const TOOLS: DrawTool[] = ["pen", "marker", "highlighter", "eraser"];
 const COLORS = ["#FFFFFF", "#000000", "#FCB020", "#E4483C", "#FF5DA2", "#A45CFF", "#3E7BFF", "#3FBF7F"];
@@ -152,8 +153,8 @@ export function DrawingCanvas({ containerWidth, containerHeight, strokes, onChan
         {...panResponder.panHandlers}
         accessible
         accessibilityRole="adjustable"
-        accessibilityLabel="Drawing canvas"
-        accessibilityHint="Draw with one finger"
+        accessibilityLabel={t("drawingCanvas.drawingCanvas")}
+        accessibilityHint={t("drawingCanvas.drawWithOneFinger")}
       >
         <DrawingStrokes strokes={strokes} containerWidth={containerWidth} containerHeight={containerHeight} />
         {live ? <DrawingStrokes strokes={[live]} containerWidth={containerWidth} containerHeight={containerHeight} /> : null}
@@ -162,14 +163,14 @@ export function DrawingCanvas({ containerWidth, containerHeight, strokes, onChan
       {drawing ? null : (
         <>
           <View style={[styles.topBar, { top: insets.top + spacing.md }]}>
-            <Pressable onPress={undo} disabled={past.current.length === 0} hitSlop={8} style={[styles.iconButton, past.current.length === 0 && styles.disabled]} accessibilityRole="button" accessibilityLabel="Undo">
+            <Pressable onPress={undo} disabled={past.current.length === 0} hitSlop={8} style={[styles.iconButton, past.current.length === 0 && styles.disabled]} accessibilityRole="button" accessibilityLabel={t("common.undo")}>
               <Icon style={styles.iconLabel} name={ICONS.undo} />
             </Pressable>
-            <Pressable onPress={redo} disabled={future.current.length === 0} hitSlop={8} style={[styles.iconButton, future.current.length === 0 && styles.disabled]} accessibilityRole="button" accessibilityLabel="Redo">
+            <Pressable onPress={redo} disabled={future.current.length === 0} hitSlop={8} style={[styles.iconButton, future.current.length === 0 && styles.disabled]} accessibilityRole="button" accessibilityLabel={t("drawingCanvas.redo")}>
               <Icon style={styles.iconLabel} name={ICONS.redo} />
             </Pressable>
-            <Pressable onPress={onDone} style={styles.doneButton} accessibilityRole="button" accessibilityLabel="Done drawing">
-              <Text style={styles.doneLabel}>Done</Text>
+            <Pressable onPress={onDone} style={styles.doneButton} accessibilityRole="button" accessibilityLabel={t("drawingCanvas.doneDrawing")}>
+              <Text style={styles.doneLabel}>{t("common.done")}</Text>
             </Pressable>
           </View>
 
@@ -204,11 +205,11 @@ export function DrawingCanvas({ containerWidth, containerHeight, strokes, onChan
               ))}
               {tool !== "eraser" ? (
                 <View style={styles.sizeRow}>
-                  <Pressable onPress={() => setSizeIndex((i) => Math.max(0, i - 1))} hitSlop={8} accessibilityRole="button" accessibilityLabel="Thinner brush">
+                  <Pressable onPress={() => setSizeIndex((i) => Math.max(0, i - 1))} hitSlop={8} accessibilityRole="button" accessibilityLabel={t("drawingCanvas.thinnerBrush")}>
                     <Icon style={styles.sizeStepper} name="minus" />
                   </Pressable>
                   <View style={[styles.sizePreview, { width: previewSize, height: previewSize, borderRadius: previewSize / 2, backgroundColor: color }]} />
-                  <Pressable onPress={() => setSizeIndex((i) => Math.min(SIZE_STEPS.length - 1, i + 1))} hitSlop={8} accessibilityRole="button" accessibilityLabel="Thicker brush">
+                  <Pressable onPress={() => setSizeIndex((i) => Math.min(SIZE_STEPS.length - 1, i + 1))} hitSlop={8} accessibilityRole="button" accessibilityLabel={t("drawingCanvas.thickerBrush")}>
                     <Icon style={styles.sizeStepper} name="add" />
                   </Pressable>
                 </View>

@@ -41,6 +41,7 @@ import { linkHost } from "../../models/storyDraft";
 import type { StickerInteraction } from "../../components/InteractiveSticker";
 import { QuestionAnswerSheet } from "../../components/QuestionAnswerSheet";
 import { AddYoursSheet } from "../../components/AddYoursSheet";
+import { t } from "../../i18n";
 
 const PHOTO_DURATION_MS = 5000;
 const SLOW_VIDEO_MS = 3000;
@@ -306,7 +307,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           return prev[currentUsername] === at ? prev : { ...prev, [currentUsername]: at };
         });
       } catch {
-        if (!cancelled) setLoadError("Couldn't load this Story.");
+        if (!cancelled) setLoadError(t("common.couldntLoadThisStory"));
       }
     })();
     return () => {
@@ -398,7 +399,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         setViewCount(story.viewCount);
         if (media) setMediaKind(media.kind === "video" ? "video" : "photo");
       } catch {
-        if (!cancelled) setLoadError("Couldn't load this Story.");
+        if (!cancelled) setLoadError(t("common.couldntLoadThisStory"));
       }
     })();
     return () => { cancelled = true; };
@@ -681,23 +682,23 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
 
   if (caughtUp) {
     return <View style={styles.centered}>
-      <EmptyState variant="media" icon="check" title="You're all caught up" message="You've seen every new Story. Share one of your own, or follow more people.">
+      <EmptyState variant="media" icon="check" title={t("storyFeed.youreAllCaughtUp")} message={t("storyFeed.youveSeenEveryNewStory")}>
         <View style={styles.endActions}>
-          {onCreate ? <Pressable onPress={onCreate} style={[styles.endButton, styles.endButtonPrimary]} accessibilityRole="button"><Text style={[styles.endButtonLabel, styles.endButtonPrimaryLabel]}>Post a Story</Text></Pressable> : null}
-          {onFindPeople ? <Pressable onPress={onFindPeople} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>Find people</Text></Pressable> : null}
-          {onInvite ? <Pressable onPress={onInvite} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>Invite friends</Text></Pressable> : null}
+          {onCreate ? <Pressable onPress={onCreate} style={[styles.endButton, styles.endButtonPrimary]} accessibilityRole="button"><Text style={[styles.endButtonLabel, styles.endButtonPrimaryLabel]}>{t("storyFeed.postAStory")}</Text></Pressable> : null}
+          {onFindPeople ? <Pressable onPress={onFindPeople} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>{t("common.findPeople")}</Text></Pressable> : null}
+          {onInvite ? <Pressable onPress={onInvite} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>{t("common.inviteFriends")}</Text></Pressable> : null}
         </View>
-        {onRefresh ? <Pressable onPress={onRefresh} hitSlop={8} style={styles.endLink} accessibilityRole="button"><Text style={styles.endLinkLabel}>Check for new Stories</Text></Pressable> : null}
+        {onRefresh ? <Pressable onPress={onRefresh} hitSlop={8} style={styles.endLink} accessibilityRole="button"><Text style={styles.endLinkLabel}>{t("storyFeed.checkForNewStories")}</Text></Pressable> : null}
       </EmptyState>
     </View>;
   }
   if (loadError) {
     return <View style={styles.centered}>
-      <EmptyState variant="media" title="Story unavailable" message={loadError}>
+      <EmptyState variant="media" title={t("common.storyUnavailable")} message={loadError}>
         <View style={styles.endActions}>
-          <Pressable onPress={() => { setLoadError(null); if (currentUsername) refetchCreator(currentUsername, currentStory?.id); else setRetry((value) => value + 1); }} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>Try again</Text></Pressable>
-          <Pressable onPress={() => { setLoadError(null); goNextCreator(); }} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>Skip Story</Text></Pressable>
-          {onClose ? <Pressable onPress={onClose} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>Close</Text></Pressable> : null}
+          <Pressable onPress={() => { setLoadError(null); if (currentUsername) refetchCreator(currentUsername, currentStory?.id); else setRetry((value) => value + 1); }} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>{t("common.tryAgain")}</Text></Pressable>
+          <Pressable onPress={() => { setLoadError(null); goNextCreator(); }} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>{t("storyFeed.skipStory")}</Text></Pressable>
+          {onClose ? <Pressable onPress={onClose} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>{t("common.close")}</Text></Pressable> : null}
         </View>
       </EmptyState>
     </View>;
@@ -732,7 +733,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       setDetail((d) => (d ? { ...d, collab: next } : d));
       if (accept) storyPublished();
     } catch (e) {
-      Alert.alert("Couldn't answer the invitation", e instanceof ApiError ? e.message : "Check your connection and try again.");
+      Alert.alert(t("storyFeed.couldntAnswerTheInvitation"), e instanceof ApiError ? e.message : t("storyFeed.checkYourConnectionAndTry"));
     } finally {
       setCollabBusy(false);
     }
@@ -746,7 +747,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       try {
         return await voteOnSticker(currentStory.id, stickerId, option, accessToken);
       } catch (e) {
-        Alert.alert("Couldn't send your answer", e instanceof ApiError ? e.message : "Check your connection and try again.");
+        Alert.alert(t("storyFeed.couldntSendYourAnswer"), e instanceof ApiError ? e.message : t("storyFeed.checkYourConnectionAndTry"));
         return null;
       }
     },
@@ -755,24 +756,24 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       if (!accessToken) return false;
       try {
         await setCountdownReminder(currentStory.id, stickerId, on, accessToken);
-        if (on) showToast("We'll remind you when it ends");
+        if (on) showToast(t("storyFeed.wellRemindYouWhenIt"));
         return true;
       } catch (e) {
-        Alert.alert("Couldn't set the reminder", e instanceof ApiError ? e.message : "Check your connection and try again.");
+        Alert.alert(t("storyFeed.couldntSetTheReminder"), e instanceof ApiError ? e.message : t("storyFeed.checkYourConnectionAndTry"));
         return false;
       }
     },
     onOpenLink: (url) => {
       // People see where a link goes before leaving Katkee (the safety policy checked it too).
       setLinkConfirming(true);
-      Alert.alert("Open this link?", `You're leaving Katkee for ${linkHost(url)}.`, [
-        { text: "Cancel", style: "cancel", onPress: () => setLinkConfirming(false) },
+      Alert.alert(t("storyFeed.openThisLink"), t("storyFeed.youreLeavingKatkeeForUrl", { url: linkHost(url) }), [
+        { text: t("common.cancel"), style: "cancel", onPress: () => setLinkConfirming(false) },
         {
-          text: "Open",
+          text: t("storyFeed.open"),
           onPress: () => {
             setLinkConfirming(false);
             track("story_link_opened");
-            void Linking.openURL(url).catch(() => Alert.alert("Couldn't open the link"));
+            void Linking.openURL(url).catch(() => Alert.alert(t("common.couldntOpenTheLink")));
           },
         },
       ], { cancelable: true, onDismiss: () => setLinkConfirming(false) });
@@ -860,7 +861,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           onError={() => {
             // 720p first falls back to the smaller copy, from where it had got to.
             if (!lowQuality && hasLowQuality) setLowQuality(true);
-            else mediaFailed("Couldn't play this Story.");
+            else mediaFailed(t("common.couldntPlayThisStory"));
           }}
           onEnd={() => {
             if (!playbackActive) return;
@@ -872,7 +873,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       ) : mediaKind === "photo" ? (
         <Image
           onLoad={() => setMediaReady(true)}
-          onError={() => mediaFailed("Couldn't load this photo.")}
+          onError={() => mediaFailed(t("common.couldntLoadThisPhoto"))}
           source={imageSource}
           style={[StyleSheet.absoluteFill, mediaTransformStyle(detail?.crop ?? currentStory.crop, containerSize.width, containerSize.height)]}
           resizeMode="cover"
@@ -906,13 +907,13 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         {...gesture.panHandlers}
         accessible
         accessibilityRole="button"
-        accessibilityLabel="Story"
-        accessibilityHint="Use the actions menu to move between Stories or creators"
+        accessibilityLabel={t("common.story")}
+        accessibilityHint={t("storyFeed.useTheActionsMenuTo")}
         accessibilityActions={[
-          { name: "nextStory", label: "Next Story" },
-          { name: "previousStory", label: "Previous Story" },
-          { name: "nextCreator", label: "Next creator" },
-          { name: "previousCreator", label: "Previous creator" },
+          { name: "nextStory", label: t("storyFeed.nextStory") },
+          { name: "previousStory", label: t("storyFeed.previousStory") },
+          { name: "nextCreator", label: t("common.nextCreator") },
+          { name: "previousCreator", label: t("common.previousCreator") },
         ]}
         onAccessibilityAction={(event) => {
           switch (event.nativeEvent.actionName) {
@@ -1012,17 +1013,17 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
             hitSlop={10}
             style={styles.actionButton}
             accessibilityRole="button"
-            accessibilityLabel="Comments"
+            accessibilityLabel={t("common.comments")}
           >
             <Icon style={styles.actionIcon} name={ICONS.comment} />
             <Text style={styles.actionCount} maxFontSizeMultiplier={1.3}>{detail?.commentCount ?? "—"}</Text>
           </Pressable>
         ) : null}
         {/* View counts are the owner's (the Activity button at the bottom), as on Instagram: a quieter rail. */}
-        <Pressable onPress={() => setShareOpen(true)} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel="Share">
+        <Pressable onPress={() => setShareOpen(true)} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel={t("common.share")}>
           <Icon style={styles.actionIcon} name={ICONS.share} />
         </Pressable>
-        <Pressable onPress={() => setMoreOpen(true)} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel="More">
+        <Pressable onPress={() => setMoreOpen(true)} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel={t("storyFeed.more")}>
           <Icon style={styles.actionIcon} name={ICONS.more} />
         </Pressable>
       </View>
@@ -1039,7 +1040,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
             <Pressable onPress={() => onOpenProfile(liveCollab.owner.username)} hitSlop={6} style={styles.usernameRow} accessibilityRole="button" accessibilityLabel={`Open @${liveCollab.owner.username}'s profile`}>
               <VerifiedName name={liveCollab.owner.username} verified={liveCollab.owner.verified} style={styles.username} />
             </Pressable>
-            <Text style={styles.postedAgo}>and</Text>
+            <Text style={styles.postedAgo}>{t("common.and")}</Text>
             <Pressable onPress={() => onOpenProfile(liveCollab.collaborator.username)} hitSlop={6} style={styles.usernameRow} accessibilityRole="button" accessibilityLabel={`Open @${liveCollab.collaborator.username}'s profile`}>
               <VerifiedName name={liveCollab.collaborator.username} verified={liveCollab.collaborator.verified} style={styles.username} />
             </Pressable>
@@ -1056,7 +1057,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         )}
         {showFollow ? (
           <Pressable onPress={followed ? undefined : () => void follow()} disabled={followed} hitSlop={8} style={[styles.followButton, followed && styles.followingButton]} accessibilityRole="button" accessibilityLabel={followState === "requested" ? `Requested to follow @${currentUsername}` : followed ? `Following @${currentUsername}` : `Follow @${currentUsername}`}>
-            <Text style={styles.followLabel}>{followState === "requested" ? "Requested" : followed ? "Following" : "Follow"}</Text>
+            <Text style={styles.followLabel}>{followState === "requested" ? t("common.requested") : followed ? t("common.following") : t("common.follow")}</Text>
           </Pressable>
         ) : null}
       </View>
@@ -1076,10 +1077,10 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
             <Pressable
               style={styles.musicPill}
               hitSlop={6}
-              onPress={() => Alert.alert(currentStory.music!.title, `${currentStory.music!.attribution}\n\nLicence: ${currentStory.music!.license}\n${currentStory.music!.licenseUrl}`)}
+              onPress={() => Alert.alert(currentStory.music!.title, t("storyFeed.attributionLicenceLicenseLicenseurl", { attribution: currentStory.music!.attribution, license: currentStory.music!.license, licenseUrl: currentStory.music!.licenseUrl }))}
               accessibilityRole="button"
               accessibilityLabel={`Music: ${currentStory.music.title} by ${currentStory.music.artist}`}
-              accessibilityHint="Shows the song's credit"
+              accessibilityHint={t("storyFeed.showsTheSongsCredit")}
             >
               <Icon name={ICONS.music} size={13} color="#FFFFFF" />
               <Text style={styles.musicText} numberOfLines={1} maxFontSizeMultiplier={1.3}>{currentStory.music.title} · {currentStory.music.artist}</Text>
@@ -1091,9 +1092,9 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       {currentStory.caption || currentStory.audience === "close_friends" ? (
         <View style={[styles.footer, chrome, { bottom: BOTTOM_BAR_HEIGHT + spacing.md + insets.bottom }]} pointerEvents={longCaption && !paused ? "box-none" : "none"}>
           {currentStory.audience === "close_friends" ? (
-            <View style={styles.closeFriendsBadge} accessible accessibilityLabel="Shared with Close Friends">
+            <View style={styles.closeFriendsBadge} accessible accessibilityLabel={t("storyFeed.sharedWithCloseFriends")}>
               <Icon name={ICONS.starFilled} size={11} color={colors.onAccent} />
-              <Text style={styles.closeFriendsBadgeText}>Close Friends</Text>
+              <Text style={styles.closeFriendsBadgeText}>{t("common.closeFriends")}</Text>
             </View>
           ) : null}
           {currentStory.caption ? (
@@ -1107,11 +1108,11 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         {isOwnStory ? (
           <Pressable onPress={() => setInsightsOpen(true)} style={styles.activityButton} accessibilityRole="button" accessibilityLabel={`Activity, ${viewCount ?? 0} views. Open viewers and Insights`}>
             <Icon name={ICONS.viewers} size={22} color={colors.textPrimary} />
-            <Text style={styles.activityLabel}>{viewCount === null ? "Activity" : `${viewCount} ${viewCount === 1 ? "view" : "views"}`}</Text>
+            <Text style={styles.activityLabel}>{viewCount === null ? t("common.activity") : `${viewCount} ${viewCount === 1 ? "view" : "views"}`}</Text>
           </Pressable>
         ) : currentStory.allowComments === "disabled" ? (
           <Pressable onPress={() => setReplyOpen(true)} style={styles.commentBar} accessibilityRole="button" accessibilityLabel={`Send a message to @${currentUsername ?? ""}`}>
-            <Text style={styles.commentPlaceholder}>Send a message…</Text>
+            <Text style={styles.commentPlaceholder}>{t("storyFeed.sendAMessage")}</Text>
           </Pressable>
         ) : (
           <Pressable
@@ -1122,9 +1123,9 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
             }}
             style={styles.commentBar}
             accessibilityRole="button"
-            accessibilityLabel="Add a comment"
+            accessibilityLabel={t("storyFeed.addAComment")}
           >
-            <Text style={styles.commentPlaceholder}>Add a comment…</Text>
+            <Text style={styles.commentPlaceholder}>{t("common.addAComment")}</Text>
           </Pressable>
         )}
         {!isOwnStory && currentStory.allowComments !== "disabled" ? (
@@ -1135,15 +1136,15 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         ) : null}
         {isOwnStory ? (
           // Keep it after the 24 hours: add it to one of your Highlights, or start a new one.
-          <Pressable onPress={() => setHighlightOpen(true)} style={[styles.activityButton, styles.highlightButton]} accessibilityRole="button" accessibilityLabel="Add this Story to a Highlight">
+          <Pressable onPress={() => setHighlightOpen(true)} style={[styles.activityButton, styles.highlightButton]} accessibilityRole="button" accessibilityLabel={t("storyFeed.addThisStoryToA")}>
             <Icon name={ICONS.add} size={20} color={colors.textPrimary} />
-            <Text style={styles.activityLabel}>{highlightAdded ? "Added" : "Highlight"}</Text>
+            <Text style={styles.activityLabel}>{highlightAdded ? t("storyFeed.added") : t("common.highlight")}</Text>
           </Pressable>
         ) : null}
       </View>
 
       {onClose ? (
-        <Pressable style={[styles.closeButton, { top: insets.top + spacing.lg }]} onPress={onClose} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close">
+        <Pressable style={[styles.closeButton, { top: insets.top + spacing.lg }]} onPress={onClose} hitSlop={12} accessibilityRole="button" accessibilityLabel={t("common.close")}>
           <Icon style={styles.closeIcon} name={ICONS.close} />
         </Pressable>
       ) : null}
@@ -1151,13 +1152,13 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       {invitedToCollab ? (
         // You were invited to share this Story: answer right here, as well as in Activity.
         <View style={[styles.inviteBanner, chrome, { top: insets.top + spacing.lg + 52 }]} pointerEvents={paused ? "none" : "auto"}>
-          <Text style={styles.inviteText} numberOfLines={2}>@{invitedToCollab.owner.username} invited you to collab. It shows to your followers too, with both names.</Text>
+          <Text style={styles.inviteText} numberOfLines={2}>{t("storyFeed.usernameInvitedYouToCollab", { username: invitedToCollab.owner.username })}</Text>
           <View style={styles.inviteButtons}>
             <Pressable onPress={() => void respondToInvite(true)} disabled={collabBusy} style={[styles.inviteButton, styles.inviteAccept]} accessibilityRole="button" accessibilityLabel={`Accept @${invitedToCollab.owner.username}'s collab invitation`}>
-              <Text style={styles.inviteAcceptLabel}>Accept</Text>
+              <Text style={styles.inviteAcceptLabel}>{t("common.accept")}</Text>
             </Pressable>
             <Pressable onPress={() => void respondToInvite(false)} disabled={collabBusy} style={styles.inviteButton} accessibilityRole="button" accessibilityLabel={`Decline @${invitedToCollab.owner.username}'s collab invitation`}>
-              <Text style={styles.inviteDeclineLabel}>Decline</Text>
+              <Text style={styles.inviteDeclineLabel}>{t("common.decline")}</Text>
             </Pressable>
           </View>
         </View>
@@ -1170,7 +1171,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         ownerUsername={liveCollab?.owner.username ?? currentUsername ?? ""}
         onClose={() => setAnswering(null)}
         onSent={() => {
-          showToast("Answer sent");
+          showToast(t("storyFeed.answerSent"));
           setDetail((d) => (d ? { ...d, overlays: d.overlays.map((o) => (o.type === "question" && o.id === answering?.id ? { ...o, properties: { ...o.properties, viewerAnswered: true } } : o)) } : d));
         }}
       />
@@ -1199,7 +1200,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           ownerUsername={currentUsername ?? ""}
           onClose={() => setReplyOpen(false)}
           onSent={(kind) => {
-            setReplySent(kind === "reaction" ? "Reaction sent" : "Reply sent");
+            setReplySent(kind === "reaction" ? t("storyFeed.reactionSent") : t("storyFeed.replySent"));
             if (replySentTimer.current) clearTimeout(replySentTimer.current);
             replySentTimer.current = setTimeout(() => setReplySent(null), 1500);
           }}

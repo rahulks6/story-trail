@@ -24,6 +24,7 @@ import { filterNameFromKey } from "../../models/filterPreviews";
 import { mediaTransformStyle, DEFAULT_CROP } from "../../models/storyDraft";
 import type { StoryDetail } from "../../api/engagement";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "HighlightViewer">;
 
@@ -133,7 +134,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
       })
       .catch((err) => {
         if (cancelled) return;
-        setError(err instanceof ApiError ? err.message : "Couldn't load this Story.");
+        setError(err instanceof ApiError ? err.message : t("common.couldntLoadThisStory"));
       });
     return () => {
       cancelled = true;
@@ -187,7 +188,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
     if (!accessToken || !items || !currentItem) return;
     const remaining = items.filter((item) => item.storyId !== currentItem.storyId).map((item) => item.storyId);
     if (remaining.length === 0) {
-      confirmDelete("This is the only Story in it, so removing it deletes the Highlight. The Story stays in your Archive.");
+      confirmDelete(t("highlightViewer.thisIsTheOnlyStory"));
       return;
     }
     updateHighlight(highlightId, { storyIds: remaining }, accessToken)
@@ -196,14 +197,14 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
         setItems(highlight.items);
         setIndex((i) => Math.min(i, highlight.items.length - 1));
       })
-      .catch(() => Alert.alert("Couldn't remove", "Check your connection and try again."));
+      .catch(() => Alert.alert(t("highlightViewer.couldntRemove"), t("highlightViewer.checkYourConnectionAndTry")));
   };
 
   const confirmDelete = (message = "The Stories in it stay in your Archive.") => {
-    Alert.alert(`Delete "${shownTitle}"?`, message, [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("highlightViewer.deleteShowntitle", { shownTitle }), message, [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Delete",
+        text: t("common.delete"),
         style: "destructive",
         onPress: () => {
           if (!accessToken) return;
@@ -212,7 +213,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
               tapFeedback("success");
               navigation.goBack();
             })
-            .catch(() => Alert.alert("Couldn't delete", "Check your connection and try again."));
+            .catch(() => Alert.alert(t("common.couldntDelete"), t("highlightViewer.checkYourConnectionAndTry")));
         },
       },
     ]);
@@ -225,7 +226,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
       onPress={() => navigation.goBack()}
       hitSlop={12}
       accessibilityRole="button"
-      accessibilityLabel="Close"
+      accessibilityLabel={t("common.close")}
     >
       <Icon style={styles.closeIcon} name={ICONS.close} />
     </Pressable>
@@ -235,9 +236,9 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
     return (
       <View style={styles.centered}>
         {loadFailed ? (
-          <EmptyState variant="media" title="Couldn't load this Highlight" message="Check your connection and try again.">
+          <EmptyState variant="media" title={t("highlightViewer.couldntLoadThisHighlight")} message={t("highlightViewer.checkYourConnectionAndTry")}>
             <Pressable onPress={() => setReload((n) => n + 1)} style={styles.retry} accessibilityRole="button">
-              <Text style={styles.retryText}>Try again</Text>
+              <Text style={styles.retryText}>{t("common.tryAgain")}</Text>
             </Pressable>
           </EmptyState>
         ) : (
@@ -251,7 +252,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
   if (items.length === 0) {
     return (
       <View style={styles.centered}>
-        <EmptyState variant="media" title="Nothing here" message="This Highlight has no Stories left to show." />
+        <EmptyState variant="media" title={t("highlightViewer.nothingHere")} message={t("highlightViewer.thisHighlightHasNoStories")} />
         {close}
       </View>
     );
@@ -313,7 +314,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
           onPress={() => setOptionsOpen(true)}
           hitSlop={12}
           accessibilityRole="button"
-          accessibilityLabel="Highlight options"
+          accessibilityLabel={t("highlightViewer.highlightOptions")}
         >
           <Icon style={styles.editIcon} name={ICONS.more} />
         </Pressable>
@@ -321,8 +322,8 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
       {close}
 
       <View style={styles.tapZones}>
-        <Pressable pressEffect="none" style={styles.tapZone} onPress={goPrevious} onLongPress={() => setHeld(true)} onPressOut={() => setHeld(false)} delayLongPress={200} accessibilityRole="button" accessibilityLabel="Previous item" />
-        <Pressable pressEffect="none" style={styles.tapZone} onPress={goNext} onLongPress={() => setHeld(true)} onPressOut={() => setHeld(false)} delayLongPress={200} accessibilityRole="button" accessibilityLabel="Next item" />
+        <Pressable pressEffect="none" style={styles.tapZone} onPress={goPrevious} onLongPress={() => setHeld(true)} onPressOut={() => setHeld(false)} delayLongPress={200} accessibilityRole="button" accessibilityLabel={t("highlightViewer.previousItem")} />
+        <Pressable pressEffect="none" style={styles.tapZone} onPress={goNext} onLongPress={() => setHeld(true)} onPressOut={() => setHeld(false)} delayLongPress={200} accessibilityRole="button" accessibilityLabel={t("highlightViewer.nextItem")} />
       </View>
 
       {detail && containerSize.width > 0 ? (
@@ -344,10 +345,10 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
           title={shownTitle}
           groups={[
             [
-              { label: "Edit Highlight", onPress: () => navigation.navigate("HighlightEditor", { highlightId }) },
-              { label: "Remove this Story from the Highlight", onPress: removeCurrent },
+              { label: t("common.editHighlight"), onPress: () => navigation.navigate("HighlightEditor", { highlightId }) },
+              { label: t("highlightViewer.removeThisStoryFromThe"), onPress: removeCurrent },
             ],
-            [{ label: "Delete Highlight", destructive: true, onPress: () => confirmDelete() }],
+            [{ label: t("common.deleteHighlight"), destructive: true, onPress: () => confirmDelete() }],
           ]}
           onClose={() => setOptionsOpen(false)}
         />

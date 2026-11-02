@@ -6,6 +6,7 @@ import { colors, spacing } from "../../theme";
 import { tapFeedback } from "../../utils/haptics";
 import type { DashboardDay } from "../../api/professional";
 import { barPath, growthColors } from "./barPath";
+import { t } from "../../i18n";
 
 const HEIGHT = 140;
 const GAP = 2;
@@ -18,8 +19,8 @@ export function dayLabel(day: string, options: Intl.DateTimeFormatOptions = { we
 
 /** What one day says, for the line above the chart and for screen readers. */
 export function growthDayText(day: DashboardDay): string {
-  if (day.followersGained === null || day.followersLost === null) return `${dayLabel(day.day)}: not counted yet`;
-  return `${dayLabel(day.day)}: ${day.followersGained} gained, ${day.followersLost} lost`;
+  if (day.followersGained === null || day.followersLost === null) return t("followerGrowthChart.dayNotCountedYet", { day: dayLabel(day.day) });
+  return t("followerGrowthChart.dayFollowersgainedGainedFollowerslos", { day: dayLabel(day.day), followersGained: day.followersGained, followersLost: day.followersLost });
 }
 
 /**
@@ -89,11 +90,11 @@ export function FollowerGrowthChart({ days }: { days: DashboardDay[] }): React.J
         <Text style={styles.axisLabel}>{days[0] ? dayLabel(days[0].day, { day: "numeric", month: "short" }) : ""}</Text>
         <Text style={styles.axisLabel}>{days.at(-1) ? dayLabel(days.at(-1)!.day, { day: "numeric", month: "short" }) : ""}</Text>
       </View>
-      <View style={styles.legend} accessible accessibilityLabel="Amber bars above the line are followers gained; blue bars below it are followers lost.">
+      <View style={styles.legend} accessible accessibilityLabel={t("followerGrowthChart.amberBarsAboveTheLine")}>
         <View style={[styles.swatch, { backgroundColor: palette.gained }]} />
-        <Text style={styles.legendLabel}>Gained</Text>
+        <Text style={styles.legendLabel}>{t("followerGrowthChart.gained")}</Text>
         <View style={[styles.swatch, { backgroundColor: palette.lost }]} />
-        <Text style={styles.legendLabel}>Lost</Text>
+        <Text style={styles.legendLabel}>{t("followerGrowthChart.lost")}</Text>
       </View>
     </View>
   );

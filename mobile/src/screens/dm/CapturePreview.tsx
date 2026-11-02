@@ -9,6 +9,7 @@ import { FilterStrip } from "../../components/FilterStrip";
 import { FILTER_PREVIEWS, type FilterKey } from "../../models/filterPreviews";
 import { filterKey, type FilterName } from "../../models/storyDraft";
 import { filteredPhotoUri, forgetFilteredPhoto } from "../../utils/filterPhoto";
+import { t } from "../../i18n";
 
 /** Same edge the DM camera captures at, so a filtered photo loses nothing. */
 const SEND_EDGE = 2048;
@@ -98,7 +99,7 @@ export function CapturePreview({
           onPress={onCancel}
           hitSlop={12}
           accessibilityRole="button"
-          accessibilityLabel="Discard"
+          accessibilityLabel={t("common.discard")}
         >
           <Icon name={ICONS.close} size={24} color="#FFFFFF" />
         </Pressable>
@@ -114,7 +115,7 @@ export function CapturePreview({
           >
             {sending ? <ActivityIndicator color={colors.onAccent} /> : (
               <>
-                <Text style={styles.sendLabel}>Send</Text>
+                <Text style={styles.sendLabel}>{t("common.send")}</Text>
                 <Icon name={ICONS.send} size={18} color={colors.onAccent} />
               </>
             )}

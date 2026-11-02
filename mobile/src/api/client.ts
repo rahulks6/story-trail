@@ -7,6 +7,7 @@
  * package.
  */
 import { appEnv } from "../config/env";
+import { t } from "../i18n";
 
 export const API_BASE_URL = appEnv.apiBaseUrl.replace(/\/+$/, "");
 
@@ -73,13 +74,13 @@ export async function withRequestTimeout<T>(
   let onAbort: (() => void) | undefined;
   const interrupted = new Promise<never>((_, reject) => {
     onAbort = () => {
-      reject(new ApiError(0, "Request cancelled."));
+      reject(new ApiError(0, t("client.requestCancelled")));
       controller.abort();
     };
     if (externalSignal?.aborted) { onAbort(); return; }
     externalSignal?.addEventListener("abort", onAbort, { once: true });
     timer = setTimeout(() => {
-      reject(new ApiError(408, "The request timed out. Check your connection and try again."));
+      reject(new ApiError(408, t("client.theRequestTimedOutCheck")));
       controller.abort();
     }, timeoutMs);
   });
@@ -101,17 +102,17 @@ export async function readApiResponse<T>(res: Response): Promise<T> {
   try { json = text ? JSON.parse(text) : undefined; }
   catch {
     throw new ApiError(res.status, res.ok
-      ? "The server returned an invalid response. Please try again."
-      : "The service is temporarily unavailable. Please try again.");
+      ? t("client.theServerReturnedAnInvalid")
+      : t("client.theServiceIsTemporarilyUnavailable"));
   }
   if (!res.ok) {
     const message = typeof json?.message === "string" ? json.message
-      : json?.error === "validation_error" ? "Please fix the highlighted fields."
-      : "Something went wrong. Please try again.";
+      : json?.error === "validation_error" ? t("client.pleaseFixTheHighlightedFields")
+      : t("client.somethingWentWrongPleaseTry");
     throw new ApiError(res.status, message, json?.fields, json && typeof json === "object" ? json : undefined);
   }
   if (json === undefined || json === null) {
-    throw new ApiError(res.status, "The server returned an empty response. Please try again.");
+    throw new ApiError(res.status, t("client.theServerReturnedAnEmpty"));
   }
   return json as T;
 }
@@ -130,7 +131,7 @@ export async function authenticatedFetch(url: string, init: RequestInit): Promis
   const authorization = headers.get("Authorization");
   if (res.status !== 401 || !authorization?.startsWith("Bearer ") || !sessionHandler) return res;
   const token = await sessionHandler(authorization.slice(7));
-  if (init.signal?.aborted) throw new ApiError(0, "Request cancelled.");
+  if (init.signal?.aborted) throw new ApiError(0, t("client.requestCancelled"));
   headers.set("Authorization", `Bearer ${token}`);
   return fetch(url, { ...init, headers });
 }

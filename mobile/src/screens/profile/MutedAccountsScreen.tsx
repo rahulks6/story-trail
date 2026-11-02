@@ -9,6 +9,7 @@ import { EmptyState } from "../../components/EmptyState";
 import { LoadFailed } from "../../components/LoadFailed";
 import { Avatar } from "../../components/Avatar";
 import { VerifiedName } from "../../components/VerifiedBadge";
+import { t } from "../../i18n";
 
 const PAGE_SIZE = 30;
 
@@ -62,7 +63,7 @@ export function MutedAccountsScreen(): React.JSX.Element {
   };
 
   if (muted === null) {
-    if (loadFailed) return <LoadFailed message="Couldn't load your muted accounts. Check your connection and try again." onRetry={() => void load()} />;
+    if (loadFailed) return <LoadFailed message={t("mutedAccounts.couldntLoadYourMutedAccounts")} onRetry={() => void load()} />;
     return (
       <View style={styles.centered}>
         <ActivityIndicator color={colors.accentText} />
@@ -71,7 +72,7 @@ export function MutedAccountsScreen(): React.JSX.Element {
   }
 
   if (muted.length === 0) {
-    return <EmptyState icon="audioMuted" title="No muted accounts" message="Accounts you mute will show up here so you can unmute them later." />;
+    return <EmptyState icon="audioMuted" title={t("mutedAccounts.noMutedAccounts")} message={t("mutedAccounts.accountsYouMuteWillShow")} />;
   }
 
   return (
@@ -94,7 +95,7 @@ export function MutedAccountsScreen(): React.JSX.Element {
               <ActivityIndicator color={colors.accentText} />
             ) : (
               <Pressable accessibilityRole="button" style={styles.unmuteButton} onPress={() => void onUnmute(item)}>
-                <Text style={styles.unmuteLabel}>Unmute</Text>
+                <Text style={styles.unmuteLabel}>{t("common.unmute")}</Text>
               </Pressable>
             )}
           </View>

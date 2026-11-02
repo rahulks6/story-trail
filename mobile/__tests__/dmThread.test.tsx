@@ -329,7 +329,7 @@ test("swipe or choose Reply to answer a message: the box says what you're replyi
   await pressLabel("Reply");
   const texts = () => tree.root.findAll((n) => typeof n.props.children === "string").map((n) => n.props.children as string);
   expect(texts()).toEqual(expect.arrayContaining(["hello"]));
-  expect(tree.root.findAll((n) => Array.isArray(n.props.children) && n.props.children.join("") === "Replying to @alice")).not.toHaveLength(0);
+  expect(tree.root.findAll((n) => (Array.isArray(n.props.children) ? n.props.children.join("") : n.props.children) === "Replying to @alice")).not.toHaveLength(0);
   await act(async () => tree.root.findByType(TextInput).props.onChangeText("see you there"));
   await pressLabel("Send");
   expect(outbox.enqueueMessage).toHaveBeenCalledWith("u-me", "c1", { body: "see you there", replyToMessageId: "m2" });
@@ -337,7 +337,7 @@ test("swipe or choose Reply to answer a message: the box says what you're replyi
 
   // Screen readers reply from the message's actions; Cancel drops the reply.
   await act(async () => bubble("You: hi").props.onAccessibilityAction({ nativeEvent: { actionName: "reply" } }));
-  expect(tree.root.findAll((n) => Array.isArray(n.props.children) && n.props.children.join("") === "Replying to yourself")).not.toHaveLength(0);
+  expect(tree.root.findAll((n) => (Array.isArray(n.props.children) ? n.props.children.join("") : n.props.children) === "Replying to yourself")).not.toHaveLength(0);
   await pressLabel("Cancel reply");
   await act(async () => tree.root.findByType(TextInput).props.onChangeText("no reply"));
   await pressLabel("Send");

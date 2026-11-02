@@ -10,6 +10,7 @@ import { VerifiedName } from "../../components/VerifiedBadge";
 import { EmptyState } from "../../components/EmptyState";
 import { ListSkeleton } from "../../components/Skeleton";
 import { tapFeedback } from "../../utils/haptics";
+import { t } from "../../i18n";
 
 interface Person {
   id: string;
@@ -62,7 +63,7 @@ export function CloseFriendsScreen(): React.JSX.Element {
       setFollowers(mine.followers);
       setError(null);
     } catch {
-      setError("Couldn't load your Close Friends. Check your connection and try again.");
+      setError(t("closeFriends.couldntLoadYourCloseFriends"));
       setFriends((current) => current ?? []);
     }
   }, [accessToken, username]);
@@ -107,7 +108,7 @@ export function CloseFriendsScreen(): React.JSX.Element {
       }
       tapFeedback("select");
     } catch {
-      setError(adding ? `Couldn't add @${person.username}. Try again.` : `Couldn't remove @${person.username}. Try again.`);
+      setError(adding ? t("closeFriends.couldntAddUsernameTryAgain", { username: person.username }) : t("closeFriends.couldntRemoveUsernameTryAgain", { username: person.username }));
     } finally {
       setBusy((b) => {
         const next = new Set(b);
@@ -117,33 +118,31 @@ export function CloseFriendsScreen(): React.JSX.Element {
     }
   };
 
-  if (friends === null) return <ListSkeleton label="Loading Close Friends" />;
+  if (friends === null) return <ListSkeleton label={t("closeFriends.loadingCloseFriends")} />;
 
   const searching = query.trim().length > 0;
   const suggestions = followers.filter((f) => !onList.has(f.id));
   const sections: Array<{ key: string; title?: string; person?: Person }> = searching
     ? (results ?? []).map((p) => ({ key: `r-${p.id}`, person: p }))
     : [
-        ...(friends.length ? [{ key: "h-list", title: `On your list · ${friends.length}` }] : []),
+        ...(friends.length ? [{ key: "h-list", title: t("closeFriends.onYourListLength", { length: friends.length }) }] : []),
         ...friends.map((p) => ({ key: `f-${p.id}`, person: p })),
-        ...(suggestions.length ? [{ key: "h-suggest", title: "Your followers" }] : []),
+        ...(suggestions.length ? [{ key: "h-suggest", title: t("closeFriends.yourFollowers") }] : []),
         ...suggestions.map((p) => ({ key: `s-${p.id}`, person: p })),
       ];
 
   return (
     <View style={styles.screen}>
-      <Text style={[typography.caption, styles.intro]}>
-        Only you can see this list. Stories you share with Close Friends are seen only by these people, and nobody is told when you add or remove them.
-      </Text>
+      <Text style={[typography.caption, styles.intro]}>{t("closeFriends.onlyYouCanSeeThis")}</Text>
       <TextInput
         style={styles.search}
         value={query}
         onChangeText={setQuery}
-        placeholder="Search people"
+        placeholder={t("common.searchPeople")}
         placeholderTextColor={colors.textSecondary}
         autoCapitalize="none"
         autoCorrect={false}
-        accessibilityLabel="Search people to add"
+        accessibilityLabel={t("closeFriends.searchPeopleToAdd")}
       />
       {error ? <Text style={styles.error} accessibilityRole="alert">{error}</Text> : null}
       <FlatList
@@ -171,16 +170,16 @@ export function CloseFriendsScreen(): React.JSX.Element {
                 accessibilityRole="button"
                 accessibilityLabel={listed ? `Remove @${person.username} from Close Friends` : `Add @${person.username} to Close Friends`}
               >
-                <Text style={listed ? styles.buttonRemoveLabel : styles.buttonAddLabel}>{listed ? "Remove" : "Add"}</Text>
+                <Text style={listed ? styles.buttonRemoveLabel : styles.buttonAddLabel}>{listed ? t("common.remove") : t("common.add")}</Text>
               </Pressable>
             </View>
           );
         }}
         ListEmptyComponent={
           searching ? (
-            results === null ? undefined : <EmptyState icon="search" title="No one found" message="Try a different name or username." />
+            results === null ? undefined : <EmptyState icon="search" title={t("common.noOneFound")} message={t("closeFriends.tryADifferentNameOr")} />
           ) : (
-            <EmptyState icon="starFilled" title="No Close Friends yet" message="Search for people to add. Stories you share with Close Friends go only to them." />
+            <EmptyState icon="starFilled" title={t("common.noCloseFriendsYet")} message={t("closeFriends.searchForPeopleToAdd")} />
           )
         }
       />

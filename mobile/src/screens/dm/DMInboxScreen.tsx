@@ -23,13 +23,14 @@ import { VerifiedName } from "../../components/VerifiedBadge";
 import { GroupAvatar } from "../../components/GroupAvatar";
 import { Icon } from "../../components/Icon";
 import { shareInvite } from "../../state/invites";
+import { t } from "../../i18n";
 
 /** The server's largest page; older conversations load as the list scrolls. */
 const PAGE_SIZE = 50;
 
 function previewText(conversation: ConversationSummary, myUserId: string | undefined): string {
   const lastMessage = conversation.lastMessage;
-  if (!lastMessage) return "No messages yet";
+  if (!lastMessage) return t("dMInbox.noMessagesYet");
   if (lastMessage.event?.type === "call") return callLineText(lastMessage.event, lastMessage.senderId === myUserId);
   if (lastMessage.event) {
     const actor = actorName(lastMessage.senderId, myUserId, lastMessage.senderUsername);
@@ -37,8 +38,8 @@ function previewText(conversation: ConversationSummary, myUserId: string | undef
     return groupEventText(lastMessage.event, actor, (id) => (id === myUserId ? "you" : known.get(id) ?? "someone"));
   }
   // In a group, whose message it was.
-  const prefix = lastMessage.senderId === myUserId ? "You: " : conversation.kind === "group" && lastMessage.senderUsername ? `${lastMessage.senderUsername}: ` : "";
-  if (lastMessage.sharedStoryId) return `${prefix}Shared a Story`;
+  const prefix = lastMessage.senderId === myUserId ? t("dMInbox.you") : conversation.kind === "group" && lastMessage.senderUsername ? `${lastMessage.senderUsername}: ` : "";
+  if (lastMessage.sharedStoryId) return t("dMInbox.prefixSharedAStory", { prefix });
   if (lastMessage.mediaKind && !lastMessage.body) return `${prefix}Sent a ${lastMessage.mediaKind === "audio" ? "voice message" : lastMessage.mediaKind}`;
   return `${prefix}${lastMessage.body ?? ""}`;
 }
@@ -73,17 +74,17 @@ export function DMInboxScreen(): React.JSX.Element {
     patch(item.id, { muted: next });
     try {
       await setConversationMuted(item.id, next, accessToken);
-      showToast(next ? "Notifications muted" : "Notifications on");
+      showToast(next ? t("common.notificationsMuted") : t("common.notificationsOn"));
     } catch {
       patch(item.id, { muted: !next });
-      Alert.alert("Couldn't change that", "Check your connection and try again.");
+      Alert.alert(t("common.couldntChangeThat"), t("dMInbox.checkYourConnectionAndTry"));
     }
   };
   const deleteChat = (item: ConversationSummary) => {
-    Alert.alert("Delete this chat?", "It's removed from your inbox only. If they message you again, it comes back.", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("common.deleteThisChat"), t("dMInbox.itsRemovedFromYourInbox"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Delete",
+        text: t("common.delete"),
         style: "destructive",
         onPress: async () => {
           if (!accessToken) return;
@@ -92,7 +93,7 @@ export function DMInboxScreen(): React.JSX.Element {
             patch(item.id, null);
             void refreshUnreadCount();
           } catch {
-            Alert.alert("Couldn't delete", "Check your connection and try again.");
+            Alert.alert(t("common.couldntDelete"), t("dMInbox.checkYourConnectionAndTry"));
           }
         },
       },
@@ -185,13 +186,13 @@ export function DMInboxScreen(): React.JSX.Element {
 
   const searchBox = (
     <View style={styles.searchRow}>
-      <Pressable style={styles.newGroup} onPress={() => navigation.navigate("NewGroup", {})} accessibilityRole="button" accessibilityLabel="New group">
+      <Pressable style={styles.newGroup} onPress={() => navigation.navigate("NewGroup", {})} accessibilityRole="button" accessibilityLabel={t("common.newGroup")}>
         <View style={styles.newGroupIcon}><Icon name={ICONS.add} size={18} color={colors.onAccent} /></View>
-        <Text style={styles.newGroupText}>New group</Text>
+        <Text style={styles.newGroupText}>{t("common.newGroup")}</Text>
       </Pressable>
       <TextInput
         style={styles.searchInput}
-        placeholder="Search messages by name"
+        placeholder={t("dMInbox.searchMessagesByName")}
         placeholderTextColor={colors.textDisabled}
         autoCapitalize="none"
         autoCorrect={false}
@@ -199,7 +200,7 @@ export function DMInboxScreen(): React.JSX.Element {
         onChangeText={setQuery}
         maxLength={60}
         returnKeyType="search"
-        accessibilityLabel="Search conversations"
+        accessibilityLabel={t("dMInbox.searchConversations")}
       />
     </View>
   );
@@ -207,23 +208,23 @@ export function DMInboxScreen(): React.JSX.Element {
   if (conversations === null) {
     return failed ? (
       <View style={styles.container}>
-        <EmptyState title="Couldn't load messages" message="Check your connection, then pull down to try again." />
+        <EmptyState title={t("dMInbox.couldntLoadMessages")} message={t("dMInbox.checkYourConnectionThenPull")} />
         <Pressable style={styles.retry} onPress={() => void load()} accessibilityRole="button">
-          <Text style={styles.retryText}>Try again</Text>
+          <Text style={styles.retryText}>{t("common.tryAgain")}</Text>
         </Pressable>
       </View>
     ) : (
-      <ListSkeleton label="Loading messages" />
+      <ListSkeleton label={t("dMInbox.loadingMessages")} />
     );
   }
 
   if (conversations.length === 0 && !search) {
     return (
-      <EmptyState icon="dm" title="No messages yet" message="Conversations with people you message will appear here.">
+      <EmptyState icon="dm" title={t("dMInbox.noMessagesYet")} message={t("dMInbox.conversationsWithPeopleYouMessage")}>
         <View style={styles.emptyAction}>
-          <Button label="New message" onPress={() => navigation.navigate("NewChat")} />
-          <Button label="New group" variant="text" onPress={() => navigation.navigate("NewGroup", {})} />
-          <Button label="Invite friends" variant="secondary" onPress={() => void shareInvite("messages", accessToken, user?.id)} />
+          <Button label={t("common.newMessage")} onPress={() => navigation.navigate("NewChat")} />
+          <Button label={t("common.newGroup")} variant="text" onPress={() => navigation.navigate("NewGroup", {})} />
+          <Button label={t("common.inviteFriends")} variant="secondary" onPress={() => void shareInvite("messages", accessToken, user?.id)} />
         </View>
       </EmptyState>
     );
@@ -235,7 +236,7 @@ export function DMInboxScreen(): React.JSX.Element {
     <ActionSheet
       visible={menu !== null}
       onClose={() => setMenuFor(null)}
-      groups={menu ? [[{ label: menu.muted ? "Unmute notifications" : "Mute notifications", onPress: () => void toggleMute(menu) }], [{ label: "Delete chat", destructive: true, onPress: () => deleteChat(menu) }]] : []}
+      groups={menu ? [[{ label: menu.muted ? t("common.unmuteNotifications") : t("common.muteNotifications"), onPress: () => void toggleMute(menu) }], [{ label: t("common.deleteChat"), destructive: true, onPress: () => deleteChat(menu) }]] : []}
     />
     <FlatList
       style={styles.container}
@@ -245,7 +246,7 @@ export function DMInboxScreen(): React.JSX.Element {
       onEndReachedThreshold={0.5}
       onEndReached={() => void loadMore()}
       ListHeaderComponent={searchBox}
-      ListEmptyComponent={<Text style={styles.noMatches}>No conversations match “{search}”.</Text>}
+      ListEmptyComponent={<Text style={styles.noMatches}>{t("dMInbox.noConversationsMatchSearch", { search })}</Text>}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accentText} />}
       renderItem={({ item }) => {
         const group = item.kind === "group" && item.group ? item.group : null;
@@ -268,7 +269,7 @@ export function DMInboxScreen(): React.JSX.Element {
           onLongPress={() => setMenuFor(item)}
           accessibilityRole="button"
           accessibilityLabel={`${name}${!group && person?.verified ? ", verified" : ""}${group ? `, group of ${group.memberCount}` : ""}${item.unread ? ", unread" : ""}${item.muted ? ", muted" : ""}`}
-          accessibilityHint="Long press for options"
+          accessibilityHint={t("dMInbox.longPressForOptions")}
         >
           {group ? (
             <GroupAvatar members={group.members} size={48} />

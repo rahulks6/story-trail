@@ -6,6 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { colors, radii, spacing, typography, ICONS } from "../theme";
 import { Icon } from "./Icon";
 import { TOPICS } from "../models/topics";
+import { t } from "../i18n";
 
 export type StoryVisibility = "public" | "followers";
 export type CommentSetting = "everyone" | "followers" | "disabled";
@@ -41,8 +42,8 @@ export function saveStorySettings(settings: StorySettings): void {
 
 /** One short line for the editor: "Everyone · Comments on · Food". */
 export function storySettingsSummary(s: StorySettings, festivalName?: string | null, topic?: string | null): string {
-  const comments = s.allowComments === "everyone" ? "Comments on" : s.allowComments === "followers" ? "Comments: followers" : "Comments off";
-  return [s.visibility === "public" ? "Everyone" : "Followers only", comments, ...(festivalName ? [festivalName] : []), ...(topic ? [topic] : [])].join(" · ");
+  const comments = s.allowComments === "everyone" ? t("storySettingsSheet.commentsOn") : s.allowComments === "followers" ? t("storySettingsSheet.commentsFollowers") : t("storySettingsSheet.commentsOff");
+  return [s.visibility === "public" ? t("common.everyone") : t("storySettingsSheet.followersOnly"), comments, ...(festivalName ? [festivalName] : []), ...(topic ? [topic] : [])].join(" · ");
 }
 
 function TopicChip({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }): React.JSX.Element {
@@ -100,35 +101,35 @@ export function StorySettingsSheet({
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.fill}>
-        <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
+        <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel={t("common.close")} />
         <View style={[styles.sheet, { paddingBottom: spacing.md + bottom }]} accessibilityViewIsModal>
           <View style={styles.handle} />
-          <Text style={styles.title} accessibilityRole="header">Story settings</Text>
+          <Text style={styles.title} accessibilityRole="header">{t("storySettingsSheet.storySettings")}</Text>
           <ScrollView>
-            <Text style={styles.section}>Who can see it</Text>
+            <Text style={styles.section}>{t("storySettingsSheet.whoCanSeeIt")}</Text>
             <View style={styles.card} accessibilityRole="radiogroup">
-              <Choice label="Everyone" selected={settings.visibility === "public"} onPress={() => set({ visibility: "public" })} />
-              <Choice label="Followers only" selected={settings.visibility === "followers"} onPress={() => set({ visibility: "followers" })} />
+              <Choice label={t("common.everyone")} selected={settings.visibility === "public"} onPress={() => set({ visibility: "public" })} />
+              <Choice label={t("storySettingsSheet.followersOnly")} selected={settings.visibility === "followers"} onPress={() => set({ visibility: "followers" })} />
             </View>
-            <Text style={styles.section}>Who can comment</Text>
+            <Text style={styles.section}>{t("storySettingsSheet.whoCanComment")}</Text>
             <View style={styles.card} accessibilityRole="radiogroup">
-              <Choice label="Everyone who can see it" selected={settings.allowComments === "everyone"} onPress={() => set({ allowComments: "everyone" })} />
-              <Choice label="Followers" selected={settings.allowComments === "followers"} onPress={() => set({ allowComments: "followers" })} />
-              <Choice label="No one" selected={settings.allowComments === "disabled"} onPress={() => set({ allowComments: "disabled" })} />
+              <Choice label={t("storySettingsSheet.everyoneWhoCanSeeIt")} selected={settings.allowComments === "everyone"} onPress={() => set({ allowComments: "everyone" })} />
+              <Choice label={t("common.followers")} selected={settings.allowComments === "followers"} onPress={() => set({ allowComments: "followers" })} />
+              <Choice label={t("storySettingsSheet.noOne")} selected={settings.allowComments === "disabled"} onPress={() => set({ allowComments: "disabled" })} />
             </View>
             <View style={[styles.card, styles.spaced]}>
               <View style={styles.row}>
                 <View style={styles.rowText}>
-                  <Text style={typography.body}>Allow sharing</Text>
-                  <Text style={styles.hint}>Others can send it to people or share its link.</Text>
+                  <Text style={typography.body}>{t("storySettingsSheet.allowSharing")}</Text>
+                  <Text style={styles.hint}>{t("storySettingsSheet.othersCanSendItTo")}</Text>
                 </View>
-                <Switch value={settings.allowSharing} onValueChange={(v) => set({ allowSharing: v })} accessibilityLabel="Allow sharing" />
+                <Switch value={settings.allowSharing} onValueChange={(v) => set({ allowSharing: v })} accessibilityLabel={t("storySettingsSheet.allowSharing")} />
               </View>
               {festival && onJoinFestival && settings.visibility === "public" ? (
                 <View style={styles.row}>
                   <View style={styles.rowText}>
-                    <Text style={typography.body}>Add to {festival.name} Stories</Text>
-                    <Text style={styles.hint}>It shows in the festival's ring on Home.</Text>
+                    <Text style={typography.body}>{t("storySettingsSheet.addToNameStories", { name: festival.name })}</Text>
+                    <Text style={styles.hint}>{t("storySettingsSheet.itShowsInTheFestivals")}</Text>
                   </View>
                   <Switch value={!!joinFestival} onValueChange={onJoinFestival} accessibilityLabel={`Add to ${festival.name} Stories`} />
                 </View>
@@ -136,19 +137,19 @@ export function StorySettingsSheet({
             </View>
             {onTopicChange ? (
               <>
-                <Text style={styles.section}>Topic</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips} accessibilityRole="radiogroup" accessibilityLabel="Topic">
-                  <TopicChip label="None" selected={topic === null} onPress={() => onTopicChange(null)} />
+                <Text style={styles.section}>{t("storySettingsSheet.topic")}</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips} accessibilityRole="radiogroup" accessibilityLabel={t("storySettingsSheet.topic")}>
+                  <TopicChip label={t("storySettingsSheet.none")} selected={topic === null} onPress={() => onTopicChange(null)} />
                   {TOPICS.map((option) => (
                     <TopicChip key={option} label={option} selected={topic === option} onPress={() => onTopicChange(option)} />
                   ))}
                 </ScrollView>
-                <Text style={[styles.hint, styles.topicHint]}>Helps people who like this topic find your Story.</Text>
+                <Text style={[styles.hint, styles.topicHint]}>{t("storySettingsSheet.helpsPeopleWhoLikeThis")}</Text>
               </>
             ) : null}
           </ScrollView>
           <Pressable style={styles.done} onPress={onClose} accessibilityRole="button">
-            <Text style={styles.doneText}>Done</Text>
+            <Text style={styles.doneText}>{t("common.done")}</Text>
           </Pressable>
         </View>
       </View>

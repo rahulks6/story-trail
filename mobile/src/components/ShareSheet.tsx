@@ -8,6 +8,7 @@ import { ActionSheet, type SheetAction } from "./ActionSheet";
 import { ExternalShareModal } from "./ExternalShareModal";
 import type { ShareCardStory } from "./StoryShareCard";
 import { showToast } from "./Toast";
+import { t } from "../i18n";
 
 interface Props {
   visible: boolean;
@@ -51,26 +52,26 @@ export function ShareSheet({ visible, storyId, ownerUsername, isPublic, onClose,
 
   // With the picture: your profile, and the Story itself when anyone can open it.
   const fileMessage = ownStory
-    ? [`@${ownerUsername} on Katkee: ${profileShareLink(ownerUsername, ownStory.ownerId)}`, ...(isPublic ? [link] : [])].join("\n")
+    ? [t("shareSheet.ownerusernameOnKatkeeOwnerusername2", { ownerUsername, ownerUsername2: profileShareLink(ownerUsername, ownStory.ownerId) }), ...(isPublic ? [link] : [])].join("\n")
     : "";
 
   const actions: SheetAction[] = [
-    { label: "Send in Katkee", onPress: onSendToUser },
-    ...(ownStory ? [{ label: "Share to other apps", onPress: () => setExporting(true) }] : []),
+    { label: t("shareSheet.sendInKatkee"), onPress: onSendToUser },
+    ...(ownStory ? [{ label: t("shareSheet.shareToOtherApps"), onPress: () => setExporting(true) }] : []),
     {
-      label: "Share via…",
+      label: t("shareSheet.shareVia"),
       onPress: () => {
         void recordShare();
-        Share.share({ message: `@${ownerUsername} on Katkee: ${link}` }).catch(() => undefined); // cancelling isn't an error
+        Share.share({ message: t("shareSheet.ownerusernameOnKatkeeLink", { ownerUsername, link }) }).catch(() => undefined); // cancelling isn't an error
       },
     },
     ...(isPublic
       ? [{
-          label: "Copy link",
+          label: t("shareSheet.copyLink"),
           onPress: () => {
             void recordShare();
             Clipboard.setString(link);
-            showToast("Link copied");
+            showToast(t("common.linkCopied"));
           },
         }]
       : []),
@@ -78,7 +79,7 @@ export function ShareSheet({ visible, storyId, ownerUsername, isPublic, onClose,
 
   return (
     <>
-      <ActionSheet visible={visible} title="Share" groups={[actions]} onClose={onClose} />
+      <ActionSheet visible={visible} title={t("common.share")} groups={[actions]} onClose={onClose} />
       {ownStory && exporting ? (
         <ExternalShareModal
           visible

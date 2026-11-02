@@ -21,6 +21,7 @@ import { Avatar } from "../../components/Avatar";
 import { VerifiedName } from "../../components/VerifiedBadge";
 import { Button } from "../../components/Form";
 import { shareInvite } from "../../state/invites";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<SearchStackParamList, "SearchHome">;
 
@@ -35,24 +36,24 @@ type Person = (SearchResult | SuggestedPerson) & { reason?: SuggestionReason };
 export function suggestionReasonText(reason: SuggestionReason): string {
   switch (reason.kind) {
     case "invited_you":
-      return "Invited you to Katkee";
+      return t("search.invitedYouToKatkee");
     case "joined_from_your_invite":
-      return "Joined from your invite";
+      return t("search.joinedFromYourInvite");
     case "follows_you":
-      return "Follows you";
+      return t("common.followsYou");
     case "followed_by":
-      return reason.others > 0 ? `Followed by @${reason.username} + ${reason.others} more` : `Followed by @${reason.username}`;
+      return reason.others > 0 ? t("search.followedByUsernameOthersMore", { username: reason.username, others: reason.others }) : t("search.followedByUsername", { username: reason.username });
     case "shared_interest":
-      return `Also into ${reason.interest}`;
+      return t("search.alsoIntoInterest", { interest: reason.interest });
     case "new":
-      return "New to Katkee";
+      return t("search.newToKatkee");
   }
 }
 
 function followLabel(relation: ListRelationship | undefined): string {
-  if (relation?.isFollowing) return "Following";
-  if (relation?.hasPendingRequestFromViewer) return "Requested";
-  return relation?.isFollowedBy ? "Follow back" : "Follow";
+  if (relation?.isFollowing) return t("common.following");
+  if (relation?.hasPendingRequestFromViewer) return t("common.requested");
+  return relation?.isFollowedBy ? t("common.followBack") : t("common.follow");
 }
 
 /**
@@ -68,14 +69,14 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
   const findFriends = (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel="Find friends from your contacts"
+      accessibilityLabel={t("search.findFriendsFromYourContacts")}
       style={styles.findFriends}
       onPress={() => rootNavigation.navigate("ContactsOnKatkee", { from: "search" })}
     >
       <View style={styles.findFriendsIcon}><Icon name={ICONS.following} size={20} color={colors.textPrimary} /></View>
       <View style={styles.rowText}>
-        <Text style={typography.bodyStrong}>Find friends from your contacts</Text>
-        <Text style={typography.caption}>See who's already on Katkee</Text>
+        <Text style={typography.bodyStrong}>{t("search.findFriendsFromYourContacts")}</Text>
+        <Text style={typography.caption}>{t("search.seeWhosAlreadyOnKatkee")}</Text>
       </View>
       <Icon name="chevron" size={16} color={colors.textDisabled} />
     </Pressable>
@@ -153,7 +154,7 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
         if (controller.signal.aborted) return;
         setResults([]);
         setHasMore(false);
-        setError(err instanceof ApiError ? err.message : "Search failed — check your connection.");
+        setError(err instanceof ApiError ? err.message : t("search.searchFailedCheckYourConnection"));
       })
       .finally(() => {
         if (!controller.signal.aborted) setLoading(false);
@@ -176,7 +177,7 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
       .catch(() => {
         if (controller.signal.aborted) return;
         setHasMore(false);
-        setError("Couldn't load more people. Search again to retry.");
+        setError(t("search.couldntLoadMorePeopleSearch"));
       })
       .finally(() => {
         if (!controller.signal.aborted) setLoadingMore(false);
@@ -203,7 +204,7 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
         }));
       }
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : "That didn't go through — try again.");
+      setActionError(err instanceof ApiError ? err.message : t("search.thatDidntGoThroughTry"));
     } finally {
       setPendingFollows((names) => {
         const next = new Set(names);
@@ -254,18 +255,18 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
         <TextInput
           ref={input}
           style={styles.input}
-          placeholder="Search people"
+          placeholder={t("common.searchPeople")}
           placeholderTextColor={colors.textDisabled}
           autoCapitalize="none"
           autoCorrect={false}
           // Not focused on open: the keyboard would cover the tab bar until dismissed.
           returnKeyType="search"
-          accessibilityLabel="Search people"
+          accessibilityLabel={t("common.searchPeople")}
           value={query}
           onChangeText={setQuery}
         />
         {query.length > 0 ? (
-          <Pressable onPress={() => setQuery("")} hitSlop={8} accessibilityRole="button" accessibilityLabel="Clear search">
+          <Pressable onPress={() => setQuery("")} hitSlop={8} accessibilityRole="button" accessibilityLabel={t("search.clearSearch")}>
             <Icon style={styles.inputIcon} name={ICONS.clear} />
           </Pressable>
         ) : null}
@@ -282,7 +283,7 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
               onPress={() => setFilter(option)}
             >
               <Text style={[styles.filterChipLabel, filter === option && styles.filterChipLabelActive]}>
-                {option === "all" ? "All" : "Following"}
+                {option === "all" ? t("common.all") : t("common.following")}
               </Text>
             </Pressable>
           ))}
@@ -293,12 +294,12 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
 
       {!debouncedQuery ? (
         suggestions === null ? (
-          <ListSkeleton rows={6} label="Loading suggestions" />
+          <ListSkeleton rows={6} label={t("search.loadingSuggestions")} />
         ) : suggestions.length === 0 ? (
           <View style={styles.fill}>
             {findFriends}
-            <EmptyState icon="search" title="Find people" message="Search by name, username or interest, or invite your friends.">
-              <Button label="Invite friends" variant="secondary" onPress={invite} />
+            <EmptyState icon="search" title={t("common.findPeople")} message={t("search.searchByNameUsernameOr")}>
+              <Button label={t("common.inviteFriends")} variant="secondary" onPress={invite} />
             </EmptyState>
           </View>
         ) : (
@@ -309,7 +310,7 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
             ListHeaderComponent={
               <>
                 {findFriends}
-                <Text style={[typography.label, styles.sectionTitle]} accessibilityRole="header">Suggested for you</Text>
+                <Text style={[typography.label, styles.sectionTitle]} accessibilityRole="header">{t("search.suggestedForYou")}</Text>
               </>
             }
             keyboardShouldPersistTaps="handled"
@@ -328,10 +329,10 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
           {error ? <Text style={styles.error}>{error}</Text> : null}
           {!loading && !error && results.length === 0 ? (
             <EmptyState
-              title="No one found"
+              title={t("common.noOneFound")}
               message={filter === "following" ? `No one you follow matches "${debouncedQuery}".` : `No people match "${debouncedQuery}". If they're not on Katkee yet, invite them.`}
             >
-              {filter === "all" ? <Button label="Invite friends" variant="secondary" onPress={invite} /> : null}
+              {filter === "all" ? <Button label={t("common.inviteFriends")} variant="secondary" onPress={invite} /> : null}
             </EmptyState>
           ) : (
             <FlatList

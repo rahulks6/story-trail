@@ -1,6 +1,7 @@
 import React, { useMemo, useRef } from "react";
 import { PanResponder, StyleSheet, View, type GestureResponderEvent, type PanResponderGestureState } from "react-native";
 import { clampCrop, type StoryCrop } from "../models/storyDraft";
+import { t } from "../i18n";
 
 interface Props {
   crop: StoryCrop;
@@ -77,7 +78,7 @@ export function CropGestureLayer({ crop, containerWidth, containerHeight, onChan
       style={StyleSheet.absoluteFill}
       {...panResponder.panHandlers}
       accessible
-      accessibilityLabel="Crop: pinch to zoom, drag to reposition"
+      accessibilityLabel={t("cropGestureLayer.cropPinchToZoomDrag")}
     />
   );
 }

@@ -14,6 +14,7 @@ import { MAX_FEEDBACK_LENGTH, sendFeedback } from "../../api/support";
 import { appEnv } from "../../config/env";
 import { deviceModel, osVersion } from "../../crashReporting";
 import { tapFeedback } from "../../utils/haptics";
+import { t } from "../../i18n";
 
 /**
  * Tell us what went wrong or what you'd like (Settings > Help > Send feedback). A screenshot is
@@ -31,9 +32,9 @@ export function FeedbackScreen(): React.JSX.Element {
   const attach = async () => {
     const result = await launchImageLibrary({ mediaType: "photo", selectionLimit: 1, assetRepresentationMode: "compatible", maxWidth: 2048, maxHeight: 2048, quality: 0.8 });
     if (result.errorCode === "permission") {
-      Alert.alert("Allow photo access", "To attach a screenshot, allow Katkee to access your photos in your phone's Settings.", [
-        { text: "Not now", style: "cancel" },
-        { text: "Open Settings", onPress: () => void Linking.openSettings().catch(() => undefined) },
+      Alert.alert(t("common.allowPhotoAccess"), t("feedback.toAttachAScreenshotAllow"), [
+        { text: t("common.notNow"), style: "cancel" },
+        { text: t("common.openSettings"), onPress: () => void Linking.openSettings().catch(() => undefined) },
       ]);
       return;
     }
@@ -50,10 +51,10 @@ export function FeedbackScreen(): React.JSX.Element {
       const shot = screenshot ? await uploadPhoto(screenshot.uri, screenshot.type, accessToken) : null;
       await sendFeedback({ body: text, ...(shot ? { screenshotMediaId: shot.id } : {}), appVersion: appEnv.appVersion, osVersion: osVersion(), deviceModel: deviceModel() }, accessToken);
       tapFeedback("success");
-      Alert.alert("Thanks!", "We read every message. It helps make Katkee better.");
+      Alert.alert(t("feedback.thanks"), t("feedback.weReadEveryMessageIt"));
       navigation.goBack();
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Couldn't send. Check your connection and try again.");
+      setError(e instanceof ApiError ? e.message : t("feedback.couldntSendCheckYourConnection"));
     } finally {
       setSending(false);
     }
@@ -62,15 +63,13 @@ export function FeedbackScreen(): React.JSX.Element {
   return (
     <KeyboardAvoider style={styles.container}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={[typography.body, styles.intro]}>
-          Something not working, or an idea? Tell us what happened and what you expected. A screenshot helps.
-        </Text>
+        <Text style={[typography.body, styles.intro]}>{t("feedback.somethingNotWorkingOrAn")}</Text>
         {error ? <Banner text={error} /> : null}
         <TextField
-          label="Your feedback"
+          label={t("feedback.yourFeedback")}
           value={body}
           onChangeText={setBody}
-          placeholder="e.g. The music picker froze after I searched for a song."
+          placeholder={t("feedback.eGTheMusicPicker")}
           multiline
           maxLength={MAX_FEEDBACK_LENGTH}
           textAlignVertical="top"
@@ -79,20 +78,18 @@ export function FeedbackScreen(): React.JSX.Element {
         {screenshot ? (
           <View style={styles.shot}>
             <Image source={{ uri: screenshot.uri }} style={styles.shotImage} resizeMode="cover" accessibilityIgnoresInvertColors />
-            <Pressable onPress={() => setScreenshot(null)} style={styles.shotRemove} hitSlop={8} accessibilityRole="button" accessibilityLabel="Remove screenshot">
+            <Pressable onPress={() => setScreenshot(null)} style={styles.shotRemove} hitSlop={8} accessibilityRole="button" accessibilityLabel={t("feedback.removeScreenshot")}>
               <Icon name={ICONS.close} size={16} color="#FFFFFF" />
             </Pressable>
           </View>
         ) : (
-          <Pressable onPress={() => void attach()} style={styles.attach} accessibilityRole="button" accessibilityLabel="Attach a screenshot">
+          <Pressable onPress={() => void attach()} style={styles.attach} accessibilityRole="button" accessibilityLabel={t("feedback.attachAScreenshot")}>
             <Icon name={ICONS.gallery} size={20} color={colors.textPrimary} />
-            <Text style={styles.attachText}>Attach a screenshot</Text>
+            <Text style={styles.attachText}>{t("feedback.attachAScreenshot")}</Text>
           </Pressable>
         )}
-        <Text style={styles.note}>
-          Sent with your username, app version ({appEnv.appVersion || "unknown"}) and phone model, so we can look into it.
-        </Text>
-        <Button label="Send" onPress={() => void send()} disabled={!body.trim()} busy={sending} />
+        <Text style={styles.note}>{t("feedback.sentWithYourUsernameApp")}{appEnv.appVersion || t("common.unknown")}{t("feedback.andPhoneModelSoWe")}</Text>
+        <Button label={t("common.send")} onPress={() => void send()} disabled={!body.trim()} busy={sending} />
       </ScrollView>
     </KeyboardAvoider>
   );

@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as RNFS from "@dr.pogodin/react-native-fs";
 import type { Message } from "../../api/conversations";
 import { sendPendingMedia, type PendingMedia } from "./sendMedia";
+import { t } from "../../i18n";
 
 /**
  * Photos, videos and voice notes on their way into a conversation, kept like the text
@@ -161,7 +162,7 @@ async function run(userId: string, clientMessageId: string, getToken: () => stri
     forgetFile(entry.uri);
   } catch (error) {
     if (epoch !== epochOf(userId)) return;
-    await patch(userId, clientMessageId, { status: "failed", error: error instanceof Error ? error.message : "Couldn't send." });
+    await patch(userId, clientMessageId, { status: "failed", error: error instanceof Error ? error.message : t("dmMediaOutbox.couldntSend") });
   } finally {
     running.delete(runKey);
   }

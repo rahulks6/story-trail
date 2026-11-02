@@ -10,6 +10,7 @@ import { Avatar } from "../../components/Avatar";
 import { VerifiedName } from "../../components/VerifiedBadge";
 import { GroupAvatar } from "../../components/GroupAvatar";
 import { Icon } from "../../components/Icon";
+import { t } from "../../i18n";
 
 /** Someone to send to: an existing chat (1:1 or a group), or a person found by search. */
 export interface Recipient {
@@ -52,7 +53,7 @@ export function RecipientPicker({ chosen, onToggle, emptyHint }: Props): React.J
         setRecent(conversations.map((c): Recipient => {
           if (c.kind === "group" && c.group) {
             const name = groupName(c.group.title, c.group.members, c.group.memberCount - 1);
-            return { key: `c:${c.id}`, name, detail: `${c.group.memberCount} people`, conversationId: c.id, picture: <GroupAvatar members={c.group.members} size={44} /> };
+            return { key: `c:${c.id}`, name, detail: t("recipientPicker.membercountPeople", { memberCount: c.group.memberCount }), conversationId: c.id, picture: <GroupAvatar members={c.group.members} size={44} /> };
           }
           const p = c.otherUser!;
           return { key: `u:${p.username}`, name: p.displayName, verified: p.verified, detail: `@${p.username}`, conversationId: c.id, username: p.username, userId: p.id, picture: <Avatar username={p.username} displayName={p.displayName} avatarMediaId={p.avatarMediaId ?? null} /> };
@@ -86,28 +87,28 @@ export function RecipientPicker({ chosen, onToggle, emptyHint }: Props): React.J
         <Icon style={styles.searchIcon} name={ICONS.search} />
         <TextInput
           style={styles.searchInput}
-          placeholder="Search"
+          placeholder={t("common.search")}
           placeholderTextColor={colors.textDisabled}
           autoCapitalize="none"
           autoCorrect={false}
           value={query}
           onChangeText={setQuery}
-          accessibilityLabel="Search people"
+          accessibilityLabel={t("common.searchPeople")}
         />
       </View>
       {searching || recent === null ? <ActivityIndicator color={colors.accentText} style={styles.spinner} /> : null}
       {searchFailed ? (
         <View style={styles.notice}>
-          <Text style={styles.noticeText} accessibilityRole="alert">Couldn't search. Check your connection and try again.</Text>
+          <Text style={styles.noticeText} accessibilityRole="alert">{t("recipientPicker.couldntSearchCheckYourConnection")}</Text>
         </View>
       ) : null}
       <FlatList
         data={list}
         keyExtractor={(row) => row.key}
         keyboardShouldPersistTaps="handled"
-        ListHeaderComponent={!found && recent?.length ? <Text style={styles.section}>Recent</Text> : undefined}
+        ListHeaderComponent={!found && recent?.length ? <Text style={styles.section}>{t("recipientPicker.recent")}</Text> : undefined}
         ListEmptyComponent={
-          search && !searching && !searchFailed ? <Text style={styles.empty}>No people match “{search}”.</Text>
+          search && !searching && !searchFailed ? <Text style={styles.empty}>{t("recipientPicker.noPeopleMatchSearch", { search })}</Text>
             : recent && !recent.length && !search ? <Text style={styles.empty}>{emptyHint}</Text> : undefined
         }
         renderItem={({ item }) => {

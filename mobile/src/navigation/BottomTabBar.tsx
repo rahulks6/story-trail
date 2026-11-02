@@ -8,13 +8,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing, typography, ICONS } from "../theme";
 import { useDM } from "../state/DMContext";
 import { tapFeedback } from "../utils/haptics";
+import { t } from "../i18n";
 
 const TAB_LABELS: Record<string, string> = {
-  Home: "Home",
-  Search: "Search",
+  get Home() { return t("bottomTabBar.home"); },
+  get Search() { return t("common.search"); },
   Create: "",
-  DM: "Messages",
-  Profile: "Profile",
+  get DM() { return t("common.messages"); },
+  get Profile() { return t("bottomTabBar.profile"); },
 };
 
 const TAB_ICONS: Record<string, import("../theme/icons").IconName> = {
@@ -78,7 +79,7 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
               key={route.key}
               accessibilityRole="tab"
               accessibilityState={{ selected: isFocused }}
-              accessibilityLabel="Create a Story"
+              accessibilityLabel={t("bottomTabBar.createAStory")}
               onPress={onPress}
               style={styles.createButtonWrapper}
             >

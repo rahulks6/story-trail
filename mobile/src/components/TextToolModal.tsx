@@ -8,6 +8,7 @@ import { contrastOn, neonCore, neonRadius, STYLE_LABELS, TEXT_STYLES, textStyleL
 import type { TextOverlayProperties, TextStyle } from "../models/storyDraft";
 import { tapFeedback } from "../utils/haptics";
 import { TEXT_MAX_WIDTH_FRACTION } from "./OverlayBody";
+import { t } from "../i18n";
 
 const COLORS = ["#FFFFFF", "#000000", "#F5B400", "#FF8A00", "#E4483C", "#FF5DA2", "#A45CFF", "#3E7BFF", "#2EC4E6", "#3FBF7F", "#9A6B4F", "#8E8E93"];
 const ALIGNS: TextOverlayProperties["align"][] = ["center", "left", "right"];
@@ -93,7 +94,7 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
       <View style={[styles.container, { paddingTop: insets.top + spacing.sm, paddingBottom: Math.max(keyboard, insets.bottom) + spacing.xs }]}>
         <View style={styles.topBar}>
           <View style={styles.topTools}>
-            <Pressable onPress={nextAlign} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel={`Alignment: ${align}`} accessibilityHint="Changes the text alignment">
+            <Pressable onPress={nextAlign} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel={`Alignment: ${align}`} accessibilityHint={t("textToolModal.changesTheTextAlignment")}>
               <Icon name={alignIcon} size={24} color={colors.textPrimary} />
             </Pressable>
             <Pressable
@@ -110,21 +111,21 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
               hitSlop={8}
               style={[styles.toolButton, hasBackground && styles.toolButtonOn]}
               accessibilityRole="switch"
-              accessibilityLabel="Text background"
+              accessibilityLabel={t("textToolModal.textBackground")}
               accessibilityState={{ checked: hasBackground }}
             >
               <Icon name={ICONS.textBackground} size={24} color={hasBackground ? colors.background : colors.textPrimary} />
             </Pressable>
           </View>
           <Pressable accessibilityRole="button" onPress={done} hitSlop={12} style={styles.doneButton}>
-            <Text style={styles.doneLabel}>Done</Text>
+            <Text style={styles.doneLabel}>{t("common.done")}</Text>
           </Pressable>
         </View>
 
         <View style={styles.middle}>
           {/* Tapping the dimmed photo around the text places it, like Instagram. */}
-          <Pressable pressEffect="none" style={StyleSheet.absoluteFill} onPress={done} accessible={false} accessibilityRole="button" accessibilityLabel="Place the text" />
-          <View style={styles.slider} {...slider.panHandlers} accessible accessibilityRole="adjustable" accessibilityLabel="Text size"
+          <Pressable pressEffect="none" style={StyleSheet.absoluteFill} onPress={done} accessible={false} accessibilityRole="button" accessibilityLabel={t("textToolModal.placeTheText")} />
+          <View style={styles.slider} {...slider.panHandlers} accessible accessibilityRole="adjustable" accessibilityLabel={t("textToolModal.textSize")}
             accessibilityValue={{ min: 0, max: 100, now: Math.round(sliderFraction * 100) }}
             accessibilityActions={[{ name: "increment" }, { name: "decrement" }]}
             onAccessibilityAction={(e) => setSize((s) => Math.min(MAX_SIZE, Math.max(MIN_SIZE, s + (e.nativeEvent.actionName === "increment" ? 0.01 : -0.01))))}
@@ -147,7 +148,7 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
                 neon && { padding: neonRadius(previewSize) },
                 style === "Highlight" && !neon && { textShadowRadius: 0 },
               ]}
-              placeholder="Type something…"
+              placeholder={t("common.typeSomething")}
               placeholderTextColor="rgba(255,255,255,0.6)"
               value={text}
               onChangeText={setText}

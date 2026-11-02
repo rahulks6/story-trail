@@ -11,6 +11,7 @@ import { ApiError } from "../../api/client";
 import { useAuth } from "../../state/AuthContext";
 import { Banner, Button, TextField } from "../../components/Form";
 import { newPasswordProblem } from "../../utils/passwordRules";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "ResetPassword">;
 
@@ -59,7 +60,7 @@ export function ResetPasswordScreen({ navigation, route }: Props): React.JSX.Ele
       if (e instanceof ApiError && e.fieldErrors) {
         setErrors({ ...(e.fieldErrors.code ? { code: e.fieldErrors.code } : {}), ...(e.fieldErrors.newPassword ? { password: e.fieldErrors.newPassword } : {}), ...(e.fieldErrors.email ? { email: e.fieldErrors.email } : {}) });
       } else {
-        setBanner({ text: e instanceof ApiError ? e.message : "Couldn't reset your password. Check your connection and try again.", tone: "error" });
+        setBanner({ text: e instanceof ApiError ? e.message : t("resetPassword.couldntResetYourPasswordCheck"), tone: "error" });
       }
     } finally {
       setBusy(false);
@@ -71,10 +72,10 @@ export function ResetPasswordScreen({ navigation, route }: Props): React.JSX.Ele
     setResendIn(RESEND_SECONDS);
     try {
       await forgotPassword(email.trim().toLowerCase());
-      setBanner({ text: "If an account uses that email, a new code is on its way. Only the newest code works.", tone: "success" });
+      setBanner({ text: t("resetPassword.ifAnAccountUsesThat"), tone: "success" });
       setCode("");
     } catch (e) {
-      setBanner({ text: e instanceof ApiError ? e.message : "Couldn't send a new code. Try again shortly.", tone: "error" });
+      setBanner({ text: e instanceof ApiError ? e.message : t("resetPassword.couldntSendANewCode"), tone: "error" });
     }
   };
 
@@ -82,17 +83,15 @@ export function ResetPasswordScreen({ navigation, route }: Props): React.JSX.Ele
     <KeyboardAvoider style={styles.root}>
       {/* The header is see-through: keep the content clear of it and of the bottom inset. */}
       <ScrollView contentContainerStyle={[styles.content, { paddingTop: headerHeight + spacing.md, paddingBottom: insets.bottom + spacing.xl }]} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
-        <Text style={typography.displayLarge} accessibilityRole="header">
-          Enter your code
-        </Text>
-        <Text style={styles.body}>We emailed a 6-digit code{email ? ` to ${email}` : ""}. It expires in 15 minutes.</Text>
+        <Text style={typography.displayLarge} accessibilityRole="header">{t("resetPassword.enterYourCode")}</Text>
+        <Text style={styles.body}>{t("resetPassword.weEmailedA6Digit")}{email ? t("resetPassword.toEmail", { email }) : ""}{t("resetPassword.itExpiresIn15Minutes")}</Text>
         {banner ? <Banner text={banner.text} tone={banner.tone} /> : null}
         {/* Shown whenever the email needs fixing, even if it came from the previous screen. */}
         {!route.params?.email || errors.email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim()) ? (
-          <TextField label="Email" value={email} onChangeText={setEmail} error={errors.email} autoCapitalize="none" keyboardType="email-address" autoComplete="email" />
+          <TextField label={t("common.email")} value={email} onChangeText={setEmail} error={errors.email} autoCapitalize="none" keyboardType="email-address" autoComplete="email" />
         ) : null}
         <TextField
-          label="6-digit code"
+          label={t("common.n6DigitCode")}
           value={code}
           onChangeText={(text) => setCode(text.replace(/\D/g, "").slice(0, 6))}
           error={errors.code}
@@ -106,18 +105,18 @@ export function ResetPasswordScreen({ navigation, route }: Props): React.JSX.Ele
         />
         <TextField
           ref={passwordRef}
-          label="New password"
+          label={t("common.newPassword")}
           value={password}
           onChangeText={setPassword}
           error={errors.password}
-          hint="At least 8 characters. Avoid passwords you use elsewhere."
+          hint={t("resetPassword.atLeast8CharactersAvoid")}
           secureTextEntry
           autoComplete="new-password"
           textContentType="newPassword"
           autoFocus={!!route.params?.code}
         />
-        <TextField label="Confirm new password" value={confirm} onChangeText={setConfirm} error={errors.confirm} secureTextEntry autoComplete="new-password" textContentType="newPassword" returnKeyType="done" onSubmitEditing={() => void submit()} />
-        <Button label="Set new password" onPress={() => void submit()} busy={busy} disabled={!code || !password} />
+        <TextField label={t("common.confirmNewPassword")} value={confirm} onChangeText={setConfirm} error={errors.confirm} secureTextEntry autoComplete="new-password" textContentType="newPassword" returnKeyType="done" onSubmitEditing={() => void submit()} />
+        <Button label={t("resetPassword.setNewPassword")} onPress={() => void submit()} busy={busy} disabled={!code || !password} />
         <Button
           label={resendIn > 0 ? `Send a new code in ${resendIn}s` : "Send a new code"}
           variant="secondary"

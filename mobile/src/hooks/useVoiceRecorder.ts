@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, Linking, PermissionsAndroid, Platform } from "react-native";
 import { AudioEncoderAndroidType, createSound, OutputFormatAndroidType } from "react-native-nitro-sound";
+import { t } from "../i18n";
 
 /** Longest voice note (the server's limit too). */
 export const MAX_VOICE_MS = 5 * 60_000;
@@ -15,9 +16,9 @@ export type RecorderState = { status: "idle" } | { status: "starting" } | { stat
 
 /** The microphone was refused for good: only Settings can turn it back on. */
 function micRefused(): void {
-  Alert.alert("Allow microphone access", MIC_REFUSED_MESSAGE, [
-    { text: "Not now", style: "cancel" },
-    { text: "Open Settings", onPress: () => void Linking.openSettings().catch(() => undefined) },
+  Alert.alert(t("useVoiceRecorder.allowMicrophoneAccess"), MIC_REFUSED_MESSAGE, [
+    { text: t("common.notNow"), style: "cancel" },
+    { text: t("common.openSettings"), onPress: () => void Linking.openSettings().catch(() => undefined) },
   ]);
 }
 
@@ -78,7 +79,7 @@ export function useVoiceRecorder(onRecorded: (uri: string, durationMs: number) =
       }
     } catch {
       // Android can't finish a recording only a moment long; that's only worth saying when it was meant to go.
-      if (wanted) latest.current.onError("Couldn't save that voice message.");
+      if (wanted) latest.current.onError(t("useVoiceRecorder.couldntSaveThatVoiceMessage"));
     } finally {
       elapsed.current = 0;
       set({ status: "idle" });
@@ -132,7 +133,7 @@ export function useVoiceRecorder(onRecorded: (uri: string, durationMs: number) =
       if (cancelWhenStarted.current || !mounted.current) return;
       // iOS: the recorder rejects with "Recording permission denied…" once the microphone is refused.
       if (/permission/i.test(error instanceof Error ? error.message : String(error))) micRefused();
-      else latest.current.onError("The microphone isn't available right now.");
+      else latest.current.onError(t("useVoiceRecorder.theMicrophoneIsntAvailableRight"));
     }
   }, [set, sound, stop]);
 

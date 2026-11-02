@@ -13,6 +13,7 @@ import { VerifiedName } from "../../components/VerifiedBadge";
 import { GroupAvatar } from "../../components/GroupAvatar";
 import { ListRow } from "../../components/ListRow";
 import { Banner } from "../../components/Form";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<DMStackParamList, "GroupInfo">;
 
@@ -34,12 +35,12 @@ export function GroupInfoScreen({ navigation, route }: Props): React.JSX.Element
       setTitle(conversation.title ?? "");
       setError(null);
     } catch (e) {
-      setError(e instanceof ApiError && e.status === 404 ? "You're no longer in this group." : "Couldn't load the group. Check your connection and try again.");
+      setError(e instanceof ApiError && e.status === 404 ? t("groupInfo.youreNoLongerInThis") : t("groupInfo.couldntLoadTheGroupCheck"));
     }
   }, [accessToken, conversationId]);
   useFocusEffect(useCallback(() => { void load(); }, [load]));
 
-  const fail = (e: unknown) => Alert.alert("Couldn't do that", e instanceof ApiError ? e.message : "Check your connection and try again.");
+  const fail = (e: unknown) => Alert.alert(t("groupInfo.couldntDoThat"), e instanceof ApiError ? e.message : t("groupInfo.checkYourConnectionAndTry"));
 
   const saveTitle = async () => {
     if (!accessToken || !group || saving || (title.trim() || null) === group.title) return;
@@ -54,10 +55,10 @@ export function GroupInfoScreen({ navigation, route }: Props): React.JSX.Element
   };
 
   const remove = (member: GroupDetails["members"][number]) => {
-    Alert.alert(`Remove @${member.username}?`, "They won't see new messages in this group.", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("groupInfo.removeUsername", { username: member.username }), t("groupInfo.theyWontSeeNewMessages"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Remove",
+        text: t("common.remove"),
         style: "destructive",
         onPress: async () => {
           if (!accessToken) return;
@@ -83,10 +84,10 @@ export function GroupInfoScreen({ navigation, route }: Props): React.JSX.Element
   };
 
   const leave = () => {
-    Alert.alert("Leave this group?", "You won't get its messages any more. Someone in it can add you back.", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("groupInfo.leaveThisGroup"), t("groupInfo.youWontGetItsMessages"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Leave",
+        text: t("groupInfo.leave"),
         style: "destructive",
         onPress: async () => {
           if (!accessToken) return;
@@ -126,26 +127,26 @@ export function GroupInfoScreen({ navigation, route }: Props): React.JSX.Element
             onChangeText={setTitle}
             onEndEditing={() => void saveTitle()}
             onSubmitEditing={() => void saveTitle()}
-            placeholder="Name this group"
+            placeholder={t("groupInfo.nameThisGroup")}
             placeholderTextColor={colors.textDisabled}
             maxLength={MAX_GROUP_TITLE}
             returnKeyType="done"
-            accessibilityLabel="Group name"
-            accessibilityHint="Everyone in the group sees the new name"
+            accessibilityLabel={t("groupInfo.groupName")}
+            accessibilityHint={t("groupInfo.everyoneInTheGroupSees")}
           />
           {saving ? <ActivityIndicator color={colors.accentText} /> : null}
-          <Text style={styles.muted}>{group.members.length} of up to {MAX_GROUP_MEMBERS} people</Text>
+          <Text style={styles.muted}>{t("groupInfo.lengthOfUpToMax", { length: group.members.length, MAX_GROUP_MEMBERS })}</Text>
           <View style={styles.card}>
             {group.members.length < MAX_GROUP_MEMBERS ? (
-              <ListRow label="Add people" icon={ICONS.add} onPress={() => navigation.navigate("NewGroup", { conversationId })} />
+              <ListRow label={t("common.addPeople")} icon={ICONS.add} onPress={() => navigation.navigate("NewGroup", { conversationId })} />
             ) : null}
             <View style={styles.switchRow}>
-              <Text style={typography.body}>Mute notifications</Text>
-              <Switch value={!!group.muted} onValueChange={(next) => void toggleMute(next)} accessibilityLabel="Mute notifications" />
+              <Text style={typography.body}>{t("common.muteNotifications")}</Text>
+              <Switch value={!!group.muted} onValueChange={(next) => void toggleMute(next)} accessibilityLabel={t("common.muteNotifications")} />
             </View>
           </View>
           {error ? <Banner text={error} /> : null}
-          <Text style={styles.section}>People</Text>
+          <Text style={styles.section}>{t("groupInfo.people")}</Text>
         </View>
       }
       renderItem={({ item }) => {
@@ -155,11 +156,11 @@ export function GroupInfoScreen({ navigation, route }: Props): React.JSX.Element
             <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} size={40} />
             <View style={styles.memberText}>
               <VerifiedName name={me ? `${item.displayName} (you)` : item.displayName} verified={item.verified} style={typography.bodyStrong} />
-              <Text style={typography.caption} numberOfLines={1}>@{item.username}{item.role === "admin" ? " · Admin" : ""}</Text>
+              <Text style={typography.caption} numberOfLines={1}>@{item.username}{item.role === "admin" ? t("groupInfo.admin") : ""}</Text>
             </View>
             {admin && !me ? (
               <Pressable onPress={() => remove(item)} hitSlop={8} style={styles.remove} accessibilityRole="button" accessibilityLabel={`Remove @${item.username}`}>
-                <Text style={styles.removeText}>Remove</Text>
+                <Text style={styles.removeText}>{t("common.remove")}</Text>
               </Pressable>
             ) : null}
           </View>
@@ -167,7 +168,7 @@ export function GroupInfoScreen({ navigation, route }: Props): React.JSX.Element
       }}
       ListFooterComponent={
         <View style={[styles.card, styles.leave]}>
-          <ListRow label="Leave group" icon={ICONS.close} destructive onPress={leave} />
+          <ListRow label={t("groupInfo.leaveGroup")} icon={ICONS.close} destructive onPress={leave} />
         </View>
       }
     />

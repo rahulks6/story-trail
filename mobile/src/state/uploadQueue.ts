@@ -7,6 +7,7 @@ import {base64ToBytes} from '../utils/base64';
 import {storyPublished} from './storyChanges';
 import {noteStoryPosted} from '../utils/reviewPrompt';
 import {track} from '../analytics/analytics';
+import { t } from "../i18n";
 
 /**
  * The Story outbox. Each Story is copied into app storage, then:
@@ -46,7 +47,7 @@ const progress=new Map<string,number>();
 const removing=new Set<string>();
 /** Uploads being cancelled: the run stops at its next step and leaves nothing behind. */
 const cancelling=new Set<string>();
-class UploadCancelled extends Error{constructor(){super('Upload cancelled.');}}
+class UploadCancelled extends Error{constructor(){super(t("uploadQueue.uploadCancelled"));}}
 function checkCancelled(storageKey:string){if(cancelling.has(storageKey))throw new UploadCancelled();}
 const listeners=new Set<()=>void>();
 let mutations:Promise<unknown>=Promise.resolve();
@@ -70,7 +71,7 @@ export async function listUploads(ownerId:string):Promise<UploadJob[]>{
  return rows.flatMap(raw=>{try{const job=JSON.parse(raw||'null') as UploadJob;if(!job||job.ownerId!==ownerId)return [];validate(ownerId,job.id);return [job];}catch{return [];}}).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
 }
 export function enqueueUpload(ownerId:string,uri:string,kind:UploadJob['kind'],mimeType:string,payload:UploadJob['payload'],effect?:'boomerang'):Promise<UploadJob>{return serial(async()=>{
- const existing=await listUploads(ownerId);if(existing.filter(j=>!isDone(j)).length>=10)throw Error('Finish or remove a pending upload before adding another.');
+ const existing=await listUploads(ownerId);if(existing.filter(j=>!isDone(j)).length>=10)throw Error(t("uploadQueue.finishOrRemoveAPending"));
  // This is an idempotency key, not an authentication secret. It is scoped by authenticated owner server-side.
  const id='story_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2)+'_'+Math.random().toString(36).slice(2);
  const target=file(ownerId,id);
@@ -78,7 +79,7 @@ export function enqueueUpload(ownerId:string,uri:string,kind:UploadJob['kind'],m
  try{
   await RNFS.copyFile(uri.startsWith('file://')?decodeURI(uri.slice(7)):uri,target);
   const stat=await RNFS.stat(target);const size=Number(stat.size);
-  if(size<=0||size>(kind==='photo'?25:200)*1024*1024)throw Error('This media is empty or exceeds the upload limit.');
+  if(size<=0||size>(kind==='photo'?25:200)*1024*1024)throw Error(t("uploadQueue.thisMediaIsEmptyOr"));
   const job:UploadJob={id,ownerId,kind,mimeType,payload:JSON.parse(JSON.stringify(payload)),status:'queued',createdAt:new Date().toISOString(),uploadVersion:2,byteSize:size,...(effect==='boomerang'&&kind==='video'?{effect}:{})};
   await save(job);return job;
  }catch(e){await RNFS.unlink(target).catch(()=>undefined);throw e;}
@@ -91,7 +92,7 @@ async function sendBytes(job:UploadJob,path:string,storageKey:string,token:()=>s
  let session:UploadSessionResponse=await createUploadSession({clientUploadId:job.id,kind:job.kind,mimeType:job.mimeType,byteSize:size,filter:job.payload.filter||'original',...(job.effect?{effect:job.effect}:{})},token());
  job=await persist({...job,mediaId:session.media.id,byteSize:size});
  for(let round=0;session.upload;round++){
-  if(round>=4)throw Error('Upload could not be completed. Try again.');
+  if(round>=4)throw Error(t("uploadQueue.uploadCouldNotBeCompleted"));
   if(job.status!=='uploading')job=await persist({...job,status:'uploading'});
   const plan=session.upload;
   let sent=plan.parts.filter(p=>p.uploaded).reduce((n,p)=>n+p.byteLength,0);
@@ -101,7 +102,7 @@ async function sendBytes(job:UploadJob,path:string,storageKey:string,token:()=>s
    if(part.uploaded||!part.url)continue;
    checkCancelled(storageKey);
    const chunk=base64ToBytes(await RNFS.read(path,part.byteLength,(part.partNumber-1)*plan.partSize,'base64'));
-   if(chunk.byteLength!==part.byteLength)throw Error('The saved media changed. Remove this upload and choose the photo or video again.');
+   if(chunk.byteLength!==part.byteLength)throw Error(t("uploadQueue.theSavedMediaChangedRemove"));
    for(let attempt=1;;attempt++){
     try{await uploadPart(part.url,chunk.buffer as ArrayBuffer,loaded=>setProgress(storageKey,(sent+loaded)/size));break;}
     catch(e){
@@ -142,7 +143,7 @@ async function awaitPublish(job:UploadJob,token:()=>string,persist:(next:UploadJ
   try{({publish}=await getPublishRequest(job.id,token()));}
   catch(e){if(isTransientError(e))continue;throw e;}
   if(publish.state==='published')return persist({...job,status:'published',storyId:publish.storyId??undefined,error:undefined,retryable:undefined});
-  if(publish.state==='failed')return persist({...job,status:'failed',error:publish.error??'This media could not be processed.',retryable:publish.retryable});
+  if(publish.state==='failed')return persist({...job,status:'failed',error:publish.error??t("uploadQueue.thisMediaCouldNotBe"),retryable:publish.retryable});
  }
  return job; // still processing: the server publishes it by itself; the outbox checks again later
 }
@@ -160,13 +161,13 @@ function failureOf(job:UploadJob,e:unknown):{stage:'upload'|'processing'|'publis
 }
 export function runUpload(ownerId:string,id:string,session:()=>{ownerId:string;token:string}|null):Promise<void>{
  const storageKey=key(ownerId,id),running=inFlight.get(storageKey);if(running)return running;
- if(removing.has(storageKey)||cancelling.has(storageKey))return Promise.reject(Error('This upload is being removed.'));
+ if(removing.has(storageKey)||cancelling.has(storageKey))return Promise.reject(Error(t("uploadQueue.thisUploadIsBeingRemoved")));
  const attemptStarted=Date.now();
  const work=Promise.resolve().then(async()=>{
-  const raw=await AsyncStorage.getItem(storageKey);if(!raw)throw Error('Upload not found.');let job=JSON.parse(raw) as UploadJob;
-  if(job.ownerId!==ownerId||job.id!==id)throw Error('Upload owner mismatch.');
+  const raw=await AsyncStorage.getItem(storageKey);if(!raw)throw Error(t("uploadQueue.uploadNotFound"));let job=JSON.parse(raw) as UploadJob;
+  if(job.ownerId!==ownerId||job.id!==id)throw Error(t("uploadQueue.uploadOwnerMismatch"));
   if(isDone(job))return;
-  const token=()=>{const current=session();if(!current||current.ownerId!==ownerId)throw Error('Sign in to resume this upload.');return current.token;};
+  const token=()=>{const current=session();if(!current||current.ownerId!==ownerId)throw Error(t("uploadQueue.signInToResumeThis"));return current.token;};
   const persist=async(next:UploadJob)=>{
    // Keep a Stop that arrived while this was running.
    const current=JSON.parse((await AsyncStorage.getItem(storageKey))??'{}') as Partial<UploadJob>;
@@ -177,7 +178,7 @@ export function runUpload(ownerId:string,id:string,session:()=>{ownerId:string;t
    const wasRetryableFailure=job.status==='failed'&&job.retryable===true&&!!job.mediaId;
    if(job.status!=='processing'){
     if(job.uploadVersion===2||!job.mediaId){
-     if(!await RNFS.exists(file(ownerId,id)))throw Error('Saved media is unavailable. Remove this upload and select the original again.');
+     if(!await RNFS.exists(file(ownerId,id)))throw Error(t("uploadQueue.savedMediaIsUnavailableRemove"));
      job=await persist({...job,status:'preparing',error:undefined});
      job=await sendBytes(job,file(ownerId,id),storageKey,token,persist);
     }
@@ -228,7 +229,7 @@ export function runUpload(ownerId:string,id:string,session:()=>{ownerId:string;t
     // The server already has it and posts it by itself: a dropped connection doesn't fail it.
     await persist({...job,error:undefined});
    }else{
-    await persist({...job,status:'failed',error:e instanceof Error?e.message:'Upload failed. Try again.',retryable:job.retryable,
+    await persist({...job,status:'failed',error:e instanceof Error?e.message:t("uploadQueue.uploadFailedTryAgain"),retryable:job.retryable,
      networkFailure:transient||undefined,failedAt:Date.now(),autoRetries:transient?(job.autoRetries??0)+(job.networkFailure?1:0):undefined});
    }
    throw e;
@@ -286,7 +287,7 @@ export function uploadPreviewUri(job:UploadJob):string|null{return job.kind==='p
 /** A failure Retry can't fix: the file itself was rejected by processing. */
 export function needsNewFile(job:UploadJob){return job.status==='failed'&&job.retryable===false;}
 export function removeUpload(ownerId:string,id:string):Promise<void>{return serial(async()=>{
- if(uploadRunning(ownerId,id))throw Error('Wait for this upload to finish before removing it.');
+ if(uploadRunning(ownerId,id))throw Error(t("uploadQueue.waitForThisUploadTo"));
  const storageKey=key(ownerId,id);removing.add(storageKey);
  try{if(await RNFS.exists(file(ownerId,id)))await RNFS.unlink(file(ownerId,id));await AsyncStorage.removeItem(storageKey);progress.delete(storageKey);notify();}finally{removing.delete(storageKey);}
 });}

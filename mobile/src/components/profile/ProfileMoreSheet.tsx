@@ -1,5 +1,6 @@
 import React from "react";
 import { ActionSheet } from "../ActionSheet";
+import { t } from "../../i18n";
 
 interface Props {
   visible: boolean;
@@ -25,13 +26,13 @@ export function ProfileMoreSheet({ visible, username, isMuted, onClose, onShare,
       onClose={onClose}
       groups={[
         [
-          { label: "Share profile", onPress: onShare },
-          { label: "Copy profile link", onPress: onCopyLink },
-          { label: isMuted ? "Unmute" : "Mute", onPress: onToggleMute },
+          { label: t("common.shareProfile"), onPress: onShare },
+          { label: t("profileMoreSheet.copyProfileLink"), onPress: onCopyLink },
+          { label: isMuted ? t("common.unmute") : t("profileMoreSheet.mute"), onPress: onToggleMute },
         ],
         [
-          { label: "Block", onPress: onBlock, destructive: true },
-          { label: "Report", onPress: onReport, destructive: true },
+          { label: t("common.block"), onPress: onBlock, destructive: true },
+          { label: t("common.report"), onPress: onReport, destructive: true },
         ],
       ]}
     />

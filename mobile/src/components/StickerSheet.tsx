@@ -25,12 +25,13 @@ import {
   isInteractive,
 } from "../models/storyDraft";
 import { InteractiveStickerForm } from "./InteractiveStickerForm";
+import { t } from "../i18n";
 
 /** Location was turned off for Katkee for good: only Settings can turn it back on. */
 function offerLocationSettings(): void {
-  Alert.alert("Location is off for Katkee", "To add where you are, allow location in Settings. You can also type a place instead.", [
-    { text: "Not now", style: "cancel" },
-    { text: "Open Settings", onPress: () => void Linking.openSettings().catch(() => undefined) },
+  Alert.alert(t("stickerSheet.locationIsOffForKatkee"), t("stickerSheet.toAddWhereYouAre"), [
+    { text: t("common.notNow"), style: "cancel" },
+    { text: t("common.openSettings"), onPress: () => void Linking.openSettings().catch(() => undefined) },
   ]);
 }
 
@@ -38,23 +39,23 @@ export type StickerTab = "interactive" | "emoji" | "mention" | "location" | "dat
 
 const TABS: { key: StickerTab; label: string }[] = [
   // Polls, quizzes, questions, countdowns, links and Add Yours (InteractiveStickerForm).
-  { key: "interactive", label: "Interactive" },
-  { key: "emoji", label: "Emoji" },
-  { key: "mention", label: "Mention" },
-  { key: "location", label: "Location" },
-  { key: "datetime", label: "Date/Time" },
-  { key: "stickers", label: "Stickers" },
+  { key: "interactive", get label() { return t("stickerSheet.interactive"); } },
+  { key: "emoji", get label() { return t("stickerSheet.emoji"); } },
+  { key: "mention", get label() { return t("stickerSheet.mention"); } },
+  { key: "location", get label() { return t("stickerSheet.location2"); } },
+  { key: "datetime", get label() { return t("stickerSheet.dateTime2"); } },
+  { key: "stickers", get label() { return t("stickerSheet.stickers"); } },
 ];
 
 const STICKER_NAMES: Record<string, string> = {
-  spark: "Spark",
-  "heart-line": "Heart outline",
-  "star-outline": "Star outline",
-  wave: "Wave",
-  flame: "Flame",
-  confetti: "Confetti",
-  ring: "Ring",
-  bolt: "Bolt",
+  get spark() { return t("stickerSheet.spark"); },
+  get "heart-line"() { return t("stickerSheet.heartOutline"); },
+  get "star-outline"() { return t("stickerSheet.starOutline"); },
+  get wave() { return t("stickerSheet.wave"); },
+  get flame() { return t("stickerSheet.flame"); },
+  get confetti() { return t("stickerSheet.confetti"); },
+  get ring() { return t("stickerSheet.ring"); },
+  get bolt() { return t("stickerSheet.bolt"); },
 };
 
 const EMOJI_SET = ["😀", "😂", "🤣", "😊", "😍", "🥰", "😘", "😎", "🤩", "🥳", "😇", "🙂", "😉", "😋", "😜", "🤪", "🤗", "🤔", "😏", "😴", "😮", "😱", "😢", "😭", "😅", "😬", "🙄", "😤", "😡", "🤯", "🥺", "😈", "👀", "👍", "👎", "👏", "🙌", "🙏", "💪", "🤝", "✌️", "🤞", "👋", "💯", "🔥", "✨", "⭐", "🌟", "🎉", "🎂", "🎁", "❤️", "🧡", "💛", "💚", "💙", "💜", "🖤", "💔", "💕", "☀️", "🌙", "🌈", "🌸", "🌹", "🍕", "☕", "🍫", "⚽", "🏏", "🎵", "📸", "✈️", "🏖️", "🚗", "🏠", "💼", "📚", "🎓", "💡"];
@@ -195,7 +196,7 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
         if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
           // "Don't ask again": Android won't ask any more, so the only way back is Settings.
           if (granted === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) offerLocationSettings();
-          setLocationError("Location permission denied.");
+          setLocationError(t("stickerSheet.locationPermissionDenied"));
           setLocatingDevice(false);
           return;
         }
@@ -204,23 +205,23 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
         (position) => {
           const lat = position.coords.latitude.toFixed(2);
           const lng = position.coords.longitude.toFixed(2);
-          setLocationLabel(`Near ${lat}, ${lng}`);
+          setLocationLabel(t("stickerSheet.nearLatLng", { lat, lng }));
           setLocatingDevice(false);
         },
         (error) => {
           // PERMISSION_DENIED (1): on iOS the system never asks twice; Settings is the way back.
           if (error?.code === 1) {
             offerLocationSettings();
-            setLocationError("Location permission denied.");
+            setLocationError(t("stickerSheet.locationPermissionDenied"));
           } else {
-            setLocationError("Couldn't get your location.");
+            setLocationError(t("stickerSheet.couldntGetYourLocation"));
           }
           setLocatingDevice(false);
         },
         { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 },
       );
     } catch {
-      setLocationError("Location isn't available on this device.");
+      setLocationError(t("stickerSheet.locationIsntAvailableOnThis"));
       setLocatingDevice(false);
     }
   };
@@ -262,14 +263,14 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={close}>
-      <Pressable pressEffect="none" style={styles.backdrop} onPress={close} accessibilityRole="button" accessibilityLabel="Close" />
+      <Pressable pressEffect="none" style={styles.backdrop} onPress={close} accessibilityRole="button" accessibilityLabel={t("common.close")} />
       {/* Mention search's TextInput/FlatList sit inside this sheet — without
           keyboard avoidance, an opening keyboard would cover the results
           list the same way it used to cover TextToolModal's controls. */}
       <KeyboardAvoider style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]} behavior="padding">
         <View style={styles.handle} />
         {editingOverlay ? (
-          <Text style={styles.editingHeader}>Editing {editingOverlay.type === "location" ? "location" : editingOverlay.type === "datetime" ? "date/time" : "sticker"}</Text>
+          <Text style={styles.editingHeader}>{t("stickerSheet.editing")}{" "}{editingOverlay.type === "location" ? t("stickerSheet.location") : editingOverlay.type === "datetime" ? t("stickerSheet.dateTime") : t("stickerSheet.sticker")}</Text>
         ) : (
           <View style={styles.tabRow}>
             {TABS.map((option) => (
@@ -335,7 +336,7 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
             <View>
               <TextInput
                 style={styles.input}
-                placeholder="Search people…"
+                placeholder={t("stickerSheet.searchPeople")}
                 placeholderTextColor={colors.textDisabled}
                 value={mentionQuery}
                 onChangeText={setMentionQuery}
@@ -358,7 +359,7 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
                 )}
                 ListEmptyComponent={
                   debouncedMentionQuery.trim().length >= 2 && !mentionSearching ? (
-                    <Text style={styles.emptyText}>No one found.</Text>
+                    <Text style={styles.emptyText}>{t("stickerSheet.noOneFound")}</Text>
                   ) : undefined
                 }
               />
@@ -369,17 +370,17 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
             <View>
               <TextInput
                 style={styles.input}
-                placeholder="Add a location…"
+                placeholder={t("stickerSheet.addALocation")}
                 placeholderTextColor={colors.textDisabled}
                 value={locationLabel}
                 onChangeText={setLocationLabel}
               />
               <Pressable accessibilityRole="button" style={styles.secondaryButton} onPress={useCurrentLocation} disabled={locatingDevice}>
-                {locatingDevice ? <ActivityIndicator color={colors.accentText} /> : <Text style={styles.secondaryButtonLabel}>Use current location</Text>}
+                {locatingDevice ? <ActivityIndicator color={colors.accentText} /> : <Text style={styles.secondaryButtonLabel}>{t("stickerSheet.useCurrentLocation")}</Text>}
               </Pressable>
               {locationError ? <Text style={styles.errorText}>{locationError}</Text> : null}
               <Pressable accessibilityRole="button" style={[styles.primaryButton, !locationLabel.trim() && styles.primaryButtonDisabled]} disabled={!locationLabel.trim()} onPress={addLocation}>
-                <Text style={styles.primaryButtonLabel}>{editingOverlay ? "Save" : "Add"}</Text>
+                <Text style={styles.primaryButtonLabel}>{editingOverlay ? t("common.save") : t("common.add")}</Text>
               </Pressable>
             </View>
           ) : null}
@@ -393,41 +394,41 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
               </Text>
 
               <View style={styles.stepperRow}>
-                <Text style={styles.stepperLabel}>Day</Text>
-                <Pressable style={styles.stepperButton} onPress={() => adjustPicker("day", -1)} accessibilityRole="button" accessibilityLabel="Previous day">
+                <Text style={styles.stepperLabel}>{t("common.day")}</Text>
+                <Pressable style={styles.stepperButton} onPress={() => adjustPicker("day", -1)} accessibilityRole="button" accessibilityLabel={t("stickerSheet.previousDay")}>
                   <Icon style={styles.stepperIcon} name="minus"/>
                 </Pressable>
-                <Pressable style={styles.stepperButton} onPress={() => adjustPicker("day", 1)} accessibilityRole="button" accessibilityLabel="Next day">
+                <Pressable style={styles.stepperButton} onPress={() => adjustPicker("day", 1)} accessibilityRole="button" accessibilityLabel={t("stickerSheet.nextDay")}>
                   <Icon style={styles.stepperIcon} name="add"/>
                 </Pressable>
               </View>
               <View style={styles.stepperRow}>
-                <Text style={styles.stepperLabel}>Hour</Text>
-                <Pressable style={styles.stepperButton} onPress={() => adjustPicker("hour", -1)} accessibilityRole="button" accessibilityLabel="Decrease hour">
+                <Text style={styles.stepperLabel}>{t("common.hour")}</Text>
+                <Pressable style={styles.stepperButton} onPress={() => adjustPicker("hour", -1)} accessibilityRole="button" accessibilityLabel={t("stickerSheet.decreaseHour")}>
                   <Icon style={styles.stepperIcon} name="minus"/>
                 </Pressable>
-                <Pressable style={styles.stepperButton} onPress={() => adjustPicker("hour", 1)} accessibilityRole="button" accessibilityLabel="Increase hour">
+                <Pressable style={styles.stepperButton} onPress={() => adjustPicker("hour", 1)} accessibilityRole="button" accessibilityLabel={t("stickerSheet.increaseHour")}>
                   <Icon style={styles.stepperIcon} name="add"/>
                 </Pressable>
               </View>
               <View style={styles.stepperRow}>
-                <Text style={styles.stepperLabel}>Minute</Text>
-                <Pressable style={styles.stepperButton} onPress={() => adjustPicker("minute", -1)} accessibilityRole="button" accessibilityLabel="Decrease minute by 5">
+                <Text style={styles.stepperLabel}>{t("common.minute")}</Text>
+                <Pressable style={styles.stepperButton} onPress={() => adjustPicker("minute", -1)} accessibilityRole="button" accessibilityLabel={t("stickerSheet.decreaseMinuteBy5")}>
                   <Icon style={styles.stepperIcon} name="minus"/>
                 </Pressable>
-                <Pressable style={styles.stepperButton} onPress={() => adjustPicker("minute", 1)} accessibilityRole="button" accessibilityLabel="Increase minute by 5">
+                <Pressable style={styles.stepperButton} onPress={() => adjustPicker("minute", 1)} accessibilityRole="button" accessibilityLabel={t("stickerSheet.increaseMinuteBy5")}>
                   <Icon style={styles.stepperIcon} name="add"/>
                 </Pressable>
               </View>
 
               {!editingOverlay || (editingOverlay.type === "datetime" && editingOverlay.properties.mode === "date") ? (
                 <Pressable accessibilityRole="button" style={styles.primaryButton} onPress={() => addDateTime("date")}>
-                  <Text style={styles.primaryButtonLabel}>{editingOverlay ? "Save date" : "Add as date sticker"}</Text>
+                  <Text style={styles.primaryButtonLabel}>{editingOverlay ? t("stickerSheet.saveDate") : t("stickerSheet.addAsDateSticker")}</Text>
                 </Pressable>
               ) : null}
               {!editingOverlay || (editingOverlay.type === "datetime" && editingOverlay.properties.mode === "time") ? (
                 <Pressable accessibilityRole="button" style={styles.primaryButton} onPress={() => addDateTime("time")}>
-                  <Text style={styles.primaryButtonLabel}>{editingOverlay ? "Save time" : "Add as time sticker"}</Text>
+                  <Text style={styles.primaryButtonLabel}>{editingOverlay ? t("stickerSheet.saveTime") : t("stickerSheet.addAsTimeSticker")}</Text>
                 </Pressable>
               ) : null}
             </View>

@@ -13,6 +13,7 @@ import { appearanceChoice, setAppearance, type AppearanceChoice } from "../../th
 import { nearbyChoice, turnNearbyOff, turnNearbyOn } from "../../state/nearby";
 import { professionalCategoryLabel } from "../../api/professional";
 import { shareInvite } from "../../state/invites";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Settings">;
 
@@ -37,7 +38,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
     if (next === appearanceChoice()) return;
     // Android reloads the app in the new colours; iPhone applies them when Katkee is opened again.
     const restarted = await setAppearance(next);
-    if (!restarted) Alert.alert("Appearance saved", "Close Katkee and open it again to see the new colours.");
+    if (!restarted) Alert.alert(t("settings.appearanceSaved"), t("settings.closeKatkeeAndOpenIt"));
   };
   const [togglingPrivacy, setTogglingPrivacy] = useState(false);
   // A professional account stays public (the server refuses otherwise): switching back comes first.
@@ -85,7 +86,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
       applyProfile(saved);
     } catch {
       setIsPrivate(!next); // the PATCH failed — revert to what the server actually has
-      Alert.alert("Couldn't update", "Try again.");
+      Alert.alert(t("common.couldntUpdate"), t("common.tryAgain2"));
     } finally {
       setTogglingPrivacy(false);
     }
@@ -101,7 +102,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
       applyProfile(saved);
     } catch {
       setFindable(!next);
-      Alert.alert("Couldn't update", "Try again.");
+      Alert.alert(t("common.couldntUpdate"), t("common.tryAgain2"));
     } finally {
       setTogglingFindable(false);
     }
@@ -117,7 +118,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
       applyProfile(saved);
     } catch {
       setOnWeb(!next);
-      Alert.alert("Couldn't update", "Try again.");
+      Alert.alert(t("common.couldntUpdate"), t("common.tryAgain2"));
     } finally {
       setTogglingWeb(false);
     }
@@ -138,16 +139,16 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
       if (result === "on") return;
       setNearbyOn(false);
       if (result === "denied") {
-        Alert.alert("Allow location for Nearby Stories", "Katkee needs your approximate location for this. You can allow it in your phone's Settings.", [
-          { text: "Not now", style: "cancel" },
-          { text: "Open Settings", onPress: () => void Linking.openSettings().catch(() => undefined) },
+        Alert.alert(t("settings.allowLocationForNearbyStories"), t("settings.katkeeNeedsYourApproximateLocation"), [
+          { text: t("common.notNow"), style: "cancel" },
+          { text: t("common.openSettings"), onPress: () => void Linking.openSettings().catch(() => undefined) },
         ]);
       } else {
-        Alert.alert("Couldn't find your area", "Check that location services are on, then try again.");
+        Alert.alert(t("settings.couldntFindYourArea"), t("settings.checkThatLocationServicesAre"));
       }
     } catch {
       setNearbyOn(!next);
-      Alert.alert("Couldn't update", "Try again.");
+      Alert.alert(t("common.couldntUpdate"), t("common.tryAgain2"));
     } finally {
       setTogglingNearby(false);
     }
@@ -157,11 +158,11 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
     if (!draftCount) return;
     Alert.alert(
       `Clear ${draftCount} saved ${draftCount === 1 ? "draft" : "drafts"}?`,
-      "Any Story you were mid-editing when the app closed will no longer be offered for restore.",
+      t("settings.anyStoryYouWereMid"),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: "Clear",
+          text: t("settings.clear"),
           style: "destructive",
           onPress: async () => {
             if (user) await clearAllPendingDrafts(user.id);
@@ -173,30 +174,30 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
   };
 
   const onLogOut = () => {
-    Alert.alert("Log out?", undefined, [
-      { text: "Cancel", style: "cancel" },
-      { text: "Log out", style: "destructive", onPress: () => void logout() },
+    Alert.alert(t("settings.logOut"), undefined, [
+      { text: t("common.cancel"), style: "cancel" },
+      { text: t("common.logOut"), style: "destructive", onPress: () => void logout() },
     ]);
   };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={[styles.sectionHeader, styles.firstHeader]}>Account</Text>
+      <Text style={[styles.sectionHeader, styles.firstHeader]}>{t("settings.account")}</Text>
       <View style={styles.card}>
-        <ListRow label="Account and sign-in" icon={ICONS.profile} onPress={() => navigation.navigate("AccountSecurity")} />
+        <ListRow label={t("settings.accountAndSignIn")} icon={ICONS.profile} onPress={() => navigation.navigate("AccountSecurity")} />
         <ListRow
           label={professional ? "Professional account" : "Switch to professional account"}
           icon={ICONS.insights}
           detail={professional ? professionalCategoryLabel(user?.professionalCategory) ?? undefined : undefined}
           onPress={() => navigation.navigate("ProfessionalAccount")}
         />
-        <ListRow label="Request verification" icon={ICONS.verified} onPress={() => navigation.navigate("Verification")} />
-        <ListRow label="Notifications" icon={ICONS.notifications} onPress={() => navigation.navigate("NotificationSettings")} />
-        <ListRow label="Appearance" icon={ICONS.settings} detail={APPEARANCE_LABELS[appearanceChoice()]} onPress={() => setAppearanceOpen(true)} />
+        <ListRow label={t("common.requestVerification")} icon={ICONS.verified} onPress={() => navigation.navigate("Verification")} />
+        <ListRow label={t("common.notifications")} icon={ICONS.notifications} onPress={() => navigation.navigate("NotificationSettings")} />
+        <ListRow label={t("settings.appearance")} icon={ICONS.settings} detail={APPEARANCE_LABELS[appearanceChoice()]} onPress={() => setAppearanceOpen(true)} />
       </View>
       <ActionSheet
         visible={appearanceOpen}
-        title="Appearance"
+        title={t("settings.appearance")}
         groups={[(["system", "light", "dark"] as AppearanceChoice[]).map((c) => ({
           label: APPEARANCE_LABELS[c],
           selected: c === appearanceChoice(),
@@ -205,79 +206,79 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
         onClose={() => setAppearanceOpen(false)}
       />
 
-      <Text style={styles.sectionHeader}>Privacy</Text>
+      <Text style={styles.sectionHeader}>{t("settings.privacy")}</Text>
       <View style={styles.card}>
         <View style={styles.switchRow}>
           <View style={styles.switchLabelGroup}>
-            <Text style={typography.body}>Private account</Text>
+            <Text style={typography.body}>{t("common.privateAccount")}</Text>
             <Text style={styles.switchHint}>
-              {professional ? "Professional accounts are public. Switch to a personal account to make yours private." : "Only followers you approve see your Stories."}
+              {professional ? t("settings.professionalAccountsArePublicSwitch") : t("settings.onlyFollowersYouApproveSee")}
             </Text>
           </View>
           {togglingPrivacy ? <ActivityIndicator color={colors.accentText} /> : (
-            <Switch value={isPrivate} onValueChange={onTogglePrivacy} disabled={professional && !isPrivate} accessibilityLabel="Private account" accessibilityHint={professional ? "Unavailable for a professional account" : undefined} />
+            <Switch value={isPrivate} onValueChange={onTogglePrivacy} disabled={professional && !isPrivate} accessibilityLabel={t("common.privateAccount")} accessibilityHint={professional ? "Unavailable for a professional account" : undefined} />
           )}
         </View>
         <View style={styles.switchRow}>
           <View style={styles.switchLabelGroup}>
-            <Text style={typography.body}>Nearby Stories</Text>
-            <Text style={styles.switchHint}>Uses your city-sized area, never your exact location.</Text>
+            <Text style={typography.body}>{t("settings.nearbyStories")}</Text>
+            <Text style={styles.switchHint}>{t("settings.usesYourCitySizedArea")}</Text>
           </View>
           {togglingNearby || nearbyOn === null ? (
             <ActivityIndicator color={colors.accentText} />
           ) : (
-            <Switch value={nearbyOn} onValueChange={(next) => void onToggleNearby(next)} accessibilityLabel="Nearby Stories" />
+            <Switch value={nearbyOn} onValueChange={(next) => void onToggleNearby(next)} accessibilityLabel={t("settings.nearbyStories")} />
           )}
         </View>
         <View style={styles.switchRow}>
           <View style={styles.switchLabelGroup}>
-            <Text style={typography.body}>Let people find me from their contacts</Text>
-            <Text style={styles.switchHint}>People who have your verified email or phone number can see your account in Contacts on Katkee.</Text>
+            <Text style={typography.body}>{t("settings.letPeopleFindMeFrom")}</Text>
+            <Text style={styles.switchHint}>{t("settings.peopleWhoHaveYourVerified")}</Text>
           </View>
           {togglingFindable ? (
             <ActivityIndicator color={colors.accentText} />
           ) : (
-            <Switch value={findable} onValueChange={(next) => void onToggleFindable(next)} accessibilityLabel="Let people find me from their contacts" />
+            <Switch value={findable} onValueChange={(next) => void onToggleFindable(next)} accessibilityLabel={t("settings.letPeopleFindMeFrom")} />
           )}
         </View>
         <View style={styles.switchRow}>
           <View style={styles.switchLabelGroup}>
-            <Text style={typography.body}>Show my profile on the web</Text>
+            <Text style={typography.body}>{t("settings.showMyProfileOnThe")}</Text>
             <Text style={styles.switchHint}>
               {isPrivate
-                ? "Private accounts never show on the web."
-                : "Anyone with your link can see your profile, Highlights and public Stories at katkee.com, and search engines may list it."}
+                ? t("settings.privateAccountsNeverShowOn")
+                : t("settings.anyoneWithYourLinkCan")}
             </Text>
           </View>
           {togglingWeb ? (
             <ActivityIndicator color={colors.accentText} />
           ) : (
-            <Switch value={onWeb && !isPrivate} onValueChange={(next) => void onToggleWeb(next)} disabled={isPrivate} accessibilityLabel="Show my profile on the web" accessibilityHint={isPrivate ? "Unavailable for a private account" : undefined} />
+            <Switch value={onWeb && !isPrivate} onValueChange={(next) => void onToggleWeb(next)} disabled={isPrivate} accessibilityLabel={t("settings.showMyProfileOnThe")} accessibilityHint={isPrivate ? "Unavailable for a private account" : undefined} />
           )}
         </View>
         <ListRow
-          label="Follow requests"
+          label={t("common.followRequests")}
           icon={ICONS.following}
           detail={pendingRequestCount ? (pendingRequestCount >= REQUEST_COUNT_CAP ? `${REQUEST_COUNT_CAP}+` : String(pendingRequestCount)) : undefined}
           onPress={() => navigation.navigate("FollowRequests")}
         />
-        <ListRow label="Close Friends" icon={ICONS.starFilled} onPress={() => navigation.navigate("CloseFriends")} />
-        <ListRow label="Blocked accounts" icon={ICONS.privacy} onPress={() => navigation.navigate("BlockedAccounts")} />
-        <ListRow label="Muted accounts" icon={ICONS.audioMuted} onPress={() => navigation.navigate("MutedAccounts")} />
+        <ListRow label={t("common.closeFriends")} icon={ICONS.starFilled} onPress={() => navigation.navigate("CloseFriends")} />
+        <ListRow label={t("common.blockedAccounts")} icon={ICONS.privacy} onPress={() => navigation.navigate("BlockedAccounts")} />
+        <ListRow label={t("common.mutedAccounts")} icon={ICONS.audioMuted} onPress={() => navigation.navigate("MutedAccounts")} />
       </View>
 
-      <Text style={styles.sectionHeader}>Friends</Text>
+      <Text style={styles.sectionHeader}>{t("settings.friends")}</Text>
       <View style={styles.card}>
-        <ListRow label="Contacts on Katkee" icon={ICONS.following} onPress={() => navigation.navigate("ContactsOnKatkee", { from: "settings" })} />
-        <ListRow label="Invite friends" icon={ICONS.share} onPress={() => void shareInvite("settings", accessToken, user?.id)} />
+        <ListRow label={t("common.contactsOnKatkee")} icon={ICONS.following} onPress={() => navigation.navigate("ContactsOnKatkee", { from: "settings" })} />
+        <ListRow label={t("common.inviteFriends")} icon={ICONS.share} onPress={() => void shareInvite("settings", accessToken, user?.id)} />
       </View>
 
-      <Text style={styles.sectionHeader}>Stories</Text>
+      <Text style={styles.sectionHeader}>{t("common.stories")}</Text>
       <View style={styles.card}>
-        <ListRow label="Uploads" icon={ICONS.create} onPress={() => navigation.navigate("UploadQueue")} />
-        <ListRow label="Your interests" icon={ICONS.like} onPress={() => navigation.navigate("YourInterests")} />
+        <ListRow label={t("settings.uploads")} icon={ICONS.create} onPress={() => navigation.navigate("UploadQueue")} />
+        <ListRow label={t("common.yourInterests")} icon={ICONS.like} onPress={() => navigation.navigate("YourInterests")} />
         <ListRow
-          label="Clear saved drafts"
+          label={t("settings.clearSavedDrafts")}
           icon={ICONS.trash}
           detail={draftCount === null ? "…" : String(draftCount)}
           onPress={onClearData}
@@ -285,18 +286,18 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
         />
       </View>
 
-      <Text style={styles.sectionHeader}>Support</Text>
+      <Text style={styles.sectionHeader}>{t("settings.support")}</Text>
       <View style={styles.card}>
-        <ListRow label="Help" icon={ICONS.help} onPress={() => navigation.navigate("Help")} />
-        <ListRow label="Send feedback" icon={ICONS.dm} onPress={() => navigation.navigate("Feedback")} />
-        <ListRow label="Account status" icon={ICONS.about} onPress={() => navigation.navigate("Appeals")} />
-        <ListRow label="About" icon={ICONS.about} onPress={() => navigation.navigate("About")} />
+        <ListRow label={t("common.help")} icon={ICONS.help} onPress={() => navigation.navigate("Help")} />
+        <ListRow label={t("common.sendFeedback")} icon={ICONS.dm} onPress={() => navigation.navigate("Feedback")} />
+        <ListRow label={t("settings.accountStatus")} icon={ICONS.about} onPress={() => navigation.navigate("Appeals")} />
+        <ListRow label={t("common.about")} icon={ICONS.about} onPress={() => navigation.navigate("About")} />
       </View>
 
       <View style={[styles.card, styles.lastCard]}>
-        <ListRow label="Log out" icon={ICONS.logout} destructive onPress={onLogOut} />
+        <ListRow label={t("common.logOut")} icon={ICONS.logout} destructive onPress={onLogOut} />
         {/* One path for every account: it verifies with a password or Google/phone, so accounts without a password can delete too. */}
-        <ListRow label="Delete account" icon={ICONS.trash} destructive onPress={() => navigation.navigate("AccountSecurity")} />
+        <ListRow label={t("common.deleteAccount")} icon={ICONS.trash} destructive onPress={() => navigation.navigate("AccountSecurity")} />
       </View>
 
     </ScrollView>
@@ -327,4 +328,4 @@ const styles = StyleSheet.create({
   switchHint: { ...typography.caption, color: colors.textSecondary },
 });
 
-const APPEARANCE_LABELS: Record<AppearanceChoice, string> = { system: "Automatic", light: "Light", dark: "Dark" };
+const APPEARANCE_LABELS: Record<AppearanceChoice, string> = { get system() { return t("settings.automatic"); }, get light() { return t("settings.light"); }, get dark() { return t("settings.dark"); } };

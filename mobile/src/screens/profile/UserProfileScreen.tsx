@@ -21,6 +21,7 @@ import { ProfileHeader, ProfileSkeleton } from "../../components/profile/Profile
 import { ProfileMoreSheet } from "../../components/profile/ProfileMoreSheet";
 import { profileButton } from "../../components/profile/profileButton";
 import { profileShareLink } from "../../navigation/profileLinks";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<SearchStackParamList, "UserProfile">;
 
@@ -93,10 +94,10 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
       const gone = err instanceof ApiError && err.status === 404;
       if (quiet && profileRef.current && !gone) {
         // A background refresh (after Follow, Mute, pull-to-refresh) keeps what's on screen.
-        setNotice("Couldn't refresh this profile. Pull down to try again.");
+        setNotice(t("userProfile.couldntRefreshThisProfilePull"));
       } else {
         setProfile(null);
-        setError(gone ? "This account isn't available." : "Couldn't load this profile.");
+        setError(gone ? t("userProfile.thisAccountIsntAvailable") : t("userProfile.couldntLoadThisProfile"));
       }
     } finally {
       setLoading(false);
@@ -136,7 +137,7 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
     try {
       await change();
     } catch {
-      setNotice("That didn't go through. Try again.");
+      setNotice(t("userProfile.thatDidntGoThroughTry"));
       return;
     } finally {
       actionInFlight.current = false;
@@ -161,7 +162,7 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
         },
       });
     } catch {
-      setNotice("Couldn't open that conversation. Try again.");
+      setNotice(t("userProfile.couldntOpenThatConversationTry"));
     } finally {
       setMessagePending(false);
     }
@@ -178,10 +179,10 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
   if (error || !profile) {
     return (
       <View style={[styles.screen, styles.centered]}>
-        <Text style={[typography.body, styles.errorText]}>{error ?? "Couldn't load this profile."}</Text>
+        <Text style={[typography.body, styles.errorText]}>{error ?? t("userProfile.couldntLoadThisProfile")}</Text>
         {error !== "This account isn't available." ? (
-          <Pressable style={styles.retry} onPress={() => void load()} accessibilityRole="button" accessibilityLabel="Try again">
-            <Text style={typography.bodyStrong}>Try again</Text>
+          <Pressable style={styles.retry} onPress={() => void load()} accessibilityRole="button" accessibilityLabel={t("common.tryAgain")}>
+            <Text style={typography.bodyStrong}>{t("common.tryAgain")}</Text>
           </Pressable>
         ) : null}
       </View>
@@ -190,7 +191,7 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
 
   const following = profile.viewer.isFollowing;
   const requested = profile.viewer.hasPendingRequestFromViewer;
-  const followLabel = following ? "Following" : requested ? "Requested" : profile.viewer.isFollowedBy ? "Follow back" : "Follow";
+  const followLabel = following ? t("common.following") : requested ? t("common.requested") : profile.viewer.isFollowedBy ? t("common.followBack") : t("common.follow");
   // A private account you don't follow shows who it is, not what it shares.
   const locked = profile.isPrivate && !profile.isSelf && !following;
   const link = profileShareLink(profile.username, profile.id);
@@ -202,18 +203,18 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
       return;
     }
     Alert.alert(
-      following ? `Unfollow @${username}?` : "Cancel your follow request?",
-      following && profile.isPrivate ? "You'll need to ask again to see their Stories." : undefined,
+      following ? t("userProfile.unfollowUsername", { username }) : t("userProfile.cancelYourFollowRequest"),
+      following && profile.isPrivate ? t("userProfile.youllNeedToAskAgain") : undefined,
       [
-        { text: "Cancel", style: "cancel" },
-        { text: following ? "Unfollow" : "Cancel request", style: "destructive", onPress: () => void runFollowChange(() => unfollowUser(username, accessToken)) },
+        { text: t("common.cancel"), style: "cancel" },
+        { text: following ? t("userProfile.unfollow") : t("userProfile.cancelRequest"), style: "destructive", onPress: () => void runFollowChange(() => unfollowUser(username, accessToken)) },
       ],
     );
   };
 
   const onShare = async () => {
     try {
-      await Share.share({ message: `@${profile.username} on Katkee: ${link}` });
+      await Share.share({ message: t("userProfile.usernameOnKatkeeLink", { username: profile.username, link }) });
     } catch {
       // Closing the share sheet isn't an error.
     }
@@ -227,14 +228,14 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
       if (muting) await muteUser(username, accessToken);
       else await unmuteUser(username, accessToken);
     } catch {
-      Alert.alert("Couldn't update", "Try again.");
+      Alert.alert(t("common.couldntUpdate"), t("common.tryAgain2"));
       return;
     } finally {
       actionInFlight.current = false;
     }
     // Show the new state straight away; the refresh below confirms it.
     setProfile((current) => (current ? { ...current, viewer: { ...current.viewer, isMutedByViewer: muting } } : current));
-    showToast(muting ? `Muted @${username}. They won't know.` : `Unmuted @${username}`);
+    showToast(muting ? t("userProfile.mutedUsernameTheyWontKnow", { username }) : t("userProfile.unmutedUsername", { username }));
     await load(true);
   };
 
@@ -250,7 +251,7 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
     } catch (err) {
       // Answered on another device, or withdrawn: the refresh below shows how things stand.
       if (!(err instanceof ApiError && (err.status === 409 || err.status === 404))) {
-        setNotice("That didn't go through. Try again.");
+        setNotice(t("userProfile.thatDidntGoThroughTry"));
         return;
       }
     } finally {
@@ -263,12 +264,12 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
   const onBlock = () => {
     if (!accessToken) return;
     Alert.alert(
-      `Block @${username}?`,
-      "They won't be able to find your profile, see your Stories or message you. Katkee won't tell them.",
+      t("userProfile.blockUsername", { username }),
+      t("userProfile.theyWontBeAbleTo"),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: "Block",
+          text: t("common.block"),
           style: "destructive",
           onPress: async () => {
             try {
@@ -277,7 +278,7 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
               if (navigation.canGoBack()) navigation.goBack();
               else navigation.navigate("SearchHome");
             } catch {
-              Alert.alert("Couldn't block", "Try again.");
+              Alert.alert(t("common.couldntBlock"), t("common.tryAgain2"));
             }
           },
         },
@@ -325,8 +326,8 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
         <View style={styles.actions}>
           {profile.isSelf ? (
             <>
-              {profileButton({ label: "Edit profile", onPress: () => rootNavigation.navigate("EditProfile") })}
-              {profileButton({ label: "Share profile", onPress: () => void onShare() })}
+              {profileButton({ label: t("common.editProfile"), onPress: () => rootNavigation.navigate("EditProfile") })}
+              {profileButton({ label: t("common.shareProfile"), onPress: () => void onShare() })}
             </>
           ) : (
             <>
@@ -336,16 +337,16 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
                 busy: actionPending,
                 onPress: onFollowPress,
               })}
-              {profileButton({ label: "Message", busy: messagePending, onPress: () => void onMessagePress() })}
+              {profileButton({ label: t("common.message"), busy: messagePending, onPress: () => void onMessagePress() })}
             </>
           )}
         </View>
         {!profile.isSelf && profile.viewer.hasPendingRequestFromTarget ? (
           <View style={styles.request}>
-            <Text style={styles.requestText}>@{profile.username} wants to follow you</Text>
+            <Text style={styles.requestText}>{t("userProfile.usernameWantsToFollowYou", { username: profile.username })}</Text>
             <View style={styles.actions}>
-              {profileButton({ label: "Confirm", variant: "primary", busy: requestPending, accessibilityLabel: "Confirm follow request", onPress: () => void onAnswerRequest(true) })}
-              {profileButton({ label: "Delete", busy: requestPending, accessibilityLabel: "Delete follow request", onPress: () => void onAnswerRequest(false) })}
+              {profileButton({ label: t("common.confirm"), variant: "primary", busy: requestPending, accessibilityLabel: t("userProfile.confirmFollowRequest"), onPress: () => void onAnswerRequest(true) })}
+              {profileButton({ label: t("common.delete"), busy: requestPending, accessibilityLabel: t("userProfile.deleteFollowRequest"), onPress: () => void onAnswerRequest(false) })}
             </View>
           </View>
         ) : null}
@@ -357,8 +358,8 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
           <View style={styles.cardIcon}>
             <Icon name={ICONS.privacy} size={22} color={colors.textPrimary} />
           </View>
-          <Text style={styles.cardTitle}>This account is private</Text>
-          <Text style={styles.cardBody}>Follow @{profile.username} to see their Stories and Highlights.</Text>
+          <Text style={styles.cardTitle}>{t("userProfile.thisAccountIsPrivate")}</Text>
+          <Text style={styles.cardBody}>{t("userProfile.followUsernameToSeeTheir", { username: profile.username })}</Text>
         </View>
       ) : (
         <>
@@ -371,8 +372,8 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
           />
           {!profile.isSelf && highlightCount === 0 ? (
             <View style={styles.card}>
-              <Text style={styles.cardTitle}>No Highlights yet</Text>
-              <Text style={styles.cardBody}>When @{profile.username} keeps Stories in Highlights, they'll show here.</Text>
+              <Text style={styles.cardTitle}>{t("userProfile.noHighlightsYet")}</Text>
+              <Text style={styles.cardBody}>{t("userProfile.whenUsernameKeepsStoriesIn", { username: profile.username })}</Text>
             </View>
           ) : null}
         </>
@@ -386,7 +387,7 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
         onShare={() => void onShare()}
         onCopyLink={() => {
           Clipboard.setString(link);
-          showToast("Link copied");
+          showToast(t("common.linkCopied"));
         }}
         onToggleMute={() => void onToggleMute()}
         onBlock={onBlock}

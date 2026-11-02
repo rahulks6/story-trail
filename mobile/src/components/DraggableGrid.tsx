@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated, PanResponder, StyleSheet, View } from "react-native";
 import { Pressable } from "./Pressable";
+import { t } from "../i18n";
 
 const LONG_PRESS_MS = 300;
 const MOVE_CANCEL_THRESHOLD = 8; // a touch that moves this far before the long-press timer fires is a scroll/tap, not a drag
@@ -164,10 +165,10 @@ function DraggableGridItem({
           style={styles.fill}
           accessible
           accessibilityLabel={accessibilityLabel ? `Reorder ${accessibilityLabel}` : "Reorder item"}
-          accessibilityHint="Use the actions menu to move it earlier or later"
+          accessibilityHint={t("draggableGrid.useTheActionsMenuTo")}
           accessibilityActions={[
-            { name: "moveUp", label: "Move earlier in order" },
-            { name: "moveDown", label: "Move later in order" },
+            { name: "moveUp", label: t("draggableGrid.moveEarlierInOrder") },
+            { name: "moveDown", label: t("draggableGrid.moveLaterInOrder") },
           ]}
           onAccessibilityAction={(event) => {
             if (event.nativeEvent.actionName === "moveUp") onMoveStep(itemKey, -1);

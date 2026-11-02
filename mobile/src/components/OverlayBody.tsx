@@ -4,6 +4,7 @@ import type { Overlay } from "../models/storyDraft";
 import { contrastOn, neonCore, neonRadius, textStyleLook, tightTextFits } from "./textLook";
 import { mediaColors as colors, radii } from "../theme";
 import { InteractiveSticker, type StickerInteraction } from "./InteractiveSticker";
+import { t } from "../i18n";
 
 export /** Text wraps within this fraction of the container's own width (spec: "auto-wrap ... text") rather than growing indefinitely off-canvas. */
 const TEXT_MAX_WIDTH_FRACTION = 0.8;
@@ -104,7 +105,7 @@ export function OverlayBody({
           style={styles.chip}
           onPress={overlay.properties.username && onMentionPress ? () => onMentionPress!(overlay.properties.username as string) : undefined}
         >
-          @{overlay.properties.username ?? "unknown"}
+          @{overlay.properties.username ?? t("common.unknown")}
         </Text>
       );
     case "location":

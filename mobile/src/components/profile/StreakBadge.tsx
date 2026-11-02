@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { colors, radii, spacing, typography } from "../../theme";
 import type { PostingStreak } from "../../api/festivals";
+import { t } from "../../i18n";
 
 /**
  * "🔥 5-day streak" on a profile: consecutive days with a Story. On your own profile it also
@@ -12,8 +13,8 @@ export function StreakBadge({ streak, own }: { streak: PostingStreak | null | un
   const remind = own && !streak.postedToday;
   return (
     <View style={styles.badge} accessible accessibilityLabel={`${streak.days}-day posting streak${remind ? ". Post today to keep it" : ""}`}>
-      <Text style={styles.label}>🔥 {streak.days}-day streak</Text>
-      {remind ? <Text style={styles.hint}>Post today to keep it</Text> : null}
+      <Text style={styles.label}>{t("streakBadge.daysDayStreak", { days: streak.days })}</Text>
+      {remind ? <Text style={styles.hint}>{t("streakBadge.postTodayToKeepIt")}</Text> : null}
     </View>
   );
 }

@@ -1,4 +1,5 @@
 import { apiDelete, apiGet, apiPatch, apiPost, apiPut } from "./client";
+import { t } from "../i18n";
 
 /**
  * Mirrors backend/src/modules/conversations/conversations.repository.ts —
@@ -123,11 +124,11 @@ export function unpinMessage(conversationId: string, messageId: string, accessTo
 
 /** One line about a message for the pinned bar and list: its text, or what kind it is. */
 export function messagePreview(message: Pick<Message, "body" | "media" | "sharedStoryId">): string {
-  if (message.media?.kind === "photo") return "Photo";
-  if (message.media?.kind === "video") return "Video";
-  if (message.media?.kind === "audio") return "Voice message";
-  if (message.sharedStoryId) return "Story";
-  return message.body?.replace(/\s+/g, " ").trim() || "Message";
+  if (message.media?.kind === "photo") return t("common.photo");
+  if (message.media?.kind === "video") return t("common.video");
+  if (message.media?.kind === "audio") return t("common.voiceMessage");
+  if (message.sharedStoryId) return t("common.story");
+  return message.body?.replace(/\s+/g, " ").trim() || t("common.message");
 }
 
 /** The start of a replied-to message: enough to show it above the reply. */
@@ -251,7 +252,7 @@ export function groupName(title: string | null | undefined, people: Array<{ disp
   if (title) return title;
   const names = people.slice(0, 2).map((p) => p.displayName.split(" ")[0] || p.displayName);
   const rest = (total ?? people.length) - names.length;
-  if (!names.length) return "Group";
+  if (!names.length) return t("common.group");
   return rest > 0 ? `${names.join(", ")} and ${rest} other${rest === 1 ? "" : "s"}` : names.join(" and ");
 }
 

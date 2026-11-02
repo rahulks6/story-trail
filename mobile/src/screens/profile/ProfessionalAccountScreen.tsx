@@ -15,6 +15,7 @@ import { Button } from "../../components/Form";
 import { LoadFailed } from "../../components/LoadFailed";
 import { showToast } from "../../components/Toast";
 import { tapFeedback } from "../../utils/haptics";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ProfessionalAccount">;
 
@@ -68,23 +69,23 @@ export function ProfessionalAccountScreen({ navigation }: Props): React.JSX.Elem
       remember(next);
       tapFeedback("success");
       if (switching) {
-        showToast("You're now a professional account");
+        showToast(t("professionalAccount.youreNowAProfessionalAccount"));
         navigation.replace("ProfessionalDashboard");
       } else {
-        showToast("Saved");
+        showToast(t("professionalAccount.saved"));
       }
     } catch (error) {
-      Alert.alert("Couldn't switch", error instanceof ApiError ? error.message : "Check your connection and try again.");
+      Alert.alert(t("professionalAccount.couldntSwitch"), error instanceof ApiError ? error.message : t("professionalAccount.checkYourConnectionAndTry"));
     } finally {
       setSaving(null);
     }
   };
 
   const backToPersonal = () => {
-    Alert.alert("Switch to a personal account?", "Your dashboard and category go away. Your Stories, followers and everything else stay as they are. You can switch back any time.", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("professionalAccount.switchToAPersonalAccount"), t("professionalAccount.yourDashboardAndCategoryGo"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Switch",
+        text: t("professionalAccount.switch"),
         onPress: async () => {
           if (!accessToken) return;
           setSaving("personal");
@@ -94,9 +95,9 @@ export function ProfessionalAccountScreen({ navigation }: Props): React.JSX.Elem
             setCategory(null);
             setShowCategory(true);
             tapFeedback("success");
-            showToast("Switched to a personal account");
+            showToast(t("professionalAccount.switchedToAPersonalAccount"));
           } catch (error) {
-            Alert.alert("Couldn't switch", error instanceof ApiError ? error.message : "Check your connection and try again.");
+            Alert.alert(t("professionalAccount.couldntSwitch"), error instanceof ApiError ? error.message : t("professionalAccount.checkYourConnectionAndTry"));
           } finally {
             setSaving(null);
           }
@@ -106,7 +107,7 @@ export function ProfessionalAccountScreen({ navigation }: Props): React.JSX.Elem
   };
 
   if (!status) {
-    if (failed) return <LoadFailed message="Couldn't load your account type. Check your connection and try again." onRetry={() => void load()} />;
+    if (failed) return <LoadFailed message={t("professionalAccount.couldntLoadYourAccountType")} onRetry={() => void load()} />;
     return (
       <View style={styles.centered}>
         <ActivityIndicator color={colors.accentText} />
@@ -124,11 +125,11 @@ export function ProfessionalAccountScreen({ navigation }: Props): React.JSX.Elem
         <View style={styles.introIcon}>
           <Icon name={ICONS.insights} size={22} color={colors.onAccent} />
         </View>
-        <Text style={typography.title} accessibilityRole="header">{pro ? "Professional account" : "Switch to professional"}</Text>
+        <Text style={typography.title} accessibilityRole="header">{pro ? t("common.professionalAccount") : t("common.switchToProfessional")}</Text>
         <Text style={styles.introText}>
           {pro
             ? `You're a professional account${professionalCategoryLabel(pro.category) ? ` (${professionalCategoryLabel(pro.category)})` : ""}. Your dashboard is behind the Insights button on your profile.`
-            : "Free, for creators, artists, businesses and public figures. Who sees your Stories doesn't change, and you can switch back any time."}
+            : t("professionalAccount.freeForCreatorsArtistsBusinesses")}
         </Text>
       </View>
 
@@ -147,15 +148,14 @@ export function ProfessionalAccountScreen({ navigation }: Props): React.JSX.Elem
         <View style={styles.notice} accessibilityRole="alert">
           <Icon name={ICONS.privacy} size={18} color={colors.textPrimary} />
           <View style={styles.noticeText}>
-            <Text style={typography.bodyStrong}>Your account is private</Text>
+            <Text style={typography.bodyStrong}>{t("professionalAccount.yourAccountIsPrivate")}</Text>
             <Text style={styles.caption}>
-              {status.eligibility.reasons[0] ?? "Private accounts can't be professional."} A professional account is about reaching people, so its Stories and category need to be public. Turn off Private account in Settings to switch.
-            </Text>
+              {status.eligibility.reasons[0] ?? t("professionalAccount.privateAccountsCantBeProfessional")}{" "}{t("professionalAccount.aProfessionalAccountIsAbout")}</Text>
           </View>
         </View>
       ) : null}
 
-      <Text style={styles.sectionHeader}>Category</Text>
+      <Text style={styles.sectionHeader}>{t("professionalAccount.category")}</Text>
       <View style={[styles.card, blocked && styles.dim]} accessibilityRole="radiogroup">
         {PROFESSIONAL_CATEGORIES.map((c) => {
           const on = category === c.value;
@@ -184,19 +184,19 @@ export function ProfessionalAccountScreen({ navigation }: Props): React.JSX.Elem
 
       <View style={[styles.card, styles.switchRow, blocked && styles.dim]}>
         <View style={styles.optionText}>
-          <Text style={typography.body}>Show category on profile</Text>
-          <Text style={styles.caption}>Shown quietly under your name, like "{professionalCategoryLabel(category ?? "creator")}".</Text>
+          <Text style={typography.body}>{t("professionalAccount.showCategoryOnProfile")}</Text>
+          <Text style={styles.caption}>{t("professionalAccount.shownQuietlyUnderYourName")}{professionalCategoryLabel(category ?? "creator")}".</Text>
         </View>
-        <Switch value={showCategory} onValueChange={setShowCategory} disabled={blocked} accessibilityLabel="Show category on profile" />
+        <Switch value={showCategory} onValueChange={setShowCategory} disabled={blocked} accessibilityLabel={t("professionalAccount.showCategoryOnProfile")} />
       </View>
 
       {!pro ? (
-        <Button label="Switch to professional account" onPress={() => void save()} disabled={blocked || !category} busy={saving === "save"} accessibilityHint={category ? undefined : "Choose a category first"} />
+        <Button label={t("professionalAccount.switchToProfessionalAccount")} onPress={() => void save()} disabled={blocked || !category} busy={saving === "save"} accessibilityHint={category ? undefined : "Choose a category first"} />
       ) : (
         <>
-          {changed ? <Button label="Save" onPress={() => void save()} busy={saving === "save"} /> : null}
-          <Button label="Open your dashboard" variant="secondary" onPress={() => navigation.navigate("ProfessionalDashboard")} />
-          <Button label="Switch to personal account" variant="text" onPress={backToPersonal} busy={saving === "personal"} />
+          {changed ? <Button label={t("common.save")} onPress={() => void save()} busy={saving === "save"} /> : null}
+          <Button label={t("professionalAccount.openYourDashboard")} variant="secondary" onPress={() => navigation.navigate("ProfessionalDashboard")} />
+          <Button label={t("professionalAccount.switchToPersonalAccount")} variant="text" onPress={backToPersonal} busy={saving === "personal"} />
         </>
       )}
     </ScrollView>

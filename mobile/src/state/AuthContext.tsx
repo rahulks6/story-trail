@@ -9,6 +9,7 @@ import { unregisterForPush } from "../push/pushNotifications";
 import { clearOutbox } from "./dmOutbox";
 import { clearMediaOutbox } from "../screens/dm/dmMediaOutbox";
 import { colors, radii, spacing, typography } from "../theme";
+import { t } from "../i18n";
 
 /**
  * The last signed-in account from /auth/me, so a launch without a connection still opens
@@ -116,15 +117,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
     let cancelled = false;
     setSessionHandler(async (rejectedToken) => {
       const current = tokensRef.current;
-      if (!current || !knownTokens.current.has(rejectedToken)) throw new ApiError(401, "Please sign in again.");
+      if (!current || !knownTokens.current.has(rejectedToken)) throw new ApiError(401, t("authContext.pleaseSignInAgain"));
       if (current.accessToken !== rejectedToken) return current.accessToken;
       if (refreshInFlight.current) return refreshInFlight.current;
       const pending = (async () => {
         try {
           const { tokens } = await authApi.refresh(current.refreshToken);
-          if (cancelled || tokensRef.current !== current) throw new ApiError(401, "Session changed.");
+          if (cancelled || tokensRef.current !== current) throw new ApiError(401, t("authContext.sessionChanged"));
           await persistTokens(tokens);
-          if (cancelled || tokensRef.current !== current) throw new ApiError(401, "Session changed.");
+          if (cancelled || tokensRef.current !== current) throw new ApiError(401, t("authContext.sessionChanged"));
           tokensRef.current = tokens;
           knownTokens.current.add(tokens.accessToken);
           setState((previous) => ({ ...previous, accessToken: tokens.accessToken }));
@@ -186,12 +187,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
           await clearTokens().catch(() => undefined);
           cacheUser(null);
           setConnectionError(null);
-          setError("Your session has ended. Please sign in again.");
+          setError(t("authContext.yourSessionHasEndedPlease"));
           setState(signedOut);
           return;
         }
         if (statusRef.current === "loading" && !(await openWithCachedUser(generation)) && !cancelled) {
-          setConnectionError("Can't connect to Katkee. Check your connection and try again.");
+          setConnectionError(t("authContext.cantConnectToKatkeeCheck"));
         }
         if (cancelled) return;
         retryTimer = setTimeout(() => void verify(), Math.min(RETRY_MAX_MS, 5000 * 2 ** attempt));
@@ -250,7 +251,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
       setConnectionError(null);
       setState({ status: "signedIn", user, accessToken: tokens.accessToken });
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Network error - check your connection and try again.");
+      setError(err instanceof ApiError ? err.message : t("authContext.networkErrorCheckYourConnection"));
       setFieldErrors(err instanceof ApiError ? err.fieldErrors : undefined);
       throw err;
     }
@@ -337,8 +338,8 @@ function CantConnect({ message, onRetry }: { message: string; onRetry: () => voi
   return (
     <View style={styles.cantConnect}>
       <Text accessibilityRole="alert" style={[typography.body, styles.cantConnectText]}>{message}</Text>
-      <Pressable accessibilityRole="button" accessibilityLabel="Try again" onPress={onRetry} style={styles.retry}>
-        <Text style={[typography.bodyStrong, styles.retryText]}>Try again</Text>
+      <Pressable accessibilityRole="button" accessibilityLabel={t("common.tryAgain")} onPress={onRetry} style={styles.retry}>
+        <Text style={[typography.bodyStrong, styles.retryText]}>{t("common.tryAgain")}</Text>
       </Pressable>
     </View>
   );

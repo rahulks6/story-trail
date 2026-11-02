@@ -10,6 +10,7 @@ import type { AuthStackParamList } from "../../navigation/types";
 import { colors, spacing, FORM_MAX_WIDTH } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Login">;
 
@@ -52,13 +53,13 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
             <Text style={styles.brandKat}>Kat</Text>
             <Text style={styles.brandKee}>kee</Text>
           </Text>
-          <Text style={styles.subtitle}>Story that connects.</Text>
+          <Text style={styles.subtitle}>{t("common.storyThatConnects")}</Text>
 
           {error ? <Banner text={error} /> : null}
 
           <TextField
-            label="Email"
-            placeholder="you@example.com"
+            label={t("common.email")}
+            placeholder={t("login.youExampleCom")}
             error={fieldErrors?.email}
             autoCapitalize="none"
             autoCorrect={false}
@@ -76,8 +77,8 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
           />
           <TextField
             ref={passwordInput}
-            label="Password"
-            placeholder="Your password"
+            label={t("common.password")}
+            placeholder={t("login.yourPassword")}
             error={fieldErrors?.password}
             secureTextEntry
             autoComplete="current-password"
@@ -92,7 +93,7 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
           />
 
           <View style={styles.loginButton}>
-            <Button label="Log in" onPress={() => void onSubmit()} disabled={!email || !password} busy={submitting} />
+            <Button label={t("common.logIn")} onPress={() => void onSubmit()} disabled={!email || !password} busy={submitting} />
           </View>
           <Pressable
             style={styles.forgot}
@@ -100,7 +101,7 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
             accessibilityRole="button"
             hitSlop={8}
           >
-            <Text style={styles.forgotText}>Forgot password?</Text>
+            <Text style={styles.forgotText}>{t("login.forgotPassword")}</Text>
           </Pressable>
 
           <ProviderEntry />
@@ -108,12 +109,11 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
 
         <View style={styles.bottom}>
           <Pressable style={styles.signup} onPress={() => navigation.navigate("Signup")} accessibilityRole="button">
-            <Text style={styles.signupText}>
-              Don't have an account? <Text style={styles.linkAccent}>Sign up</Text>
+            <Text style={styles.signupText}>{t("login.dontHaveAnAccount")}{" "}<Text style={styles.linkAccent}>{t("common.signUp")}</Text>
             </Text>
           </Pressable>
           <Pressable style={styles.appeal} onPress={() => navigation.navigate("Appeals")} accessibilityRole="button" hitSlop={6}>
-            <Text style={styles.appealText}>Account restricted? Request a review</Text>
+            <Text style={styles.appealText}>{t("login.accountRestrictedRequestAReview")}</Text>
           </Pressable>
         </View>
       </ScrollView>

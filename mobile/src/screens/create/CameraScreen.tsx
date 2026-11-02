@@ -27,6 +27,7 @@ import { guessMimeTypeFromUri } from "../../utils/mime";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
 import { clearCreateSeed, currentCreateSeed, onCreateSeedChange, type CreateSeed } from "../../state/createSeed";
 import { BOOMERANG_RECORD_MS, CAPTURE_MODES, shutterLabel, shutterTap, type CaptureMode, type MediaEffect } from "../../models/captureModes";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<CreateStackParamList, "Camera">;
 
@@ -185,8 +186,8 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
     }
     cameraErrors.current = [];
     // The technical detail goes to crash reports (Admin > Crashes), not into the message.
-    reportHandledError(error ?? new Error("Camera error"));
-    Alert.alert("Camera unavailable", "Close the camera and open it again. If it keeps happening, restart your phone.");
+    reportHandledError(error ?? new Error(t("camera.cameraError")));
+    Alert.alert(t("common.cameraUnavailable"), t("camera.closeTheCameraAndOpen"));
   }, []);
 
   useEffect(() => {
@@ -258,7 +259,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
         const path=await photo.saveToTemporaryFileAsync();
         goToEditor(path.startsWith('file://')?path:`file://${path}`,'photo',width,height,'image/jpeg');
       }finally{photo.dispose();}
-    }catch{if(activeRef.current)Alert.alert('Could not take photo','Please try again.');}
+    }catch{if(activeRef.current)Alert.alert(t("camera.couldNotTakePhoto"),t("common.pleaseTryAgain"));}
     finally{capturingRef.current=false;setCountdown(0);}
   }, [flash, timerSeconds, goToEditor,device?.hasFlash,photoOutput]);
 
@@ -292,7 +293,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
           },
           () => {
             finishRecordingState();
-            if(activeRef.current)Alert.alert('Could not record video','Please try again.');
+            if(activeRef.current)Alert.alert(t("camera.couldNotRecordVideo"),t("common.pleaseTryAgain"));
           },
         );
         // A release that happened while the recorder was still being created.
@@ -301,7 +302,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
         else if(effect==='boomerang')boomerangTimer.current=setTimeout(()=>void stopRecordingRef.current(),BOOMERANG_RECORD_MS);
       }catch{
         finishRecordingState();
-        if(activeRef.current)Alert.alert('Could not start recording','Please try again.');
+        if(activeRef.current)Alert.alert(t("camera.couldNotStartRecording"),t("common.pleaseTryAgain"));
       }
     })();
   }, [goToEditor,videoOutput,finishRecordingState]);
@@ -311,7 +312,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
     stoppingRef.current=true;
     const recorder=recorderRef.current;
     if(!recorder)return; // startRecording stops it as soon as it exists.
-    try{await recorder.stopRecording();}catch{stoppingRef.current=false;if(activeRef.current)Alert.alert('Could not stop recording','Try stopping again.');}
+    try{await recorder.stopRecording();}catch{stoppingRef.current=false;if(activeRef.current)Alert.alert(t("camera.couldNotStopRecording"),t("camera.tryStoppingAgain"));}
   }, []);
   stopRecordingRef.current = stopRecording;
 
@@ -331,7 +332,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
     // "compatible": iOS exports HEIC photos as JPEG and HEVC video as H.264 — the upload
     // pipeline accepts JPEG/PNG/WebP and MP4/MOV, and iPhones store HEIC by default.
     const result = await launchImageLibrary({ mediaType: "mixed", selectionLimit: 1, assetRepresentationMode: "compatible" });
-    if(result.errorCode)throw Error('Gallery unavailable');
+    if(result.errorCode)throw Error(t("common.galleryUnavailable"));
     const asset = result.assets?.[0];
     if (!asset?.uri) return;
     const kind = asset.type?.startsWith("video") ? "video" : "photo";
@@ -339,23 +340,23 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
     const limit = kind === "video" ? MAX_VIDEO_BYTES : MAX_PHOTO_BYTES;
     if (typeof asset.fileSize === "number" && asset.fileSize > limit) {
       Alert.alert(
-        kind === "video" ? "Video too large" : "Photo too large",
+        kind === "video" ? t("common.videoTooLarge") : t("camera.photoTooLarge"),
         `Stories can be up to ${Math.round(limit / (1024 * 1024))} MB. ${kind === "video" ? "Trim the video or choose a shorter one." : "Choose a smaller photo."}`,
       );
       return;
     }
     // The server turns these away only after the whole file is uploaded: say so before editing.
     if (kind === "video" && typeof asset.duration === "number" && asset.duration > MAX_RECORDING_SECONDS + 0.5) {
-      Alert.alert("Video too long", `Stories can be up to ${MAX_RECORDING_SECONDS} seconds. Trim the video or choose a shorter one.`);
+      Alert.alert(t("camera.videoTooLong"), t("camera.storiesCanBeUpTo", { MAX_RECORDING_SECONDS }));
       return;
     }
     // Android hands over HEIC photos as they are ("compatible" converts them on iOS only).
     if (kind === "photo" && /^image\/hei[cf]/i.test(asset.type ?? "")) {
-      Alert.alert("Photo format not supported", "HEIC photos aren't supported yet. Choose a JPEG, or set your camera to save JPEG photos.");
+      Alert.alert(t("camera.photoFormatNotSupported"), t("camera.heicPhotosArentSupportedYet"));
       return;
     }
     goToEditor(asset.uri, kind, asset.width ?? null, asset.height ?? null, asset.type);
-    }catch{if(activeRef.current)Alert.alert('Could not open gallery','Check photo access in Settings and try again.');}
+    }catch{if(activeRef.current)Alert.alert(t("camera.couldNotOpenGallery"),t("camera.checkPhotoAccessInSettings"));}
   }, [goToEditor]);
 
   const onPreviewTap = useTapGesture(
@@ -496,20 +497,20 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   }, []);
 
   const closeButton = (
-    <Pressable onPress={() => navigation.goBack()} hitSlop={8} style={[styles.toolButton, styles.closeCorner, { top: insets.top + spacing.md }]} accessibilityRole="button" accessibilityLabel="Close camera">
+    <Pressable onPress={() => navigation.goBack()} hitSlop={8} style={[styles.toolButton, styles.closeCorner, { top: insets.top + spacing.md }]} accessibilityRole="button" accessibilityLabel={t("camera.closeCamera")}>
       <Icon style={styles.topIcon} name={ICONS.close} />
     </Pressable>
   );
   if (!hasCameraPermission) {
     return (
       <View style={styles.container}>
-        <EmptyState variant="media" icon="camera" title="Camera access needed" message="Turn on camera access in Settings, or post a photo or video from your gallery.">
+        <EmptyState variant="media" icon="camera" title={t("camera.cameraAccessNeeded")} message={t("camera.turnOnCameraAccessIn")}>
           <View style={styles.emptyActions}>
             <Pressable accessibilityRole="button" style={[styles.emptyButton, styles.emptyButtonPrimary]} onPress={() => void Linking.openSettings().catch(() => undefined)}>
-              <Text style={[styles.emptyButtonLabel, styles.emptyButtonPrimaryLabel]}>Open Settings</Text>
+              <Text style={[styles.emptyButtonLabel, styles.emptyButtonPrimaryLabel]}>{t("common.openSettings")}</Text>
             </Pressable>
             <Pressable accessibilityRole="button" style={styles.emptyButton} onPress={() => void openGallery()}>
-              <Text style={styles.emptyButtonLabel}>Choose from gallery</Text>
+              <Text style={styles.emptyButtonLabel}>{t("camera.chooseFromGallery")}</Text>
             </Pressable>
           </View>
         </EmptyState>
@@ -521,13 +522,13 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
     return (
       <View style={styles.container}>
         {cameraSearchOver ? (
-          <EmptyState variant="media" icon="camera" title="No camera available" message="You can still post a photo or video from your gallery.">
+          <EmptyState variant="media" icon="camera" title={t("camera.noCameraAvailable")} message={t("camera.youCanStillPostA")}>
             <Pressable accessibilityRole="button" style={styles.emptyButton} onPress={() => void openGallery()}>
-              <Text style={styles.emptyButtonLabel}>Choose from gallery</Text>
+              <Text style={styles.emptyButtonLabel}>{t("camera.chooseFromGallery")}</Text>
             </Pressable>
           </EmptyState>
         ) : (
-          <ActivityIndicator style={styles.cameraLoading} color={colors.textPrimary} accessibilityLabel="Starting camera" />
+          <ActivityIndicator style={styles.cameraLoading} color={colors.textPrimary} accessibilityLabel={t("camera.startingCamera")} />
         )}
         {closeButton}
       </View>
@@ -547,11 +548,11 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
         }}
         accessible
         accessibilityRole="button"
-        accessibilityLabel="Camera preview"
-        accessibilityHint="Use the actions menu to focus the camera or flip it"
+        accessibilityLabel={t("camera.cameraPreview")}
+        accessibilityHint={t("camera.useTheActionsMenuTo")}
         accessibilityActions={[
-          { name: "focus", label: "Focus camera" },
-          { name: "activate", label: "Flip camera" },
+          { name: "focus", label: t("camera.focusCamera") },
+          { name: "activate", label: t("camera.flipCamera") },
         ]}
         onAccessibilityAction={(event) => {
           if (event.nativeEvent.actionName === "focus") onFocusCenterAccessibilityAction();
@@ -573,7 +574,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
 
       {zoomIndicator.visible ? (
         <View style={styles.zoomBadge} accessibilityLiveRegion="polite">
-          <Text style={styles.zoomBadgeLabel}>Zoom {zoomIndicator.label}</Text>
+          <Text style={styles.zoomBadgeLabel}>{t("camera.zoomLabel", { label: zoomIndicator.label })}</Text>
         </View>
       ) : null}
 
@@ -582,7 +583,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
         <View style={[styles.seedRow, { top: insets.top + spacing.md + 56 }]} pointerEvents="box-none">
           <View style={styles.seedChip}>
             <Icon name={seed.kind === "addYours" ? ICONS.add : ICONS.reply} size={14} color={colors.onAccent} />
-            <Text style={styles.seedText} numberOfLines={1}>{seed.kind === "addYours" ? `Add Yours: ${seed.prompt}` : `Sharing an answer: ${seed.prompt}`}</Text>
+            <Text style={styles.seedText} numberOfLines={1}>{seed.kind === "addYours" ? t("camera.addYoursPrompt", { prompt: seed.prompt }) : t("camera.sharingAnAnswerPrompt", { prompt: seed.prompt })}</Text>
             <Pressable onPress={clearCreateSeed} hitSlop={10} accessibilityRole="button" accessibilityLabel={seed.kind === "addYours" ? "Don't add this prompt" : "Don't share this answer"}>
               <Icon name={ICONS.close} size={14} color={colors.onAccent} />
             </Pressable>
@@ -591,7 +592,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
       ) : null}
 
       <View style={[styles.topBar, { top: insets.top + spacing.md }]}>
-        <Pressable onPress={() => { clearCreateSeed(); navigation.goBack(); }} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel="Close camera">
+        <Pressable onPress={() => { clearCreateSeed(); navigation.goBack(); }} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel={t("camera.closeCamera")}>
           <Icon style={styles.topIcon} name={ICONS.close} />
         </Pressable>
         <View style={styles.topRight}>
@@ -601,7 +602,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
             hitSlop={8}
             style={[styles.toolButton, !device.hasFlash && styles.toolDisabled]}
             accessibilityRole="button"
-            accessibilityLabel="Flash"
+            accessibilityLabel={t("camera.flash")}
             accessibilityState={{ selected: flash === "on" }}
           >
             <Icon style={[styles.topIcon, flash === "on" && styles.topIconActive]} name={ICONS.flash} />
@@ -613,15 +614,15 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
             accessibilityRole="button"
             accessibilityLabel={timerSeconds === 0 ? "Timer off" : `Timer, ${timerSeconds} seconds`}
           >
-            <Icon name="timer" style={[styles.topIcon, timerSeconds > 0 && styles.topIconActive]}/>{timerSeconds > 0 ? <Text style={styles.timerLabel}>{`${timerSeconds}s`}</Text> : null}
+            <Icon name="timer" style={[styles.topIcon, timerSeconds > 0 && styles.topIconActive]}/>{timerSeconds > 0 ? <Text style={styles.timerLabel}>{t("camera.timersecondsS", { timerSeconds })}</Text> : null}
           </Pressable>
         </View>
       </View>
 
       {!hasMicPermission && !isRecording ? (
-        <Pressable onPress={() => void Linking.openSettings().catch(() => undefined)} style={[styles.micNote, { top: insets.top + spacing.md + 52 }]} accessibilityRole="button" accessibilityLabel="Microphone off. Videos record without sound. Open Settings to allow it.">
+        <Pressable onPress={() => void Linking.openSettings().catch(() => undefined)} style={[styles.micNote, { top: insets.top + spacing.md + 52 }]} accessibilityRole="button" accessibilityLabel={t("camera.microphoneOffVideosRecordWithout")}>
           <Icon name={ICONS.audioMuted} size={14} color={colors.textPrimary} />
-          <Text style={styles.micNoteLabel}>Microphone off · videos have no sound</Text>
+          <Text style={styles.micNoteLabel}>{t("camera.microphoneOffVideosHaveNo")}</Text>
         </Pressable>
       ) : null}
 
@@ -649,7 +650,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
           style={[styles.modeRow, { bottom: spacing.xl + insets.bottom + SHUTTER + MODE_ROW_GAP }]}
           contentContainerStyle={styles.modeRowContent}
           accessibilityRole="radiogroup"
-          accessibilityLabel="Camera mode"
+          accessibilityLabel={t("camera.cameraMode")}
         >
           {CAPTURE_MODES.map((m) => (
             <Pressable
@@ -673,7 +674,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
       ) : null}
 
       <View style={[styles.bottomBar, { bottom: spacing.xl + insets.bottom }]}>
-        <Pressable onPress={openGallery} hitSlop={12} style={styles.sideButton} accessibilityRole="button" accessibilityLabel="Choose from gallery">
+        <Pressable onPress={openGallery} hitSlop={12} style={styles.sideButton} accessibilityRole="button" accessibilityLabel={t("camera.chooseFromGallery")}>
           <Icon style={styles.sideButtonIcon} name={ICONS.gallery} />
         </Pressable>
 
@@ -694,7 +695,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
           accessibilityHint={isRecording || mode !== "normal" ? undefined : "Use the actions menu to record video instead"}
           accessibilityActions={[
             { name: "activate", label: shutterLabel(mode, isRecording) },
-            ...(mode === "normal" ? [{ name: "longpress", label: "Record video" }] : []),
+            ...(mode === "normal" ? [{ name: "longpress", label: t("camera.recordVideo") }] : []),
           ]}
           onAccessibilityAction={(event) => {
             if (event.nativeEvent.actionName === "activate") onShutterTap();
@@ -727,7 +728,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
           hitSlop={12}
           style={styles.sideButton}
           accessibilityRole="button"
-          accessibilityLabel="Flip camera"
+          accessibilityLabel={t("camera.flipCamera")}
         >
           <Icon style={styles.sideButtonIcon} name={ICONS.flip} />
         </Pressable>

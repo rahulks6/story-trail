@@ -8,6 +8,7 @@ import { useAuth } from "../state/AuthContext";
 import { getHighlightDetail, listHighlightsForUser, updateHighlight, type HighlightSummary } from "../api/highlights";
 import { ActionSheet, type SheetAction } from "./ActionSheet";
 import { tapFeedback } from "../utils/haptics";
+import { t } from "../i18n";
 
 /** The Story ids a Highlight has after adding some: its own first, in order, then the new ones not already in it. */
 export function withAddedStories(existing: string[], adding: string[]): string[] {
@@ -63,17 +64,17 @@ export function AddToHighlightSheet({ visible, storyIds, onClose, onAdded }: { v
       tapFeedback("success");
       onAdded?.(highlight.title);
     } catch {
-      Alert.alert("Couldn't add", "Check your connection and try again.");
+      Alert.alert(t("addToHighlightSheet.couldntAdd"), t("addToHighlightSheet.checkYourConnectionAndTry"));
     }
   };
 
   const groups: SheetAction[][] = [
     loadFailed
-      ? [{ label: "Couldn't load your Highlights — Try again", onPress: retry }]
+      ? [{ label: t("addToHighlightSheet.couldntLoadYourHighlightsTry"), onPress: retry }]
       : (highlights ?? []).map((h) => ({ label: `${h.title} · ${h.itemCount}`, onPress: () => void addTo(h) })),
-    [{ label: "New Highlight", onPress: () => navigation.navigate("HighlightEditor", { initialStoryIds: storyIds }) }],
+    [{ label: t("common.newHighlight"), onPress: () => navigation.navigate("HighlightEditor", { initialStoryIds: storyIds }) }],
   ].filter((g) => g.length > 0);
 
-  const title = loadFailed ? "Add to Highlight" : highlights === null ? "Loading your Highlights…" : "Add to Highlight";
+  const title = loadFailed ? t("common.addToHighlight") : highlights === null ? t("addToHighlightSheet.loadingYourHighlights") : t("common.addToHighlight");
   return <ActionSheet visible={shown} title={title} groups={groups} onClose={close} />;
 }

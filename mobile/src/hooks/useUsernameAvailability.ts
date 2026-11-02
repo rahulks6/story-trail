@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { checkUsername, type UsernameAvailability } from "../api/users";
 import { useDebouncedValue } from "./useDebouncedValue";
+import { t } from "../i18n";
 
 export type UsernameCheck =
   | { state: "idle" }
@@ -46,9 +47,9 @@ export function useUsernameAvailability(username: string, accessToken: string | 
 
 /** The answer as one line under the field: the server's message when the name can't be used. */
 export function usernameCheckText(check: UsernameCheck): { text: string; tone: "info" | "success" | "error" } | null {
-  if (check.state === "checking") return { text: "Checking…", tone: "info" };
+  if (check.state === "checking") return { text: t("useUsernameAvailability.checking"), tone: "info" };
   if (check.state !== "done") return null;
-  if (check.result.available) return { text: check.result.reason === "yours" ? check.result.message : "Available.", tone: "success" };
+  if (check.result.available) return { text: check.result.reason === "yours" ? check.result.message : t("useUsernameAvailability.available"), tone: "success" };
   return { text: check.result.message, tone: "error" };
 }
 

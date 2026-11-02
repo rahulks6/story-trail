@@ -5,6 +5,7 @@ import { ApiError } from "../api/client";
 import { getInviter, getMyInvite, redeemInvite, type Inviter } from "../api/growth";
 import { track } from "../analytics/analytics";
 import { useAuth } from "./AuthContext";
+import { t } from "../i18n";
 
 /**
  * Invite friends. Everyone's link is https://katkee.com/i/<code> (backend growth/invites.ts).
@@ -24,7 +25,7 @@ export const PENDING_INVITE_TTL_MS = 30 * 24 * 3600 * 1000;
 
 /** The text that goes with the link; the link itself carries the code. */
 export function inviteMessage(url: string): string {
-  return `Join me on Katkee, for Stories with the people you know: ${url}`;
+  return t("invites.joinMeOnKatkeeFor", { url });
 }
 
 let cached: { userId: string; url: string } | null = null;
@@ -42,7 +43,7 @@ export async function shareInvite(from: InviteSource, accessToken: string | null
       if (userId) cached = { userId, url };
     }
   } catch {
-    Alert.alert("Couldn't get your invite link", "Check your connection and try again.");
+    Alert.alert(t("invites.couldntGetYourInviteLink"), t("invites.checkYourConnectionAndTry"));
     return;
   }
   try {

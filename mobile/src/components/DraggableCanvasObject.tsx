@@ -5,6 +5,7 @@ import { pinchPlacement, TAP_SLOP, type Placement, type Touch } from "../models/
 import { OverlayBody } from "./OverlayBody";
 import { PlacedOverlay } from "./PlacedOverlay";
 import { tapFeedback } from "../utils/haptics";
+import { t } from "../i18n";
 
 interface Props {
   overlay: Overlay;
@@ -42,7 +43,7 @@ export function snapToCentre(x: number, y: number, width: number, height: number
 }
 
 const HIT_SLOP = { top: 16, bottom: 16, left: 16, right: 16 };
-const ACCESSIBILITY_ACTIONS = [{ name: "activate", label: "Open controls" }];
+const ACCESSIBILITY_ACTIONS = [{ name: "activate", get label() { return t("draggableCanvasObject.openControls"); } }];
 
 const touchesOf = (evt: GestureResponderEvent): Touch[] => evt.nativeEvent.touches.map((touch) => ({ pageX: touch.pageX, pageY: touch.pageY }));
 
@@ -208,7 +209,7 @@ function DraggableCanvasObjectImpl(props: Props): React.JSX.Element {
       accessible
       accessibilityRole="button"
       accessibilityLabel={overlayDescription(overlay)}
-      accessibilityHint="Drag to move, pinch with two fingers to resize and rotate, or activate for button controls"
+      accessibilityHint={t("draggableCanvasObject.dragToMovePinchWith")}
       // A screen reader takes raw touches for its own navigation, so its "activate" opens the
       // buttons for moving, resizing, rotating and deleting instead.
       accessibilityActions={ACCESSIBILITY_ACTIONS}
@@ -226,19 +227,19 @@ export const DraggableCanvasObject = memo(DraggableCanvasObjectImpl);
 function overlayDescription(overlay: Overlay): string {
   switch (overlay.type) {
     case "text":
-      return `Text: ${overlay.properties.text}`;
+      return t("draggableCanvasObject.textText", { text: overlay.properties.text });
     case "emoji":
-      return `Emoji ${overlay.properties.emoji}`;
+      return t("draggableCanvasObject.emojiEmoji", { emoji: overlay.properties.emoji });
     case "mention":
       return `Mention of @${overlay.properties.username ?? "unknown"}`;
     case "location":
-      return `Location: ${overlay.properties.label}`;
+      return t("draggableCanvasObject.locationLabel", { label: overlay.properties.label });
     case "datetime":
       return overlay.properties.display;
     case "sticker":
-      return "Sticker";
+      return t("draggableCanvasObject.sticker");
     default:
-      return "Story object";
+      return t("draggableCanvasObject.storyObject");
   }
 }
 

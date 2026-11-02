@@ -10,6 +10,7 @@ import { ApiError } from "../../api/client";
 import { Banner, Button, TextField } from "../../components/Form";
 import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import { tapFeedback } from "../../utils/haptics";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "VerifyEmail">;
 
@@ -59,7 +60,7 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
   const submit = async () => {
     if (!accessToken || busy) return;
     if (!/^\d{6}$/.test(code)) {
-      setError("Enter the 6-digit code from the email.");
+      setError(t("verifyEmail.enterThe6DigitCode"));
       return;
     }
     setBusy(true);
@@ -71,7 +72,7 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
       // A required verification lifts the gate: the navigator swaps this screen for the app.
       if (!required) leave();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Couldn't check the code. Check your connection and try again.");
+      setError(err instanceof ApiError ? err.message : t("verifyEmail.couldntCheckTheCodeCheck"));
     } finally {
       setBusy(false);
     }
@@ -88,7 +89,7 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
       setNotice(`We sent a new code to ${user?.email ?? "your email"}.`);
       setCooldown(RESEND_SECONDS);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Couldn't send a code. Check your connection and try again.");
+      setError(err instanceof ApiError ? err.message : t("verifyEmail.couldntSendACodeCheck"));
     } finally {
       sending.current = false;
     }
@@ -98,7 +99,7 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
     if (!accessToken || busy) return;
     const email = newEmail.trim().toLowerCase();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-      setError("Enter a valid email address.");
+      setError(t("verifyEmail.enterAValidEmailAddress"));
       return;
     }
     setBusy(true);
@@ -109,10 +110,10 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
       applyProfile(updated);
       setEditingEmail(false);
       setCode("");
-      setNotice(`We sent a new code to ${updated.email ?? email}.`);
+      setNotice(t("verifyEmail.weSentANewCode", { email: updated.email ?? email }));
       setCooldown(RESEND_SECONDS);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Couldn't change your email. Check your connection and try again.");
+      setError(err instanceof ApiError ? err.message : t("verifyEmail.couldntChangeYourEmailCheck"));
     } finally {
       setBusy(false);
     }
@@ -122,11 +123,11 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
     return (
       <KeyboardAvoider style={styles.root}>
         <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.xl }]} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
-          <Text style={typography.displayLarge} accessibilityRole="header">Change your email</Text>
-          <Text style={styles.body}>We'll send a new code to this address.</Text>
+          <Text style={typography.displayLarge} accessibilityRole="header">{t("verifyEmail.changeYourEmail")}</Text>
+          <Text style={styles.body}>{t("verifyEmail.wellSendANewCode")}</Text>
           {error ? <Banner text={error} /> : null}
           <TextField
-            label="Email"
+            label={t("common.email")}
             value={newEmail}
             onChangeText={setNewEmail}
             keyboardType="email-address"
@@ -138,8 +139,8 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
             returnKeyType="done"
             onSubmitEditing={() => void saveEmail()}
           />
-          <Button label="Send code" onPress={() => void saveEmail()} busy={busy} disabled={!newEmail.trim()} />
-          <Button label="Cancel" onPress={() => { setEditingEmail(false); setError(null); }} variant="text" />
+          <Button label={t("common.sendCode")} onPress={() => void saveEmail()} busy={busy} disabled={!newEmail.trim()} />
+          <Button label={t("common.cancel")} onPress={() => { setEditingEmail(false); setError(null); }} variant="text" />
         </ScrollView>
       </KeyboardAvoider>
     );
@@ -148,13 +149,12 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
   return (
     <KeyboardAvoider style={styles.root}>
       <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.xl }]} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
-        <Text style={typography.displayLarge} accessibilityRole="header">Verify your email</Text>
-        <Text style={styles.body}>
-          We sent a 6-digit code to <Text style={styles.email}>{user?.email ?? "your email"}</Text>. {required ? "Enter it to finish creating your account." : "It keeps your account secure and lets you reset your password if you ever forget it."}
+        <Text style={typography.displayLarge} accessibilityRole="header">{t("common.verifyYourEmail")}</Text>
+        <Text style={styles.body}>{t("verifyEmail.weSentA6Digit")}{" "}<Text style={styles.email}>{user?.email ?? t("verifyEmail.yourEmail")}</Text>. {required ? t("verifyEmail.enterItToFinishCreating") : t("verifyEmail.itKeepsYourAccountSecure")}
         </Text>
         {error ? <Banner text={error} /> : notice ? <Banner text={notice} tone="success" /> : null}
         <TextField
-          label="6-digit code"
+          label={t("common.n6DigitCode")}
           value={code}
           onChangeText={(text) => setCode(text.replace(/\D/g, "").slice(0, 6))}
           keyboardType="number-pad"
@@ -165,9 +165,9 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
           returnKeyType="done"
           onSubmitEditing={() => void submit()}
         />
-        <Button label="Verify" onPress={() => void submit()} busy={busy} disabled={code.length !== 6} />
+        <Button label={t("common.verify")} onPress={() => void submit()} busy={busy} disabled={code.length !== 6} />
         {/* One clear action; everything else is a quiet link under it. */}
-        <Text style={styles.hint}>Can't find it? Check your spam or promotions folder.</Text>
+        <Text style={styles.hint}>{t("verifyEmail.cantFindItCheckYour")}</Text>
         <View style={styles.links}>
           <Button
             label={cooldown > 0 ? `Send a new code in ${cooldown}s` : "Send a new code"}
@@ -176,14 +176,14 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
             variant="text"
           />
           {required ? (
-            <Button label="Change email" onPress={() => { setNewEmail(user?.email ?? ""); setError(null); setNotice(null); setEditingEmail(true); }} variant="text" />
+            <Button label={t("verifyEmail.changeEmail")} onPress={() => { setNewEmail(user?.email ?? ""); setError(null); setNotice(null); setEditingEmail(true); }} variant="text" />
           ) : null}
         </View>
         <View style={styles.footer}>
           {required ? (
-            <Button label="Log out" onPress={() => void logout()} variant="text" />
+            <Button label={t("common.logOut")} onPress={() => void logout()} variant="text" />
           ) : (
-            <Button label="Later" onPress={leave} variant="text" accessibilityHint="Verify from your profile any time" />
+            <Button label={t("verifyEmail.later")} onPress={leave} variant="text" accessibilityHint={t("verifyEmail.verifyFromYourProfileAny")} />
           )}
         </View>
       </ScrollView>

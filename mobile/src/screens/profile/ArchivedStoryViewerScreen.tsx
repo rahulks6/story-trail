@@ -20,6 +20,7 @@ import { StoryOverlayLayer, useContainerLayout } from "../../components/StoryOve
 import { filterNameFromKey } from "../../models/filterPreviews";
 import { mediaTransformStyle } from "../../models/storyDraft";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ArchivedStoryViewer">;
 
@@ -74,7 +75,7 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
         setDetail(story);
         setMediaKind(media.kind === "video" ? "video" : "photo");
       } catch (err) {
-        if (!cancelled) setError(err instanceof ApiError ? err.message : "Couldn't load this Story.");
+        if (!cancelled) setError(err instanceof ApiError ? err.message : t("common.couldntLoadThisStory"));
       }
     })();
     return () => {
@@ -122,9 +123,9 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
       <View style={styles.centered}>
         <Text style={styles.errorText}>{error}</Text>
         <Pressable style={styles.retryButton} onPress={retry} accessibilityRole="button">
-          <Text style={styles.retryLabel}>Try again</Text>
+          <Text style={styles.retryLabel}>{t("common.tryAgain")}</Text>
         </Pressable>
-        <Pressable style={[styles.closeButton, { top: insets.top + spacing.sm + 10 }]} onPress={close} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close">
+        <Pressable style={[styles.closeButton, { top: insets.top + spacing.sm + 10 }]} onPress={close} hitSlop={12} accessibilityRole="button" accessibilityLabel={t("common.close")}>
           <Icon style={styles.closeIcon} name={ICONS.close} />
         </Pressable>
       </View>
@@ -135,7 +136,7 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
     return (
       <View style={styles.centered}>
         <ActivityIndicator color={colors.accentText} />
-        <Pressable style={[styles.closeButton, { top: insets.top + spacing.sm + 10 }]} onPress={close} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close">
+        <Pressable style={[styles.closeButton, { top: insets.top + spacing.sm + 10 }]} onPress={close} hitSlop={12} accessibilityRole="button" accessibilityLabel={t("common.close")}>
           <Icon style={styles.closeIcon} name={ICONS.close} />
         </Pressable>
       </View>
@@ -158,12 +159,12 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
           onLoad={(meta) => setVideoDurationMs(Math.max(1000, meta.duration * 1000))}
           paused={!active}
           muted={detail.audioMuted}
-          onError={() => setError("Couldn't play this Story.")}
+          onError={() => setError(t("common.couldntPlayThisStory"))}
         />
       ) : mediaKind === "photo" ? (
         <Image
           key={attempt}
-          onError={() => setError("Couldn't load this photo.")}
+          onError={() => setError(t("common.couldntLoadThisPhoto"))}
           source={{ uri: mediaUrl, headers: authHeaders }}
           style={[StyleSheet.absoluteFill, mediaTransformStyle(detail.crop, containerSize.width, containerSize.height)]}
           resizeMode="cover"
@@ -209,14 +210,14 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
         }}
         style={[styles.addButton, { bottom: spacing.md + insets.bottom }]}
         accessibilityRole="button"
-        accessibilityLabel="Add to Highlight"
+        accessibilityLabel={t("common.addToHighlight")}
       >
         <Icon name={added ? ICONS.check : ICONS.add} size={18} color={colors.onAccent} />
-        <Text style={styles.addLabel}>{added ? `Added to ${added}` : "Add to Highlight"}</Text>
+        <Text style={styles.addLabel}>{added ? t("archivedStoryViewer.addedToAdded", { added }) : t("common.addToHighlight")}</Text>
       </Pressable>
       <AddToHighlightSheet visible={addOpen} storyIds={[storyId]} onClose={() => setAddOpen(false)} onAdded={setAdded} />
 
-      <Pressable style={[styles.closeButton, { top: insets.top + spacing.sm + 10 }]} onPress={close} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close">
+      <Pressable style={[styles.closeButton, { top: insets.top + spacing.sm + 10 }]} onPress={close} hitSlop={12} accessibilityRole="button" accessibilityLabel={t("common.close")}>
         <Icon style={styles.closeIcon} name={ICONS.close} />
       </Pressable>
     </View>

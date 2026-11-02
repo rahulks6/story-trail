@@ -83,6 +83,7 @@ import { actorName, groupEventText } from "../../models/groupEvents";
 import { GroupAvatar } from "../../components/GroupAvatar";
 import { callLineText, isMissedCall } from "../../models/callLines";
 import { useCallsIfAvailable } from "../../calls/CallContext";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<DMStackParamList, "Conversation">;
 
@@ -148,31 +149,31 @@ function quoteOf(message: Message): QuotedMessage {
 /** What a quote shows of the message: its text, or what kind of message it was. */
 export function quoteSnippet(quote: QuotedMessage): string {
   if (quote.body) return quote.body;
-  if (quote.mediaKind === "photo") return "Photo";
-  if (quote.mediaKind === "video") return "Video";
-  if (quote.mediaKind === "audio") return "Voice message";
-  return quote.sharedStory ? "Shared a Story" : "Message";
+  if (quote.mediaKind === "photo") return t("common.photo");
+  if (quote.mediaKind === "video") return t("common.video");
+  if (quote.mediaKind === "audio") return t("common.voiceMessage");
+  return quote.sharedStory ? t("conversation.sharedAStory") : t("common.message");
 }
 
 function statusLabel(row: ListRow, nameOf?: RowProps["nameOf"]): string {
-  if (row.kind === "media") return row.status === "failed" ? `${row.error ?? "Not sent"} · Tap to retry` : "Sending…";
+  if (row.kind === "media") return row.status === "failed" ? `${row.error ?? "Not sent"} · Tap to retry` : t("conversation.sending");
   if (row.kind === "pending") {
     if (row.status === "failed") return `${row.error ?? "Not sent"} · Tap to retry`;
-    return row.status === "waiting" && row.attempts > 0 ? "Waiting for connection…" : "Sending…";
+    return row.status === "waiting" && row.attempts > 0 ? t("conversation.waitingForConnection") : t("conversation.sending");
   }
   // A group: Seen once everyone has read it; until then, who has.
   if (row.seenBy) {
-    if (row.status === "read") return "Seen by everyone";
+    if (row.status === "read") return t("conversation.seenByEveryone");
     const names = row.seenBy.map((id) => nameOf?.(id)).filter((n): n is string => !!n).map((n) => `@${n}`);
     if (names.length) return `Seen by ${names.length <= 2 ? names.join(" and ") : `${names.slice(0, 2).join(", ")} and ${names.length - 2} more`}`;
   }
   switch (row.status) {
     case "read":
-      return "Seen";
+      return t("conversation.seen");
     case "delivered":
-      return "Delivered";
+      return t("conversation.delivered");
     default:
-      return "Sent";
+      return t("common.sent");
   }
 }
 
@@ -290,7 +291,7 @@ function SwipeToReply({ enabled, onReply, children }: { enabled: boolean; onRepl
 
 /** The message a reply answers, above the reply: who wrote it and how it started. A tap goes to it. */
 function Quote({ quote, userId, labelOf, mine, onPress }: { quote: QuotedMessage; userId: string | undefined; labelOf: RowProps["labelOf"]; mine: boolean; onPress: (id: string) => void }): React.JSX.Element {
-  const author = quote.senderId === userId ? "You" : labelOf(quote.senderId) ?? "Them";
+  const author = quote.senderId === userId ? t("common.you") : labelOf(quote.senderId) ?? t("conversation.them");
   const snippet = quoteSnippet(quote);
   return (
     <Pressable
@@ -298,7 +299,7 @@ function Quote({ quote, userId, labelOf, mine, onPress }: { quote: QuotedMessage
       style={[styles.quote, mine ? styles.quoteMine : styles.quoteTheirs]}
       accessibilityRole="button"
       accessibilityLabel={`Replying to ${author === "You" ? "you" : author}: ${snippet}`}
-      accessibilityHint="Shows that message"
+      accessibilityHint={t("conversation.showsThatMessage")}
     >
       <Text style={styles.quoteAuthor} numberOfLines={1}>{author}</Text>
       <Text style={styles.quoteText} numberOfLines={2}>{snippet}</Text>
@@ -391,14 +392,14 @@ function MessageContent({ row, userId, nameOf, labelOf, senderLabel, accessToken
   const forwarded = row.kind === "sent" && row.forwarded ? (
     <View style={styles.forwardedLabel}>
       <Icon name={ICONS.forward} size={12} color={colors.textSecondary} />
-      <Text style={styles.forwardedText}>Forwarded</Text>
+      <Text style={styles.forwardedText}>{t("conversation.forwarded")}</Text>
     </View>
   ) : null;
   if (row.kind === "media" || (row.kind === "sent" && row.media)) {
     const mineMedia = row.kind === "media" || row.senderId === userId;
     const kind = row.kind === "media" ? row.mediaKind : row.media!.kind;
     const failedMedia = row.kind === "media" && row.status === "failed";
-    const who = mineMedia ? "You" : otherUsername ? `@${otherUsername}` : "Them";
+    const who = mineMedia ? t("common.you") : otherUsername ? `@${otherUsername}` : t("conversation.them");
     if (kind === "audio") {
       const key = rowKey(row);
       return (
@@ -476,10 +477,10 @@ function MessageContent({ row, userId, nameOf, labelOf, senderLabel, accessToken
   const replyLabel = reply ? storyReplyLabel(reply, mine) : null;
   const openableStory = row.kind === "sent" ? row.sharedStoryId ?? reply?.storyId ?? null : null;
   const shared = row.kind === "sent"
-    ? (row.sharedStoryId ? (row.sharedStory ? `@${row.sharedStory.ownerUsername}'s Story${row.sharedStory.active ? "" : ", no longer available"}` : "Shared a Story") : replyLabel)
-    : row.storyId ? "Shared a Story" : null;
+    ? (row.sharedStoryId ? (row.sharedStory ? `@${row.sharedStory.ownerUsername}'s Story${row.sharedStory.active ? "" : ", no longer available"}` : t("conversation.sharedAStory")) : replyLabel)
+    : row.storyId ? t("conversation.sharedAStory") : null;
   // Bubbles show who sent what by their side of the screen; a screen reader says it.
-  const spoken = [forwarded ? "Forwarded" : null, shared, row.body].filter(Boolean).join(". ");
+  const spoken = [forwarded ? t("conversation.forwarded") : null, shared, row.body].filter(Boolean).join(". ");
   return (
     <View style={[styles.bubbleRow, mine ? styles.bubbleRowMine : styles.bubbleRowTheirs]}>
       <View style={[styles.bubbleColumn, mine ? styles.bubbleColumnMine : styles.bubbleColumnTheirs]}>
@@ -506,7 +507,7 @@ function MessageContent({ row, userId, nameOf, labelOf, senderLabel, accessToken
             row.kind === "pending" && row.status !== "sending" ? "Retry or delete this message"
               : openableStory ? "Opens the Story" : undefined
           }
-          accessibilityActions={row.kind === "sent" ? [{ name: "reply", label: "Reply" }, { name: "react", label: "React" }, ...(canReport ? [{ name: "report", label: "Report message" }] : [])] : undefined}
+          accessibilityActions={row.kind === "sent" ? [{ name: "reply", label: t("common.reply") }, { name: "react", label: t("conversation.react") }, ...(canReport ? [{ name: "report", label: t("conversation.reportMessage") }] : [])] : undefined}
           onAccessibilityAction={(event) => {
             if (row.kind !== "sent") return;
             if (event.nativeEvent.actionName === "reply") actions.onReply(row);
@@ -521,16 +522,16 @@ function MessageContent({ row, userId, nameOf, labelOf, senderLabel, accessToken
                 <Image source={{ uri: mediaFileUrl(row.sharedStory.mediaId, "thumbnail"), headers: authHeaders(accessToken) }} style={styles.storyCardImage} resizeMode="cover" />
               ) : (
                 <View style={[styles.storyCardImage, styles.storyCardGone]}>
-                  <Text style={styles.storyCardGoneText}>{row.sharedStory && !row.sharedStory.active ? "Story unavailable" : "Story"}</Text>
+                  <Text style={styles.storyCardGoneText}>{row.sharedStory && !row.sharedStory.active ? t("common.storyUnavailable") : t("common.story")}</Text>
                 </View>
               )}
               <Text style={[styles.storyCardOwner, mine ? styles.bubbleTextMine : styles.bubbleTextTheirs]} numberOfLines={1}>
-                {row.sharedStory ? `@${row.sharedStory.ownerUsername}'s Story` : "Shared a Story"}
+                {row.sharedStory ? t("conversation.ownerusernameSStory", { ownerUsername: row.sharedStory.ownerUsername }) : t("conversation.sharedAStory")}
               </Text>
             </View>
           ) : null}
           {row.kind === "pending" && row.storyId ? (
-            <Text style={styles.bubbleTextMine}>Shared a Story</Text>
+            <Text style={styles.bubbleTextMine}>{t("conversation.sharedAStory")}</Text>
           ) : null}
           {replyLabel ? <Text style={[styles.replyLabel, mine ? styles.bubbleTextMine : styles.bubbleTextTheirs]}>{replyLabel}</Text> : null}
           {row.body ? (
@@ -606,7 +607,7 @@ const Composer = memo(function Composer({ onSendText, onVoiceNote, onStartRecord
       setComposerError(null);
     } catch (error) {
       setDraft((current) => current || body); // nothing lost: it's back in the box
-      setComposerError(error instanceof Error ? error.message : "Couldn't send that message.");
+      setComposerError(error instanceof Error ? error.message : t("conversation.couldntSendThatMessage"));
     } finally {
       sendingRef.current = false;
     }
@@ -627,30 +628,30 @@ const Composer = memo(function Composer({ onSendText, onVoiceNote, onStartRecord
         <View style={styles.replyBar}>
           <Icon name={ICONS.reply} size={18} color={colors.textSecondary} />
           <View style={styles.replyBarText}>
-            <Text style={styles.replyBarTitle} numberOfLines={1}>Replying to {replyingTo.author}</Text>
+            <Text style={styles.replyBarTitle} numberOfLines={1}>{t("conversation.replyingToAuthor", { author: replyingTo.author })}</Text>
             <Text style={styles.replyBarSnippet} numberOfLines={1}>{replyingTo.snippet}</Text>
           </View>
-          <Pressable onPress={onCancelReply} hitSlop={10} style={styles.replyBarClose} accessibilityRole="button" accessibilityLabel="Cancel reply">
+          <Pressable onPress={onCancelReply} hitSlop={10} style={styles.replyBarClose} accessibilityRole="button" accessibilityLabel={t("conversation.cancelReply")}>
             <Icon name={ICONS.close} size={18} color={colors.textSecondary} />
           </Pressable>
         </View>
       ) : null}
       {recording ? (
         <View style={[styles.composerRow, styles.recordingRow, padBottom]}>
-          <Pressable onPress={() => void recorder.cancel()} hitSlop={8} style={styles.recordCancel} accessibilityRole="button" accessibilityLabel="Delete voice message">
+          <Pressable onPress={() => void recorder.cancel()} hitSlop={8} style={styles.recordCancel} accessibilityRole="button" accessibilityLabel={t("conversation.deleteVoiceMessage")}>
             <Icon name={ICONS.trash} size={22} color={colors.danger} />
           </Pressable>
           <View style={styles.recordDot} />
           <Text style={styles.recordTime} accessibilityLiveRegion="polite">
             {recorder.state.status === "recording" ? formatClock(recorder.state.elapsedMs) : "0:00"}
           </Text>
-          <Text style={styles.recordHint} numberOfLines={1}>Recording…</Text>
+          <Text style={styles.recordHint} numberOfLines={1}>{t("conversation.recording")}</Text>
           <Pressable
             style={[styles.roundButton, styles.sendRound]}
             onPress={() => void recorder.send()}
             disabled={recorder.state.status !== "recording"}
             accessibilityRole="button"
-            accessibilityLabel="Send voice message"
+            accessibilityLabel={t("conversation.sendVoiceMessage")}
           >
             <Icon name={ICONS.send} size={20} color={colors.onAccent} />
           </Pressable>
@@ -658,19 +659,19 @@ const Composer = memo(function Composer({ onSendText, onVoiceNote, onStartRecord
       ) : (
         <View style={[styles.composerRow, padBottom]}>
           {/* Camera always; the gallery steps aside while you type (emoji come from the keyboard). */}
-          <Pressable style={[styles.roundButton, styles.cameraButton]} onPress={onTakePhoto} hitSlop={4} accessibilityRole="button" accessibilityLabel="Take a photo or video">
+          <Pressable style={[styles.roundButton, styles.cameraButton]} onPress={onTakePhoto} hitSlop={4} accessibilityRole="button" accessibilityLabel={t("conversation.takeAPhotoOrVideo")}>
             <Icon name={ICONS.camera} size={20} color={colors.onAccent} />
           </Pressable>
           {draft.trim() ? null : (
-            <Pressable style={styles.roundButton} onPress={onPickFromGallery} hitSlop={4} accessibilityRole="button" accessibilityLabel="Send a photo or video from your gallery">
+            <Pressable style={styles.roundButton} onPress={onPickFromGallery} hitSlop={4} accessibilityRole="button" accessibilityLabel={t("conversation.sendAPhotoOrVideo")}>
               <Icon name={ICONS.gallery} size={22} color={colors.textPrimary} />
             </Pressable>
           )}
           <TextInput
             ref={inputRef}
             style={styles.composerInput}
-            accessibilityLabel="Message"
-            placeholder="Message…"
+            accessibilityLabel={t("common.message")}
+            placeholder={t("conversation.message")}
             placeholderTextColor={colors.textDisabled}
             value={draft}
             onChangeText={onChangeDraft}
@@ -678,12 +679,12 @@ const Composer = memo(function Composer({ onSendText, onVoiceNote, onStartRecord
             multiline
           />
           {draft.trim() ? (
-            <Pressable style={[styles.roundButton, styles.sendRound]} onPress={() => void onSend()} accessibilityRole="button" accessibilityLabel="Send">
+            <Pressable style={[styles.roundButton, styles.sendRound]} onPress={() => void onSend()} accessibilityRole="button" accessibilityLabel={t("common.send")}>
               <Icon name={ICONS.send} size={20} color={colors.onAccent} />
             </Pressable>
           ) : (
             // Nothing typed: the microphone, like Instagram and WhatsApp. Tap to record.
-            <Pressable style={styles.roundButton} onPress={onMic} accessibilityRole="button" accessibilityLabel="Record a voice message">
+            <Pressable style={styles.roundButton} onPress={onMic} accessibilityRole="button" accessibilityLabel={t("conversation.recordAVoiceMessage")}>
               <Icon name={ICONS.mic} size={22} color={colors.textPrimary} />
             </Pressable>
           )}
@@ -696,13 +697,13 @@ const Composer = memo(function Composer({ onSendText, onVoiceNote, onStartRecord
 /** Camera or photos refused for good: only Settings can turn them back on. */
 function accessRefused(what: "camera" | "photos"): void {
   Alert.alert(
-    what === "camera" ? "Allow camera access" : "Allow photo access",
+    what === "camera" ? t("common.allowCameraAccess") : t("common.allowPhotoAccess"),
     what === "camera"
-      ? "To take a photo or video here, allow Katkee to use the camera in your phone's Settings."
-      : "To send photos and videos, allow Katkee to access them in your phone's Settings.",
+      ? t("conversation.toTakeAPhotoOr")
+      : t("conversation.toSendPhotosAndVideos"),
     [
-      { text: "Not now", style: "cancel" },
-      { text: "Open Settings", onPress: () => void Linking.openSettings().catch(() => undefined) },
+      { text: t("common.notNow"), style: "cancel" },
+      { text: t("common.openSettings"), onPress: () => void Linking.openSettings().catch(() => undefined) },
     ],
   );
 }
@@ -800,7 +801,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         });
       }
     } catch (error: unknown) {
-      if (error instanceof ApiError && error.status === 404) setLoadError(isGroupParam ? "You're no longer in this group." : "This conversation isn't available.");
+      if (error instanceof ApiError && error.status === 404) setLoadError(isGroupParam ? t("conversation.youreNoLongerInThis") : t("conversation.thisConversationIsntAvailable"));
     }
   }, [conversationId, isGroupParam, navigation, userId]);
   // Also for a 1:1 chat opened from the inbox: whether you muted it (the header's menu).
@@ -846,7 +847,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   useEffect(() => {
     if (isGroup) {
       const others = (group?.members ?? []).filter((m) => m.userId !== userId);
-      const title = group ? groupName(group.title, others, others.length) : groupTitleParam ?? "Group";
+      const title = group ? groupName(group.title, others, others.length) : groupTitleParam ?? t("common.group");
       navigation.setOptions({
         headerTitle: () => (
           <Pressable
@@ -855,12 +856,12 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
             hitSlop={6}
             accessibilityRole="button"
             accessibilityLabel={`${title}${group ? `, ${group.members.length} people` : ""}`}
-            accessibilityHint="Shows the group's people and settings"
+            accessibilityHint={t("conversation.showsTheGroupsPeopleAnd")}
           >
             <GroupAvatar members={others} size={34} />
             <View style={styles.headerNames}>
               <Text style={styles.headerName} numberOfLines={1}>{title}</Text>
-              {group ? <Text style={styles.headerUsername} numberOfLines={1}>{group.members.length} people</Text> : null}
+              {group ? <Text style={styles.headerUsername} numberOfLines={1}>{t("conversation.lengthPeople", { length: group.members.length })}</Text> : null}
             </View>
           </Pressable>
         ),
@@ -877,7 +878,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           hitSlop={6}
           accessibilityRole="button"
           accessibilityLabel={otherUsername ? `${otherDisplayName ?? otherUsername}${otherVerified ? ", verified" : ""}, @${otherUsername}` : "Conversation"}
-          accessibilityHint="Opens their profile"
+          accessibilityHint={t("conversation.opensTheirProfile")}
         >
           {otherUsername ? <Avatar username={otherUsername} displayName={otherDisplayName ?? otherUsername} avatarMediaId={otherAvatarMediaId ?? null} size={34} /> : null}
           <View style={styles.headerNames}>
@@ -898,7 +899,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
               </Pressable>
             </>
           ) : null}
-          <Pressable onPress={() => setChatMenuOpen(true)} hitSlop={10} style={styles.headerMore} accessibilityRole="button" accessibilityLabel="Chat options">
+          <Pressable onPress={() => setChatMenuOpen(true)} hitSlop={10} style={styles.headerMore} accessibilityRole="button" accessibilityLabel={t("conversation.chatOptions")}>
             <Icon name={ICONS.more} size={22} color={colors.textPrimary} />
           </Pressable>
         </View>
@@ -957,7 +958,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       if (page.messages.some((m) => m.senderId !== userId)) markRead();
     } catch (error) {
       if (messagesRef.current === null) {
-        setLoadError(error instanceof ApiError && error.status === 404 ? "This conversation isn't available." : "Couldn't load messages. Check your connection and try again.");
+        setLoadError(error instanceof ApiError && error.status === 404 ? t("conversation.thisConversationIsntAvailable") : t("conversation.couldntLoadMessagesCheckYour"));
       }
     }
   }, [conversationId, markRead, userId]);
@@ -999,7 +1000,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         // Taken out of a group (or the chat is gone): say so. Offline: the next event, resync or poll tries again.
         if (error instanceof ApiError && error.status === 404) {
           setMessages(null);
-          setLoadError(isGroupParam ? "You're no longer in this group." : "This conversation isn't available.");
+          setLoadError(isGroupParam ? t("conversation.youreNoLongerInThis") : t("conversation.thisConversationIsntAvailable"));
         }
       }
       return null;
@@ -1120,7 +1121,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   const onEndReached = useCallback(() => void loadOlder(), [loadOlder]);
 
   const onSendText = useCallback(async (body: string) => {
-    if (!userId) throw new Error("You're signed out.");
+    if (!userId) throw new Error(t("common.youreSignedOut"));
     const replyToMessageId = replyingRef.current?.id;
     await enqueueMessage(userId, conversationId, { body, ...(replyToMessageId ? { replyToMessageId } : {}) });
     takeReply(); // only once it's queued: a refused message keeps its reply
@@ -1132,7 +1133,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     if (!userId) return;
     const replyToMessageId = takeReply();
     void enqueueMedia(userId, conversationId, replyToMessageId ? { ...item, replyToMessageId } : item, getToken).catch(() => {
-      Alert.alert("Not sent", "Couldn't send that. Try again.");
+      Alert.alert(t("conversation.notSent"), t("conversation.couldntSendThatTryAgain"));
     });
   }, [conversationId, getToken, takeReply, userId]);
 
@@ -1143,7 +1144,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     for (const asset of assets ?? []) {
       if (!asset.uri) continue;
       if (asset.type?.startsWith("video/") && (asset.fileSize ?? 0) > MAX_DM_VIDEO_BYTES) {
-        Alert.alert("Video too large", "Choose a video under 100 MB, or a shorter one.");
+        Alert.alert(t("common.videoTooLarge"), t("conversation.chooseAVideoUnder100"));
         continue;
       }
       sendMedia(newPendingMedia({ uri: asset.uri, type: asset.type, width: asset.width, height: asset.height }));
@@ -1153,11 +1154,11 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     if (result.didCancel) return;
     // iOS reports a refused camera or photo library as "permission": offer Settings, not "try again".
     if (result.errorCode === "permission") accessRefused(source);
-    else if (result.errorCode === "camera_unavailable") Alert.alert("No camera", "There's no camera available. Choose from your gallery instead.");
-    else if (result.errorCode) Alert.alert(source === "camera" ? "Camera unavailable" : "Gallery unavailable", result.errorMessage ?? "Try again.");
+    else if (result.errorCode === "camera_unavailable") Alert.alert(t("conversation.noCamera"), t("conversation.theresNoCameraAvailableChoose"));
+    else if (result.errorCode) Alert.alert(source === "camera" ? t("common.cameraUnavailable") : t("common.galleryUnavailable"), result.errorMessage ?? t("common.tryAgain2"));
     else if (source === "camera" && result.assets?.length === 1 && result.assets[0]!.uri) {
       const asset = result.assets[0]!;
-      if (asset.type?.startsWith("video/") && (asset.fileSize ?? 0) > MAX_DM_VIDEO_BYTES) Alert.alert("Video too large", "Record a shorter video.");
+      if (asset.type?.startsWith("video/") && (asset.fileSize ?? 0) > MAX_DM_VIDEO_BYTES) Alert.alert(t("common.videoTooLarge"), t("conversation.recordAShorterVideo"));
       else setCapture({ uri: asset.uri!, type: asset.type, width: asset.width, height: asset.height });
     } else onPickedAssets(result.assets);
   }, [onPickedAssets]);
@@ -1208,7 +1209,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       setMessages((current) => current?.map((m) => (m.id === messageId && JSON.stringify(m.reactions ?? []) !== JSON.stringify(reactions) ? { ...m, reactions } : m)) ?? current);
     } catch (error) {
       setMessages((current) => (current ? applyReaction(current, messageId, userId, before) : current));
-      Alert.alert("Couldn't react", error instanceof ApiError && error.status !== 404 ? error.message : "Check your connection and try again.");
+      Alert.alert(t("conversation.couldntReact"), error instanceof ApiError && error.status !== 404 ? error.message : t("conversation.checkYourConnectionAndTry"));
     }
   };
 
@@ -1219,38 +1220,38 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     setMuted(next);
     try {
       await setConversationMuted(conversationId, next, token);
-      showToast(next ? "Notifications muted" : "Notifications on");
+      showToast(next ? t("common.notificationsMuted") : t("common.notificationsOn"));
     } catch {
       setMuted(!next);
-      Alert.alert("Couldn't change that", "Check your connection and try again.");
+      Alert.alert(t("common.couldntChangeThat"), t("conversation.checkYourConnectionAndTry"));
     }
   };
   const blockOther = () => {
     if (!otherUsername) return;
-    Alert.alert(`Block @${otherUsername}?`, "They won't be able to message you, see your Stories or find your profile.", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("conversation.blockOtherusername2", { otherUsername }), t("conversation.theyWontBeAbleTo"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Block",
+        text: t("common.block"),
         style: "destructive",
         onPress: async () => {
           const token = tokenRef.current;
           if (!token) return;
           try {
             await blockUser(otherUsername, token);
-            showToast(`Blocked @${otherUsername}`);
+            showToast(t("conversation.blockedOtherusername", { otherUsername }));
             navigation.popToTop();
           } catch {
-            Alert.alert("Couldn't block", "Check your connection and try again.");
+            Alert.alert(t("common.couldntBlock"), t("conversation.checkYourConnectionAndTry"));
           }
         },
       },
     ]);
   };
   const deleteChat = () => {
-    Alert.alert("Delete this chat?", "It's removed from your inbox only. If they message you again, it comes back.", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("common.deleteThisChat"), t("conversation.itsRemovedFromYourInbox"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Delete",
+        text: t("common.delete"),
         style: "destructive",
         onPress: async () => {
           const token = tokenRef.current;
@@ -1260,7 +1261,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
             void refreshUnreadCount();
             navigation.popToTop();
           } catch {
-            Alert.alert("Couldn't delete", "Check your connection and try again.");
+            Alert.alert(t("common.couldntDelete"), t("conversation.checkYourConnectionAndTry"));
           }
         },
       },
@@ -1269,10 +1270,10 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
 
   /** Unsend your own message, after a confirmation; it goes at once and comes back if that fails. */
   const unsend = (message: Message) => {
-    Alert.alert("Unsend message?", "It will be removed for everyone in this chat.", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("conversation.unsendMessage"), t("conversation.itWillBeRemovedFor"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Unsend",
+        text: t("conversation.unsend"),
         style: "destructive",
         onPress: async () => {
           const token = tokenRef.current;
@@ -1283,7 +1284,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
             setPins((current) => current.filter((p) => p.messageId !== message.id));
           } catch {
             setMessages((current) => (current ? mergeMessages(current, [message]) : current));
-            Alert.alert("Couldn't unsend", "Check your connection and try again.");
+            Alert.alert(t("conversation.couldntUnsend"), t("conversation.checkYourConnectionAndTry"));
           }
         },
       },
@@ -1299,9 +1300,9 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       const oldest = current[current.length - 1];
       if (oldest) await unpinMessage(conversationId, oldest.messageId, token);
       await pinMessage(conversationId, message.id, token);
-      showToast("Pinned");
+      showToast(t("conversation.pinned"));
     } catch {
-      Alert.alert("Couldn't pin", "Check your connection and try again.");
+      Alert.alert(t("conversation.couldntPin"), t("conversation.checkYourConnectionAndTry"));
     }
     void loadPins();
   };
@@ -1312,17 +1313,17 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     try {
       if (pinned) await unpinMessage(conversationId, message.id, token);
       else await pinMessage(conversationId, message.id, token);
-      showToast(pinned ? "Unpinned" : "Pinned");
+      showToast(pinned ? t("conversation.unpinned") : t("conversation.pinned"));
       void loadPins();
     } catch (error) {
       if (!pinned && error instanceof ApiError && error.status === 409 && error.details?.code === "too_many_pins") {
-        Alert.alert("Replace the oldest pin?", `You can pin up to ${MAX_PINS} messages in a chat.`, [
-          { text: "Cancel", style: "cancel" },
-          { text: "Replace oldest", onPress: () => void replaceOldestPin(message) },
+        Alert.alert(t("conversation.replaceTheOldestPin"), t("conversation.youCanPinUpTo", { MAX_PINS }), [
+          { text: t("common.cancel"), style: "cancel" },
+          { text: t("conversation.replaceOldest"), onPress: () => void replaceOldestPin(message) },
         ]);
         return;
       }
-      Alert.alert(pinned ? "Couldn't unpin" : "Couldn't pin", error instanceof ApiError && error.status !== 404 && error.status !== 0 ? error.message : "Check your connection and try again.");
+      Alert.alert(pinned ? t("conversation.couldntUnpin") : t("conversation.couldntPin"), error instanceof ApiError && error.status !== 404 && error.status !== 0 ? error.message : t("conversation.checkYourConnectionAndTry"));
     }
   };
   const forward = (message: Message) => {
@@ -1332,7 +1333,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     if (Platform.OS !== "ios") go();
   };
   /** Who sent a pinned message, as its list says it. */
-  const authorOf = (senderId: string) => (senderId === userId ? "You" : nameOf(senderId) ? `@${nameOf(senderId)}` : "Someone");
+  const authorOf = (senderId: string) => (senderId === userId ? t("common.you") : nameOf(senderId) ? `@${nameOf(senderId)}` : t("common.someone"));
 
   // The rows' handlers never change identity; they act on the screen's latest state.
   /** Brings a quoted message into view, if it's among the messages loaded so far. */
@@ -1346,19 +1347,19 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     onPendingMediaPress: (row) => {
       const owner = latest.current.userId;
       if (row.status !== "failed" || !owner) return;
-      Alert.alert("Not sent", row.error ?? undefined, [
-        { text: "Try again", onPress: () => void retryMedia(owner, row.clientMessageId, latest.current.getToken) },
-        { text: "Delete", style: "destructive", onPress: () => void discardMedia(owner, row.clientMessageId) },
-        { text: "Cancel", style: "cancel" },
+      Alert.alert(t("conversation.notSent"), row.error ?? undefined, [
+        { text: t("common.tryAgain"), onPress: () => void retryMedia(owner, row.clientMessageId, latest.current.getToken) },
+        { text: t("common.delete"), style: "destructive", onPress: () => void discardMedia(owner, row.clientMessageId) },
+        { text: t("common.cancel"), style: "cancel" },
       ]);
     },
     onPendingPress: (row) => {
       const owner = latest.current.userId;
       if (!owner || row.status === "sending") return;
-      Alert.alert(row.status === "failed" ? "Message not sent" : "Message waiting to send", row.error ?? undefined, [
-        { text: "Try again", onPress: () => void retryMessage(owner, row.clientMessageId, latest.current.getToken) },
-        { text: "Delete", style: "destructive", onPress: () => void discardMessage(owner, row.clientMessageId) },
-        { text: "Cancel", style: "cancel" },
+      Alert.alert(row.status === "failed" ? t("conversation.messageNotSent") : t("conversation.messageWaitingToSend"), row.error ?? undefined, [
+        { text: t("common.tryAgain"), onPress: () => void retryMessage(owner, row.clientMessageId, latest.current.getToken) },
+        { text: t("common.delete"), style: "destructive", onPress: () => void discardMessage(owner, row.clientMessageId) },
+        { text: t("common.cancel"), style: "cancel" },
       ]);
     },
     // Long-press any stored message to react to it (and, on the other person's, to report it:
@@ -1463,7 +1464,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           <>
             <Text style={[typography.body, styles.loadError]}>{loadError}</Text>
             <Pressable style={styles.retryButton} onPress={() => void loadLatest(true)} accessibilityRole="button">
-              <Text style={styles.retryButtonText}>Try again</Text>
+              <Text style={styles.retryButtonText}>{t("common.tryAgain")}</Text>
             </Pressable>
           </>
         ) : (
@@ -1484,11 +1485,11 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           onPress={() => setPinsOpen(true)}
           accessibilityRole="button"
           accessibilityLabel={`Pinned: ${messagePreview(pins[0]!.message)}${pins.length > 1 ? `, ${pins.length} pinned messages` : ""}`}
-          accessibilityHint="Shows the pinned messages"
+          accessibilityHint={t("conversation.showsThePinnedMessages")}
         >
           <Icon name={ICONS.pin} size={16} color={colors.textSecondary} />
           <Text style={styles.pinBarText} numberOfLines={1}>{messagePreview(pins[0]!.message)}</Text>
-          {pins.length > 1 ? <Text style={styles.pinBarCount}>{pins.length} pinned</Text> : null}
+          {pins.length > 1 ? <Text style={styles.pinBarCount}>{t("conversation.lengthPinned", { length: pins.length })}</Text> : null}
         </Pressable>
       ) : null}
       <FlatList
@@ -1514,13 +1515,13 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       {/* Outside the inverted list: Android flips an inverted list on both axes, which mirrored this text. */}
       {rows.length === 0 ? (
         <View style={styles.emptyState} pointerEvents="none">
-          <Text style={typography.body}>{otherUsername && !isGroup ? `Say hi to @${otherUsername}` : "Say hi to the group"}</Text>
+          <Text style={typography.body}>{otherUsername && !isGroup ? t("conversation.sayHiToOtherusername", { otherUsername }) : t("conversation.sayHiToTheGroup")}</Text>
         </View>
       ) : null}
       {otherTyping ? (
         <View style={styles.typingRow} accessibilityLiveRegion="polite">
           <View style={styles.typingBubble}>
-            <Text style={styles.typingText}>{typingUserId && nameOf(typingUserId) ? `@${nameOf(typingUserId)} is typing…` : "Typing…"}</Text>
+            <Text style={styles.typingText}>{typingUserId && nameOf(typingUserId) ? t("conversation.isTyping", { username: nameOf(typingUserId) ?? "" }) : t("conversation.typing")}</Text>
           </View>
         </View>
       ) : null}
@@ -1537,7 +1538,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           ) : viewing?.id ? (
             <Image source={{ uri: mediaFileUrl(viewing.id, "display"), headers: authHeaders(accessToken) }} style={StyleSheet.absoluteFill} resizeMode="contain" />
           ) : null}
-          <Pressable style={[styles.viewerClose, { top: insetsTop + spacing.sm }]} onPress={() => setViewing(null)} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close">
+          <Pressable style={[styles.viewerClose, { top: insetsTop + spacing.sm }]} onPress={() => setViewing(null)} hitSlop={12} accessibilityRole="button" accessibilityLabel={t("common.close")}>
             <Icon name={ICONS.close} size={24} color="#FFFFFF" />
           </Pressable>
         </View>
@@ -1554,7 +1555,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           next?.();
         }}
       >
-        <Pressable pressEffect="none" style={styles.reactBackdrop} onPress={() => setReactingTo(null)} accessibilityRole="button" accessibilityLabel="Close">
+        <Pressable pressEffect="none" style={styles.reactBackdrop} onPress={() => setReactingTo(null)} accessibilityRole="button" accessibilityLabel={t("common.close")}>
           <View style={styles.reactCard}>
             <View style={styles.reactBar} accessibilityRole="menu">
               {MESSAGE_REACTIONS.map((emoji) => {
@@ -1579,13 +1580,13 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
             </View>
             {/* One short list under the reactions, like Instagram: Reply, Copy, then Unsend or Report. */}
             <View style={styles.menuCard}>
-              <Pressable style={styles.menuRow} onPress={() => { if (reactingTo) actions.onReply(reactingTo); }} accessibilityRole="button" accessibilityLabel="Reply">
-                <Text style={styles.menuText}>Reply</Text>
+              <Pressable style={styles.menuRow} onPress={() => { if (reactingTo) actions.onReply(reactingTo); }} accessibilityRole="button" accessibilityLabel={t("common.reply")}>
+                <Text style={styles.menuText}>{t("common.reply")}</Text>
                 <Icon name={ICONS.reply} size={18} color={colors.textPrimary} />
               </Pressable>
               {reactingTo && !reactingTo.event && (reactingTo.body || reactingTo.media || reactingTo.sharedStoryId) ? (
-                <Pressable style={styles.menuRow} onPress={() => forward(reactingTo)} accessibilityRole="button" accessibilityLabel="Forward">
-                  <Text style={styles.menuText}>Forward</Text>
+                <Pressable style={styles.menuRow} onPress={() => forward(reactingTo)} accessibilityRole="button" accessibilityLabel={t("conversation.forward")}>
+                  <Text style={styles.menuText}>{t("conversation.forward")}</Text>
                   <Icon name={ICONS.forward} size={18} color={colors.textPrimary} />
                 </Pressable>
               ) : null}
@@ -1595,12 +1596,12 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
                   onPress={() => {
                     Clipboard.setString(reactingTo.body ?? "");
                     setReactingTo(null);
-                    showToast("Copied");
+                    showToast(t("conversation.copied"));
                   }}
                   accessibilityRole="button"
-                  accessibilityLabel="Copy"
+                  accessibilityLabel={t("conversation.copy")}
                 >
-                  <Text style={styles.menuText}>Copy</Text>
+                  <Text style={styles.menuText}>{t("conversation.copy")}</Text>
                   <Icon name={ICONS.copy} size={18} color={colors.textPrimary} />
                 </Pressable>
               ) : null}
@@ -1617,7 +1618,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
                     accessibilityRole="button"
                     accessibilityLabel={pinned ? "Unpin" : "Pin"}
                   >
-                    <Text style={styles.menuText}>{pinned ? "Unpin" : "Pin"}</Text>
+                    <Text style={styles.menuText}>{pinned ? t("conversation.unpin") : t("conversation.pin")}</Text>
                     <Icon name={ICONS.pin} size={18} color={colors.textPrimary} />
                   </Pressable>
                 );
@@ -1631,9 +1632,9 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
                     unsend(target);
                   }}
                   accessibilityRole="button"
-                  accessibilityLabel="Unsend"
+                  accessibilityLabel={t("conversation.unsend")}
                 >
-                  <Text style={styles.menuDanger}>Unsend</Text>
+                  <Text style={styles.menuDanger}>{t("conversation.unsend")}</Text>
                   <Icon name={ICONS.trash} size={18} color={colors.danger} />
                 </Pressable>
               ) : reactingTo ? (
@@ -1645,9 +1646,9 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
                     setReportingMessageId(id);
                   }}
                   accessibilityRole="button"
-                  accessibilityLabel="Report message"
+                  accessibilityLabel={t("conversation.reportMessage")}
                 >
-                  <Text style={styles.menuDanger}>Report</Text>
+                  <Text style={styles.menuDanger}>{t("common.report")}</Text>
                   <Icon name={ICONS.report} size={18} color={colors.danger} />
                 </Pressable>
               ) : null}
@@ -1660,20 +1661,20 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         onClose={() => setChatMenuOpen(false)}
         groups={[
           [
-            { label: muted ? "Unmute notifications" : "Mute notifications", onPress: () => void toggleMute() },
-            ...(otherUsername ? [{ label: "View profile", onPress: openProfile }] : []),
+            { label: muted ? t("common.unmuteNotifications") : t("common.muteNotifications"), onPress: () => void toggleMute() },
+            ...(otherUsername ? [{ label: t("common.viewProfile"), onPress: openProfile }] : []),
           ],
           [
-            ...(otherUsername ? [{ label: `Block @${otherUsername}`, destructive: true, onPress: blockOther }] : []),
-            { label: "Delete chat", destructive: true, onPress: deleteChat },
+            ...(otherUsername ? [{ label: t("conversation.blockOtherusername", { otherUsername }), destructive: true, onPress: blockOther }] : []),
+            { label: t("common.deleteChat"), destructive: true, onPress: deleteChat },
           ],
         ]}
       />
       <Modal visible={pinsOpen && pins.length > 0} transparent animationType="slide" statusBarTranslucent onRequestClose={() => setPinsOpen(false)}>
         <View style={styles.sheetFill}>
-          <Pressable pressEffect="none" style={styles.sheetBackdrop} onPress={() => setPinsOpen(false)} accessibilityRole="button" accessibilityLabel="Close" />
+          <Pressable pressEffect="none" style={styles.sheetBackdrop} onPress={() => setPinsOpen(false)} accessibilityRole="button" accessibilityLabel={t("common.close")} />
           <View style={[styles.sheet, { paddingBottom: spacing.lg + insetsBottom }]} accessibilityViewIsModal>
-            <Text style={styles.sheetTitle} accessibilityRole="header">Pinned messages</Text>
+            <Text style={styles.sheetTitle} accessibilityRole="header">{t("conversation.pinnedMessages")}</Text>
             {pins.map((pin) => {
               const preview = messagePreview(pin.message);
               const author = authorOf(pin.message.senderId);
@@ -1687,13 +1688,13 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
                     }}
                     accessibilityRole="button"
                     accessibilityLabel={`${author}: ${preview}`}
-                    accessibilityHint="Shows it in the chat, if it's loaded"
+                    accessibilityHint={t("conversation.showsItInTheChat")}
                   >
                     <Text style={styles.pinRowAuthor} numberOfLines={1}>{author}</Text>
                     <Text style={styles.pinRowBody} numberOfLines={3}>{preview}</Text>
                   </Pressable>
                   <Pressable style={styles.unpinButton} onPress={() => void togglePin(pin.message)} hitSlop={6} accessibilityRole="button" accessibilityLabel={`Unpin ${preview}`}>
-                    <Text style={styles.unpinText}>Unpin</Text>
+                    <Text style={styles.unpinText}>{t("conversation.unpin")}</Text>
                   </Pressable>
                 </View>
               );

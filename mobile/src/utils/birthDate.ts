@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 /**
  * Date of birth at sign-up. Katkee is for people 18 and older: the server decides
  * (backend/src/modules/auth/age.ts) and these mirror its rule and messages so most problems show
@@ -8,9 +9,9 @@
 export const MINIMUM_AGE = 18;
 
 export const BIRTH_DATE_MESSAGES = {
-  required: "Enter your date of birth.",
-  invalid: "Enter a valid date of birth.",
-  tooYoung: `Katkee is only for people ${MINIMUM_AGE} and older.`,
+  get required() { return t("birthDate.enterYourDateOfBirth"); },
+  get invalid() { return t("birthDate.enterAValidDateOf"); },
+  get tooYoung() { return t("birthDate.katkeeIsOnlyForPeople", { MINIMUM_AGE }); },
 } as const;
 
 /** India Standard Time is UTC+05:30 all year: a birthday counts from midnight in India. */

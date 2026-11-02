@@ -5,6 +5,7 @@ import { useAuth } from "../../state/AuthContext";
 import { getSequenceInsights, type StoryInsights } from "../../api/stories";
 import { EmptyState } from "../../components/EmptyState";
 import { Button } from "../../components/Form";
+import { t } from "../../i18n";
 
 function StatCard({ label, value, hint }: { label: string; value: string; hint: string }): React.JSX.Element {
   return (
@@ -40,7 +41,7 @@ export function SequenceInsightsScreen(): React.JSX.Element {
         if (!cancelled) setInsights(fetched);
       })
       .catch(() => {
-        if (!cancelled) setError("Check your connection and try again.");
+        if (!cancelled) setError(t("sequenceInsights.checkYourConnectionAndTry"));
       });
     return () => {
       cancelled = true;
@@ -50,8 +51,8 @@ export function SequenceInsightsScreen(): React.JSX.Element {
   if (error) {
     return (
       <View style={styles.centered}>
-        <EmptyState title="Couldn't load Insights" message={error}>
-          <Button label="Try again" variant="secondary" onPress={() => setReload((n) => n + 1)} />
+        <EmptyState title={t("sequenceInsights.couldntLoadInsights")} message={error}>
+          <Button label={t("common.tryAgain")} variant="secondary" onPress={() => setReload((n) => n + 1)} />
         </EmptyState>
       </View>
     );
@@ -68,23 +69,21 @@ export function SequenceInsightsScreen(): React.JSX.Element {
   if (insights.viewCount === 0) {
     return (
       <EmptyState
-        title="No views yet"
-        message="Once people watch your active Stories, Insights for the whole run will show up here."
+        title={t("sequenceInsights.noViewsYet")}
+        message={t("sequenceInsights.oncePeopleWatchYourActive")}
       />
     );
   }
 
   return (
     <View style={styles.container}>
-      <Text style={[typography.caption, styles.subtitle]}>
-        Your Stories from the last 24 hours
-      </Text>
+      <Text style={[typography.caption, styles.subtitle]}>{t("sequenceInsights.yourStoriesFromTheLast")}</Text>
       <View style={styles.grid}>
-        <StatCard label="Viewers" value={String(insights.viewCount)} hint="Watched at least one" />
-        <StatCard label="Watched to the end" value={`${insights.completionRate}%`} hint="Of your viewers" />
-        <StatCard label="Followers" value={`${insights.followingViewRate}%`} hint="Already follow you" />
-        <StatCard label="New people" value={`${insights.discoveryViewRate}%`} hint="Don't follow you yet" />
-        <StatCard label="Profile visits" value={`${insights.profileVisitRate}%`} hint="Then opened your profile" />
+        <StatCard label={t("sequenceInsights.viewers")} value={String(insights.viewCount)} hint={t("sequenceInsights.watchedAtLeastOne")} />
+        <StatCard label={t("sequenceInsights.watchedToTheEnd")} value={`${insights.completionRate}%`} hint={t("sequenceInsights.ofYourViewers")} />
+        <StatCard label={t("common.followers")} value={`${insights.followingViewRate}%`} hint={t("sequenceInsights.alreadyFollowYou")} />
+        <StatCard label={t("sequenceInsights.newPeople")} value={`${insights.discoveryViewRate}%`} hint={t("sequenceInsights.dontFollowYouYet")} />
+        <StatCard label={t("sequenceInsights.profileVisits")} value={`${insights.profileVisitRate}%`} hint={t("sequenceInsights.thenOpenedYourProfile")} />
       </View>
     </View>
   );

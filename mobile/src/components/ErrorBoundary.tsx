@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { Pressable } from "./Pressable";
 import { colors, radii, spacing, typography } from "../theme";
 import { reportCrash } from "../crashReporting";
+import { t } from "../i18n";
 
 interface Props {
   children: React.ReactNode;
@@ -42,12 +43,10 @@ export class ErrorBoundary extends React.Component<Props, State> {
     if (!this.state.error) return this.props.children;
     return (
       <View style={styles.container}>
-        <Text style={[typography.title, styles.title]}>Something went wrong</Text>
-        <Text style={[typography.body, styles.message]}>
-          Katkee ran into a problem. Try again — if it keeps happening, restart the app.
-        </Text>
+        <Text style={[typography.title, styles.title]}>{t("errorBoundary.somethingWentWrong")}</Text>
+        <Text style={[typography.body, styles.message]}>{t("errorBoundary.katkeeRanIntoAProblem")}</Text>
         <Pressable accessibilityRole="button" style={styles.button} onPress={this.reset}>
-          <Text style={styles.buttonLabel}>Try again</Text>
+          <Text style={styles.buttonLabel}>{t("common.tryAgain")}</Text>
         </Pressable>
       </View>
     );

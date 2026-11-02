@@ -9,6 +9,7 @@ import { ResetPasswordScreen } from "../screens/auth/ResetPasswordScreen";
 import { colors } from "../theme";
 import { PUSH_TRANSITION } from "./transitions";
 import { useAuth } from "../state/AuthContext";
+import { t } from "../i18n";
 
 const header = { headerShown: true, title: "", headerTransparent: true, headerTintColor: colors.textPrimary } as const;
 
@@ -22,7 +23,7 @@ export function AuthNavigator(): React.JSX.Element {
     <Stack.Navigator screenOptions={{ ...PUSH_TRANSITION, headerShown: false }} screenListeners={{ blur: clearError, beforeRemove: clearError }}>
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
-      <Stack.Screen name="Appeals" component={AppealsScreen} options={{headerShown:true,title:'Account review'}}/>
+      <Stack.Screen name="Appeals" component={AppealsScreen} options={{headerShown:true,title:t("common.accountReview")}}/>
       <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={header} />
       <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} options={header} />
     </Stack.Navigator>

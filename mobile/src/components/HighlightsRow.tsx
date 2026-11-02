@@ -14,6 +14,7 @@ import { mediaFileUrl } from "../api/stories";
 import { DraggableGrid } from "./DraggableGrid";
 import { FadeInImage } from "./FadeInImage";
 import { firstCharacter } from "../utils/firstCharacter";
+import { t } from "../i18n";
 
 interface Props {
   username: string;
@@ -110,10 +111,10 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
   );
 
   const confirmDelete = (highlight: HighlightSummary) => {
-    Alert.alert(`Delete "${highlight.title}"?`, "The Stories in it stay in your Archive.", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("highlightsRow.deleteTitle", { title: highlight.title }), t("highlightsRow.theStoriesInItStay"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Delete",
+        text: t("common.delete"),
         style: "destructive",
         onPress: () => {
           if (!accessToken) return;
@@ -121,7 +122,7 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
           deleteHighlight(highlight.id, accessToken)
             .then(() => tapFeedback("success"))
             .catch(() => {
-              Alert.alert("Couldn't delete", "Check your connection and try again.");
+              Alert.alert(t("common.couldntDelete"), t("highlightsRow.checkYourConnectionAndTry"));
               void load();
             });
         },
@@ -147,7 +148,7 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
   return (
     <View style={styles.wrapper}>
       <View style={styles.headerRow}>
-        <Text style={styles.sectionTitle} accessibilityRole="header">Highlights</Text>
+        <Text style={styles.sectionTitle} accessibilityRole="header">{t("highlightsRow.highlights")}</Text>
         {isOwner && highlights.length > 0 ? (
           <Pressable
             style={styles.reorderToggle}
@@ -156,7 +157,7 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
             accessibilityRole="button"
             accessibilityLabel={reordering ? "Done reordering Highlights" : "Reorder Highlights"}
           >
-            <Text style={styles.reorderToggleLabel}>{reordering ? "Done" : "Reorder"}</Text>
+            <Text style={styles.reorderToggleLabel}>{reordering ? t("common.done") : t("highlightsRow.reorder")}</Text>
           </Pressable>
         ) : null}
       </View>
@@ -170,7 +171,7 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
         startIndex={isOwner ? 1 : 0}
         draggable={isOwner && reordering}
         onReorder={onReorder}
-        itemAccessibilityLabel={(highlight) => `${highlight.title}, Highlight`}
+        itemAccessibilityLabel={(highlight) => t("highlightsRow.titleHighlight", { title: highlight.title })}
         // Tapping a card opens it, except mid-reorder — nothing should
         // navigate away while you're in the middle of dragging cards around.
         onPress={reordering ? undefined : (highlight) => navigation.navigate("HighlightViewer", { highlightId: highlight.id, title: highlight.title })}
@@ -181,12 +182,12 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
               style={[styles.newSlot, { width: cardWidth, height: cardHeight, left: 0, top: 0 }]}
               onPress={() => navigation.navigate("HighlightEditor", {})}
               accessibilityRole="button"
-              accessibilityLabel="New Highlight"
+              accessibilityLabel={t("common.newHighlight")}
             >
               <View style={[styles.newCard, { height: coverHeight }]}>
                 <Icon style={styles.newGlyph} name={ICONS.add} />
               </View>
-              <Text style={styles.label} numberOfLines={1}>New</Text>
+              <Text style={styles.label} numberOfLines={1}>{t("highlightsRow.new")}</Text>
             </Pressable>
           ) : null
         }
@@ -212,16 +213,16 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
         )}
       />
       {isOwner && highlights.length > 0 ? (
-        <Text style={styles.hint}>Press and hold a Highlight to edit or delete it.</Text>
+        <Text style={styles.hint}>{t("highlightsRow.pressAndHoldAHighlight")}</Text>
       ) : null}
       <ActionSheet
         visible={options !== null}
         title={options?.title}
         groups={[
           [
-            { label: "Edit Highlight", onPress: () => options && navigation.navigate("HighlightEditor", { highlightId: options.id }) },
-            { label: "Change cover", onPress: () => options && navigation.navigate("HighlightEditor", { highlightId: options.id, chooseCover: true }) },
-            { label: "Delete Highlight", destructive: true, onPress: () => options && confirmDelete(options) },
+            { label: t("common.editHighlight"), onPress: () => options && navigation.navigate("HighlightEditor", { highlightId: options.id }) },
+            { label: t("common.changeCover"), onPress: () => options && navigation.navigate("HighlightEditor", { highlightId: options.id, chooseCover: true }) },
+            { label: t("common.deleteHighlight"), destructive: true, onPress: () => options && confirmDelete(options) },
           ],
         ]}
         onClose={() => setOptions(null)}

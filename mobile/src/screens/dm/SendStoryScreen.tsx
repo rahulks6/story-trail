@@ -16,6 +16,7 @@ import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import { showToast } from "../../components/Toast";
 import { tapFeedback } from "../../utils/haptics";
 import { RecipientPicker, type Recipient } from "./RecipientPicker";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "SendStory">;
 
@@ -40,7 +41,7 @@ export function SendStoryScreen({ route, navigation }: Props): React.JSX.Element
   useEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
-        <Pressable onPress={() => navigation.goBack()} hitSlop={10} accessibilityRole="button" accessibilityLabel="Close">
+        <Pressable onPress={() => navigation.goBack()} hitSlop={10} accessibilityRole="button" accessibilityLabel={t("common.close")}>
           <Icon name={ICONS.close} size={22} color={colors.textPrimary} />
         </Pressable>
       ),
@@ -82,7 +83,7 @@ export function SendStoryScreen({ route, navigation }: Props): React.JSX.Element
     void refreshUnreadCount();
     if (!failed.size) {
       tapFeedback("success");
-      showToast(chosen.size === 1 ? "Sent" : `Sent to ${chosen.size}`);
+      showToast(chosen.size === 1 ? t("common.sent") : t("sendStory.sentToSize", { size: chosen.size }));
       navigation.goBack();
       return;
     }
@@ -100,12 +101,12 @@ export function SendStoryScreen({ route, navigation }: Props): React.JSX.Element
           {error ? <Text style={styles.error} accessibilityRole="alert">{error}</Text> : null}
           <TextInput
             style={styles.note}
-            placeholder="Add a message…"
+            placeholder={t("sendStory.addAMessage")}
             placeholderTextColor={colors.textDisabled}
             value={note}
             onChangeText={setNote}
             maxLength={MAX_MESSAGE_LENGTH}
-            accessibilityLabel="Add a message, optional"
+            accessibilityLabel={t("sendStory.addAMessageOptional")}
           />
           <Button label={chosen.size === 1 ? `Send to ${chosenNames}` : `Send to ${chosen.size}`} onPress={() => void send()} busy={sending} />
         </View>

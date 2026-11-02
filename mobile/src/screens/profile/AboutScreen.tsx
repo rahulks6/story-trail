@@ -5,6 +5,7 @@ import { BrandMark } from "../../components/BrandMark";
 import { ListRow } from "../../components/ListRow";
 import { appEnv } from "../../config/env";
 import { colors, radii, spacing, typography } from "../../theme";
+import { t } from "../../i18n";
 
 /** The public pages the stores also link to (build-config.json; published at katkee.com). */
 const LINKS = [
@@ -14,7 +15,7 @@ const LINKS = [
 ] as const;
 
 export function openPublicPage(url: string): void {
-  void Linking.openURL(url).catch(() => Alert.alert("Could not open link", "Please try again."));
+  void Linking.openURL(url).catch(() => Alert.alert(t("about.couldNotOpenLink"), t("common.pleaseTryAgain")));
 }
 
 /** The app's identity: the mark, its name and release version (build-config.json), and its public pages. */
@@ -24,8 +25,8 @@ export function AboutScreen(): React.JSX.Element {
       <View style={styles.header}>
         <BrandMark height={72} />
         <Text style={[typography.title, styles.name]} accessibilityRole="header">Katkee</Text>
-        <Text style={styles.version}>Version {appEnv.appVersion}</Text>
-        <Text style={[typography.body, styles.tagline]}>Story that connects.</Text>
+        <Text style={styles.version}>{t("about.versionAppversion", { appVersion: appEnv.appVersion })}</Text>
+        <Text style={[typography.body, styles.tagline]}>{t("common.storyThatConnects")}</Text>
       </View>
       <View style={styles.card}>
         {LINKS.filter(([, url]) => !!url).map(([label, url]) => (

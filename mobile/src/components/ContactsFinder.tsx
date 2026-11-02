@@ -13,6 +13,7 @@ import { VerifiedName } from "./VerifiedBadge";
 import { Banner, Button } from "./Form";
 import { Icon } from "./Icon";
 import { tapFeedback } from "../utils/haptics";
+import { t } from "../i18n";
 
 type Phase = "intro" | "checking" | "results" | "denied" | "blocked" | "failed";
 type FollowState = "none" | "following" | "requested" | "busy";
@@ -59,13 +60,13 @@ export function ContactsFinder({ header, footer, source, onOpenProfile }: Props)
     setProgress(null);
     try {
       const found = await findContactsOnKatkee(accessToken, (done, total) => {
-        if (total > 1) setProgress(`Checking ${done} of ${total}…`);
+        if (total > 1) setProgress(t("contactsFinder.checkingDoneOfTotal", { done, total }));
       });
       setPeople(found);
       setFollows(Object.fromEntries(found.map((p) => [p.username, p.viewer.isFollowing ? "following" : p.viewer.hasPendingRequestFromViewer ? "requested" : "none"])));
       setPhase("results");
     } catch (error) {
-      setFailure(error instanceof ApiError && error.status === 429 ? error.message : "Check your connection and try again.");
+      setFailure(error instanceof ApiError && error.status === 429 ? error.message : t("contactsFinder.checkYourConnectionAndTry"));
       setPhase("failed");
     }
   };
@@ -89,7 +90,7 @@ export function ContactsFinder({ header, footer, source, onOpenProfile }: Props)
     }
   };
 
-  const invite = <Button label="Invite friends" variant="secondary" onPress={() => void shareInvite(source === "onboarding" ? "onboarding" : "contacts", accessToken, user?.id)} />;
+  const invite = <Button label={t("common.inviteFriends")} variant="secondary" onPress={() => void shareInvite(source === "onboarding" ? "onboarding" : "contacts", accessToken, user?.id)} />;
 
   if (phase !== "results") {
     return (
@@ -101,7 +102,7 @@ export function ContactsFinder({ header, footer, source, onOpenProfile }: Props)
           </View>
           {phase === "intro" || phase === "checking" ? (
             <>
-              <Text style={typography.displayLarge} accessibilityRole="header">Find friends from your contacts</Text>
+              <Text style={typography.displayLarge} accessibilityRole="header">{t("contactsFinder.findFriendsFromYourContacts")}</Text>
               <View style={styles.points}>
                 {CONTACTS_EXPLAINER.map((point) => (
                   <View key={point} style={styles.point}>
@@ -112,31 +113,31 @@ export function ContactsFinder({ header, footer, source, onOpenProfile }: Props)
               </View>
               {phase === "checking" ? (
                 <View style={styles.checking}>
-                  <ActivityIndicator color={colors.accentText} accessibilityLabel="Checking your contacts" />
-                  <Text style={styles.body}>{progress ?? "Checking your contacts…"}</Text>
+                  <ActivityIndicator color={colors.accentText} accessibilityLabel={t("contactsFinder.checkingYourContacts2")} />
+                  <Text style={styles.body}>{progress ?? t("contactsFinder.checkingYourContacts")}</Text>
                 </View>
               ) : (
-                <Button label="Continue" onPress={() => void check()} accessibilityHint="Asks to use your contacts" />
+                <Button label={t("common.continue")} onPress={() => void check()} accessibilityHint={t("contactsFinder.asksToUseYourContacts")} />
               )}
             </>
           ) : phase === "failed" ? (
             <>
-              <Text style={typography.displayLarge} accessibilityRole="header">Couldn't check your contacts</Text>
+              <Text style={typography.displayLarge} accessibilityRole="header">{t("contactsFinder.couldntCheckYourContacts")}</Text>
               {failure ? <Banner text={failure} /> : null}
-              <Button label="Try again" onPress={() => void check()} />
+              <Button label={t("common.tryAgain")} onPress={() => void check()} />
             </>
           ) : (
             <>
-              <Text style={typography.displayLarge} accessibilityRole="header">Contacts are off for Katkee</Text>
+              <Text style={typography.displayLarge} accessibilityRole="header">{t("contactsFinder.contactsAreOffForKatkee")}</Text>
               <Text style={styles.body}>
                 {phase === "blocked"
-                  ? "To find friends from your contacts, allow Contacts for Katkee in your phone's Settings."
-                  : "That's fine: nothing was read. You can try again any time from Settings."}
+                  ? t("contactsFinder.toFindFriendsFromYour")
+                  : t("contactsFinder.thatsFineNothingWasRead")}
               </Text>
               {phase === "blocked" ? (
-                <Button label="Open Settings" onPress={() => void Linking.openSettings().catch(() => undefined)} />
+                <Button label={t("common.openSettings")} onPress={() => void Linking.openSettings().catch(() => undefined)} />
               ) : (
-                <Button label="Try again" variant="secondary" onPress={() => void check()} />
+                <Button label={t("common.tryAgain")} variant="secondary" onPress={() => void check()} />
               )}
               {invite}
             </>
@@ -156,22 +157,22 @@ export function ContactsFinder({ header, footer, source, onOpenProfile }: Props)
         ListHeaderComponent={
           <View style={styles.listHeader}>
             {header}
-            <Text style={typography.displayLarge} accessibilityRole="header">Contacts on Katkee</Text>
+            <Text style={typography.displayLarge} accessibilityRole="header">{t("common.contactsOnKatkee")}</Text>
             <Text style={styles.body}>
-              {people.length === 0 ? "None of your contacts are on Katkee yet." : people.length === 1 ? "1 of your contacts is here." : `${people.length} of your contacts are here.`}
+              {people.length === 0 ? t("contactsFinder.noneOfYourContactsAre") : people.length === 1 ? t("contactsFinder.n1OfYourContactsIs") : t("contactsFinder.lengthOfYourContactsAre", { length: people.length })}
             </Text>
           </View>
         }
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Text style={styles.body}>Invite them, and their Stories will show on your Home when they join.</Text>
+            <Text style={styles.body}>{t("contactsFinder.inviteThemAndTheirStories")}</Text>
             {invite}
           </View>
         }
         ListFooterComponent={people.length > 0 ? <View style={styles.listFooter}>{invite}</View> : undefined}
         renderItem={({ item }) => {
           const state = follows[item.username] ?? "none";
-          const label = state === "following" ? "Following" : state === "requested" ? "Requested" : "Follow";
+          const label = state === "following" ? t("common.following") : state === "requested" ? t("common.requested") : t("common.follow");
           const active = state === "following" || state === "requested";
           const who = (
             <>

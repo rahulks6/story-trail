@@ -12,6 +12,7 @@ import { ApiError } from "../../api/client";
 import { EmptyState } from "../../components/EmptyState";
 import { Avatar } from "../../components/Avatar";
 import { VerifiedName } from "../../components/VerifiedBadge";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "FollowList">;
 
@@ -57,7 +58,7 @@ export function FollowListScreen({ route }: Props): React.JSX.Element {
       setOffset(list.length);
       setHasMore(list.length === PAGE_SIZE);
     } catch (err) {
-      setError(err instanceof ApiError && err.status === 403 ? "This account is private." : "Couldn't load this list.");
+      setError(err instanceof ApiError && err.status === 403 ? t("followList.thisAccountIsPrivate") : t("followList.couldntLoadThisList"));
       setUsers([]);
     }
   }, [accessToken, fetchList]);
@@ -82,11 +83,11 @@ export function FollowListScreen({ route }: Props): React.JSX.Element {
   }, [accessToken, fetchList, loadingMore, hasMore, users, offset]);
 
   if (users === null) {
-    return <ListSkeleton label="Loading people" />;
+    return <ListSkeleton label={t("followList.loadingPeople")} />;
   }
 
   if (error) {
-    return <EmptyState title="Can't show this list" message={error} />;
+    return <EmptyState title={t("followList.cantShowThisList")} message={error} />;
   }
 
   if (users.length === 0) {

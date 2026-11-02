@@ -1,4 +1,5 @@
 import type { CallEndReason, CallMedia, CallPerson } from "../api/calls";
+import { t } from "../i18n";
 
 /**
  * What the call screen shows, as a pure reducer (tested on its own; CallController.ts feeds it):
@@ -155,34 +156,34 @@ export function formatCallDuration(totalSeconds: number): string {
 }
 
 const ENDED_TEXT: Record<EndedBecause, string> = {
-  completed: "Call ended",
-  missed: "No answer",
-  cancelled: "Call ended",
-  declined: "Declined",
-  busy: "On another call",
-  failed: "Couldn't connect",
-  unavailable: "Calls aren't available",
-  permission: "Microphone access needed",
-  error: "Call ended",
+  get completed() { return t("callMachine.callEnded"); },
+  get missed() { return t("callMachine.noAnswer"); },
+  get cancelled() { return t("callMachine.callEnded"); },
+  get declined() { return t("common.declined"); },
+  get busy() { return t("callMachine.onAnotherCall"); },
+  get failed() { return t("callMachine.couldntConnect"); },
+  get unavailable() { return t("callMachine.callsArentAvailable"); },
+  get permission() { return t("callMachine.microphoneAccessNeeded"); },
+  get error() { return t("callMachine.callEnded"); },
 };
 
 /** The line under the person's name: what's happening now. */
 export function callStatusText(state: CallState, now: number): string {
   switch (state.phase) {
     case "outgoing":
-      return state.remoteRinging ? "Ringing…" : "Calling…";
+      return state.remoteRinging ? t("callMachine.ringing") : t("callMachine.calling");
     case "incoming":
-      return state.media === "video" ? "Incoming video call" : "Incoming voice call";
+      return state.media === "video" ? t("callMachine.incomingVideoCall") : t("callMachine.incomingVoiceCall");
     case "connecting":
-      return "Connecting…";
+      return t("callMachine.connecting");
     case "reconnecting":
-      return "Reconnecting…";
+      return t("callMachine.reconnecting");
     case "active":
       return formatCallDuration(state.connectedAt === null ? 0 : (now - state.connectedAt) / 1000);
     case "ended":
-      if (state.endedBecause === "permission" && state.media === "video") return "Camera and microphone access needed";
+      if (state.endedBecause === "permission" && state.media === "video") return t("callMachine.cameraAndMicrophoneAccessNeeded");
       return state.endedBecause === "completed" && state.durationSeconds !== null
-        ? `Call ended · ${formatCallDuration(state.durationSeconds)}`
+        ? t("callMachine.callEndedDurationseconds", { durationSeconds: formatCallDuration(state.durationSeconds) })
         : ENDED_TEXT[state.endedBecause ?? "error"];
     default:
       return "";

@@ -5,6 +5,7 @@ import { Pressable } from "../Pressable";
 import { colors, spacing } from "../../theme";
 import { tapFeedback } from "../../utils/haptics";
 import { barPath } from "./barPath";
+import { t } from "../../i18n";
 
 const HEIGHT = 110;
 const GAP = 2;
@@ -21,7 +22,7 @@ export function hourRange(hour: number): string {
 
 /** What one hour says: its share of the busiest hour, never a count of people. */
 export function hourText(hour: number, share: number, peakHour: number): string {
-  return hour === peakHour ? `${hourRange(hour)}: your followers' busiest hour` : `${hourRange(hour)}: ${share}% as busy as your busiest hour`;
+  return hour === peakHour ? t("activeHoursChart.hourYourFollowersBusiestHour", { hour: hourRange(hour) }) : t("activeHoursChart.hourShareAsBusyAs", { hour: hourRange(hour), share });
 }
 
 /**

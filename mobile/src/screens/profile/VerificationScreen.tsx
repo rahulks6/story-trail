@@ -28,6 +28,7 @@ import { ActionSheet } from "../../components/ActionSheet";
 import { LoadFailed } from "../../components/LoadFailed";
 import { Icon } from "../../components/Icon";
 import { tapFeedback } from "../../utils/haptics";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Verification">;
 
@@ -42,11 +43,11 @@ export function verificationDate(iso: string | null | undefined): string {
 /** A link the form accepts: https, a real host, at most 300 characters. Returns the problem, or null. */
 export function linkProblem(link: string): string | null {
   const value = link.trim();
-  if (!value) return "Enter a link, or remove this one.";
-  if (value.length > MAX_LINK_LENGTH) return `Links can be up to ${MAX_LINK_LENGTH} characters.`;
-  if (!/^https:\/\//i.test(value)) return "Use a link that starts with https://";
+  if (!value) return t("verification.enterALinkOrRemove");
+  if (value.length > MAX_LINK_LENGTH) return t("verification.linksCanBeUpTo", { MAX_LINK_LENGTH });
+  if (!/^https:\/\//i.test(value)) return t("verification.useALinkThatStarts");
   // A host with a dot, and no spaces anywhere.
-  if (!/^https:\/\/[^\s/?#]+\.[^\s/?#]+(?:[/?#]\S*)?$/i.test(value)) return "Enter a full web address.";
+  if (!/^https:\/\/[^\s/?#]+\.[^\s/?#]+(?:[/?#]\S*)?$/i.test(value)) return t("verification.enterAFullWebAddress");
   return null;
 }
 
@@ -69,8 +70,8 @@ function fieldErrorsFrom(fields: Record<string, string>): FieldErrors {
 
 /** The fix for a reason the server gives, where there's an obvious one. */
 function fixFor(reason: string): { label: string; screen: "EditProfile" | "VerifyEmail" } | null {
-  if (/email/i.test(reason)) return { label: "Verify email", screen: "VerifyEmail" };
-  if (/photo|bio/i.test(reason)) return { label: "Edit profile", screen: "EditProfile" };
+  if (/email/i.test(reason)) return { label: t("verification.verifyEmail"), screen: "VerifyEmail" };
+  if (/photo|bio/i.test(reason)) return { label: t("common.editProfile"), screen: "EditProfile" };
   return null;
 }
 
@@ -101,7 +102,7 @@ export function VerificationScreen({ navigation }: Props): React.JSX.Element {
       loaded.current = true;
     } catch (e) {
       // A quiet refresh keeps what's on screen.
-      if (!loaded.current) setLoadError(e instanceof ApiError && e.status !== 0 && e.status < 500 ? e.message : "Couldn't load your verification status. Check your connection and try again.");
+      if (!loaded.current) setLoadError(e instanceof ApiError && e.status !== 0 && e.status < 500 ? e.message : t("verification.couldntLoadYourVerificationStatus"));
     }
   }, [accessToken]);
 
@@ -114,10 +115,10 @@ export function VerificationScreen({ navigation }: Props): React.JSX.Element {
   }), [navigation, load]);
 
   const withdraw = () => {
-    Alert.alert("Withdraw request?", "We'll stop reviewing it, and your ID photo is deleted within 30 days. You can apply again later.", [
-      { text: "Keep request", style: "cancel" },
+    Alert.alert(t("verification.withdrawRequest2"), t("verification.wellStopReviewingItAnd"), [
+      { text: t("verification.keepRequest"), style: "cancel" },
       {
-        text: "Withdraw",
+        text: t("verification.withdraw"),
         style: "destructive",
         onPress: () => void (async () => {
           if (!accessToken) return;
@@ -127,7 +128,7 @@ export function VerificationScreen({ navigation }: Props): React.JSX.Element {
             await withdrawVerification(accessToken);
             await load();
           } catch (e) {
-            setBanner(e instanceof ApiError ? e.message : "Couldn't withdraw your request. Try again.");
+            setBanner(e instanceof ApiError ? e.message : t("verification.couldntWithdrawYourRequestTry"));
           } finally {
             setWithdrawing(false);
           }
@@ -140,7 +141,7 @@ export function VerificationScreen({ navigation }: Props): React.JSX.Element {
     return loadError ? (
       <LoadFailed message={loadError} onRetry={() => { setLoadError(null); void load(); }} />
     ) : (
-      <View style={styles.loading} accessible accessibilityLabel="Loading">
+      <View style={styles.loading} accessible accessibilityLabel={t("verification.loading")}>
         <ActivityIndicator color={colors.accentText} />
       </View>
     );
@@ -152,14 +153,14 @@ export function VerificationScreen({ navigation }: Props): React.JSX.Element {
   let content: React.ReactNode;
   if (status.onHold) {
     content = (
-      <StatusCard icon title="Badge paused" body="Your badge is paused while we review your name change." detail={categoryDetail(status.category)} />
+      <StatusCard icon title={t("verification.badgePaused")} body={t("verification.yourBadgeIsPausedWhile")} detail={categoryDetail(status.category)} />
     );
   } else if (status.verified) {
     content = (
       <StatusCard
         icon
-        title="You're verified"
-        body="Your badge shows next to your name across Katkee. Changing your name or username pauses it until we review the change."
+        title={t("verification.youreVerified")}
+        body={t("verification.yourBadgeShowsNextTo")}
         detail={categoryDetail(status.category)}
       />
     );
@@ -167,29 +168,29 @@ export function VerificationScreen({ navigation }: Props): React.JSX.Element {
     content = (
       <>
         <StatusCard
-          title="In review"
-          body="We're reviewing your request. We'll let you know when we've decided."
+          title={t("verification.inReview")}
+          body={t("verification.wereReviewingYourRequestWell")}
           detail={`Submitted ${verificationDate(request.createdAt)}`}
         />
-        <Button label="Withdraw request" variant="destructive" onPress={withdraw} busy={withdrawing} />
+        <Button label={t("verification.withdrawRequest")} variant="destructive" onPress={withdraw} busy={withdrawing} />
       </>
     );
   } else if (request?.status === "denied" && reapplyAt && !reapplying) {
     content = (
       <>
         <StatusCard
-          title="Not approved"
+          title={t("verification.notApproved")}
           body={request.denialReason || "Your request wasn't approved."}
           detail={`You can apply again on ${verificationDate(reapplyAt)}.`}
         />
-        <Button label="Apply again" onPress={() => setReapplying(true)} disabled={waiting} />
+        <Button label={t("verification.applyAgain")} onPress={() => setReapplying(true)} disabled={waiting} />
       </>
     );
   } else if (!status.eligibility.eligible) {
     content = (
       <View style={styles.section}>
-        <Text style={typography.title} accessibilityRole="header">Before you apply</Text>
-        <Text style={styles.intro}>Verified accounts belong to notable people, brands and organisations. A few things are needed first:</Text>
+        <Text style={typography.title} accessibilityRole="header">{t("verification.beforeYouApply")}</Text>
+        <Text style={styles.intro}>{t("verification.verifiedAccountsBelongToNotable")}</Text>
         <View style={styles.card}>
           {status.eligibility.reasons.map((reason) => {
             const fix = fixFor(reason);
@@ -236,7 +237,7 @@ export function VerificationScreen({ navigation }: Props): React.JSX.Element {
 
 function categoryDetail(category: string | null): string | undefined {
   const label = verificationCategoryLabel(category);
-  return label ? `Category: ${label}` : undefined;
+  return label ? t("verification.categoryLabel", { label }) : undefined;
 }
 
 function StatusCard({ title, body, detail, icon }: { title: string; body: string; detail?: string; icon?: boolean }): React.JSX.Element {
@@ -299,15 +300,15 @@ function RequestForm({
       if (result.didCancel) return;
       if (result.errorCode === "permission") {
         if (source === "camera") cameraRefused();
-        else setError("Allow access to your photos in Settings to choose a photo.");
+        else setError(t("verification.allowAccessToYourPhotos"));
         return;
       }
       if (result.errorCode === "camera_unavailable") {
-        setError("There's no camera available. Choose a photo instead.");
+        setError(t("verification.theresNoCameraAvailableChoose"));
         return;
       }
       if (result.errorCode) {
-        setError(result.errorMessage ?? "Couldn't open that. Try again.");
+        setError(result.errorMessage ?? t("verification.couldntOpenThatTryAgain"));
         return;
       }
       const asset = result.assets?.[0];
@@ -315,17 +316,17 @@ function RequestForm({
         setPhoto({ uri: asset.uri, type: asset.type ?? "image/jpeg" });
         setErrors((current) => ({ ...current, idPhoto: undefined }));
       } else {
-        setError("Couldn't read that photo. Try another.");
+        setError(t("verification.couldntReadThatPhotoTry"));
       }
     } catch {
-      setError("Couldn't open that. Try again.");
+      setError(t("verification.couldntOpenThatTryAgain"));
     }
   };
 
   const cameraRefused = () => {
-    Alert.alert("Allow camera access", "To take a photo of your ID, allow Katkee to use the camera in your phone's Settings.", [
-      { text: "Not now", style: "cancel" },
-      { text: "Open Settings", onPress: () => void Linking.openSettings().catch(() => undefined) },
+    Alert.alert(t("common.allowCameraAccess"), t("verification.toTakeAPhotoOf"), [
+      { text: t("common.notNow"), style: "cancel" },
+      { text: t("common.openSettings"), onPress: () => void Linking.openSettings().catch(() => undefined) },
     ]);
   };
 
@@ -343,7 +344,7 @@ function RequestForm({
     if (!photo) found.idPhoto = "Add a photo of your ID.";
     if (found.category || found.fullName || found.idPhoto || Object.values(found.links).some(Boolean)) {
       setErrors(found);
-      setError("Check the highlighted fields.");
+      setError(t("verification.checkTheHighlightedFields"));
       return;
     }
     inFlight.current = true;
@@ -364,7 +365,7 @@ function RequestForm({
         // The server didn't take the photo (already used, or gone): choose it again.
         if (next.idPhoto) uploaded.current = null;
         setErrors(next);
-        setError("Check the highlighted fields.");
+        setError(t("verification.checkTheHighlightedFields"));
       } else if (e instanceof ApiError && e.status === 403) {
         const reasons = Array.isArray(e.details?.reasons) ? (e.details.reasons as unknown[]).filter((r): r is string => typeof r === "string") : [];
         if (reasons.length) onNotEligible(reasons);
@@ -372,7 +373,7 @@ function RequestForm({
       } else if (e instanceof ApiError && e.status === 409) {
         onConflict(e.message);
       } else {
-        setError(e instanceof ApiError ? e.message : "Couldn't send your request. Check your connection and try again.");
+        setError(e instanceof ApiError ? e.message : t("verification.couldntSendYourRequestCheck"));
       }
     } finally {
       inFlight.current = false;
@@ -382,12 +383,10 @@ function RequestForm({
 
   return (
     <View style={styles.section}>
-      <Text style={styles.intro}>
-        A verified badge shows that an account belongs to the notable person, brand or organisation it represents. Our team checks every request by hand.
-      </Text>
+      <Text style={styles.intro}>{t("verification.aVerifiedBadgeShowsThat")}</Text>
       {error ? <Banner text={error} /> : null}
 
-      <Text style={styles.label}>Account type</Text>
+      <Text style={styles.label}>{t("verification.accountType")}</Text>
       <View style={[styles.card, errors.category ? styles.cardError : null]} accessibilityRole="radiogroup">
         {VERIFICATION_CATEGORIES.map((c) => {
           const selected = category === c.value;
@@ -412,7 +411,7 @@ function RequestForm({
       {errors.category ? <Text style={styles.error}>{errors.category}</Text> : null}
 
       <TextField
-        label="Full name as on your ID"
+        label={t("verification.fullNameAsOnYour")}
         value={fullName}
         onChangeText={(value) => {
           setFullName(value);
@@ -425,8 +424,8 @@ function RequestForm({
       />
 
       <View style={styles.links}>
-        <Text style={styles.label}>Links</Text>
-        <Text style={styles.hint}>Up to {MAX_VERIFICATION_LINKS} pages that show who you are, such as a website, news articles or other profiles.</Text>
+        <Text style={styles.label}>{t("verification.links")}</Text>
+        <Text style={styles.hint}>{t("verification.upToMaxVerificationLinks", { MAX_VERIFICATION_LINKS })}</Text>
         {links.map((link, index) => (
           <View key={index} style={styles.linkRow}>
             <View style={styles.linkField}>
@@ -453,39 +452,39 @@ function RequestForm({
         {links.length < MAX_VERIFICATION_LINKS ? (
           <Pressable onPress={() => setLinks((current) => [...current, ""])} style={styles.addLink} hitSlop={6} accessibilityRole="button">
             <Icon name={ICONS.add} size={18} color={colors.accentText} />
-            <Text style={styles.addLinkText}>Add a link</Text>
+            <Text style={styles.addLinkText}>{t("verification.addALink")}</Text>
           </Pressable>
         ) : null}
       </View>
 
       <View style={styles.links}>
-        <Text style={styles.label}>ID</Text>
+        <Text style={styles.label}>{t("verification.id")}</Text>
         {photo ? (
           <View style={styles.photoRow}>
-            <Image source={{ uri: photo.uri }} style={styles.photo} accessibilityLabel="Photo of your ID" accessibilityIgnoresInvertColors />
-            <Button label="Change photo" variant="text" onPress={() => setPhotoSheetOpen(true)} disabled={submitting} />
+            <Image source={{ uri: photo.uri }} style={styles.photo} accessibilityLabel={t("verification.photoOfYourId")} accessibilityIgnoresInvertColors />
+            <Button label={t("common.changePhoto")} variant="text" onPress={() => setPhotoSheetOpen(true)} disabled={submitting} />
           </View>
         ) : (
           <Pressable onPress={() => setPhotoSheetOpen(true)} style={[styles.addPhoto, errors.idPhoto ? styles.cardError : null]} accessibilityRole="button">
             <Icon name={ICONS.camera} size={20} color={colors.textPrimary} />
-            <Text style={styles.addPhotoText}>Add a photo of your ID</Text>
+            <Text style={styles.addPhotoText}>{t("verification.addAPhotoOfYour")}</Text>
           </Pressable>
         )}
         {errors.idPhoto ? <Text style={styles.error}>{errors.idPhoto}</Text> : null}
         <View style={styles.privacy}>
           <Icon name={ICONS.privacy} size={16} color={colors.textSecondary} />
-          <Text style={styles.privacyText}>Only Katkee's review team sees your ID. It's deleted 30 days after we decide.</Text>
+          <Text style={styles.privacyText}>{t("verification.onlyKatkeesReviewTeamSees")}</Text>
         </View>
       </View>
 
-      <Button label="Submit request" onPress={() => void submit()} busy={submitting} />
+      <Button label={t("verification.submitRequest")} onPress={() => void submit()} busy={submitting} />
 
       <ActionSheet
         visible={photoSheetOpen}
-        title="Photo of your ID"
+        title={t("verification.photoOfYourId")}
         groups={[[
-          { label: "Take photo", onPress: () => void takeFrom("camera") },
-          { label: "Choose from library", onPress: () => void takeFrom("library") },
+          { label: t("common.takePhoto"), onPress: () => void takeFrom("camera") },
+          { label: t("common.chooseFromLibrary"), onPress: () => void takeFrom("library") },
         ]]}
         onClose={() => setPhotoSheetOpen(false)}
       />

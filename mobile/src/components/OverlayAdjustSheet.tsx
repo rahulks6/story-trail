@@ -5,6 +5,7 @@ import { Modal, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "./Pressable";
 import { colors, radii, spacing, typography } from "../theme";
 import { clampOverlayPosition, isInteractive, type Overlay } from "../models/storyDraft";
+import { t } from "../i18n";
 
 const NUDGE_STEP = 0.02;
 const SCALE_STEP = 0.15;
@@ -58,48 +59,48 @@ export function OverlayAdjustSheet({ overlay, onChange, onEditText, onEditLocati
 
   return (
     <Modal visible={overlay !== null} animationType="slide" transparent onRequestClose={onClose}>
-      <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
+      <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel={t("common.close")} />
       <View style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]}>
         <View style={styles.handle} />
-        <Text style={typography.caption}>Adjust</Text>
+        <Text style={typography.caption}>{t("overlayAdjustSheet.adjust")}</Text>
 
         <View style={styles.dpad}>
           <View style={styles.dpadRow}>
             <View style={styles.dpadSpacer} />
-            <Pressable style={styles.dpadButton} onPress={() => nudge(0, -NUDGE_STEP)} accessibilityRole="button" accessibilityLabel="Move up">
+            <Pressable style={styles.dpadButton} onPress={() => nudge(0, -NUDGE_STEP)} accessibilityRole="button" accessibilityLabel={t("overlayAdjustSheet.moveUp")}>
               <Icon style={styles.dpadIcon} name="up"/>
             </Pressable>
             <View style={styles.dpadSpacer} />
           </View>
           <View style={styles.dpadRow}>
-            <Pressable style={styles.dpadButton} onPress={() => nudge(-NUDGE_STEP, 0)} accessibilityRole="button" accessibilityLabel="Move left">
+            <Pressable style={styles.dpadButton} onPress={() => nudge(-NUDGE_STEP, 0)} accessibilityRole="button" accessibilityLabel={t("overlayAdjustSheet.moveLeft")}>
               <Icon style={styles.dpadIcon} name="left"/>
             </Pressable>
-            <Pressable style={styles.dpadButton} onPress={() => nudge(0, NUDGE_STEP)} accessibilityRole="button" accessibilityLabel="Move down">
+            <Pressable style={styles.dpadButton} onPress={() => nudge(0, NUDGE_STEP)} accessibilityRole="button" accessibilityLabel={t("overlayAdjustSheet.moveDown")}>
               <Icon style={styles.dpadIcon} name="down"/>
             </Pressable>
-            <Pressable style={styles.dpadButton} onPress={() => nudge(NUDGE_STEP, 0)} accessibilityRole="button" accessibilityLabel="Move right">
+            <Pressable style={styles.dpadButton} onPress={() => nudge(NUDGE_STEP, 0)} accessibilityRole="button" accessibilityLabel={t("overlayAdjustSheet.moveRight")}>
               <Icon style={styles.dpadIcon} name="right"/>
             </Pressable>
           </View>
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.rowLabel}>Size</Text>
-          <Pressable style={styles.stepButton} onPress={() => rescale(-SCALE_STEP)} accessibilityRole="button" accessibilityLabel="Decrease size">
+          <Text style={styles.rowLabel}>{t("overlayAdjustSheet.size")}</Text>
+          <Pressable style={styles.stepButton} onPress={() => rescale(-SCALE_STEP)} accessibilityRole="button" accessibilityLabel={t("overlayAdjustSheet.decreaseSize")}>
             <Icon style={styles.stepIcon} name="minus"/>
           </Pressable>
-          <Pressable style={styles.stepButton} onPress={() => rescale(SCALE_STEP)} accessibilityRole="button" accessibilityLabel="Increase size">
+          <Pressable style={styles.stepButton} onPress={() => rescale(SCALE_STEP)} accessibilityRole="button" accessibilityLabel={t("overlayAdjustSheet.increaseSize")}>
             <Icon style={styles.stepIcon} name="add"/>
           </Pressable>
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.rowLabel}>Rotate</Text>
-          <Pressable style={styles.stepButton} onPress={() => rotate(-ROTATE_STEP_DEG)} accessibilityRole="button" accessibilityLabel="Rotate counterclockwise">
+          <Text style={styles.rowLabel}>{t("overlayAdjustSheet.rotate")}</Text>
+          <Pressable style={styles.stepButton} onPress={() => rotate(-ROTATE_STEP_DEG)} accessibilityRole="button" accessibilityLabel={t("overlayAdjustSheet.rotateCounterclockwise")}>
             <Icon style={styles.stepIcon} name="undo"/>
           </Pressable>
-          <Pressable style={styles.stepButton} onPress={() => rotate(ROTATE_STEP_DEG)} accessibilityRole="button" accessibilityLabel="Rotate clockwise">
+          <Pressable style={styles.stepButton} onPress={() => rotate(ROTATE_STEP_DEG)} accessibilityRole="button" accessibilityLabel={t("overlayAdjustSheet.rotateClockwise")}>
             <Icon style={styles.stepIcon} name="redo"/>
           </Pressable>
         </View>
@@ -112,9 +113,9 @@ export function OverlayAdjustSheet({ overlay, onChange, onEditText, onEditLocati
               onClose();
             }}
             accessibilityRole="button"
-            accessibilityLabel="Edit text and style"
+            accessibilityLabel={t("overlayAdjustSheet.editTextAndStyle")}
           >
-            <Text style={styles.secondaryButtonLabel}>Edit text</Text>
+            <Text style={styles.secondaryButtonLabel}>{t("overlayAdjustSheet.editText")}</Text>
           </Pressable>
         ) : null}
 
@@ -128,7 +129,7 @@ export function OverlayAdjustSheet({ overlay, onChange, onEditText, onEditLocati
             accessibilityRole="button"
             accessibilityLabel={shown.type === "location" ? "Edit location" : shown.type === "datetime" ? "Edit date or time" : "Edit sticker"}
           >
-            <Text style={styles.secondaryButtonLabel}>{shown.type === "location" ? "Edit location" : shown.type === "datetime" ? "Edit date and time" : "Edit sticker"}</Text>
+            <Text style={styles.secondaryButtonLabel}>{shown.type === "location" ? t("overlayAdjustSheet.editLocation") : shown.type === "datetime" ? t("overlayAdjustSheet.editDateAndTime") : t("overlayAdjustSheet.editSticker")}</Text>
           </Pressable>
         ) : null}
 
@@ -139,13 +140,13 @@ export function OverlayAdjustSheet({ overlay, onChange, onEditText, onEditLocati
             onClose();
           }}
           accessibilityRole="button"
-          accessibilityLabel="Delete"
+          accessibilityLabel={t("common.delete")}
         >
-          <Text style={styles.deleteButtonLabel}>Delete</Text>
+          <Text style={styles.deleteButtonLabel}>{t("common.delete")}</Text>
         </Pressable>
 
-        <Pressable style={styles.doneButton} onPress={onClose} accessibilityRole="button" accessibilityLabel="Done adjusting">
-          <Text style={styles.doneButtonLabel}>Done</Text>
+        <Pressable style={styles.doneButton} onPress={onClose} accessibilityRole="button" accessibilityLabel={t("overlayAdjustSheet.doneAdjusting")}>
+          <Text style={styles.doneButtonLabel}>{t("common.done")}</Text>
         </Pressable>
       </View>
     </Modal>

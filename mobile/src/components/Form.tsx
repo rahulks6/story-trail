@@ -3,6 +3,7 @@ import { ActivityIndicator, StyleSheet, Text, TextInput, View, type TextInputPro
 import { Pressable } from "./Pressable";
 import { colors, radii, spacing, typography } from "../theme";
 import { tapFeedback } from "../utils/haptics";
+import { t } from "../i18n";
 
 interface TextFieldProps extends Omit<TextInputProps, "style"> {
   label: string;
@@ -42,7 +43,7 @@ export const TextField = forwardRef<React.ComponentRef<typeof TextInput>, TextFi
             accessibilityRole="button"
             accessibilityLabel={revealed ? `Hide ${label.toLowerCase()}` : `Show ${label.toLowerCase()}`}
           >
-            <Text style={styles.revealText}>{revealed ? "Hide" : "Show"}</Text>
+            <Text style={styles.revealText}>{revealed ? t("form.hide") : t("form.show")}</Text>
           </Pressable>
         ) : null}
       </View>

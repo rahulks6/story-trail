@@ -14,6 +14,7 @@ import { EmptyState } from "../../components/EmptyState";
 import { Avatar } from "../../components/Avatar";
 import { VerifiedName } from "../../components/VerifiedBadge";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<DMStackParamList, "NewChat">;
 
@@ -84,7 +85,7 @@ export function NewChatScreen({ navigation }: Props): React.JSX.Element {
         otherAvatarMediaId: conversation.otherUser.avatarMediaId ?? null,
       });
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Couldn't start that conversation — try again.");
+      setError(err instanceof ApiError ? err.message : t("newChat.couldntStartThatConversationTry"));
       setOpening(null);
     }
   };
@@ -95,7 +96,7 @@ export function NewChatScreen({ navigation }: Props): React.JSX.Element {
         <Icon style={styles.inputIcon} name={ICONS.search} />
         <TextInput
           style={styles.input}
-          placeholder="Search people"
+          placeholder={t("common.searchPeople")}
           placeholderTextColor={colors.textDisabled}
           autoCapitalize="none"
           autoCorrect={false}
@@ -109,13 +110,13 @@ export function NewChatScreen({ navigation }: Props): React.JSX.Element {
       {loading ? <ActivityIndicator color={colors.accentText} style={styles.spinner} /> : null}
 
       {searchFailed ? (
-        <EmptyState icon="search" title="Couldn't search" message="Check your connection and try again." />
+        <EmptyState icon="search" title={t("newChat.couldntSearch")} message={t("newChat.checkYourConnectionAndTry")} />
       ) : !loading && debouncedQuery && results.length === 0 ? (
-        <EmptyState icon="search" title="No one found" message={`No people match "${debouncedQuery}".`} />
+        <EmptyState icon="search" title={t("common.noOneFound")} message={`No people match "${debouncedQuery}".`} />
       ) : (
         <FlatList keyboardShouldPersistTaps="handled"
           data={debouncedQuery ? results : suggested}
-          ListHeaderComponent={!debouncedQuery && suggested.length ? <Text style={styles.section}>People you follow</Text> : undefined}
+          ListHeaderComponent={!debouncedQuery && suggested.length ? <Text style={styles.section}>{t("newChat.peopleYouFollow")}</Text> : undefined}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingBottom: bottomInset }}
           renderItem={({ item }) => (

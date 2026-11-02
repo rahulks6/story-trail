@@ -55,6 +55,7 @@ import { listCloseFriends } from "../../api/users";
 import { ScheduleSheet } from "../../components/ScheduleSheet";
 import { scheduleProblem, scheduleText } from "../../models/schedule";
 import { showToast } from "../../components/Toast";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<CreateStackParamList, "StoryEditor">;
 type Audience = "public" | "followers" | "close_friends";
@@ -100,11 +101,11 @@ export function shareErrorMessage(err: unknown): string {
   if (err instanceof ApiError) return err.message;
   const message = err instanceof Error ? err.message : "";
   if (err instanceof TypeError || /network|internet|offline|timed? ?out/i.test(message)) {
-    return "Sharing failed — check your connection and try again.";
+    return t("storyEditor.sharingFailedCheckYourConnection");
   }
   // The upload queue's reasons are short sentences meant for people; a raw system error isn't.
   if (/^[A-Z][^\n]{0,160}[.!]$/.test(message) && !/^E[A-Z]+[:\s]/.test(message)) return message;
-  return "Couldn't get your Story ready to share. Try again.";
+  return t("storyEditor.couldntGetYourStoryReady");
 }
 
 /**
@@ -435,7 +436,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   useEffect(() => {
     if (filterHintShown) return;
     filterHintShown = true;
-    showFilterToast("Swipe for filters");
+    showFilterToast(t("storyEditor.swipeForFilters"));
   }, [showFilterToast]);
 
   const currentFilter = useRef(draft.filter);
@@ -598,9 +599,9 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         onDiscard();
         return;
       }
-      Alert.alert("Discard Story?", undefined, [
-        { text: "Keep Editing", style: "cancel" },
-        { text: "Discard", style: "destructive", onPress: onDiscard },
+      Alert.alert(t("storyEditor.discardStory"), undefined, [
+        { text: t("storyEditor.keepEditing"), style: "cancel" },
+        { text: t("common.discard"), style: "destructive", onPress: onDiscard },
       ]);
     },
     [draft, music],
@@ -637,7 +638,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
     if (!accessToken||!user||submittingUpload.current) return;
     // The chosen time can pass while the Story is being edited: choose again rather than surprise.
     if (publishAt && scheduleProblem(publishAt)) {
-      Alert.alert("Choose a new time", scheduleProblem(publishAt) ?? undefined, [{ text: "OK", onPress: () => setScheduleOpen(true) }]);
+      Alert.alert(t("storyEditor.chooseANewTime"), scheduleProblem(publishAt) ?? undefined, [{ text: "OK", onPress: () => setScheduleOpen(true) }]);
       return;
     }
     submittingUpload.current=true;
@@ -667,7 +668,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
       );
       setUploadState("done");
       tapFeedback("success");
-      if (publishAt) showToast(`Scheduled for ${scheduleText(publishAt)}`);
+      if (publishAt) showToast(t("storyEditor.scheduledForPublishat", { publishAt: scheduleText(publishAt) }));
       void clearPendingDraft(user.id, mediaUri);
       // The "Add yours" (or shared answer) this Story was started from is used up.
       clearCreateSeed();
@@ -740,7 +741,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
 
         {boomerang ? (
           <View style={styles.boomerangBadge} pointerEvents="none">
-            <Text style={styles.boomerangLabel} accessibilityLabel="Boomerang. It loops back and forth once you share it.">Boomerang</Text>
+            <Text style={styles.boomerangLabel} accessibilityLabel={t("storyEditor.boomerangItLoopsBackAnd")}>{t("common.boomerang")}</Text>
           </View>
         ) : null}
 
@@ -816,15 +817,15 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
       {cropMode ? (
         <>
           <View style={[styles.topBar, { top: insets.top + spacing.md }]}>
-            <Text style={styles.cropHint}>Pinch to zoom · Drag to reposition</Text>
+            <Text style={styles.cropHint}>{t("storyEditor.pinchToZoomDragTo")}</Text>
             <Pressable
               onPress={() => setCropMode(false)}
               hitSlop={12}
               style={styles.cropDoneButton}
               accessibilityRole="button"
-              accessibilityLabel="Done cropping"
+              accessibilityLabel={t("storyEditor.doneCropping")}
             >
-              <Text style={styles.cropDoneLabel}>Done</Text>
+              <Text style={styles.cropDoneLabel}>{t("common.done")}</Text>
             </Pressable>
           </View>
           {/* Pinch and drag crop the photo; the step buttons are for a screen reader. */}
@@ -838,11 +839,11 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
 
       {!drawMode && !cropMode && !isDraggingOverlay && !textModalVisible ? (
         <View style={[styles.topBar, { top: insets.top + spacing.md }]}>
-          <Pressable onPress={onClose} hitSlop={8} style={toolButtonStyle} accessibilityRole="button" accessibilityLabel="Close editor">
+          <Pressable onPress={onClose} hitSlop={8} style={toolButtonStyle} accessibilityRole="button" accessibilityLabel={t("storyEditor.closeEditor")}>
             <Icon style={topIconStyle} name={ICONS.close} />
           </Pressable>
           <View style={[styles.topRight, compact && styles.topRightCompact]}>
-            <Pressable onPress={() => setCropMode(true)} hitSlop={8} style={toolButtonStyle} accessibilityRole="button" accessibilityLabel="Crop">
+            <Pressable onPress={() => setCropMode(true)} hitSlop={8} style={toolButtonStyle} accessibilityRole="button" accessibilityLabel={t("storyEditor.crop")}>
               <Icon style={topIconStyle} name={ICONS.crop} />
             </Pressable>
             <Pressable
@@ -852,7 +853,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               }}
               hitSlop={8} style={toolButtonStyle}
               accessibilityRole="button"
-              accessibilityLabel="Add text"
+              accessibilityLabel={t("storyEditor.addText")}
             >
               <Icon style={topIconStyle} name={ICONS.text} />
             </Pressable>
@@ -864,7 +865,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               }}
               hitSlop={8} style={toolButtonStyle}
               accessibilityRole="button"
-              accessibilityLabel="Add sticker, emoji, mention, location, or date and time"
+              accessibilityLabel={t("storyEditor.addStickerEmojiMentionLocation")}
             >
               <Icon style={topIconStyle} name={ICONS.sticker} />
             </Pressable>
@@ -877,11 +878,11 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               }}
               hitSlop={8} style={toolButtonStyle}
               accessibilityRole="button"
-              accessibilityLabel="Mention someone"
+              accessibilityLabel={t("storyEditor.mentionSomeone")}
             >
               <Icon style={topIconStyle} name={ICONS.mention} />
             </Pressable>
-            <Pressable onPress={() => setDrawMode(true)} hitSlop={8} style={toolButtonStyle} accessibilityRole="button" accessibilityLabel="Draw">
+            <Pressable onPress={() => setDrawMode(true)} hitSlop={8} style={toolButtonStyle} accessibilityRole="button" accessibilityLabel={t("storyEditor.draw")}>
               <Icon style={topIconStyle} name={ICONS.draw} />
             </Pressable>
             {musicAvailable || music ? <Pressable onPress={() => setMusicSheetVisible(true)} hitSlop={8} style={[toolButtonStyle, music && styles.toolButtonOn]} accessibilityRole="button" accessibilityLabel={music ? `Music: ${music.track.title}. Change` : "Add music"}>
@@ -907,7 +908,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             <Icon name={ICONS.music} size={14} color="#FFFFFF" />
             <Text style={styles.musicChipText} numberOfLines={1}>{music.track.title} · {music.track.artist}</Text>
           </Pressable>
-          <Pressable style={styles.musicRemove} onPress={() => setMusic(null)} hitSlop={8} accessibilityRole="button" accessibilityLabel="Remove music">
+          <Pressable style={styles.musicRemove} onPress={() => setMusic(null)} hitSlop={8} accessibilityRole="button" accessibilityLabel={t("storyEditor.removeMusic")}>
             <Icon name={ICONS.close} size={14} color="#FFFFFF" />
           </Pressable>
         </View>
@@ -926,11 +927,11 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           {/* Filters change by swiping the photo (like Instagram); a screen reader gets buttons instead. */}
           {screenReader ? (
             <View style={styles.filterButtons}>
-              <Pressable onPress={() => cycleFilter(-1)} style={styles.filterButton} accessibilityRole="button" accessibilityLabel="Previous filter">
+              <Pressable onPress={() => cycleFilter(-1)} style={styles.filterButton} accessibilityRole="button" accessibilityLabel={t("storyEditor.previousFilter")}>
                 <Icon name={ICONS.left} size={18} color={colors.textPrimary} />
               </Pressable>
               <Text style={styles.filterName} accessibilityLiveRegion="polite">{draft.filter}</Text>
-              <Pressable onPress={() => cycleFilter(1)} style={styles.filterButton} accessibilityRole="button" accessibilityLabel="Next filter">
+              <Pressable onPress={() => cycleFilter(1)} style={styles.filterButton} accessibilityRole="button" accessibilityLabel={t("storyEditor.nextFilter")}>
                 <Icon name={ICONS.right} size={18} color={colors.textPrimary} />
               </Pressable>
             </View>
@@ -939,8 +940,8 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           <View style={[styles.captionField, captionFocused && styles.captionFieldFocused]}>
             <TextInput
               style={styles.captionInput}
-              accessibilityLabel="Caption"
-              placeholder="Write a caption…"
+              accessibilityLabel={t("storyEditor.caption")}
+              placeholder={t("storyEditor.writeACaption")}
               placeholderTextColor="rgba(255,255,255,0.55)"
               selectionColor={colors.accent}
               cursorColor={colors.accent}
@@ -980,7 +981,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               accessibilityLabel={publishAt ? `Scheduled for ${scheduleText(publishAt)}. Change or remove the time` : "Schedule. Choose when this Story posts"}
             >
               <Icon name={ICONS.timer} size={14} color={publishAt ? colors.onAccent : colors.textPrimary} />
-              <Text style={[styles.visibilityLabel, publishAt && styles.scheduleOnLabel]} numberOfLines={1}>{publishAt ? scheduleText(publishAt) : "Schedule"}</Text>
+              <Text style={[styles.visibilityLabel, publishAt && styles.scheduleOnLabel]} numberOfLines={1}>{publishAt ? scheduleText(publishAt) : t("storyEditor.schedule")}</Text>
             </Pressable>
           </View>
 
@@ -993,14 +994,14 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             accessibilityLabel={collaborator ? `Collab with @${collaborator.username}. Change` : "Invite a collaborator"}
           >
             {collaborator ? <Avatar username={collaborator.username} avatarMediaId={collaborator.avatarMediaId} size={18} /> : <Icon name={ICONS.add} size={14} color={colors.textPrimary} />}
-            <Text style={styles.visibilityLabel} numberOfLines={1}>{collaborator ? `With @${collaborator.username}` : "Invite collaborator"}</Text>
+            <Text style={styles.visibilityLabel} numberOfLines={1}>{collaborator ? t("storyEditor.withUsername", { username: collaborator.username }) : t("storyEditor.inviteCollaborator")}</Text>
           </Pressable>
 
           {uploadError ? (
             <View>
               <Text style={styles.uploadError}>{uploadError}</Text>
               <Pressable style={styles.retryButton} onPress={() => void onShare()} accessibilityRole="button">
-                <Text style={styles.retryButtonLabel}>Retry</Text>
+                <Text style={styles.retryButtonLabel}>{t("common.retry")}</Text>
               </Pressable>
             </View>
           ) : null}
@@ -1021,7 +1022,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               ) : (
                 <>
                   <Avatar username={user?.username ?? ""} avatarMediaId={user?.avatarMediaId} size={24} />
-                  <Text style={styles.shareYourStoryLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>Your story</Text>
+                  <Text style={styles.shareYourStoryLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{t("storyEditor.yourStory")}</Text>
                 </>
               )}
             </Pressable>
@@ -1031,16 +1032,16 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               onPress={() => {
                 // A Close Friends list is yours alone: there's no second audience to share it with.
                 if (collaborator) {
-                  Alert.alert("Collab Stories go to Your story", `Sharing with Close Friends leaves out @${collaborator.username}.`, [
-                    { text: "Cancel", style: "cancel" },
-                    { text: "Share without collab", onPress: () => { setCollaborator(null); void onShare("close_friends"); } },
+                  Alert.alert(t("storyEditor.collabStoriesGoToYour"), t("storyEditor.sharingWithCloseFriendsLeaves", { username: collaborator.username }), [
+                    { text: t("common.cancel"), style: "cancel" },
+                    { text: t("storyEditor.shareWithoutCollab"), onPress: () => { setCollaborator(null); void onShare("close_friends"); } },
                   ]);
                   return;
                 }
                 if (hasCloseFriends === false) {
-                  Alert.alert("No Close Friends yet", "Add people to your Close Friends list, then share to them.", [
-                    { text: "Not now", style: "cancel" },
-                    { text: "Add people", onPress: () => rootNavigation.navigate("CloseFriends") },
+                  Alert.alert(t("common.noCloseFriendsYet"), t("storyEditor.addPeopleToYourClose"), [
+                    { text: t("common.notNow"), style: "cancel" },
+                    { text: t("common.addPeople"), onPress: () => rootNavigation.navigate("CloseFriends") },
                   ]);
                   return;
                 }
@@ -1049,7 +1050,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               onLongPress={() => rootNavigation.navigate("CloseFriends")}
               accessibilityRole="button"
               accessibilityLabel={publishAt ? `Schedule for ${scheduleText(publishAt)} to Close Friends` : "Share to Close Friends"}
-              accessibilityHint="Long press to edit your Close Friends list"
+              accessibilityHint={t("storyEditor.longPressToEditYour")}
               accessibilityState={{ busy: uploadState === "uploading" && audience === "close_friends" }}
             >
               {uploadState === "uploading" && audience === "close_friends" ? (
@@ -1057,7 +1058,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               ) : (
                 <>
                   <Icon name={ICONS.starFilled} size={18} color={colors.onAccent} />
-                  <Text style={styles.shareCloseFriendsLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>Close Friends</Text>
+                  <Text style={styles.shareCloseFriendsLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{t("common.closeFriends")}</Text>
                 </>
               )}
             </Pressable>

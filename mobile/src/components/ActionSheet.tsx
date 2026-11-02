@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing, ICONS } from "../theme";
 import { Icon } from "./Icon";
 import { tapFeedback } from "../utils/haptics";
+import { t } from "../i18n";
 
 export interface SheetAction {
   label: string;
@@ -44,7 +45,7 @@ export function ActionSheet({ visible, title, groups, onClose }: Props): React.J
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose} onDismiss={runPending}>
       <View style={styles.fill}>
-        <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
+        <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel={t("common.close")} />
         <View style={[styles.sheet, { paddingBottom: spacing.md + insets.bottom }]} accessibilityViewIsModal>
           <View style={styles.handle} />
           {title ? <Text style={styles.title} numberOfLines={1}>{title}</Text> : null}
@@ -68,8 +69,8 @@ export function ActionSheet({ visible, title, groups, onClose }: Props): React.J
               ))}
             </View>
           ))}
-          <Pressable style={styles.cancel} onPress={onClose} accessibilityRole="button" accessibilityLabel="Cancel">
-            <Text style={styles.rowLabel}>Cancel</Text>
+          <Pressable style={styles.cancel} onPress={onClose} accessibilityRole="button" accessibilityLabel={t("common.cancel")}>
+            <Text style={styles.rowLabel}>{t("common.cancel")}</Text>
           </Pressable>
         </View>
       </View>

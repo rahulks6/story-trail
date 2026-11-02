@@ -23,6 +23,7 @@ import { ActionSheet } from "../../components/ActionSheet";
 import { AvatarCropper, type PickedPhoto } from "../../components/AvatarCropper";
 import { rememberLocalProfilePhoto, useProfilePhotoSource } from "../../hooks/useProfilePhotoSource";
 import { INTEREST_CHOICES, MAX_INTERESTS } from "../onboarding/OnboardingScreen";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "EditProfile">;
 
@@ -66,7 +67,7 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
     setInterests((current) => {
       if (current.includes(interest)) return current.filter((i) => i !== interest);
       if (current.length >= MAX_INTERESTS) {
-        setError(`Pick up to ${MAX_INTERESTS} interests.`);
+        setError(t("editProfile.pickUpToMaxInterests", { MAX_INTERESTS }));
         return current;
       }
       return [...current, interest];
@@ -97,9 +98,9 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
 
   // Back button, Android back and the iOS swipe all come through here while changes are unsaved.
   usePreventRemove(dirty && !saved, ({ data }) => {
-    Alert.alert("Discard changes?", "Your changes to your profile won't be saved.", [
-      { text: "Keep editing", style: "cancel" },
-      { text: "Discard", style: "destructive", onPress: () => navigation.dispatch(data.action) },
+    Alert.alert(t("common.discardChanges"), t("editProfile.yourChangesToYourProfile"), [
+      { text: t("common.keepEditing"), style: "cancel" },
+      { text: t("common.discard"), style: "destructive", onPress: () => navigation.dispatch(data.action) },
     ]);
   });
 
@@ -125,29 +126,29 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
       if (result.didCancel) return;
       if (result.errorCode === "permission") {
         if (source === "camera") cameraRefused();
-        else setError("Allow access to your photos in Settings to choose a photo.");
+        else setError(t("editProfile.allowAccessToYourPhotos"));
         return;
       }
       if (result.errorCode === "camera_unavailable") {
-        setError("There's no camera available. Choose a photo instead.");
+        setError(t("editProfile.theresNoCameraAvailableChoose"));
         return;
       }
       if (result.errorCode) {
-        setError(result.errorMessage ?? "Couldn't open that. Try again.");
+        setError(result.errorMessage ?? t("editProfile.couldntOpenThatTryAgain"));
         return;
       }
       const asset = result.assets?.[0];
       if (asset?.uri && asset.width && asset.height) setPicked({ photo: { uri: asset.uri, width: asset.width, height: asset.height }, target });
-      else setError("Couldn't read that photo. Try another.");
+      else setError(t("editProfile.couldntReadThatPhotoTry"));
     } catch {
-      setError("Couldn't open that. Try again.");
+      setError(t("editProfile.couldntOpenThatTryAgain"));
     }
   };
 
   const cameraRefused = () => {
-    Alert.alert("Allow camera access", "To take a profile photo, allow Katkee to use the camera in your phone's Settings.", [
-      { text: "Not now", style: "cancel" },
-      { text: "Open Settings", onPress: () => void Linking.openSettings().catch(() => undefined) },
+    Alert.alert(t("common.allowCameraAccess"), t("editProfile.toTakeAProfilePhoto"), [
+      { text: t("common.notNow"), style: "cancel" },
+      { text: t("common.openSettings"), onPress: () => void Linking.openSettings().catch(() => undefined) },
     ]);
   };
 
@@ -158,7 +159,7 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
       return;
     }
     if (!/^[a-z0-9_.]{3,30}$/.test(username.trim().toLowerCase())) {
-      setError("Enter a valid username.");
+      setError(t("editProfile.enterAValidUsername"));
       return;
     }
     inFlight.current = true;
@@ -203,7 +204,7 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
       profileChanged();
       setSaved(true);
     } catch (err) {
-      setError(err instanceof ApiError ? Object.values(err.fieldErrors ?? {}).join("\n") || err.message : "That didn't save. Try again.");
+      setError(err instanceof ApiError ? Object.values(err.fieldErrors ?? {}).join("\n") || err.message : t("editProfile.thatDidntSaveTryAgain"));
     } finally {
       inFlight.current = false;
       setSaving(false);
@@ -213,11 +214,11 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
   const target = sheet.target;
   const sheetActions = [
     [
-      { label: "Take photo", onPress: () => void takeFrom("camera", target) },
-      { label: "Choose from library", onPress: () => void takeFrom("library", target) },
+      { label: t("common.takePhoto"), onPress: () => void takeFrom("camera", target) },
+      { label: t("common.chooseFromLibrary"), onPress: () => void takeFrom("library", target) },
     ],
-    ...(target === "photo" && hasPhoto ? [[{ label: "Remove current photo", onPress: () => setPhoto({ kind: "removed" }), destructive: true }]] : []),
-    ...(target === "cover" && hasCover ? [[{ label: "Remove cover photo", onPress: () => setCover({ kind: "removed" }), destructive: true }]] : []),
+    ...(target === "photo" && hasPhoto ? [[{ label: t("editProfile.removeCurrentPhoto"), onPress: () => setPhoto({ kind: "removed" }), destructive: true }]] : []),
+    ...(target === "cover" && hasCover ? [[{ label: t("editProfile.removeCoverPhoto"), onPress: () => setCover({ kind: "removed" }), destructive: true }]] : []),
   ];
   const openSheet = (next: Target) => setSheet({ open: true, target: next });
 
@@ -233,18 +234,18 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
         >
           <View style={styles.cover}>
             {cover.kind === "new" ? (
-              <Image source={{ uri: cover.uri }} style={styles.coverImage} accessibilityLabel="New cover photo" />
+              <Image source={{ uri: cover.uri }} style={styles.coverImage} accessibilityLabel={t("editProfile.newCoverPhoto")} />
             ) : savedCover.source ? (
               <FadeInImage source={savedCover.source} style={styles.coverImage} resizeMode="cover" onError={savedCover.onError} />
             ) : (
               <Icon name={ICONS.camera} size={22} color={colors.textSecondary} />
             )}
           </View>
-          <Text style={styles.photoAction}>{hasCover ? "Change cover photo" : "Add cover photo"}</Text>
+          <Text style={styles.photoAction}>{hasCover ? t("editProfile.changeCoverPhoto") : t("editProfile.addCoverPhoto")}</Text>
         </Pressable>
         {cover.kind !== "unchanged" ? (
           <Text style={styles.photoNote} accessibilityLiveRegion="polite">
-            {cover.kind === "new" ? "Your new cover is used when you save." : "Your cover is removed when you save."}
+            {cover.kind === "new" ? t("editProfile.yourNewCoverIsUsed") : t("editProfile.yourCoverIsRemovedWhen")}
           </Text>
         ) : null}
 
@@ -253,32 +254,32 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
           disabled={saving}
           onPress={() => openSheet("photo")}
           accessibilityRole="button"
-          accessibilityLabel="Change profile photo"
+          accessibilityLabel={t("editProfile.changeProfilePhoto")}
         >
           {photo.kind === "new" ? (
-            <Image source={{ uri: photo.uri }} style={styles.photo} accessibilityLabel="New profile photo" />
+            <Image source={{ uri: photo.uri }} style={styles.photo} accessibilityLabel={t("editProfile.newProfilePhoto")} />
           ) : user ? (
             <Avatar username={user.username} displayName={user.displayName} avatarMediaId={photo.kind === "removed" ? null : user.avatarMediaId} size={PHOTO_SIZE} />
           ) : null}
-          <Text style={styles.photoAction}>{hasPhoto ? "Change photo" : "Add photo"}</Text>
+          <Text style={styles.photoAction}>{hasPhoto ? t("common.changePhoto") : t("editProfile.addPhoto")}</Text>
         </Pressable>
         {photo.kind !== "unchanged" ? (
           <Text style={styles.photoNote} accessibilityLiveRegion="polite">
-            {photo.kind === "new" ? "Your new photo is used when you save." : "Your photo is removed when you save."}
+            {photo.kind === "new" ? t("editProfile.yourNewPhotoIsUsed") : t("editProfile.yourPhotoIsRemovedWhen")}
           </Text>
         ) : null}
 
-        <Text style={styles.label}>Username</Text>
+        <Text style={styles.label}>{t("common.username")}</Text>
         <TextInput
           style={styles.input}
           value={username}
           onChangeText={(value) => setUsername(value.toLowerCase().replace(/\s/g, ""))}
-          placeholder="username"
+          placeholder={t("editProfile.username")}
           placeholderTextColor={colors.textDisabled}
           maxLength={30}
           autoCapitalize="none"
           autoCorrect={false}
-          accessibilityLabel="Username"
+          accessibilityLabel={t("common.username")}
         />
         {availabilityLine ? (
           <Text
@@ -288,42 +289,42 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
             {availabilityLine.text}
           </Text>
         ) : (
-          <Text style={styles.hint}>3–30 lowercase letters, numbers, dots or underscores.</Text>
+          <Text style={styles.hint}>{t("editProfile.n330LowercaseLettersNumbers")}</Text>
         )}
 
         <View style={styles.labelRow}>
-          <Text style={styles.label}>Name</Text>
+          <Text style={styles.label}>{t("common.name")}</Text>
           <Text style={styles.counter}>{displayName.length}/{MAX_DISPLAY_NAME_LENGTH}</Text>
         </View>
         <TextInput
           style={[styles.input, (nameMissing || nameHasTick) && styles.inputError]}
           value={displayName}
           onChangeText={setDisplayName}
-          placeholder="Your name"
+          placeholder={t("editProfile.yourName")}
           placeholderTextColor={colors.textDisabled}
           maxLength={MAX_DISPLAY_NAME_LENGTH}
-          accessibilityLabel="Display name"
+          accessibilityLabel={t("common.displayName")}
         />
-        {nameMissing ? <Text style={[styles.hint, styles.unavailable]}>Enter your name.</Text> : null}
+        {nameMissing ? <Text style={[styles.hint, styles.unavailable]}>{t("editProfile.enterYourName")}</Text> : null}
         {nameHasTick ? <Text style={[styles.hint, styles.unavailable]} accessibilityLiveRegion="polite">{NAME_TICK_ERROR}</Text> : null}
 
         <View style={styles.labelRow}>
-          <Text style={styles.label}>Bio</Text>
+          <Text style={styles.label}>{t("editProfile.bio")}</Text>
           <Text style={styles.counter}>{bio.length}/{MAX_BIO_LENGTH}</Text>
         </View>
         <TextInput
           style={[styles.input, styles.bioInput]}
           value={bio}
           onChangeText={setBio}
-          placeholder="Tell people about yourself"
+          placeholder={t("editProfile.tellPeopleAboutYourself")}
           placeholderTextColor={colors.textDisabled}
           maxLength={MAX_BIO_LENGTH}
           multiline
-          accessibilityLabel="Bio"
+          accessibilityLabel={t("editProfile.bio")}
         />
 
         <View style={styles.labelRow}>
-          <Text style={styles.label}>Interests</Text>
+          <Text style={styles.label}>{t("editProfile.interests")}</Text>
           <Text style={styles.counter}>{interests.length}/{MAX_INTERESTS}</Text>
         </View>
         <View style={styles.chips}>
@@ -351,9 +352,9 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
           disabled={!canSave}
           onPress={onSave}
           accessibilityRole="button"
-          accessibilityLabel="Save profile changes"
+          accessibilityLabel={t("editProfile.saveProfileChanges")}
         >
-          {saving ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.saveLabel}>Save</Text>}
+          {saving ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.saveLabel}>{t("common.save")}</Text>}
         </Pressable>
       </ScrollView>
 

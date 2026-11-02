@@ -11,6 +11,7 @@ import { NewGroupScreen } from "../screens/dm/NewGroupScreen";
 import { GroupInfoScreen } from "../screens/dm/GroupInfoScreen";
 import { NewChatScreen } from "../screens/dm/NewChatScreen";
 import { PUSH_TRANSITION } from "./transitions";
+import { t } from "../i18n";
 
 const Stack = createNativeStackNavigator<DMStackParamList>();
 
@@ -29,14 +30,14 @@ export function DMStack(): React.JSX.Element {
         name="DMInbox"
         component={DMInboxScreen}
         options={({ navigation }) => ({
-          title: "Messages",
+          title: t("common.messages"),
           headerRight: () => (
             <Pressable
               onPress={() => navigation.navigate("NewChat")}
               hitSlop={8}
               style={{ paddingHorizontal: spacing.xs }}
               accessibilityRole="button"
-              accessibilityLabel="New chat"
+              accessibilityLabel={t("dMStack.newChat")}
             >
               <Icon style={{ color: colors.textPrimary, fontSize: 20 }} name={ICONS.newChat} />
             </Pressable>
@@ -44,9 +45,9 @@ export function DMStack(): React.JSX.Element {
         })}
       />
       <Stack.Screen name="Conversation" component={ConversationScreen} options={{ title: "" }} />
-      <Stack.Screen name="NewChat" component={NewChatScreen} options={{ title: "New message" }} />
-      <Stack.Screen name="NewGroup" component={NewGroupScreen} options={{ title: "New group" }} />
-      <Stack.Screen name="GroupInfo" component={GroupInfoScreen} options={{ title: "Group" }} />
+      <Stack.Screen name="NewChat" component={NewChatScreen} options={{ title: t("common.newMessage") }} />
+      <Stack.Screen name="NewGroup" component={NewGroupScreen} options={{ title: t("common.newGroup") }} />
+      <Stack.Screen name="GroupInfo" component={GroupInfoScreen} options={{ title: t("common.group") }} />
     </Stack.Navigator>
   );
 }

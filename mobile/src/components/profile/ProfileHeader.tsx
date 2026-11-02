@@ -14,6 +14,7 @@ import { VerifiedBadgeSheet, VerifiedName } from "../VerifiedBadge";
 import { colors, radii, spacing, ICONS } from "../../theme";
 import { countLabel, formatCount } from "../../utils/formatCount";
 import { professionalCategoryLabel } from "../../api/professional";
+import { t } from "../../i18n";
 
 export interface ProfileStat {
   key: string;
@@ -134,7 +135,7 @@ export function ProfileHeader({
               </View>
             )}
             {!hasActiveStory && onAddStory ? (
-              <Pressable style={styles.addBadge} onPress={onAddStory} hitSlop={8} accessibilityRole="button" accessibilityLabel="Add to your Story">
+              <Pressable style={styles.addBadge} onPress={onAddStory} hitSlop={8} accessibilityRole="button" accessibilityLabel={t("profileHeader.addToYourStory")}>
                 <Icon name={ICONS.add} size={14} color={colors.onAccent} />
               </Pressable>
             ) : null}
@@ -169,11 +170,11 @@ export function ProfileHeader({
         <View style={styles.handleRow}>
           <Text style={styles.handle} numberOfLines={1}>@{username}</Text>
           {isPrivate ? (
-            <View accessible accessibilityLabel="Private account">
+            <View accessible accessibilityLabel={t("common.privateAccount")}>
               <Icon name={ICONS.privacy} size={13} color={colors.textSecondary} />
             </View>
           ) : null}
-          {followsYou ? <Text style={styles.followsYou}>Follows you</Text> : null}
+          {followsYou ? <Text style={styles.followsYou}>{t("common.followsYou")}</Text> : null}
         </View>
         {bio ? <Text style={styles.bio}>{bio}</Text> : null}
         {interests.length > 0 ? (
@@ -194,7 +195,7 @@ export function ProfileHeader({
 /** What a creator page shows while it loads: its shape, without numbers that aren't known yet. */
 export function ProfileSkeleton(): React.JSX.Element {
   return (
-    <View style={styles.container} accessible accessibilityLabel="Loading profile">
+    <View style={styles.container} accessible accessibilityLabel={t("profileHeader.loadingProfile")}>
       <View style={styles.topRow}>
         <View style={[styles.ring, styles.bone]} />
         <View style={styles.stats}>

@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 /**
  * Camera modes (like Instagram's): Normal is tap for a photo, hold to record; Hands-free is tap to
  * start recording and tap again to stop; Boomerang is one tap for a short burst that the server
@@ -9,9 +10,9 @@ export type CaptureMode = "normal" | "handsfree" | "boomerang";
 export type MediaEffect = "none" | "boomerang";
 
 export const CAPTURE_MODES: ReadonlyArray<{ mode: CaptureMode; label: string; hint: string }> = [
-  { mode: "normal", label: "Normal", hint: "Tap for a photo, hold to record" },
-  { mode: "handsfree", label: "Hands-free", hint: "Tap to start recording, tap again to stop" },
-  { mode: "boomerang", label: "Boomerang", hint: "Tap for a short clip that loops back and forth" },
+  { mode: "normal", get label() { return t("captureModes.normal"); }, get hint() { return t("captureModes.tapForAPhotoHold"); } },
+  { mode: "handsfree", get label() { return t("captureModes.handsFree"); }, get hint() { return t("captureModes.tapToStartRecordingTap"); } },
+  { mode: "boomerang", get label() { return t("common.boomerang"); }, get hint() { return t("captureModes.tapForAShortClip"); } },
 ];
 
 /**
@@ -31,8 +32,8 @@ export function shutterTap(mode: CaptureMode, recording: boolean): CaptureAction
 
 /** The shutter's name for a screen reader, in each mode and state. */
 export function shutterLabel(mode: CaptureMode, recording: boolean): string {
-  if (recording) return mode === "boomerang" ? "Recording Boomerang" : "Recording — activate to stop";
-  if (mode === "handsfree") return "Start recording";
-  if (mode === "boomerang") return "Record Boomerang";
-  return "Take photo";
+  if (recording) return mode === "boomerang" ? t("captureModes.recordingBoomerang") : t("captureModes.recordingActivateToStop");
+  if (mode === "handsfree") return t("captureModes.startRecording");
+  if (mode === "boomerang") return t("captureModes.recordBoomerang");
+  return t("common.takePhoto");
 }

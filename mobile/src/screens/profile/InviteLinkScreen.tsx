@@ -13,6 +13,7 @@ import { EmptyState } from "../../components/EmptyState";
 import { Button } from "../../components/Form";
 import { track } from "../../analytics/analytics";
 import { tapFeedback } from "../../utils/haptics";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "InviteLink">;
 
@@ -52,8 +53,8 @@ export function InviteLinkScreen({ navigation, route }: Props): React.JSX.Elemen
           message={problem === "invalid" ? "Ask your friend to send their link again." : "Check your connection and try again."}
         />
         <View style={styles.actions}>
-          {problem === "offline" ? <Button label="Try again" onPress={() => setAttempt((n) => n + 1)} /> : null}
-          <Button label="Close" variant="secondary" onPress={close} />
+          {problem === "offline" ? <Button label={t("common.tryAgain")} onPress={() => setAttempt((n) => n + 1)} /> : null}
+          <Button label={t("common.close")} variant="secondary" onPress={close} />
         </View>
       </View>
     );
@@ -61,7 +62,7 @@ export function InviteLinkScreen({ navigation, route }: Props): React.JSX.Elemen
   if (!result) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={colors.accentText} size="large" accessibilityLabel="Opening invite" />
+        <ActivityIndicator color={colors.accentText} size="large" accessibilityLabel={t("inviteLink.openingInvite")} />
       </View>
     );
   }
@@ -70,8 +71,8 @@ export function InviteLinkScreen({ navigation, route }: Props): React.JSX.Elemen
   if (status === "own") {
     return (
       <View style={styles.root}>
-        <EmptyState icon="share" title="This is your invite link" message="Send it to friends: when they join, you'll each be suggested to follow the other." />
-        <View style={styles.actions}><Button label="Done" onPress={close} /></View>
+        <EmptyState icon="share" title={t("inviteLink.thisIsYourInviteLink")} message={t("inviteLink.sendItToFriendsWhen")} />
+        <View style={styles.actions}><Button label={t("common.done")} onPress={close} /></View>
       </View>
     );
   }
@@ -93,7 +94,7 @@ export function InviteLinkScreen({ navigation, route }: Props): React.JSX.Elemen
         <VerifiedName name={inviter.displayName || inviter.username} verified={inviter.verified} style={typography.title} />
         <Text style={styles.username}>@{inviter.username}</Text>
         <Text style={styles.message} accessibilityRole="header">
-          {status === "redeemed" ? `You joined from ${inviter.displayName}'s invite. We've let them know.` : `${inviter.displayName} invited you to Katkee.`}
+          {status === "redeemed" ? t("inviteLink.youJoinedFromDisplaynameS", { displayName: inviter.displayName }) : t("inviteLink.displaynameInvitedYouToKatkee", { displayName: inviter.displayName })}
         </Text>
       </View>
       <View style={styles.actions}>
@@ -103,8 +104,8 @@ export function InviteLinkScreen({ navigation, route }: Props): React.JSX.Elemen
           disabled={follow === "following" || follow === "requested"}
           onPress={() => void onFollow()}
         />
-        <Button label="View profile" variant="secondary" onPress={() => navigation.replace("Main", { screen: "Search", params: { screen: "UserProfile", initial: false, params: { username: inviter.username } } })} />
-        <Button label="Done" variant="text" onPress={close} />
+        <Button label={t("common.viewProfile")} variant="secondary" onPress={() => navigation.replace("Main", { screen: "Search", params: { screen: "UserProfile", initial: false, params: { username: inviter.username } } })} />
+        <Button label={t("common.done")} variant="text" onPress={close} />
       </View>
     </View>
   );

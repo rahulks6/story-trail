@@ -17,10 +17,11 @@ import { showToast } from "../../components/Toast";
 import { scheduleText } from "../../models/schedule";
 import { serverDate } from "../../utils/serverTime";
 import { tapFeedback } from "../../utils/haptics";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ScheduledStories">;
 
-const AUDIENCE_LABELS: Record<ScheduledStory["audience"], string> = { public: "Everyone", followers: "Followers", close_friends: "Close Friends" };
+const AUDIENCE_LABELS: Record<ScheduledStory["audience"], string> = { get public() { return t("common.everyone"); }, get followers() { return t("common.followers"); }, get close_friends() { return t("common.closeFriends"); } };
 
 /**
  * Archive > Scheduled (and katkee://scheduled, from a "couldn't be posted" push): Stories waiting
@@ -57,10 +58,10 @@ export function ScheduledStoriesScreen(_props: Props): React.JSX.Element {
       setItems((current) => (current ?? []).map((s) => (s.id === scheduled.id ? scheduled : s)).sort((a, b) => a.publishAt.localeCompare(b.publishAt)));
       setEditing(null);
       tapFeedback("success");
-      showToast(`Rescheduled for ${scheduleText(at)}`);
+      showToast(t("scheduledStories.rescheduledForAt", { at: scheduleText(at) }));
     } catch (error) {
       setEditing(null);
-      Alert.alert("Couldn't reschedule", error instanceof ApiError ? error.message : "Check your connection and try again.");
+      Alert.alert(t("scheduledStories.couldntReschedule"), error instanceof ApiError ? error.message : t("scheduledStories.checkYourConnectionAndTry"));
       if (error instanceof ApiError && error.status === 409) void load();
     } finally {
       setSaving(false);
@@ -69,10 +70,10 @@ export function ScheduledStoriesScreen(_props: Props): React.JSX.Element {
 
   const onCancel = (item: ScheduledStory) => {
     const failedOne = item.state === "failed";
-    Alert.alert(failedOne ? "Remove from this list?" : "Cancel this scheduled Story?", failedOne ? undefined : "It won't be posted.", [
-      { text: "Keep", style: "cancel" },
+    Alert.alert(failedOne ? t("scheduledStories.removeFromThisList") : t("common.cancelThisScheduledStory"), failedOne ? undefined : t("scheduledStories.itWontBePosted"), [
+      { text: t("scheduledStories.keep"), style: "cancel" },
       {
-        text: failedOne ? "Remove" : "Cancel Story",
+        text: failedOne ? t("common.remove") : t("common.cancelStory"),
         style: "destructive",
         onPress: async () => {
           if (!accessToken) return;
@@ -80,9 +81,9 @@ export function ScheduledStoriesScreen(_props: Props): React.JSX.Element {
             await cancelScheduledStory(item.id, accessToken);
             setItems((current) => (current ?? []).filter((s) => s.id !== item.id));
             tapFeedback("success");
-            if (!failedOne) showToast("Scheduled Story cancelled");
+            if (!failedOne) showToast(t("scheduledStories.scheduledStoryCancelled"));
           } catch (error) {
-            Alert.alert("Couldn't cancel", error instanceof ApiError ? error.message : "Check your connection and try again.");
+            Alert.alert(t("common.couldntCancel"), error instanceof ApiError ? error.message : t("scheduledStories.checkYourConnectionAndTry"));
             if (error instanceof ApiError && error.status === 409) void load();
           }
         },
@@ -91,7 +92,7 @@ export function ScheduledStoriesScreen(_props: Props): React.JSX.Element {
   };
 
   if (items === null) {
-    if (failed) return <LoadFailed message="Couldn't load your scheduled Stories. Check your connection and try again." onRetry={() => void load()} />;
+    if (failed) return <LoadFailed message={t("scheduledStories.couldntLoadYourScheduledStories")} onRetry={() => void load()} />;
     return (
       <View style={styles.centered}>
         <ActivityIndicator color={colors.accentText} />
@@ -108,9 +109,9 @@ export function ScheduledStoriesScreen(_props: Props): React.JSX.Element {
         contentContainerStyle={items.length ? styles.list : styles.emptyList}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={async () => { setRefreshing(true); await load(); setRefreshing(false); }} tintColor={colors.accentText} />}
         ListEmptyComponent={
-          <EmptyState icon="timer" title="Nothing scheduled" message="In the Story editor, tap Schedule to choose when a Story posts. It shows up here until then." />
+          <EmptyState icon="timer" title={t("scheduledStories.nothingScheduled")} message={t("scheduledStories.inTheStoryEditorTap")} />
         }
-        ListHeaderComponent={items.length ? <Text style={styles.header}>Only you can see these. Each posts by itself at its time, and its 24 hours start then.</Text> : undefined}
+        ListHeaderComponent={items.length ? <Text style={styles.header}>{t("scheduledStories.onlyYouCanSeeThese")}</Text> : undefined}
         renderItem={({ item }) => {
           const at = serverDate(item.publishAt);
           const failedOne = item.state === "failed";
@@ -120,22 +121,22 @@ export function ScheduledStoriesScreen(_props: Props): React.JSX.Element {
               <FadeInImage source={{ uri: mediaFileUrl(item.mediaId, "thumbnail"), headers: authHeaders }} style={styles.thumb} resizeMode="cover" />
               <View style={styles.info}>
                 <Text style={[styles.when, failedOne && styles.failed]} accessibilityRole="text">
-                  {failedOne ? "Couldn't be posted" : when}
+                  {failedOne ? t("scheduledStories.couldntBePosted") : when}
                 </Text>
                 <Text style={styles.meta} numberOfLines={1}>
-                  {failedOne ? item.error ?? "Something went wrong." : `${AUDIENCE_LABELS[item.audience]}${item.caption ? ` · ${item.caption}` : ""}`}
+                  {failedOne ? item.error ?? t("scheduledStories.somethingWentWrong") : `${AUDIENCE_LABELS[item.audience]}${item.caption ? ` · ${item.caption}` : ""}`}
                 </Text>
-                {item.media?.status === "processing" && !failedOne ? <Text style={styles.meta}>Still processing. It posts once it's ready.</Text> : null}
+                {item.media?.status === "processing" && !failedOne ? <Text style={styles.meta}>{t("scheduledStories.stillProcessingItPostsOnce")}</Text> : null}
                 <View style={styles.actions}>
                   {!failedOne ? (
                     <Pressable style={styles.action} onPress={() => setEditing(item)} accessibilityRole="button" accessibilityLabel={`Reschedule the Story for ${when}`}>
                       <Icon name={ICONS.timer} size={16} color={colors.textPrimary} />
-                      <Text style={styles.actionLabel}>Reschedule</Text>
+                      <Text style={styles.actionLabel}>{t("scheduledStories.reschedule")}</Text>
                     </Pressable>
                   ) : null}
                   <Pressable style={styles.action} onPress={() => onCancel(item)} accessibilityRole="button" accessibilityLabel={failedOne ? "Remove from this list" : `Cancel the Story scheduled for ${when}`}>
                     <Icon name={ICONS.close} size={16} color={colors.danger} />
-                    <Text style={[styles.actionLabel, styles.cancelLabel]}>{failedOne ? "Remove" : "Cancel"}</Text>
+                    <Text style={[styles.actionLabel, styles.cancelLabel]}>{failedOne ? t("common.remove") : t("common.cancel")}</Text>
                   </Pressable>
                 </View>
               </View>
@@ -146,8 +147,8 @@ export function ScheduledStoriesScreen(_props: Props): React.JSX.Element {
       <ScheduleSheet
         visible={!!editing}
         initial={editing ? serverDate(editing.publishAt) : null}
-        title="Reschedule"
-        confirmLabel="Save new time"
+        title={t("scheduledStories.reschedule")}
+        confirmLabel={t("scheduledStories.saveNewTime")}
         busy={saving}
         onConfirm={(at) => void onReschedule(at)}
         onClose={() => setEditing(null)}

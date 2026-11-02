@@ -9,6 +9,7 @@ import { EmptyState } from "../../components/EmptyState";
 import { LoadFailed } from "../../components/LoadFailed";
 import { Avatar } from "../../components/Avatar";
 import { VerifiedName } from "../../components/VerifiedBadge";
+import { t } from "../../i18n";
 
 const PAGE_SIZE = 30;
 
@@ -62,7 +63,7 @@ export function BlockedAccountsScreen(): React.JSX.Element {
   };
 
   if (blocked === null) {
-    if (loadFailed) return <LoadFailed message="Couldn't load your blocked accounts. Check your connection and try again." onRetry={() => void load()} />;
+    if (loadFailed) return <LoadFailed message={t("blockedAccounts.couldntLoadYourBlockedAccounts")} onRetry={() => void load()} />;
     return (
       <View style={styles.centered}>
         <ActivityIndicator color={colors.accentText} />
@@ -71,7 +72,7 @@ export function BlockedAccountsScreen(): React.JSX.Element {
   }
 
   if (blocked.length === 0) {
-    return <EmptyState icon="privacy" title="No blocked accounts" message="Accounts you block will show up here so you can unblock them later." />;
+    return <EmptyState icon="privacy" title={t("blockedAccounts.noBlockedAccounts")} message={t("blockedAccounts.accountsYouBlockWillShow")} />;
   }
 
   return (
@@ -94,7 +95,7 @@ export function BlockedAccountsScreen(): React.JSX.Element {
               <ActivityIndicator color={colors.accentText} />
             ) : (
               <Pressable accessibilityRole="button" style={styles.unblockButton} onPress={() => void onUnblock(item)}>
-                <Text style={styles.unblockLabel}>Unblock</Text>
+                <Text style={styles.unblockLabel}>{t("blockedAccounts.unblock")}</Text>
               </Pressable>
             )}
           </View>

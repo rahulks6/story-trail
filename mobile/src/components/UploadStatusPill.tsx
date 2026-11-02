@@ -12,18 +12,19 @@ import { cancelScheduledStory, deleteStory } from "../api/stories";
 import { scheduleText } from "../models/schedule";
 import { serverDate } from "../utils/serverTime";
 import { storyPublished } from "../state/storyChanges";
+import { t } from "../i18n";
 
 /** How long "Shared" stays before the pill goes away. */
 export const SHARED_NOTICE_MS = 5000;
 
 /** What the pill says for a Story on its way. */
 export function pillLabel(job: UploadJob, percent: number | undefined, running: boolean): string {
-  if (job.status === "published") return "Shared to your Story";
-  if (job.status === "scheduled") return serverDate(job.payload.publishAt) ? `Scheduled for ${scheduleText(serverDate(job.payload.publishAt)!)}` : "Scheduled";
-  if (job.status === "failed") return "Couldn't share · Tap to retry";
-  if (job.status === "uploading" && percent !== undefined) return `Sharing… ${Math.round(percent * 100)}%`;
-  if (!running && job.status !== "queued" && job.status !== "processing") return "Paused · Tap to continue";
-  return job.status === "processing" ? "Finishing up…" : "Sharing…";
+  if (job.status === "published") return t("uploadStatusPill.sharedToYourStory");
+  if (job.status === "scheduled") return serverDate(job.payload.publishAt) ? t("uploadStatusPill.scheduledForPublishat", { publishAt: scheduleText(serverDate(job.payload.publishAt)!) }) : t("common.scheduled");
+  if (job.status === "failed") return t("uploadStatusPill.couldntShareTapToRetry");
+  if (job.status === "uploading" && percent !== undefined) return t("uploadStatusPill.sharingValue", { value: Math.round(percent * 100) });
+  if (!running && job.status !== "queued" && job.status !== "processing") return t("uploadStatusPill.pausedTapToContinue");
+  return job.status === "processing" ? t("uploadStatusPill.finishingUp") : t("uploadStatusPill.sharing");
 }
 
 /**
@@ -71,17 +72,17 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
   // Stop a Story that is still on its way, or take back one that has just posted.
   const stop = (current: UploadJob) => {
     if (current.status === "scheduled") {
-      Alert.alert("Cancel this scheduled Story?", "It won't be posted. Your photo or video stays on your phone.", [
-        { text: "Keep it", style: "cancel" },
+      Alert.alert(t("common.cancelThisScheduledStory"), t("uploadStatusPill.itWontBePostedYour"), [
+        { text: t("uploadStatusPill.keepIt"), style: "cancel" },
         {
-          text: "Cancel Story",
+          text: t("common.cancelStory"),
           style: "destructive",
           onPress: async () => {
             try {
               if (current.scheduledId && accessToken) await cancelScheduledStory(current.scheduledId, accessToken);
               await removeUpload(current.ownerId, current.id).catch(() => undefined);
             } catch {
-              Alert.alert("Couldn't cancel", "Open Archive, then Scheduled, and cancel it there.");
+              Alert.alert(t("common.couldntCancel"), t("uploadStatusPill.openArchiveThenScheduledAnd"));
             }
           },
         },
@@ -89,10 +90,10 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
       return;
     }
     if (current.status === "published") {
-      Alert.alert("Delete this Story?", "It has been shared. Deleting removes it for everyone.", [
-        { text: "Keep it", style: "cancel" },
+      Alert.alert(t("common.deleteThisStory"), t("uploadStatusPill.itHasBeenSharedDeleting"), [
+        { text: t("uploadStatusPill.keepIt"), style: "cancel" },
         {
-          text: "Delete",
+          text: t("common.delete"),
           style: "destructive",
           onPress: async () => {
             try {
@@ -100,23 +101,23 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
               await removeUpload(current.ownerId, current.id).catch(() => undefined);
               storyPublished(); // Home and your profile reload without it.
             } catch {
-              Alert.alert("Couldn't delete", "Open the Story, tap More, then Delete.");
+              Alert.alert(t("common.couldntDelete"), t("uploadStatusPill.openTheStoryTapMore"));
             }
           },
         },
       ]);
       return;
     }
-    Alert.alert("Stop sharing?", "This Story won't be posted. Your photo or video stays on your phone.", [
-      { text: "Keep sharing", style: "cancel" },
+    Alert.alert(t("uploadStatusPill.stopSharing2"), t("uploadStatusPill.thisStoryWontBePosted"), [
+      { text: t("uploadStatusPill.keepSharing"), style: "cancel" },
       {
-        text: "Stop",
+        text: t("uploadStatusPill.stop"),
         style: "destructive",
         onPress: async () => {
           setStopping(true);
           const stopped = await cancelUpload(current.ownerId, current.id, accessToken ?? null).catch(() => false);
           setStopping(false);
-          if (!stopped) Alert.alert("Already posted", "It finished just now. Open the Story, tap More, then Delete.");
+          if (!stopped) Alert.alert(t("uploadStatusPill.alreadyPosted"), t("uploadStatusPill.itFinishedJustNowOpen"));
         },
       },
     ]);
@@ -125,8 +126,8 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
   if (!job) return null;
   const percent = uploadProgress(job.ownerId, job.id);
   const running = uploadRunning(job.ownerId, job.id);
-  const label = stopping ? "Stopping…" : job.cancelAfterPublish ? "Removing…" : pillLabel(job, percent, running);
-  const othersLabel = attention > 1 ? `${attention} Stories need attention` : null;
+  const label = stopping ? t("uploadStatusPill.stopping") : job.cancelAfterPublish ? t("uploadStatusPill.removing") : pillLabel(job, percent, running);
+  const othersLabel = attention > 1 ? t("uploadStatusPill.attentionStoriesNeedAttention", { attention }) : null;
   const preview = uploadPreviewUri(job);
   const shown = job.status === "uploading" && percent !== undefined ? percent : isDone(job) || job.status === "processing" ? 1 : 0.05;
 
@@ -136,7 +137,7 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
       style={[styles.pill, { top }]}
       accessibilityRole="button"
       accessibilityLabel={othersLabel ? `${label}. ${othersLabel}` : label}
-      accessibilityHint="Opens your Story uploads"
+      accessibilityHint={t("uploadStatusPill.opensYourStoryUploads")}
       accessibilityLiveRegion="polite"
     >
       {preview ? <Image source={{ uri: preview }} style={styles.thumb} /> : <View style={[styles.thumb, styles.thumbVideo]}><Icon name={ICONS.create} size={14} color={colors.textPrimary} /></View>}
@@ -155,10 +156,10 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
       ) : null}
       {isDone(job) ? (
         <Pressable onPress={() => stop(job)} hitSlop={10} accessibilityRole="button" accessibilityLabel={job.status === "scheduled" ? "Undo, cancel this scheduled Story" : "Undo, delete this Story"}>
-          <Text style={styles.undo}>Undo</Text>
+          <Text style={styles.undo}>{t("common.undo")}</Text>
         </Pressable>
       ) : !stopping && !job.cancelAfterPublish ? (
-        <Pressable onPress={() => stop(job)} hitSlop={10} style={styles.close} accessibilityRole="button" accessibilityLabel="Stop sharing">
+        <Pressable onPress={() => stop(job)} hitSlop={10} style={styles.close} accessibilityRole="button" accessibilityLabel={t("uploadStatusPill.stopSharing")}>
           <Icon name={ICONS.close} size={16} color={colors.textPrimary} />
         </Pressable>
       ) : null}

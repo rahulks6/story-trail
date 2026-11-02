@@ -7,6 +7,7 @@ import { Icon } from "./Icon";
 import { mediaSource } from "../api/media";
 import { formatClock } from "../api/music";
 import { showToast } from "./Toast";
+import { t } from "../i18n";
 
 interface BubbleProps {
   /** The voice note's link (relative: this API with the sign-in header), or a local file while it sends. */
@@ -92,7 +93,7 @@ export function VoiceNoteBubble({ url, accessToken, durationMs, mine, playing, o
           onError={() => {
             setLoading(false);
             onStop();
-            showToast("Couldn't play this voice message. Check your connection and try again.");
+            showToast(t("voiceNote.couldntPlayThisVoiceMessage"));
           }}
         />
       ) : null}

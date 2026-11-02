@@ -8,6 +8,7 @@ import { useAuth } from "../state/AuthContext";
 import { deleteStickerResponse, listStickerResponses, type QuestionResponse, type StickerVoter } from "../api/stickers";
 import { timeAgo } from "../utils/serverTime";
 import { isInteractive, type Overlay } from "../models/storyDraft";
+import { t } from "../i18n";
 
 /**
  * The owner's view of their Story's interactive stickers, in Insights: each poll's and quiz's
@@ -20,7 +21,7 @@ export function StickerResults({ storyId, overlays, onShareAnswer }: { storyId: 
   if (stickers.length === 0) return null;
   return (
     <View style={styles.section}>
-      <Text style={typography.label}>Sticker responses</Text>
+      <Text style={typography.label}>{t("stickerResults.stickerResponses")}</Text>
       {stickers.map((overlay) => (
         <StickerBlock key={overlay.id} storyId={storyId} overlay={overlay} onShareAnswer={onShareAnswer} />
       ))}
@@ -49,10 +50,10 @@ function StickerBlock({ storyId, overlay, onShareAnswer }: { storyId: string; ov
   useEffect(() => { void load(); }, [load]);
 
   const clear = (answer: QuestionResponse) =>
-    Alert.alert("Delete this answer?", undefined, [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("stickerResults.deleteThisAnswer"), undefined, [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Delete",
+        text: t("common.delete"),
         style: "destructive",
         onPress: () => {
           if (!accessToken) return;
@@ -69,7 +70,7 @@ function StickerBlock({ storyId, overlay, onShareAnswer }: { storyId: string; ov
       const total = results?.total ?? 0;
       return (
         <View style={styles.block}>
-          <Text style={typography.bodyStrong}>{overlay.type === "quiz" ? "Quiz" : "Poll"}{overlay.properties.question ? `: ${overlay.properties.question}` : ""}</Text>
+          <Text style={typography.bodyStrong}>{overlay.type === "quiz" ? t("common.quiz") : t("common.poll")}{overlay.properties.question ? `: ${overlay.properties.question}` : ""}</Text>
           {overlay.properties.options.map((option, i) => {
             const n = results?.counts[i] ?? 0;
             const share = total ? Math.round((n / total) * 100) : 0;
@@ -77,12 +78,12 @@ function StickerBlock({ storyId, overlay, onShareAnswer }: { storyId: string; ov
             return (
               <View key={i} style={styles.resultRow} accessible accessibilityLabel={`${option}: ${n} ${n === 1 ? "vote" : "votes"}, ${share} percent${right ? ", the right answer" : ""}`}>
                 <View style={[styles.resultFill, { width: `${share}%` }, right && styles.resultRight]} />
-                <Text style={[typography.body, styles.resultText]} numberOfLines={1}>{option}{right ? " (right answer)" : ""}</Text>
+                <Text style={[typography.body, styles.resultText]} numberOfLines={1}>{option}{right ? t("stickerResults.rightAnswer") : ""}</Text>
                 <Text style={typography.bodyStrong}>{share}%</Text>
               </View>
             );
           })}
-          <Text style={typography.caption}>{total === 1 ? "1 vote" : `${total} votes`}</Text>
+          <Text style={typography.caption}>{total === 1 ? t("common.n1Vote") : t("stickerResults.totalVotes", { total })}</Text>
           {voters === null && !failed ? <ActivityIndicator color={colors.accentText} /> : null}
           {(voters ?? []).map((v) => (
             <View key={v.id} style={styles.person}>
@@ -97,9 +98,9 @@ function StickerBlock({ storyId, overlay, onShareAnswer }: { storyId: string; ov
     case "question":
       return (
         <View style={styles.block}>
-          <Text style={typography.bodyStrong}>Question: {overlay.properties.prompt}</Text>
+          <Text style={typography.bodyStrong}>{t("stickerResults.questionPrompt", { prompt: overlay.properties.prompt })}</Text>
           {answers === null && !failed ? <ActivityIndicator color={colors.accentText} /> : null}
-          {answers?.length === 0 ? <Text style={typography.caption}>No answers yet.</Text> : null}
+          {answers?.length === 0 ? <Text style={typography.caption}>{t("stickerResults.noAnswersYet")}</Text> : null}
           {(answers ?? []).map((a) => (
             <View key={a.id} style={styles.answer}>
               <View style={styles.person}>
@@ -110,31 +111,31 @@ function StickerBlock({ storyId, overlay, onShareAnswer }: { storyId: string; ov
               <Text style={typography.body}>{a.body}</Text>
               <View style={styles.answerActions}>
                 {onShareAnswer ? (
-                  <Pressable onPress={() => onShareAnswer(overlay.properties.prompt, a.body)} style={[styles.smallButton, styles.smallPrimary]} accessibilityRole="button" accessibilityLabel="Share this answer to your Story" accessibilityHint="Your Story shows the question and the answer, not who sent it">
-                    <Text style={styles.smallPrimaryLabel}>Share</Text>
+                  <Pressable onPress={() => onShareAnswer(overlay.properties.prompt, a.body)} style={[styles.smallButton, styles.smallPrimary]} accessibilityRole="button" accessibilityLabel={t("stickerResults.shareThisAnswerToYour")} accessibilityHint={t("stickerResults.yourStoryShowsTheQuestion")}>
+                    <Text style={styles.smallPrimaryLabel}>{t("common.share")}</Text>
                   </Pressable>
                 ) : null}
                 <Pressable onPress={() => clear(a)} style={styles.smallButton} accessibilityRole="button" accessibilityLabel={`Delete @${a.responder.username}'s answer`}>
-                  <Text style={styles.smallLabel}>Delete</Text>
+                  <Text style={styles.smallLabel}>{t("common.delete")}</Text>
                 </Pressable>
               </View>
             </View>
           ))}
-          {failed ? <Text style={typography.caption}>Couldn't load answers.</Text> : null}
+          {failed ? <Text style={typography.caption}>{t("stickerResults.couldntLoadAnswers")}</Text> : null}
         </View>
       );
     case "countdown":
       return (
         <View style={styles.block}>
-          <Text style={typography.bodyStrong}>Countdown: {overlay.properties.title}</Text>
-          <Text style={typography.caption}>{(overlay.properties.reminderCount ?? 0) === 1 ? "1 person will be reminded" : `${overlay.properties.reminderCount ?? 0} people will be reminded`}</Text>
+          <Text style={typography.bodyStrong}>{t("stickerResults.countdownTitle", { title: overlay.properties.title })}</Text>
+          <Text style={typography.caption}>{(overlay.properties.reminderCount ?? 0) === 1 ? t("stickerResults.n1PersonWillBeReminded") : t("stickerResults.remindercountPeopleWillBeReminded", { reminderCount: overlay.properties.reminderCount ?? 0 })}</Text>
         </View>
       );
     case "addYours":
       return (
         <View style={styles.block}>
-          <Text style={typography.bodyStrong}>Add Yours: {overlay.properties.prompt}</Text>
-          <Text style={typography.caption}>{(overlay.properties.participants ?? 0) === 1 ? "1 participant" : `${overlay.properties.participants ?? 0} participants`}</Text>
+          <Text style={typography.bodyStrong}>{t("stickerResults.addYoursPrompt", { prompt: overlay.properties.prompt })}</Text>
+          <Text style={typography.caption}>{(overlay.properties.participants ?? 0) === 1 ? t("common.n1Participant") : t("stickerResults.participantsParticipants", { participants: overlay.properties.participants ?? 0 })}</Text>
         </View>
       );
     default:

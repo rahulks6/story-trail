@@ -1,4 +1,5 @@
 import type { GroupEvent } from "../api/conversations";
+import { t } from "../i18n";
 
 /**
  * A group's "what happened" line, from the reader's side: "You added @dev", "@asha left",
@@ -12,15 +13,15 @@ export function groupEventText(event: GroupEvent, actor: string, nameOf: (userId
   };
   switch (event.type) {
     case "created":
-      return event.title ? `${actor} made the group ${event.title}` : `${actor} made the group`;
+      return event.title ? t("groupEvents.actorMadeTheGroupTitle", { actor, title: event.title }) : t("groupEvents.actorMadeTheGroup", { actor });
     case "added":
-      return `${actor} added ${people(event.userIds)}`;
+      return t("groupEvents.actorAddedUserids", { actor, userIds: people(event.userIds) });
     case "removed":
-      return `${actor} removed ${people(event.userIds)}`;
+      return t("groupEvents.actorRemovedUserids", { actor, userIds: people(event.userIds) });
     case "left":
-      return `${actor} left`;
+      return t("groupEvents.actorLeft", { actor });
     case "renamed":
-      return event.title ? `${actor} named the group ${event.title}` : `${actor} removed the group's name`;
+      return event.title ? t("groupEvents.actorNamedTheGroupTitle", { actor, title: event.title }) : t("groupEvents.actorRemovedTheGroupsName", { actor });
     default:
       return "";
   }
@@ -28,6 +29,6 @@ export function groupEventText(event: GroupEvent, actor: string, nameOf: (userId
 
 /** "You" for yourself; otherwise "@name", or "Someone" when not known. Capitalised for the line's start. */
 export function actorName(userId: string, myUserId: string | undefined, username: string | undefined): string {
-  if (userId === myUserId) return "You";
-  return username ? `@${username}` : "Someone";
+  if (userId === myUserId) return t("common.you");
+  return username ? `@${username}` : t("common.someone");
 }

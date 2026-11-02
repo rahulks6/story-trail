@@ -9,6 +9,7 @@ import { Icon } from "./Icon";
 import { MusicPlayer } from "./MusicPlayer";
 import { KeyboardAvoider } from "./KeyboardAvoider";
 import { tapFeedback } from "../utils/haptics";
+import { t } from "../i18n";
 
 export interface ChosenMusic {
   track: MusicTrack;
@@ -60,7 +61,7 @@ export function MusicSheet({ visible, current, onClose, onChoose }: Props): Reac
           if (r.moods) setMoods(r.moods);
           setError(null);
         })
-        .catch(() => { if (!cancelled) setError("Couldn't load songs. Check your connection."); });
+        .catch(() => { if (!cancelled) setError(t("musicSheet.couldntLoadSongsCheckYour")); });
     };
     // Typing waits for a pause; a mood or opening the sheet loads at once.
     const timer = query ? setTimeout(run, 250) : null;
@@ -80,7 +81,7 @@ export function MusicSheet({ visible, current, onClose, onChoose }: Props): Reac
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={() => (choosing && !current ? setChoosing(null) : onClose())}>
-      <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
+      <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel={t("common.close")} />
       <KeyboardAvoider style={[styles.sheet, { paddingBottom: insets.bottom + spacing.md }]}>
         <View style={styles.handle} />
         {choosing ? (
@@ -92,21 +93,21 @@ export function MusicSheet({ visible, current, onClose, onChoose }: Props): Reac
           />
         ) : (
           <>
-            <Text style={[typography.bodyStrong, styles.title]} accessibilityRole="header">Music</Text>
+            <Text style={[typography.bodyStrong, styles.title]} accessibilityRole="header">{t("musicSheet.music")}</Text>
             <TextInput
               style={styles.search}
-              placeholder="Search songs or artists"
+              placeholder={t("musicSheet.searchSongsOrArtists")}
               placeholderTextColor={colors.textDisabled}
               value={query}
               onChangeText={setQuery}
-              accessibilityLabel="Search music"
+              accessibilityLabel={t("musicSheet.searchMusic")}
               returnKeyType="search"
             />
             {moods.length ? (
               <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.moods} contentContainerStyle={styles.moodsContent} keyboardShouldPersistTaps="handled">
                 {["", ...moods].map((m) => (
                   <Pressable key={m || "all"} onPress={() => setMood(m)} style={[styles.mood, mood === m && styles.moodOn]} accessibilityRole="button" accessibilityState={{ selected: mood === m }} accessibilityLabel={m || "All moods"}>
-                    <Text style={[styles.moodLabel, mood === m && styles.moodLabelOn]}>{m || "For you"}</Text>
+                    <Text style={[styles.moodLabel, mood === m && styles.moodLabelOn]}>{m || t("musicSheet.forYou")}</Text>
                   </Pressable>
                 ))}
               </ScrollView>
@@ -116,7 +117,7 @@ export function MusicSheet({ visible, current, onClose, onChoose }: Props): Reac
             ) : error ? (
               <Text style={styles.empty}>{error}</Text>
             ) : tracks!.length === 0 ? (
-              <Text style={styles.empty}>{query || mood ? "No songs match." : "Songs are on their way. Check back soon."}</Text>
+              <Text style={styles.empty}>{query || mood ? t("musicSheet.noSongsMatch") : t("musicSheet.songsAreOnTheirWay")}</Text>
             ) : (
               <FlatList
                 data={tracks!}
@@ -124,7 +125,7 @@ export function MusicSheet({ visible, current, onClose, onChoose }: Props): Reac
                 style={styles.list}
                 keyboardShouldPersistTaps="handled"
                 renderItem={({ item }) => (
-                  <Pressable style={styles.row} onPress={() => pick(item)} accessibilityRole="button" accessibilityLabel={`${item.title} by ${item.artist}, ${formatClock(item.durationMs)}`} accessibilityHint="Adds it to your Story">
+                  <Pressable style={styles.row} onPress={() => pick(item)} accessibilityRole="button" accessibilityLabel={`${item.title} by ${item.artist}, ${formatClock(item.durationMs)}`} accessibilityHint={t("musicSheet.addsItToYourStory")}>
                     <View style={styles.cover}><Icon name={ICONS.music} size={20} color={colors.textPrimary} /></View>
                     <View style={styles.rowText}>
                       <Text style={styles.trackTitle} numberOfLines={1}>{item.title}</Text>
@@ -181,15 +182,15 @@ function ClipChooser({ music, onChange, onBack, onDone }: { music: ChosenMusic; 
   return (
     <View style={styles.chooser}>
       <View style={styles.chooserTop}>
-        <Pressable onPress={onBack} hitSlop={10} accessibilityRole="button" accessibilityLabel="Choose another song">
+        <Pressable onPress={onBack} hitSlop={10} accessibilityRole="button" accessibilityLabel={t("musicSheet.chooseAnotherSong")}>
           <Icon name={ICONS.back} size={22} color={colors.textPrimary} />
         </Pressable>
         <View style={styles.chooserTitle}>
           <Text style={styles.trackTitle} numberOfLines={1}>{track.title}</Text>
           <Text style={styles.trackMeta} numberOfLines={1}>{track.artist}</Text>
         </View>
-        <Pressable onPress={onDone} style={styles.doneButton} accessibilityRole="button" accessibilityLabel="Add to Story">
-          <Text style={styles.doneLabel}>Done</Text>
+        <Pressable onPress={onDone} style={styles.doneButton} accessibilityRole="button" accessibilityLabel={t("common.addToStory")}>
+          <Text style={styles.doneLabel}>{t("common.done")}</Text>
         </Pressable>
       </View>
 
@@ -199,8 +200,8 @@ function ClipChooser({ music, onChange, onBack, onDone }: { music: ChosenMusic; 
         {...pan.panHandlers}
         accessible
         accessibilityRole="adjustable"
-        accessibilityLabel="Part of the song"
-        accessibilityValue={{ text: `Starts at ${formatClock(startMs)}` }}
+        accessibilityLabel={t("musicSheet.partOfTheSong")}
+        accessibilityValue={{ text: t("musicSheet.startsAtStartms", { startMs: formatClock(startMs) }) }}
         accessibilityActions={[{ name: "increment" }, { name: "decrement" }]}
         onAccessibilityAction={(e) => step(e.nativeEvent.actionName === "increment" ? 5_000 : -5_000)}
       >
@@ -209,7 +210,7 @@ function ClipChooser({ music, onChange, onBack, onDone }: { music: ChosenMusic; 
         ))}
         <View style={[styles.window, { left: windowLeft, width: windowWidth }]} />
       </View>
-      <Text style={styles.hint}>Drag to choose the part that plays</Text>
+      <Text style={styles.hint}>{t("musicSheet.dragToChooseThePart")}</Text>
 
       <View style={styles.lengths}>
         {CLIP_LENGTHS.filter((l) => l <= Math.max(track.durationMs, MIN_CLIP_MS)).map((l) => (
@@ -221,7 +222,7 @@ function ClipChooser({ music, onChange, onBack, onDone }: { music: ChosenMusic; 
             accessibilityState={{ selected: durationMs === l }}
             accessibilityLabel={`${l / 1000} seconds`}
           >
-            <Text style={[styles.moodLabel, durationMs === l && styles.moodLabelOn]}>{l / 1000}s</Text>
+            <Text style={[styles.moodLabel, durationMs === l && styles.moodLabelOn]}>{t("musicSheet.valueS", { value: l / 1000 })}</Text>
           </Pressable>
         ))}
       </View>

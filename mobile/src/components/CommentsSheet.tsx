@@ -13,6 +13,7 @@ import { VerifiedName } from "./VerifiedBadge";
 import { Icon } from "./Icon";
 import { timeAgo } from "../utils/serverTime";
 import { tapFeedback } from "../utils/haptics";
+import { t } from "../i18n";
 
 interface Props {
   visible: boolean;
@@ -53,7 +54,7 @@ function useKeyboardShown(): boolean {
 
 /** One comment. Memoised: typing in the box, or a new comment, doesn't redraw the others. */
 const CommentRow = React.memo(function CommentRow({ item, onOptions, onOpenProfile }: { item: Row; onOptions: (item: Row) => void; onOpenProfile: (username: string) => void }): React.JSX.Element {
-  const ago = item.pending ? "Posting…" : timeAgo(item.createdAt);
+  const ago = item.pending ? t("commentsSheet.posting") : timeAgo(item.createdAt);
   return (
     <Pressable
       style={[styles.row, item.pending && styles.rowPending]}
@@ -61,7 +62,7 @@ const CommentRow = React.memo(function CommentRow({ item, onOptions, onOpenProfi
       delayLongPress={350}
       accessibilityRole="text"
       accessibilityLabel={`@${item.username}${item.verified ? ", verified" : ""}: ${item.body}. ${timeAgo(item.createdAt)}`}
-      accessibilityActions={item.pending ? undefined : [{ name: "options", label: "Comment options" }]}
+      accessibilityActions={item.pending ? undefined : [{ name: "options", label: t("commentsSheet.commentOptions") }]}
       onAccessibilityAction={() => onOptions(item)}
     >
       <Pressable onPress={() => onOpenProfile(item.username)} hitSlop={6} accessibilityRole="button" accessibilityLabel={`@${item.username}'s profile`}>
@@ -75,7 +76,7 @@ const CommentRow = React.memo(function CommentRow({ item, onOptions, onOpenProfi
         <Text style={styles.body}>{item.body}</Text>
       </View>
       {!item.pending ? (
-        <Pressable onPress={() => onOptions(item)} hitSlop={10} style={styles.more} accessibilityRole="button" accessibilityLabel="Comment options">
+        <Pressable onPress={() => onOptions(item)} hitSlop={10} style={styles.more} accessibilityRole="button" accessibilityLabel={t("commentsSheet.commentOptions")}>
           <Icon name={ICONS.more} size={16} color={colors.textDisabled} />
         </Pressable>
       ) : null}
@@ -111,17 +112,17 @@ function Composer({ user, autoFocus, onSend }: { user: { username: string; displ
       {user ? <Avatar username={user.username} displayName={user.displayName ?? user.username} avatarMediaId={user.avatarMediaId ?? null} size={32} /> : null}
       <TextInput
         style={styles.input}
-        placeholder="Add a comment…"
+        placeholder={t("common.addAComment")}
         placeholderTextColor={colors.textDisabled}
         autoFocus={autoFocus}
         value={draft}
         onChangeText={setDraft}
         maxLength={MAX_LENGTH}
         multiline
-        accessibilityLabel="Comment"
+        accessibilityLabel={t("commentsSheet.comment")}
       />
-      <Pressable accessibilityRole="button" accessibilityLabel="Post comment" accessibilityState={{ disabled: !canSend, busy: sending }} onPress={() => void send()} disabled={!canSend} hitSlop={8}>
-        <Text style={[styles.sendLabel, !canSend && styles.sendDisabled]}>Post</Text>
+      <Pressable accessibilityRole="button" accessibilityLabel={t("commentsSheet.postComment")} accessibilityState={{ disabled: !canSend, busy: sending }} onPress={() => void send()} disabled={!canSend} hitSlop={8}>
+        <Text style={[styles.sendLabel, !canSend && styles.sendDisabled]}>{t("commentsSheet.post")}</Text>
       </Pressable>
     </View>
   );
@@ -211,7 +212,7 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
     const { accessToken: token, user: me, comments: before, stored: storedBefore } = latest.current;
     if (!token || !me) return body;
     const knownIds = new Set(before.map((c) => c.id));
-    const tempId = `pending-${Date.now()}`;
+    const tempId = t("commentsSheet.pendingDate", { Date: Date.now() });
     const temp: Row = {
       id: tempId, storyId, userId: me.id, username: me.username, displayName: me.displayName ?? me.username,
       avatarMediaId: me.avatarMediaId ?? null, verified: me.verified, body, createdAt: new Date().toISOString(), pending: true,
@@ -237,7 +238,7 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
         }
       }
       setComments((prev) => prev.filter((c) => c.id !== tempId));
-      setError(err instanceof ApiError ? err.message : "Couldn't post that comment.");
+      setError(err instanceof ApiError ? err.message : t("commentsSheet.couldntPostThatComment"));
       return body;
     }
   }, [storyId, findStored]);
@@ -245,10 +246,10 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
   const onDelete = useCallback((commentId: string) => {
     const token = latest.current.accessToken;
     if (!token) return;
-    Alert.alert("Delete comment?", undefined, [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("commentsSheet.deleteComment"), undefined, [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Delete",
+        text: t("common.delete"),
         style: "destructive",
         onPress: async () => {
           const before = latest.current.comments;
@@ -258,7 +259,7 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
             latest.current.onCommentCountChange(-1);
           } catch {
             setComments(before);
-            setError("Couldn't delete that comment.");
+            setError(t("commentsSheet.couldntDeleteThatComment"));
           }
         },
       },
@@ -271,10 +272,10 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
     const mine = item.userId === me?.id;
     const canDelete = mine || owner === me?.id;
     const buttons: Array<{ text: string; style?: "destructive" | "cancel"; onPress?: () => void }> = [];
-    if (canDelete) buttons.push({ text: "Delete", style: "destructive", onPress: () => onDelete(item.id) });
-    if (!mine) buttons.push({ text: "Report", style: "destructive", onPress: () => setReportingCommentId(item.id) });
-    buttons.push({ text: "Cancel", style: "cancel" });
-    Alert.alert("Comment", undefined, buttons);
+    if (canDelete) buttons.push({ text: t("common.delete"), style: "destructive", onPress: () => onDelete(item.id) });
+    if (!mine) buttons.push({ text: t("common.report"), style: "destructive", onPress: () => setReportingCommentId(item.id) });
+    buttons.push({ text: t("common.cancel"), style: "cancel" });
+    Alert.alert(t("commentsSheet.comment"), undefined, buttons);
   }, [onDelete]);
 
   const openProfile = useCallback((username: string) => {
@@ -286,17 +287,17 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
 
   const renderItem = useCallback(({ item }: { item: Row }) => <CommentRow item={item} onOptions={onOptions} onOpenProfile={openProfile} />, [onOptions, openProfile]);
 
-  const closedNote = commentsDisabled ? "Comments are turned off for this Story." : followersOnly ? "Only followers can comment on this Story." : null;
+  const closedNote = commentsDisabled ? t("commentsSheet.commentsAreTurnedOffFor") : followersOnly ? t("commentsSheet.onlyFollowersCanCommentOn") : null;
 
   return (
     <>
       <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-        <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
+        <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel={t("common.close")} />
         {/* The keyboard's room comes out of the sheet: it grows while the keyboard is up, so the list keeps space. */}
         <KeyboardAvoider style={[styles.sheet, keyboardShown && styles.sheetKeyboard, { paddingBottom: spacing.md + bottomInset }]}>
           <View style={styles.handle} />
           <Text style={[typography.bodyStrong, styles.title]} accessibilityRole="header">
-            {stored > 0 ? `${stored}${hasMore ? "+" : ""} comment${stored === 1 ? "" : "s"}` : "Comments"}
+            {stored > 0 ? `${stored}${hasMore ? "+" : ""} comment${stored === 1 ? "" : "s"}` : t("common.comments")}
           </Text>
 
           {loading ? (
@@ -304,16 +305,16 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
           ) : loadFailed ? (
             // Not "no comments": they couldn't be loaded.
             <View style={styles.emptyBox}>
-              <Text style={typography.bodyStrong}>Couldn't load comments</Text>
-              <Text style={[typography.caption, styles.emptyHint]}>Check your connection and try again.</Text>
+              <Text style={typography.bodyStrong}>{t("commentsSheet.couldntLoadComments")}</Text>
+              <Text style={[typography.caption, styles.emptyHint]}>{t("commentsSheet.checkYourConnectionAndTry")}</Text>
               <Pressable onPress={() => void load()} style={styles.retry} accessibilityRole="button" hitSlop={8}>
-                <Text style={styles.retryText}>Try again</Text>
+                <Text style={styles.retryText}>{t("common.tryAgain")}</Text>
               </Pressable>
             </View>
           ) : comments.length === 0 ? (
             <View style={styles.emptyBox}>
-              <Text style={typography.bodyStrong}>No comments yet</Text>
-              {!closedNote ? <Text style={[typography.caption, styles.emptyHint]}>Start the conversation.</Text> : null}
+              <Text style={typography.bodyStrong}>{t("commentsSheet.noCommentsYet")}</Text>
+              {!closedNote ? <Text style={[typography.caption, styles.emptyHint]}>{t("commentsSheet.startTheConversation")}</Text> : null}
             </View>
           ) : (
             <FlatList

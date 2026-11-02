@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 /**
  * Scheduling a Story (backend stories/scheduled.ts): a time on the phone's own clock and
  * calendar, at least a few minutes ahead and at most 7 days.
@@ -27,8 +28,8 @@ export function atTime(day: Date, hour: number, minute: number): Date {
 
 /** Why a time can't be chosen, in words for people; null when it's fine. */
 export function scheduleProblem(at: Date, now: Date = new Date()): string | null {
-  if (at.getTime() < now.getTime() + MIN_SCHEDULE_LEAD_MS) return "Choose a time at least 10 minutes from now.";
-  if (at.getTime() > now.getTime() + MAX_SCHEDULE_AHEAD_MS) return "Stories can be scheduled up to 7 days ahead.";
+  if (at.getTime() < now.getTime() + MIN_SCHEDULE_LEAD_MS) return t("schedule.chooseATimeAtLeast");
+  if (at.getTime() > now.getTime() + MAX_SCHEDULE_AHEAD_MS) return t("schedule.storiesCanBeScheduledUp");
   return null;
 }
 
@@ -43,8 +44,8 @@ export function defaultScheduleTime(now: Date = new Date()): Date {
 /** "Today", "Tomorrow" or "Sat, 1 Nov". */
 export function dayName(day: Date, now: Date = new Date()): string {
   const diff = Math.round((startOfDay(day).getTime() - startOfDay(now).getTime()) / 86_400_000);
-  if (diff === 0) return "Today";
-  if (diff === 1) return "Tomorrow";
+  if (diff === 0) return t("common.today");
+  if (diff === 1) return t("schedule.tomorrow");
   return day.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" });
 }
 
@@ -55,5 +56,5 @@ export function timeText(at: Date): string {
 
 /** "Today at 8:30 PM", "Tomorrow at 9:00 AM", "Sat, 1 Nov at 6:15 PM". */
 export function scheduleText(at: Date, now: Date = new Date()): string {
-  return `${dayName(at, now)} at ${timeText(at)}`;
+  return t("schedule.atAtAt2", { at: dayName(at, now), at2: timeText(at) });
 }

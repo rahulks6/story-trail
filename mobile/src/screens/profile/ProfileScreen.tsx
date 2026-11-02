@@ -16,6 +16,7 @@ import { profileButton, profileIconButton } from "../../components/profile/profi
 import { profileShareLink } from "../../navigation/profileLinks";
 import type { RootStackParamList } from "../../navigation/types";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
+import { t } from "../../i18n";
 
 /**
  * Your own creator page (Phase 10). Your name and bio come from your account (so an edit shows
@@ -93,7 +94,7 @@ export function ProfileScreen(): React.JSX.Element {
 
   const onShareProfile = async () => {
     try {
-      await Share.share({ message: `@${user.username} on Katkee: ${profileShareLink(user.username, user.id)}` });
+      await Share.share({ message: t("profile.usernameOnKatkeeUsername2", { username: user.username, username2: profileShareLink(user.username, user.id) }) });
     } catch {
       // Closing the share sheet isn't an error.
     }
@@ -104,17 +105,17 @@ export function ProfileScreen(): React.JSX.Element {
       <View style={[styles.topBar, { paddingTop: insets.top + spacing.xs }]}>
         <View style={styles.topBarTitle}>
           {user.isPrivate ? (
-            <View accessible accessibilityLabel="Private account">
+            <View accessible accessibilityLabel={t("common.privateAccount")}>
               <Icon name={ICONS.privacy} size={16} color={colors.textPrimary} />
             </View>
           ) : null}
           <Text style={styles.topBarUsername} numberOfLines={1} accessibilityRole="header">{user.username}</Text>
         </View>
         <View style={styles.topBarActions}>
-          <Pressable style={styles.topBarButton} onPress={() => navigation.navigate("Archive")} hitSlop={8} accessibilityRole="button" accessibilityLabel="Archive">
+          <Pressable style={styles.topBarButton} onPress={() => navigation.navigate("Archive")} hitSlop={8} accessibilityRole="button" accessibilityLabel={t("common.archive")}>
             <Icon name={ICONS.archive} size={24} color={colors.textPrimary} />
           </Pressable>
-          <Pressable style={styles.topBarButton} onPress={() => navigation.navigate("Settings")} hitSlop={8} accessibilityRole="button" accessibilityLabel="Settings">
+          <Pressable style={styles.topBarButton} onPress={() => navigation.navigate("Settings")} hitSlop={8} accessibilityRole="button" accessibilityLabel={t("common.settings")}>
             <Icon name={ICONS.settings} size={24} color={colors.textPrimary} />
           </Pressable>
         </View>
@@ -131,14 +132,14 @@ export function ProfileScreen(): React.JSX.Element {
             style={({ pressed }) => [styles.verify, pressed && styles.dashboardPressed]}
             onPress={() => navigation.navigate("VerifyEmail")}
             accessibilityRole="button"
-            accessibilityLabel="Verify your email"
+            accessibilityLabel={t("common.verifyYourEmail")}
             accessibilityHint={`Enter the code we sent to ${user.email}`}
           >
             <View style={styles.verifyText}>
-              <Text style={styles.verifyTitle}>Verify your email</Text>
-              <Text style={styles.verifyBody} numberOfLines={2}>Confirm {user.email} so you can always get back into your account.</Text>
+              <Text style={styles.verifyTitle}>{t("common.verifyYourEmail")}</Text>
+              <Text style={styles.verifyBody} numberOfLines={2}>{t("profile.confirmEmailSoYouCan", { email: user.email ?? "" })}</Text>
             </View>
-            <Text style={styles.verifyAction}>Verify</Text>
+            <Text style={styles.verifyAction}>{t("common.verify")}</Text>
           </Pressable>
         ) : null}
         <ProfileHeader
@@ -174,13 +175,13 @@ export function ProfileScreen(): React.JSX.Element {
         >
           <StreakBadge streak={streak} own />
           <View style={styles.actions}>
-            {profileButton({ label: "Edit profile", onPress: () => navigation.navigate("EditProfile") })}
-            {profileButton({ label: "Share profile", onPress: () => void onShareProfile() })}
+            {profileButton({ label: t("common.editProfile"), onPress: () => navigation.navigate("EditProfile") })}
+            {profileButton({ label: t("common.shareProfile"), onPress: () => void onShareProfile() })}
             {/* Only you see Insights: a small button beside the others, not a card on your profile.
                 A professional account's opens its dashboard; a personal one's, today's Stories. */}
             {user.professionalCategory
-              ? profileIconButton({ icon: ICONS.insights, accessibilityLabel: "Professional dashboard. See your reach, followers and top Stories. Only you can see this.", onPress: () => navigation.navigate("ProfessionalDashboard") })
-              : profileIconButton({ icon: ICONS.insights, accessibilityLabel: "Insights. See how your Stories are doing. Only you can see this.", onPress: () => navigation.navigate("SequenceInsights") })}
+              ? profileIconButton({ icon: ICONS.insights, accessibilityLabel: t("profile.professionalDashboardSeeYourReach"), onPress: () => navigation.navigate("ProfessionalDashboard") })
+              : profileIconButton({ icon: ICONS.insights, accessibilityLabel: t("profile.insightsSeeHowYourStories"), onPress: () => navigation.navigate("SequenceInsights") })}
           </View>
         </ProfileHeader>
 

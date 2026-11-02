@@ -6,6 +6,7 @@ import type { PeerLike, StreamLike, WebRtc } from "./webrtc";
 import { VIDEO_CONSTRAINTS } from "./webrtc";
 import * as audio from "./callAudio";
 import { serverTimeMs } from "../utils/serverTime";
+import { t } from "../i18n";
 
 /** How long a call keeps ringing: until the server's deadline, or 45 s when it gave none we can read. */
 function ringsForMs(ringsUntil: string | null | undefined, now: number): number {
@@ -112,7 +113,7 @@ export class CallController {
 
   private token(): string {
     const token = this.options.token();
-    if (!token) throw new ApiError(401, "Signed out.");
+    if (!token) throw new ApiError(401, t("common.signedOut"));
     return token;
   }
 

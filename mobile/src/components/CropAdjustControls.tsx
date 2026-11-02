@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { Pressable } from "./Pressable";
 import { mediaColors as colors, radii, spacing } from "../theme";
 import { clampCrop, type StoryCrop } from "../models/storyDraft";
+import { t } from "../i18n";
 
 const ZOOM_STEP = 0.25;
 const PAN_STEP = 0.1;
@@ -29,41 +30,41 @@ export function CropAdjustControls({ crop, onChange }: Props): React.JSX.Element
   return (
     <View style={styles.container}>
       <View style={styles.zoomRow}>
-        <Pressable style={styles.stepButton} onPress={() => zoomBy(-ZOOM_STEP)} accessibilityRole="button" accessibilityLabel="Zoom out">
+        <Pressable style={styles.stepButton} onPress={() => zoomBy(-ZOOM_STEP)} accessibilityRole="button" accessibilityLabel={t("common.zoomOut")}>
           <Icon style={styles.stepIcon} name="minus"/>
         </Pressable>
         <Text style={styles.zoomLabel}>{crop.zoom.toFixed(2)}×</Text>
-        <Pressable style={styles.stepButton} onPress={() => zoomBy(ZOOM_STEP)} accessibilityRole="button" accessibilityLabel="Zoom in">
+        <Pressable style={styles.stepButton} onPress={() => zoomBy(ZOOM_STEP)} accessibilityRole="button" accessibilityLabel={t("common.zoomIn")}>
           <Icon style={styles.stepIcon} name="add"/>
         </Pressable>
       </View>
       <View style={styles.dpad}>
         <View style={styles.dpadRow}>
           <View style={styles.dpadSpacer} />
-          <Pressable style={styles.dpadButton} onPress={() => panBy(0, -PAN_STEP)} accessibilityRole="button" accessibilityLabel="Pan up">
+          <Pressable style={styles.dpadButton} onPress={() => panBy(0, -PAN_STEP)} accessibilityRole="button" accessibilityLabel={t("cropAdjustControls.panUp")}>
             <Icon style={styles.dpadIcon} name="up"/>
           </Pressable>
           <View style={styles.dpadSpacer} />
         </View>
         <View style={styles.dpadRow}>
-          <Pressable style={styles.dpadButton} onPress={() => panBy(-PAN_STEP, 0)} accessibilityRole="button" accessibilityLabel="Pan left">
+          <Pressable style={styles.dpadButton} onPress={() => panBy(-PAN_STEP, 0)} accessibilityRole="button" accessibilityLabel={t("cropAdjustControls.panLeft")}>
             <Icon style={styles.dpadIcon} name="left"/>
           </Pressable>
           <Pressable
             style={styles.dpadButton}
             onPress={() => onChange({ zoom: 1, offsetX: 0, offsetY: 0 })}
             accessibilityRole="button"
-            accessibilityLabel="Reset crop"
+            accessibilityLabel={t("cropAdjustControls.resetCrop")}
           >
             <Icon style={styles.resetIcon} name="undo"/>
           </Pressable>
-          <Pressable style={styles.dpadButton} onPress={() => panBy(PAN_STEP, 0)} accessibilityRole="button" accessibilityLabel="Pan right">
+          <Pressable style={styles.dpadButton} onPress={() => panBy(PAN_STEP, 0)} accessibilityRole="button" accessibilityLabel={t("cropAdjustControls.panRight")}>
             <Icon style={styles.dpadIcon} name="right"/>
           </Pressable>
         </View>
         <View style={styles.dpadRow}>
           <View style={styles.dpadSpacer} />
-          <Pressable style={styles.dpadButton} onPress={() => panBy(0, PAN_STEP)} accessibilityRole="button" accessibilityLabel="Pan down">
+          <Pressable style={styles.dpadButton} onPress={() => panBy(0, PAN_STEP)} accessibilityRole="button" accessibilityLabel={t("cropAdjustControls.panDown")}>
             <Icon style={styles.dpadIcon} name="down"/>
           </Pressable>
           <View style={styles.dpadSpacer} />

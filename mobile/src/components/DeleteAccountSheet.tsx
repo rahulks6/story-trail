@@ -6,6 +6,7 @@ import { colors, radii, spacing, typography } from "../theme";
 import { useAuth } from "../state/AuthContext";
 import { ApiError } from "../api/client";
 import { KeyboardAvoider } from "./KeyboardAvoider";
+import { t } from "../i18n";
 
 interface Props {
   visible: boolean;
@@ -44,7 +45,7 @@ export function DeleteAccountSheet({ visible, onClose }: Props): React.JSX.Eleme
       // deleteAccount() flips AuthContext to signedOut, which unmounts
       // this screen (and this sheet with it) via RootNavigator.
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "That didn't go through — try again.");
+      setError(err instanceof ApiError ? err.message : t("deleteAccountSheet.thatDidntGoThroughTry"));
       setBusy(false);
     }
   };
@@ -70,25 +71,23 @@ export function DeleteAccountSheet({ visible, onClose }: Props): React.JSX.Eleme
             }
           }}
           accessibilityRole="button"
-          accessibilityLabel="Close"
+          accessibilityLabel={t("common.close")}
         />
         <View style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]}>
           <View style={styles.handle} />
-          <Text style={[typography.bodyStrong, styles.title]}>Delete your account?</Text>
-          <Text style={[typography.body, styles.warning]}>
-            This is permanent. Your profile, Stories, and Highlights are removed immediately and can't be recovered.
-          </Text>
+          <Text style={[typography.bodyStrong, styles.title]}>{t("deleteAccountSheet.deleteYourAccount")}</Text>
+          <Text style={[typography.body, styles.warning]}>{t("deleteAccountSheet.thisIsPermanentYourProfile")}</Text>
 
           {!confirming ? (
             <Pressable style={styles.destructiveButton} onPress={() => setConfirming(true)} accessibilityRole="button">
-              <Text style={styles.destructiveLabel}>Continue</Text>
+              <Text style={styles.destructiveLabel}>{t("common.continue")}</Text>
             </Pressable>
           ) : (
             <>
               <TextInput
                 style={styles.input}
-                accessibilityLabel="Password"
-                placeholder="Confirm your password"
+                accessibilityLabel={t("common.password")}
+                placeholder={t("deleteAccountSheet.confirmYourPassword")}
                 placeholderTextColor={colors.textDisabled}
                 autoComplete="current-password"
                 textContentType="password"
@@ -104,10 +103,10 @@ export function DeleteAccountSheet({ visible, onClose }: Props): React.JSX.Eleme
                 disabled={!password || busy}
                 onPress={onSubmit}
                 accessibilityRole="button"
-                accessibilityLabel="Permanently delete my account"
+                accessibilityLabel={t("deleteAccountSheet.permanentlyDeleteMyAccount")}
                 accessibilityState={{ busy, disabled: !password || busy }}
               >
-                {busy ? <ActivityIndicator color={colors.onDanger} /> : <Text style={styles.destructiveLabel}>Permanently delete my account</Text>}
+                {busy ? <ActivityIndicator color={colors.onDanger} /> : <Text style={styles.destructiveLabel}>{t("deleteAccountSheet.permanentlyDeleteMyAccount")}</Text>}
               </Pressable>
             </>
           )}
@@ -121,7 +120,7 @@ export function DeleteAccountSheet({ visible, onClose }: Props): React.JSX.Eleme
               onClose();
             }}
           >
-            <Text style={typography.caption}>Cancel</Text>
+            <Text style={typography.caption}>{t("common.cancel")}</Text>
           </Pressable>
         </View>
       </KeyboardAvoider>

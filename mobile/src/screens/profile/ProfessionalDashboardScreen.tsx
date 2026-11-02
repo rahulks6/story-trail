@@ -20,12 +20,13 @@ import { formatCount } from "../../utils/formatCount";
 import { timeAgo } from "../../utils/serverTime";
 import { tapFeedback } from "../../utils/haptics";
 import { track } from "../../analytics/analytics";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ProfessionalDashboard">;
 
 const RANGES: { value: DashboardRange; label: string }[] = [
-  { value: 7, label: "Last 7 days" },
-  { value: 30, label: "Last 30 days" },
+  { value: 7, get label() { return t("professionalDashboard.last7Days"); } },
+  { value: 30, get label() { return t("professionalDashboard.last30Days"); } },
 ];
 
 /**
@@ -35,7 +36,7 @@ const RANGES: { value: DashboardRange; label: string }[] = [
 export function changeText(current: number, previous: number, days: number): string | null {
   if (previous <= 0) return null;
   const change = Math.round(((current - previous) / previous) * 100);
-  if (change === 0) return `Same as the previous ${days} days`;
+  if (change === 0) return t("professionalDashboard.sameAsThePreviousDays", { days });
   return `${change > 0 ? "+" : "−"}${Math.abs(change)}% vs the previous ${days} days`;
 }
 
@@ -115,14 +116,14 @@ export function ProfessionalDashboardScreen({ navigation }: Props): React.JSX.El
   if (state === "notProfessional") {
     return (
       <View style={styles.centered}>
-        <EmptyState icon="insights" title="Switch to a professional account" message="It's free. You'll see your reach, follower growth, top Stories and when your followers are online.">
-          <Button label="Switch to professional" onPress={() => navigation.replace("ProfessionalAccount")} />
+        <EmptyState icon="insights" title={t("professionalDashboard.switchToAProfessionalAccount")} message={t("professionalDashboard.itsFreeYoullSeeYour")}>
+          <Button label={t("common.switchToProfessional")} onPress={() => navigation.replace("ProfessionalAccount")} />
         </EmptyState>
       </View>
     );
   }
   if (state === "failed" && !data) {
-    return <LoadFailed message="Couldn't load your dashboard. Check your connection and try again." onRetry={() => { setState("loading"); void load(range); }} />;
+    return <LoadFailed message={t("professionalDashboard.couldntLoadYourDashboardCheck")} onRetry={() => { setState("loading"); void load(range); }} />;
   }
 
   const stale = state === "loading";
@@ -149,10 +150,10 @@ export function ProfessionalDashboardScreen({ navigation }: Props): React.JSX.El
           );
         })}
       </View>
-      {state === "failed" ? <Text style={styles.error} accessibilityRole="alert">Couldn't refresh. Showing the last numbers loaded.</Text> : null}
+      {state === "failed" ? <Text style={styles.error} accessibilityRole="alert">{t("professionalDashboard.couldntRefreshShowingTheLast")}</Text> : null}
 
       {!data ? (
-        <View style={styles.skeleton} accessible accessibilityLabel="Loading your dashboard">
+        <View style={styles.skeleton} accessible accessibilityLabel={t("professionalDashboard.loadingYourDashboard")}>
           <SkeletonBlock width="60%" height={44} />
           <SkeletonBlock width="100%" height={120} radius={radii.md} />
           <SkeletonBlock width="100%" height={200} radius={radii.md} />
@@ -163,32 +164,30 @@ export function ProfessionalDashboardScreen({ navigation }: Props): React.JSX.El
 
           <View style={styles.hero} accessible accessibilityLabel={`Accounts reached: ${data.summary.accountsReached}. ${changeText(data.summary.accountsReached, data.previous.accountsReached, data.days) ?? ""}`}>
             <Text style={styles.heroValue}>{formatCount(data.summary.accountsReached)}</Text>
-            <Text style={styles.heroLabel}>Accounts reached</Text>
+            <Text style={styles.heroLabel}>{t("professionalDashboard.accountsReached")}</Text>
             {changeText(data.summary.accountsReached, data.previous.accountsReached, data.days) ? (
               <Text style={styles.heroChange}>{changeText(data.summary.accountsReached, data.previous.accountsReached, data.days)}</Text>
             ) : null}
             {data.summary.accountsReached > 0 ? (
-              <Text style={styles.heroNote}>
-                {Math.round((data.summary.reachedFollowers / data.summary.accountsReached) * 100)}% already followed you · {formatCount(data.summary.accountsReached - data.summary.reachedFollowers)} didn't
-              </Text>
+              <Text style={styles.heroNote}>{t("professionalDashboard.valueAlreadyFollowedYouCount", { value: Math.round((data.summary.reachedFollowers / data.summary.accountsReached) * 100), count: formatCount(data.summary.accountsReached - data.summary.reachedFollowers) })}</Text>
             ) : (
-              <Text style={styles.heroNote}>Post a Story and the people who watch it show up here.</Text>
+              <Text style={styles.heroNote}>{t("professionalDashboard.postAStoryAndThe")}</Text>
             )}
           </View>
 
-          <Card title="Your Stories" subtitle={changeText(data.summary.storyViews, data.previous.storyViews, data.days) ?? undefined}>
+          <Card title={t("professionalDashboard.yourStories")} subtitle={changeText(data.summary.storyViews, data.previous.storyViews, data.days) ?? undefined}>
             <View style={styles.grid}>
-              <Stat label="Story views" value={data.summary.storyViews} />
-              <Stat label="Stories posted" value={data.summary.storiesPosted} />
-              <Stat label="Likes" value={data.summary.likes} />
-              <Stat label="Replies" value={data.summary.replies} />
-              <Stat label="Comments" value={data.summary.comments} />
-              <Stat label="Shares" value={data.summary.shares} />
+              <Stat label={t("professionalDashboard.storyViews")} value={data.summary.storyViews} />
+              <Stat label={t("professionalDashboard.storiesPosted")} value={data.summary.storiesPosted} />
+              <Stat label={t("common.likes")} value={data.summary.likes} />
+              <Stat label={t("professionalDashboard.replies")} value={data.summary.replies} />
+              <Stat label={t("common.comments")} value={data.summary.comments} />
+              <Stat label={t("professionalDashboard.shares")} value={data.summary.shares} />
             </View>
           </Card>
 
           <Card
-            title="Followers"
+            title={t("common.followers")}
             subtitle={data.summary.followersNet === null
               ? `${formatCount(data.summary.followers)} followers · changes counted since ${dayLabel(data.followerHistorySince, { day: "numeric", month: "short" })}`
               : `${formatCount(data.summary.followers)} followers · ${signed(data.summary.followersNet)} in this period`}
@@ -196,9 +195,9 @@ export function ProfessionalDashboardScreen({ navigation }: Props): React.JSX.El
             <FollowerGrowthChart days={data.daily} />
           </Card>
 
-          <Card title="Top Stories" subtitle="Stories you posted in this period, by views">
+          <Card title={t("professionalDashboard.topStories")} subtitle={t("professionalDashboard.storiesYouPostedInThis")}>
             {data.topStories.length === 0 ? (
-              <Text style={styles.muted}>No Stories in this period yet.</Text>
+              <Text style={styles.muted}>{t("professionalDashboard.noStoriesInThisPeriod")}</Text>
             ) : (
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.topRow}>
                 {data.topStories.map((s, i) => (
@@ -208,7 +207,7 @@ export function ProfessionalDashboardScreen({ navigation }: Props): React.JSX.El
                     onPress={() => navigation.navigate("ArchivedStoryViewer", { storyId: s.id })}
                     accessibilityRole="button"
                     accessibilityLabel={`Number ${i + 1}, posted ${timeAgo(s.createdAt)}: ${s.views} views, ${s.likes} likes, ${s.replies} replies, ${s.shares} shares`}
-                    accessibilityHint="Opens the Story"
+                    accessibilityHint={t("professionalDashboard.opensTheStory")}
                   >
                     <FadeInImage
                       source={{ uri: mediaFileUrl(s.mediaId, "thumbnail"), headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined }}
@@ -228,22 +227,19 @@ export function ProfessionalDashboardScreen({ navigation }: Props): React.JSX.El
             )}
           </Card>
 
-          <Card title="When your followers are online" subtitle="Your time, over the last 7 days">
+          <Card title={t("professionalDashboard.whenYourFollowersAreOnline")} subtitle={t("professionalDashboard.yourTimeOverTheLast")}>
             {data.audience.status === "ready" ? (
               <>
                 <ActiveHoursChart hours={data.audience.hours} peakHour={data.audience.peakHour} />
-                <Text style={styles.muted}>
-                  Most active {hourRange(data.audience.peakHour)}.{data.audience.sampled ? " Based on your newest 10,000 followers." : ""}
+                <Text style={styles.muted}>{t("professionalDashboard.mostActive")}{" "}{hourRange(data.audience.peakHour)}.{data.audience.sampled ? t("professionalDashboard.basedOnYourNewest10") : ""}
                 </Text>
               </>
             ) : (
-              <Text style={styles.muted}>
-                This appears once at least {data.audience.minimumFollowers} of your followers have used Katkee this week, so it never shows when one person is online.
-              </Text>
+              <Text style={styles.muted}>{t("professionalDashboard.thisAppearsOnceAtLeast", { minimumFollowers: data.audience.minimumFollowers })}</Text>
             )}
           </Card>
 
-          <Text style={styles.footer}>Only you can see this. Your own views, likes and replies aren't counted.</Text>
+          <Text style={styles.footer}>{t("professionalDashboard.onlyYouCanSeeThis")}</Text>
         </View>
       )}
     </ScrollView>

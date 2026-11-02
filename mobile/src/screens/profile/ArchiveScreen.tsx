@@ -17,6 +17,7 @@ import { Button } from "../../components/Form";
 import { ApiError } from "../../api/client";
 import { serverDate } from "../../utils/serverTime";
 import { FadeInImage } from "../../components/FadeInImage";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Archive">;
 
@@ -37,7 +38,7 @@ function monthKey(iso: string): string {
 }
 
 function monthTitle(iso: string): string {
-  return serverDate(iso)?.toLocaleDateString(undefined, { month: "long", year: "numeric" }) ?? "Earlier";
+  return serverDate(iso)?.toLocaleDateString(undefined, { month: "long", year: "numeric" }) ?? t("common.earlier");
 }
 
 function groupByMonth(stories: PublicStory[]): MonthSection[] {
@@ -92,7 +93,7 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
       headerRight: () =>
         stories?.length ? (
           <Pressable onPress={choosing ? endSelection : () => setSelecting(true)} hitSlop={10} accessibilityRole="button">
-            <Text style={styles.headerAction}>{choosing ? "Cancel" : "Select"}</Text>
+            <Text style={styles.headerAction}>{choosing ? t("common.cancel") : t("archive.select")}</Text>
           </Pressable>
         ) : null,
     });
@@ -114,10 +115,10 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
       onPress={() => navigation.navigate("ScheduledStories")}
       accessibilityRole="button"
       accessibilityLabel={`Scheduled, ${scheduledCount} ${scheduledCount === 1 ? "Story" : "Stories"}`}
-      accessibilityHint="Reschedule or cancel Stories that haven't posted yet"
+      accessibilityHint={t("archive.rescheduleOrCancelStoriesThat")}
     >
       <Icon name={ICONS.timer} size={20} color={colors.accentText} />
-      <Text style={styles.scheduledLabel}>Scheduled</Text>
+      <Text style={styles.scheduledLabel}>{t("common.scheduled")}</Text>
       <Text style={styles.scheduledCount}>{scheduledCount}</Text>
       <Icon name={ICONS.chevron} size={16} color={colors.textDisabled} />
     </Pressable>
@@ -179,11 +180,11 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
     if (selected.length === 0 || !accessToken) return;
     Alert.alert(
       `Delete ${selected.length} ${selected.length === 1 ? "Story" : "Stories"}?`,
-      "This can't be undone.",
+      t("common.thisCantBeUndone"),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: "Delete",
+          text: t("common.delete"),
           style: "destructive",
           onPress: async () => {
             setDeleting(true);
@@ -202,8 +203,8 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
             const failed = ids.length - done.length;
             if (failed > 0) {
               Alert.alert(
-                failed === ids.length ? "Couldn't delete" : `${failed} of ${ids.length} weren't deleted`,
-                "They're still selected. Check your connection and tap Delete to try again.",
+                failed === ids.length ? t("common.couldntDelete") : t("archive.failedOfLengthWerentDeleted", { failed, length: ids.length }),
+                t("archive.theyreStillSelectedCheckYour"),
               );
             }
           },
@@ -213,7 +214,7 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
   };
 
   if (stories === null) {
-    if (loadFailed) return <LoadFailed message="Couldn't load your Archive. Check your connection and try again." onRetry={() => void loadFirst()} />;
+    if (loadFailed) return <LoadFailed message={t("archive.couldntLoadYourArchiveCheck")} onRetry={() => void loadFirst()} />;
     return (
       <View style={styles.centered}>
         <ActivityIndicator color={colors.accentText} />
@@ -226,19 +227,19 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
       {stories.length === 0 ? (
         <>
           {scheduledRow ? <View style={styles.scheduledAlone}>{scheduledRow}</View> : null}
-          <EmptyState icon="archive" title="Your Archive is empty" message="Every Story you publish stays here, even after it expires." />
+          <EmptyState icon="archive" title={t("archive.yourArchiveIsEmpty")} message={t("archive.everyStoryYouPublishStays")} />
         </>
       ) : (
         <SectionList
           ListHeaderComponent={scheduledRow ?? undefined}
           sections={sections}
-          keyExtractor={(row, index) => `${row[0]?.id ?? index}-row`}
+          keyExtractor={(row, index) => t("archive.idRow", { id: row[0]?.id ?? index })}
           contentContainerStyle={styles.listContent}
           onEndReachedThreshold={0.4}
           onEndReached={() => void onEndReached()}
           ListFooterComponent={
             loadingMore ? <ActivityIndicator color={colors.accentText} style={styles.footerSpinner} />
-              : moreFailed ? <View style={styles.footerSpinner}><Button label="Couldn't load more. Try again" variant="secondary" onPress={() => void onEndReached(true)} /></View>
+              : moreFailed ? <View style={styles.footerSpinner}><Button label={t("archive.couldntLoadMoreTryAgain")} variant="secondary" onPress={() => void onEndReached(true)} /></View>
               : undefined
           }
           renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
@@ -277,12 +278,12 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
         // Clear of the home indicator / navigation bar; the actions wait for at least one Story.
         <View style={[styles.actionBar, { paddingBottom: spacing.sm + bottomInset }]}>
           <Pressable accessibilityRole="button" onPress={onDelete} disabled={deleting || !selected.length} hitSlop={8} style={[styles.actionButton, !selected.length && styles.actionDisabled]}>
-            {deleting ? <ActivityIndicator color={colors.danger} /> : <><Icon name={ICONS.trash} size={20} color={colors.danger} /><Text style={styles.actionDelete}>Delete</Text></>}
+            {deleting ? <ActivityIndicator color={colors.danger} /> : <><Icon name={ICONS.trash} size={20} color={colors.danger} /><Text style={styles.actionDelete}>{t("common.delete")}</Text></>}
           </Pressable>
-          <Text style={typography.caption} accessibilityLiveRegion="polite">{selected.length ? `${selected.length} selected` : "Choose Stories"}</Text>
+          <Text style={typography.caption} accessibilityLiveRegion="polite">{selected.length ? t("archive.lengthSelected", { length: selected.length }) : t("archive.chooseStories")}</Text>
           <Pressable accessibilityRole="button" onPress={onCreateHighlight} disabled={!selected.length} hitSlop={8} style={[styles.actionButton, !selected.length && styles.actionDisabled]}>
             <Icon name={ICONS.add} size={20} color={colors.accentText} />
-            <Text style={styles.actionCreate}>Highlight</Text>
+            <Text style={styles.actionCreate}>{t("common.highlight")}</Text>
           </Pressable>
         </View>
       ) : null}
@@ -292,7 +293,7 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
         onClose={() => setAddOpen(false)}
         onAdded={(title) => {
           endSelection();
-          showToast(`Added to ${title}`);
+          showToast(t("archive.addedToTitle", { title }));
         }}
       />
     </View>

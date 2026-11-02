@@ -54,6 +54,7 @@ import { MEDIA_TRANSITION, PUSH_TRANSITION } from "./transitions";
 import { ContactsScreen } from "../screens/profile/ContactsScreen";
 import { InviteLinkScreen } from "../screens/profile/InviteLinkScreen";
 import { savePendingInvite, useInviteRedemption } from "../state/invites";
+import { t } from "../i18n";
 
 /** The screen on view, deepest navigator first (crash reports say where they happened). */
 export function focusedRouteName(state: { index?: number; routes: Array<{ name: string; state?: unknown }> } | undefined): string | undefined {
@@ -98,14 +99,14 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
   return (
     <Stack.Navigator initialRouteName={verifyFirst ? "VerifyEmail" : "Main"} screenOptions={{ ...PUSH_TRANSITION, headerShown: false, freezeOnBlur: true, headerBackButtonDisplayMode: "minimal" }}>
       <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
-      <Stack.Screen name="AccountSecurity" component={AccountSecurityScreen} options={{headerShown:true,title:"Account security",headerStyle:{backgroundColor:colors.background},headerTintColor:colors.textPrimary}}/>
+      <Stack.Screen name="AccountSecurity" component={AccountSecurityScreen} options={{headerShown:true,title:t("rootNavigator.accountSecurity"),headerStyle:{backgroundColor:colors.background},headerTintColor:colors.textPrimary}}/>
       <Stack.Screen name="Main" component={MainTabs} />
       <Stack.Screen name="Activity" component={ActivityScreen} />
-      <Stack.Screen name="UploadQueue" component={UploadQueueScreen} options={{headerShown:true,title:'Story uploads',headerStyle:{backgroundColor:colors.background},headerTintColor:colors.textPrimary}}/>
-      <Stack.Screen name="Appeals" component={AppealsScreen} options={{headerShown:true,title:'Account review',headerStyle:{backgroundColor:colors.background},headerTintColor:colors.textPrimary}}/>
+      <Stack.Screen name="UploadQueue" component={UploadQueueScreen} options={{headerShown:true,title:t("common.storyUploads"),headerStyle:{backgroundColor:colors.background},headerTintColor:colors.textPrimary}}/>
+      <Stack.Screen name="Appeals" component={AppealsScreen} options={{headerShown:true,title:t("common.accountReview"),headerStyle:{backgroundColor:colors.background},headerTintColor:colors.textPrimary}}/>
       <Stack.Screen name="StoryViewer" component={StoryViewerScreen} options={MEDIA_TRANSITION} />
-      <Stack.Screen name="SendStory" component={SendStoryScreen} options={{ presentation: "modal", headerShown: true, title: "Send to", headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary, headerShadowVisible: false }} />
-      <Stack.Screen name="ForwardMessage" component={ForwardScreen} options={{ presentation: "modal", headerShown: true, title: "Forward to", headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary, headerShadowVisible: false }} />
+      <Stack.Screen name="SendStory" component={SendStoryScreen} options={{ presentation: "modal", headerShown: true, title: t("rootNavigator.sendTo"), headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary, headerShadowVisible: false }} />
+      <Stack.Screen name="ForwardMessage" component={ForwardScreen} options={{ presentation: "modal", headerShown: true, title: t("rootNavigator.forwardTo"), headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary, headerShadowVisible: false }} />
       <Stack.Screen name="StoryLink" component={StoryLinkScreen} options={MEDIA_TRANSITION} />
       <Stack.Screen name="HighlightViewer" component={HighlightViewerScreen} options={MEDIA_TRANSITION} />
       <Stack.Screen
@@ -113,7 +114,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={HighlightEditorScreen}
         options={({ route }) => ({
           headerShown: true,
-          title: route.params.highlightId ? "Edit Highlight" : "New Highlight",
+          title: route.params.highlightId ? t("common.editHighlight") : t("common.newHighlight"),
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -124,7 +125,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={ArchiveScreen}
         options={{
           headerShown: true,
-          title: "Archive",
+          title: t("common.archive"),
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -135,7 +136,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={SequenceInsightsScreen}
         options={{
           headerShown: true,
-          title: "Insights",
+          title: t("common.insights"),
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -144,17 +145,17 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
       <Stack.Screen
         name="ProfessionalDashboard"
         component={ProfessionalDashboardScreen}
-        options={{ headerShown: true, title: "Professional dashboard", headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary, headerShadowVisible: false }}
+        options={{ headerShown: true, title: t("rootNavigator.professionalDashboard"), headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary, headerShadowVisible: false }}
       />
       <Stack.Screen
         name="ProfessionalAccount"
         component={ProfessionalAccountScreen}
-        options={{ headerShown: true, title: "Professional account", headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary, headerShadowVisible: false }}
+        options={{ headerShown: true, title: t("common.professionalAccount"), headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary, headerShadowVisible: false }}
       />
       <Stack.Screen
         name="ScheduledStories"
         component={ScheduledStoriesScreen}
-        options={{ headerShown: true, title: "Scheduled", headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary, headerShadowVisible: false }}
+        options={{ headerShown: true, title: t("common.scheduled"), headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary, headerShadowVisible: false }}
       />
       <Stack.Screen
         name="ArchivedStoryViewer"
@@ -166,7 +167,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={EditProfileScreen}
         options={{
           headerShown: true,
-          title: "Edit profile",
+          title: t("common.editProfile"),
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -177,7 +178,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={SettingsScreen}
         options={{
           headerShown: true,
-          title: "Settings",
+          title: t("common.settings"),
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -188,7 +189,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={NotificationSettingsScreen}
         options={{
           headerShown: true,
-          title: "Notifications",
+          title: t("common.notifications"),
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -199,7 +200,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={HelpScreen}
         options={{
           headerShown: true,
-          title: "Help",
+          title: t("common.help"),
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -210,7 +211,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={FeedbackScreen}
         options={{
           headerShown: true,
-          title: "Send feedback",
+          title: t("common.sendFeedback"),
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -221,7 +222,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={AboutScreen}
         options={{
           headerShown: true,
-          title: "About",
+          title: t("common.about"),
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -232,7 +233,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={FollowRequestsScreen}
         options={{
           headerShown: true,
-          title: "Follow requests",
+          title: t("common.followRequests"),
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -243,7 +244,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={BlockedAccountsScreen}
         options={{
           headerShown: true,
-          title: "Blocked accounts",
+          title: t("common.blockedAccounts"),
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -254,7 +255,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={MutedAccountsScreen}
         options={{
           headerShown: true,
-          title: "Muted accounts",
+          title: t("common.mutedAccounts"),
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -265,7 +266,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={YourInterestsScreen}
         options={{
           headerShown: true,
-          title: "Your interests",
+          title: t("common.yourInterests"),
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -276,7 +277,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={CloseFriendsScreen}
         options={{
           headerShown: true,
-          title: "Close Friends",
+          title: t("common.closeFriends"),
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -287,7 +288,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={VerificationScreen}
         options={{
           headerShown: true,
-          title: "Request verification",
+          title: t("common.requestVerification"),
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -298,7 +299,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={ContactsScreen}
         options={{
           headerShown: true,
-          title: "Contacts on Katkee",
+          title: t("common.contactsOnKatkee"),
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -310,7 +311,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         component={FollowListScreen}
         options={({ route }) => ({
           headerShown: true,
-          title: route.params.mode === "followers" ? "Followers" : "Following",
+          title: route.params.mode === "followers" ? t("common.followers") : t("common.following"),
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,

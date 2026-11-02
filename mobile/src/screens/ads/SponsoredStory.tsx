@@ -7,6 +7,7 @@ import { API_BASE_URL } from '../../api/client';
 import { adCtaAction, recordAd, reportAd, validateAd, type SponsoredPlacement } from '../../api/ads';
 import { useAuth } from '../../state/AuthContext';
 import { useScreenInsets } from '../../hooks/useScreenInsets';
+import { t } from "../../i18n";
 interface Props {
     ad: SponsoredPlacement;
     active: boolean;
@@ -82,7 +83,7 @@ export function SponsoredStory({ ad, active, onNext, onPrevious, onHide, onOpenP
     } }, [active, gesture]);
     const hide = () => { setMenu(false); emit('ad_hide'); callbacks.current.onHide(ad.creativeId); leave(); };
     const report = (reason: string) => { setMenu(false); if (accessToken)
-        void reportAd(ad.deliveryId, reason, accessToken).catch(() => Alert.alert('Report failed', 'Please try again when connected.')); leave(); };
+        void reportAd(ad.deliveryId, reason, accessToken).catch(() => Alert.alert(t("sponsoredStory.reportFailed"), t("sponsoredStory.pleaseTryAgainWhenConnected"))); leave(); };
     const more = () => setMenu('options');
     const source = { uri: `${API_BASE_URL}/api/v1/ads/deliveries/${ad.deliveryId}/media`, headers: { Authorization: `Bearer ${accessToken}` } };
     const open = () => {
@@ -93,28 +94,28 @@ export function SponsoredStory({ ad, active, onNext, onPrevious, onHide, onOpenP
         if (action.kind === 'profile')
             onOpenProfile?.(action.username);
         else
-            void Linking.openURL(action.url).catch(() => Alert.alert('Unable to open link'));
+            void Linking.openURL(action.url).catch(() => Alert.alert(t("sponsoredStory.unableToOpenLink")));
     };
-    const choices = menu === 'report' ? [['Misleading or scam', 'scam'], ['Inappropriate', 'inappropriate'], ['Offensive', 'offensive'], ['Prohibited product or service', 'prohibited'], ['Impersonation', 'impersonation'], ['Other', 'other']] : [];
+    const choices = menu === 'report' ? [[t("sponsoredStory.misleadingOrScam"), 'scam'], [t("sponsoredStory.inappropriate"), 'inappropriate'], [t("sponsoredStory.offensive"), 'offensive'], [t("sponsoredStory.prohibitedProductOrService"), 'prohibited'], [t("sponsoredStory.impersonation"), 'impersonation'], [t("sponsoredStory.other"), 'other']] : [];
     return <View style={styles.root}>
   <Modal visible={!!menu} transparent animationType="fade" onRequestClose={() => setMenu(false)}>
    <View style={styles.modalBackdrop}><ScrollView style={styles.modalPanel} contentContainerStyle={styles.modalContent}>
-    <Text style={styles.brand}>{menu === 'report' ? 'Report Ad' : 'Sponsored Story'}</Text>
+    <Text style={styles.brand}>{menu === 'report' ? t("sponsoredStory.reportAd") : t("sponsoredStory.sponsoredStory")}</Text>
     {menu === 'report' ? choices.map(([label, reason]) => <Pressable key={reason} accessibilityRole="button" onPress={() => report(reason)}><Text style={styles.menuOption}>{label}</Text></Pressable>) : <>
-     <Pressable accessibilityRole="button" onPress={hide}><Text style={styles.menuOption}>Hide Ad</Text></Pressable>
-     {ad.reportingEnabled && <Pressable accessibilityRole="button" onPress={() => setMenu('report')}><Text style={styles.menuOption}>Report Ad</Text></Pressable>}
-     <Pressable accessibilityRole="button" onPress={() => { setMenu(false); Alert.alert('Why this ad?', ad.explanation); }}><Text style={styles.menuOption}>Why am I seeing this?</Text></Pressable>
+     <Pressable accessibilityRole="button" onPress={hide}><Text style={styles.menuOption}>{t("sponsoredStory.hideAd")}</Text></Pressable>
+     {ad.reportingEnabled && <Pressable accessibilityRole="button" onPress={() => setMenu('report')}><Text style={styles.menuOption}>{t("sponsoredStory.reportAd")}</Text></Pressable>}
+     <Pressable accessibilityRole="button" onPress={() => { setMenu(false); Alert.alert(t("sponsoredStory.whyThisAd"), ad.explanation); }}><Text style={styles.menuOption}>{t("sponsoredStory.whyAmISeeingThis")}</Text></Pressable>
     </>}
-    <Pressable accessibilityRole="button" onPress={() => setMenu(false)}><Text style={styles.menuOption}>Cancel</Text></Pressable>
+    <Pressable accessibilityRole="button" onPress={() => setMenu(false)}><Text style={styles.menuOption}>{t("common.cancel")}</Text></Pressable>
    </ScrollView></View>
   </Modal>
   {valid && (ad.mediaKind === 'video' ? <Video source={source} style={StyleSheet.absoluteFill} resizeMode="cover" paused={!active || paused || !!menu} onReadyForDisplay={() => setReady(true)} onError={fail} onEnd={() => { if (active) {
         emit('ad_complete');
         leave();
     } }}/> : <Image source={source} style={StyleSheet.absoluteFill} resizeMode="cover" onLoad={() => setReady(true)} onError={fail}/>)}
-  <View style={StyleSheet.absoluteFill} {...gesture.panHandlers} accessible accessibilityRole="button" accessibilityLabel="Sponsored Story. Swipe up to skip or down to go back." accessibilityActions={[{ name: 'next', label: 'Next creator' }, { name: 'previous', label: 'Previous creator' }]} onAccessibilityAction={e => leave(e.nativeEvent.actionName === 'previous')}/>
-  <View style={[styles.header, { top: insets.top + 12 }]}><View><Text style={styles.brand}>{ad.brand}</Text><Text style={styles.disclosure}>Sponsored</Text></View><Pressable accessibilityRole="button" onPress={more} accessibilityLabel="Ad options" hitSlop={12}><Icon name="more" color="#FFFFFF"/></Pressable></View>
-  <View style={[styles.footer, { bottom: 30 + insets.bottom }]}><Text style={styles.caption}>{ad.caption}</Text><Pressable style={styles.cta} onPress={open} accessibilityRole="link"><Text style={styles.ctaText}>{ad.cta}</Text></Pressable><Pressable onPress={() => leave()} accessibilityRole="button"><Text style={styles.skip}>Skip ad</Text></Pressable></View>
+  <View style={StyleSheet.absoluteFill} {...gesture.panHandlers} accessible accessibilityRole="button" accessibilityLabel={t("sponsoredStory.sponsoredStorySwipeUpTo")} accessibilityActions={[{ name: 'next', label: t("common.nextCreator") }, { name: 'previous', label: t("common.previousCreator") }]} onAccessibilityAction={e => leave(e.nativeEvent.actionName === 'previous')}/>
+  <View style={[styles.header, { top: insets.top + 12 }]}><View><Text style={styles.brand}>{ad.brand}</Text><Text style={styles.disclosure}>{t("sponsoredStory.sponsored")}</Text></View><Pressable accessibilityRole="button" onPress={more} accessibilityLabel={t("sponsoredStory.adOptions")} hitSlop={12}><Icon name="more" color="#FFFFFF"/></Pressable></View>
+  <View style={[styles.footer, { bottom: 30 + insets.bottom }]}><Text style={styles.caption}>{ad.caption}</Text><Pressable style={styles.cta} onPress={open} accessibilityRole="link"><Text style={styles.ctaText}>{ad.cta}</Text></Pressable><Pressable onPress={() => leave()} accessibilityRole="button"><Text style={styles.skip}>{t("sponsoredStory.skipAd")}</Text></Pressable></View>
  </View>;
 }
 const styles = StyleSheet.create({ modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'center', padding: 24 }, modalPanel: { flexGrow: 0, maxHeight: '80%', backgroundColor: '#222', borderRadius: 16 }, modalContent: { padding: 20 }, menuOption: { color: '#fff', fontSize: 16, paddingVertical: 16 }, root: { flex: 1, backgroundColor: '#111' }, header: { position: 'absolute', top: 30, left: 20, right: 20, flexDirection: 'row', justifyContent: 'space-between', padding: 12, backgroundColor: 'rgba(0,0,0,0.6)', borderRadius: 8 }, brand: { color: '#fff', fontSize: 18, fontWeight: '700' }, disclosure: { color: '#f4c24f', fontSize: 14, fontWeight: '700', marginTop: 4 }, footer: { position: 'absolute', bottom: 30, left: 20, right: 20 }, caption: { color: '#fff', backgroundColor: 'rgba(0,0,0,0.6)', padding: 8, marginBottom: 12 }, cta: { backgroundColor: '#f4c24f', borderRadius: 10, padding: 16, alignItems: 'center' }, ctaText: { color: '#111', fontWeight: '700' }, skip: { textAlign: 'center', color: '#fff', padding: 12 } });

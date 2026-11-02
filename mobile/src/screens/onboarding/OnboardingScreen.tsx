@@ -15,6 +15,7 @@ import { tapFeedback } from "../../utils/haptics";
 import { TOPICS } from "../../models/topics";
 import { ContactsFinder } from "../../components/ContactsFinder";
 import { shareInvite } from "../../state/invites";
+import { t } from "../../i18n";
 
 /** What people can pick from; the same words appear on profiles, in "Also into …" and as Story topics. */
 export const INTEREST_CHOICES = TOPICS;
@@ -49,7 +50,7 @@ export function OnboardingScreen(): React.JSX.Element {
     setChosen((current) => {
       if (current.includes(interest)) return current.filter((i) => i !== interest);
       if (current.length >= MAX_INTERESTS) {
-        setError(`Pick up to ${MAX_INTERESTS}.`);
+        setError(t("onboarding.pickUpToMaxInterests2", { MAX_INTERESTS }));
         return current;
       }
       tapFeedback("select");
@@ -70,7 +71,7 @@ export function OnboardingScreen(): React.JSX.Element {
       applyProfile(updated);
       setStep("people");
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Couldn't save. Check your connection and try again.");
+      setError(err instanceof ApiError ? err.message : t("onboarding.couldntSaveCheckYourConnection"));
     } finally {
       setSaving(false);
     }
@@ -113,9 +114,9 @@ export function OnboardingScreen(): React.JSX.Element {
     return (
       <View style={styles.root}>
         <ScrollView contentContainerStyle={[styles.content, pad]}>
-          <Text style={styles.stepLabel}>Step 1 of 3</Text>
-          <Text style={typography.displayLarge} accessibilityRole="header">What are you into?</Text>
-          <Text style={styles.body}>Pick up to {MAX_INTERESTS}. We'll suggest people and Stories you'll like.</Text>
+          <Text style={styles.stepLabel}>{t("onboarding.step1Of3")}</Text>
+          <Text style={typography.displayLarge} accessibilityRole="header">{t("onboarding.whatAreYouInto")}</Text>
+          <Text style={styles.body}>{t("onboarding.pickUpToMaxInterests", { MAX_INTERESTS })}</Text>
           {error ? <Banner text={error} /> : null}
           <View style={styles.chips}>
             {INTEREST_CHOICES.map((interest) => {
@@ -137,7 +138,7 @@ export function OnboardingScreen(): React.JSX.Element {
         </ScrollView>
         <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.md }]}>
           <Button label={chosen.length ? `Next (${chosen.length})` : "Next"} onPress={() => void saveInterests()} busy={saving} disabled={chosen.length === 0} />
-          <Button label="Skip" variant="secondary" onPress={() => setStep("people")} />
+          <Button label={t("onboarding.skip")} variant="secondary" onPress={() => setStep("people")} />
         </View>
       </View>
     );
@@ -148,10 +149,10 @@ export function OnboardingScreen(): React.JSX.Element {
       <View style={[styles.root, { paddingTop: insets.top }]}>
         <ContactsFinder
           source="onboarding"
-          header={<Text style={styles.stepLabel}>Step 3 of 3</Text>}
+          header={<Text style={styles.stepLabel}>{t("onboarding.step3Of3")}</Text>}
           footer={
             <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.md }]}>
-              <Button label="Start using Katkee" variant="secondary" onPress={done} />
+              <Button label={t("onboarding.startUsingKatkee")} variant="secondary" onPress={done} />
             </View>
           }
         />
@@ -168,25 +169,25 @@ export function OnboardingScreen(): React.JSX.Element {
         contentContainerStyle={[styles.content, pad]}
         ListHeaderComponent={
           <View style={styles.header}>
-            <Text style={styles.stepLabel}>Step 2 of 3</Text>
-            <Text style={typography.displayLarge} accessibilityRole="header">People to follow</Text>
-            <Text style={styles.body}>Their Stories will show on your Home.</Text>
+            <Text style={styles.stepLabel}>{t("onboarding.step2Of3")}</Text>
+            <Text style={typography.displayLarge} accessibilityRole="header">{t("onboarding.peopleToFollow")}</Text>
+            <Text style={styles.body}>{t("onboarding.theirStoriesWillShowOn")}</Text>
           </View>
         }
         ListEmptyComponent={
           people === null ? (
-            <ActivityIndicator color={colors.accentText} style={styles.loading} accessibilityLabel="Finding people" />
+            <ActivityIndicator color={colors.accentText} style={styles.loading} accessibilityLabel={t("onboarding.findingPeople")} />
           ) : (
             <View style={styles.empty}>
-              <Text style={styles.emptyTitle}>You're one of the first here</Text>
-              <Text style={styles.body}>Invite friends to see their Stories, and post your own to get started.</Text>
-              <Button label="Invite friends" variant="secondary" onPress={invite} />
+              <Text style={styles.emptyTitle}>{t("onboarding.youreOneOfTheFirst")}</Text>
+              <Text style={styles.body}>{t("onboarding.inviteFriendsToSeeTheir")}</Text>
+              <Button label={t("common.inviteFriends")} variant="secondary" onPress={invite} />
             </View>
           )
         }
         renderItem={({ item }) => {
           const state = follows[item.username] ?? "none";
-          const label = state === "following" ? "Following" : state === "requested" ? "Requested" : "Follow";
+          const label = state === "following" ? t("common.following") : state === "requested" ? t("common.requested") : t("common.follow");
           const active = state === "following" || state === "requested";
           return (
             <View style={styles.row}>

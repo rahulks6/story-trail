@@ -10,6 +10,7 @@ import { useAuth } from "../state/AuthContext";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { listCollabCandidates } from "../api/stickers";
 import type { CollabPerson } from "../api/stories";
+import { t } from "../i18n";
 
 interface Props {
   visible: boolean;
@@ -49,17 +50,17 @@ export function CollabPickerSheet({ visible, current, onChoose, onClose }: Props
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={close}>
-      <Pressable pressEffect="none" style={styles.backdrop} onPress={close} accessibilityRole="button" accessibilityLabel="Close" />
+      <Pressable pressEffect="none" style={styles.backdrop} onPress={close} accessibilityRole="button" accessibilityLabel={t("common.close")} />
       <KeyboardAvoider style={[styles.sheet, { paddingBottom: spacing.lg + bottomInset }]} behavior="padding">
         <View style={styles.handle} />
-        <Text style={[typography.bodyStrong, styles.title]}>Invite a collaborator</Text>
-        <Text style={[typography.caption, styles.subtitle]}>When they accept, your Story shows to their followers too, with both your names.</Text>
+        <Text style={[typography.bodyStrong, styles.title]}>{t("collabPickerSheet.inviteACollaborator")}</Text>
+        <Text style={[typography.caption, styles.subtitle]}>{t("collabPickerSheet.whenTheyAcceptYourStory")}</Text>
         {current ? (
           <View style={styles.currentRow}>
             <Avatar username={current.username} avatarMediaId={current.avatarMediaId} size={32} />
             <VerifiedName name={`@${current.username}`} verified={current.verified} style={typography.bodyStrong} containerStyle={styles.name} />
             <Pressable onPress={() => { onChoose(null); close(); }} style={styles.removeButton} accessibilityRole="button" accessibilityLabel={`Don't invite @${current.username}`}>
-              <Text style={styles.removeLabel}>Remove</Text>
+              <Text style={styles.removeLabel}>{t("common.remove")}</Text>
             </Pressable>
           </View>
         ) : null}
@@ -67,11 +68,11 @@ export function CollabPickerSheet({ visible, current, onChoose, onClose }: Props
           style={styles.input}
           value={search}
           onChangeText={setSearch}
-          placeholder="Search people you follow or who follow you"
+          placeholder={t("collabPickerSheet.searchPeopleYouFollowOr")}
           placeholderTextColor={colors.textDisabled}
           autoCapitalize="none"
           autoCorrect={false}
-          accessibilityLabel="Search people to invite"
+          accessibilityLabel={t("collabPickerSheet.searchPeopleToInvite")}
         />
         {people === null ? (
           <ActivityIndicator color={colors.accentText} style={styles.spinner} />
@@ -94,12 +95,12 @@ export function CollabPickerSheet({ visible, current, onChoose, onClose }: Props
                   <VerifiedName name={item.displayName} verified={item.verified} style={typography.body} />
                   <Text style={typography.caption}>@{item.username}</Text>
                 </View>
-                {current?.id === item.id ? <Text style={styles.invited}>Invited</Text> : null}
+                {current?.id === item.id ? <Text style={styles.invited}>{t("collabPickerSheet.invited")}</Text> : null}
               </Pressable>
             )}
             ListEmptyComponent={
               <Text style={[typography.caption, styles.empty]}>
-                {failed ? "Couldn't load people. Check your connection." : "No one to invite yet. You can invite people who follow you or whom you follow."}
+                {failed ? t("collabPickerSheet.couldntLoadPeopleCheckYour") : t("collabPickerSheet.noOneToInviteYet")}
               </Text>
             }
           />

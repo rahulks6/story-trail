@@ -2,6 +2,7 @@ import React from "react";
 import { Alert, Linking, StyleSheet, Text } from "react-native";
 import buildConfig from "../../build-config.json";
 import { colors, typography } from "../theme";
+import { t } from "../i18n";
 
 /**
  * What creating an account agrees to (App Review 1.2: apps with user posts need terms with no
@@ -14,7 +15,7 @@ export function TermsNotice({ action }: { action: string }): React.JSX.Element {
       <Text
         style={styles.link}
         accessibilityRole="link"
-        onPress={() => void Linking.openURL(url).catch(() => Alert.alert("Couldn't open the link", "Try again."))}
+        onPress={() => void Linking.openURL(url).catch(() => Alert.alert(t("common.couldntOpenTheLink"), t("common.tryAgain2")))}
       >
         {label}
       </Text>
@@ -22,10 +23,7 @@ export function TermsNotice({ action }: { action: string }): React.JSX.Element {
       label
     );
   return (
-    <Text style={styles.text}>
-      By {action}, you agree to Katkee's {link("Terms", buildConfig.termsUrl)} and {link("Privacy Policy", buildConfig.privacyPolicyUrl)}. Katkee
-      has no tolerance for objectionable content or abuse: you can report and block anyone.
-    </Text>
+    <Text style={styles.text}>{t("termsNotice.by")}{" "}{action}{t("termsNotice.youAgreeToKatkees")}{" "}{link("Terms", buildConfig.termsUrl)}{" "}{t("common.and")}{" "}{link("Privacy Policy", buildConfig.privacyPolicyUrl)}{t("termsNotice.katkeeHasNoToleranceFor")}</Text>
   );
 }
 

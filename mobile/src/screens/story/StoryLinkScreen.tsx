@@ -8,6 +8,7 @@ import { getStoryOwnerUsername } from "../../api/stories";
 import { ApiError } from "../../api/client";
 import { EmptyState } from "../../components/EmptyState";
 import { Button } from "../../components/Form";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "StoryLink">;
 
@@ -32,9 +33,9 @@ export function StoryLinkScreen({ navigation, route }: Props): React.JSX.Element
       .catch((e) => {
         if (cancelled) return;
         if (e instanceof ApiError && (e.status === 404 || e.status === 403)) {
-          setProblem({ title: "Story unavailable", message: e.status === 403 ? "This Story is only visible to approved followers." : "It may have expired or been removed." });
+          setProblem({ title: t("common.storyUnavailable"), message: e.status === 403 ? t("storyLink.thisStoryIsOnlyVisible") : t("storyLink.itMayHaveExpiredOr") });
         } else {
-          setProblem({ title: "Couldn't open this Story", message: "Check your connection and try again." });
+          setProblem({ title: t("storyLink.couldntOpenThisStory"), message: t("storyLink.checkYourConnectionAndTry") });
         }
       });
     return () => {
@@ -45,7 +46,7 @@ export function StoryLinkScreen({ navigation, route }: Props): React.JSX.Element
   if (!problem) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={colors.accentText} size="large" accessibilityLabel="Opening Story" />
+        <ActivityIndicator color={colors.accentText} size="large" accessibilityLabel={t("storyLink.openingStory")} />
       </View>
     );
   }
@@ -53,8 +54,8 @@ export function StoryLinkScreen({ navigation, route }: Props): React.JSX.Element
     <View style={styles.root}>
       <EmptyState title={problem.title} message={problem.message} />
       <View style={styles.actions}>
-        {problem.title !== "Story unavailable" ? <Button label="Try again" onPress={() => setAttempt((n) => n + 1)} /> : null}
-        <Button label="Close" variant="secondary" onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.replace("Main", { screen: "Home" }))} />
+        {problem.title !== "Story unavailable" ? <Button label={t("common.tryAgain")} onPress={() => setAttempt((n) => n + 1)} /> : null}
+        <Button label={t("common.close")} variant="secondary" onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.replace("Main", { screen: "Home" }))} />
       </View>
     </View>
   );

@@ -15,6 +15,7 @@ import {
 import { sendMessage, newClientMessageId, type Message } from "../../api/conversations";
 import { ApiError } from "../../api/client";
 import { base64ToBytes } from "../../utils/base64";
+import { t } from "../../i18n";
 
 /** A photo or video on its way into a conversation: shown in the thread straight away. */
 export interface PendingMedia {
@@ -75,16 +76,16 @@ const localPath = (uri: string) => (uri.startsWith("file://") ? decodeURI(uri.sl
 async function uploadVideoResumable(item: PendingMedia, token: () => string): Promise<UploadedMedia> {
   const path = localPath(item.uri);
   const size = Number((await RNFS.stat(path)).size);
-  if (!size) throw new Error("The selected file is empty.");
+  if (!size) throw new Error(t("sendMedia.theSelectedFileIsEmpty"));
   let session: UploadSessionResponse = await createUploadSession({ clientUploadId: item.clientMessageId, kind: "video", mimeType: item.mimeType, byteSize: size, ...(item.filter ? { filter: item.filter } : {}) }, token());
   for (let round = 0; session.upload; round++) {
-    if (round >= 4) throw new Error("Upload could not be completed. Try again.");
+    if (round >= 4) throw new Error(t("sendMedia.uploadCouldNotBeCompleted"));
     const plan = session.upload;
     let refresh = false;
     for (const part of plan.parts) {
       if (part.uploaded || !part.url) continue;
       const chunk = base64ToBytes(await RNFS.read(path, part.byteLength, (part.partNumber - 1) * plan.partSize, "base64"));
-      if (chunk.byteLength !== part.byteLength) throw new Error("The video changed. Delete it and choose it again.");
+      if (chunk.byteLength !== part.byteLength) throw new Error(t("sendMedia.theVideoChangedDeleteIt"));
       for (let attempt = 1; ; attempt++) {
         try {
           await uploadPart(part.url, chunk.buffer as ArrayBuffer);
@@ -138,7 +139,7 @@ export async function sendPendingMedia(
 ): Promise<Message> {
   const token = () => {
     const token = getToken();
-    if (!token) throw new Error("You're signed out.");
+    if (!token) throw new Error(t("common.youreSignedOut"));
     return token;
   };
   let media = item.mediaId ? await existingMedia(item.mediaId, token) : null;
@@ -151,9 +152,9 @@ export async function sendPendingMedia(
   const mediaId = media.id;
   const deadline = Date.now() + READY_TIMEOUT_MS;
   for (let delay = 700; media.status !== "ready"; delay = Math.min(delay * 1.5, 5_000)) {
-    if (media.status === "failed") throw new Error(media.processingError ?? "This file couldn't be processed.");
+    if (media.status === "failed") throw new Error(media.processingError ?? t("sendMedia.thisFileCouldntBeProcessed"));
     // Uploaded: Retry only waits again, it doesn't upload a second copy.
-    if (Date.now() > deadline) throw new Error("Still processing. Tap to check again.");
+    if (Date.now() > deadline) throw new Error(t("sendMedia.stillProcessingTapToCheck"));
     await wait(delay);
     try {
       media = await getMedia(mediaId, token());

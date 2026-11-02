@@ -5,6 +5,7 @@ import type { DrawStroke, FilterName, Overlay, StoryCrop } from "../models/story
 import { mediaTransformStyle } from "../models/storyDraft";
 import { StoryOverlayLayer } from "./StoryOverlayLayer";
 import { BRAND_MARK } from "./brandMarkPaths";
+import { t } from "../i18n";
 
 /** What a ref to the card holds (a host View), for react-native-view-shot's captureRef. */
 export type ShareCardHandle = React.ComponentRef<typeof View>;
@@ -81,7 +82,7 @@ export function ShareWatermark({ username }: { username: string }): React.JSX.El
         </Text>
       </View>
       <Text style={styles.username} numberOfLines={1} allowFontScaling={false}>@{username}</Text>
-      <Text style={styles.link} numberOfLines={1} allowFontScaling={false}>katkee.com/u/{username}</Text>
+      <Text style={styles.link} numberOfLines={1} allowFontScaling={false}>{t("storyShareCard.katkeeComUUsername", { username })}</Text>
     </View>
   );
 }

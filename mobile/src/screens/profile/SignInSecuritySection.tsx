@@ -15,26 +15,27 @@ import {
 import { Banner, Button, TextField } from "../../components/Form";
 import { deviceLabel } from "../../utils/devices";
 import { serverDate } from "../../utils/serverTime";
+import { t } from "../../i18n";
 
 const EVENT_LABELS: Record<SecurityEvent["kind"], string> = {
-  login_succeeded: "Signed in",
-  login_failed: "Wrong password entered",
-  login_new_device: "Signed in on a new device",
-  login_locked: "Sign-in paused after repeated wrong passwords",
-  password_reset_requested: "Password reset code requested",
-  password_reset_completed: "Password reset",
-  password_changed: "Password changed",
-  session_revoked: "Signed out a device",
-  sessions_revoked: "Signed out of all other devices",
+  get login_succeeded() { return t("signInSecuritySection.signedIn"); },
+  get login_failed() { return t("signInSecuritySection.wrongPasswordEntered"); },
+  get login_new_device() { return t("signInSecuritySection.signedInOnANew"); },
+  get login_locked() { return t("signInSecuritySection.signInPausedAfterRepeated"); },
+  get password_reset_requested() { return t("signInSecuritySection.passwordResetCodeRequested"); },
+  get password_reset_completed() { return t("signInSecuritySection.passwordReset"); },
+  get password_changed() { return t("signInSecuritySection.passwordChanged"); },
+  get session_revoked() { return t("signInSecuritySection.signedOutADevice"); },
+  get sessions_revoked() { return t("signInSecuritySection.signedOutOfAllOther"); },
 };
 
 function when(iso: string): string {
   const date = serverDate(iso);
   if (!date) return "";
   const minutes = Math.round((Date.now() - date.getTime()) / 60000);
-  if (minutes < 1) return "Just now";
-  if (minutes < 60) return `${minutes} min ago`;
-  if (minutes < 24 * 60) return `${Math.round(minutes / 60)} h ago`;
+  if (minutes < 1) return t("signInSecuritySection.justNow");
+  if (minutes < 60) return t("signInSecuritySection.minutesMinAgo", { minutes });
+  if (minutes < 24 * 60) return t("signInSecuritySection.valueHAgo", { value: Math.round(minutes / 60) });
   return date.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
 }
 
@@ -59,7 +60,7 @@ export function SignInSecuritySection({ hasPassword }: { hasPassword: boolean })
       setSessions(s.sessions);
       setEvents(e.events.slice(0, 10));
     } catch (error) {
-      setLoadError(error instanceof ApiError ? error.message : "Couldn't load your devices. Check your connection.");
+      setLoadError(error instanceof ApiError ? error.message : t("signInSecuritySection.couldntLoadYourDevicesCheck"));
     }
   }, [accessToken]);
   useEffect(() => void load(), [load]);
@@ -80,22 +81,22 @@ export function SignInSecuritySection({ hasPassword }: { hasPassword: boolean })
       setCurrent("");
       setNext("");
       setConfirm("");
-      setNotice({ text: "Password changed. Other devices were signed out.", tone: "success" });
+      setNotice({ text: t("signInSecuritySection.passwordChangedOtherDevicesWere"), tone: "success" });
       await load();
     } catch (error) {
       if (error instanceof ApiError && error.status === 401) setErrors({ current: error.message });
       else if (error instanceof ApiError && error.fieldErrors?.newPassword) setErrors({ next: error.fieldErrors.newPassword });
-      else setNotice({ text: error instanceof ApiError ? error.message : "Couldn't change your password. Try again.", tone: "error" });
+      else setNotice({ text: error instanceof ApiError ? error.message : t("signInSecuritySection.couldntChangeYourPasswordTry"), tone: "error" });
     } finally {
       setBusy(null);
     }
   };
 
   const signOut = (session: SignInSession) =>
-    Alert.alert(`Sign out ${deviceLabel(session.userAgent)}?`, "That device will need to sign in again.", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("signInSecuritySection.signOutUseragent", { userAgent: deviceLabel(session.userAgent) }), t("signInSecuritySection.thatDeviceWillNeedTo"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Sign out",
+        text: t("signInSecuritySection.signOut"),
         style: "destructive",
         onPress: async () => {
           if (!accessToken) return;
@@ -104,7 +105,7 @@ export function SignInSecuritySection({ hasPassword }: { hasPassword: boolean })
             await endSession(session.id, accessToken);
             await load();
           } catch (error) {
-            setNotice({ text: error instanceof ApiError ? error.message : "Couldn't sign that device out.", tone: "error" });
+            setNotice({ text: error instanceof ApiError ? error.message : t("signInSecuritySection.couldntSignThatDeviceOut"), tone: "error" });
           } finally {
             setBusy(null);
           }
@@ -113,20 +114,20 @@ export function SignInSecuritySection({ hasPassword }: { hasPassword: boolean })
     ]);
 
   const signOutOthers = () =>
-    Alert.alert("Sign out of all other devices?", "Every device except this one will need to sign in again.", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("signInSecuritySection.signOutOfAllOther2"), t("signInSecuritySection.everyDeviceExceptThisOne"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Sign out others",
+        text: t("signInSecuritySection.signOutOthers"),
         style: "destructive",
         onPress: async () => {
           if (!accessToken) return;
           setBusy("others");
           try {
             const { ended } = await endOtherSessions(accessToken);
-            setNotice({ text: ended ? `Signed out ${ended} other device${ended === 1 ? "" : "s"}.` : "No other devices were signed in.", tone: "success" });
+            setNotice({ text: ended ? `Signed out ${ended} other device${ended === 1 ? "" : "s"}.` : t("signInSecuritySection.noOtherDevicesWereSigned"), tone: "success" });
             await load();
           } catch (error) {
-            setNotice({ text: error instanceof ApiError ? error.message : "Couldn't sign out other devices.", tone: "error" });
+            setNotice({ text: error instanceof ApiError ? error.message : t("signInSecuritySection.couldntSignOutOtherDevices"), tone: "error" });
           } finally {
             setBusy(null);
           }
@@ -142,27 +143,23 @@ export function SignInSecuritySection({ hasPassword }: { hasPassword: boolean })
 
       {hasPassword ? (
         <View style={styles.section}>
-          <Text style={styles.heading} accessibilityRole="header">
-            Change password
-          </Text>
-          <TextField label="Current password" value={current} onChangeText={setCurrent} error={errors.current} secureTextEntry autoComplete="current-password" textContentType="password" />
-          <TextField label="New password" value={next} onChangeText={setNext} error={errors.next} hint="At least 8 characters." secureTextEntry autoComplete="new-password" textContentType="newPassword" />
-          <TextField label="Confirm new password" value={confirm} onChangeText={setConfirm} error={errors.confirm} secureTextEntry autoComplete="new-password" textContentType="newPassword" />
-          <Button label="Change password" onPress={() => void submitPassword()} busy={busy === "password"} disabled={!current || !next} />
+          <Text style={styles.heading} accessibilityRole="header">{t("signInSecuritySection.changePassword")}</Text>
+          <TextField label={t("common.currentPassword")} value={current} onChangeText={setCurrent} error={errors.current} secureTextEntry autoComplete="current-password" textContentType="password" />
+          <TextField label={t("common.newPassword")} value={next} onChangeText={setNext} error={errors.next} hint={t("common.atLeast8Characters")} secureTextEntry autoComplete="new-password" textContentType="newPassword" />
+          <TextField label={t("common.confirmNewPassword")} value={confirm} onChangeText={setConfirm} error={errors.confirm} secureTextEntry autoComplete="new-password" textContentType="newPassword" />
+          <Button label={t("signInSecuritySection.changePassword")} onPress={() => void submitPassword()} busy={busy === "password"} disabled={!current || !next} />
         </View>
       ) : null}
 
       <View style={styles.section}>
-        <Text style={styles.heading} accessibilityRole="header">
-          Where you're signed in
-        </Text>
+        <Text style={styles.heading} accessibilityRole="header">{t("signInSecuritySection.whereYoureSignedIn")}</Text>
         {loadError ? (
           <>
             <Banner text={loadError} />
-            <Button label="Try again" variant="secondary" onPress={() => void load()} />
+            <Button label={t("common.tryAgain")} variant="secondary" onPress={() => void load()} />
           </>
         ) : sessions === null ? (
-          <ActivityIndicator color={colors.accentText} accessibilityLabel="Loading devices" />
+          <ActivityIndicator color={colors.accentText} accessibilityLabel={t("signInSecuritySection.loadingDevices")} />
         ) : (
           <>
             {sessions.map((session) => (
@@ -170,27 +167,25 @@ export function SignInSecuritySection({ hasPassword }: { hasPassword: boolean })
                 <View style={styles.rowText}>
                   <Text style={typography.bodyStrong}>
                     {deviceLabel(session.userAgent)}
-                    {session.current ? <Text style={styles.thisDevice}>  This device</Text> : null}
+                    {session.current ? <Text style={styles.thisDevice}>{" "}{t("signInSecuritySection.thisDevice")}</Text> : null}
                   </Text>
-                  <Text style={typography.caption}>Last active {when(session.lastUsedAt)} · Signed in {when(session.createdAt)}</Text>
+                  <Text style={typography.caption}>{t("signInSecuritySection.lastActiveLastusedatSignedIn", { lastUsedAt: when(session.lastUsedAt), createdAt: when(session.createdAt) })}</Text>
                 </View>
                 {!session.current ? (
                   <View style={styles.rowAction}>
-                    <Button label="Sign out" variant="destructive" onPress={() => signOut(session)} busy={busy === session.id} />
+                    <Button label={t("signInSecuritySection.signOut")} variant="destructive" onPress={() => signOut(session)} busy={busy === session.id} />
                   </View>
                 ) : null}
               </View>
             ))}
-            {others.length ? <Button label="Sign out of all other devices" variant="destructive" onPress={signOutOthers} busy={busy === "others"} /> : null}
+            {others.length ? <Button label={t("signInSecuritySection.signOutOfAllOther")} variant="destructive" onPress={signOutOthers} busy={busy === "others"} /> : null}
           </>
         )}
       </View>
 
       {events.length ? (
         <View style={styles.section}>
-          <Text style={styles.heading} accessibilityRole="header">
-            Recent security activity
-          </Text>
+          <Text style={styles.heading} accessibilityRole="header">{t("signInSecuritySection.recentSecurityActivity")}</Text>
           {events.map((event, index) => (
             <View key={`${event.createdAt}-${index}`} style={styles.event}>
               <Text style={[typography.body, event.kind === "login_new_device" || event.kind === "login_locked" ? styles.attention : null]}>{EVENT_LABELS[event.kind]}</Text>
@@ -200,7 +195,7 @@ export function SignInSecuritySection({ hasPassword }: { hasPassword: boolean })
               </Text>
             </View>
           ))}
-          <Text style={typography.caption}>Don't recognize something? Change your password and sign out of all other devices.</Text>
+          <Text style={typography.caption}>{t("signInSecuritySection.dontRecognizeSomethingChangeYour")}</Text>
         </View>
       ) : null}
     </View>

@@ -16,6 +16,7 @@ import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import { showToast } from "../../components/Toast";
 import { tapFeedback } from "../../utils/haptics";
 import { RecipientPicker, type Recipient } from "./RecipientPicker";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ForwardMessage">;
 
@@ -39,7 +40,7 @@ export function ForwardScreen({ route, navigation }: Props): React.JSX.Element {
   useEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
-        <Pressable onPress={() => navigation.goBack()} hitSlop={10} accessibilityRole="button" accessibilityLabel="Close">
+        <Pressable onPress={() => navigation.goBack()} hitSlop={10} accessibilityRole="button" accessibilityLabel={t("common.close")}>
           <Icon name={ICONS.close} size={22} color={colors.textPrimary} />
         </Pressable>
       ),
@@ -48,7 +49,7 @@ export function ForwardScreen({ route, navigation }: Props): React.JSX.Element {
 
   const toggle = (target: Recipient) => {
     if (!chosen.has(target.key) && chosen.size >= MAX_FORWARD_RECIPIENTS) {
-      setError(`You can forward to up to ${MAX_FORWARD_RECIPIENTS} chats at a time.`);
+      setError(t("forward.youCanForwardToUp", { MAX_FORWARD_RECIPIENTS }));
       return;
     }
     tapFeedback("select");
@@ -74,7 +75,7 @@ export function ForwardScreen({ route, navigation }: Props): React.JSX.Element {
       ({ results } = await forwardMessage(conversationId, messageId, { userIds, conversationIds }, accessToken));
     } catch (e) {
       setSending(false);
-      setError(e instanceof ApiError && e.status !== 0 ? e.message : "Couldn't send. Check your connection and try again.");
+      setError(e instanceof ApiError && e.status !== 0 ? e.message : t("forward.couldntSendCheckYourConnection"));
       return;
     }
     setSending(false);
@@ -89,12 +90,12 @@ export function ForwardScreen({ route, navigation }: Props): React.JSX.Element {
     const failedNames = [...failed.values()].map(nameFor).join(", ");
     if (sent === 0) {
       setChosen(failed);
-      setError(`Couldn't send to ${failedNames}.`);
+      setError(t("forward.couldntSendToFailednames", { failedNames }));
       return;
     }
     tapFeedback("success");
-    const done = sent === 1 ? "Sent" : `Sent to ${sent} chats`;
-    showToast(failed.size ? `${done}. Couldn't send to ${failedNames}.` : done);
+    const done = sent === 1 ? t("common.sent") : t("forward.sentToSentChats", { sent });
+    showToast(failed.size ? t("forward.doneCouldntSendToFailednames", { done, failedNames }) : done);
     navigation.goBack();
   };
 

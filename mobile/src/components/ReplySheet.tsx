@@ -9,6 +9,7 @@ import { useAuth } from "../state/AuthContext";
 import { ApiError } from "../api/client";
 import { STORY_REACTIONS, replyToStory, type StoryReplyKind } from "../api/conversations";
 import { tapFeedback } from "../utils/haptics";
+import { t } from "../i18n";
 
 interface Props {
   visible: boolean;
@@ -19,7 +20,7 @@ interface Props {
   onSent: (kind: StoryReplyKind) => void;
 }
 
-const newClientId = () => `reply_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 12)}`;
+const newClientId = () => t("replySheet.replyValueValue2", { value: Date.now().toString(36), value2: Math.random().toString(36).slice(2, 12) });
 
 /**
  * Reply to a Story (like Instagram): one tap sends a quick reaction, or write a message. Either
@@ -56,7 +57,7 @@ export function ReplySheet({ visible, storyId, ownerUsername, onClose, onSent }:
       onSent(kind);
       onClose();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Couldn't send. Check your connection and try again.");
+      setError(err instanceof ApiError ? err.message : t("replySheet.couldntSendCheckYourConnection"));
     } finally {
       setBusy(false);
     }
@@ -66,10 +67,10 @@ export function ReplySheet({ visible, storyId, ownerUsername, onClose, onSent }:
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-      <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
+      <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel={t("common.close")} />
       <KeyboardAvoider style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]}>
         <View style={styles.handle} />
-        <Text style={[typography.body, styles.title]}>Reply to @{ownerUsername}</Text>
+        <Text style={[typography.body, styles.title]}>{t("replySheet.replyToOwnerusername", { ownerUsername })}</Text>
         <View style={styles.reactions}>
           {STORY_REACTIONS.map((emoji) => (
             <Pressable
@@ -94,7 +95,7 @@ export function ReplySheet({ visible, storyId, ownerUsername, onClose, onSent }:
             placeholderTextColor={colors.textSecondary}
             maxLength={2000}
             multiline
-            accessibilityLabel="Reply"
+            accessibilityLabel={t("common.reply")}
           />
           <Pressable
             onPress={() => void send({ body: trimmed }, "reply")}
@@ -102,7 +103,7 @@ export function ReplySheet({ visible, storyId, ownerUsername, onClose, onSent }:
             style={[styles.sendButton, (!trimmed || busy) && styles.sendDisabled]}
             hitSlop={8}
             accessibilityRole="button"
-            accessibilityLabel="Send reply"
+            accessibilityLabel={t("replySheet.sendReply")}
             accessibilityState={{ disabled: busy || !trimmed }}
           >
             {busy ? <ActivityIndicator color={colors.onAccent} /> : <Icon name={ICONS.send} size={20} color={colors.onAccent} />}

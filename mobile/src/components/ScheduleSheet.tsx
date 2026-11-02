@@ -6,6 +6,7 @@ import { Button } from "./Form";
 import { colors, radii, spacing, typography } from "../theme";
 import { tapFeedback } from "../utils/haptics";
 import { MINUTE_STEP, atTime, dayName, defaultScheduleTime, scheduleDays, scheduleProblem, scheduleText } from "../models/schedule";
+import { t } from "../i18n";
 
 interface Props {
   visible: boolean;
@@ -67,13 +68,13 @@ export function ScheduleSheet({ visible, initial, title = "Schedule your Story",
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.fill}>
-        <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
+        <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel={t("common.close")} />
         <View style={[styles.sheet, { paddingBottom: spacing.md + bottom }]} accessibilityViewIsModal>
           <View style={styles.handle} />
           <Text style={styles.title} accessibilityRole="header">{title}</Text>
-          <Text style={styles.subtitle}>It posts by itself at this time, and its 24 hours start then. Up to 7 days ahead.</Text>
+          <Text style={styles.subtitle}>{t("scheduleSheet.itPostsByItselfAt")}</Text>
 
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.days} accessibilityLabel="Day">
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.days} accessibilityLabel={t("common.day")}>
             {days.map((day, i) => {
               const on = i === chosenDay;
               return (
@@ -92,7 +93,7 @@ export function ScheduleSheet({ visible, initial, title = "Schedule your Story",
           </ScrollView>
 
           <View style={styles.time}>
-            <ScrollView ref={hourList} style={styles.column} showsVerticalScrollIndicator={false} accessibilityLabel="Hour">
+            <ScrollView ref={hourList} style={styles.column} showsVerticalScrollIndicator={false} accessibilityLabel={t("common.hour")}>
               {HOURS.map((h) => {
                 const on = chosen.getHours() === h;
                 return (
@@ -103,7 +104,7 @@ export function ScheduleSheet({ visible, initial, title = "Schedule your Story",
               })}
             </ScrollView>
             <Text style={styles.colon}>:</Text>
-            <ScrollView ref={minuteList} style={styles.column} showsVerticalScrollIndicator={false} accessibilityLabel="Minutes">
+            <ScrollView ref={minuteList} style={styles.column} showsVerticalScrollIndicator={false} accessibilityLabel={t("scheduleSheet.minutes")}>
               {MINUTES.map((m) => {
                 const on = minuteOf === m;
                 return (
@@ -115,11 +116,11 @@ export function ScheduleSheet({ visible, initial, title = "Schedule your Story",
             </ScrollView>
           </View>
 
-          <Text style={styles.summary} accessibilityLiveRegion="polite">Posts {scheduleText(chosen, now)}</Text>
+          <Text style={styles.summary} accessibilityLiveRegion="polite">{t("scheduleSheet.postsChosen", { chosen: scheduleText(chosen, now) })}</Text>
           {problem ? <Text style={styles.problem} accessibilityRole="alert">{problem}</Text> : null}
           <View style={styles.actions}>
             <Button label={confirmLabel} onPress={() => onConfirm(chosen)} disabled={!!problem} busy={busy} />
-            {onClear ? <Button label="Don't schedule" variant="text" onPress={onClear} /> : null}
+            {onClear ? <Button label={t("scheduleSheet.dontSchedule")} variant="text" onPress={onClear} /> : null}
           </View>
         </View>
       </View>

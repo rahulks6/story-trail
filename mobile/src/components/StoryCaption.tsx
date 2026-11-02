@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, useWindowDimensions, View, type StyleProp
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Pressable } from "./Pressable";
 import { spacing } from "../theme";
+import { t } from "../i18n";
 
 /** Shown in full up to this; longer, or more lines, folds to two lines with "more". */
 const FOLD_CHARS = 90;
@@ -64,12 +65,12 @@ export function StoryCaption({ text, expanded = false, onToggle }: Props): React
       {expanded ? (
         <ScrollView style={{ maxHeight }} scrollEnabled={scrolls} showsVerticalScrollIndicator={scrolls} onContentSizeChange={(_w, h) => setScrolls(h > maxHeight)}>
           <Text style={styles.text} maxFontSizeMultiplier={1.4}>{text}</Text>
-          <Text style={styles.more} maxFontSizeMultiplier={1.4}>less</Text>
+          <Text style={styles.more} maxFontSizeMultiplier={1.4}>{t("storyCaption.less")}</Text>
         </ScrollView>
       ) : (
         <>
           <Text style={styles.text} numberOfLines={FOLD_LINES} maxFontSizeMultiplier={1.4}>{text}</Text>
-          <Text style={styles.more} maxFontSizeMultiplier={1.4}>more</Text>
+          <Text style={styles.more} maxFontSizeMultiplier={1.4}>{t("storyCaption.more")}</Text>
         </>
       )}
     </Pressable>

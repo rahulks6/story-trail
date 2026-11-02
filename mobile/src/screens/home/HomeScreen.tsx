@@ -20,6 +20,7 @@ import {getAdPlacements,type SponsoredPlacement} from '../../api/ads';
 import {useFestival} from '../../hooks/useFestival';
 import type {MainTabParamList,RootStackParamList} from '../../navigation/types';
 import {shareInvite} from '../../state/invites';
+import { t } from "../../i18n";
 /** Away from Home (another tab, a screen on top, the app in the background) this long: the feed is reloaded on return. */
 export const HOME_STALE_MS=3*60*1000;
 /** While Stories play, the festival pill sits just under the Story's name and avatar instead of on them. */
@@ -47,11 +48,11 @@ export function HomeScreen():React.JSX.Element {
  useEffect(()=>onProfileChanged(()=>setRetry(n=>n+1)),[]);
  // Returning from Profile/DM/overlays does not remount the viewer or restart its playback.
  useEffect(()=>{const generation=++request.current;const currentToken=token.current;if(!currentToken)return;setFeed(null);setCursor(null);setSponsored([]);setError('');setRefreshing(false);loadingMore.current=false;
-  void getRankedHomeFeed(currentToken).then(result=>{if(generation!==request.current)return;setFeed(result.feed);setCursor(result.nextCursor);if(result.sponsoredEnabled)void getAdPlacements(result.feed.length,currentToken).then(r=>{if(generation===request.current)setSponsored(r.items);}).catch(()=>undefined);}).catch(()=>{if(generation===request.current)setError("Couldn't load Stories. Check your connection.");});
+  void getRankedHomeFeed(currentToken).then(result=>{if(generation!==request.current)return;setFeed(result.feed);setCursor(result.nextCursor);if(result.sponsoredEnabled)void getAdPlacements(result.feed.length,currentToken).then(r=>{if(generation===request.current)setSponsored(r.items);}).catch(()=>undefined);}).catch(()=>{if(generation===request.current)setError(t("home.couldntLoadStoriesCheckYour"));});
   return()=>{request.current++;};
  },[user?.id,retry]);
  const more=useCallback(()=>{if(!cursor||!token.current||loadingMore.current)return;loadingMore.current=true;const generation=request.current;
-  void getRankedHomeFeed(token.current,cursor).then(result=>{if(generation!==request.current)return;setFeed(previous=>{const ids=new Set(previous?.map(e=>e.owner.id));return [...(previous??[]),...result.feed.filter(e=>!ids.has(e.owner.id))];});setCursor(result.nextCursor);setError('');}).catch(()=>{if(generation===request.current)setError('More Stories could not load. Retry or refresh your feed.');}).finally(()=>{if(generation===request.current)loadingMore.current=false;});
+  void getRankedHomeFeed(token.current,cursor).then(result=>{if(generation!==request.current)return;setFeed(previous=>{const ids=new Set(previous?.map(e=>e.owner.id));return [...(previous??[]),...result.feed.filter(e=>!ids.has(e.owner.id))];});setCursor(result.nextCursor);setError('');}).catch(()=>{if(generation===request.current)setError(t("home.moreStoriesCouldNotLoad"));}).finally(()=>{if(generation===request.current)loadingMore.current=false;});
  },[cursor]);
  const refresh=()=>setRetry(n=>n+1);
  // Caught up, or nothing to watch yet: friends who join bring their Stories with them.
@@ -80,29 +81,29 @@ export function HomeScreen():React.JSX.Element {
  const openDM=useCallback(({storyId,ownerUsername}:{storyId:string;ownerUsername:string})=>navigation.navigate('SendStory',{storyId,ownerUsername}),[navigation]);
  const openProfile=useCallback((username:string)=>navigation.navigate('Search',{screen:'UserProfile',initial:false,params:{username}}),[navigation]);
  if(feed===null&&!error)return <View style={styles.root}><StorySkeleton/>{festivalButton}{activityButton}{uploads}</View>;
- if(feed===null)return <View style={styles.empty}><EmptyState variant="media" title="Couldn't load Stories" message="Check your connection and try again.">
-  <Pressable onPress={refresh} style={styles.emptyButton} accessibilityRole="button"><Text style={styles.emptyButtonLabel}>Try again</Text></Pressable>
+ if(feed===null)return <View style={styles.empty}><EmptyState variant="media" title={t("home.couldntLoadStories")} message={t("home.checkYourConnectionAndTry")}>
+  <Pressable onPress={refresh} style={styles.emptyButton} accessibilityRole="button"><Text style={styles.emptyButtonLabel}>{t("common.tryAgain")}</Text></Pressable>
  </EmptyState>{festivalButton}{activityButton}</View>;
  // Pull down (or tap Refresh) to look again; Find people for someone to follow.
  if(!feed.length)return <View style={styles.root}><ScrollView contentContainerStyle={styles.emptyScroll} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={reloadQuietly} tintColor={colors.textPrimary} colors={[colors.accentText]}/>}>
   {festival?<View style={styles.festivalCard}>
    <Text style={styles.festivalCardEmoji}>{festival.emoji}</Text>
    <Text style={styles.festivalCardTitle}>{festival.greeting}!</Text>
-   {festivalCreators.length?<Pressable onPress={openFestival} style={styles.festivalCardButton} accessibilityRole="button"><Text style={styles.festivalCardButtonLabel}>See {festivalInfo?.storyCount} {festival.name} {festivalInfo?.storyCount===1?'Story':'Stories'}</Text></Pressable>:null}
-   <Pressable onPress={()=>navigation.navigate('Create')} style={styles.emptyButton} accessibilityRole="button"><Text style={styles.emptyButtonLabel}>Post your {festival.name} Story</Text></Pressable>
+   {festivalCreators.length?<Pressable onPress={openFestival} style={styles.festivalCardButton} accessibilityRole="button"><Text style={styles.festivalCardButtonLabel}>{t("home.see")}{" "}{festivalInfo?.storyCount} {festival.name} {festivalInfo?.storyCount===1?t("common.story"):t("common.stories")}</Text></Pressable>:null}
+   <Pressable onPress={()=>navigation.navigate('Create')} style={styles.emptyButton} accessibilityRole="button"><Text style={styles.emptyButtonLabel}>{t("home.postYourNameStory", { name: festival.name })}</Text></Pressable>
   </View>:null}
-  <EmptyState variant="media" icon="create" title="No active Stories yet" message="Stories from people you follow and eligible new creators will appear here."/>
+  <EmptyState variant="media" icon="create" title={t("home.noActiveStoriesYet")} message={t("home.storiesFromPeopleYouFollow")}/>
   <View style={styles.emptyActions}>
-   <Pressable onPress={()=>navigation.navigate('Search',{screen:'SearchHome'})} style={styles.emptyButton} accessibilityRole="button"><Text style={styles.emptyButtonLabel}>Find people</Text></Pressable>
-   <Pressable onPress={invite} style={styles.emptyButton} accessibilityRole="button"><Text style={styles.emptyButtonLabel}>Invite friends</Text></Pressable>
-   <Pressable onPress={reloadQuietly} disabled={refreshing} style={styles.emptyButton} accessibilityRole="button" accessibilityLabel="Refresh Stories"><Text style={styles.emptyButtonLabel}>{refreshing?'Refreshing…':'Refresh'}</Text></Pressable>
+   <Pressable onPress={()=>navigation.navigate('Search',{screen:'SearchHome'})} style={styles.emptyButton} accessibilityRole="button"><Text style={styles.emptyButtonLabel}>{t("common.findPeople")}</Text></Pressable>
+   <Pressable onPress={invite} style={styles.emptyButton} accessibilityRole="button"><Text style={styles.emptyButtonLabel}>{t("common.inviteFriends")}</Text></Pressable>
+   <Pressable onPress={reloadQuietly} disabled={refreshing} style={styles.emptyButton} accessibilityRole="button" accessibilityLabel={t("home.refreshStories")}><Text style={styles.emptyButtonLabel}>{refreshing?t("home.refreshing"):t("common.refresh")}</Text></Pressable>
   </View>
  </ScrollView>{festivalButton}{activityButton}{uploads}</View>;
  return <View style={styles.root}><StoryFeed key={`${user?.id}:${retry}:${version}`} creators={creators} following={following} verified={verified} startIndex={0} sponsored={sponsored} onNeedMore={more} onRefresh={refresh}
   onCreate={()=>navigation.navigate('Create')} onFindPeople={()=>navigation.navigate('Search',{screen:'SearchHome'})} onInvite={invite}
   onOpenDM={openDM} onOpenProfile={openProfile}
   onOpenCreate={()=>navigation.navigate('Create')} onOpenStory={(username,storyId)=>navigation.navigate('StoryViewer',{creators:[username],startIndex:0,initialStoryId:storyId})}/>
-  {!!error&&<View style={[styles.error,{top:insets.top+spacing.xl+40}]}><Text style={typography.caption}>{error}</Text><Pressable onPress={more} accessibilityRole="button"><Text style={typography.body}>Retry</Text></Pressable><Pressable onPress={refresh} accessibilityRole="button"><Text style={typography.body}>Refresh</Text></Pressable></View>}
+  {!!error&&<View style={[styles.error,{top:insets.top+spacing.xl+40}]}><Text style={typography.caption}>{error}</Text><Pressable onPress={more} accessibilityRole="button"><Text style={typography.body}>{t("common.retry")}</Text></Pressable><Pressable onPress={refresh} accessibilityRole="button"><Text style={typography.body}>{t("common.refresh")}</Text></Pressable></View>}
   {festivalButton}{activityButton}{uploads}
  </View>;
 }

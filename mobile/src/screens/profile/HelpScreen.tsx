@@ -7,29 +7,28 @@ import buildConfig from "../../../build-config.json";
 import { ListRow } from "../../components/ListRow";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { openPublicPage } from "./AboutScreen";
+import { t } from "../../i18n";
 
 const FAQS: Array<{ question: string; answer: string }> = [
   {
-    question: "Who can see my Stories?",
-    answer:
-      "Public accounts: anyone. Private accounts: only followers you've approved. You can change this any time in Settings > Privacy.",
+    get question() { return t("help.whoCanSeeMyStories"); },
+    get answer() { return t("help.publicAccountsAnyonePrivateAccounts"); },
   },
   {
-    question: "How long does a Story last?",
-    answer: "24 hours from when you publish it, unless you add it to a Highlight — Highlights never expire.",
+    get question() { return t("help.howLongDoesAStory"); },
+    get answer() { return t("help.n24HoursFromWhenYou"); },
   },
   {
-    question: "How do I add a Story to a Highlight, or delete a Highlight?",
-    answer:
-      "Open your Story and tap Highlight to add it to one of your Highlights or start a new one; older Stories are in Profile > Archive. To edit or delete a Highlight, press and hold it on your profile, or open it and tap the options button at the top.",
+    get question() { return t("help.howDoIAddA"); },
+    get answer() { return t("help.openYourStoryAndTap"); },
   },
   {
-    question: "How do I stop getting a certain kind of notification?",
-    answer: "Settings > Notifications lets you turn off messages, likes, comments, follows, or mentions independently.",
+    get question() { return t("help.howDoIStopGetting"); },
+    get answer() { return t("help.settingsNotificationsLetsYouTurn"); },
   },
   {
-    question: "Can I get my account back after deleting it?",
-    answer: "No — account deletion in Settings is permanent and can't be undone.",
+    get question() { return t("help.canIGetMyAccount"); },
+    get answer() { return t("help.noAccountDeletionInSettings"); },
   },
 ];
 
@@ -42,7 +41,7 @@ export function HelpScreen(): React.JSX.Element {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.card}>
-        <ListRow label="Send feedback" icon={ICONS.dm} onPress={() => navigation.navigate("Feedback")} />
+        <ListRow label={t("common.sendFeedback")} icon={ICONS.dm} onPress={() => navigation.navigate("Feedback")} />
       </View>
       {FAQS.map((faq) => (
         <View key={faq.question} style={styles.item}>
@@ -52,10 +51,10 @@ export function HelpScreen(): React.JSX.Element {
       ))}
       {buildConfig.supportUrl ? (
         <View style={styles.more}>
-          <Text style={[typography.bodyStrong, styles.question]}>Need more help?</Text>
-          <Text style={[typography.body, styles.answer]}>The Help Center has more answers, and how to contact us.</Text>
+          <Text style={[typography.bodyStrong, styles.question]}>{t("help.needMoreHelp")}</Text>
+          <Text style={[typography.body, styles.answer]}>{t("help.theHelpCenterHasMore")}</Text>
           <View style={styles.card}>
-            <ListRow label="Help Center" onPress={() => openPublicPage(buildConfig.supportUrl)} />
+            <ListRow label={t("help.helpCenter")} onPress={() => openPublicPage(buildConfig.supportUrl)} />
           </View>
         </View>
       ) : null}

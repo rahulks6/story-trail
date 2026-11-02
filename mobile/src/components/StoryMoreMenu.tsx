@@ -7,6 +7,7 @@ import { showToast } from "./Toast";
 import { muteUser, blockUser } from "../api/users";
 import { recordEvent } from "../api/events";
 import { ReportSheet } from "./ReportSheet";
+import { t } from "../i18n";
 
 interface Props {
   visible: boolean;
@@ -32,19 +33,19 @@ export function StoryMoreMenu({ visible, storyId, isOwnStory, isPublic = false, 
   const [reportOpen, setReportOpen] = useState(false);
 
   const onDelete = () => {
-    Alert.alert("Delete this Story?", "This can't be undone.", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("common.deleteThisStory"), t("common.thisCantBeUndone"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Delete",
+        text: t("common.delete"),
         style: "destructive",
         onPress: async () => {
           if (!accessToken) return;
           try {
             await deleteStory(storyId, accessToken);
-            showToast("Story deleted");
+            showToast(t("storyMoreMenu.storyDeleted"));
             onDeleted();
           } catch {
-            Alert.alert("Couldn't delete that Story", "Check your connection and try again.");
+            Alert.alert(t("storyMoreMenu.couldntDeleteThatStory"), t("storyMoreMenu.checkYourConnectionAndTry"));
           }
         },
       },
@@ -55,10 +56,10 @@ export function StoryMoreMenu({ visible, storyId, isOwnStory, isPublic = false, 
     if (!accessToken || !otherUserId) return;
     try {
       await recordEvent({ eventType: "not_interested", creatorId: otherUserId }, accessToken);
-      showToast("You'll see fewer Stories like this");
+      showToast(t("storyMoreMenu.youllSeeFewerStoriesLike"));
       onDeleted(); // this creator won't be recommended again: nothing more to show here
     } catch {
-      Alert.alert("Couldn't save that", "Check your connection and try again.");
+      Alert.alert(t("storyMoreMenu.couldntSaveThat"), t("storyMoreMenu.checkYourConnectionAndTry"));
     }
   };
 
@@ -66,9 +67,9 @@ export function StoryMoreMenu({ visible, storyId, isOwnStory, isPublic = false, 
     if (!accessToken) return;
     try {
       await recordEvent({ eventType: "more_like_this", storyId, ...(otherUserId ? { creatorId: otherUserId } : {}) }, accessToken);
-      showToast("You'll see more Stories like this");
+      showToast(t("storyMoreMenu.youllSeeMoreStoriesLike"));
     } catch {
-      Alert.alert("Couldn't save that", "Check your connection and try again.");
+      Alert.alert(t("storyMoreMenu.couldntSaveThat"), t("storyMoreMenu.checkYourConnectionAndTry"));
     }
   };
 
@@ -76,27 +77,27 @@ export function StoryMoreMenu({ visible, storyId, isOwnStory, isPublic = false, 
     if (!accessToken || !otherUsername) return;
     try {
       await muteUser(otherUsername, accessToken);
-      showToast(`Muted @${otherUsername}`);
+      showToast(t("storyMoreMenu.mutedOtherusername", { otherUsername }));
     } catch {
-      Alert.alert("Couldn't mute", "Check your connection and try again.");
+      Alert.alert(t("storyMoreMenu.couldntMute"), t("storyMoreMenu.checkYourConnectionAndTry"));
     }
   };
 
   const onBlock = () => {
     if (!otherUsername) return;
-    Alert.alert(`Block @${otherUsername}?`, "They won't be able to see your Stories or profile, or message you.", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("storyMoreMenu.blockOtherusername", { otherUsername }), t("storyMoreMenu.theyWontBeAbleTo"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Block",
+        text: t("common.block"),
         style: "destructive",
         onPress: async () => {
           if (!accessToken) return;
           try {
             await blockUser(otherUsername, accessToken);
-            showToast(`Blocked @${otherUsername}`);
+            showToast(t("storyMoreMenu.blockedOtherusername", { otherUsername }));
             onDeleted(); // the Story is no longer visible either way: close the viewer
           } catch {
-            Alert.alert("Couldn't block", "Check your connection and try again.");
+            Alert.alert(t("common.couldntBlock"), t("storyMoreMenu.checkYourConnectionAndTry"));
           }
         },
       },
@@ -104,15 +105,15 @@ export function StoryMoreMenu({ visible, storyId, isOwnStory, isPublic = false, 
   };
 
   const groups: SheetAction[][] = isOwnStory
-    ? [[...(onOpenInsights ? [{ label: "View insights", onPress: onOpenInsights }] : []), { label: "Delete Story", destructive: true, onPress: onDelete }]]
+    ? [[...(onOpenInsights ? [{ label: t("storyMoreMenu.viewInsights"), onPress: onOpenInsights }] : []), { label: t("storyMoreMenu.deleteStory"), destructive: true, onPress: onDelete }]]
     : [
         [
-          ...(isPublic ? [{ label: "Show more like this", onPress: () => void onMoreLikeThis() }] : []),
-          { label: "Not interested", onPress: () => void onNotInterested() },
+          ...(isPublic ? [{ label: t("storyMoreMenu.showMoreLikeThis"), onPress: () => void onMoreLikeThis() }] : []),
+          { label: t("storyMoreMenu.notInterested"), onPress: () => void onNotInterested() },
           { label: `Mute @${otherUsername ?? ""}`, onPress: () => void onMute() },
         ],
         [
-          { label: "Report", destructive: true, onPress: () => setReportOpen(true) },
+          { label: t("common.report"), destructive: true, onPress: () => setReportOpen(true) },
           { label: `Block @${otherUsername ?? ""}`, destructive: true, onPress: onBlock },
         ],
       ];

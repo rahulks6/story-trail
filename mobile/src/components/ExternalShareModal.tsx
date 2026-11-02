@@ -4,6 +4,7 @@ import { Pressable } from "./Pressable";
 import { colors, radii, spacing } from "../theme";
 import { ShareCancelled, ShareFailed, sharePhotoStory, shareVideoStory } from "../utils/shareStoryExternally";
 import { StoryShareCard, type ShareCardHandle, type ShareCardStory } from "./StoryShareCard";
+import { t } from "../i18n";
 
 interface Props {
   visible: boolean;
@@ -46,7 +47,7 @@ export function ExternalShareModal({ visible, storyId, story, username, message,
     setError(null);
     if (isPhoto && imageState === "loading") return; // drawn once the photo has loaded
     if (isPhoto && imageState === "failed") {
-      setError("Couldn't load this photo. Try again.");
+      setError(t("externalShareModal.couldntLoadThisPhotoTry"));
       return;
     }
     const abort = new AbortController();
@@ -65,7 +66,7 @@ export function ExternalShareModal({ visible, storyId, story, username, message,
         },
         (e: unknown) => {
           if (!live || e instanceof ShareCancelled || abort.signal.aborted) return;
-          setError(e instanceof ShareFailed ? e.message : "We couldn't prepare your Story. Try again.");
+          setError(e instanceof ShareFailed ? e.message : t("externalShareModal.weCouldntPrepareYourStory"));
         },
       );
     }, 50);
@@ -114,24 +115,24 @@ export function ExternalShareModal({ visible, storyId, story, username, message,
         <View style={styles.panel} accessibilityViewIsModal accessibilityLiveRegion="polite">
           {error ? (
             <>
-              <Text style={styles.title}>Couldn't share your Story</Text>
+              <Text style={styles.title}>{t("externalShareModal.couldntShareYourStory")}</Text>
               <Text style={styles.message}>{error}</Text>
               <View style={styles.buttons}>
                 <Pressable style={styles.secondary} onPress={close} accessibilityRole="button">
-                  <Text style={styles.secondaryLabel}>Close</Text>
+                  <Text style={styles.secondaryLabel}>{t("common.close")}</Text>
                 </Pressable>
                 <Pressable style={styles.primary} onPress={retry} accessibilityRole="button">
-                  <Text style={styles.primaryLabel}>Try again</Text>
+                  <Text style={styles.primaryLabel}>{t("common.tryAgain")}</Text>
                 </Pressable>
               </View>
             </>
           ) : (
             <>
               <ActivityIndicator color={colors.accentText} />
-              <Text style={styles.title}>{isPhoto ? "Preparing photo…" : "Preparing video…"}</Text>
-              {!isPhoto ? <Text style={styles.message}>This can take up to a minute.</Text> : null}
+              <Text style={styles.title}>{isPhoto ? t("externalShareModal.preparingPhoto") : t("externalShareModal.preparingVideo")}</Text>
+              {!isPhoto ? <Text style={styles.message}>{t("externalShareModal.thisCanTakeUpTo")}</Text> : null}
               <Pressable style={styles.secondary} onPress={close} accessibilityRole="button">
-                <Text style={styles.secondaryLabel}>Cancel</Text>
+                <Text style={styles.secondaryLabel}>{t("common.cancel")}</Text>
               </Pressable>
             </>
           )}

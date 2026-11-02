@@ -11,6 +11,7 @@ import { useReducedMotion } from "../hooks/useReducedMotion";
 import { callStatusText, isLive, type CallState } from "./callMachine";
 import type { CallControls } from "./CallContext";
 import { webRtc, type StreamLike } from "./webrtc";
+import { t } from "../i18n";
 
 /** The call screen is always dark, like the camera and Stories: faces and video read best on black. */
 const c = mediaColors;
@@ -101,7 +102,7 @@ function CallPill({ state, controls }: { state: CallState; controls: CallControl
   const { top } = useSafeAreaInsets();
   const now = useNow(state.phase === "active");
   const status = callStatusText(state, now);
-  const name = state.peer?.displayName || (state.peer ? `@${state.peer.username}` : "Call");
+  const name = state.peer?.displayName || (state.peer ? `@${state.peer.username}` : t("call.call"));
   return (
     <View style={[styles.pillWrap, { top: top + spacing.xs }]} pointerEvents="box-none">
       <Pressable
@@ -109,7 +110,7 @@ function CallPill({ state, controls }: { state: CallState; controls: CallControl
         style={styles.pill}
         accessibilityRole="button"
         accessibilityLabel={`${state.media === "video" ? "Video call" : "Call"} with ${name}, ${status}`}
-        accessibilityHint="Returns to the call"
+        accessibilityHint={t("call.returnsToTheCall")}
       >
         <Icon name={state.media === "video" ? ICONS.video : ICONS.call} size={16} color="#FFFFFF" />
         <Text style={styles.pillText} numberOfLines={1}>{name} · {status}</Text>
@@ -150,7 +151,7 @@ export function CallScreen({ state, controls, local, remote }: Props): React.JSX
 
         <View style={[styles.top, { paddingTop: insets.top + spacing.sm }]}>
           {live && state.phase !== "incoming" ? (
-            <Pressable onPress={controls.minimize} hitSlop={10} style={styles.minimize} accessibilityRole="button" accessibilityLabel="Minimize call" accessibilityHint="Keeps the call going while you use the app">
+            <Pressable onPress={controls.minimize} hitSlop={10} style={styles.minimize} accessibilityRole="button" accessibilityLabel={t("call.minimizeCall")} accessibilityHint={t("call.keepsTheCallGoingWhile")}>
               <Icon name={ICONS.down} size={22} color="#FFFFFF" />
             </Pressable>
           ) : <View style={styles.minimize} />}
@@ -163,11 +164,11 @@ export function CallScreen({ state, controls, local, remote }: Props): React.JSX
             {status}
           </Text>
           {live && !state.remoteMicrophoneOn ? <Text style={styles.note}>{`${state.peer?.displayName || "They"} muted their microphone`}</Text> : null}
-          {live && video && !state.remoteCameraOn && (state.phase === "active" || state.phase === "reconnecting") ? <Text style={styles.note}>Their camera is off</Text> : null}
+          {live && video && !state.remoteCameraOn && (state.phase === "active" || state.phase === "reconnecting") ? <Text style={styles.note}>{t("call.theirCameraIsOff")}</Text> : null}
         </View>
 
         {showLocal && !localFull && VideoView ? (
-          <View style={[styles.pip, { top: insets.top + spacing.xxl + spacing.sm }]} accessible accessibilityLabel="Your camera">
+          <View style={[styles.pip, { top: insets.top + spacing.xxl + spacing.sm }]} accessible accessibilityLabel={t("call.yourCamera")}>
             <VideoView streamURL={local!.toURL()} objectFit="cover" mirror={state.frontCamera} zOrder={1} style={StyleSheet.absoluteFill} />
           </View>
         ) : null}
@@ -175,19 +176,19 @@ export function CallScreen({ state, controls, local, remote }: Props): React.JSX
         <View style={[styles.controls, { paddingBottom: insets.bottom + spacing.xl }]}>
           {state.phase === "incoming" ? (
             <View style={styles.row}>
-              <CallButton icon={ICONS.endCall} label="Decline" tone="danger" size={72} onPress={controls.decline} accessibilityLabel="Decline call" />
-              <CallButton icon={video ? ICONS.video : ICONS.call} label="Accept" tone="answer" size={72} onPress={controls.accept} accessibilityLabel={video ? "Accept video call" : "Accept call"} />
+              <CallButton icon={ICONS.endCall} label={t("common.decline")} tone="danger" size={72} onPress={controls.decline} accessibilityLabel={t("call.declineCall")} />
+              <CallButton icon={video ? ICONS.video : ICONS.call} label={t("common.accept")} tone="answer" size={72} onPress={controls.accept} accessibilityLabel={video ? "Accept video call" : "Accept call"} />
             </View>
           ) : live ? (
             <>
               <View style={styles.row}>
-                {video ? <CallButton icon={ICONS.flip} label="Flip" onPress={controls.flipCamera} accessibilityLabel="Switch camera" /> : null}
-                {video ? <CallButton icon={state.cameraOn ? ICONS.video : ICONS.videoOff} label="Camera" active={!state.cameraOn} onPress={controls.toggleCamera} accessibilityLabel={toggleLabel(state.cameraOn, "camera")} /> : null}
+                {video ? <CallButton icon={ICONS.flip} label={t("call.flip")} onPress={controls.flipCamera} accessibilityLabel={t("call.switchCamera")} /> : null}
+                {video ? <CallButton icon={state.cameraOn ? ICONS.video : ICONS.videoOff} label={t("call.camera")} active={!state.cameraOn} onPress={controls.toggleCamera} accessibilityLabel={toggleLabel(state.cameraOn, "camera")} /> : null}
                 <CallButton icon={state.microphoneOn ? ICONS.mic : ICONS.micOff} label={state.microphoneOn ? "Mute" : "Unmute"} active={!state.microphoneOn} onPress={controls.toggleMicrophone} accessibilityLabel={state.microphoneOn ? "Mute microphone" : "Unmute microphone"} />
-                <CallButton icon={ICONS.audioOn} label="Speaker" active={state.speakerOn} onPress={controls.toggleSpeaker} accessibilityLabel={toggleLabel(state.speakerOn, "loudspeaker")} />
+                <CallButton icon={ICONS.audioOn} label={t("call.speaker")} active={state.speakerOn} onPress={controls.toggleSpeaker} accessibilityLabel={toggleLabel(state.speakerOn, "loudspeaker")} />
               </View>
               <View style={styles.row}>
-                <CallButton icon={ICONS.endCall} label="End" tone="danger" size={72} onPress={controls.hangUp} accessibilityLabel="End call" />
+                <CallButton icon={ICONS.endCall} label={t("call.end")} tone="danger" size={72} onPress={controls.hangUp} accessibilityLabel={t("call.endCall")} />
               </View>
             </>
           ) : null}

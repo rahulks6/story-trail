@@ -6,6 +6,7 @@ import { API_BASE_URL, ApiError } from "../api/client";
 import { uploadStoryOverlay } from "../api/media";
 import { getStoryExport, startStoryExport } from "../api/stories";
 import { track } from "../analytics/analytics";
+import { t } from "../i18n";
 
 /** How often, and for how long, the app asks whether a video is ready. */
 export const EXPORT_POLL_MS = 1500;
@@ -13,7 +14,7 @@ export const EXPORT_MAX_WAIT_MS = 90_000;
 
 export class ShareCancelled extends Error {
   constructor() {
-    super("Cancelled.");
+    super(t("shareStoryExternally.cancelled"));
     this.name = "ShareCancelled";
   }
 }
@@ -44,7 +45,7 @@ const stripScheme = (uri: string) => uri.replace(/^file:\/\//, "");
  * provider covers (view-shot may write to the external cache instead).
  */
 async function intoCache(uri: string, ext: string): Promise<string> {
-  const target = `${RNFS.CachesDirectoryPath}/katkee-share-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const target = t("shareStoryExternally.cachesdirectorypathKatkeeShareDateVa", { CachesDirectoryPath: RNFS.CachesDirectoryPath, Date: Date.now(), value: Math.random().toString(36).slice(2, 8), ext });
   await RNFS.moveFile(stripScheme(uri), target);
   return target;
 }
@@ -102,11 +103,11 @@ export async function shareVideoStory(card: React.RefObject<ShareCardHandle | nu
     let job = await startStoryExport(storyId, upload.id, accessToken);
     const deadline = Date.now() + EXPORT_MAX_WAIT_MS;
     while (job.status === "processing") {
-      if (Date.now() >= deadline) throw new ShareFailed("This is taking longer than usual. Try again in a moment.");
+      if (Date.now() >= deadline) throw new ShareFailed(t("shareStoryExternally.thisIsTakingLongerThan"));
       await wait(EXPORT_POLL_MS, signal);
       job = await getStoryExport(storyId, job.id, accessToken, signal);
     }
-    if (job.status === "failed" || !job.url) throw new ShareFailed(job.error ?? "We couldn't prepare this video. Try again.");
+    if (job.status === "failed" || !job.url) throw new ShareFailed(job.error ?? t("shareStoryExternally.weCouldntPrepareThisVideo"));
     if (signal.aborted) throw new ShareCancelled();
 
     file = `${RNFS.CachesDirectoryPath}/katkee-story-${job.id}.mp4`;

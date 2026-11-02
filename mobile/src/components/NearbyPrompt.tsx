@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing, typography } from "../theme";
 import { useAuth } from "../state/AuthContext";
 import { declineNearby, nearbyChoice, turnNearbyOn } from "../state/nearby";
+import { t } from "../i18n";
 
 const FACTS = [
   "Katkee uses an approximate area about the size of a city, never your exact location.",
@@ -66,7 +67,7 @@ export function NearbyPrompt({ delayMs = 6000 }: { delayMs?: number }): React.JS
     <Modal visible transparent animationType="slide" onRequestClose={notNow}>
       <View style={styles.fill}>
         {/* Tapping outside means "Not now", like the other sheets' backdrops. */}
-        <Pressable pressEffect="none" style={styles.backdrop} onPress={notNow} accessibilityRole="button" accessibilityLabel="Close" />
+        <Pressable pressEffect="none" style={styles.backdrop} onPress={notNow} accessibilityRole="button" accessibilityLabel={t("common.close")} />
         <View style={[styles.sheet, { paddingBottom: spacing.lg + insets.bottom }]} accessibilityViewIsModal>
           <View style={styles.handle} />
           <View style={styles.rings} accessible={false}>
@@ -74,10 +75,8 @@ export function NearbyPrompt({ delayMs = 6000 }: { delayMs?: number }): React.JS
             <View style={[styles.ring, styles.ringMiddle]} />
             <View style={styles.dot} />
           </View>
-          <Text style={[typography.title, styles.title]} accessibilityRole="header">See Stories from people near you</Text>
-          <Text style={[typography.body, styles.lead]}>
-            Turn on Nearby Stories to discover people around you, and let people nearby discover your public Stories.
-          </Text>
+          <Text style={[typography.title, styles.title]} accessibilityRole="header">{t("nearbyPrompt.seeStoriesFromPeopleNear")}</Text>
+          <Text style={[typography.body, styles.lead]}>{t("nearbyPrompt.turnOnNearbyStoriesTo")}</Text>
           <View style={styles.facts}>
             {FACTS.map((fact) => (
               <View key={fact} style={styles.fact}>
@@ -91,13 +90,13 @@ export function NearbyPrompt({ delayMs = 6000 }: { delayMs?: number }): React.JS
             onPress={() => void turnOn()}
             disabled={busy}
             accessibilityRole="button"
-            accessibilityLabel="Turn on Nearby Stories"
+            accessibilityLabel={t("nearbyPrompt.turnOnNearbyStories")}
             accessibilityState={{ busy, disabled: busy }}
           >
-            {busy ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.primaryLabel}>Turn on</Text>}
+            {busy ? <ActivityIndicator color={colors.onAccent} /> : <Text style={styles.primaryLabel}>{t("nearbyPrompt.turnOn")}</Text>}
           </Pressable>
-          <Pressable style={styles.secondary} onPress={notNow} disabled={busy} accessibilityRole="button" accessibilityLabel="Not now">
-            <Text style={typography.bodyStrong}>Not now</Text>
+          <Pressable style={styles.secondary} onPress={notNow} disabled={busy} accessibilityRole="button" accessibilityLabel={t("common.notNow")}>
+            <Text style={typography.bodyStrong}>{t("common.notNow")}</Text>
           </Pressable>
         </View>
       </View>

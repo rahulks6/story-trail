@@ -10,6 +10,7 @@ import { useAuth } from "../state/AuthContext";
 import { getAddYoursChain, type ChainStory } from "../api/stickers";
 import { mediaFileUrl } from "../api/stories";
 import { timeAgo } from "../utils/serverTime";
+import { t } from "../i18n";
 
 interface Props {
   visible: boolean;
@@ -42,14 +43,14 @@ export function AddYoursSheet({ visible, chainId, onClose, onOpenStory, onAddYou
     setError(null);
     getAddYoursChain(chainId, accessToken)
       .then((r) => { if (!cancelled) { setChain(r.chain); setStories(r.stories); } })
-      .catch(() => { if (!cancelled) setError("This Add Yours isn't available."); });
+      .catch(() => { if (!cancelled) setError(t("addYoursSheet.thisAddYoursIsntAvailable")); });
     return () => { cancelled = true; };
   }, [visible, chainId, accessToken]);
 
   const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-      <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
+      <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel={t("common.close")} />
       <View style={[styles.sheet, { paddingBottom: spacing.lg + bottomInset }]}>
         <View style={styles.handle} />
         {error ? (
@@ -60,10 +61,10 @@ export function AddYoursSheet({ visible, chainId, onClose, onOpenStory, onAddYou
           <>
             <View style={styles.badge}>
               <Icon name={ICONS.add} size={12} color={colors.onAccent} />
-              <Text style={styles.badgeText}>ADD YOURS</Text>
+              <Text style={styles.badgeText}>{t("common.addYours2")}</Text>
             </View>
             <Text style={[typography.title, styles.center]}>{chain.prompt}</Text>
-            <Text style={[typography.caption, styles.center]}>{chain.participants === 1 ? "1 participant" : `${chain.participants} participants`}</Text>
+            <Text style={[typography.caption, styles.center]}>{chain.participants === 1 ? t("common.n1Participant") : t("addYoursSheet.participantsParticipants", { participants: chain.participants })}</Text>
             <FlatList
               data={stories}
               keyExtractor={(s) => s.storyId}
@@ -84,12 +85,12 @@ export function AddYoursSheet({ visible, chainId, onClose, onOpenStory, onAddYou
                   </View>
                 </Pressable>
               )}
-              ListEmptyComponent={<Text style={[typography.caption, styles.center]}>No Stories to show right now.</Text>}
+              ListEmptyComponent={<Text style={[typography.caption, styles.center]}>{t("addYoursSheet.noStoriesToShowRight")}</Text>}
             />
             {canAdd ? (
-              <Pressable onPress={() => onAddYours({ id: chain.id, prompt: chain.prompt })} style={styles.addButton} accessibilityRole="button" accessibilityHint="Opens the camera with this prompt on your Story">
+              <Pressable onPress={() => onAddYours({ id: chain.id, prompt: chain.prompt })} style={styles.addButton} accessibilityRole="button" accessibilityHint={t("addYoursSheet.opensTheCameraWithThis")}>
                 <Icon name={ICONS.camera} size={18} color={colors.onAccent} />
-                <Text style={styles.addLabel}>Add yours</Text>
+                <Text style={styles.addLabel}>{t("common.addYours")}</Text>
               </Pressable>
             ) : null}
           </>

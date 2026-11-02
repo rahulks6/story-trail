@@ -2,13 +2,14 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { colors, spacing, typography } from "../theme";
 import { Button } from "./Form";
+import { t } from "../i18n";
 
 /** A whole-screen "couldn't load" with a way out, instead of a spinner that never ends. */
 export function LoadFailed({ message, onRetry }: { message: string; onRetry: () => void }): React.JSX.Element {
   return (
     <View style={styles.container}>
       <Text accessibilityRole="alert" style={[typography.body, styles.message]}>{message}</Text>
-      <Button label="Try again" onPress={onRetry} />
+      <Button label={t("common.tryAgain")} onPress={onRetry} />
     </View>
   );
 }

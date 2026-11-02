@@ -17,6 +17,7 @@ import { Button } from "../../components/Form";
 import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { tapFeedback } from "../../utils/haptics";
+import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<DMStackParamList, "NewGroup">;
 
@@ -41,7 +42,7 @@ export function NewGroupScreen({ navigation, route }: Props): React.JSX.Element 
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    navigation.setOptions({ title: adding ? "Add people" : "New group" });
+    navigation.setOptions({ title: adding ? t("common.addPeople") : t("common.newGroup") });
   }, [adding, navigation]);
 
   // People you're connected to, the ones a group can have.
@@ -103,7 +104,7 @@ export function NewGroupScreen({ navigation, route }: Props): React.JSX.Element 
         navigation.replace("Conversation", { conversationId: conversation.id, group: true, title: groupName(conversation.title, others, others.length) });
       }
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Couldn't do that. Check your connection and try again.");
+      setError(e instanceof ApiError ? e.message : t("newGroup.couldntDoThatCheckYour"));
     } finally {
       setSaving(false);
     }
@@ -116,33 +117,33 @@ export function NewGroupScreen({ navigation, route }: Props): React.JSX.Element 
       {adding ? null : (
         <TextInput
           style={styles.title}
-          placeholder="Group name (optional)"
+          placeholder={t("newGroup.groupNameOptional2")}
           placeholderTextColor={colors.textDisabled}
           value={title}
           onChangeText={setTitle}
           maxLength={MAX_GROUP_TITLE}
-          accessibilityLabel="Group name, optional"
+          accessibilityLabel={t("newGroup.groupNameOptional")}
         />
       )}
       <View style={styles.searchBox}>
         <Icon style={styles.searchIcon} name={ICONS.search} />
         <TextInput
           style={styles.searchInput}
-          placeholder="Search people"
+          placeholder={t("common.searchPeople")}
           placeholderTextColor={colors.textDisabled}
           autoCapitalize="none"
           autoCorrect={false}
           value={query}
           onChangeText={setQuery}
-          accessibilityLabel="Search people"
+          accessibilityLabel={t("common.searchPeople")}
         />
       </View>
       {chosen.length ? (
         <Text style={styles.count} accessibilityLiveRegion="polite">
-          {chosen.length} chosen{chosen.length >= limit ? ` (a group can have up to ${MAX_GROUP_MEMBERS} people)` : ""}
+          {chosen.length}{" "}{t("newGroup.chosen")}{chosen.length >= limit ? t("newGroup.aGroupCanHaveUp", { MAX_GROUP_MEMBERS }) : ""}
         </Text>
       ) : (
-        <Text style={styles.count}>{adding ? "Choose people to add." : "Choose at least two people. You can add people you follow or who follow you."}</Text>
+        <Text style={styles.count}>{adding ? t("newGroup.choosePeopleToAdd") : t("newGroup.chooseAtLeastTwoPeople")}</Text>
       )}
       {error ? <Text style={styles.error} accessibilityRole="alert">{error}</Text> : null}
       {loading ? <ActivityIndicator color={colors.accentText} style={styles.spinner} /> : null}
@@ -150,7 +151,7 @@ export function NewGroupScreen({ navigation, route }: Props): React.JSX.Element 
         data={list}
         keyExtractor={(p) => p.id}
         keyboardShouldPersistTaps="handled"
-        ListEmptyComponent={search && !loading ? <Text style={styles.empty}>No people match “{search}”.</Text> : undefined}
+        ListEmptyComponent={search && !loading ? <Text style={styles.empty}>{t("newGroup.noPeopleMatchSearch", { search })}</Text> : undefined}
         renderItem={({ item }) => {
           const on = chosenIds.has(item.id);
           return (

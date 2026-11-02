@@ -1,6 +1,7 @@
 import { apiDelete, apiGet, apiPost, apiPut } from "./client";
 import type { VoteResults } from "../models/storyDraft";
 import type { CollabPerson, StoryCollab } from "./stories";
+import { t } from "../i18n";
 
 /**
  * Interactive stickers, "Add Yours" chains and Collab Stories — mirrors backend
@@ -8,7 +9,7 @@ import type { CollabPerson, StoryCollab } from "./stories";
  * (expired, blocked, private, outside its audience).
  */
 
-const sticker = (storyId: string, stickerId: string) => `/api/v1/stories/${storyId}/stickers/${encodeURIComponent(stickerId)}`;
+const sticker = (storyId: string, stickerId: string) => t("stickers.apiV1StoriesStoryidStickers", { storyId, stickerId: encodeURIComponent(stickerId) });
 
 export interface VoteOutcome {
   results: VoteResults;

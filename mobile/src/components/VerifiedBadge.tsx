@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing, typography, ICONS } from "../theme";
 import { verificationCategoryLabel } from "../api/verification";
 import { Icon } from "./Icon";
+import { t } from "../i18n";
 
 /**
  * The verified badge: a tick in a rosette, in the accent colour, about as tall as the text beside
@@ -14,12 +15,12 @@ export function VerifiedBadge({ size = 16, onPress, style }: { size?: number; on
   const icon = <Icon name={ICONS.verified} size={size} color={colors.accentText} />;
   if (onPress) {
     return (
-      <Pressable onPress={onPress} hitSlop={10} style={[styles.badge, style]} accessibilityRole="button" accessibilityLabel="Verified" accessibilityHint="Shows what the badge means">
+      <Pressable onPress={onPress} hitSlop={10} style={[styles.badge, style]} accessibilityRole="button" accessibilityLabel={t("verifiedBadge.verified")} accessibilityHint={t("verifiedBadge.showsWhatTheBadgeMeans")}>
         {icon}
       </Pressable>
     );
   }
-  return <View style={[styles.badge, style]} accessible accessibilityRole="image" accessibilityLabel="Verified">{icon}</View>;
+  return <View style={[styles.badge, style]} accessible accessibilityRole="image" accessibilityLabel={t("verifiedBadge.verified")}>{icon}</View>;
 }
 
 /**
@@ -58,20 +59,20 @@ export function VerifiedBadgeSheet({ visible, category, onClose }: { visible: bo
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.fill}>
-        <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close" />
+        <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel={t("common.close")} />
         <View style={[styles.sheet, { paddingBottom: spacing.md + bottom }]} accessibilityViewIsModal>
           <View style={styles.handle} />
           <View style={styles.sheetIcon}>
             <Icon name={ICONS.verified} size={40} color={colors.accentText} />
           </View>
-          <Text style={styles.title} accessibilityRole="header">Verified</Text>
+          <Text style={styles.title} accessibilityRole="header">{t("verifiedBadge.verified")}</Text>
           <Text style={styles.body}>
             {label
-              ? `Katkee confirmed this account belongs to the ${label.toLowerCase()} it represents.`
-              : "Katkee confirmed this account belongs to the person or organisation it represents."}
+              ? t("verifiedBadge.katkeeConfirmedThisAccountBelongs2", { label: label.toLowerCase() })
+              : t("verifiedBadge.katkeeConfirmedThisAccountBelongs")}
           </Text>
           <Pressable style={styles.done} onPress={onClose} accessibilityRole="button">
-            <Text style={styles.doneText}>Done</Text>
+            <Text style={styles.doneText}>{t("common.done")}</Text>
           </Pressable>
         </View>
       </View>

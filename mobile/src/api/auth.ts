@@ -1,4 +1,5 @@
 import { apiDelete, apiDeleteWithBody, apiGet, apiPost, type PublicUser, type TokenPair } from "./client";
+import { t } from "../i18n";
 
 export interface SignupPayload {
   username: string;
@@ -56,7 +57,7 @@ export function fetchMe(accessToken: string): Promise<{ user: PublicUser }> {
 
 /** Real, in-app account deletion (Phase 12 — App Store guideline 5.1.1(v) requires this exist). Password-confirmed since it's irreversible. */
 export function deleteMyAccount(password: string, accessToken: string): Promise<void> {
-  return apiDeleteWithBody<void>("/api/v1/users/me", { password }, accessToken);
+  return apiDeleteWithBody<void>(t("auth.apiV1UsersMe"), { password }, accessToken);
 }
 
 /** Always resolves the same way whether or not the email has an account (server never reveals it). */

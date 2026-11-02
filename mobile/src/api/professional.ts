@@ -1,5 +1,6 @@
 import { apiDelete, apiGet, apiPut } from "./client";
 import type { MediaDelivery } from "./media";
+import { t } from "../i18n";
 
 /**
  * Professional accounts and their dashboard: /api/v1/me/professional. Mirrors the server's
@@ -9,12 +10,12 @@ export type ProfessionalCategory = "creator" | "artist" | "public_figure" | "bra
 
 /** The verified badge's categories plus Artist; "brand" reads as Business here. */
 export const PROFESSIONAL_CATEGORIES: { value: ProfessionalCategory; label: string; hint: string }[] = [
-  { value: "creator", label: "Creator", hint: "Videos, photos and everyday Stories" },
-  { value: "artist", label: "Artist", hint: "Music, art, dance, comedy or writing" },
-  { value: "brand", label: "Business", hint: "A shop, brand, restaurant or service" },
-  { value: "public_figure", label: "Public figure", hint: "Sports, politics, film or public life" },
-  { value: "news_media", label: "News or media", hint: "A publisher, channel or journalist" },
-  { value: "organization", label: "Organisation", hint: "A non-profit, school or government body" },
+  { value: "creator", get label() { return t("common.creator"); }, get hint() { return t("professional.videosPhotosAndEverydayStories"); } },
+  { value: "artist", get label() { return t("professional.artist"); }, get hint() { return t("professional.musicArtDanceComedyOr"); } },
+  { value: "brand", get label() { return t("professional.business"); }, get hint() { return t("professional.aShopBrandRestaurantOr"); } },
+  { value: "public_figure", get label() { return t("common.publicFigure"); }, get hint() { return t("professional.sportsPoliticsFilmOrPublic"); } },
+  { value: "news_media", get label() { return t("common.newsOrMedia"); }, get hint() { return t("professional.aPublisherChannelOrJournalist"); } },
+  { value: "organization", get label() { return t("professional.organisation"); }, get hint() { return t("professional.aNonProfitSchoolOr"); } },
 ];
 
 /** The label people read for a category; null for a missing or unknown one. */

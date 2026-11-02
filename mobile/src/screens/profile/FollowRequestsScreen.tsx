@@ -17,6 +17,7 @@ import { EmptyState } from "../../components/EmptyState";
 import { LoadFailed } from "../../components/LoadFailed";
 import { Avatar } from "../../components/Avatar";
 import { VerifiedName } from "../../components/VerifiedBadge";
+import { t } from "../../i18n";
 
 const PAGE_SIZE = 30;
 
@@ -75,7 +76,7 @@ export function FollowRequestsScreen(): React.JSX.Element {
   };
 
   if (requests === null) {
-    if (loadFailed) return <LoadFailed message="Couldn't load your follow requests. Check your connection and try again." onRetry={() => void load()} />;
+    if (loadFailed) return <LoadFailed message={t("followRequests.couldntLoadYourFollowRequests")} onRetry={() => void load()} />;
     return (
       <View style={styles.centered}>
         <ActivityIndicator color={colors.accentText} />
@@ -84,7 +85,7 @@ export function FollowRequestsScreen(): React.JSX.Element {
   }
 
   if (requests.length === 0) {
-    return <EmptyState icon="following" title="No pending requests" message="Follow requests waiting on your approval will show up here." />;
+    return <EmptyState icon="following" title={t("followRequests.noPendingRequests")} message={t("followRequests.followRequestsWaitingOnYour")} />;
   }
 
   return (
@@ -112,10 +113,10 @@ export function FollowRequestsScreen(): React.JSX.Element {
             ) : (
               <View style={styles.actions}>
                 <Pressable accessibilityRole="button" style={styles.declineButton} onPress={() => void onResolve(item, false)}>
-                  <Text style={styles.declineLabel}>Decline</Text>
+                  <Text style={styles.declineLabel}>{t("common.decline")}</Text>
                 </Pressable>
                 <Pressable accessibilityRole="button" style={styles.acceptButton} onPress={() => void onResolve(item, true)}>
-                  <Text style={styles.acceptLabel}>Accept</Text>
+                  <Text style={styles.acceptLabel}>{t("common.accept")}</Text>
                 </Pressable>
               </View>
             )}

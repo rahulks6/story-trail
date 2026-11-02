@@ -1,4 +1,5 @@
 import { apiDelete, apiGet, apiPost } from "./client";
+import { t } from "../i18n";
 
 /**
  * The verified badge: GET/POST/DELETE /api/v1/me/verification. Mirrors the server's
@@ -7,11 +8,11 @@ import { apiDelete, apiGet, apiPost } from "./client";
 export type VerificationCategory = "creator" | "public_figure" | "brand" | "news_media" | "organization";
 
 export const VERIFICATION_CATEGORIES: { value: VerificationCategory; label: string }[] = [
-  { value: "creator", label: "Creator" },
-  { value: "public_figure", label: "Public figure" },
-  { value: "brand", label: "Brand or business" },
-  { value: "news_media", label: "News or media" },
-  { value: "organization", label: "Government or organisation" },
+  { value: "creator", get label() { return t("common.creator"); } },
+  { value: "public_figure", get label() { return t("common.publicFigure"); } },
+  { value: "brand", get label() { return t("verification.brandOrBusiness"); } },
+  { value: "news_media", get label() { return t("common.newsOrMedia"); } },
+  { value: "organization", get label() { return t("verification.governmentOrOrganisation"); } },
 ];
 
 /** The label people read for a category; null for a missing or unknown one. */
