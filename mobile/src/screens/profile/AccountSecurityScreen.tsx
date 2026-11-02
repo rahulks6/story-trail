@@ -8,7 +8,7 @@ import {KeyboardAvoider} from '../../components/KeyboardAvoider';
 import {useAuth} from '../../state/AuthContext';
 import {colors} from '../../theme';
 import {SignInSecuritySection} from './SignInSecuritySection';
-interface Identities {items:Array<{provider:'GOOGLE'|'PHONE';verified_at:string}>;hasPassword:boolean}
+interface Identities {items:Array<{provider:'GOOGLE'|'APPLE'|'PHONE';verified_at:string}>;hasPassword:boolean}
 export function AccountSecurityScreen():React.JSX.Element {
  const headerHeight=useHeaderHeight();
  const {accessToken,logout}=useAuth();const [identities,setIdentities]=useState<Identities|null>(null),[password,setPassword]=useState(''),[ticket,setTicket]=useState<string|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false);

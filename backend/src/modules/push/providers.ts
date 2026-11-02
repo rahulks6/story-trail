@@ -19,8 +19,13 @@ export interface PushMessage {
   badge?: number | undefined;
   /** Groups notifications on iOS. */
   threadId?: string | undefined;
-  /** Android notification channel; the app creates "messages" and "activity" (MainApplication.kt). */
-  channel?: "messages" | "activity" | undefined;
+  /** Android notification channel; the app creates "messages", "activity" and "calls" (MainApplication.kt). */
+  channel?: "messages" | "activity" | "calls" | undefined;
+  /**
+   * Not delivered after this many seconds (a ringing call is over by then): FCM's Android TTL
+   * and the APNs expiration. Without it the providers keep trying for weeks.
+   */
+  ttlSeconds?: number | undefined;
   /**
    * Only sets the iPhone app-icon badge to `badge`: no alert, sound or banner, and
    * title/body are ignored. Low priority (APNs priority 5), collapsed to the latest.
@@ -118,6 +123,7 @@ export class FcmProvider implements PushProvider {
 
   async send(deviceToken: string, message: PushMessage): Promise<PushResult> {
     const collapse = message.collapseKey ? { "apns-collapse-id": message.collapseKey } : {};
+    const expiry = message.ttlSeconds !== undefined ? { "apns-expiration": String(Math.floor(Date.now() / 1000) + message.ttlSeconds) } : {};
     const payload = message.badgeOnly
       ? {
         message: {
@@ -136,11 +142,12 @@ export class FcmProvider implements PushProvider {
           data: message.data,
           android: {
             priority: "HIGH",
+            ...(message.ttlSeconds !== undefined ? { ttl: `${message.ttlSeconds}s` } : {}),
             ...(message.collapseKey ? { collapse_key: message.collapseKey } : {}),
             notification: { ...(message.channel ? { channel_id: message.channel } : {}), ...(message.collapseKey ? { tag: message.collapseKey } : {}) },
           },
           apns: {
-            headers: { "apns-priority": "10", ...collapse },
+            headers: { "apns-priority": "10", ...collapse, ...expiry },
             payload: { aps: { sound: "default", ...(message.badge !== undefined ? { badge: message.badge } : {}), ...(message.threadId ? { "thread-id": message.threadId } : {}) } },
           },
         },
@@ -244,6 +251,7 @@ export class ApnsProvider implements PushProvider {
           "apns-push-type": "alert",
           "apns-priority": message.badgeOnly ? "5" : "10",
           ...(message.collapseKey ? { "apns-collapse-id": message.collapseKey.slice(0, 64) } : {}),
+          ...(message.ttlSeconds !== undefined ? { "apns-expiration": String(Math.floor(Date.now() / 1000) + message.ttlSeconds) } : {}),
         });
       } catch (error) {
         this.session = null;

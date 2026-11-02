@@ -3,17 +3,21 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import { ActivityIndicator, Alert, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Pressable } from "../../components/Pressable";
 import {GoogleSignin,GoogleSigninButton,isSuccessResponse,isErrorWithCode,statusCodes} from '@react-native-google-signin/google-signin';
+import {AppleButton,appleAuth} from '@invertase/react-native-apple-authentication';
 import * as Keychain from 'react-native-keychain';
 import * as api from '../../api/providers';
 import {providerBuild} from '../../config/providers';
 import {useAuth} from '../../state/AuthContext';
-import {colors,FORM_MAX_WIDTH} from '../../theme';
+import {colors,colorScheme,FORM_MAX_WIDTH} from '../../theme';
 import {KeyboardAvoider} from '../../components/KeyboardAvoider';
 import {usernameCheckText,usernameRefused,useUsernameAvailability} from '../../hooks/useUsernameAvailability';
 import {hasTickLikeCharacter,NAME_TICK_ERROR} from '../../api/verification';
 import {TermsNotice} from '../../components/TermsNotice';
 import {BIRTH_DATE_MESSAGES,birthDateFieldProblem,birthDateProblem,birthDateToIso,formatBirthDateInput} from '../../utils/birthDate';
-/** Google shows only where this build can finish it: iOS needs its own client ID (and, for App Review 4.8, Sign in with Apple beside it). */
+/**
+ * Google shows only where this build can finish it: iOS needs its own client ID and, for App
+ * Review 4.8, Sign in with Apple offered beside it (showGoogle below).
+ */
 const googleReady=!!providerBuild.googleWebClientId&&(Platform.OS!=='ios'||!!providerBuild.googleIosClientId);
 const PENDING_SERVICE='com.katkee.provider-onboarding.v1';
 export function ProviderEntry({onProof}:{onProof?:(proof:string)=>Promise<void>}):React.JSX.Element {
@@ -27,15 +31,16 @@ export function ProviderEntry({onProof}:{onProof?:(proof:string)=>Promise<void>}
  const birthDate=birthDateToIso(birth),birthProblem=birthDateFieldProblem(birth);
  const availability=useUsernameAvailability(stage==='username'?username:'',null),availabilityLine=usernameCheckText(availability);
  useEffect(()=>{let alive=true;void api.methods().then(m=>{if(alive){setMethods(m);setCountry(m.countries[0]??'');}}).catch(()=>{if(alive)setError('Additional sign-in methods are unavailable. Email sign-in is still available.');});
-  if(!onProof)void Keychain.getGenericPassword({service:PENDING_SERVICE}).then(c=>{if(c&&alive){const p=JSON.parse(c.password);if(p.expiresAt>Date.now()){setProof(p.proof);setStage('username');}else void Keychain.resetGenericPassword({service:PENDING_SERVICE});}}).catch(()=>undefined);
+  if(!onProof)void Keychain.getGenericPassword({service:PENDING_SERVICE}).then(c=>{if(c&&alive){const p=JSON.parse(c.password);if(p.expiresAt>Date.now()){setProof(p.proof);setName(typeof p.name==='string'?p.name:'');setStage('username');}else void Keychain.resetGenericPassword({service:PENDING_SERVICE});}}).catch(()=>undefined);
   return()=>{alive=false;};},[onProof]);
  useEffect(()=>{if(stage!=='code')return;const timer=setInterval(()=>setNow(Date.now()),1000);return()=>clearInterval(timer);},[stage]);
  async function run(work:()=>Promise<void>){if(busy)return;setBusy(true);setError('');try{await work();}catch(e){setError(e instanceof Error?e.message:'Unable to sign in. Try again.');}finally{setBusy(false);}}
- async function accept(result:api.ProviderResult){
+ async function accept(result:api.ProviderResult,suggestedName=''){
   if('tokens' in result){await acceptSession(result);await Keychain.resetGenericPassword({service:PENDING_SERVICE});setStage('closed');return;}
   if(onProof){await onProof(result.proof);setStage('closed');return;}
-  const saved=await Keychain.setGenericPassword('onboarding',JSON.stringify({proof:result.proof,expiresAt:Date.now()+result.expiresIn*1000}),{service:PENDING_SERVICE,accessible:Keychain.ACCESSIBLE.WHEN_UNLOCKED_THIS_DEVICE_ONLY});
-  if(!saved)throw Error('Secure storage unavailable. Please try again.');setProof(result.proof);setStage('username');
+  // A suggested name (Apple's, which it sends only once) is kept with the pending sign-up.
+  const saved=await Keychain.setGenericPassword('onboarding',JSON.stringify({proof:result.proof,expiresAt:Date.now()+result.expiresIn*1000,name:suggestedName}),{service:PENDING_SERVICE,accessible:Keychain.ACCESSIBLE.WHEN_UNLOCKED_THIS_DEVICE_ONLY});
+  if(!saved)throw Error('Secure storage unavailable. Please try again.');setProof(result.proof);setName(suggestedName);setStage('username');
  }
  const google=()=>run(async()=>{
   if(!providerBuild.googleWebClientId)throw Error('Google sign-in has not been configured for this build.');
@@ -43,13 +48,29 @@ export function ProviderEntry({onProof}:{onProof?:(proof:string)=>Promise<void>}
   try{await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog:true});const response=await GoogleSignin.signIn();if(!isSuccessResponse(response))return;if(!response.data.idToken)throw Error('Google did not return a sign-in token.');await accept(await api.google(response.data.idToken,!!onProof));}
   catch(e){if(isErrorWithCode(e)&&e.code===statusCodes.SIGN_IN_CANCELLED)return;throw e;}
  });
+ // The server's nonce goes to Apple (the library sends its SHA-256), which signs it into the token.
+ const apple=()=>run(async()=>{
+  const {nonce}=await api.appleNonce();
+  let response;
+  try{response=await appleAuth.performRequest({requestedOperation:appleAuth.Operation.LOGIN,requestedScopes:[appleAuth.Scope.FULL_NAME,appleAuth.Scope.EMAIL],nonce});}
+  catch(e){if((e as {code?:string}|null)?.code===appleAuth.Error.CANCELED)return;throw e;}
+  if(!response.identityToken||!response.authorizationCode)throw Error('Apple did not return a sign-in token.');
+  // Apple shares the person's name only the first time they use it with Katkee: offered as the display name.
+  const fullName=Array.from([response.fullName?.givenName,response.fullName?.familyName].filter(Boolean).join(' ').trim()).slice(0,60).join('');
+  await accept(await api.apple(response.identityToken,response.authorizationCode,!!onProof),fullName);
+ });
  const send=()=>run(async()=>{const result=await api.requestPhone(phone,country);setChallenge(result);setCode('');setResendAt(Date.now()+result.resendAfter*1000);setNow(Date.now());setStage('code');});
  const confirmSend=()=>Alert.alert('Send verification code',`Send an SMS to ${country} •••• ${phone.replace(/\D/g,'').slice(-4)}?`,[{text:'Cancel',style:'cancel'},{text:'Send code',onPress:()=>void send()}]);
  const close=()=>{if(busy)return;setStage('closed');setError('');setCode('');};
  // The server refuses someone under 18 and deletes their verified sign-in, so this one is over.
  const finish=()=>run(async()=>{try{await accept(await api.complete(proof,username,name,birthDate!));}catch(e){if(e instanceof Error&&e.message===BIRTH_DATE_MESSAGES.tooYoung){await Keychain.resetGenericPassword({service:PENDING_SERVICE});setProof('');setStage('closed');}throw e;}});
+ // Apple's own button, as prominent as Google's and above it (Human Interface Guidelines). iPhone
+ // only: Android doesn't link the library (react-native.config.js).
+ const showApple=!!methods?.apple&&Platform.OS==='ios'&&appleAuth.isSupported;
+ const showGoogle=!!methods?.google&&googleReady&&(Platform.OS!=='ios'||showApple);
  return <View>
-  {methods?.google&&googleReady&&<GoogleSigninButton style={styles.google} size={GoogleSigninButton.Size.Wide} color={GoogleSigninButton.Color.Dark} disabled={busy} onPress={()=>void google()}/>}
+  {showApple&&<AppleButton style={styles.apple} cornerRadius={8} buttonStyle={colorScheme()==='dark'?AppleButton.Style.WHITE:AppleButton.Style.BLACK} buttonType={AppleButton.Type.CONTINUE} onPress={()=>void apple()}/>}
+  {showGoogle&&<GoogleSigninButton style={styles.google} size={GoogleSigninButton.Size.Wide} color={GoogleSigninButton.Color.Dark} disabled={busy} onPress={()=>void google()}/>}
   {methods?.phone&&<Pressable style={styles.button} disabled={busy} accessibilityRole="button" onPress={()=>{setError('');setStage('phone');}}><Text style={styles.buttonText}>Continue with Phone</Text></Pressable>}
   {stage==='closed'&&error?<Text accessibilityRole="alert" style={styles.error}>{error}</Text>:null}
   <Modal visible={stage!=='closed'} animationType="slide" onRequestClose={close}>
@@ -64,4 +85,4 @@ export function ProviderEntry({onProof}:{onProof?:(proof:string)=>Promise<void>}
   </Modal>
  </View>;
 }
-const styles=StyleSheet.create({fill:{flex:1,backgroundColor:colors.background},google:{width:'100%',height:48},button:{minHeight:48,padding:14,borderRadius:10,backgroundColor:colors.surfaceElevated,marginVertical:5,alignItems:'center'},buttonText:{color:colors.textPrimary,fontWeight:'600'},modal:{flexGrow:1,padding:24,paddingTop:60,backgroundColor:colors.background,gap:16,width:'100%',maxWidth:FORM_MAX_WIDTH,alignSelf:'center'},heading:{color:colors.textPrimary,fontSize:26,fontWeight:'700'},label:{color:colors.textSecondary},input:{minHeight:48,borderWidth:1,borderColor:colors.border,padding:14,color:colors.textPrimary,borderRadius:8},inputError:{borderColor:colors.danger},error:{color:colors.danger,paddingVertical:8},available:{color:colors.success},countries:{flexDirection:'row',flexWrap:'wrap',gap:8},country:{padding:14,borderWidth:1,borderColor:colors.border,borderRadius:8},selected:{borderColor:colors.accentText}});
+const styles=StyleSheet.create({fill:{flex:1,backgroundColor:colors.background},apple:{width:'100%',height:48,marginBottom:8},google:{width:'100%',height:48},button:{minHeight:48,padding:14,borderRadius:10,backgroundColor:colors.surfaceElevated,marginVertical:5,alignItems:'center'},buttonText:{color:colors.textPrimary,fontWeight:'600'},modal:{flexGrow:1,padding:24,paddingTop:60,backgroundColor:colors.background,gap:16,width:'100%',maxWidth:FORM_MAX_WIDTH,alignSelf:'center'},heading:{color:colors.textPrimary,fontSize:26,fontWeight:'700'},label:{color:colors.textSecondary},input:{minHeight:48,borderWidth:1,borderColor:colors.border,padding:14,color:colors.textPrimary,borderRadius:8},inputError:{borderColor:colors.danger},error:{color:colors.danger,paddingVertical:8},available:{color:colors.success},countries:{flexDirection:'row',flexWrap:'wrap',gap:8},country:{padding:14,borderWidth:1,borderColor:colors.border,borderRadius:8},selected:{borderColor:colors.accentText}});

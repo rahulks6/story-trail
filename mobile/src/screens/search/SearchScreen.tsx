@@ -3,9 +3,10 @@ import { ListSkeleton } from "../../components/Skeleton";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, TextInput, View } from "react-native";
 import { Pressable } from "../../components/Pressable";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import type { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import type { MainTabParamList, SearchStackParamList } from "../../navigation/types";
+import type { MainTabParamList, RootStackParamList, SearchStackParamList } from "../../navigation/types";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import {
@@ -18,6 +19,8 @@ import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { EmptyState } from "../../components/EmptyState";
 import { Avatar } from "../../components/Avatar";
 import { VerifiedName } from "../../components/VerifiedBadge";
+import { Button } from "../../components/Form";
+import { shareInvite } from "../../state/invites";
 
 type Props = NativeStackScreenProps<SearchStackParamList, "SearchHome">;
 
@@ -31,6 +34,10 @@ type Person = (SearchResult | SuggestedPerson) & { reason?: SuggestionReason };
 /** The line under a suggestion: only what the person can already see. */
 export function suggestionReasonText(reason: SuggestionReason): string {
   switch (reason.kind) {
+    case "invited_you":
+      return "Invited you to Katkee";
+    case "joined_from_your_invite":
+      return "Joined from your invite";
     case "follows_you":
       return "Follows you";
     case "followed_by":
@@ -54,7 +61,25 @@ function followLabel(relation: ListRelationship | undefined): string {
  * cancels the request for an older one, and more results load as the list scrolls.
  */
 export function SearchScreen({ navigation }: Props): React.JSX.Element {
-  const { accessToken } = useAuth();
+  const { accessToken, user } = useAuth();
+  // Contacts on Katkee is a screen of the app's own, above the tabs.
+  const rootNavigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const invite = () => void shareInvite("search", accessToken, user?.id);
+  const findFriends = (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel="Find friends from your contacts"
+      style={styles.findFriends}
+      onPress={() => rootNavigation.navigate("ContactsOnKatkee", { from: "search" })}
+    >
+      <View style={styles.findFriendsIcon}><Icon name={ICONS.following} size={20} color={colors.textPrimary} /></View>
+      <View style={styles.rowText}>
+        <Text style={typography.bodyStrong}>Find friends from your contacts</Text>
+        <Text style={typography.caption}>See who's already on Katkee</Text>
+      </View>
+      <Icon name="chevron" size={16} color={colors.textDisabled} />
+    </Pressable>
+  );
   const input = useRef<React.ComponentRef<typeof TextInput>>(null);
   const [query, setQuery] = useState("");
   // "@name" searches for name, the way usernames appear in the app.
@@ -270,13 +295,23 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
         suggestions === null ? (
           <ListSkeleton rows={6} label="Loading suggestions" />
         ) : suggestions.length === 0 ? (
-          <EmptyState icon="search" title="Find people" message="Search by name, username or interest." />
+          <View style={styles.fill}>
+            {findFriends}
+            <EmptyState icon="search" title="Find people" message="Search by name, username or interest, or invite your friends.">
+              <Button label="Invite friends" variant="secondary" onPress={invite} />
+            </EmptyState>
+          </View>
         ) : (
           <FlatList
             data={suggestions as Person[]}
             keyExtractor={(item) => item.id}
             renderItem={renderPerson}
-            ListHeaderComponent={<Text style={[typography.label, styles.sectionTitle]} accessibilityRole="header">Suggested for you</Text>}
+            ListHeaderComponent={
+              <>
+                {findFriends}
+                <Text style={[typography.label, styles.sectionTitle]} accessibilityRole="header">Suggested for you</Text>
+              </>
+            }
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="on-drag"
             refreshing={refreshing}
@@ -294,8 +329,10 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
           {!loading && !error && results.length === 0 ? (
             <EmptyState
               title="No one found"
-              message={filter === "following" ? `No one you follow matches "${debouncedQuery}".` : `No people match "${debouncedQuery}".`}
-            />
+              message={filter === "following" ? `No one you follow matches "${debouncedQuery}".` : `No people match "${debouncedQuery}". If they're not on Katkee yet, invite them.`}
+            >
+              {filter === "all" ? <Button label="Invite friends" variant="secondary" onPress={invite} /> : null}
+            </EmptyState>
           ) : (
             <FlatList
               data={results as Person[]}
@@ -348,6 +385,27 @@ const styles = StyleSheet.create({
   filterChipLabel: { ...typography.caption, fontWeight: "600", color: colors.textSecondary },
   filterChipLabelActive: { color: colors.onAccent },
   sectionTitle: { marginTop: spacing.xs, marginBottom: spacing.xs },
+  fill: { flex: 1 },
+  findFriends: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    minHeight: 56,
+    paddingVertical: spacing.sm,
+    marginBottom: spacing.xs,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
+  },
+  findFriendsIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.surface,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+  },
   spinner: { marginTop: spacing.md },
   error: { color: colors.danger, marginTop: spacing.sm },
   row: {

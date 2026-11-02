@@ -40,6 +40,8 @@ export interface PublicUser {
   coverMediaId: string | null;
   interests: string[];
   isPrivate: boolean;
+  /** "Let people find me from their contacts" (Settings > Privacy). */
+  findableByContacts: boolean;
   /** False until the email is proved with a code; phone-only accounts have no email. */
   emailVerified: boolean;
   /** A new account whose email isn't verified yet: the app shows only the code screen. */
@@ -64,6 +66,7 @@ function toPublicUser(user: usersRepo.UserRecord): PublicUser {
     coverMediaId: user.coverMediaId,
     interests: user.interests,
     isPrivate: user.isPrivate,
+    findableByContacts: user.findableByContacts,
     emailVerified: user.emailVerified,
     emailVerificationRequired: user.emailVerificationRequired && !!user.email && !user.emailVerified,
     verified: user.verified,

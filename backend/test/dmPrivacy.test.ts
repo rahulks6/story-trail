@@ -39,7 +39,7 @@ async function signup() {
 const ADMIN_GETS = [
   "/api/v1/admin/session", "/api/v1/admin/dashboard", "/api/v1/admin/reports", "/api/v1/admin/reports/:reportId",
   "/api/v1/admin/reports/:reportId/messages",
-  "/api/v1/admin/evidence/:reportId", "/api/v1/admin/users", "/api/v1/admin/users?search=:username", "/api/v1/admin/users?search=:userId", "/api/v1/admin/users/:userId/cover",
+  "/api/v1/admin/evidence/:reportId", "/api/v1/admin/users", "/api/v1/admin/users?search=:username", "/api/v1/admin/users?search=:userId", "/api/v1/admin/users/:userId/cover", "/api/v1/admin/users/:userId/avatar",
   "/api/v1/admin/history", "/api/v1/admin/appeals", "/api/v1/admin/audit", "/api/v1/admin/audit/verify",
   "/api/v1/admin/security-alerts", "/api/v1/admin/admins", "/api/v1/admin/advertisers", "/api/v1/admin/campaigns",
   "/api/v1/admin/ad-interest-categories", "/api/v1/admin/campaigns/:campaignId/analytics", "/api/v1/admin/campaigns/:campaignId/preview", "/api/v1/admin/ad-settings",
@@ -105,6 +105,8 @@ describe("DM privacy", () => {
     const dmTable = /\b(FROM|JOIN|INTO|UPDATE)\s+(messages|conversations|conversation_reads)\b/i;
     const readers = files.filter((f) => dmTable.test(fs.readFileSync(f, "utf8"))).map((f) => path.relative(src, f)).sort();
     assert.deepEqual(readers, [
+      // A call's line in the chat ("Missed voice call"): written as an event, never read back.
+      "modules/calls/calls.repository.ts",
       "modules/conversations/conversations.repository.ts",
       // Group membership, and who sent a reported message: never a message's body.
       "modules/conversations/groups.repository.ts",
@@ -120,6 +122,8 @@ describe("DM privacy", () => {
     assert.ok(!/\bm\.(body|conversation_id)\b|SELECT\s+body/i.test(dashboard), "the dashboard only counts replies");
     const groups = fs.readFileSync(path.join(src, "modules/conversations/groups.repository.ts"), "utf8");
     assert.ok(!/\bbody\b/i.test(groups), "group membership code never reads message bodies");
+    const calls = fs.readFileSync(path.join(src, "modules/calls/calls.repository.ts"), "utf8");
+    assert.ok(!/\bbody\b|FROM\s+messages|JOIN\s+messages/i.test(calls), "calls only write their line, never read messages");
 
     const adminAndAds = files.filter((f) => /modules\/(admin|ads|recommendations|moderation|analytics)\//.test(f));
     assert.ok(adminAndAds.length >= 5);

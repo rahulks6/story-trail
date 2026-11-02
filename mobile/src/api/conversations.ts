@@ -7,13 +7,15 @@ import { apiDelete, apiGet, apiPatch, apiPost, apiPut } from "./client";
  */
 export interface PersonSummary { id: string; username: string; displayName: string; avatarMediaId?: string | null; verified?: boolean }
 
-/** A line in a group's thread about the group itself ("@asha added @dev"). */
+/** A line in a group's thread about the group itself ("@asha added @dev"), or a 1:1 call's line ("Missed voice call"). */
 export type GroupEvent =
   | { type: "created"; title: string | null }
   | { type: "added"; userIds: string[] }
   | { type: "removed"; userIds: string[] }
   | { type: "left" }
-  | { type: "renamed"; title: string | null };
+  | { type: "renamed"; title: string | null }
+  /** Sent by the caller when the call ended (backend/src/modules/calls). */
+  | { type: "call"; callId: string; media: "audio" | "video"; outcome: "completed" | "missed" | "cancelled" | "declined" | "busy" | "failed"; durationSeconds: number | null };
 
 export interface ConversationSummary {
   id: string;
@@ -240,7 +242,7 @@ export function listConversations(
 }
 
 /** One of your conversations by id (a push notification's link carries only the id). */
-export function getConversation(conversationId: string, accessToken: string): Promise<{ conversation: (ConversationWithOtherUser & { kind?: "direct"; muted?: boolean }) | GroupDetails }> {
+export function getConversation(conversationId: string, accessToken: string): Promise<{ conversation: (ConversationWithOtherUser & { kind?: "direct"; muted?: boolean; /** Voice and video calls work in this chat (absent from servers before calls). */ callsAvailable?: boolean }) | GroupDetails }> {
   return apiGet(`/api/v1/conversations/${encodeURIComponent(conversationId)}?groups=1`, accessToken);
 }
 

@@ -57,6 +57,9 @@ export interface SearchResult {
 
 /** Why someone is suggested; only facts the person can already see. */
 export type SuggestionReason =
+  // From an invite link: they invited you, or they joined from yours.
+  | { kind: "invited_you" }
+  | { kind: "joined_from_your_invite" }
   | { kind: "follows_you" }
   | { kind: "followed_by"; username: string; others: number }
   | { kind: "shared_interest"; interest: string }
@@ -97,7 +100,7 @@ export function getSuggestions(accessToken: string, signal?: AbortSignal): Promi
 }
 
 export function updateMyProfile(
-  input: { username?: string; displayName?: string; bio?: string; isPrivate?: boolean; interests?: string[]; avatarMediaId?: string | null; coverMediaId?: string | null },
+  input: { username?: string; displayName?: string; bio?: string; isPrivate?: boolean; findableByContacts?: boolean; interests?: string[]; avatarMediaId?: string | null; coverMediaId?: string | null },
   accessToken: string,
 ) {
   return apiPatch<{ user: PublicUser }>("/api/v1/users/me", input, accessToken);

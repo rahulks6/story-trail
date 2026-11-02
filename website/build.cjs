@@ -147,6 +147,14 @@ const TYPES = {
  * markers are in the manifest so the two never disagree.
  */
 const OPEN_MARKERS = { appLink: '%APP_LINK%', linkPath: '%LINK_PATH%' };
+/**
+ * The invite page (/i/<code>) works the same way, and also says whose invite it is: the API puts
+ * "<name> invited you to Katkee" (or a plain "You're invited" for a link that doesn't work) in the
+ * headline, which is the page title too, so a link preview in a chat names the friend.
+ */
+const INVITE_MARKERS = { appLink: '%INVITE_APP_LINK%', linkPath: '%INVITE_PATH%', headline: '%INVITE_HEADLINE%' };
+/** Which page each set of per-request markers belongs on. */
+const MARKERS_BY_FILE = { 'open.html': OPEN_MARKERS, 'invite.html': INVITE_MARKERS };
 const FINGERPRINT = /^([0-9A-F]{2}:){31}[0-9A-F]{2}$/;
 
 function hashed(name, data) {
@@ -174,7 +182,7 @@ function getKatkee(site) {
 
 /**
  * The files that let katkee.com links open the app directly (Android App Links, iOS Universal
- * Links), for the paths of shared profiles and Stories. iOS needs the Apple Team ID: without it
+ * Links), for the paths of shared profiles, Stories and invites. iOS needs the Apple Team ID: without it
  * there's no file, and links open the "Open in Katkee" page in Safari instead.
  */
 function appLinkFiles(site) {
@@ -191,7 +199,7 @@ function appLinkFiles(site) {
   if (ios.teamId) {
     if (!/^[A-Z0-9]{10}$/.test(ios.teamId)) throw new Error(`appLinks.ios.teamId ${ios.teamId} is not an Apple Team ID (10 letters and digits)`);
     files['/.well-known/apple-app-site-association'] = ['apple-app-site-association.json', Buffer.from(JSON.stringify({
-      applinks: { details: [{ appIDs: [`${ios.teamId}.${ios.bundleId}`], components: [{ '/': '/u/*' }, { '/': '/s/*' }] }] },
+      applinks: { details: [{ appIDs: [`${ios.teamId}.${ios.bundleId}`], components: [{ '/': '/u/*' }, { '/': '/s/*' }, { '/': '/i/*' }] }] },
     }, null, 2) + '\n')];
   }
   return files;
@@ -251,6 +259,8 @@ ${doc.html}
     // Shared links (/u/<username>, /s/<story id>) for people without the app. It says nothing
     // about the account or Story: those may be private, blocked or gone.
     { route: null, file: 'open.html', title: `Open in ${site.name}`, description: `Someone shared this with you on ${site.name}. Open it in the app.`, content: read('src/pages/open.html'), body: 'open', url: `${site.origin}/${OPEN_MARKERS.linkPath}`, appLink: OPEN_MARKERS.appLink },
+    // Invite links (/i/<code>) from Settings > Invite friends. noindex, like the open page.
+    { route: null, file: 'invite.html', title: INVITE_MARKERS.headline, description: `Join your friends on ${site.name}: Stories with the people you know.`, content: read('src/pages/invite.html'), body: 'open', url: `${site.origin}/${INVITE_MARKERS.linkPath}` },
   ];
   const routes = new Set(pages.filter((p) => p.route).map((p) => p.route));
   const layout = read('src/layout.html');
@@ -275,8 +285,9 @@ ${doc.html}
     if (/<script|\son[a-z]+=|\sstyle=|javascript:/i.test(html)) throw new Error(`${page.file}: scripts and inline styles are not allowed (the site's Content-Security-Policy blocks them)`);
     for (const [, href] of html.matchAll(/\shref="([^"]+)"/g)) {
       if (href.startsWith('#') || href.startsWith('mailto:')) continue;
-      // The open page's own address and app link are filled in per request by the API.
-      if (page.file === 'open.html' && (href === OPEN_MARKERS.appLink || href === page.url)) continue;
+      // The open and invite pages' own addresses and app links are filled in per request by the API.
+      const own = MARKERS_BY_FILE[page.file];
+      if (own && (href === own.appLink || href === page.url)) continue;
       const local = href.startsWith(site.origin) ? href.slice(site.origin.length) || '/' : href;
       if (!local.startsWith('/')) { if (!/^https:\/\//.test(local)) throw new Error(`${page.file}: link ${href} must be https`); continue; }
       const pathname = local.split('#')[0].split('?')[0];
@@ -285,8 +296,10 @@ ${doc.html}
     for (const [, email] of html.matchAll(/mailto:([^"?]+)/g)) {
       if (!Object.values(site.contact).includes(email)) throw new Error(`${page.file}: ${email} is not one of the contact addresses in site.json`);
     }
-    for (const marker of Object.values(OPEN_MARKERS)) {
-      if (html.includes(marker) !== (page.file === 'open.html')) throw new Error(`${page.file}: ${marker} belongs on open.html only`);
+    for (const [file, markers] of Object.entries(MARKERS_BY_FILE)) {
+      for (const marker of Object.values(markers)) {
+        if (html.includes(marker) !== (page.file === file)) throw new Error(`${page.file}: ${marker} belongs on ${file} only`);
+      }
     }
     files.set(page.file, Buffer.from(html));
   }
@@ -316,6 +329,7 @@ ${doc.html}
     pages: Object.fromEntries(pages.filter((p) => p.route).map((p) => [p.route, p.file])),
     notFound: '404.html',
     openInApp: { file: 'open.html', markers: OPEN_MARKERS },
+    invite: { file: 'invite.html', markers: INVITE_MARKERS },
     assets,
     files: Object.fromEntries(Object.entries(rootFiles).map(([route, [file]]) => [route, { file, type: TYPES[path.extname(file)] }])),
   };

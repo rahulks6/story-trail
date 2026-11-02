@@ -6,8 +6,9 @@ import { ActivityIndicator, Linking, View } from "react-native";
 import { createNavigationContainerRef, DarkTheme, DefaultTheme, NavigationContainer, type LinkingOptions, type Theme } from "@react-navigation/native";
 import { InAppNotificationBanner } from "../components/InAppNotificationBanner";
 import { colorScheme } from "../theme/colors";
-import { deepLinkTarget, LINK_PREFIXES, linkPath, opensInApp } from "./profileLinks";
+import { callIdFromLink, deepLinkTarget, LINK_PREFIXES, linkPath, opensInApp } from "./profileLinks";
 import { initialNotificationLink, onNotificationOpened } from "../push/pushNotifications";
+import { useCallsIfAvailable } from "../calls/CallContext";
 import { usePushRegistration } from "../push/usePushRegistration";
 import { useAreaSync } from "../state/nearby";
 import { NearbyPrompt } from "../components/NearbyPrompt";
@@ -50,6 +51,9 @@ import { SendStoryScreen } from "../screens/dm/SendStoryScreen";
 import { ForwardScreen } from "../screens/dm/ForwardScreen";
 import { setCurrentScreen } from "../crashReporting";
 import { MEDIA_TRANSITION, PUSH_TRANSITION } from "./transitions";
+import { ContactsScreen } from "../screens/profile/ContactsScreen";
+import { InviteLinkScreen } from "../screens/profile/InviteLinkScreen";
+import { savePendingInvite, useInviteRedemption } from "../state/invites";
 
 /** The screen on view, deepest navigator first (crash reports say where they happened). */
 export function focusedRouteName(state: { index?: number; routes: Array<{ name: string; state?: unknown }> } | undefined): string | undefined {
@@ -290,6 +294,18 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         }}
       />
       <Stack.Screen
+        name="ContactsOnKatkee"
+        component={ContactsScreen}
+        options={{
+          headerShown: true,
+          title: "Contacts on Katkee",
+          headerStyle: { backgroundColor: colors.background },
+          headerTintColor: colors.textPrimary,
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen name="InviteLink" component={InviteLinkScreen} options={{ presentation: "modal" }} />
+      <Stack.Screen
         name="FollowList"
         component={FollowListScreen}
         options={({ route }) => ({
@@ -322,17 +338,24 @@ export function RootNavigator(): React.JSX.Element {
   usePushRegistration();
   useAreaSync();
   useAnalytics();
+  // An invite opened before signing up is redeemed once someone signs in (state/invites.ts).
+  useInviteRedemption();
   const pendingLink = useRef<string | null>(null);
   const navigationRef = useMemo(() => createNavigationContainerRef<RootStackParamList>(), []);
   // The linking listener below, so a tapped in-app banner opens its link like a tapped notification.
   const openLink = useRef<((url: string) => void) | null>(null);
+  // A ringing call's notification (katkee://call/<id>) opens the call screen, not a screen of the app.
+  const calls = useCallsIfAvailable();
+  const openCallLink = useRef(calls?.openCallLink);
+  openCallLink.current = calls?.openCallLink;
   // A profile or Story link that arrives while signed out opens after sign-in.
   useEffect(() => {
     if (status === "signedIn") return;
     const subscription = Linking.addEventListener("url", ({url}) => {
       const path = linkPath(url);
       const target = path === null ? null : deepLinkTarget(path);
-      if (target && target.kind !== "resetPassword" && opensInApp(url)) pendingLink.current = url;
+      // Invites are kept on their own (savePendingInvite, below), not replayed as a link.
+      if (target && target.kind !== "resetPassword" && target.kind !== "invite" && opensInApp(url)) pendingLink.current = url;
     });
     return () => subscription.remove();
   }, [status]);
@@ -341,13 +364,20 @@ export function RootNavigator(): React.JSX.Element {
     getInitialURL: async () => {
       const url = pendingLink.current ?? await Linking.getInitialURL() ?? await initialNotificationLink();
       pendingLink.current = null;
+      if (callIdFromLink(url)) {
+        openCallLink.current?.(url!);
+        return null;
+      }
       return url && opensInApp(url) ? url : null;
     },
     // Links opened from outside, plus taps on push notifications while the app runs.
     subscribe: listener => {
       openLink.current = listener;
       const links = Linking.addEventListener("url", ({ url }) => { if (opensInApp(url)) listener(url); });
-      const stopNotifications = onNotificationOpened(listener);
+      const stopNotifications = onNotificationOpened((url) => {
+        if (callIdFromLink(url)) openCallLink.current?.(url);
+        else listener(url);
+      });
       return () => {
         links.remove();
         stopNotifications();
@@ -370,14 +400,20 @@ export function RootNavigator(): React.JSX.Element {
       if (target?.kind === "followRequests") return { routes: [{ name: "Main" }, { name: "FollowRequests" }] };
       if (target?.kind === "verification") return { routes: [{ name: "Main" }, { name: "Settings" }, { name: "Verification" }] };
       if (target?.kind === "scheduled") return { routes: [{ name: "Main" }, { name: "Archive" }, { name: "ScheduledStories" }] };
+      if (target?.kind === "invite") return { routes: [{ name: "Main" }, { name: "InviteLink", params: { code: target.code } }] };
       return undefined;
     },
   }), []);
-  // Signed out, only password-reset links are meaningful.
+  // Signed out, password-reset links open their screen; an invite is kept for after sign-up and
+  // opens Sign up, the reason someone taps a friend's invite.
   const signedOutLinking = useMemo<LinkingOptions<AuthStackParamList>>(() => ({
     prefixes: LINK_PREFIXES,
     getStateFromPath: path => {
       const target = deepLinkTarget(path);
+      if (target?.kind === "invite") {
+        void savePendingInvite(target.code);
+        return { routes: [{ name: "Login" }, { name: "Signup" }] };
+      }
       if (target?.kind !== "resetPassword") return undefined;
       const { kind: _kind, ...params } = target;
       return { routes: [{ name: "Login" }, { name: "ResetPassword", params }] };

@@ -8,6 +8,7 @@ import { after, before, describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import type { AddressInfo } from "node:net";
+import { inviteCodeFor } from "../src/modules/growth/invites";
 import { buildApp } from "../src/app";
 import { query, queryOne } from "../src/db/psql";
 import { buildTestPng } from "./fixtures";
@@ -178,6 +179,22 @@ describe("a private account's Story", () => {
     assert.equal(await count(`story_comments WHERE story_id = :'story' AND deleted_at IS NULL`, p), 1, "the follower's comment is intact, none added");
     assert.equal((await request("GET", s, undefined, owner.auth)).status, 200, "the Story is still there");
     assert.equal((await request("GET", s, undefined, friend.auth)).status, 200, "and its follower still sees it");
+  });
+
+  it("its stickers, Add Yours chain and collab can't be answered, read or taken over by a stranger", async () => {
+    const s = `/api/v1/stories/${ids.story}`;
+    const st = `${s}/stickers/poll-1`;
+    refused(await attempt("POST /api/v1/stories/:id/stickers/:stickerId/vote", `${st}/vote`, stranger, { option: 0 }), "vote");
+    refused(await attempt("POST /api/v1/stories/:id/stickers/:stickerId/answers", `${st}/answers`, stranger, { body: "hi" }), "answer");
+    refused(await attempt("PUT /api/v1/stories/:id/stickers/:stickerId/reminder", `${st}/reminder`, stranger), "remind");
+    refused(await attempt("DELETE /api/v1/stories/:id/stickers/:stickerId/reminder", `${st}/reminder`, stranger), "unremind");
+    refused(await attempt("GET /api/v1/stories/:id/stickers/:stickerId/responses", `${st}/responses`, friend), "responses");
+    refused(await attempt("DELETE /api/v1/stories/:id/stickers/:stickerId/responses/:responseId", `${st}/responses/${randomUUID()}`, friend), "delete response");
+    refused(await attempt("GET /api/v1/add-yours/:chainId", `/api/v1/add-yours/${randomUUID()}`, stranger), "chain");
+    refused(await attempt("POST /api/v1/stories/:id/collab/accept", `${s}/collab/accept`, stranger), "accept collab");
+    refused(await attempt("POST /api/v1/stories/:id/collab/decline", `${s}/collab/decline`, stranger), "decline collab");
+    refused(await attempt("DELETE /api/v1/stories/:id/collab", `${s}/collab`, stranger), "end collab");
+    assert.equal(await count(`story_sticker_votes WHERE story_id = :'id'`, { id: ids.story }), 0);
   });
 
   it("a follow request alone opens nothing", async () => {
@@ -399,6 +416,22 @@ describe("the Admin API", () => {
         if (method === "GET") assert.equal(strip(reply.text), nobody, key);
       }
     }
+  });
+});
+
+describe("invite links", () => {
+  it("an invite link (katkee.com/i/, the sign-up lookup) shows the inviter's name and nothing private", async () => {
+    const code = await inviteCodeFor(owner.id);
+    const lookup = await attempt("GET /api/v1/invites/:code", `/api/v1/invites/${code}`, null);
+    assert.equal(lookup.status, 200);
+    assert.deepEqual(Object.keys(JSON.parse(lookup.text).inviter).sort(), ["displayName", "username", "verified"]);
+    for (const method of ["GET", "HEAD"]) {
+      const page = await attempt(`${method} /i/:code`, `/i/${code}`, stranger);
+      assert.equal(page.status, 200, method);
+      for (const secret of [...Object.values(SECRET), owner.email]) assert.ok(!page.text.includes(secret), `invite page leaked ${secret}`);
+    }
+    for (const secret of [...Object.values(SECRET), owner.email]) assert.ok(!lookup.text.includes(secret), `invite lookup leaked ${secret}`);
+    refused(await request("GET", "/api/v1/invites/notarealcode", undefined, {}), "unknown invite", [404, 422]);
   });
 });
 

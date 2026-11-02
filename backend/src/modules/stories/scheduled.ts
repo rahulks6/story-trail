@@ -129,6 +129,10 @@ export async function scheduleStory(ownerId: string, input: PublishStoryInput, p
   if (!requestId) throw new ValidationError({ requestId: "A scheduled Story needs a request id." });
   await assertCanContribute(ownerId);
   await assertLinksAllowed(captionText(input), "caption", ownerId);
+  // Link stickers and a collaborator are checked as a publish checks them (stories.service.ts);
+  // at publish time publish_story_once sends the collab invitation (migration 0063).
+  const { assertStickersAndCollab } = await import("./stories.service");
+  await assertStickersAndCollab(ownerId, input);
   if (input.music) input = { ...input, music: await validateStoryMusic(input.music) };
   // Hashed as the app sent it (the request path's rule), so a retry still matches its schedule.
   const hash = createHash("sha256").update(JSON.stringify(input)).digest("hex");

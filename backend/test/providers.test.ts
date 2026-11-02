@@ -10,7 +10,7 @@ import {liveProviders} from '../src/modules/auth/providers';
 import {clipText} from '../src/shared/validation';
 let sends=0;const tag=randomUUID().slice(0,8);
 // Only the remote gateway is a test double. All HTTP, SQL, uniqueness, and session behavior is real.
-const server=buildApp({async google(token){if(!token.startsWith('verified-'))throw new HttpError(401,'Invalid test assertion');return {subject:token+'-'+tag,email:token==='verified-collision'?`collision-${tag}@example.com`:token==='verified-email'?`google-${tag}@example.com`:null,displayName:'Provider test'};},async sendPhone(){sends++;return 'VE'+'3'.repeat(32);},async checkPhone(_sid,code){return code==='246810';}});
+const server=buildApp({async google(token){if(!token.startsWith('verified-'))throw new HttpError(401,'Invalid test assertion');return {subject:token+'-'+tag,email:token==='verified-collision'?`collision-${tag}@example.com`:token==='verified-email'?`google-${tag}@example.com`:null,displayName:'Provider test'};},apple:liveProviders.apple,async sendPhone(){sends++;return 'VE'+'3'.repeat(32);},async checkPhone(_sid,code){return code==='246810';}});
 let base:string;
 before(async()=>{await new Promise<void>(r=>server.listen(0,r));base=`http://127.0.0.1:${(server.address() as AddressInfo).port}`;});after(()=>new Promise<void>(r=>server.close(()=>r())));
 async function req(path:string,data?:unknown,token?:string,method='POST'){const r=await fetch(base+'/api/v1/auth/'+path,{method,headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},...(data===undefined?{}:{body:JSON.stringify(data)})});return {status:r.status,body:r.status===204?null:await r.json() as any};}

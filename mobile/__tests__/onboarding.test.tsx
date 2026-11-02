@@ -18,6 +18,14 @@ jest.mock("../src/api/users", () => ({
   unfollowUser: jest.fn(),
 }));
 jest.mock("../src/components/Avatar", () => ({ Avatar: () => null }));
+jest.mock("../src/state/invites", () => ({ shareInvite: jest.fn() }));
+// The contacts step's own behaviour is tested in contacts.test.tsx.
+jest.mock("../src/components/ContactsFinder", () => ({
+  ContactsFinder: ({ header, footer }: { header: React.ReactNode; footer: React.ReactNode }) => {
+    const { Text: T, View: V } = require("react-native");
+    return <V>{header}<T>Find friends from your contacts</T>{footer}</V>;
+  },
+}));
 const api = usersApi as jest.Mocked<typeof usersApi>;
 const person = (username: string, reason: usersApi.SuggestedPerson["reason"]) =>
   ({ id: `id-${username}`, username, displayName: username, avatarMediaId: null, isPrivate: false, reason, viewer: {} }) as unknown as usersApi.SuggestedPerson;
@@ -64,18 +72,25 @@ test("picks up to five interests, saves them, then suggests people to follow", a
   expect(api.followUser).toHaveBeenCalledWith("asha", "token");
   expect(pressable("Following @asha")).toBeTruthy();
 
-  await press("Done");
+  await press("Next");
+  expect(finish).not.toHaveBeenCalled();
+  expect(texts()).toEqual(expect.arrayContaining(["Step 3 of 3", "Find friends from your contacts"]));
+  await press("Start using Katkee");
   expect(finish).toHaveBeenCalled();
   expect(await needsOnboarding(me)).toBe(false);
 });
 
-test("both steps can be skipped, and with nobody to suggest it offers an invite", async () => {
+test("every step can be skipped, and with nobody to suggest it offers an invite", async () => {
   api.getSuggestions.mockResolvedValueOnce({ suggestions: [] });
   await press("Skip");
   await settle();
   expect(api.updateMyProfile).not.toHaveBeenCalled();
   expect(texts()).toEqual(expect.arrayContaining(["You're one of the first here"]));
   expect(pressable("Invite friends")).toBeTruthy();
+  const { shareInvite } = jest.requireMock("../src/state/invites") as { shareInvite: jest.Mock };
+  await press("Invite friends");
+  expect(shareInvite).toHaveBeenCalledWith("onboarding", "token", "u-new");
+  await press("Skip");
   await press("Start using Katkee");
   expect(finish).toHaveBeenCalled();
 });

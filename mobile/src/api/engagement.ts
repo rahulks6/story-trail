@@ -1,6 +1,6 @@
 import { apiDelete, apiGet, apiPost } from "./client";
 import type { Overlay, DrawStroke, StoryCrop } from "../models/storyDraft";
-import type { StoryMusic } from "./stories";
+import type { StoryCollab, StoryMusic } from "./stories";
 
 export interface StoryDetail {
   id: string;
@@ -26,6 +26,8 @@ export interface StoryDetail {
   audioMuted: boolean;
   crop: StoryCrop;
   music?: StoryMusic | null;
+  /** A Collab Story's two creators (see stories.ts's StoryCollab). */
+  collab?: StoryCollab | null;
 }
 
 export interface Comment {

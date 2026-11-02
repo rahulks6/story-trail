@@ -29,7 +29,7 @@ test('website/public is exactly what the sources build',()=>{
 
 test('every page is well-formed, self-contained and accessible',()=>{
  const manifest=JSON.parse(fs.readFileSync(path.join(root,'website/public/manifest.json'),'utf8'));
- const pages=[...Object.values(manifest.pages),manifest.notFound,manifest.openInApp.file];
+ const pages=[...Object.values(manifest.pages),manifest.notFound,manifest.openInApp.file,manifest.invite.file];
  const ids=new Map(pages.map(p=>[p,new Set([...fs.readFileSync(path.join(root,'website/public',p),'utf8').matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]))]));
  for(const page of pages){
   const html=fs.readFileSync(path.join(root,'website/public',page),'utf8');
@@ -85,7 +85,7 @@ test('the build refuses broken links, unknown addresses, scripts, inline styles 
   ['website/src/pages/index.html','{{{storeButtons}}}','{{{storeButton}}}',/unknown placeholder \{\{storeButton\}\}/],
   ['website/src/pages/support.html','href="/delete-account"','href="http://katkee.com/delete-account"',/must be https/],
   ['legal/TERMS_OF_SERVICE.md','[Privacy Policy](./PRIVACY_POLICY.md)','[Privacy Policy](./PRIVACY.md)',/unsupported link \.\/PRIVACY\.md/],
-  ['legal/PRIVACY_POLICY.md','**Last updated:** 26 October 2026','Updated recently.',/needs a "\*\*Last updated:\*\* <date>" line/],
+  ['legal/PRIVACY_POLICY.md','**Last updated:** 2 November 2026','Updated recently.',/needs a "\*\*Last updated:\*\* <date>" line/],
   ['legal/PRIVACY_POLICY.md','## 9. Katkee is for adults','> ## 9. Katkee is for adults',/unsupported Markdown/],
   ['website/src/pages/support.html','href="/terms#grievances"','href="/terms#grievance"',/link \/terms#grievance names no section on terms\.html/],
   ['website/site.json','"origin": "https://katkee.com"','"origin": "http://katkee.com"',/exact https:\/\/ origin/],
@@ -117,7 +117,7 @@ test('shared links: one noindex "Open in Katkee" page, and the files that let th
  s.edit('website/site.json','"googlePlay": ""','"googlePlay": "https://play.google.com/store/apps/details?id=com.katkee.app"');
  const live=s.run();
  assert.deepEqual(JSON.parse(live.get('apple-app-site-association.json').toString()),
-  {applinks:{details:[{appIDs:['ABCDE12345.com.katkee.app'],components:[{'/':'/u/*'},{'/':'/s/*'}]}]}});
+  {applinks:{details:[{appIDs:['ABCDE12345.com.katkee.app'],components:[{'/':'/u/*'},{'/':'/s/*'},{'/':'/i/*'}]}]}});
  assert.deepEqual(JSON.parse(live.get('manifest.json').toString()).files['/.well-known/apple-app-site-association'],{file:'apple-app-site-association.json',type:'application/json'});
  const liveOpen=live.get('open.html').toString();
  assert.match(liveOpen,/<h2 class="open-get">Get Katkee<\/h2>/);
@@ -133,6 +133,24 @@ test('shared links: one noindex "Open in Katkee" page, and the files that let th
   bad.edit('website/site.json',from,to);
   assert.throws(bad.run,error,to);
  }
+});
+
+test('invite links: one noindex page whose headline, title and app link the API fills in',t=>{
+ const files=build();
+ const invite=files.get('invite.html').toString();
+ const markers=JSON.parse(files.get('manifest.json').toString()).invite.markers;
+ assert.deepEqual(markers,{appLink:'%INVITE_APP_LINK%',linkPath:'%INVITE_PATH%',headline:'%INVITE_HEADLINE%'});
+ assert.match(invite,/<meta name="robots" content="noindex">/);
+ assert.ok(invite.includes(`<title>${markers.headline}</title>`),'a chat preview of the link names the friend');
+ assert.ok(invite.includes(`<h1>${markers.headline}</h1>`));
+ assert.ok(invite.includes(`<a class="button" href="${markers.appLink}">Open invite in Katkee</a>`));
+ assert.ok(invite.includes(`<link rel="canonical" href="${site.origin}/${markers.linkPath}">`));
+ // Honest about attribution: after installing, come back and open the link.
+ assert.match(invite,/Come back to this page and tap <strong>Open invite in Katkee<\/strong>/);
+ for(const page of [...files.keys()].filter(f=>f.endsWith('.html')&&f!=='invite.html'))assert.ok(!files.get(page).toString().includes('%INVITE_'),`${page} has no invite markers`);
+ const s=sandbox(t);
+ s.edit('website/src/pages/404.html','</section>','<p>%INVITE_HEADLINE%</p></section>');
+ assert.throws(s.run,/%INVITE_HEADLINE% belongs on invite\.html only/);
 });
 
 test('the legal pages render the Markdown faithfully',()=>{

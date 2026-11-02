@@ -28,7 +28,12 @@ import {
   type TextOverlayProperties,
   type LocationOverlayProperties,
   type DateTimeOverlayProperties,
+  type InteractiveProperties,
+  isInteractive,
 } from "../../models/storyDraft";
+import { currentCreateSeed, clearCreateSeed } from "../../state/createSeed";
+import { CollabPickerSheet } from "../../components/CollabPickerSheet";
+import type { CollabPerson } from "../../api/stories";
 import { DraggableCanvasObject } from "../../components/DraggableCanvasObject";
 import { OverlayBody } from "../../components/OverlayBody";
 import { PlacedOverlay } from "../../components/PlacedOverlay";
@@ -134,6 +139,9 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   // Who can comment and share, remembered from your last Story (Story settings sheet).
   const [settings, setSettings] = useState<StorySettings>(DEFAULT_STORY_SETTINGS);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  // Collab Stories: one person invited to share this Story (never with Close Friends).
+  const [collaborator, setCollaborator] = useState<CollabPerson | null>(null);
+  const [collabOpen, setCollabOpen] = useState(false);
   const [captionFocused, setCaptionFocused] = useState(false);
   // This Story's topic (Story settings sheet): chosen for each Story, never remembered for the next.
   const [topic, setTopic] = useState<string | null>(null);
@@ -355,11 +363,12 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   const festival = useFestival().current?.festival ?? null;
   const [joinFestival, setJoinFestival] = useState(true);
 
-  const addSticker = useCallback((payload: StickerAddPayload) => {
+  const addSticker = useCallback((payload: StickerAddPayload, place: { y?: number } = {}) => {
     const overlay = {
-      id: `${payload.type}-${Date.now()}`,
+      // The counter too: a seeded Story adds two in the same millisecond.
+      id: `${payload.type}-${Date.now()}-${nextZIndex.current}`,
       x: 0.5,
-      y: 0.5,
+      y: place.y ?? 0.5,
       scale: 1,
       rotation: 0,
       zIndex: nextZIndex.current++,
@@ -373,13 +382,30 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
     setDraft((d) => ({ ...d, overlays: d.overlays.map((o) => (o.id === id ? { ...o, ...patch } : o)) }));
   }, []);
 
-  /** Location/date-time content edit — geometry (position/scale/rotation) stays exactly where it was. */
-  const updateOverlayContent = useCallback((id: string, properties: LocationOverlayProperties | DateTimeOverlayProperties) => {
+  /** Location/date-time/interactive sticker content edit — geometry (position/scale/rotation) stays exactly where it was. */
+  const updateOverlayContent = useCallback((id: string, properties: LocationOverlayProperties | DateTimeOverlayProperties | InteractiveProperties) => {
     setDraft((d) => ({
       ...d,
-      overlays: d.overlays.map((o) => ((o.type === "location" || o.type === "datetime") && o.id === id ? ({ ...o, properties } as Overlay) : o)),
+      overlays: d.overlays.map((o) => ((o.type === "location" || o.type === "datetime" || isInteractive(o)) && o.id === id ? ({ ...o, properties } as Overlay) : o)),
     }));
   }, []);
+
+  // Started from someone's "Add yours" (or sharing an answer to your question): the prompt is
+  // already on the Story, low on the photo where it doesn't cover a face.
+  const seededFor = useRef<string | null>(null);
+  useEffect(() => {
+    const seed = currentCreateSeed();
+    if (!seed || !restored || seededFor.current === mediaUri) return;
+    seededFor.current = mediaUri;
+    if (seed.kind === "addYours") {
+      if (draft.overlays.some((o) => o.type === "addYours")) return;
+      addSticker({ type: "addYours", properties: { prompt: seed.prompt, chainId: seed.chainId } }, { y: 0.72 });
+    } else {
+      addSticker({ type: "text", properties: { text: seed.prompt, style: "Bold", color: "#0B0B0B", backgroundColor: "#FFFFFF", align: "center", fontSize: 0.032 } }, { y: 0.36 });
+      addSticker({ type: "text", properties: { text: seed.answer, style: "Clean", color: "#FFFFFF", backgroundColor: null, align: "center", fontSize: 0.045 } }, { y: 0.48 });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [restored, mediaUri]);
 
   const deleteOverlay = useCallback((id: string) => {
     setDraft((d) => ({ ...d, overlays: d.overlays.filter((o) => o.id !== id) }));
@@ -448,7 +474,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
       if (o?.type === "text") {
         setEditingOverlayId(id);
         setTextModalVisible(true);
-      } else if (o?.type === "location" || o?.type === "datetime") {
+      } else if (o && (o.type === "location" || o.type === "datetime" || isInteractive(o))) {
         openStickerEditor(id);
       }
     },
@@ -635,6 +661,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           ...(festival && joinFestival && target === "public" ? { festival: festival.slug } : {}),
           ...(topic ? { topic } : {}),
           ...(publishAt ? { publishAt: publishAt.toISOString() } : {}),
+          ...(collaborator && target !== "close_friends" ? { collaboratorId: collaborator.id } : {}),
         },
         boomerang ? "boomerang" : undefined,
       );
@@ -642,6 +669,8 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
       tapFeedback("success");
       if (publishAt) showToast(`Scheduled for ${scheduleText(publishAt)}`);
       void clearPendingDraft(user.id, mediaUri);
+      // The "Add yours" (or shared answer) this Story was started from is used up.
+      clearCreateSeed();
       // Back to Home, where a small status shows the Story sharing (components/UploadStatusPill).
       rootNavigation.reset({ index: 0, routes: [{ name: "Main" }] });
     } catch (err) {
@@ -955,6 +984,18 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             </Pressable>
           </View>
 
+          {/* Collab: one person who'll share this Story with their followers once they accept. */}
+          <Pressable
+            onPress={() => setCollabOpen(true)}
+            hitSlop={8}
+            style={[styles.visibility, collaborator && styles.collabOn]}
+            accessibilityRole="button"
+            accessibilityLabel={collaborator ? `Collab with @${collaborator.username}. Change` : "Invite a collaborator"}
+          >
+            {collaborator ? <Avatar username={collaborator.username} avatarMediaId={collaborator.avatarMediaId} size={18} /> : <Icon name={ICONS.add} size={14} color={colors.textPrimary} />}
+            <Text style={styles.visibilityLabel} numberOfLines={1}>{collaborator ? `With @${collaborator.username}` : "Invite collaborator"}</Text>
+          </Pressable>
+
           {uploadError ? (
             <View>
               <Text style={styles.uploadError}>{uploadError}</Text>
@@ -988,6 +1029,14 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               style={[styles.shareButton, styles.shareCloseFriends, uploadState === "uploading" && styles.uploadButtonDisabled]}
               disabled={uploadState === "uploading" || uploadState === "done"}
               onPress={() => {
+                // A Close Friends list is yours alone: there's no second audience to share it with.
+                if (collaborator) {
+                  Alert.alert("Collab Stories go to Your story", `Sharing with Close Friends leaves out @${collaborator.username}.`, [
+                    { text: "Cancel", style: "cancel" },
+                    { text: "Share without collab", onPress: () => { setCollaborator(null); void onShare("close_friends"); } },
+                  ]);
+                  return;
+                }
                 if (hasCloseFriends === false) {
                   Alert.alert("No Close Friends yet", "Add people to your Close Friends list, then share to them.", [
                     { text: "Not now", style: "cancel" },
@@ -1066,7 +1115,9 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         editingOverlay={editingStickerOverlay}
         initialTab={stickerTab}
         onEditDone={updateOverlayContent}
+        usedInteractiveTypes={draft.overlays.filter((o) => isInteractive(o) && o.id !== editingStickerOverlayId).map((o) => o.type)}
       />
+      <CollabPickerSheet visible={collabOpen} current={collaborator} onChoose={setCollaborator} onClose={() => setCollabOpen(false)} />
       <OverlayAdjustSheet
         overlay={selectedOverlay}
         onChange={updateOverlay}
@@ -1157,6 +1208,7 @@ const styles = StyleSheet.create({
   visibilityShrink: { flexShrink: 1 },
   scheduleOn: { backgroundColor: colors.accent },
   scheduleOnLabel: { color: colors.onAccent },
+  collabOn: { borderWidth: 1, borderColor: colors.accent },
   shareRow: { flexDirection: "row", gap: spacing.sm },
   shareButton: { flex: 1, minHeight: 48, paddingVertical: spacing.sm, paddingHorizontal: spacing.sm, borderRadius: radii.pill, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm },
   shareYourStory: { backgroundColor: colors.textPrimary },

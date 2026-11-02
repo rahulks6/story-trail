@@ -12,6 +12,7 @@ import { ActionSheet } from "../../components/ActionSheet";
 import { appearanceChoice, setAppearance, type AppearanceChoice } from "../../theme/appearance";
 import { nearbyChoice, turnNearbyOff, turnNearbyOn } from "../../state/nearby";
 import { professionalCategoryLabel } from "../../api/professional";
+import { shareInvite } from "../../state/invites";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Settings">;
 
@@ -41,6 +42,9 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
   const [togglingPrivacy, setTogglingPrivacy] = useState(false);
   // A professional account stays public (the server refuses otherwise): switching back comes first.
   const professional = !!user?.professionalCategory;
+  // Missing from older servers' answers: it has always been on there.
+  const [findable, setFindable] = useState(user?.findableByContacts ?? true);
+  const [togglingFindable, setTogglingFindable] = useState(false);
   const [draftCount, setDraftCount] = useState<number | null>(null);
   const [pendingRequestCount, setPendingRequestCount] = useState<number | null>(null);
   const [nearbyOn, setNearbyOn] = useState<boolean | null>(null);
@@ -49,6 +53,9 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
   useEffect(() => {
     setIsPrivate(user?.isPrivate ?? false);
   }, [user?.isPrivate]);
+  useEffect(() => {
+    setFindable(user?.findableByContacts ?? true);
+  }, [user?.findableByContacts]);
 
   useFocusEffect(
     useCallback(() => {
@@ -76,6 +83,22 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
       Alert.alert("Couldn't update", "Try again.");
     } finally {
       setTogglingPrivacy(false);
+    }
+  };
+
+  // Off: contact matching never returns this account, whoever has your email or number.
+  const onToggleFindable = async (next: boolean) => {
+    if (!accessToken || togglingFindable) return;
+    setTogglingFindable(true);
+    setFindable(next);
+    try {
+      const { user: saved } = await updateMyProfile({ findableByContacts: next }, accessToken);
+      applyProfile(saved);
+    } catch {
+      setFindable(!next);
+      Alert.alert("Couldn't update", "Try again.");
+    } finally {
+      setTogglingFindable(false);
     }
   };
 
@@ -185,6 +208,17 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
             <Switch value={nearbyOn} onValueChange={(next) => void onToggleNearby(next)} accessibilityLabel="Nearby Stories" />
           )}
         </View>
+        <View style={styles.switchRow}>
+          <View style={styles.switchLabelGroup}>
+            <Text style={typography.body}>Let people find me from their contacts</Text>
+            <Text style={styles.switchHint}>People who have your verified email or phone number can see your account in Contacts on Katkee.</Text>
+          </View>
+          {togglingFindable ? (
+            <ActivityIndicator color={colors.accentText} />
+          ) : (
+            <Switch value={findable} onValueChange={(next) => void onToggleFindable(next)} accessibilityLabel="Let people find me from their contacts" />
+          )}
+        </View>
         <ListRow
           label="Follow requests"
           icon={ICONS.following}
@@ -194,6 +228,12 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
         <ListRow label="Close Friends" icon={ICONS.starFilled} onPress={() => navigation.navigate("CloseFriends")} />
         <ListRow label="Blocked accounts" icon={ICONS.privacy} onPress={() => navigation.navigate("BlockedAccounts")} />
         <ListRow label="Muted accounts" icon={ICONS.audioMuted} onPress={() => navigation.navigate("MutedAccounts")} />
+      </View>
+
+      <Text style={styles.sectionHeader}>Friends</Text>
+      <View style={styles.card}>
+        <ListRow label="Contacts on Katkee" icon={ICONS.following} onPress={() => navigation.navigate("ContactsOnKatkee", { from: "settings" })} />
+        <ListRow label="Invite friends" icon={ICONS.share} onPress={() => void shareInvite("settings", accessToken, user?.id)} />
       </View>
 
       <Text style={styles.sectionHeader}>Stories</Text>

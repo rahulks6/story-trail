@@ -3,6 +3,17 @@ import type { Audience, CommentSetting } from "./stories.repository";
 import type { StoryOverlay, DrawStroke, StoryCrop } from "./overlays";
 import { canonicalTopic, TOPICS, type Topic } from "../../shared/topics";
 import { OVERLAY_TYPES, TEXT_STYLES, STICKER_IDS, DATETIME_MODES, DRAW_TOOLS, FILTER_NAMES, MAX_CROP_ZOOM } from "./overlays";
+import {
+  INTERACTIVE_TYPES,
+  MIN_OPTIONS,
+  MAX_OPTIONS,
+  MAX_OPTION_LENGTH,
+  MAX_QUESTION_LENGTH,
+  MAX_COUNTDOWN_TITLE_LENGTH,
+  MAX_COUNTDOWN_DAYS,
+  MAX_LINK_LENGTH,
+  MAX_LINK_LABEL_LENGTH,
+} from "./overlays";
 
 const MAX_CAPTION_LENGTH = 280;
 const AUDIENCES: Audience[] = ["public", "followers", "close_friends"];
@@ -26,6 +37,8 @@ export interface PublishStoryInput {
   festival?: string;
   /** One topic from the topic list (shared/topics.ts); without one, the owner's interests stand in. */
   topic?: Topic;
+  /** Collab Stories: the one person invited to share this Story (collab.service.ts says who may be). */
+  collaboratorId?: string;
 }
 
 function parseMusic(raw: unknown, errors: Record<string, string>): PublishStoryInput["music"] {
@@ -154,17 +167,100 @@ function parseOverlay(raw: unknown, index: number): StoryOverlay | null {
       if (!STICKER_IDS.includes(stickerId as (typeof STICKER_IDS)[number])) return null;
       return { id, type: "sticker", x, y, scale, rotation, zIndex, properties: { stickerId: stickerId as (typeof STICKER_IDS)[number] } };
     }
+    // Interactive stickers: only what the creator chose is kept. Anything a reader sees later
+    // (results, counts, who reminded) is attached per viewer on read, never stored from input.
+    case "poll":
+    case "quiz": {
+      const question = oneLine(properties.question, MAX_QUESTION_LENGTH);
+      const options = parseOptions(properties.options);
+      if (!options) return null;
+      if (type === "poll") {
+        // A poll may be just its options ("This or that?" is optional), like Instagram.
+        return { id, type: "poll", x, y, scale, rotation, zIndex, properties: { question, options } };
+      }
+      const correctIndex = properties.correctIndex;
+      if (question.length === 0 || !Number.isInteger(correctIndex) || (correctIndex as number) < 0 || (correctIndex as number) >= options.length) return null;
+      return { id, type: "quiz", x, y, scale, rotation, zIndex, properties: { question, options, correctIndex: correctIndex as number } };
+    }
+    case "question": {
+      const prompt = oneLine(properties.prompt, MAX_QUESTION_LENGTH) || "Ask me anything";
+      return { id, type: "question", x, y, scale, rotation, zIndex, properties: { prompt } };
+    }
+    case "countdown": {
+      const title = oneLine(properties.title, MAX_COUNTDOWN_TITLE_LENGTH);
+      const endsAt = typeof properties.endsAt === "string" ? new Date(properties.endsAt) : null;
+      if (title.length === 0 || !endsAt || !Number.isFinite(endsAt.getTime())) return null;
+      // A countdown that has already ended, or ends absurdly far away, has nothing to count.
+      const now = Date.now();
+      if (endsAt.getTime() <= now || endsAt.getTime() > now + MAX_COUNTDOWN_DAYS * 86_400_000) return null;
+      return { id, type: "countdown", x, y, scale, rotation, zIndex, properties: { title, endsAt: endsAt.toISOString() } };
+    }
+    case "link": {
+      const url = parseStickerUrl(properties.url);
+      if (!url) return null;
+      const label = oneLine(properties.label, MAX_LINK_LABEL_LENGTH) || null;
+      return { id, type: "link", x, y, scale, rotation, zIndex, properties: { url, label } };
+    }
+    case "addYours": {
+      const prompt = oneLine(properties.prompt, MAX_QUESTION_LENGTH);
+      if (prompt.length === 0) return null;
+      const chainId = typeof properties.chainId === "string" && UUID.test(properties.chainId) ? properties.chainId : undefined;
+      return { id, type: "addYours", x, y, scale, rotation, zIndex, properties: { prompt, ...(chainId ? { chainId } : {}) } };
+    }
     default:
       return null;
   }
 }
 
+/** Sticker text is one line: a line break would push a poll's options off its card. */
+function oneLine(raw: unknown, max: number): string {
+  return typeof raw === "string" ? clipText(raw.replace(/\s+/g, " ").trim(), max).trim() : "";
+}
+
+/** 2-4 options, each short and non-empty; anything else isn't a poll anyone could answer. */
+function parseOptions(raw: unknown): string[] | null {
+  if (!Array.isArray(raw)) return null;
+  const options = raw.slice(0, MAX_OPTIONS).map((o) => oneLine(o, MAX_OPTION_LENGTH));
+  if (options.length < MIN_OPTIONS || options.some((o) => o.length === 0)) return null;
+  return options;
+}
+
+/**
+ * A link sticker's URL: http or https only, with a real host and no "user@" part (the classic
+ * way to make evil.example look like a trusted site). Whether it may be posted at all is the
+ * link-safety policy's call (safety/links.ts), made in stories.service.ts.
+ */
+export function parseStickerUrl(raw: unknown): string | null {
+  if (typeof raw !== "string") return null;
+  const text = raw.trim();
+  if (text.length === 0 || text.length > MAX_LINK_LENGTH || /\s/.test(text)) return null;
+  let url: URL;
+  try {
+    url = new URL(/^https?:\/\//i.test(text) ? text : `https://${text}`);
+  } catch {
+    return null;
+  }
+  if (url.protocol !== "https:" && url.protocol !== "http:") return null;
+  if (url.username || url.password || !url.hostname.includes(".") || url.hostname.endsWith(".")) return null;
+  return url.toString();
+}
+
 function parseOverlays(raw: unknown): StoryOverlay[] {
   if (!Array.isArray(raw)) return [];
+  const seen = new Set<string>();
   return raw
     .slice(0, MAX_OVERLAYS)
     .map((o, i) => parseOverlay(o, i))
-    .filter((o): o is StoryOverlay => o !== null);
+    .filter((o): o is StoryOverlay => o !== null)
+    .filter((o) => {
+      // One of each interactive sticker (the first wins), each with an id of its own: votes
+      // and answers are addressed by it.
+      if (!(INTERACTIVE_TYPES as readonly string[]).includes(o.type)) return true;
+      if (seen.has(o.type) || seen.has(`id:${o.id}`)) return false;
+      seen.add(o.type);
+      seen.add(`id:${o.id}`);
+      return true;
+    });
 }
 
 function parseStroke(raw: unknown, index: number): DrawStroke | null {
@@ -254,6 +350,14 @@ export function parsePublishStoryInput(body: unknown): PublishStoryInput {
     else topic = known;
   }
 
+  let collaboratorId: string | undefined;
+  if (b.collaboratorId !== undefined && b.collaboratorId !== null && b.collaboratorId !== "") {
+    if (typeof b.collaboratorId !== "string" || !UUID.test(b.collaboratorId)) errors.collaboratorId = "collaboratorId must be a user id.";
+    // A Close Friends list is yours alone: there's no second audience to share it with.
+    else if (audience === "close_friends") errors.collaboratorId = "Collab Stories can't be shared with Close Friends.";
+    else collaboratorId = b.collaboratorId.toLowerCase();
+  }
+
   if (Object.keys(errors).length > 0) throw new ValidationError(errors);
   return {
     mediaId,
@@ -271,7 +375,29 @@ export function parsePublishStoryInput(body: unknown): PublishStoryInput {
     ...(festival ? { festival } : {}),
     // Left out when absent, so an older app's retried publish hashes as it always did.
     ...(topic ? { topic } : {}),
+    ...(collaboratorId ? { collaboratorId } : {}),
   };
+}
+
+const MAX_ANSWER_LENGTH = 300;
+
+/** A poll or quiz answer: the option's place in the sticker's list. */
+export function parseVoteInput(body: unknown): number {
+  const b = (typeof body === "object" && body !== null ? body : {}) as Record<string, unknown>;
+  if (!Number.isInteger(b.option) || (b.option as number) < 0 || (b.option as number) >= MAX_OPTIONS) {
+    throw new ValidationError({ option: `option must be a whole number from 0 to ${MAX_OPTIONS - 1}.` });
+  }
+  return b.option as number;
+}
+
+/** An answer to a question sticker. */
+export function parseAnswerInput(body: unknown): string {
+  const b = (typeof body === "object" && body !== null ? body : {}) as Record<string, unknown>;
+  const text = typeof b.body === "string" ? b.body.trim() : "";
+  if (text.length < 1 || text.length > MAX_ANSWER_LENGTH) {
+    throw new ValidationError({ body: `An answer must be 1-${MAX_ANSWER_LENGTH} characters.` });
+  }
+  return text;
 }
 
 const MAX_COMMENT_LENGTH = 500;

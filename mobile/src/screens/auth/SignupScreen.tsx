@@ -13,6 +13,7 @@ import { useAuth } from "../../state/AuthContext";
 import { usernameCheckText, usernameRefused, useUsernameAvailability } from "../../hooks/useUsernameAvailability";
 import { TermsNotice } from "../../components/TermsNotice";
 import { hasTickLikeCharacter, NAME_TICK_ERROR } from "../../api/verification";
+import { usePendingInviter } from "../../state/invites";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Signup">;
 
@@ -25,6 +26,8 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const insets = useScreenInsets();
+  // Opened a friend's invite link first: say whose, so the sign-up feels like theirs.
+  const inviter = usePendingInviter();
   const usernameInput = useRef<React.ComponentRef<typeof TextInput>>(null);
   const emailInput = useRef<React.ComponentRef<typeof TextInput>>(null);
   const birthInput = useRef<React.ComponentRef<typeof TextInput>>(null);
@@ -66,6 +69,7 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
         keyboardDismissMode="on-drag"
       >
         <Text style={[typography.title, styles.title]} accessibilityRole="header">Create your account</Text>
+        {inviter ? <Banner tone="info" text={`${inviter.displayName} (@${inviter.username}) invited you to Katkee.`} /> : null}
         {error ? <Banner text={error} /> : null}
 
         <TextField

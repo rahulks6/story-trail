@@ -15,12 +15,14 @@ import { groupName, hideConversation, listConversations, setConversationMuted, t
 import { ActionSheet } from "../../components/ActionSheet";
 import { showToast } from "../../components/Toast";
 import { actorName, groupEventText } from "../../models/groupEvents";
+import { callLineText } from "../../models/callLines";
 import { EmptyState } from "../../components/EmptyState";
 import { Button } from "../../components/Form";
 import { Avatar } from "../../components/Avatar";
 import { VerifiedName } from "../../components/VerifiedBadge";
 import { GroupAvatar } from "../../components/GroupAvatar";
 import { Icon } from "../../components/Icon";
+import { shareInvite } from "../../state/invites";
 
 /** The server's largest page; older conversations load as the list scrolls. */
 const PAGE_SIZE = 50;
@@ -28,6 +30,7 @@ const PAGE_SIZE = 50;
 function previewText(conversation: ConversationSummary, myUserId: string | undefined): string {
   const lastMessage = conversation.lastMessage;
   if (!lastMessage) return "No messages yet";
+  if (lastMessage.event?.type === "call") return callLineText(lastMessage.event, lastMessage.senderId === myUserId);
   if (lastMessage.event) {
     const actor = actorName(lastMessage.senderId, myUserId, lastMessage.senderUsername);
     const known = new Map((conversation.group?.members ?? []).map((m) => [m.id, `@${m.username}`]));
@@ -220,6 +223,7 @@ export function DMInboxScreen(): React.JSX.Element {
         <View style={styles.emptyAction}>
           <Button label="New message" onPress={() => navigation.navigate("NewChat")} />
           <Button label="New group" variant="text" onPress={() => navigation.navigate("NewGroup", {})} />
+          <Button label="Invite friends" variant="secondary" onPress={() => void shareInvite("messages", accessToken, user?.id)} />
         </View>
       </EmptyState>
     );

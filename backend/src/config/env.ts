@@ -56,6 +56,10 @@ function optionalInt(name: string, fallback: number): number {
   return parsed;
 }
 
+function commaList(value: string): string[] {
+  return value.split(",").map((s) => s.trim()).filter(Boolean);
+}
+
 /** The CloudFront signing key: PEM (escaped "\n" line breaks are accepted), or base64 of the PEM. */
 export function cloudFrontPrivateKeyPem(raw: string): string {
   return raw.includes("BEGIN") ? raw.replace(/\\n/g, "\n") : Buffer.from(raw, "base64").toString("utf8");
@@ -170,6 +174,36 @@ export const config = {
     },
     pollMs: optionalInt("PUSH_WORKER_POLL_MS", 5000),
     maxAttempts: optionalInt("PUSH_MAX_ATTEMPTS", 5),
+  },
+  calls: {
+    // One-to-one voice and video calls (src/modules/calls, docs/REALTIME_AND_PUSH.md). On by default
+    // outside production; production needs CALLS_ENABLED=true and a TURN server below, because
+    // without a relay, calls between phones on mobile networks and strict NATs never connect.
+    enabled: process.env.CALLS_ENABLED ? process.env.CALLS_ENABLED === "true" : process.env.NODE_ENV !== "production",
+    // How long a call rings before it counts as missed.
+    ringSeconds: optionalInt("CALLS_RING_SECONDS", 45),
+    // Always offered to the phones; Twilio's own STUN servers come with its TURN credentials.
+    stunUrls: commaList(process.env.CALLS_STUN_URLS ?? "stun:stun.l.google.com:19302"),
+    turn: {
+      // twilio (Network Traversal Service), secret (your own TURN server with a shared secret,
+      // e.g. coturn's use-auth-secret), or empty for STUN only.
+      provider: (process.env.CALLS_TURN_PROVIDER ?? "") as "twilio" | "secret" | "",
+      // How long the credentials a phone gets stay valid: long enough for a long call.
+      ttlSeconds: optionalInt("CALLS_TURN_TTL_SECONDS", 3 * 3600),
+      // secret: the TURN server's turn:/turns: URLs and the secret it shares with this server.
+      urls: commaList(process.env.CALLS_TURN_URLS ?? ""),
+      secret: process.env.CALLS_TURN_SECRET ?? "",
+      twilio: {
+        // The same account as phone sign-in. An API key (SK…, from the secret store) is preferred
+        // to the account's auth token; either one authenticates.
+        accountSid: process.env.TWILIO_ACCOUNT_SID ?? "",
+        apiKeySid: process.env.TWILIO_API_KEY_SID ?? "",
+        apiKeySecret: process.env.TWILIO_API_KEY_SECRET ?? "",
+        authToken: process.env.TWILIO_AUTH_TOKEN ?? "",
+        // Test servers only; never set in production.
+        endpoint: process.env.TWILIO_API_ENDPOINT ?? "https://api.twilio.com",
+      },
+    },
   },
   safety: {
     // Per-account action budgets (src/modules/safety/limits.ts); JSON overrides per action, e.g.
@@ -318,6 +352,27 @@ if (config.nodeEnv === "production") {
     throw new Error(`Production needs a writable temporary directory for uploads and media processing: ${os.tmpdir()} is not writable.`);
   }
 }
+const calls = config.calls;
+if (!["twilio", "secret", ""].includes(calls.turn.provider)) throw new Error("CALLS_TURN_PROVIDER must be twilio, secret or empty.");
+if (calls.ringSeconds < 15 || calls.ringSeconds > 120) throw new Error("CALLS_RING_SECONDS must be between 15 and 120.");
+if (calls.turn.ttlSeconds < 900 || calls.turn.ttlSeconds > 86400) throw new Error("CALLS_TURN_TTL_SECONDS must be between 900 and 86400.");
+if (calls.stunUrls.some((url) => !/^stuns?:[^\s]+$/.test(url))) throw new Error("CALLS_STUN_URLS must be stun: or stuns: URLs, comma-separated.");
+if (calls.turn.provider === "twilio") {
+  const t = calls.turn.twilio;
+  const apiKey = /^SK[0-9a-f]{32}$/i.test(t.apiKeySid) && !!t.apiKeySecret;
+  if (!/^AC[0-9a-f]{32}$/i.test(t.accountSid) || (!apiKey && !t.authToken)) {
+    throw new Error("CALLS_TURN_PROVIDER=twilio needs TWILIO_ACCOUNT_SID and either TWILIO_API_KEY_SID with TWILIO_API_KEY_SECRET, or TWILIO_AUTH_TOKEN.");
+  }
+}
+if (calls.turn.provider === "secret" && (!calls.turn.urls.length || calls.turn.urls.some((url) => !/^turns?:[^\s]+$/.test(url)) || calls.turn.secret.length < MIN_SECRET_LENGTH)) {
+  throw new Error(`CALLS_TURN_PROVIDER=secret needs CALLS_TURN_URLS (turn: or turns: URLs) and a CALLS_TURN_SECRET of at least ${MIN_SECRET_LENGTH} characters.`);
+}
+if (config.nodeEnv === "production") {
+  // Without a relay most calls on mobile networks never connect: calls stay off until one is set up.
+  if (calls.enabled && !calls.turn.provider) throw new Error("CALLS_ENABLED in production requires a TURN server: set CALLS_TURN_PROVIDER (docs/REALTIME_AND_PUSH.md).");
+  if (process.env.TWILIO_API_ENDPOINT) throw new Error("TWILIO_API_ENDPOINT is for local test servers only.");
+}
+
 const apns = config.push.apns;
 if ([apns.keyId, apns.teamId, apns.privateKey, apns.bundleId].some(Boolean) && ![apns.keyId, apns.teamId, apns.privateKey, apns.bundleId].every(Boolean)) {
   throw new Error("APNs needs all of APNS_KEY_ID, APNS_TEAM_ID, APNS_PRIVATE_KEY and APNS_BUNDLE_ID.");

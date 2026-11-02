@@ -4,7 +4,7 @@ export const WEB_ORIGIN = "https://katkee.com";
 /**
  * What the app opens: its own katkee:// links (push notifications, reset emails, links shared by
  * older versions) and katkee.com links (Android App Links and iOS Universal Links send /u/ and /s/
- * here). www redirects to katkee.com on the web, but a pasted link may still carry it.
+ * here, and invite links /i/). www redirects to katkee.com on the web, but a pasted link may still carry it.
  */
 export const LINK_PREFIXES = ["katkee://", WEB_ORIGIN, "https://www.katkee.com"];
 
@@ -35,9 +35,13 @@ export type DeepLinkTarget =
   | { kind: "followRequests" }
   | { kind: "verification" }
   | { kind: "scheduled" }
+  // katkee.com/i/<code> (Invite friends) and the website's katkee://invite/<code> button.
+  | { kind: "invite"; code: string }
   | { kind: "resetPassword"; email?: string; code?: string };
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+/** Eight characters without look-alikes (backend growth/invites.ts). */
+export const INVITE_CODE_RE = /^[2-9a-hjkmnp-z]{8}$/;
 
 /**
  * Parses the path part of a katkee:// or katkee.com link (React Navigation passes it without
@@ -64,6 +68,8 @@ export function deepLinkTarget(path: string): DeepLinkTarget | null {
   if (/^verification\/?$/i.test(rawPath)) return { kind: "verification" };
   // A scheduled Story that couldn't be posted: Archive > Scheduled, where it says why.
   if (/^scheduled\/?$/i.test(rawPath)) return { kind: "scheduled" };
+  const invite = /^(?:invite|i)\/([^/]+)\/?$/i.exec(rawPath)?.[1]?.toLowerCase();
+  if (invite !== undefined) return INVITE_CODE_RE.test(invite) ? { kind: "invite", code: invite } : null;
   if (/^reset-password\/?$/i.test(rawPath)) {
     const query = new URLSearchParams(rawQuery);
     const email = query.get("email")?.trim().toLowerCase();
@@ -78,7 +84,7 @@ export function deepLinkTarget(path: string): DeepLinkTarget | null {
 }
 
 /**
- * Whether the app follows this link. Only profiles and Stories are katkee.com pages; a katkee.com
+ * Whether the app follows this link. Only profiles, Stories and invites are katkee.com pages; a katkee.com
  * address for one of the app's own screens (katkee.com/verification) is a web page, not the app.
  */
 export function opensInApp(url: string): boolean {
@@ -86,6 +92,14 @@ export function opensInApp(url: string): boolean {
   const target = path === null ? null : deepLinkTarget(path);
   if (!target) return false;
   return target.kind !== "verification" || url.toLowerCase().startsWith("katkee://");
+}
+
+/**
+ * A ringing call's link (katkee://call/<id>, from its push): the call screen opens it, not the
+ * navigator. Null for any other link.
+ */
+export function callIdFromLink(url: string | null | undefined): string | null {
+  return /^katkee:\/\/call\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\/?$/i.exec(url ?? "")?.[1]?.toLowerCase() ?? null;
 }
 
 /**

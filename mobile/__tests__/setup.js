@@ -148,15 +148,99 @@ jest.mock("react-native-keychain", () => {
   };
 });
 
+jest.mock("@invertase/react-native-apple-authentication", () => {
+  const React = require("react");
+  const AppleButton = (props) => React.createElement("AppleButton", props);
+  AppleButton.Style = { WHITE: "White", BLACK: "Black" };
+  AppleButton.Type = { SIGN_IN: "SignIn", CONTINUE: "Continue" };
+  return {
+    AppleButton,
+    appleAuth: { isSupported: true, performRequest: jest.fn(), Error: { CANCELED: "1001" }, Operation: { LOGIN: 1 }, Scope: { EMAIL: 0, FULL_NAME: 1 } },
+  };
+});
 jest.mock("@react-native-clipboard/clipboard", () => require("@react-native-clipboard/clipboard/jest/clipboard-mock.js"));
 jest.mock("@react-native-community/geolocation", () => ({ getCurrentPosition: jest.fn(), requestAuthorization: jest.fn() }));
 jest.mock("@react-native-google-signin/google-signin", () => {
   const React = require("react");
   return {
     GoogleSignin: { configure: jest.fn(), hasPlayServices: jest.fn(async () => true), signIn: jest.fn(), signOut: jest.fn() },
-    GoogleSigninButton: (props) => React.createElement("GoogleSigninButton", props),
+    GoogleSigninButton: Object.assign((props) => React.createElement("GoogleSigninButton", props), { Size: { Wide: 1 }, Color: { Dark: 0 } }),
     isSuccessResponse: () => false,
     isErrorWithCode: () => false,
     statusCodes: {},
   };
 });
+
+// WebRTC (calls): a peer connection and camera/microphone that tests drive through global.__webrtc
+// (the peers created, and an error for getUserMedia to throw). Virtual: the app requires it lazily.
+global.__webrtc = { peers: [], getUserMediaError: null };
+jest.mock("react-native-webrtc", () => {
+  const React = require("react");
+  const track = (kind) => ({ kind, enabled: true, stop: jest.fn(), applyConstraints: jest.fn(async () => undefined) });
+  const stream = (kinds) => {
+    const tracks = kinds.map(track);
+    return { toURL: () => `stream-${kinds.join("-")}`, getTracks: () => tracks, getAudioTracks: () => tracks.filter((t) => t.kind === "audio"), getVideoTracks: () => tracks.filter((t) => t.kind === "video"), release: jest.fn() };
+  };
+  class RTCPeerConnection {
+    constructor(configuration) {
+      this.configuration = configuration;
+      this.connectionState = "new";
+      this.iceConnectionState = "new";
+      this.remoteDescription = null;
+      this.localDescription = null;
+      this.tracks = [];
+      this.candidates = [];
+      this.onicecandidate = null;
+      this.ontrack = null;
+      this.onconnectionstatechange = null;
+      this.closed = false;
+      global.__webrtc.peers.push(this);
+    }
+    addTrack(t) { this.tracks.push(t); }
+    async createOffer(options) { return { type: "offer", sdp: `v=0 offer${options?.iceRestart ? " restart" : ""}` }; }
+    async createAnswer() { return { type: "answer", sdp: "v=0 answer" }; }
+    async setLocalDescription(d) { this.localDescription = d; }
+    async setRemoteDescription(d) { this.remoteDescription = d; }
+    async addIceCandidate(c) { this.candidates.push(c); }
+    setConfiguration(c) { this.configuration = c; }
+    close() { this.closed = true; }
+    /** Test helper: the connection reaches `state`. */
+    __setState(state) { this.connectionState = state; this.onconnectionstatechange?.(); }
+  }
+  const RTCView = (props) => React.createElement("RTCView", props);
+  return {
+    RTCPeerConnection,
+    RTCView,
+    mediaDevices: {
+      getUserMedia: jest.fn(async (constraints) => {
+        if (global.__webrtc.getUserMediaError) throw global.__webrtc.getUserMediaError;
+        return stream(constraints.video ? ["audio", "video"] : ["audio"]);
+      }),
+    },
+  };
+}, { virtual: true });
+
+// Call audio (ringtone, ringback, loudspeaker): records what was asked of it.
+global.__incall = [];
+jest.mock("react-native-incall-manager", () => {
+  const record = (name) => jest.fn((...args) => global.__incall.push([name, ...args]));
+  return {
+    __esModule: true,
+    default: {
+      start: record("start"), stop: record("stop"), startRingtone: record("startRingtone"), stopRingtone: record("stopRingtone"),
+      stopRingback: record("stopRingback"), setForceSpeakerphoneOn: record("speaker"), setKeepScreenOn: record("keepScreenOn"),
+    },
+  };
+}, { virtual: true });
+
+// Contacts (react-native-contacts): what the address book holds and what the phone answers are set
+// per test through global.__contacts. Virtual, so tests run before `npm install` adds the library.
+global.__contacts = { permission: "undefined", afterRequest: "authorized", list: [] };
+jest.mock("react-native-contacts", () => {
+  const api = {
+    checkPermission: jest.fn(async () => global.__contacts.permission),
+    requestPermission: jest.fn(async () => { global.__contacts.permission = global.__contacts.afterRequest; return global.__contacts.permission; }),
+    getAllWithoutPhotos: jest.fn(async () => global.__contacts.list),
+  };
+  return { __esModule: true, default: api, ...api };
+}, { virtual: true });

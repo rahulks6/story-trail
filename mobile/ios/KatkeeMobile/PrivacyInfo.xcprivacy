@@ -83,6 +83,21 @@
 				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
 			</array>
 		</dict>
+		<!-- Contacts on Katkee, only if you choose it: emails and phone numbers, hashed on the phone,
+		     checked against accounts and not kept (processed only to answer the request). Declared as
+		     linked because the request is made by a signed-in account. -->
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeContacts</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
 		<!-- Nearby Stories, only if turned on: a city-sized area, never coordinates. -->
 		<dict>
 			<key>NSPrivacyCollectedDataType</key>

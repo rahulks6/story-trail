@@ -18,6 +18,7 @@ import { registerMediaRoutes } from "./modules/media/media.routes";
 import { registerMusicRoutes } from "./modules/music/music.routes";
 import { registerStoriesRoutes } from "./modules/stories/stories.routes";
 import { registerEngagementRoutes } from "./modules/stories/engagement.routes";
+import { registerStickerRoutes } from "./modules/stories/stickers.routes";
 import { registerEventsRoutes } from "./modules/recommendations/events.routes";
 import { registerRecommendationRoutes } from "./modules/recommendations/recommendation.routes";
 import { registerAreaRoutes } from "./modules/recommendations/area.routes";
@@ -31,11 +32,13 @@ import { registerAdsRoutes } from "./modules/ads/ads.routes";
 import { registerAppealRoutes } from "./modules/admin/appeals.routes";
 import { registerRealtimeRoutes } from "./realtime/realtime.routes";
 import { registerPushRoutes } from "./modules/push/push.routes";
+import { registerCallsRoutes } from "./modules/calls/calls.routes";
 import { registerAnalyticsRoutes } from "./modules/analytics/analytics.routes";
 import { registerSupportRoutes } from "./modules/support/support.routes";
 import { registerVerificationRoutes } from "./modules/verification/verification.routes";
 import { registerProfessionalRoutes } from "./modules/professional/professional.routes";
 import { registerWebsiteRoutes, websiteGate } from "./modules/website/website.routes";
+import { registerGrowthRoutes } from "./modules/growth/growth.routes";
 import { RealtimeHub } from "./realtime/hub";
 
 /** The API server, with its readiness/shutdown state (see http/lifecycle.ts) and its route table. */
@@ -107,6 +110,7 @@ export function buildApp(providers?:ProviderGateway): KatkeeServer {
   registerMusicRoutes(router);
   registerStoriesRoutes(router);
   registerEngagementRoutes(router);
+  registerStickerRoutes(router);
   registerEventsRoutes(router);
   registerRecommendationRoutes(router);
   registerAreaRoutes(router);
@@ -122,8 +126,10 @@ export function buildApp(providers?:ProviderGateway): KatkeeServer {
   registerSupportRoutes(router);
   registerVerificationRoutes(router);
   registerProfessionalRoutes(router);
+  registerGrowthRoutes(router);
   registerRealtimeRoutes(router);
   registerPushRoutes(router);
+  registerCallsRoutes(router);
   registerWebsiteRoutes(router);
 
   const server = createServer(router, lifecycle, websiteGate);

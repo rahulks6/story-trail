@@ -24,6 +24,7 @@
 import { completeFinishedCampaigns } from "../ads/ads.service";
 import { purgeRawAnalytics, rollupAnalytics } from "../analytics/rollup";
 import { CRASH_RETENTION_DAYS, RESOLVED_FEEDBACK_RETENTION_DAYS } from "../support/support.service";
+import { revokeAppleGrants } from "../auth/apple";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -202,6 +203,9 @@ export async function deletedAccounts(store: ObjectStore, batch: number, days: n
        LIMIT :'batch'`, { id, evidence: evidenceDays, batch });
     for (const row of media) await purgeReferenced(store, mapMediaRow(row));
     if (media.length === batch) continue; // more next run; scrub once everything is gone
+    // A Sign in with Apple authorisation Apple didn't revoke when the account was deleted gets one
+    // more try before the identity goes (auth/apple.ts).
+    await revokeAppleGrants(id);
     // Every part of one statement sees the account as it was before the scrub, so `kept` copies
     // the registration details (and sign-in identities) that `u` and `a` remove.
     await query(
@@ -243,7 +247,15 @@ export async function deletedAccounts(store: ObjectStore, batch: number, days: n
        fb AS (DELETE FROM app_feedback WHERE user_id IN (SELECT id FROM u)),
        -- Already deleted when the account was (verification.service.ts); this is the backstop.
        vr AS (DELETE FROM verification_requests WHERE user_id IN (SELECT id FROM u)),
-       cr AS (DELETE FROM crash_reports WHERE user_id IN (SELECT id FROM u))
+       cr AS (DELETE FROM crash_reports WHERE user_id IN (SELECT id FROM u)),
+       -- What they did with Story stickers, and their collab invitations (migrations 0062, 0063).
+       sq AS (DELETE FROM story_question_responses WHERE responder_id IN (SELECT id FROM u)),
+       sv AS (DELETE FROM story_sticker_votes WHERE voter_id IN (SELECT id FROM u)),
+       sr AS (DELETE FROM story_countdown_reminders WHERE user_id IN (SELECT id FROM u)),
+       sc AS (DELETE FROM story_collaborators WHERE user_id IN (SELECT id FROM u)),
+       -- The invite link stops working with the account; who joined from whose link goes now.
+       ic AS (DELETE FROM invite_codes WHERE user_id IN (SELECT id FROM u)),
+       ir AS (DELETE FROM invite_redemptions WHERE invitee_id IN (SELECT id FROM u) OR inviter_id IN (SELECT id FROM u))
        SELECT count(*) AS n FROM u`,
       { id },
     );
@@ -290,6 +302,7 @@ export async function expiredRecords(): Promise<number> {
   total += await deleteWhere("admin_login_challenges", "expires_at < now() - interval '1 day'");
   total += await deleteWhere("auth_provider_proofs", "expires_at < now() - interval '1 day'");
   total += await deleteWhere("auth_reauth_tickets", "expires_at < now() - interval '1 day'");
+  total += await deleteWhere("auth_apple_nonces", "expires_at < now() - interval '1 day'");
   total += await deleteWhere("auth_phone_challenges", "created_at < now() - interval '2 days'");
   total += await deleteWhere("home_feed_snapshots", "expires_at < now() - interval '1 hour'");
   // Approximate areas count for 30 days after the app last sent them (reach.repository.ts).
@@ -316,6 +329,10 @@ export async function expiredRecords(): Promise<number> {
   total += await deleteWhere("realtime_tickets", "expires_at < now() - interval '1 hour'");
   total += await deleteWhere("push_outbox", "status IN ('sent', 'failed', 'skipped') AND finished_at < now() - interval '30 days'");
   total += await deleteWhere("push_devices", "disabled_at < now() - interval '90 days'");
+  // Calls (migration 0068): signaling is deleted when a call ends; anything a crash left behind
+  // goes here. A call's record is kept 90 days for safety reports; its line in the chat stays.
+  total += await deleteWhere("call_signals", "created_at < now() - interval '1 day'");
+  total += await deleteWhere("calls", "state = 'ended' AND ended_at < now() - interval '90 days'");
   // What was sent (return-reasons.ts) is only needed while it limits the next push.
   total += await deleteWhere("push_sent", "sent_at < now() - interval '30 days'");
   return total;

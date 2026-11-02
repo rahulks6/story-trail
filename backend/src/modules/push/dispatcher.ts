@@ -41,10 +41,38 @@ const TEXT: Record<string, (actor: string) => string> = {
   follow: (a) => `@${a} started following you`,
   follow_request: (a) => `@${a} requested to follow you`,
   follow_accepted: (a) => `@${a} accepted your follow request`,
+  invite_joined: (a) => `@${a} joined from your invite`,
   // Never the message itself: lock screens and notification logs are not private.
   message: (a) => `@${a} sent you a message`,
   new_story: (a) => `@${a} posted a new Story`,
+  collab_invite: (a) => `@${a} invited you to a collab Story`,
+  collab_accepted: (a) => `@${a} accepted your collab Story`,
 };
+
+/**
+ * "Remind me" on a countdown sticker, sent when it ends. Its text comes from the sticker as it
+ * is now; the reminder must still be on, and the Story not deleted (expired is fine: a
+ * countdown often ends after its 24 hours). Blocks and the owner's account are checked with
+ * every other actor push.
+ */
+async function renderCountdown(item: OutboxItem): Promise<{ body: string; link: string } | null> {
+  if (!item.refId) return null;
+  const row = await queryOne(
+    `SELECT o->'properties'->>'title' AS title, s.expires_at > now() AS active, u.username
+     FROM stories s
+     JOIN users u ON u.id = s.owner_id
+     JOIN story_countdown_reminders r ON r.story_id = s.id AND r.user_id = :'user'
+     CROSS JOIN LATERAL jsonb_array_elements(s.overlays) o
+     WHERE s.id = :'story' AND s.deleted_at IS NULL AND o->>'type' = 'countdown' AND o->>'id' = r.sticker_id
+     LIMIT 1`,
+    { story: item.refId, user: item.userId },
+  );
+  if (!row) return null;
+  return {
+    body: `⏰ ${row.title} — @${row.username}'s countdown has ended`,
+    link: row.active === "t" ? `katkee://story/${item.refId}` : `katkee://user/${row.username}`,
+  };
+}
 
 /** Which preference switch (migration 0051) silences each newer kind. */
 const SWITCH: Record<string, "stories_enabled" | "milestones_enabled" | "reminders_enabled"> = {
@@ -87,6 +115,11 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
   if (item.kind === "badge") {
     return { message: { title: "", body: "", data: { kind: "badge" }, collapseKey: "badge", badge, badgeOnly: true } };
   }
+  if (item.kind === "call" || item.kind === "call_missed") {
+    // Calls ring whenever pushes are on (like a phone call, the New messages switch and a muted chat don't silence them).
+    if (item.actorId && (row.actor_ok !== "t" || row.blocked === "t")) return { skip: "actor unavailable" };
+    return renderCallPush(item, (row.actor_username as string | null) ?? "someone", badge);
+  }
   if ((item.kind === "message" || item.kind === "message_reaction") && row.messages_enabled !== "t") return { skip: "message pushes turned off" };
   const toggle = SWITCH[item.kind];
   if (toggle && row[toggle] !== "t") return { skip: `${item.kind} pushes turned off` };
@@ -112,6 +145,21 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
     };
   }
   if (item.actorId && (row.actor_ok !== "t" || row.blocked === "t")) return { skip: "actor unavailable" };
+  if (item.kind === "countdown") {
+    const countdown = await renderCountdown(item);
+    if (!countdown) return { skip: "reminder gone" };
+    return {
+      message: {
+        title: "Katkee",
+        body: countdown.body,
+        data: { kind: item.kind, url: countdown.link, storyId: item.refId! },
+        collapseKey: `countdown-${item.refId}`,
+        threadId: "activity",
+        badge,
+        channel: "activity",
+      },
+    };
+  }
   const actor = (row.actor_username as string | null) ?? "someone";
   const text = TEXT[item.kind];
   if (!text) return { skip: `unknown kind ${item.kind}` };
@@ -132,6 +180,52 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
       threadId: isMessage && item.refId ? `dm-${item.refId}` : "activity",
       badge,
       channel: isMessage ? "messages" : "activity",
+    },
+  };
+}
+
+/**
+ * A ringing call (on the "calls" channel, which rings like a phone on Android, and never delivered
+ * once the call can't be answered any more), or the "Missed call" that replaces it under the same
+ * collapse key. Tapping either opens the app: a ringing call's katkee://call/<id> link brings up
+ * the incoming-call screen while it still rings.
+ */
+async function renderCallPush(item: OutboxItem, actor: string, badge: number): Promise<Rendered> {
+  const call = item.refId
+    ? await queryOne(
+      `SELECT conversation_id, media, state, GREATEST(0, :'ring'::integer - floor(extract(epoch FROM now() - created_at)))::integer AS rings_for
+       FROM calls WHERE id = :'id'`,
+      { id: item.refId, ring: config.calls.ringSeconds },
+    )
+    : null;
+  if (!call) return { skip: "call gone" };
+  const video = call.media === "video";
+  const conversationId = call.conversation_id as string;
+  if (item.kind === "call") {
+    const ringsFor = Number(call.rings_for);
+    if (call.state !== "ringing" || ringsFor < 3) return { skip: "call over" };
+    return {
+      message: {
+        title: "Katkee",
+        body: video ? `@${actor} is video calling you` : `@${actor} is calling you`,
+        data: { kind: "call", callId: item.refId!, conversationId, media: call.media as string, url: `katkee://call/${item.refId}` },
+        collapseKey: `call-${item.refId}`,
+        threadId: `dm-${conversationId}`,
+        badge,
+        channel: "calls",
+        ttlSeconds: ringsFor,
+      },
+    };
+  }
+  return {
+    message: {
+      title: "Katkee",
+      body: `Missed ${video ? "video" : "voice"} call from @${actor}`,
+      data: { kind: "call_missed", callId: item.refId!, conversationId, url: `katkee://conversation/${conversationId}` },
+      collapseKey: `call-${item.refId}`,
+      threadId: `dm-${conversationId}`,
+      badge,
+      channel: "messages",
     },
   };
 }

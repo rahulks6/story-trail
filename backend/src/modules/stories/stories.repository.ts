@@ -230,8 +230,12 @@ export async function listActiveStoryOwnersForViewer(
   includeSelf: boolean,
 ): Promise<{ ownerId: string; latestStoryAt: string }[]> {
   const rows = await query(
+    // A live Collab Story counts toward its collaborator's ring as well as its owner's (0063).
     `SELECT s.owner_id, MAX(s.created_at) AS latest_story_at
-     FROM stories s
+     FROM (SELECT id, owner_id, created_at, deleted_at, expires_at FROM stories
+           UNION ALL
+           SELECT st.id, cl.user_id, st.created_at, st.deleted_at, st.expires_at
+           FROM story_collabs_live cl JOIN stories st ON st.id = cl.story_id) s
      WHERE s.deleted_at IS NULL
        AND s.expires_at > now()
        AND (

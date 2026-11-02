@@ -1,4 +1,8 @@
-/** Isolated test databases only. Never reset, truncate, or drop an existing database. */
+/**
+ * Isolated test databases only. Never reset, truncate, or drop an existing database: the only
+ * ones dropped are those this run created, for files that passed (a failing file's database is
+ * kept for inspection). Keeping them all filled the disk after a few hundred runs.
+ */
 const cp=require('node:child_process'),fs=require('node:fs'),path=require('node:path');
 const root=path.resolve(__dirname,'..');
 if(process.env.NODE_ENV==='production')throw Error('Do not run integration tests with production configuration.');
@@ -17,7 +21,9 @@ for(const file of fs.readdirSync(path.join(root,'dist/test')).filter(n=>n.endsWi
  const database='katkee_test_'+file.replace(/[^a-z0-9]/gi,'').toLowerCase()+'_'+run;
  dbCommand('createdb',['-T',template,database]);
  const result=cp.spawnSync(process.execPath,['--test',path.join(root,'dist/test',file)],{env:{...env,PGDATABASE_TEST:database},stdio:'inherit'});
- if(result.status!==0)failed=true;
+ if(result.status!==0){failed=true;console.log(`Kept ${database} for inspection (${file} failed).`);}
+ else dbCommand('dropdb',['--if-exists','--force',database]);
 }
-console.log('Generated local test databases retained for inspection. No existing data was reset.');
+dbCommand('dropdb',['--if-exists','--force',template]);
+console.log('Test databases of passing files were dropped; any failing file kept its own. No existing data was reset.');
 process.exitCode=failed?1:0;

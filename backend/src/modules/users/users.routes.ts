@@ -103,6 +103,7 @@ export function registerUserRoutes(router: Router): void {
         professionalCategoryShown: user.professionalCategoryShown,
         interests: user.interests,
         isPrivate: user.isPrivate,
+        findableByContacts: user.findableByContacts,
       },
     });
   });

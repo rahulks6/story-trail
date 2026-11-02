@@ -59,7 +59,7 @@ test('the check is not vacuous: each kind of drift is caught',()=>{
  const c=load();
  const drift=(change)=>problems({...c,...change(c)});
  assert.deepEqual(drift(c=>({app:c.app.replace('NotificationChannel("messages"','NotificationChannel("dms"')})),
-  ['server channels [activity,messages] != channels the app creates [activity,dms]']);
+  ['server channels [activity,calls,messages] != channels the app creates [activity,calls,dms]']);
  assert.deepEqual(drift(c=>({firebase:{...c.firebase,messaging_android_notification_channel_id:'general'}})),['firebase.json default channel is not one the app creates']);
  assert.deepEqual(drift(c=>({androidColors:c.androidColors.replace(/#[0-9A-Fa-f]{6}/,'#FCB020')})),['notification colour #FCB020 is not the app accent #FFC800']);
  assert.deepEqual(drift(c=>({firebase:{...c.firebase,messaging_ios_foreground_presentation_options:['badge','banner']}})),['iOS foreground presentation must be ["badge"]']);
