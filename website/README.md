@@ -12,6 +12,7 @@ so they must be live before you submit (`npm run check:live`).
 | Terms of Service | https://katkee.com/terms | `../legal/TERMS_OF_SERVICE.md` |
 | Delete your account (Google Play's deletion URL) | https://katkee.com/delete-account | `src/pages/delete-account.html` |
 | Shared profile or Story ("Open in Katkee") | https://katkee.com/u/&lt;username&gt;, /s/&lt;story id&gt; | `src/pages/open.html` |
+| Invite link ("Asha invited you to Katkee") | https://katkee.com/i/&lt;code&gt; | `src/pages/invite.html` |
 | Android App Links | https://katkee.com/.well-known/assetlinks.json | `site.json` (`appLinks.android`) |
 | iOS Universal Links | https://katkee.com/.well-known/apple-app-site-association | `site.json` (`appLinks.ios`) |
 
@@ -67,6 +68,13 @@ and `https://katkee.com/s/<story id>`.
   3 to 30 letters, digits, `_` or `.`; a Story ID that is a UUID); anything else is a 404. The
   page never looks the account or Story up, so it can't tell anyone whether they exist, are
   private or have expired. It is `noindex`.
+
+Invite links (`/i/<code>`, Settings, then Invite friends) get their own page: the API looks the
+code up and puts "<display name> invited you to Katkee" in the headline and title (so chat
+previews name the friend), or a plain "You're invited" for a code that doesn't work. It shows
+the store buttons and asks the person, once Katkee is installed, to come back and tap **Open
+invite in Katkee**: that App Link (or `katkee://invite/<code>`) is how a new account is credited
+to its inviter. Nothing follows people through the app stores; there is no attribution SDK.
 
 The app-link files come from `site.json`:
 

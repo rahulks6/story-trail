@@ -1,7 +1,7 @@
 import { nullable, query, queryOne, type Row } from "../../db/psql";
 import { verifiedSql } from "../../shared/verified";
 
-export type NotificationType = "like" | "comment" | "follow" | "follow_request" | "follow_accepted" | "mention" | "verification";
+export type NotificationType = "like" | "comment" | "follow" | "follow_request" | "follow_accepted" | "mention" | "verification" | "invite_joined";
 
 /** What happened to the recipient's own verified badge (modules/verification). */
 export type VerificationOutcome = "approved" | "denied" | "removed" | "restored";
@@ -152,6 +152,8 @@ async function isTypeEnabled(recipientId: string, type: NotificationType): Promi
       return prefs.commentsEnabled;
     case "follow":
     case "follow_accepted":
+    // Someone joining from your invite is news about people, like a follow.
+    case "invite_joined":
       return prefs.followsEnabled;
     case "mention":
       return prefs.mentionsEnabled;

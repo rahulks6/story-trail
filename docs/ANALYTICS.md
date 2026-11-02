@@ -47,6 +47,12 @@ Spec section 15. Implemented in Phase 4 (October 2026). Report: `docs/phases/PHA
 | `highlight_viewed`, `profile_viewed`, `search_performed` | none |
 | `upload_succeeded` | `mediaKind`, `attempts` (1–100), `durationMs` (0–3,600,000) |
 | `upload_failed` | `mediaKind`, `stage` (`upload`/`processing`/`publish`), `reason` (`network`/`server`/`rejected`/`timeout`/`unknown`), `attempts` |
+| `invite_shared` | `from` (`settings`/`home`/`search`/`messages`/`onboarding`/`contacts`): Invite friends handed the link to the share sheet (never to whom) |
+| `invite_link_opened` | `signedIn` (boolean): an invite link opened in the app; signed-out opens are sent once the invite is redeemed after sign-up |
+| `contacts_checked` | `found` (0–10,000): how many accounts Contacts on Katkee found; never the contacts or the accounts |
+
+People who joined from an invite are counted from `invite_redemptions` (migration 0064), not
+from app events; they are not yet shown in the Admin Console.
 
 `POST /api/v1/analytics/events` (signed in): `{ platform?, appVersion?, events: [{ id, name, occurredAt, sessionId?, properties? }] }`,
 1–50 events, 60 batches a minute per person. Events older than 7 days or more than 10 minutes

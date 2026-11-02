@@ -6,7 +6,8 @@ import { apiGet, apiPatch, apiPost } from "./client";
  * lockstep by hand until there's a shared types package.
  */
 /** `verification`: your badge was approved, denied, removed or restored (no actor). */
-export type NotificationType = "like" | "comment" | "follow" | "follow_request" | "follow_accepted" | "mention" | "verification";
+/** "invite_joined": someone joined Katkee from your invite link (backend growth/invites.ts). */
+export type NotificationType = "like" | "comment" | "follow" | "follow_request" | "follow_accepted" | "mention" | "verification" | "invite_joined";
 
 export interface NotificationRecord {
   id: string;

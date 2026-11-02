@@ -42,7 +42,7 @@ const TABS: Array<{ key: ActivityTab; label: string }> = [
 /** A `follow_request` reads as the same relationship-y thing a `follow` does — the "Follows" tab covers both rather than needing a 5th tab. */
 function matchesTab(notification: NotificationRecord, tab: ActivityTab): boolean {
   if (tab === "all") return true;
-  if (tab === "follow") return notification.type === "follow" || notification.type === "follow_request" || notification.type === "follow_accepted";
+  if (tab === "follow") return notification.type === "follow" || notification.type === "follow_request" || notification.type === "follow_accepted" || notification.type === "invite_joined";
   if (tab === "comment") return notification.type === "comment" || notification.type === "mention";
   return notification.type === tab;
 }
@@ -91,6 +91,8 @@ function messageFor(notification: NotificationRecord): string {
       return `${name} requested to follow you.`;
     case "follow_accepted":
       return `${name} accepted your follow request.`;
+    case "invite_joined":
+      return `${name} joined Katkee from your invite.`;
     case "mention":
       // A mention sticker on their Story, or @you in a comment.
       return notification.comment ? `${name} mentioned you in a comment.` : `${name} mentioned you in their Story.`;
@@ -418,15 +420,17 @@ export function ActivityScreen(): React.JSX.Element {
         </View>
       );
     }
-    if ((n.type === "follow" || n.type === "follow_accepted") && n.actor) {
+    // Someone who joined from your invite gets a Follow button too: they're new and know you.
+    if ((n.type === "follow" || n.type === "follow_accepted" || n.type === "invite_joined") && n.actor) {
       const state = followedBack[n.actor.username];
       if (n.actor.followedByYou && !state) return null;
       const username = n.actor.username;
+      const label = n.type === "invite_joined" ? "Follow" : "Follow back";
       return state ? (
         <Text style={styles.trailingNote}>{state === "requested" ? "Requested" : "Following"}</Text>
       ) : (
-        <Pressable onPress={() => void followBack(username)} style={[styles.smallButton, styles.smallButtonPrimary]} accessibilityRole="button" accessibilityLabel={`Follow @${username} back`}>
-          <Text style={styles.smallButtonPrimaryText}>Follow back</Text>
+        <Pressable onPress={() => void followBack(username)} style={[styles.smallButton, styles.smallButtonPrimary]} accessibilityRole="button" accessibilityLabel={n.type === "invite_joined" ? `Follow @${username}` : `Follow @${username} back`}>
+          <Text style={styles.smallButtonPrimaryText}>{label}</Text>
         </Pressable>
       );
     }

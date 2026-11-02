@@ -18,7 +18,9 @@ import { appEnv } from "../config/env";
  */
 export type AnalyticsEventName =
   | "app_session_started" | "app_crash" | "story_created" | "highlight_viewed"
-  | "profile_viewed" | "search_performed" | "upload_succeeded" | "upload_failed" | "story_shared_external";
+  | "profile_viewed" | "search_performed" | "upload_succeeded" | "upload_failed" | "story_shared_external"
+  // Invite friends (where it was tapped), an invite link opened, and how many contacts were found.
+  | "invite_shared" | "invite_link_opened" | "contacts_checked";
 export type AnalyticsProperties = Record<string, string | number | boolean>;
 
 interface QueuedEvent {

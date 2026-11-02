@@ -22,6 +22,7 @@ jest.mock("../src/api/users", () => ({
 }));
 jest.mock("../src/api/stories", () => ({ getUserActiveStories: jest.fn(async () => ({ stories: [] })) }));
 jest.mock("../src/api/conversations", () => ({ openConversation: jest.fn() }));
+jest.mock("../src/state/invites", () => ({ shareInvite: jest.fn() }));
 jest.mock("../src/components/HighlightsRow", () => ({ HighlightsRow: () => null }));
 jest.mock("../src/components/ReportSheet", () => ({ ReportSheet: () => null }));
 jest.mock("@react-navigation/native", () => ({
@@ -172,7 +173,16 @@ test("a follow that fails says why and leaves the button as it was", async () =>
 test("no suggestions, or none loading, invites a search instead of spinning", async () => {
   api.getSuggestions.mockRejectedValueOnce(new Error("offline"));
   await renderSearch();
-  expect(texts()).toEqual(expect.arrayContaining(["Find people", "Search by name, username or interest."]));
+  expect(texts()).toEqual(expect.arrayContaining(["Find people", "Search by name, username or interest, or invite your friends."]));
+  const { shareInvite } = jest.requireMock("../src/state/invites") as { shareInvite: jest.Mock };
+  await press("Invite friends");
+  expect(shareInvite).toHaveBeenCalledWith("search", "token", "u-me");
+});
+
+test("Find friends from your contacts opens Contacts on Katkee, which explains before asking", async () => {
+  await renderSearch();
+  await press("Find friends from your contacts");
+  expect(mockRootNavigation.navigate).toHaveBeenCalledWith("ContactsOnKatkee", { from: "search" });
 });
 
 describe("profile links", () => {

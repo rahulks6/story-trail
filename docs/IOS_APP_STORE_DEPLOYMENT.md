@@ -215,6 +215,7 @@ match `mobile/ios/KatkeeMobile/PrivacyInfo.xcprivacy`, and none is used for trac
 | Other Diagnostic Data (crash counts) | Yes | No | Analytics |
 | Crash Data (crash reports to Katkee's own server: the error, its trace, the screen, phone model and app version) | Yes | No | App Functionality |
 | Customer Support (Send feedback: the note and a screenshot the person chooses to attach) | Yes | No | App Functionality |
+| Contacts (only with Find friends from your contacts: emails and phone numbers hashed on the phone, matched and not kept) | Yes | No | App Functionality |
 
 Advertisers never see who anyone is, and messages and location are never used for ads.
 
@@ -264,7 +265,7 @@ Advertising" here and in the privacy manifest.
 | 1.2 User-generated content | Agree to terms with no tolerance for objectionable content; filter; report; block; published contact | Terms notice at sign-up and onboarding; moderation and link safety; Report on Stories, profiles and messages; Block; Support URL |
 | 2.1 App completeness | A working backend, a demo account, no placeholder content | Your steps 2 and 7 |
 | 4.8 Login services | Sign in with Apple beside Google, Facebook and similar | Google hidden on iPhone unless configured |
-| 5.1.1 Data collection | Clear purpose strings; ask only when needed | Camera, microphone, photos and location ask in context; location is opt-in and approximate |
+| 5.1.1 Data collection | Clear purpose strings; ask only when needed | Camera, microphone, photos and location ask in context; location is opt-in and approximate; contacts are asked for only after an explainer, hashed on the phone and not kept (5.1.1(viii)/(ix): no contact database is built) |
 | 5.1.1(v) Account deletion | Delete the account inside the app | Settings, then Delete account |
 | 5.1.2 Data use | No tracking without permission | No tracking, no advertising identifier, so no tracking prompt |
 
