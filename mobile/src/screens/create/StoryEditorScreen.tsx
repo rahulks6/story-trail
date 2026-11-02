@@ -1236,7 +1236,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: "#FFFFFF",
     fontSize: 15,
-    lineHeight: 21,
+    lineHeight: 22,
     fontWeight: "500",
     paddingVertical: spacing.sm + 3,
     maxHeight: 21 * 4 + spacing.sm * 2 + 6,

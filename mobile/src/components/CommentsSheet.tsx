@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
   metaName: { flexShrink: 1 },
   username: { color: colors.textPrimary, fontWeight: "700", fontSize: 13 },
   time: { color: colors.textDisabled, fontSize: 12 },
-  body: { color: colors.textPrimary, fontSize: 15, lineHeight: 20 },
+  body: { color: colors.textPrimary, fontSize: 15, lineHeight: 22 },
   more: { paddingTop: 2, paddingHorizontal: 2 },
   error: { color: colors.danger, textAlign: "center", marginTop: spacing.xs },
   disabled: { textAlign: "center", marginVertical: spacing.md },

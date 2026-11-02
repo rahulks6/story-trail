@@ -34,6 +34,6 @@ export function TermsNotice({ action }: { action: "signup" | "continue" }): Reac
 }
 
 const styles = StyleSheet.create({
-  text: { ...typography.caption, color: colors.textSecondary, textAlign: "center", lineHeight: 18 },
+  text: { ...typography.caption, color: colors.textSecondary, textAlign: "center", lineHeight: 20 },
   link: { color: colors.accentText, fontWeight: "600" },
 });

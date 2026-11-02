@@ -43,7 +43,8 @@ const GAP = spacing.sm;
 const CONTAINER_PADDING = spacing.lg;
 const CARD_ASPECT_RATIO = 1.35; // portrait, not circular — spec section 62
 /** The name sits under each cover, never on the photo, so it reads on any picture and in light or dark. */
-const LABEL_HEIGHT = 22;
+// Room for Devanagari (Hindi and Marathi titles and labels): its marks sit above and below the line.
+const LABEL_HEIGHT = 25;
 
 /**
  * The Highlights grid under a profile's bio (spec section 62): EXACTLY 3
@@ -249,7 +250,7 @@ const styles = StyleSheet.create({
   coverImage: { width: "100%", height: "100%" },
   coverFallback: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.surfaceElevated },
   coverFallbackInitial: { color: colors.textPrimary, fontWeight: "700", fontSize: 28 },
-  label: { ...typography.bodyStrong, fontSize: 13, lineHeight: 18, height: LABEL_HEIGHT, paddingTop: 4, textAlign: "center" },
+  label: { ...typography.bodyStrong, fontSize: 13, lineHeight: 20, height: LABEL_HEIGHT, paddingTop: 4, textAlign: "center" },
   newSlot: { position: "absolute" },
   newCard: {
     width: "100%",

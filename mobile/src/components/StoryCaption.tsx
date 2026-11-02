@@ -81,6 +81,6 @@ const shadow = { textShadowColor: "rgba(0,0,0,0.55)", textShadowOffset: { width:
 
 const styles = StyleSheet.create({
   scrim: { position: "absolute", left: 0, right: 0, bottom: 0 },
-  text: { color: "#FFFFFF", fontSize: 15, lineHeight: 21, fontWeight: "500", letterSpacing: 0.1, ...shadow },
+  text: { color: "#FFFFFF", fontSize: 15, lineHeight: 22, fontWeight: "500", letterSpacing: 0.1, ...shadow },
   more: { color: "rgba(255,255,255,0.72)", fontSize: 14, fontWeight: "600", marginTop: spacing.xs / 2, ...shadow },
 });

@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     overflow: "hidden",
   },
-  bio: { color: colors.textPrimary, fontSize: 14, lineHeight: 20, marginTop: 2 },
+  bio: { color: colors.textPrimary, fontSize: 14, lineHeight: 21, marginTop: 2 },
   chips: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xs, marginTop: spacing.xs },
   chip: {
     color: colors.textPrimary,

@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
   centered: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background },
   intro: { alignItems: "center", gap: spacing.sm, paddingTop: spacing.sm },
   introIcon: { width: 48, height: 48, borderRadius: 24, backgroundColor: colors.accent, alignItems: "center", justifyContent: "center" },
-  introText: { ...typography.caption, textAlign: "center", lineHeight: 19 },
+  introText: { ...typography.caption, textAlign: "center", lineHeight: 20 },
   perks: { gap: spacing.sm, paddingHorizontal: spacing.sm },
   perk: { flexDirection: "row", gap: spacing.sm, alignItems: "flex-start" },
   perkText: { ...typography.body, flex: 1 },

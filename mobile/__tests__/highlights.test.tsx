@@ -76,11 +76,11 @@ test("Highlights are permanent portrait cards, exactly three per row on a phone"
   const width = (widthSeen - 24 * 2 - 8 * 2) / 3;
   for (const c of cards) {
     expect(c.width).toBeCloseTo(width, 5);
-    expect(c.height).toBeCloseTo(width * 1.35 + 22, 5); // a portrait cover (not a circle), its name underneath
+    expect(c.height).toBeCloseTo(width * 1.35 + 25, 5); // a portrait cover (not a circle), its name underneath (room for Devanagari)
   }
   expect(cards.map((c) => [Math.round(c.left), Math.round(c.top)])).toEqual([
     [0, 0], [Math.round(width + 8), 0], [Math.round(2 * (width + 8)), 0],
-    [0, Math.round(width * 1.35 + 22 + 8)],
+    [0, Math.round(width * 1.35 + 25 + 8)],
   ]);
   // The name is below the photo in the screen's own text colour, so it reads in light and dark mode.
   const name = tree.root.find((n: ReactTestInstance) => (n.type as unknown) === "Text" && n.props.children === "Travel");
