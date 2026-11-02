@@ -228,6 +228,11 @@ describe("product analytics", () => {
       users: { dau: 3, wau: 4, mau: 5, returning: 2, registrations: 1, platforms: { android: 2, ios: 1, web: 1, unknown: 0 } },
       stories: { published: 2, activeCreators: 1, views: 3, viewers: 2, completions: 3, completedViews: 2, replays: 1, watchMs: 10000, watchSamples: 2, highlightsCreated: 1 },
       engagement: { likes: 1, comments: 1, shares: 1, follows: 1 },
+      // Interactive stickers and Collab Stories (migration 0063): none used on day D.
+      interactive: {
+        pollVotes: 0, quizAnswers: 0, questionResponses: 0, countdownReminders: 0, addYoursChains: 0, addYoursStories: 0,
+        collabInvites: 0, collabsAccepted: 0, linkOpens: 0, addYoursTaps: 0,
+      },
       dms: { sent: 3, senders: 2, received: 2 },
       app: { sessions: 3, crashedSessions: 1, crashes: 1, storiesStarted: 2, highlightViews: 1, profileViews: 2, searches: 1, uploadsSucceeded: 3, uploadsFailed: 1, processingFailures: 1 },
       moderation: { reports: 1, resolved: 0 },

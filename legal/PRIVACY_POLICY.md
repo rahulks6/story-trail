@@ -1,6 +1,6 @@
 # Katkee Privacy Policy
 
-**Last updated:** 30 October 2026
+**Last updated:** 2 November 2026
 
 This policy explains what Katkee collects, how we use it, who can see it, how long we keep it
 and the choices you have. It covers the Katkee apps for iPhone and Android, the website at
@@ -52,6 +52,18 @@ If you add a song to a Story, we record which song from Katkee's music
 library and which part of it plays. The songs are openly licensed and credited
 on the Story; choosing one tells us nothing else about you.
 
+### Story stickers and Collab Stories
+When you answer an interactive sticker on someone's Story, we keep what you
+did: your vote on a poll or your answer to a quiz (one each, and it can't be
+changed), the text you send to a question sticker ("Ask me anything"), and
+whether you asked to be reminded when a countdown ends (we then send you one
+notification at that time). If you post from someone's "Add Yours", we record
+that your Story is part of that prompt's chain. If you invite someone to a
+Collab Story, or are invited, we keep the invitation and whether it was
+accepted. When you open a link sticker the app tells us a link was opened,
+never which one; link stickers are checked against our link-safety rules and,
+when it's configured, Google Safe Browsing.
+
 When you change your profile photo, the app cuts out the square you choose
 on your phone and uploads only that square. Your cover photo works the same
 way: only the wide banner you frame is uploaded.
@@ -71,6 +83,34 @@ video call, how it ended and how long it lasted.
 ### Your connections
 Who you follow, who follows you, follow requests, and who you've blocked or
 muted.
+
+### Your contacts (Contacts on Katkee, optional)
+Only if you choose **Find friends from your contacts** and allow it on your
+phone. Before anything is sent, the app turns each email address and phone
+number in your contacts into a scrambled code (a SHA-256 hash) on your
+phone. Only those codes are sent; names, photos, notes and the rest of your
+contacts never leave your phone. We compare the codes with the verified
+email addresses and phone numbers of accounts that allow being found this
+way, show you the accounts that match, and then **forget the codes: we
+never store your contacts or the codes made from them**, and never use
+them for anything else (not for ads, suggestions or to contact anyone).
+
+The codes are not encryption: someone who had one could work out the
+phone number behind it by trying every number. That is why we don't keep
+them. You can run the check again or never; turning off contacts for
+Katkee in your phone's settings stops it.
+
+Others can find you the same way, from your verified email or phone
+number, unless you turn off **Let people find me from their contacts**
+(Settings, then Privacy). They see your account, never your email or
+number.
+
+### Invites
+Your personal invite link (katkee.com/i/...) shows your display name to
+whoever opens it. If someone creates an account after opening your link, we
+record that they joined from your invite, tell you, and suggest you to each
+other. We don't track installs through the app stores and don't use any
+attribution service.
 
 ### Your approximate area (Nearby Stories, optional)
 Only if you turn on **Nearby Stories**. The app reads an approximate
@@ -181,7 +221,9 @@ message is kept as evidence for the moderator.
   no analytics or advertising trackers.
 
 ### What we do **not** collect or do
-- We don't access your contacts or your precise location.
+- We don't access your contacts unless you choose Contacts on Katkee, and
+  then we don't keep them (see above). We never access your precise
+  location.
 - We remove location details (EXIF/GPS and similar metadata) from the copies
   of your photos and videos that we show, and delete uploaded originals 30
   days after processing.
@@ -215,6 +257,17 @@ message is kept as evidence for the moderator.
   or who've blocked you, never see them.
 - **Blocking**: hides your content from someone and theirs from you, both
   ways, at once.
+- **Sticker answers**: who voted on a poll or quiz and what they chose, and
+  answers to a question sticker, are seen only by the Story's owner. Other
+  viewers see a poll's percentages after they vote, and a quiz's answer after
+  they answer. If the owner shares an answer to a new Story, it shows the
+  question and the answer, not who sent it.
+- **Collab Stories**: once accepted, a Collab Story shows both names and
+  reaches both people's followers, within the owner's own privacy settings (a
+  private account's Collab Story is still seen only by its followers).
+  Neither person's blocks are bypassed, and either can end the collab.
+- **Add Yours**: the Stories in a chain are shown only to people who could
+  already see each of them.
 - **Your area and time zone**: never shown to anyone.
 - **Interests we learn**: only you see them (Settings, then Your interests).
 - **Verification ID photo**: only staff who review verification requests,
@@ -268,6 +321,9 @@ recorded in an audit log that can't be edited.
     kept separately for 180 days after deletion, because India's IT Rules
     2021 (rule 3(1)(h)) require it, then deleted. We use them only to
     answer lawful requests.
+- **Sticker answers, reminders and collab invitations**: kept with the Story
+  they belong to, deleted with it, and deleted when the account that sent
+  them is deleted.
 - **Uploads never used**: deleted after 48 hours.
 - **Photo originals**: deleted 30 days after processing.
 - **A video of your Story prepared for sharing to another app**: deleted
@@ -303,6 +359,8 @@ In the app you can:
 - edit your profile;
 - make your account private;
 - turn Nearby Stories on or off (Settings, then Privacy);
+- choose whether people can find you from their contacts (Settings, then
+  Privacy);
 - see and remove the interests Katkee has learned (Settings, then Your
   interests);
 - turn notification types on or off;
@@ -345,7 +403,8 @@ time. The legal bases we rely on:
   and our own analytics, which identify nobody once counted
   (Article 6(1)(f)). You can object to any of these; for Sponsored Stories,
   removing your interests in Edit Profile stops them being used.
-- **Consent**: Nearby Stories (your area) and a location sticker; you can
+- **Consent**: Nearby Stories (your area), a location sticker, and Contacts
+  on Katkee (checked once each time you choose it, and not kept); you can
   turn them off at any time.
 - **Legal obligation**: keeping server logs and the details of deleted
   accounts for as long as the law requires (section 7).

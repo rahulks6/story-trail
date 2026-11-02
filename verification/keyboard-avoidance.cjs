@@ -9,6 +9,7 @@ const src=path.join(__dirname,'../mobile/src');
 const EXEMPT={
  'components/Form.tsx':'the shared TextField; the screens that use it handle the keyboard',
  'components/StickerSheet.tsx':'its own KeyboardAvoidingView (padding on iOS, height on Android)',
+ 'components/InteractiveStickerForm.tsx':'shown only inside StickerSheet, which keeps it above the keyboard',
  'components/TextToolModal.tsx':'its own KeyboardAvoidingView (padding on iOS, height on Android)',
  'screens/search/SearchScreen.tsx':'search field at the top of the screen',
  'screens/dm/NewChatScreen.tsx':'search field at the top of the screen',

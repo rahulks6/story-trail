@@ -5,6 +5,13 @@ import type { CallAction, CallState, EndedBecause } from "./callMachine";
 import type { PeerLike, StreamLike, WebRtc } from "./webrtc";
 import { VIDEO_CONSTRAINTS } from "./webrtc";
 import * as audio from "./callAudio";
+import { serverTimeMs } from "../utils/serverTime";
+
+/** How long a call keeps ringing: until the server's deadline, or 45 s when it gave none we can read. */
+function ringsForMs(ringsUntil: string | null | undefined, now: number): number {
+  const until = serverTimeMs(ringsUntil);
+  return Number.isFinite(until) ? until - now : 45_000;
+}
 
 /** Heartbeats while a call rings or runs (the server ends a call whose phones went quiet for a minute). */
 const HEARTBEAT_MS = 15_000;
@@ -138,7 +145,7 @@ export class CallController {
     this.audio.startCallAudio(media, true);
     this.audio.setSpeaker(media === "video");
     this.startHeartbeat();
-    const ringsFor = started.call.ringsUntil ? new Date(started.call.ringsUntil).getTime() - this.now() : 45_000;
+    const ringsFor = ringsForMs(started.call.ringsUntil, this.now());
     this.ringTimer = this.timers.setTimeout(() => void this.hangUp("timeout"), Math.max(1_000, ringsFor));
     this.createPeer(started.iceServers.iceServers);
     try {
@@ -173,7 +180,7 @@ export class CallController {
       this.finished = true; // already on another call: the caller hears "busy" from the server
       return;
     }
-    const ringsFor = call.ringsUntil ? new Date(call.ringsUntil).getTime() - this.now() : 45_000;
+    const ringsFor = ringsForMs(call.ringsUntil, this.now());
     this.audio.startRinging(ringsFor / 1000);
     // The caller's ring time is the server's: past it (plus a moment for the event), it was missed.
     this.ringTimer = this.timers.setTimeout(() => this.finish("missed"), Math.max(1_000, ringsFor + 2_000));

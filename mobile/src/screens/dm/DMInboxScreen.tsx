@@ -22,6 +22,7 @@ import { Avatar } from "../../components/Avatar";
 import { VerifiedName } from "../../components/VerifiedBadge";
 import { GroupAvatar } from "../../components/GroupAvatar";
 import { Icon } from "../../components/Icon";
+import { shareInvite } from "../../state/invites";
 
 /** The server's largest page; older conversations load as the list scrolls. */
 const PAGE_SIZE = 50;
@@ -222,6 +223,7 @@ export function DMInboxScreen(): React.JSX.Element {
         <View style={styles.emptyAction}>
           <Button label="New message" onPress={() => navigation.navigate("NewChat")} />
           <Button label="New group" variant="text" onPress={() => navigation.navigate("NewGroup", {})} />
+          <Button label="Invite friends" variant="secondary" onPress={() => void shareInvite("messages", accessToken, user?.id)} />
         </View>
       </EmptyState>
     );

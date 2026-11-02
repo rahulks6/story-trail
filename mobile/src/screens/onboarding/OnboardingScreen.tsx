@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, ScrollView, Share, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "../../components/Pressable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing, typography, FORM_MAX_WIDTH } from "../../theme";
@@ -13,6 +13,8 @@ import { Banner, Button } from "../../components/Form";
 import { suggestionReasonText } from "../search/SearchScreen";
 import { tapFeedback } from "../../utils/haptics";
 import { TOPICS } from "../../models/topics";
+import { ContactsFinder } from "../../components/ContactsFinder";
+import { shareInvite } from "../../state/invites";
 
 /** What people can pick from; the same words appear on profiles, in "Also into …" and as Story topics. */
 export const INTEREST_CHOICES = TOPICS;
@@ -21,14 +23,16 @@ export const MAX_INTERESTS = 5;
 type FollowState = "none" | "following" | "requested" | "busy";
 
 /**
- * First run, after the email is verified: pick what you're into, then follow a few people, so
- * Home has Stories from day one. Either step can be skipped; it's shown once (state/onboarding).
+ * First run, after the email is verified: pick what you're into, follow a few people, then
+ * (optionally) find friends from your contacts, so Home has Stories from day one. Every step can
+ * be skipped; it's shown once (state/onboarding). Contacts are read only if the person taps
+ * Continue on that step's explainer.
  */
 export function OnboardingScreen(): React.JSX.Element {
   const { user, accessToken, applyProfile } = useAuth();
   const { finish } = useOnboarding();
   const insets = useSafeAreaInsets();
-  const [step, setStep] = useState<"interests" | "people">("interests");
+  const [step, setStep] = useState<"interests" | "people" | "contacts">("interests");
   const [chosen, setChosen] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -101,9 +105,7 @@ export function OnboardingScreen(): React.JSX.Element {
     }
   };
 
-  const invite = () => {
-    void Share.share({ message: "I'm on Katkee, a new place for Stories. Join me: https://katkee.com" }).catch(() => undefined);
-  };
+  const invite = () => void shareInvite("onboarding", accessToken, user?.id);
 
   const pad = { paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.lg };
 
@@ -111,7 +113,7 @@ export function OnboardingScreen(): React.JSX.Element {
     return (
       <View style={styles.root}>
         <ScrollView contentContainerStyle={[styles.content, pad]}>
-          <Text style={styles.stepLabel}>Step 1 of 2</Text>
+          <Text style={styles.stepLabel}>Step 1 of 3</Text>
           <Text style={typography.displayLarge} accessibilityRole="header">What are you into?</Text>
           <Text style={styles.body}>Pick up to {MAX_INTERESTS}. We'll suggest people and Stories you'll like.</Text>
           {error ? <Banner text={error} /> : null}
@@ -141,6 +143,22 @@ export function OnboardingScreen(): React.JSX.Element {
     );
   }
 
+  if (step === "contacts") {
+    return (
+      <View style={[styles.root, { paddingTop: insets.top }]}>
+        <ContactsFinder
+          source="onboarding"
+          header={<Text style={styles.stepLabel}>Step 3 of 3</Text>}
+          footer={
+            <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.md }]}>
+              <Button label="Start using Katkee" variant="secondary" onPress={done} />
+            </View>
+          }
+        />
+      </View>
+    );
+  }
+
   const followedCount = Object.values(follows).filter((s) => s === "following" || s === "requested").length;
   return (
     <View style={styles.root}>
@@ -150,7 +168,7 @@ export function OnboardingScreen(): React.JSX.Element {
         contentContainerStyle={[styles.content, pad]}
         ListHeaderComponent={
           <View style={styles.header}>
-            <Text style={styles.stepLabel}>Step 2 of 2</Text>
+            <Text style={styles.stepLabel}>Step 2 of 3</Text>
             <Text style={typography.displayLarge} accessibilityRole="header">People to follow</Text>
             <Text style={styles.body}>Their Stories will show on your Home.</Text>
           </View>
@@ -191,7 +209,7 @@ export function OnboardingScreen(): React.JSX.Element {
         }}
       />
       <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.md }]}>
-        <Button label={followedCount ? "Done" : "Start using Katkee"} onPress={done} />
+        <Button label={followedCount ? "Next" : "Skip"} variant={followedCount ? "primary" : "secondary"} onPress={() => setStep("contacts")} />
       </View>
     </View>
   );

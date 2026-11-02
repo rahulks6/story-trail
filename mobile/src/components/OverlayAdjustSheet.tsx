@@ -4,7 +4,7 @@ import React from "react";
 import { Modal, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "./Pressable";
 import { colors, radii, spacing, typography } from "../theme";
-import { clampOverlayPosition, type Overlay } from "../models/storyDraft";
+import { clampOverlayPosition, isInteractive, type Overlay } from "../models/storyDraft";
 
 const NUDGE_STEP = 0.02;
 const SCALE_STEP = 0.15;
@@ -118,7 +118,7 @@ export function OverlayAdjustSheet({ overlay, onChange, onEditText, onEditLocati
           </Pressable>
         ) : null}
 
-        {(shown.type === "location" || shown.type === "datetime") && onEditLocationOrDateTime ? (
+        {(shown.type === "location" || shown.type === "datetime" || isInteractive(shown)) && onEditLocationOrDateTime ? (
           <Pressable
             style={styles.secondaryButton}
             onPress={() => {
@@ -126,9 +126,9 @@ export function OverlayAdjustSheet({ overlay, onChange, onEditText, onEditLocati
               onClose();
             }}
             accessibilityRole="button"
-            accessibilityLabel={shown.type === "location" ? "Edit location" : "Edit date or time"}
+            accessibilityLabel={shown.type === "location" ? "Edit location" : shown.type === "datetime" ? "Edit date or time" : "Edit sticker"}
           >
-            <Text style={styles.secondaryButtonLabel}>{shown.type === "location" ? "Edit location" : "Edit date and time"}</Text>
+            <Text style={styles.secondaryButtonLabel}>{shown.type === "location" ? "Edit location" : shown.type === "datetime" ? "Edit date and time" : "Edit sticker"}</Text>
           </Pressable>
         ) : null}
 

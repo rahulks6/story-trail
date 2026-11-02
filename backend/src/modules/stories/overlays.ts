@@ -7,8 +7,27 @@
  * than a permanently-rendered "@username".
  */
 
-export const OVERLAY_TYPES = ["text", "emoji", "mention", "location", "datetime", "sticker"] as const;
+export const OVERLAY_TYPES = [
+  "text", "emoji", "mention", "location", "datetime", "sticker",
+  // Interactive stickers (stickers.service.ts): what viewers do with them is stored apart
+  // from the Story (migration 0062), and attached for each viewer on every read.
+  "poll", "quiz", "question", "countdown", "link", "addYours",
+] as const;
 export type OverlayType = (typeof OVERLAY_TYPES)[number];
+
+/** A Story carries at most one of each: one poll, one quiz, and so on (like Instagram). */
+export const INTERACTIVE_TYPES = ["poll", "quiz", "question", "countdown", "link", "addYours"] as const;
+export type InteractiveType = (typeof INTERACTIVE_TYPES)[number];
+
+export const MIN_OPTIONS = 2;
+export const MAX_OPTIONS = 4;
+export const MAX_OPTION_LENGTH = 40;
+export const MAX_QUESTION_LENGTH = 80;
+export const MAX_COUNTDOWN_TITLE_LENGTH = 40;
+export const MAX_LINK_LENGTH = 2048;
+export const MAX_LINK_LABEL_LENGTH = 40;
+/** How far ahead a countdown may end. */
+export const MAX_COUNTDOWN_DAYS = 90;
 
 export const TEXT_STYLES = ["Clean", "Bold", "Classic", "Modern", "Typewriter", "Outline", "Soft", "Highlight"] as const;
 export type TextStyle = (typeof TEXT_STYLES)[number];
@@ -85,7 +104,77 @@ export interface StickerOverlay extends OverlayBase {
   properties: { stickerId: StickerId };
 }
 
-export type StoryOverlay = TextOverlay | EmojiOverlay | MentionOverlay | LocationOverlay | DateTimeOverlay | StickerOverlay;
+/**
+ * What a poll or quiz looks like to one viewer. Only attached once they have answered (or for
+ * the owner): the counts aren't shown before you vote, and a quiz never gives its answer away.
+ */
+export interface VoteResults {
+  counts: number[];
+  total: number;
+  /** The option this viewer chose; null for the owner, who doesn't vote. */
+  viewerChoice: number | null;
+}
+
+export interface PollOverlay extends OverlayBase {
+  type: "poll";
+  properties: { question: string; options: string[]; results?: VoteResults | null };
+}
+
+export interface QuizOverlay extends OverlayBase {
+  type: "quiz";
+  /**
+   * `correctIndex` is stored, but only ever sent to the owner and to a viewer who has already
+   * answered (stickers.service.ts): before that the response leaves it out entirely.
+   */
+  properties: { question: string; options: string[]; correctIndex?: number; results?: VoteResults | null };
+}
+
+export interface QuestionOverlay extends OverlayBase {
+  type: "question";
+  /** `responseCount` is the owner's alone; `viewerAnswered` is whether this viewer has sent one. */
+  properties: { prompt: string; viewerAnswered?: boolean; responseCount?: number };
+}
+
+export interface CountdownOverlay extends OverlayBase {
+  type: "countdown";
+  /** `endsAt` is an ISO time. `reminderCount` is the owner's alone. */
+  properties: { title: string; endsAt: string; viewerReminded?: boolean; reminderCount?: number };
+}
+
+export interface LinkOverlay extends OverlayBase {
+  type: "link";
+  /** An http(s) URL that passed the link-safety policy (safety/links.ts), at publish and on every read. */
+  properties: { url: string; label: string | null };
+}
+
+export interface AddYoursOverlay extends OverlayBase {
+  type: "addYours";
+  /**
+   * Sent on publish: the prompt, and the chain being joined (when posting from someone's
+   * "Add yours"). On read the chain's own prompt replaces whatever was sent, with how many
+   * people have taken part and a few of their faces.
+   */
+  properties: {
+    prompt: string;
+    chainId?: string;
+    participants?: number;
+    recent?: { username: string; avatarMediaId: string | null }[];
+  };
+}
+
+export type StoryOverlay =
+  | TextOverlay
+  | EmojiOverlay
+  | MentionOverlay
+  | LocationOverlay
+  | DateTimeOverlay
+  | StickerOverlay
+  | PollOverlay
+  | QuizOverlay
+  | QuestionOverlay
+  | CountdownOverlay
+  | LinkOverlay
+  | AddYoursOverlay;
 
 export interface DrawStroke {
   id: string;

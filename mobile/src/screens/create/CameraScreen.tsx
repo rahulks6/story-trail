@@ -25,6 +25,7 @@ import { useTapGesture } from "../../hooks/useTapGesture";
 import { EmptyState } from "../../components/EmptyState";
 import { guessMimeTypeFromUri } from "../../utils/mime";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
+import { clearCreateSeed, currentCreateSeed, onCreateSeedChange, type CreateSeed } from "../../state/createSeed";
 import { BOOMERANG_RECORD_MS, CAPTURE_MODES, shutterLabel, shutterTap, type CaptureMode, type MediaEffect } from "../../models/captureModes";
 
 type Props = NativeStackScreenProps<CreateStackParamList, "Camera">;
@@ -82,6 +83,11 @@ const VIDEO_BIT_RATE = 6_000_000;
 export function CameraScreen({ navigation }: Props): React.JSX.Element {
   useMediaStatusBar();
   const insets = useScreenInsets();
+  // Opened from someone's "Add yours" (state/createSeed.ts): the prompt shows until it's used or dismissed.
+  const [seed, setSeed] = useState<CreateSeed | null>(currentCreateSeed);
+  useEffect(() => onCreateSeedChange(() => setSeed(currentCreateSeed())), []);
+  const focusedForSeed = useIsFocused();
+  useEffect(() => { if (focusedForSeed) setSeed(currentCreateSeed()); }, [focusedForSeed]);
   const { hasPermission: hasCameraPermission, requestPermission: requestCameraPermission } = useCameraPermission();
   const { hasPermission: hasMicPermission, requestPermission: requestMicPermission } = useMicrophonePermission();
   const [position, setPosition] = useState<CameraPosition>("back");
@@ -571,8 +577,21 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
         </View>
       ) : null}
 
+      {seed ? (
+        // What this Story will carry (someone's "Add yours" prompt, or an answer you're sharing).
+        <View style={[styles.seedRow, { top: insets.top + spacing.md + 56 }]} pointerEvents="box-none">
+          <View style={styles.seedChip}>
+            <Icon name={seed.kind === "addYours" ? ICONS.add : ICONS.reply} size={14} color={colors.onAccent} />
+            <Text style={styles.seedText} numberOfLines={1}>{seed.kind === "addYours" ? `Add Yours: ${seed.prompt}` : `Sharing an answer: ${seed.prompt}`}</Text>
+            <Pressable onPress={clearCreateSeed} hitSlop={10} accessibilityRole="button" accessibilityLabel={seed.kind === "addYours" ? "Don't add this prompt" : "Don't share this answer"}>
+              <Icon name={ICONS.close} size={14} color={colors.onAccent} />
+            </Pressable>
+          </View>
+        </View>
+      ) : null}
+
       <View style={[styles.topBar, { top: insets.top + spacing.md }]}>
-        <Pressable onPress={() => navigation.goBack()} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel="Close camera">
+        <Pressable onPress={() => { clearCreateSeed(); navigation.goBack(); }} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel="Close camera">
           <Icon style={styles.topIcon} name={ICONS.close} />
         </Pressable>
         <View style={styles.topRight}>
@@ -730,6 +749,9 @@ const styles = StyleSheet.create({
   },
   topRight: { flexDirection: "row", gap: spacing.lg },
   closeCorner: { position: "absolute", left: spacing.md, zIndex: 1 },
+  seedRow: { position: "absolute", left: spacing.md, right: spacing.md, alignItems: "center" },
+  seedChip: { flexDirection: "row", alignItems: "center", gap: spacing.sm, maxWidth: "100%", paddingHorizontal: spacing.md, minHeight: 34, borderRadius: radii.pill, backgroundColor: colors.accent },
+  seedText: { color: colors.onAccent, fontWeight: "700", fontSize: 13, flexShrink: 1 },
   cameraLoading: { flex: 1 },
   topIcon: { color: colors.textPrimary, fontSize: 24, fontWeight: "600" },
   toolDisabled: { opacity: 0.4 },

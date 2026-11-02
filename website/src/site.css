@@ -236,6 +236,10 @@ details p { margin: 0; padding: 0 20px 18px; color: var(--text-2); }
 .open-get { font-size: 1.1rem; margin-top: 48px; }
 .open-in-app .store-buttons { justify-content: center; margin-top: 16px; }
 .open-note { color: var(--text-2); font-size: 0.95rem; margin-top: 40px; }
+/* Invite links: the three steps, left-aligned in a card so they read as a list. */
+.invite-steps { text-align: left; max-width: 26em; margin: 40px auto 28px; padding: 20px 20px 20px 44px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; color: var(--text-2); line-height: 1.6; }
+.invite-steps li + li { margin-top: 8px; }
+.invite-steps strong { color: var(--text); }
 
 .button { display: inline-block; padding: 12px 24px; border-radius: 999px; background: var(--accent); color: var(--on-accent); font-weight: 700; }
 .button:hover { background: var(--accent-pressed); text-decoration: none; }

@@ -4,14 +4,17 @@
  *   - domains on the Admin-managed blocklist (and their subdomains) are refused;
  *   - when Google Safe Browsing is configured, links it flags are refused (an
  *     unreachable or slow service lets the text through rather than blocking people);
- *   - accounts under a day old can't put links in comments or DMs, and accounts under a
- *     week old can't post look-alike (punycode) domains — the usual spam/phishing shapes.
+ *   - accounts under a day old can't put links in comments or DMs, or post a link sticker,
+ *     and accounts under a week old can't post look-alike (punycode) domains — the usual
+ *     spam/phishing shapes.
+ * A Story's link sticker ("story_link") is checked when it's posted and again each time the
+ * Story is read, so a domain blocked later stops being shown on Stories already up.
  */
 import { config } from "../../config/env";
 import { query, queryOne } from "../../db/psql";
 import { HttpError } from "../../http/errors";
 
-export type TextSurface = "comment" | "message" | "caption" | "bio" | "ad_destination";
+export type TextSurface = "comment" | "message" | "caption" | "bio" | "ad_destination" | "story_link";
 
 // Only real script/data/file URLs: "data: 5 GB used" or "File: notes.pdf" are ordinary text.
 const DANGEROUS_SCHEME = /\b(?:javascript|vbscript):\S|\bdata:[a-z]+\/[a-z0-9.+-]+[;,]|\bfile:\/\//i;
@@ -122,7 +125,7 @@ export async function assertLinksAllowed(text: string, surface: TextSurface, aut
   if (authorId) {
     const age = await queryOne(`SELECT extract(epoch FROM now() - created_at) / 3600 AS hours FROM users WHERE id = :'id'`, { id: authorId });
     const hours = Number(age?.hours ?? 0);
-    if (hours < 24 && (surface === "comment" || surface === "message")) {
+    if (hours < 24 && (surface === "comment" || surface === "message" || surface === "story_link")) {
       throw refuse("New accounts can share links after their first day.");
     }
     if (hours < 24 * 7 && links.some((l) => l.host.split(".").some((label) => label.startsWith("xn--")))) {

@@ -4,7 +4,7 @@ export const WEB_ORIGIN = "https://katkee.com";
 /**
  * What the app opens: its own katkee:// links (push notifications, reset emails, links shared by
  * older versions) and katkee.com links (Android App Links and iOS Universal Links send /u/ and /s/
- * here). www redirects to katkee.com on the web, but a pasted link may still carry it.
+ * here, and invite links /i/). www redirects to katkee.com on the web, but a pasted link may still carry it.
  */
 export const LINK_PREFIXES = ["katkee://", WEB_ORIGIN, "https://www.katkee.com"];
 
@@ -34,9 +34,13 @@ export type DeepLinkTarget =
   | { kind: "home" }
   | { kind: "followRequests" }
   | { kind: "verification" }
+  // katkee.com/i/<code> (Invite friends) and the website's katkee://invite/<code> button.
+  | { kind: "invite"; code: string }
   | { kind: "resetPassword"; email?: string; code?: string };
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+/** Eight characters without look-alikes (backend growth/invites.ts). */
+export const INVITE_CODE_RE = /^[2-9a-hjkmnp-z]{8}$/;
 
 /**
  * Parses the path part of a katkee:// or katkee.com link (React Navigation passes it without
@@ -61,6 +65,8 @@ export function deepLinkTarget(path: string): DeepLinkTarget | null {
   if (/^follow-requests\/?$/i.test(rawPath)) return { kind: "followRequests" };
   // Verification notifications: Settings > Request verification.
   if (/^verification\/?$/i.test(rawPath)) return { kind: "verification" };
+  const invite = /^(?:invite|i)\/([^/]+)\/?$/i.exec(rawPath)?.[1]?.toLowerCase();
+  if (invite !== undefined) return INVITE_CODE_RE.test(invite) ? { kind: "invite", code: invite } : null;
   if (/^reset-password\/?$/i.test(rawPath)) {
     const query = new URLSearchParams(rawQuery);
     const email = query.get("email")?.trim().toLowerCase();
@@ -75,7 +81,7 @@ export function deepLinkTarget(path: string): DeepLinkTarget | null {
 }
 
 /**
- * Whether the app follows this link. Only profiles and Stories are katkee.com pages; a katkee.com
+ * Whether the app follows this link. Only profiles, Stories and invites are katkee.com pages; a katkee.com
  * address for one of the app's own screens (katkee.com/verification) is a web page, not the app.
  */
 export function opensInApp(url: string): boolean {

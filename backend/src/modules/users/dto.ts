@@ -52,6 +52,14 @@ export function parseUpdateProfileInput(body: unknown): UpdateProfileInput {
     }
   }
 
+  if (b.findableByContacts !== undefined) {
+    if (typeof b.findableByContacts !== "boolean") {
+      errors.findableByContacts = "findableByContacts must be a boolean.";
+    } else {
+      result.findableByContacts = b.findableByContacts;
+    }
+  }
+
   if (b.interests !== undefined) {
     if (!Array.isArray(b.interests) || b.interests.length > 5 || b.interests.some((value) => typeof value !== "string" || value.trim().length < 1 || value.trim().length > 30)) {
       errors.interests = "Choose up to 5 interests, each 1-30 characters.";

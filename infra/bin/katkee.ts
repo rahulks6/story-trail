@@ -20,7 +20,7 @@ const need = (key: string): string => {
 const list = (key: string): string[] => (get(key) ?? "").split(",").map((v) => v.trim()).filter(Boolean);
 const providers = new Set(list("providers"));
 const features = new Set(list("features"));
-for (const name of providers) if (!["fcm", "apns", "phone", "safeBrowsing"].includes(name)) throw new Error(`Unknown provider "${name}"`);
+for (const name of providers) if (!["fcm", "apns", "phone", "apple", "safeBrowsing"].includes(name)) throw new Error(`Unknown provider "${name}"`);
 for (const name of features) if (!["ads", "sponsoredStories", "adReporting"].includes(name)) throw new Error(`Unknown feature "${name}"`);
 
 const settings: KatkeeSettings = {
@@ -48,6 +48,7 @@ const settings: KatkeeSettings = {
     phone: providers.has("phone") ? { verifyServiceSid: need("twilioVerifyServiceSid"), countries: list("phoneAuthCountries").length ? list("phoneAuthCountries") : ["IN"] } : undefined,
     safeBrowsing: providers.has("safeBrowsing"),
     googleClientIds: list("googleClientIds"),
+    apple: providers.has("apple") ? { clientIds: list("appleClientIds").length ? list("appleClientIds") : ["com.katkee.app"] } : undefined,
   },
   features: { ads: features.has("ads"), sponsoredStories: features.has("sponsoredStories"), adReporting: features.has("adReporting") },
   bootstrap: get("bootstrap") === "true",
