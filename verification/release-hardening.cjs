@@ -1,10 +1,11 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const {i18n,isI18n}=require('./lib-i18n.cjs');
 const ts=require('../backend/node_modules/typescript');
 const root=path.resolve(__dirname,'..');
 function load(file,mocks={}) {
  const filename=path.join(root,file),module={exports:{}};
  const code=ts.transpileModule(fs.readFileSync(filename,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
- vm.runInNewContext(code,{module,exports:module.exports,require:name=>{if(name in mocks)return mocks[name];throw Error('Unexpected '+name);},console},{filename});
+ vm.runInNewContext(code,{module,exports:module.exports,require:name=>{if(isI18n(name))return i18n;if(name in mocks)return mocks[name];throw Error('Unexpected '+name);},console},{filename});
  return module.exports;
 }
 class HttpError extends Error {constructor(status,message){super(message);this.status=status;}}
@@ -74,6 +75,6 @@ test('profile link parser accepts only valid profile paths',()=>{
  for(const p of ['user/a','user/a%2fb','admin/reset','user/rahul?token=x','user/../admin','user/rahul/extra'])assert.equal(parse(p),null);
 });
 test('email signup reserves official-looking usernames',()=>{
- const d=load('backend/src/modules/auth/dto.ts',{'../../shared/validation':{EMAIL_RE:/^[^@]+@[^@]+\.[^@]+$/,USERNAME_RE:/^[a-z0-9_.]{3,30}$/},'../users/username-policy':usernamePolicy(),'./age':load('backend/src/modules/auth/age.ts'),'../../shared/verified':verified()});
+ const d=load('backend/src/modules/auth/dto.ts',{'../../shared/locale':load('backend/src/shared/locale.ts'),'../../shared/validation':{EMAIL_RE:/^[^@]+@[^@]+\.[^@]+$/,USERNAME_RE:/^[a-z0-9_.]{3,30}$/},'../users/username-policy':usernamePolicy(),'./age':load('backend/src/modules/auth/age.ts'),'../../shared/verified':verified()});
  for(const username of ['ADMIN','katkee','support','moderator','superadmin'])assert.throws(()=>d.parseSignupInput({username,email:'u@site.com',password:'12345678',displayName:'User'}),e=>!!e.fieldErrors.username);
 });

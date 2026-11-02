@@ -4,7 +4,9 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const ts=require('../backend/node_modules/typescript');
 const src=path.join(__dirname,'../mobile/src');
 const code=ts.transpileModule(fs.readFileSync(path.join(src,'utils/serverTime.ts'),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
-const module_={exports:{}};vm.runInNewContext(code,{module:module_,exports:module_.exports,Date,Number},{filename:'serverTime.ts'});
+const module_={exports:{}};// Its words come from the i18n catalogue (English here).
+const {i18n,isI18n}=require('./lib-i18n.cjs');
+vm.runInNewContext(code,{module:module_,exports:module_.exports,require:(n)=>{if(isI18n(n))return i18n;throw Error('unexpected '+n);},Date,Number},{filename:'serverTime.ts'});
 const {serverDate,serverTimeMs,timeAgo}=module_.exports;
 
 test('serverDate reads every API timestamp format and never yields an Invalid Date',()=>{

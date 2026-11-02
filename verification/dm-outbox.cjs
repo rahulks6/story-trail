@@ -1,5 +1,6 @@
 // DM outbox (mobile/src/state/dmOutbox.ts) against a model of the server's idempotent send.
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const {i18n,isI18n}=require('./lib-i18n.cjs');
 const ts=require('../backend/node_modules/typescript');
 const code=ts.transpileModule(fs.readFileSync(path.join(__dirname,'../mobile/src/state/dmOutbox.ts'),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText;
 const me='11111111-1111-4111-8111-111111111111',other='22222222-2222-4222-8222-222222222222';
@@ -33,7 +34,7 @@ function fixture(){
    if(!message){message={id:'msg-'+(server.messages.length+1),conversationId,senderId:me,body:input.body??null,sharedStoryId:input.storyId??null,createdAt:new Date(c.now()).toISOString(),clientMessageId:input.clientMessageId};server.messages.push(message);}
    if(step==='lost')throw new ApiError(0,'Response lost');
    return {message};}};
- const load=()=>{const module={exports:{}};vm.runInNewContext(code,{module,exports:module.exports,require:n=>({'@react-native-async-storage/async-storage':storage,'../api/client':{ApiError},'../api/conversations':api})[n],
+ const load=()=>{const module={exports:{}};vm.runInNewContext(code,{module,exports:module.exports,require:n=>isI18n(n)?i18n:({'@react-native-async-storage/async-storage':storage,'../api/client':{ApiError},'../api/conversations':api})[n],
   setTimeout:c.setTimeout,clearTimeout:c.clearTimeout,Date:c.Date},{filename:'dmOutbox.ts'});return module.exports;};
  return {load,store,server,clock:c};
 }

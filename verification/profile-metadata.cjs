@@ -34,6 +34,7 @@ function loadDto() {
       if (name === '../auth/dto') return { ValidationError };
       if (name === '../../shared/validation') return { USERNAME_RE: /^[a-z0-9_.]{3,30}$/ };
       if (name === './profiles.service') return {};
+      if (name === '../../shared/locale') return { isLocale: (v) => ['en', 'hi', 'mr'].includes(v), LOCALES: ['en', 'hi', 'mr'] };
       if (name === '../../shared/verified') return loadVerified();
       throw new Error(`Unexpected dependency: ${name}`);
     },

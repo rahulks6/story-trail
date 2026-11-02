@@ -4,13 +4,15 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const { test } = require('node:test');
+// Pure apart from their text, which comes from the catalogue (English here).
+const { i18n, isI18n } = require('./lib-i18n.cjs');
 const ts = require('../backend/node_modules/typescript');
 const root = path.resolve(__dirname, '..');
 function load(relative) {
   const filename = path.join(root, relative);
   const out = ts.transpileModule(fs.readFileSync(filename, 'utf8'), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS } });
   const module = { exports: {} };
-  vm.runInNewContext(out.outputText, { module, exports: module.exports, require: () => { throw new Error('pure module expected'); }, URLSearchParams });
+  vm.runInNewContext(out.outputText, { module, exports: module.exports, require: (name) => { if (isI18n(name)) return i18n; throw new Error('pure module expected'); }, URLSearchParams });
   return module.exports;
 }
 const links = load('mobile/src/navigation/profileLinks.ts');

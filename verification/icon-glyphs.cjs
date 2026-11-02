@@ -19,9 +19,12 @@ const CONTENT=[
  ['screens/dm/ConversationScreen.tsx',/^\s*("[^"]+",\s*)+$/],
  ['api/conversations.ts',/export const STORY_REACTIONS = \[/],
  ['api/conversations.ts',/export const MESSAGE_REACTIONS = \[/],
- ['screens/auth/ProviderEntry.tsx',/\$\{country\} •••• \$\{phone/],
- // The posting streak is text people read ("🔥 5-day streak").
- ['components/profile/StreakBadge.tsx',/<Text style=\{styles\.label\}>🔥 \{streak\.days\}-day streak<\/Text>/],
+ // The masked phone number, and the posting streak, which is text people read ("🔥 5-day streak"):
+ // the catalogue entries ProviderEntry and StreakBadge show, in each language.
+ ...['en','hi','mr'].flatMap((lang)=>[
+  [`i18n/${lang}.ts`,/^\s*"providerEntry\.sendAnSmsToCountry": "[^"]*\{country\} •••• \{value\}/],
+  [`i18n/${lang}.ts`,/^\s*"streakBadge\.daysDayStreak": "🔥 \{days\}/],
+ ]),
 ];
 
 function glyphLines(files){

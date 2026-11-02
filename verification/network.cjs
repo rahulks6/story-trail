@@ -1,9 +1,10 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const {i18n,isI18n}=require('./lib-i18n.cjs');
 const ts=require('../backend/node_modules/typescript');
 function client(fetch=async()=>{throw Error('Unexpected fetch');}) {
  const module={exports:{}};
  const code=ts.transpileModule(fs.readFileSync(require.resolve('../mobile/src/api/client.ts'),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
- vm.runInNewContext(code,{module,exports:module.exports,require:()=>({appEnv:{apiBaseUrl:'https://unit.invalid/'}}),fetch,Headers,AbortController,setTimeout,clearTimeout});
+ vm.runInNewContext(code,{module,exports:module.exports,require:(n)=>isI18n(n)?i18n:{appEnv:{apiBaseUrl:'https://unit.invalid/'}},fetch,Headers,AbortController,setTimeout,clearTimeout});
  return module.exports;
 }
 test('deadline aborts native work even when transport ignores cancellation',async()=>{

@@ -5,6 +5,8 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const root=path.join(__dirname,'..');
 const read=(file)=>fs.readFileSync(path.join(root,file),'utf8');
+// The app's words live in its catalogue (mobile/src/i18n/en.ts): a getter returning t("key").
+const {en}=require('./lib-i18n.cjs');
 
 /** MINIMUM_AGE and the three messages, as written in a TypeScript source file. */
 function ageRule(file){
@@ -12,7 +14,10 @@ function ageRule(file){
  const age=/export const MINIMUM_AGE = (\d+);/.exec(source);
  const block=/export const BIRTH_DATE_MESSAGES = \{([\s\S]*?)\} as const;/.exec(source);
  assert.ok(age&&block,`${file}: MINIMUM_AGE and BIRTH_DATE_MESSAGES`);
- const messages=Object.fromEntries([...block[1].matchAll(/(\w+): ["`]([^"`]+)["`]/g)].map(([,key,text])=>[key,text.replace('${MINIMUM_AGE}',age[1])]));
+ const messages=Object.fromEntries([
+  ...[...block[1].matchAll(/(\w+): ["`]([^"`]+)["`]/g)].map(([,key,text])=>[key,text.replace('${MINIMUM_AGE}',age[1])]),
+  ...[...block[1].matchAll(/get (\w+)\(\) \{ return t\("([^"]+)"/g)].map(([,key,id])=>[key,en[id].replace('{MINIMUM_AGE}',age[1])]),
+ ]);
  return {age:Number(age[1]),messages};
 }
 
@@ -71,13 +76,14 @@ test('anyone can report an account as "May be under 18", in the app, on the serv
  const app=read('mobile/src/api/moderation.ts'),dto=read('backend/src/modules/moderation/dto.ts'),migration=read('backend/migrations/0040_minimum_age.sql');
  const quoted=(text)=>[...text.matchAll(/"([a-z_0-9]+)"/g)].map((m)=>m[1]);
  const serverReasons=quoted(/export const REPORT_REASONS: ReportReason\[\] = \[([^\]]+)\]/.exec(dto)[1]);
- const appReasons=[...app.matchAll(/\{ value: "([a-z_0-9]+)", label: "([^"]+)" \}/g)].map((m)=>m[1]);
+ const appReasons=[...app.matchAll(/\{ value: "([a-z_0-9]+)", get label\(\) \{ return t\("([^"]+)"\); \} \}/g)].map((m)=>m[1]);
  const appType=quoted(/export type ReportReason = ([^;]+);/.exec(app)[1]);
  const databaseReasons=[.../reports_reason_valid CHECK \(reason IN \(([^)]+)\)\)/.exec(migration)[1].matchAll(/'([a-z_0-9]+)'/g)].map((m)=>m[1]);
  assert.ok(serverReasons.includes('under_18'));
  assert.deepEqual(appReasons,serverReasons,'the app offers exactly the reasons the server accepts');
  assert.deepEqual(appType,serverReasons);
  assert.deepEqual(databaseReasons,serverReasons);
- assert.match(app,/\{ value: "under_18", label: "May be under 18" \}/);
+ const under18=/\{ value: "under_18", get label\(\) \{ return t\("([^"]+)"\); \} \}/.exec(app);
+ assert.equal(under18&&en[under18[1]],'May be under 18');
  assert.match(migration,/WHEN 'under_18' THEN 2/);
 });

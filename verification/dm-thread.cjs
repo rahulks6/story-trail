@@ -1,8 +1,9 @@
 // Pure DM thread helpers (mobile/src/screens/dm/threadState.ts) and API timestamp parsing (mobile/src/utils/serverTime.ts).
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const {i18n,isI18n}=require('./lib-i18n.cjs');
 const ts=require('../backend/node_modules/typescript');
 const transpile=f=>ts.transpileModule(fs.readFileSync(path.join(__dirname,'..',f),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
-function load(file,requireMap={}){const module={exports:{}};vm.runInNewContext(transpile(file),{module,exports:module.exports,require:n=>{if(n in requireMap)return requireMap[n];throw Error('unexpected '+n);},Date,Math,Map,Set,Number},{filename:file});return module.exports;}
+function load(file,requireMap={}){const module={exports:{}};vm.runInNewContext(transpile(file),{module,exports:module.exports,require:n=>{if(isI18n(n))return i18n;if(n in requireMap)return requireMap[n];throw Error('unexpected '+n);},Date,Math,Map,Set,Number},{filename:file});return module.exports;}
 const time=load('mobile/src/utils/serverTime.ts');
 const thread=load('mobile/src/screens/dm/threadState.ts',{'../../utils/serverTime':time});
 const plain=v=>JSON.parse(JSON.stringify(v));

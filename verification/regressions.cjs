@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const { test } = require('node:test');
+const {i18n,isI18n}=require('./lib-i18n.cjs');
 const ts = require(process.argv[2] || '../backend/node_modules/typescript');
 const root = path.resolve(__dirname, '..');
 function load(relative, mocks = {}, globals = {}) {
@@ -16,7 +17,7 @@ function load(relative, mocks = {}, globals = {}) {
   const module = { exports: {} };
   vm.runInNewContext(result.outputText, {
     module, exports: module.exports,
-    require: (name) => { if (name in mocks) return mocks[name]; throw new Error(`Unexpected dependency: ${name}`); },
+    require: (name) => { if (isI18n(name)) return i18n; if (name in mocks) return mocks[name]; throw new Error(`Unexpected dependency: ${name}`); },
     Headers, AbortController, setTimeout, clearTimeout, ...globals,
   }, { filename });
   return module.exports;

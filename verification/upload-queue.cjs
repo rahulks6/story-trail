@@ -1,9 +1,10 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const {i18n,isI18n}=require('./lib-i18n.cjs');
 const ts=require('../backend/node_modules/typescript');
 const owner='11111111-1111-4111-8111-111111111111',other='22222222-2222-4222-8222-222222222222';
 const transpile=file=>ts.transpileModule(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText;
 const queueCode=transpile('mobile/src/state/uploadQueue.ts'),base64Code=transpile('mobile/src/utils/base64.ts');
-function loadModule(code,requireMap,globals={}){const module={exports:{}};vm.runInNewContext(code,{module,exports:module.exports,require:n=>requireMap[n],Uint8Array,Int16Array,...globals});return module.exports;}
+function loadModule(code,requireMap,globals={}){const module={exports:{}};vm.runInNewContext(code,{module,exports:module.exports,require:n=>isI18n(n)?i18n:requireMap[n],Uint8Array,Int16Array,...globals});return module.exports;}
 const base64=loadModule(base64Code,{});
 class ApiError extends Error{constructor(status,message,fieldErrors,details){super(message);this.status=status;this.fieldErrors=fieldErrors;this.details=details;}}
 class PartUploadError extends Error{constructor(status,message){super(message);this.status=status;}get urlExpired(){return this.status===403;}}
