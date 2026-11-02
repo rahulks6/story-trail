@@ -208,6 +208,12 @@ function parseCrop(raw: unknown): StoryCrop {
   };
 }
 
+/** The caption plus any text overlays: everything a viewer reads on the Story. */
+export function captionText(input: PublishStoryInput): string {
+  const overlays = (input as { overlays?: { type?: string; properties?: { text?: unknown } }[] }).overlays ?? [];
+  return [input.caption ?? "", ...overlays.filter((o) => o?.type === "text" && typeof o.properties?.text === "string").map((o) => String(o.properties!.text))].join("\n");
+}
+
 export function parsePublishStoryInput(body: unknown): PublishStoryInput {
   const errors: Record<string, string> = {};
   const b = (typeof body === "object" && body !== null ? body : {}) as Record<string, unknown>;

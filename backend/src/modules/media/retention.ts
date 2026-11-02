@@ -5,7 +5,8 @@
  *
  * Policy (all configurable, see config.retention):
  *  - expired upload sessions: aborted and removed;
- *  - media nobody uses (no Story, avatar, cover, ad or waiting publish) after 48 h: deleted;
+ *  - media nobody uses (no Story, avatar, cover, ad, waiting publish or scheduled Story) after 48 h:
+ *    deleted;
  *  - Stories the owner deleted: media purged after 30 days (already unreachable on delete),
  *    unless an open report still needs it as evidence;
  *  - content removed by moderation: kept as evidence for 180 days, then purged;
@@ -133,6 +134,7 @@ export async function unusedMedia(store: ObjectStore, batch: number, minAgeHours
        AND NOT EXISTS (SELECT 1 FROM ad_creatives c WHERE c.media_id = m.id)
        AND NOT m.verification_document
        AND NOT EXISTS (SELECT 1 FROM story_publish_requests r WHERE r.media_id = m.id AND r.state = 'waiting')
+       AND NOT EXISTS (SELECT 1 FROM scheduled_stories ss WHERE ss.media_id = m.id AND ss.state = 'scheduled')
      ORDER BY m.created_at LIMIT :'batch'`,
     { hours: minAgeHours, batch },
   );
@@ -206,6 +208,7 @@ export async function deletedAccounts(store: ObjectStore, batch: number, days: n
       `WITH u AS (
          UPDATE users SET username = 'deleted_' || substr(replace(id::text, '-', ''), 1, 12), email = NULL, password_hash = NULL,
                 display_name = 'Deleted account', bio = '', avatar_media_id = NULL, cover_media_id = NULL, interests_json = '[]', birth_date = NULL,
+                professional_category = NULL, professional_since = NULL, professional_time_zone = NULL,
                 data_purged_at = now()
          WHERE id = :'id' AND deleted_at IS NOT NULL AND data_purged_at IS NULL RETURNING id),
        kept AS (
@@ -232,6 +235,11 @@ export async function deletedAccounts(store: ObjectStore, batch: number, days: n
        -- Per-person analytics go too; the daily totals already computed identify nobody.
        ae AS (DELETE FROM analytics_events WHERE user_id IN (SELECT id FROM u)),
        ad AS (DELETE FROM analytics_active_days WHERE user_id IN (SELECT id FROM u)),
+       ah AS (DELETE FROM activity_half_hours WHERE user_id IN (SELECT id FROM u)),
+       -- Cancelled when the account was (profiles.service.ts); these are the backstop.
+       ss AS (DELETE FROM scheduled_stories WHERE owner_id IN (SELECT id FROM u)),
+       pa AS (DELETE FROM professional_audience_hours WHERE user_id IN (SELECT id FROM u)),
+       fc AS (DELETE FROM follower_changes WHERE followee_id IN (SELECT id FROM u)),
        fb AS (DELETE FROM app_feedback WHERE user_id IN (SELECT id FROM u)),
        -- Already deleted when the account was (verification.service.ts); this is the backstop.
        vr AS (DELETE FROM verification_requests WHERE user_id IN (SELECT id FROM u)),
@@ -293,6 +301,11 @@ export async function expiredRecords(): Promise<number> {
   total += await deleteWhere("admin_sessions", "absolute_expires_at < now() - interval '1 day'");
   total += await deleteWhere("media_jobs", "status IN ('done', 'failed') AND finished_at < now() - interval '30 days'");
   total += await deleteWhere("story_publish_requests", "state <> 'waiting' AND resolved_at < now() - interval '30 days'");
+  // Scheduled Stories that posted, failed or were cancelled (stories/scheduled.ts).
+  total += await deleteWhere("scheduled_stories", "state <> 'scheduled' AND resolved_at < now() - interval '30 days'");
+  // The professional dashboard shows 30 days of follower changes and 7 days of activity.
+  total += await deleteWhere("follower_changes", "changed_at < now() - interval '40 days'");
+  total += await deleteWhere("activity_half_hours", "slot < now() - interval '8 days'");
   total += await deleteWhere("auth_security_events", "created_at < now() - make_interval(days => :'days'::integer)", { days: config.retention.securityEventDays });
   // IT Rules 2021, rule 3(1)(h): registration details stay 180 days after the account was deleted.
   total += await deleteWhere("deleted_account_records", "deleted_at < now() - make_interval(days => :'days'::integer)", { days: config.retention.deletedAccountRecordDays });

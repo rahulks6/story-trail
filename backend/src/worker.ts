@@ -1,6 +1,6 @@
 /**
  * Worker service: processes uploads, sends push notifications, judges how far public Stories
- * reach, and runs scheduled retention.
+ * reach, publishes scheduled Stories when they are due, and runs scheduled retention.
  *
  *   node dist/src/worker.js
  *
@@ -21,6 +21,7 @@ import { providersFromConfig } from "./modules/push/dispatcher";
 import { ReachWorker } from "./modules/recommendations/reach-worker";
 import { ReturnReasonsWorker } from "./modules/reminders/return-reasons";
 import { reachSettings } from "./modules/recommendations/reach";
+import { ScheduledStoriesWorker } from "./modules/stories/scheduled";
 
 export function createReachWorker(): ReachWorker {
   return new ReachWorker({
@@ -36,6 +37,14 @@ export function createPushWorker(): PushWorker {
     providers: providersFromConfig(),
     pollMs: config.push.pollMs,
     maxAttempts: config.push.maxAttempts,
+    log: (event) => console.log(JSON.stringify({ ts: new Date().toISOString(), ...event })),
+  });
+}
+
+export function createScheduledStoriesWorker(): ScheduledStoriesWorker {
+  return new ScheduledStoriesWorker({
+    everyMs: config.scheduledStories.pollSeconds * 1000,
+    batchSize: config.scheduledStories.batchSize,
     log: (event) => console.log(JSON.stringify({ ts: new Date().toISOString(), ...event })),
   });
 }
@@ -72,7 +81,8 @@ if (require.main === module) {
   const reasons = config.returnReasons.enabled
     ? new ReturnReasonsWorker({ everyMs: config.returnReasons.everyMinutes * 60_000, log: (e) => console.info(JSON.stringify(e)) })
     : null;
-  Promise.all([worker.start(), push.start(), reach?.start(), reasons?.start()])
+  const scheduled = config.scheduledStories.enabled ? createScheduledStoriesWorker() : null;
+  Promise.all([worker.start(), push.start(), reach?.start(), reasons?.start(), scheduled?.start()])
     .then(() => console.log(JSON.stringify({
       ts: new Date().toISOString(), event: "worker_started", store: mediaStorage.kind, queue: config.media.queue.driver,
       pushProviders: [...providersFromConfig().keys()],
@@ -83,7 +93,7 @@ if (require.main === module) {
     });
   const shutdown = () => {
     // Finishes the job in hand; an interrupted job is retried after its lease expires.
-    void Promise.all([worker.stop(), push.stop(), reach?.stop(), reasons?.stop()]).then(closeDatabase).finally(() => process.exit(0));
+    void Promise.all([worker.stop(), push.stop(), reach?.stop(), reasons?.stop(), scheduled?.stop()]).then(closeDatabase).finally(() => process.exit(0));
   };
   process.on("SIGTERM", shutdown);
   process.on("SIGINT", shutdown);

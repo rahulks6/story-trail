@@ -220,6 +220,13 @@ export const config = {
     // see test/env.ts. Spec section 29's 24h lifetime is the production default.
     ttlSeconds: optionalInt("STORY_TTL_SECONDS", 60 * 60 * 24),
   },
+  scheduledStories: {
+    // Publishes scheduled Stories when they are due (src/modules/stories/scheduled.ts). Each
+    // round is one indexed query, so checking often keeps "on time" to within these seconds.
+    enabled: process.env.SCHEDULED_STORIES_ENABLED !== "false",
+    pollSeconds: optionalInt("SCHEDULED_STORIES_POLL_SECONDS", 15),
+    batchSize: optionalInt("SCHEDULED_STORIES_BATCH_SIZE", 200),
+  },
   jwt: {
     accessSecret: requireStrongSecret("JWT_ACCESS_SECRET", required("JWT_ACCESS_SECRET")),
     refreshSecret: requireStrongSecret("JWT_REFRESH_SECRET", required("JWT_REFRESH_SECRET")),

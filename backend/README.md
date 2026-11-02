@@ -668,6 +668,20 @@ Configuration:
 
 Details, measurements and tests: `docs/phases/PHASE_9_REACH_AND_HOME.md`.
 
+### Professional accounts and scheduled Stories (migrations 0066, 0067)
+
+- `GET/PUT/DELETE /api/v1/me/professional`: the account type and category (`creator`, `artist`,
+  `public_figure`, `brand`, `news_media`, `organization`). Private accounts can't switch, and a
+  professional account can't turn private (409 `private_account` / `professional_account`).
+- `GET /api/v1/me/professional/dashboard?days=7|30&tz=<IANA zone>`: the owner's dashboard
+  (`src/modules/professional/dashboard.ts`); 403 `not_professional` for a personal account.
+- `POST /api/v1/stories` with `publishAt` (and a `requestId`) schedules the Story instead
+  (201 `{scheduled}`); `GET /api/v1/stories/scheduled`, `PATCH`/`DELETE /api/v1/stories/scheduled/:id`
+  list, reschedule and cancel. The worker publishes due ones (`src/modules/stories/scheduled.ts`).
+
+Configuration: `SCHEDULED_STORIES_ENABLED` (default on), `SCHEDULED_STORIES_POLL_SECONDS` (15),
+`SCHEDULED_STORIES_BATCH_SIZE` (200).
+
 ## API (v1)
 
 | Method | Path | Auth | Notes |

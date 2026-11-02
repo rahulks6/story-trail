@@ -200,6 +200,24 @@ describe("a private account's Story", () => {
     refused(await attempt("GET /api/v1/stories/publish-requests/:requestId", `/api/v1/stories/publish-requests/${ids.publishRequest}`, stranger), "publish request", [404]);
     assert.equal((await request("GET", `/api/v1/stories/publish-requests/${ids.publishRequest}`, undefined, owner.auth)).status, 200);
   });
+
+  it("its scheduled Stories are the owner's alone: nobody else lists, moves or cancels them", async () => {
+    const mediaId = await photo(owner);
+    const made = await request("POST", "/api/v1/stories", {
+      mediaId, requestId: `ownerscheduled_${randomUUID().replace(/-/g, "")}`, caption: SECRET.caption, publishAt: new Date(Date.now() + 3600_000).toISOString(),
+    }, owner.auth);
+    assert.equal(made.status, 201, made.text);
+    const id = made.body.scheduled.id as string;
+    for (const who of [stranger, friend]) {
+      const list = await request("GET", "/api/v1/stories/scheduled", undefined, who.auth);
+      assert.deepEqual(list.body.scheduled, [], "only your own");
+      refused(await attempt("PATCH /api/v1/stories/scheduled/:id", `/api/v1/stories/scheduled/${id}`, who, { publishAt: new Date(Date.now() + 7200_000).toISOString() }), "reschedule", [404]);
+      refused(await attempt("DELETE /api/v1/stories/scheduled/:id", `/api/v1/stories/scheduled/${id}`, who), "cancel", [404]);
+    }
+    const mine = await request("GET", "/api/v1/stories/scheduled", undefined, owner.auth);
+    assert.equal(mine.body.scheduled[0].id, id);
+    assert.ok(Math.abs(Date.parse(mine.body.scheduled[0].publishAt) - Date.parse(made.body.scheduled.publishAt)) < 1000, "unmoved");
+  });
 });
 
 describe("a private account's profile", () => {
