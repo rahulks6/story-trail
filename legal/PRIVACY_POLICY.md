@@ -1,6 +1,6 @@
 # Katkee Privacy Policy
 
-**Last updated:** 26 October 2026
+**Last updated:** 30 October 2026
 
 This policy explains what Katkee collects, how we use it, who can see it, how long we keep it
 and the choices you have. It covers the Katkee apps for iPhone and Android, the website at
@@ -55,6 +55,18 @@ on the Story; choosing one tells us nothing else about you.
 When you change your profile photo, the app cuts out the square you choose
 on your phone and uploads only that square. Your cover photo works the same
 way: only the wide banner you frame is uploaded.
+
+### Calls
+Voice and video calls go straight between the two phones, encrypted between
+them (WebRTC). When the phones can't reach each other directly, the call is
+relayed by our service provider's relay servers (see section 5), still
+encrypted: they can't hear or see it. We never record calls.
+
+To set a call up, the two phones exchange connection details (their network
+addresses and the formats they support) through our servers; we delete them
+when the call ends. We keep the call log your chat shows ("Missed voice
+call", "Video call · 4:12"): who called whom, when, whether it was a voice or
+video call, how it ended and how long it lasted.
 
 ### Your connections
 Who you follow, who follows you, follow requests, and who you've blocked or
@@ -196,6 +208,8 @@ message is kept as evidence for the moderator.
 - **Direct messages**: only the people in the conversation see them. Staff
   can't browse messages. A moderator sees a message only when someone
   reports it.
+- **Calls**: only the two people on the call hear and see it. The call's
+  line in your chat is visible to the two of you, like a message.
 - **Profile photo and cover photo**: anyone signed in who can see your
   profile, including when your account is private. People you've blocked,
   or who've blocked you, never see them.
@@ -211,7 +225,9 @@ message is kept as evidence for the moderator.
 - **Amazon Web Services**: our servers, database, file storage and email.
 - **Google Firebase Cloud Messaging** and **Apple Push Notification
   service**: deliver notifications.
-- **Twilio**: sends phone sign-in codes, if you use phone sign-in.
+- **Twilio**: sends phone sign-in codes, if you use phone sign-in, and
+  relays calls that can't connect directly. To relay a call it sees the
+  network addresses of the two phones, never what's said or shown.
 - **Google**: Google sign-in, if you use it, and Safe Browsing checks of
   links posted in Katkee.
 
@@ -263,6 +279,9 @@ recorded in an audit log that can't be edited.
 - **Raw analytics events**: deleted after 90 days; only daily totals that
   identify nobody remain.
 - **Crash reports**: deleted after 90 days.
+- **Calls**: the connection details are deleted when the call ends. The
+  call's line in your chat stays like a message; our record of the call
+  (who, when, how it ended, how long) is deleted 90 days after it ended.
 - **Verification ID photo**: deleted 30 days after the request is approved,
   denied or withdrawn, and at once if you delete your account. The request
   itself (category, name and links) is kept while your account exists, so
@@ -383,5 +402,4 @@ India.
   We acknowledge a complaint within 24 hours and resolve it within 15 days.
   If you're not satisfied with the decision, you can appeal to the
   Grievance Appellate Committee at [gac.gov.in](https://gac.gov.in) within
-  30 days. Section 12 of the [Terms of Service](./TERMS_OF_SERVICE.md) has
-  the details.
+  30 days. Section 12 of the [Terms 
