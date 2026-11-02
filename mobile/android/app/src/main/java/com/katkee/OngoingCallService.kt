@@ -32,7 +32,8 @@ class OngoingCallService : Service() {
     val title = intent?.getStringExtra(EXTRA_TITLE)?.takeIf { it.isNotBlank() } ?: getString(R.string.app_name)
     val video = intent?.getBooleanExtra(EXTRA_VIDEO, false) ?: false
     val open = packageManager.getLaunchIntentForPackage(packageName)?.apply {
-      flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+      // this.flags: the Intent's, not onStartCommand's `flags` parameter of the same name.
+      this.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
     }
     val notification = NotificationCompat.Builder(this, "calls")
       .setSmallIcon(R.drawable.ic_notification)
