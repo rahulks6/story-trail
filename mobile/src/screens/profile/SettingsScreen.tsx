@@ -13,7 +13,7 @@ import { appearanceChoice, setAppearance, type AppearanceChoice } from "../../th
 import { nearbyChoice, turnNearbyOff, turnNearbyOn } from "../../state/nearby";
 import { professionalCategoryLabel } from "../../api/professional";
 import { shareInvite } from "../../state/invites";
-import { t } from "../../i18n";
+import { LANGUAGES, LANGUAGE_NAMES, setLanguage, t, useLanguage } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Settings">;
 
@@ -33,6 +33,8 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
   const { user, accessToken, logout, applyProfile } = useAuth();
   const [isPrivate, setIsPrivate] = useState(user?.isPrivate ?? false);
   const [appearanceOpen, setAppearanceOpen] = useState(false);
+  const language = useLanguage();
+  const [languageOpen, setLanguageOpen] = useState(false);
   const chooseAppearance = async (next: AppearanceChoice) => {
     setAppearanceOpen(false);
     if (next === appearanceChoice()) return;
@@ -194,7 +196,24 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
         <ListRow label={t("common.requestVerification")} icon={ICONS.verified} onPress={() => navigation.navigate("Verification")} />
         <ListRow label={t("common.notifications")} icon={ICONS.notifications} onPress={() => navigation.navigate("NotificationSettings")} />
         <ListRow label={t("settings.appearance")} icon={ICONS.settings} detail={APPEARANCE_LABELS[appearanceChoice()]} onPress={() => setAppearanceOpen(true)} />
+        <ListRow label={t("settings.language")} icon={ICONS.settings} detail={LANGUAGE_NAMES[language]} onPress={() => setLanguageOpen(true)} />
       </View>
+      <ActionSheet
+        visible={languageOpen}
+        title={t("settings.language")}
+        groups={[LANGUAGES.map((option) => ({
+          // Each language in its own script, so anyone can find theirs.
+          label: LANGUAGE_NAMES[option],
+          selected: option === language,
+          onPress: () => {
+            setLanguageOpen(false);
+            // The app switches at once (the screens remount on this one); the server hears it
+            // from useLocaleSync, for pushes and emails.
+            if (option !== language) void setLanguage(option);
+          },
+        }))]}
+        onClose={() => setLanguageOpen(false)}
+      />
       <ActionSheet
         visible={appearanceOpen}
         title={t("settings.appearance")}

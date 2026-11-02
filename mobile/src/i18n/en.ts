@@ -2131,4 +2131,7 @@ export const en = {
   "termsNotice.bySigningUp": "By signing up, you agree to Katkee's <terms>Terms</terms> and <privacy>Privacy Policy</privacy>. Katkee has no tolerance for objectionable content or abuse: you can report and block anyone.",
   "termsNotice.byContinuing": "By continuing, you agree to Katkee's <terms>Terms</terms> and <privacy>Privacy Policy</privacy>. Katkee has no tolerance for objectionable content or abuse: you can report and block anyone.",
   "verifyEmail.weSentACodeTo": "We sent a 6-digit code to <email>{email}</email>.",
+
+  // Settings > Language
+  "settings.language": "Language",
 } as const;

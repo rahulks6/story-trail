@@ -32,6 +32,8 @@ export interface PublicUser {
   /** A professional account's category and whether it shows on the profile (absent from older servers). */
   professionalCategory?: string | null;
   professionalCategoryShown?: boolean;
+  /** The app's language as last sent from a phone: pushes and emails use it (absent from older servers). */
+  locale?: "en" | "hi" | "mr";
   /** False until the email is confirmed with a code (absent from older servers and caches). */
   emailVerified?: boolean;
   /** A new account whose email isn't verified yet: only the code screen is shown until it is. */

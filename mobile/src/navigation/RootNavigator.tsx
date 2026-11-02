@@ -3,13 +3,14 @@ import {UploadQueueScreen} from '../screens/create/UploadQueueScreen';
 import {AppealsScreen} from '../screens/profile/AppealsScreen';
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Linking, View } from "react-native";
-import { createNavigationContainerRef, DarkTheme, DefaultTheme, NavigationContainer, type LinkingOptions, type Theme } from "@react-navigation/native";
+import { createNavigationContainerRef, DarkTheme, DefaultTheme, NavigationContainer, type LinkingOptions, type NavigationState, type Theme } from "@react-navigation/native";
 import { InAppNotificationBanner } from "../components/InAppNotificationBanner";
 import { colorScheme } from "../theme/colors";
 import { callIdFromLink, deepLinkTarget, LINK_PREFIXES, linkPath, opensInApp } from "./profileLinks";
 import { initialNotificationLink, onNotificationOpened } from "../push/pushNotifications";
 import { useCallsIfAvailable } from "../calls/CallContext";
 import { usePushRegistration } from "../push/usePushRegistration";
+import { useLocaleSync } from "../state/localeSync";
 import { useAreaSync } from "../state/nearby";
 import { NearbyPrompt } from "../components/NearbyPrompt";
 import { useAnalytics } from "../analytics/useAnalytics";
@@ -54,7 +55,7 @@ import { MEDIA_TRANSITION, PUSH_TRANSITION } from "./transitions";
 import { ContactsScreen } from "../screens/profile/ContactsScreen";
 import { InviteLinkScreen } from "../screens/profile/InviteLinkScreen";
 import { savePendingInvite, useInviteRedemption } from "../state/invites";
-import { t } from "../i18n";
+import { t, useLanguage } from "../i18n";
 
 /** The screen on view, deepest navigator first (crash reports say where they happened). */
 export function focusedRouteName(state: { index?: number; routes: Array<{ name: string; state?: unknown }> } | undefined): string | undefined {
@@ -337,12 +338,18 @@ export function RootNavigator(): React.JSX.Element {
   }, [userId]);
   const onboardingControl = useMemo(() => ({ finish: () => setOnboarding(false) }), []);
   usePushRegistration();
+  useLocaleSync();
   useAreaSync();
   useAnalytics();
   // An invite opened before signing up is redeemed once someone signs in (state/invites.ts).
   useInviteRedemption();
   const pendingLink = useRef<string | null>(null);
   const navigationRef = useMemo(() => createNavigationContainerRef<RootStackParamList>(), []);
+  // A language change remounts the navigation tree, so every screen, header and memoized row reads
+  // its text again, and puts it back on the screen it was on (Settings > Language) with the same
+  // history. The state is kept per account: a different account starts from its own first screen.
+  const language = useLanguage();
+  const lastState = useRef<{ userId: string | undefined; state: NavigationState } | null>(null);
   // The linking listener below, so a tapped in-app banner opens its link like a tapped notification.
   const openLink = useRef<((url: string) => void) | null>(null);
   // A ringing call's notification (katkee://call/<id>) opens the call screen, not a screen of the app.
@@ -435,7 +442,17 @@ export function RootNavigator(): React.JSX.Element {
     const inApp = !user?.emailVerificationRequired && !onboarding;
     return (
       <OnboardingProvider value={onboardingControl}>
-        <NavigationContainer ref={navigationRef} key={user?.id ?? "signedIn"} linking={linking} theme={navigationTheme()} onStateChange={(state) => setCurrentScreen(focusedRouteName(state))}>
+        <NavigationContainer
+          ref={navigationRef}
+          key={`${user?.id ?? "signedIn"}:${language}`}
+          linking={linking}
+          initialState={lastState.current?.userId === user?.id ? lastState.current?.state : undefined}
+          theme={navigationTheme()}
+          onStateChange={(state) => {
+            lastState.current = state ? { userId: user?.id, state } : null;
+            setCurrentScreen(focusedRouteName(state));
+          }}
+        >
           <SignedInNavigator onboarding={!!onboarding && !user?.emailVerificationRequired} />
           {inApp ? <NearbyPrompt /> : null}
           {inApp ? (
@@ -444,12 +461,13 @@ export function RootNavigator(): React.JSX.Element {
               open={(url) => openLink.current?.(url)}
             />
           ) : null}
-          <UploadRunner />
         </NavigationContainer>
+        {/* Outside the container, so a language change doesn't restart an upload. */}
+        <UploadRunner />
       </OnboardingProvider>
     );
   }
-  return <NavigationContainer key="signedOut" linking={signedOutLinking} theme={navigationTheme()}><AuthNavigator /></NavigationContainer>;
+  return <NavigationContainer key={`signedOut:${language}`} linking={signedOutLinking} theme={navigationTheme()}><AuthNavigator /></NavigationContainer>;
 }
 
 /** Headers, screen backgrounds and borders in the app's light or dark colours. */

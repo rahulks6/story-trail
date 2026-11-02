@@ -101,7 +101,7 @@ export function getSuggestions(accessToken: string, signal?: AbortSignal): Promi
 }
 
 export function updateMyProfile(
-  input: { username?: string; displayName?: string; bio?: string; isPrivate?: boolean; findableByContacts?: boolean; showOnWeb?: boolean; interests?: string[]; avatarMediaId?: string | null; coverMediaId?: string | null },
+  input: { username?: string; displayName?: string; bio?: string; isPrivate?: boolean; findableByContacts?: boolean; showOnWeb?: boolean; interests?: string[]; avatarMediaId?: string | null; coverMediaId?: string | null; locale?: "en" | "hi" | "mr" },
   accessToken: string,
 ) {
   return apiPatch<{ user: PublicUser }>("/api/v1/users/me", input, accessToken);
