@@ -16,6 +16,8 @@ export interface UserRecord {
   isPrivate: boolean;
   /** "Let people find me from their contacts" (Settings > Privacy); on unless turned off. */
   findableByContacts: boolean;
+  /** "Show my profile on the web" (Settings > Privacy); on unless turned off. Only a public account shows. */
+  showOnWeb: boolean;
   isActive: boolean;
   isModerator: boolean;
   /** The email has been proved with a code (signup verification or a password reset). */
@@ -33,7 +35,7 @@ export interface UserRecord {
   professionalCategoryShown: boolean;
 }
 
-const SELECT_COLUMNS = "id, username, email, password_hash, display_name, bio, avatar_media_id, cover_media_id, interests_json, is_private, findable_by_contacts, is_active, is_moderator, email_verified_at IS NOT NULL AS email_verified, email_verification_required, created_at, " +
+const SELECT_COLUMNS = "id, username, email, password_hash, display_name, bio, avatar_media_id, cover_media_id, interests_json, is_private, findable_by_contacts, show_on_web, is_active, is_moderator, email_verified_at IS NOT NULL AS email_verified, email_verification_required, created_at, " +
   `${verifiedSql()} AS verified, CASE WHEN ${verifiedSql()} THEN verified_category END AS verified_category, ` +
   "professional_category, professional_category_shown";
 
@@ -59,6 +61,7 @@ function mapRow(row: Record<string, string | null>): UserRecord {
     interests: parseInterests(row.interests_json),
     isPrivate: row.is_private === "t",
     findableByContacts: row.findable_by_contacts === "t",
+    showOnWeb: row.show_on_web === "t",
     isActive: row.is_active === "t",
     isModerator: row.is_moderator === "t",
     emailVerified: row.email_verified === "t",
@@ -151,7 +154,7 @@ export async function usernameTaken(username: string, exceptUserId: string): Pro
  */
 export async function setProfile(
   id: string,
-  values: { username?: string; displayName?: string; bio?: string; isPrivate?: boolean; findableByContacts?: boolean; interests?: string[]; avatarMediaId?: string | null; coverMediaId?: string | null },
+  values: { username?: string; displayName?: string; bio?: string; isPrivate?: boolean; findableByContacts?: boolean; showOnWeb?: boolean; interests?: string[]; avatarMediaId?: string | null; coverMediaId?: string | null },
 ): Promise<UserRecord> {
   const row = await queryOne(
     `UPDATE users
@@ -161,6 +164,7 @@ export async function setProfile(
          interests_json = CASE WHEN :'has_interests'::boolean THEN :'interests_json' ELSE interests_json END,
          is_private = CASE WHEN :'has_private'::boolean THEN :'is_private'::boolean ELSE is_private END,
          findable_by_contacts = CASE WHEN :'has_findable'::boolean THEN :'findable'::boolean ELSE findable_by_contacts END,
+         show_on_web = CASE WHEN :'has_web'::boolean THEN :'web'::boolean ELSE show_on_web END,
          avatar_media_id = CASE WHEN :'has_avatar'::boolean THEN ${nullable("avatar_media_id", "uuid")} ELSE avatar_media_id END,
          cover_media_id = CASE WHEN :'has_cover'::boolean THEN ${nullable("cover_media_id", "uuid")} ELSE cover_media_id END
      WHERE id = :'id' AND deleted_at IS NULL
@@ -175,12 +179,14 @@ export async function setProfile(
       cover_media_id: values.coverMediaId ?? null,
       is_private: values.isPrivate ?? false,
       findable: values.findableByContacts ?? true,
+      web: values.showOnWeb ?? true,
       has_username: values.username !== undefined,
       has_name: values.displayName !== undefined,
       has_bio: values.bio !== undefined,
       has_interests: values.interests !== undefined,
       has_private: values.isPrivate !== undefined,
       has_findable: values.findableByContacts !== undefined,
+      has_web: values.showOnWeb !== undefined,
       has_avatar: values.avatarMediaId !== undefined,
       has_cover: values.coverMediaId !== undefined,
     },

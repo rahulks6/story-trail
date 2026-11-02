@@ -42,6 +42,8 @@ export interface PublicUser {
   isPrivate: boolean;
   /** "Let people find me from their contacts" (Settings > Privacy). */
   findableByContacts: boolean;
+  /** "Show my profile on the web" (Settings > Privacy): katkee.com/u/<username> for a public account. */
+  showOnWeb: boolean;
   /** False until the email is proved with a code; phone-only accounts have no email. */
   emailVerified: boolean;
   /** A new account whose email isn't verified yet: the app shows only the code screen. */
@@ -67,6 +69,7 @@ function toPublicUser(user: usersRepo.UserRecord): PublicUser {
     interests: user.interests,
     isPrivate: user.isPrivate,
     findableByContacts: user.findableByContacts,
+    showOnWeb: user.showOnWeb,
     emailVerified: user.emailVerified,
     emailVerificationRequired: user.emailVerificationRequired && !!user.email && !user.emailVerified,
     verified: user.verified,

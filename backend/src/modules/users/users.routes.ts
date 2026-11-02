@@ -104,6 +104,7 @@ export function registerUserRoutes(router: Router): void {
         interests: user.interests,
         isPrivate: user.isPrivate,
         findableByContacts: user.findableByContacts,
+        showOnWeb: user.showOnWeb,
       },
     });
   });

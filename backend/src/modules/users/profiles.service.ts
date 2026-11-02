@@ -137,6 +137,7 @@ export interface UpdateProfileInput {
   bio?: string;
   isPrivate?: boolean;
   findableByContacts?: boolean;
+  showOnWeb?: boolean;
   interests?: string[];
   avatarMediaId?: string | null;
   coverMediaId?: string | null;
