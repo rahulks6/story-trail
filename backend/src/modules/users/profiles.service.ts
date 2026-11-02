@@ -9,6 +9,7 @@ import * as socialRepo from "../social/social.repository";
 import * as eventsRepo from "../recommendations/events.repository";
 import * as storiesRepo from "../stories/stories.repository";
 import * as storiesService from "../stories/stories.service";
+import { cancelAllScheduledStories } from "../stories/scheduled";
 import * as refreshTokensRepo from "../auth/refresh-tokens.repository";
 import { verifyPassword } from "../auth/password";
 import { revokeAppleGrants } from "../auth/apple";
@@ -25,6 +26,8 @@ export interface ProfileView {
   verified: boolean;
   /** creator, public_figure, brand, news_media or organization; null unless verified. */
   verifiedCategory: string | null;
+  /** A professional account's category, shown quietly under the name; null for personal accounts or when hidden. */
+  professionalCategory: string | null;
   interests: string[];
   isPrivate: boolean;
   isSelf: boolean;
@@ -84,6 +87,7 @@ async function profileView(target: usersRepo.UserRecord | null, viewerId: string
     coverMediaId: target.coverMediaId,
     verified: target.verified,
     verifiedCategory: target.verifiedCategory,
+    professionalCategory: target.professionalCategoryShown ? target.professionalCategory : null,
     interests: target.interests,
     isPrivate: target.isPrivate,
     isSelf: target.id === viewerId,
@@ -177,6 +181,10 @@ export async function updateMyProfile(userId: string, input: UpdateProfileInput)
     if (error instanceof DatabaseError && error.detail.includes("users_username_unique")) {
       throw new HttpError(409, "That username is already taken.");
     }
+    // A professional account stays public (migration 0066): switching back comes first.
+    if (error instanceof DatabaseError && error.detail.includes("users_professional_is_public")) {
+      throw new HttpError(409, "A professional account can't be private. Switch to a personal account first.", undefined, undefined, "professional_account");
+    }
     if (error instanceof DatabaseError && error.detail.includes("USERNAME_HELD")) {
       throw new HttpError(409, USERNAME_MESSAGES.held);
     }
@@ -225,6 +233,8 @@ export async function removeAccount(userId: string): Promise<void> {
     await storiesService.moderatorDeleteStory(story.id);
   }
 
+  // Nothing scheduled posts after the account is gone.
+  await cancelAllScheduledStories(userId);
   await usersRepo.softDeleteUser(userId);
   await refreshTokensRepo.revokeAllRefreshTokensForUser(userId);
   await deleteVerificationQuietly(userId);

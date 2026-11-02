@@ -1,6 +1,7 @@
 /**
  * Worker service: processes uploads, sends push notifications, judges how far public Stories
- * reach, ends calls nobody answered, and runs scheduled retention.
+ * reach, publishes scheduled Stories when they are due, ends calls nobody answered, and runs
+ * scheduled retention.
  *
  *   node dist/src/worker.js
  *
@@ -21,6 +22,7 @@ import { providersFromConfig } from "./modules/push/dispatcher";
 import { ReachWorker } from "./modules/recommendations/reach-worker";
 import { ReturnReasonsWorker } from "./modules/reminders/return-reasons";
 import { reachSettings } from "./modules/recommendations/reach";
+import { ScheduledStoriesWorker } from "./modules/stories/scheduled";
 import { CallTimeoutWorker } from "./modules/calls/call-timeouts";
 
 export function createReachWorker(): ReachWorker {
@@ -37,6 +39,14 @@ export function createPushWorker(): PushWorker {
     providers: providersFromConfig(),
     pollMs: config.push.pollMs,
     maxAttempts: config.push.maxAttempts,
+    log: (event) => console.log(JSON.stringify({ ts: new Date().toISOString(), ...event })),
+  });
+}
+
+export function createScheduledStoriesWorker(): ScheduledStoriesWorker {
+  return new ScheduledStoriesWorker({
+    everyMs: config.scheduledStories.pollSeconds * 1000,
+    batchSize: config.scheduledStories.batchSize,
     log: (event) => console.log(JSON.stringify({ ts: new Date().toISOString(), ...event })),
   });
 }
@@ -76,7 +86,8 @@ if (require.main === module) {
   const calls = config.calls.enabled
     ? new CallTimeoutWorker({ everyMs: 5000, log: (event) => console.log(JSON.stringify({ ts: new Date().toISOString(), ...event })) })
     : null;
-  Promise.all([worker.start(), push.start(), reach?.start(), reasons?.start(), calls?.start()])
+  const scheduled = config.scheduledStories.enabled ? createScheduledStoriesWorker() : null;
+  Promise.all([worker.start(), push.start(), reach?.start(), reasons?.start(), calls?.start(), scheduled?.start()])
     .then(() => console.log(JSON.stringify({
       ts: new Date().toISOString(), event: "worker_started", store: mediaStorage.kind, queue: config.media.queue.driver,
       pushProviders: [...providersFromConfig().keys()],
@@ -87,7 +98,7 @@ if (require.main === module) {
     });
   const shutdown = () => {
     // Finishes the job in hand; an interrupted job is retried after its lease expires.
-    void Promise.all([worker.stop(), push.stop(), reach?.stop(), reasons?.stop(), calls?.stop()]).then(closeDatabase).finally(() => process.exit(0));
+    void Promise.all([worker.stop(), push.stop(), reach?.stop(), reasons?.stop(), calls?.stop(), scheduled?.stop()]).then(closeDatabase).finally(() => process.exit(0));
   };
   process.on("SIGTERM", shutdown);
   process.on("SIGINT", shutdown);

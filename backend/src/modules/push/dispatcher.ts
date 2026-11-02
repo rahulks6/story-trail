@@ -123,7 +123,7 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
   if ((item.kind === "message" || item.kind === "message_reaction") && row.messages_enabled !== "t") return { skip: "message pushes turned off" };
   const toggle = SWITCH[item.kind];
   if (toggle && row[toggle] !== "t") return { skip: `${item.kind} pushes turned off` };
-  if (item.kind === "new_story" && item.refId) {
+  if ((item.kind === "new_story" || item.kind === "scheduled_story_live") && item.refId) {
     // The Story may have been deleted, or have expired, while the push waited.
     const live = await queryOne(`SELECT 1 AS ok FROM stories WHERE id = :'id' AND deleted_at IS NULL AND moderation_removed_at IS NULL AND expires_at > now()`, { id: item.refId });
     if (!live) return { skip: "story gone" };

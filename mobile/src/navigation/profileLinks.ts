@@ -34,6 +34,7 @@ export type DeepLinkTarget =
   | { kind: "home" }
   | { kind: "followRequests" }
   | { kind: "verification" }
+  | { kind: "scheduled" }
   // katkee.com/i/<code> (Invite friends) and the website's katkee://invite/<code> button.
   | { kind: "invite"; code: string }
   | { kind: "resetPassword"; email?: string; code?: string };
@@ -65,6 +66,8 @@ export function deepLinkTarget(path: string): DeepLinkTarget | null {
   if (/^follow-requests\/?$/i.test(rawPath)) return { kind: "followRequests" };
   // Verification notifications: Settings > Request verification.
   if (/^verification\/?$/i.test(rawPath)) return { kind: "verification" };
+  // A scheduled Story that couldn't be posted: Archive > Scheduled, where it says why.
+  if (/^scheduled\/?$/i.test(rawPath)) return { kind: "scheduled" };
   const invite = /^(?:invite|i)\/([^/]+)\/?$/i.exec(rawPath)?.[1]?.toLowerCase();
   if (invite !== undefined) return INVITE_CODE_RE.test(invite) ? { kind: "invite", code: invite } : null;
   if (/^reset-password\/?$/i.test(rawPath)) {

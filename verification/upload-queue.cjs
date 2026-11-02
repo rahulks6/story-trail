@@ -44,6 +44,7 @@ function fixture(opts={}){
   publishStory:async input=>{calls.publishes++;assert.equal(input.mediaId,'owned-media');assert.ok(input.requestId);
    if(opts.publishError)throw opts.publishError;
    if(failResponse){failResponse=false;throw Error('Response lost after server commit');}
+   if(opts.scheduled){assert.equal(input.publishAt,opts.scheduled,'the chosen time travels with the share');return {scheduled:{id:'sched-1',state:'scheduled',storyId:null}};}
    return opts.processing?{publish:{state:'processing',requestId:input.requestId,mediaId:input.mediaId}}:{story:{id:'same-story'}};},
   getPublishRequest:async()=>{calls.polls++;return {publish:pollAnswers.shift()??{state:'processing'}};}};
  const fastTimers={setTimeout:fn=>setTimeout(fn,0),clearTimeout};
@@ -122,4 +123,20 @@ test('a temporary processing failure is retried on the server without uploading 
 test('base64 decoding matches Node for every padding case',()=>{
  for(const n of [0,1,2,3,4,255,1000]){const b=Buffer.from(Array.from({length:n},(_,i)=>(i*37)%256));assert.ok(Buffer.from(base64.base64ToBytes(b.toString('base64'))).equals(b),String(n));}
  assert.throws(()=>base64.base64ToBytes('abc'),/length/);assert.throws(()=>base64.base64ToBytes('ab*d'),/character/);
+});
+
+test('a scheduled share uploads now, is handed to the server, and leaves the outbox done',async()=>{
+ const at='2026-11-02T14:30:00.000Z';
+ const f=fixture({scheduled:at});f.succeedPublish();const api=f.load();
+ const job=await api.enqueueUpload(owner,'/original','photo','image/png',{caption:'later',publishAt:at});
+ await api.runUpload(owner,job.id,f.session);
+ const saved=(await api.listUploads(owner))[0];
+ assert.equal(saved.status,'scheduled');assert.equal(saved.scheduledId,'sched-1');assert.ok(api.isDone(saved));
+ assert.equal(f.calls.puts.length,f.partCount,'the media uploaded straight away');assert.equal(f.calls.polls,0,'nothing to wait for');
+ assert.equal([...f.files.keys()].filter(k=>k.startsWith('/private/')).length,0,'the saved copy is removed');
+ assert.equal(f.storyChanges,0,'nothing posted yet');
+ assert.deepEqual(f.events.map(e=>e.name),['upload_succeeded']);
+ // Running it again, or trying to stop it, does nothing: it is the server's now.
+ await api.runUpload(owner,job.id,f.session);assert.equal(f.calls.publishes,1);
+ assert.equal(await api.cancelUpload(owner,job.id,'private-token'),false);
 });

@@ -22,7 +22,8 @@ export type AnalyticsEventName =
   // A Story's link sticker opened (never which link), and "Add yours" tapped on someone's Story.
   | "story_link_opened" | "add_yours_tapped"
   // Invite friends (where it was tapped), an invite link opened, and how many contacts were found.
-  | "invite_shared" | "invite_link_opened" | "contacts_checked";
+  | "invite_shared" | "invite_link_opened" | "contacts_checked"
+  | "professional_dashboard_viewed";
 export type AnalyticsProperties = Record<string, string | number | boolean>;
 
 interface QueuedEvent {

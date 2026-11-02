@@ -16,7 +16,8 @@ import * as likesRepo from "./likes.repository";
 import * as commentsRepo from "./comments.repository";
 import * as highlightsRepo from "../highlights/highlights.repository";
 import type { StoryRecord } from "./stories.repository";
-import type { PublishStoryInput } from "./dto";
+import { captionText, type PublishStoryInput } from "./dto";
+import { findScheduledByRequest, mediaIsScheduled, type ScheduledStoryView } from "./scheduled";
 import type { StoryOverlay, DrawStroke, FilterKey, StoryCrop } from "./overlays";
 import { deliveryFor, type MediaDelivery } from "../media/delivery";
 import type { MediaRecord } from "../media/media.repository";
@@ -163,12 +164,6 @@ export function isActive(story: StoryRecord): boolean {
   return story.deletedAt === null && new Date(story.expiresAt).getTime() > Date.now();
 }
 
-/** The caption plus any text overlays: everything a viewer reads on the Story. */
-function captionText(input: PublishStoryInput): string {
-  const overlays = (input as { overlays?: { type?: string; properties?: { text?: unknown } }[] }).overlays ?? [];
-  return [input.caption ?? "", ...overlays.filter((o) => o?.type === "text" && typeof o.properties?.text === "string").map((o) => String(o.properties!.text))].join("\n");
-}
-
 export async function publishStory(
   ownerId: string,
   input: PublishStoryInput,
@@ -182,6 +177,7 @@ export async function publishStory(
   if(input.requestId){
     const result=await requestPublish(ownerId,input,options);
     if(result.state==='published')return result.story;
+    if(result.state==='scheduled')throw new HttpError(409,"This Story is scheduled to post later.");
     throw new HttpError(409,"This media is still processing. It will be published when it's ready.");
   }
   const media = await mediaRepo.findMediaById(input.mediaId);
@@ -196,6 +192,7 @@ export async function publishStory(
   if (existing) {
     throw new HttpError(409, "This media has already been published as a Story.");
   }
+  if (await mediaIsScheduled(input.mediaId)) throw new HttpError(409, SCHEDULED_MEDIA_MESSAGE);
 
   const ttlSeconds = options.ttlSecondsOverride ?? config.stories.ttlSeconds;
   const expiresAt = new Date(Date.now() + ttlSeconds * 1000);
@@ -228,7 +225,7 @@ export async function publishStory(
  * collaborator (if any) is someone the owner may invite. Both are refused with a reason the
  * editor can show, rather than the Story quietly posting without them.
  */
-async function assertStickersAndCollab(ownerId: string, input: PublishStoryInput): Promise<void> {
+export async function assertStickersAndCollab(ownerId: string, input: PublishStoryInput): Promise<void> {
   await stickersService.assertStickerLinksAllowed(input.overlays ?? [], ownerId);
   if (input.collaboratorId) await collabService.assertCanInvite(ownerId, input.collaboratorId);
 }
@@ -280,7 +277,11 @@ export class MediaFailedError extends Error {
 
 export type PublishResult =
   | { state: "published"; story: PublicStory }
-  | { state: "processing"; requestId: string; mediaId: string };
+  | { state: "processing"; requestId: string; mediaId: string }
+  // The request scheduled this Story (a retried scheduled share): it posts at its time.
+  | { state: "scheduled"; scheduled: ScheduledStoryView };
+
+const SCHEDULED_MEDIA_MESSAGE = "This photo or video is scheduled to post later. Reschedule or cancel it in Archive, under Scheduled.";
 
 /**
  * Idempotent publish keyed by the device's request id. If the media is still being
@@ -291,6 +292,10 @@ export async function requestPublish(ownerId: string, input: PublishStoryInput, 
   if (!input.requestId) return { state: "published", story: await publishStory(ownerId, input, options) };
   await assertCanContribute(ownerId);
   await assertNotSound(input.mediaId);
+  // A scheduled share's retry finds its schedule; sharing a scheduled upload now is refused.
+  const scheduled = await findScheduledByRequest(ownerId, input.requestId);
+  if (scheduled) return { state: "scheduled", scheduled };
+  if (await mediaIsScheduled(input.mediaId)) throw new HttpError(409, SCHEDULED_MEDIA_MESSAGE);
   await assertStickersAndCollab(ownerId, input);
   if (input.music) input = { ...input, music: await validateStoryMusic(input.music) };
   // The hash is of what the app sent, so a retry after a festival ends still matches its request.

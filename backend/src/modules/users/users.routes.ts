@@ -99,6 +99,8 @@ export function registerUserRoutes(router: Router): void {
         // False straight after a rename while verified: the badge is on hold until an admin looks.
         verified: user.verified,
         verifiedCategory: user.verifiedCategory,
+        professionalCategory: user.professionalCategory,
+        professionalCategoryShown: user.professionalCategoryShown,
         interests: user.interests,
         isPrivate: user.isPrivate,
         findableByContacts: user.findableByContacts,

@@ -4,15 +4,24 @@ import { sendJson } from "../../http/respond";
 import { parsePagination, parseQueryString } from "../../http/pagination";
 import { parseUsernameParam } from "../../shared/validation";
 import { parsePublishStoryInput } from "./dto";
+import { ValidationError } from "../auth/dto";
 import * as storiesService from "./stories.service";
+import * as scheduled from "./scheduled";
 
 export function registerStoriesRoutes(router: Router): void {
+  // `publishAt` schedules it instead (scheduled.ts): 201 {scheduled}; it posts at that time.
   router.post("/api/v1/stories", async (req, res) => {
     requireAuth(req);
     const input = parsePublishStoryInput(req.body);
+    const publishAt = scheduled.parsePublishAt(req.body);
+    if (publishAt) {
+      sendJson(res, 201, { scheduled: await scheduled.scheduleStory(req.userId as string, input, publishAt) });
+      return;
+    }
     try {
       const result = await storiesService.requestPublish(req.userId as string, input);
       if (result.state === "published") sendJson(res, 201, { story: result.story });
+      else if (result.state === "scheduled") sendJson(res, 201, { scheduled: result.scheduled });
       else sendJson(res, 202, { publish: { state: "processing", requestId: result.requestId, mediaId: result.mediaId } });
     } catch (error) {
       if (!(error instanceof storiesService.MediaFailedError)) throw error;
@@ -25,6 +34,27 @@ export function registerStoriesRoutes(router: Router): void {
     requireAuth(req);
     const publish = await storiesService.getPublishRequest(req.userId as string, req.params.requestId as string);
     sendJson(res, 200, { publish: { ...publish, state: publish.state === "waiting" ? "processing" : publish.state } });
+  });
+
+  // Your Scheduled list (Archive > Scheduled): only ever your own. Registered before
+  // "/api/v1/stories/:id" so "scheduled" is never mistaken for a story id.
+  router.get("/api/v1/stories/scheduled", async (req, res) => {
+    requireAuth(req);
+    res.setHeader("Cache-Control", "no-store");
+    sendJson(res, 200, { scheduled: await scheduled.listScheduled(req.userId as string) });
+  });
+
+  router.patch("/api/v1/stories/scheduled/:id", async (req, res) => {
+    requireAuth(req);
+    const publishAt = scheduled.parsePublishAt(req.body);
+    if (!publishAt) throw new ValidationError({ publishAt: "Choose when it should post." });
+    sendJson(res, 200, { scheduled: await scheduled.reschedule(req.userId as string, req.params.id as string, publishAt) });
+  });
+
+  router.delete("/api/v1/stories/scheduled/:id", async (req, res) => {
+    requireAuth(req);
+    await scheduled.cancelScheduled(req.userId as string, req.params.id as string);
+    sendJson(res, 204, undefined);
   });
 
   // Registered before "/api/v1/stories/:id" so "feed" is never mistaken for a story id.

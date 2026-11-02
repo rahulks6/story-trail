@@ -2,9 +2,10 @@ import React,{useCallback,useEffect,useRef,useState} from 'react';
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "../../components/Pressable";
 import {useAuth} from '../../state/AuthContext';
-import {autoResumeDue,cancelUpload,listUploads,needsNewFile,removeUpload,runUpload,subscribeUploads,uploadProgress,uploadRunning,type UploadJob} from '../../state/uploadQueue';
+import {autoResumeDue,cancelUpload,isDone,listUploads,needsNewFile,removeUpload,runUpload,subscribeUploads,uploadProgress,uploadRunning,type UploadJob} from '../../state/uploadQueue';
 import {colors} from '../../theme';
 import {serverDate} from '../../utils/serverTime';
+import {scheduleText} from '../../models/schedule';
 
 /** What a person sees for each step: Preparing -> Uploading -> Processing -> Posted, or why it stopped. */
 function describe(job:UploadJob,active:boolean,percent:number|undefined):string{
@@ -15,6 +16,7 @@ function describe(job:UploadJob,active:boolean,percent:number|undefined):string{
   case 'publishing':return active?'Publishing…':'Paused — tap Retry to continue';
   case 'processing':return 'Processing — it will post automatically';
   case 'published':return 'Posted';
+  case 'scheduled':return serverDate(job.payload.publishAt)?`Scheduled for ${scheduleText(serverDate(job.payload.publishAt)!)}`:'Scheduled';
   case 'failed':return needsNewFile(job)?"Couldn't use this file":autoResumeDue(job,Number.POSITIVE_INFINITY)?"Couldn't connect — trying again soon":"Couldn't post";
  }
 }
@@ -30,27 +32,27 @@ export function UploadQueueScreen():React.JSX.Element {
  // Uploads run in the background (state/UploadRunner); failed or interrupted ones wait here for a Retry.
  // A Story not yet posted may already be on the server: cancel it there too, or it would still post.
  const discard=async(job:UploadJob)=>{
-  if(job.status==='published'){await removeUpload(job.ownerId,job.id);return;}
+  if(isDone(job)){await removeUpload(job.ownerId,job.id);return;}
   if(!await cancelUpload(job.ownerId,job.id,session.current?.token??null)&&mounted.current)setError('It posted just now. Open the Story, tap More, then Delete.');
  };
- const remove=(job:UploadJob)=>Alert.alert(job.status==='published'?'Dismiss receipt?':'Remove this Story?',job.status==='published'?'The posted Story stays up.':'This removes the saved copy and your edits, and it won\'t be posted. Your original photo or video is unchanged.',[{text:'Cancel',style:'cancel'},{text:'Remove',style:'destructive',onPress:()=>void discard(job).catch(e=>{if(mounted.current)setError(e instanceof Error?e.message:'Could not remove it. Try again.');})}]);
+ const remove=(job:UploadJob)=>Alert.alert(isDone(job)?'Dismiss receipt?':'Remove this Story?',job.status==='scheduled'?'It still posts at its time. Reschedule or cancel it in Archive, under Scheduled.':job.status==='published'?'The posted Story stays up.':'This removes the saved copy and your edits, and it won\'t be posted. Your original photo or video is unchanged.',[{text:'Cancel',style:'cancel'},{text:'Remove',style:'destructive',onPress:()=>void discard(job).catch(e=>{if(mounted.current)setError(e instanceof Error?e.message:'Could not remove it. Try again.');})}]);
  return <ScrollView style={styles.root} contentContainerStyle={styles.content}>
   <Text style={styles.title} accessibilityRole="header">Story uploads</Text>
   <Text style={styles.muted}>Stories share in the background while Katkee is open. Once one is processing it posts by itself, even if you close the app. Anything interrupted waits here to continue.</Text>
   {jobs===null?<ActivityIndicator color={colors.accentText}/>:!jobs.length?<Text style={styles.muted}>No pending uploads.</Text>:jobs.map(job=>{
    const active=uploadRunning(job.ownerId,job.id);const percent=uploadProgress(job.ownerId,job.id);
    const label=describe(job,active,percent);
-   const canRetry=!active&&job.status!=='published'&&job.status!=='queued'&&job.status!=='processing'&&!needsNewFile(job);
+   const canRetry=!active&&!isDone(job)&&job.status!=='queued'&&job.status!=='processing'&&!needsNewFile(job);
    return <View key={job.id} style={styles.card}>
     <Text style={styles.text} numberOfLines={2}>{job.payload.caption||(job.kind==='video'?'Video Story':'Photo Story')} · {serverDate(job.createdAt)?.toLocaleString() ?? ''}</Text>
-    <Text style={[styles.status,job.status==='failed'&&styles.error,job.status==='published'&&styles.done]} accessibilityLiveRegion="polite">{label}</Text>
+    <Text style={[styles.status,job.status==='failed'&&styles.error,isDone(job)&&styles.done]} accessibilityLiveRegion="polite">{label}</Text>
     {job.status==='uploading'&&active?<View style={styles.track} accessibilityRole="progressbar" accessibilityValue={{min:0,max:100,now:Math.round((percent??0)*100)}}><View style={[styles.fill,{width:`${Math.round((percent??0)*100)}%`}]}/></View>:null}
     {!!job.error&&job.status==='failed'&&<Text style={styles.error}>{job.error}</Text>}
     {needsNewFile(job)&&<Text style={styles.muted}>Remove it and share the photo or video again, or choose a different one.</Text>}
     {active&&job.status!=='uploading'?<ActivityIndicator color={colors.accentText}/>:null}
     <View style={styles.actions}>
      {canRetry&&<Pressable style={styles.button} onPress={()=>run(job)} accessibilityRole="button"><Text style={styles.text}>Retry</Text></Pressable>}
-     {!active&&!job.cancelAfterPublish&&<Pressable style={styles.button} onPress={()=>remove(job)} accessibilityRole="button"><Text style={styles.text}>{job.status==='published'?'Dismiss':'Remove'}</Text></Pressable>}
+     {!active&&!job.cancelAfterPublish&&<Pressable style={styles.button} onPress={()=>remove(job)} accessibilityRole="button"><Text style={styles.text}>{isDone(job)?'Dismiss':'Remove'}</Text></Pressable>}
     </View>
    </View>;})}
   {!!error&&<Text accessibilityRole="alert" style={styles.error}>{error}</Text>}

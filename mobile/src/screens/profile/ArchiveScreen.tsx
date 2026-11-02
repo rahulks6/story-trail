@@ -9,7 +9,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../../navigation/types";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
-import { deleteStory, getMyArchivedStories, mediaFileUrl, type PublicStory } from "../../api/stories";
+import { deleteStory, getMyArchivedStories, getScheduledStories, mediaFileUrl, type PublicStory } from "../../api/stories";
+import { useFocusEffect } from "@react-navigation/native";
 import { EmptyState } from "../../components/EmptyState";
 import { LoadFailed } from "../../components/LoadFailed";
 import { Button } from "../../components/Form";
@@ -97,6 +98,30 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
     });
   }, [choosing, endSelection, navigation, stories?.length]);
   const [deleting, setDeleting] = useState(false);
+  // Stories waiting to post (Scheduled): a row at the top while there are any.
+  const [scheduledCount, setScheduledCount] = useState(0);
+  useFocusEffect(
+    useCallback(() => {
+      if (!accessToken) return;
+      getScheduledStories(accessToken)
+        .then(({ scheduled }) => setScheduledCount(scheduled.length))
+        .catch(() => undefined);
+    }, [accessToken]),
+  );
+  const scheduledRow = scheduledCount > 0 ? (
+    <Pressable
+      style={styles.scheduledRow}
+      onPress={() => navigation.navigate("ScheduledStories")}
+      accessibilityRole="button"
+      accessibilityLabel={`Scheduled, ${scheduledCount} ${scheduledCount === 1 ? "Story" : "Stories"}`}
+      accessibilityHint="Reschedule or cancel Stories that haven't posted yet"
+    >
+      <Icon name={ICONS.timer} size={20} color={colors.accentText} />
+      <Text style={styles.scheduledLabel}>Scheduled</Text>
+      <Text style={styles.scheduledCount}>{scheduledCount}</Text>
+      <Icon name={ICONS.chevron} size={16} color={colors.textDisabled} />
+    </Pressable>
+  ) : null;
   const [loadFailed, setLoadFailed] = useState(false);
   // A failed next page waits for a tap on "Try again" rather than retrying on every scroll.
   const [moreFailed, setMoreFailed] = useState(false);
@@ -199,9 +224,13 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
   return (
     <View style={styles.container}>
       {stories.length === 0 ? (
-        <EmptyState icon="archive" title="Your Archive is empty" message="Every Story you publish stays here, even after it expires." />
+        <>
+          {scheduledRow ? <View style={styles.scheduledAlone}>{scheduledRow}</View> : null}
+          <EmptyState icon="archive" title="Your Archive is empty" message="Every Story you publish stays here, even after it expires." />
+        </>
       ) : (
         <SectionList
+          ListHeaderComponent={scheduledRow ?? undefined}
           sections={sections}
           keyExtractor={(row, index) => `${row[0]?.id ?? index}-row`}
           contentContainerStyle={styles.listContent}
@@ -294,6 +323,21 @@ const styles = StyleSheet.create({
   },
   selectedCheckGlyph: { color: colors.onAccent, fontWeight: "700" },
   footerSpinner: { marginVertical: spacing.md },
+  scheduledRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    minHeight: 52,
+    paddingHorizontal: spacing.md,
+    marginTop: spacing.sm,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+  },
+  scheduledAlone: { paddingHorizontal: CONTAINER_PADDING },
+  scheduledLabel: { ...typography.bodyStrong, flex: 1 },
+  scheduledCount: { ...typography.caption },
   actionBar: {
     flexDirection: "row",
     alignItems: "center",

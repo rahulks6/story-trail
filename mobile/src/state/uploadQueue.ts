@@ -12,16 +12,20 @@ import {track} from '../analytics/analytics';
  * The Story outbox. Each Story is copied into app storage, then:
  *   preparing -> uploading (resumable, part by part, straight to storage) -> publishing
  *   -> processing (server prepares the media and publishes it by itself) -> published
+ * or, for a Story shared with a time (payload.publishAt), uploading -> publishing -> scheduled:
+ * the server keeps it and posts it at that time by itself (backend stories/scheduled.ts).
  * Any failure keeps the saved copy and the edits so "Retry" can continue where it
  * stopped: finished parts are never sent twice, and a temporary processing failure
  * is retried on the server without uploading again.
  */
-export type UploadStatus='queued'|'preparing'|'uploading'|'processing'|'publishing'|'published'|'failed';
+export type UploadStatus='queued'|'preparing'|'uploading'|'processing'|'publishing'|'published'|'scheduled'|'failed';
 export type UploadJob={id:string;ownerId:string;kind:'photo'|'video';mimeType:string;payload:Omit<PublishStoryInput,'mediaId'|'requestId'>;createdAt:string;status:UploadStatus;
  /** 2 = resumable direct upload. Older outbox items (uploaded in one request) have no version. */
  uploadVersion?:2;
  /** A server-side effect made while processing the video (Boomerang). */
  effect?:'boomerang';mediaId?:string;storyId?:string;error?:string;
+ /** A scheduled share: the server's schedule, to cancel from the uploads pill. */
+ scheduledId?:string;
  /** For a processing failure: whether Retry can help (true) or the file itself is unusable (false). */
  retryable?:boolean;byteSize?:number;
  /** Stopped while the server was already processing it: deleted as soon as it posts. */
@@ -53,6 +57,8 @@ function key(owner:string,id:string){validate(owner,id);return PREFIX+owner+'.'+
 function file(owner:string,id:string){validate(owner,id);return ROOT+'/'+owner+'-'+id;}
 function notify(){listeners.forEach(fn=>fn());}
 const sleep=(ms:number)=>new Promise<void>(resolve=>setTimeout(resolve,ms));
+/** On the server and out of the outbox's hands: posted, or scheduled to post by itself. */
+export function isDone(job:UploadJob){return job.status==='published'||job.status==='scheduled';}
 export function subscribeUploads(fn:()=>void){listeners.add(fn);return ()=>{listeners.delete(fn);};}
 /** 0..1 while bytes are being sent; undefined otherwise. Not persisted. */
 export function uploadProgress(ownerId:string,id:string):number|undefined{return progress.get(key(ownerId,id));}
@@ -64,7 +70,7 @@ export async function listUploads(ownerId:string):Promise<UploadJob[]>{
  return rows.flatMap(raw=>{try{const job=JSON.parse(raw||'null') as UploadJob;if(!job||job.ownerId!==ownerId)return [];validate(ownerId,job.id);return [job];}catch{return [];}}).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
 }
 export function enqueueUpload(ownerId:string,uri:string,kind:UploadJob['kind'],mimeType:string,payload:UploadJob['payload'],effect?:'boomerang'):Promise<UploadJob>{return serial(async()=>{
- const existing=await listUploads(ownerId);if(existing.filter(j=>j.status!=='published').length>=10)throw Error('Finish or remove a pending upload before adding another.');
+ const existing=await listUploads(ownerId);if(existing.filter(j=>!isDone(j)).length>=10)throw Error('Finish or remove a pending upload before adding another.');
  // This is an idempotency key, not an authentication secret. It is scoped by authenticated owner server-side.
  const id='story_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2)+'_'+Math.random().toString(36).slice(2);
  const target=file(ownerId,id);
@@ -159,7 +165,7 @@ export function runUpload(ownerId:string,id:string,session:()=>{ownerId:string;t
  const work=Promise.resolve().then(async()=>{
   const raw=await AsyncStorage.getItem(storageKey);if(!raw)throw Error('Upload not found.');let job=JSON.parse(raw) as UploadJob;
   if(job.ownerId!==ownerId||job.id!==id)throw Error('Upload owner mismatch.');
-  if(job.status==='published')return;
+  if(isDone(job))return;
   const token=()=>{const current=session();if(!current||current.ownerId!==ownerId)throw Error('Sign in to resume this upload.');return current.token;};
   const persist=async(next:UploadJob)=>{
    // Keep a Stop that arrived while this was running.
@@ -184,11 +190,18 @@ export function runUpload(ownerId:string,id:string,session:()=>{ownerId:string;t
     job=await persist({...job,status:'publishing',error:undefined,retryable:undefined});
     const result=await publishStory({...job.payload,mediaId:job.mediaId!,requestId:job.id},token());
     if('story' in result)job=await persist({...job,status:'published',storyId:result.story.id});
+    else if('scheduled' in result)job=await persist({...job,status:'scheduled',scheduledId:result.scheduled.id,storyId:result.scheduled.storyId??undefined,error:undefined});
     else job=await persist({...job,status:'processing'});
    }
    if(job.status==='processing')job=await awaitPublish(job,token,persist);
    // The server reported a processing failure (no exception): counted like a thrown one.
    if(job.status==='failed')track('upload_failed',{mediaKind:job.kind,stage:'processing',reason:job.retryable===true?'server':'rejected'});
+   if(job.status==='scheduled'){
+    // Uploaded and handed over: the server posts it at its time, so the saved copy can go.
+    if(job.networkFailure||job.autoRetries)job=await persist({...job,networkFailure:undefined,autoRetries:undefined,failedAt:undefined});
+    track('upload_succeeded',{mediaKind:job.kind,durationMs:Math.min(3_600_000,Date.now()-attemptStarted)});
+    await RNFS.unlink(file(ownerId,id)).catch(()=>undefined);
+   }
    if(job.status==='published'){
     // Stopped while processing: take it down straight away and leave nothing behind.
     if(job.cancelAfterPublish&&job.storyId){
@@ -233,14 +246,14 @@ export async function cancelUpload(ownerId:string,id:string,token:string|null):P
  const storageKey=key(ownerId,id);
  const raw=await AsyncStorage.getItem(storageKey);if(!raw)return true;
  const job=JSON.parse(raw) as UploadJob;
- if(job.status==='published')return false;
+ if(isDone(job))return false;
  // The server is finishing it and will post it by itself: delete it the moment it posts.
  if(job.status==='processing'){await save({...job,cancelAfterPublish:true});return true;}
  cancelling.add(storageKey);
  try{
   await inFlight.get(storageKey)?.catch(()=>undefined);
   const latest=JSON.parse((await AsyncStorage.getItem(storageKey))??raw) as UploadJob;
-  if(latest.status==='published'||latest.status==='processing')return false;
+  if(isDone(latest)||latest.status==='processing')return false;
   if(latest.mediaId&&token)await abortUploadSession(latest.mediaId,token).catch(()=>undefined);
   await removeUpload(ownerId,id);
   return true;

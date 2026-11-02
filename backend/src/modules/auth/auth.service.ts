@@ -49,6 +49,10 @@ export interface PublicUser {
   /** The verified badge (Settings > Request verification); see modules/verification. */
   verified: boolean;
   verifiedCategory: string | null;
+  /** A professional account's category (Settings > Professional account); null for a personal account. */
+  professionalCategory: string | null;
+  /** Whether that category shows on the profile. */
+  professionalCategoryShown: boolean;
 }
 
 function toPublicUser(user: usersRepo.UserRecord): PublicUser {
@@ -67,6 +71,8 @@ function toPublicUser(user: usersRepo.UserRecord): PublicUser {
     emailVerificationRequired: user.emailVerificationRequired && !!user.email && !user.emailVerified,
     verified: user.verified,
     verifiedCategory: user.verifiedCategory,
+    professionalCategory: user.professionalCategory,
+    professionalCategoryShown: user.professionalCategoryShown,
   };
 }
 

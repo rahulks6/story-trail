@@ -14,6 +14,7 @@ export const ANALYTICS_EVENTS = [
   // A link sticker opened in the browser (never which link), and "Add yours" tapped on a Story.
   "story_link_opened", "add_yours_tapped",
   "invite_shared", "invite_link_opened", "contacts_checked",
+  "professional_dashboard_viewed",
 ] as const;
 export type AnalyticsEventName = (typeof ANALYTICS_EVENTS)[number];
 
@@ -55,6 +56,8 @@ const PROPERTIES: Record<AnalyticsEventName, Record<string, PropertyRule>> = {
   invite_link_opened: { signedIn: { kind: "boolean" } },
   // Contacts on Katkee ran: how many accounts it found. Never the contacts or the accounts.
   contacts_checked: { found: { kind: "int", min: 0, max: 10_000 } },
+  // The professional dashboard opened, and for which period; nothing about what it showed.
+  professional_dashboard_viewed: { range: { kind: "enum", values: ["7d", "30d"] } },
 };
 
 export const MAX_EVENTS_PER_BATCH = 50;

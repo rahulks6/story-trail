@@ -105,13 +105,7 @@ appId: com.katkee.app
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: 05b-onboarding-people
-# Step 3: find friends from contacts (optional), then into the app.
-- tapOn: "(Next|Skip)"
-- extendedWaitUntil:
-    visible: "Start using Katkee"
-    timeout: 20000
-- takeScreenshot: 05c-onboarding-contacts
-- tapOn: "Start using Katkee"
+- tapOn: "(Done|Start using Katkee)"
 # Home, or the Nearby Stories offer already on top of it.
 - extendedWaitUntil:
     visible: "(Home|Not now)"

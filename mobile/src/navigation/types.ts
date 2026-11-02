@@ -86,6 +86,12 @@ export type RootStackParamList = {
   ArchivedStoryViewer: { storyId: string };
   /** "Per-sequence Insights" (spec) — completion %, following-vs-discovery split, and profile-visit rate aggregated across every currently-active Story you own. Always the caller's own. */
   SequenceInsights: undefined;
+  /** A professional account's dashboard (reach, followers, top Stories, active hours): always your own. */
+  ProfessionalDashboard: undefined;
+  /** Settings > Professional account: switch, choose a category, or switch back. */
+  ProfessionalAccount: undefined;
+  /** Archive > Scheduled, and katkee://scheduled: Stories waiting to post, to reschedule or cancel. */
+  ScheduledStories: undefined;
   /** Display name + bio, wired to the existing `PATCH /api/v1/users/me` — always the caller's own profile. */
   EditProfile: undefined;
   /** Privacy, Notifications, Data & Storage, Help, About, Log Out, Delete account — the settings hub the icon reference calls for. */
