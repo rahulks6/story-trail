@@ -52,8 +52,8 @@ export function ForgotPasswordScreen({ navigation, route }: Props): React.JSX.El
         <TextField
           label="Email"
           value={email}
-          onChangeText={(t) => {
-            setEmail(t);
+          onChangeText={(text) => {
+            setEmail(text);
             setError(undefined);
           }}
           autoCapitalize="none"

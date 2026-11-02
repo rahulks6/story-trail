@@ -272,15 +272,15 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
           <Text style={styles.editingHeader}>Editing {editingOverlay.type === "location" ? "location" : editingOverlay.type === "datetime" ? "date/time" : "sticker"}</Text>
         ) : (
           <View style={styles.tabRow}>
-            {TABS.map((t) => (
+            {TABS.map((option) => (
               <Pressable
-                key={t.key}
-                onPress={() => setTab(t.key)}
-                style={[styles.tab, tab === t.key && styles.tabActive]}
+                key={option.key}
+                onPress={() => setTab(option.key)}
+                style={[styles.tab, tab === option.key && styles.tabActive]}
                 accessibilityRole="tab"
-                accessibilityState={{ selected: tab === t.key }}
+                accessibilityState={{ selected: tab === option.key }}
               >
-                <Text style={[styles.tabLabel, tab === t.key && styles.tabLabelActive]}>{t.label}</Text>
+                <Text style={[styles.tabLabel, tab === option.key && styles.tabLabelActive]}>{option.label}</Text>
               </Pressable>
             ))}
           </View>

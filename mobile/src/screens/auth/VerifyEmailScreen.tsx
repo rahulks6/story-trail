@@ -156,7 +156,7 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
         <TextField
           label="6-digit code"
           value={code}
-          onChangeText={(t) => setCode(t.replace(/\D/g, "").slice(0, 6))}
+          onChangeText={(text) => setCode(text.replace(/\D/g, "").slice(0, 6))}
           keyboardType="number-pad"
           autoComplete="one-time-code"
           textContentType="oneTimeCode"

@@ -69,8 +69,8 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
             submitBehavior="submit"
             onSubmitEditing={() => passwordInput.current?.focus()}
             value={email}
-            onChangeText={(t) => {
-              setEmail(t);
+            onChangeText={(text) => {
+              setEmail(text);
               clearError();
             }}
           />
@@ -85,8 +85,8 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
             returnKeyType="go"
             onSubmitEditing={() => void onSubmit()}
             value={password}
-            onChangeText={(t) => {
-              setPassword(t);
+            onChangeText={(text) => {
+              setPassword(text);
               clearError();
             }}
           />

@@ -103,7 +103,7 @@ export function RecipientPicker({ chosen, onToggle, emptyHint }: Props): React.J
       ) : null}
       <FlatList
         data={list}
-        keyExtractor={(t) => t.key}
+        keyExtractor={(row) => row.key}
         keyboardShouldPersistTaps="handled"
         ListHeaderComponent={!found && recent?.length ? <Text style={styles.section}>Recent</Text> : undefined}
         ListEmptyComponent={

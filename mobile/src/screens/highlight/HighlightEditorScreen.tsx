@@ -262,7 +262,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
             placeholderTextColor={colors.textDisabled}
             value={title}
             onChangeText={setTitle}
-            onBlur={() => setTitle((t) => cleanTitle(t))}
+            onBlur={() => setTitle((current) => cleanTitle(current))}
             maxLength={MAX_TITLE_LENGTH}
             autoCapitalize="words"
             returnKeyType="done"

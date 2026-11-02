@@ -49,7 +49,7 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
     const latest = [...jobs].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0] ?? null;
     setJob(latest);
     setAttention(jobs.filter(needsAttention).length);
-    setTick((t) => t + 1);
+    setTick((tick) => tick + 1);
     if (latest && isDone(latest) && !dismissTimer.current) {
       dismissTimer.current = setTimeout(() => {
         dismissTimer.current = null;

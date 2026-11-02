@@ -54,7 +54,7 @@ export function DrawingCanvas({ containerWidth, containerHeight, strokes, onChan
   const commit = (next: DrawStroke[]) => {
     past.current.push(latest.current.strokes);
     future.current = [];
-    setHistoryTick((t) => t + 1);
+    setHistoryTick((tick) => tick + 1);
     latest.current.onChangeStrokes(next);
   };
   const commitRef = useRef(commit);
@@ -64,7 +64,7 @@ export function DrawingCanvas({ containerWidth, containerHeight, strokes, onChan
     const previous = past.current.pop();
     if (previous === undefined) return;
     future.current.push(strokes);
-    setHistoryTick((t) => t + 1);
+    setHistoryTick((tick) => tick + 1);
     onChangeStrokes(previous);
   };
 
@@ -72,7 +72,7 @@ export function DrawingCanvas({ containerWidth, containerHeight, strokes, onChan
     const next = future.current.pop();
     if (next === undefined) return;
     past.current.push(strokes);
-    setHistoryTick((t) => t + 1);
+    setHistoryTick((tick) => tick + 1);
     onChangeStrokes(next);
   };
 
@@ -190,16 +190,16 @@ export function DrawingCanvas({ containerWidth, containerHeight, strokes, onChan
               </View>
             ) : null}
             <View style={styles.toolRow}>
-              {TOOLS.map((t) => (
+              {TOOLS.map((option) => (
                 <Pressable
-                  key={t}
-                  onPress={pick(() => setTool(t))}
-                  style={[styles.toolChip, tool === t && styles.toolChipActive]}
+                  key={option}
+                  onPress={pick(() => setTool(option))}
+                  style={[styles.toolChip, tool === option && styles.toolChipActive]}
                   accessibilityRole="button"
-                  accessibilityLabel={`${t} tool`}
-                  accessibilityState={{ selected: tool === t }}
+                  accessibilityLabel={`${option} tool`}
+                  accessibilityState={{ selected: tool === option }}
                 >
-                  <Text style={[styles.toolLabel, tool === t && styles.toolLabelActive]}>{t}</Text>
+                  <Text style={[styles.toolLabel, tool === option && styles.toolLabelActive]}>{option}</Text>
                 </Pressable>
               ))}
               {tool !== "eraser" ? (

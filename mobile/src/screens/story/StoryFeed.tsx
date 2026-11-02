@@ -336,12 +336,12 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       return;
     }
     reveal.setValue(0);
-    const t = setTimeout(() => setSlowLoad(true), 350);
+    const timer = setTimeout(() => setSlowLoad(true), 350);
     // A video that hasn't started after a few seconds is on a slow connection: the 480p copy is
     // about a third of the size.
     const slow = setTimeout(() => setLowQuality(true), SLOW_VIDEO_MS);
     return () => {
-      clearTimeout(t);
+      clearTimeout(timer);
       clearTimeout(slow);
     };
   }, [mediaReady, reveal]);

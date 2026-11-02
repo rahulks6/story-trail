@@ -515,7 +515,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
     let pinch: { id: string; start: Placement; from: [Touch, Touch]; now?: Placement } | null = null;
     let pinched = false;
     let swipeStart = { x: 0, y: 0 };
-    const touchesOf = (evt: GestureResponderEvent): Touch[] => evt.nativeEvent.touches.map((t) => ({ pageX: t.pageX, pageY: t.pageY }));
+    const touchesOf = (evt: GestureResponderEvent): Touch[] => evt.nativeEvent.touches.map((touch) => ({ pageX: touch.pageX, pageY: touch.pageY }));
     /** Commits a pinch's last place (once, as the fingers lift) and stops the live one. */
     const endPinch = () => {
       if (pinch?.now) {

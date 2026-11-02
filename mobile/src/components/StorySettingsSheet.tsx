@@ -139,8 +139,8 @@ export function StorySettingsSheet({
                 <Text style={styles.section}>Topic</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips} accessibilityRole="radiogroup" accessibilityLabel="Topic">
                   <TopicChip label="None" selected={topic === null} onPress={() => onTopicChange(null)} />
-                  {TOPICS.map((t) => (
-                    <TopicChip key={t} label={t} selected={topic === t} onPress={() => onTopicChange(t)} />
+                  {TOPICS.map((option) => (
+                    <TopicChip key={option} label={option} selected={topic === option} onPress={() => onTopicChange(option)} />
                   ))}
                 </ScrollView>
                 <Text style={[styles.hint, styles.topicHint]}>Helps people who like this topic find your Story.</Text>

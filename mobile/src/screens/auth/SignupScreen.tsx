@@ -56,8 +56,8 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
     }
   };
 
-  const change = (set: (v: string) => void) => (t: string) => {
-    set(t);
+  const change = (set: (v: string) => void) => (text: string) => {
+    set(text);
     clearError();
   };
 
@@ -100,7 +100,7 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
           submitBehavior="submit"
           onSubmitEditing={() => emailInput.current?.focus()}
           value={username}
-          onChangeText={change((t) => setUsername(t.toLowerCase()))}
+          onChangeText={change((text) => setUsername(text.toLowerCase()))}
         />
         <TextField
           ref={emailInput}
@@ -131,7 +131,7 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
           submitBehavior="submit"
           onSubmitEditing={() => passwordInput.current?.focus()}
           value={birth}
-          onChangeText={change((t) => setBirth(formatBirthDateInput(t)))}
+          onChangeText={change((text) => setBirth(formatBirthDateInput(text)))}
         />
         <TextField
           ref={passwordInput}

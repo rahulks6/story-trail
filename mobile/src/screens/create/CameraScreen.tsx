@@ -177,7 +177,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
     // A command that reached the camera while it was starting or stopping: harmless, not a failure.
     if (/not active|OperationCanceled/i.test(error?.message ?? "")) return;
     const now = Date.now();
-    cameraErrors.current = [...cameraErrors.current.filter((t) => now - t < 10_000), now];
+    cameraErrors.current = [...cameraErrors.current.filter((at) => now - at < 10_000), now];
     if (cameraErrors.current.length <= 2) {
       // Restart the camera; most errors (a busy camera, an interrupted session) clear on a restart.
       setCameraKey((k) => k + 1);
@@ -607,7 +607,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
             <Icon style={[styles.topIcon, flash === "on" && styles.topIconActive]} name={ICONS.flash} />
           </Pressable>
           <Pressable
-            onPress={() => setTimerSeconds((t) => (t === 0 ? 3 : t === 3 ? 10 : 0))}
+            onPress={() => setTimerSeconds((seconds) => (seconds === 0 ? 3 : seconds === 3 ? 10 : 0))}
             hitSlop={8}
             style={[styles.toolButton, styles.timerButton]}
             accessibilityRole="button"

@@ -44,7 +44,7 @@ export function snapToCentre(x: number, y: number, width: number, height: number
 const HIT_SLOP = { top: 16, bottom: 16, left: 16, right: 16 };
 const ACCESSIBILITY_ACTIONS = [{ name: "activate", label: "Open controls" }];
 
-const touchesOf = (evt: GestureResponderEvent): Touch[] => evt.nativeEvent.touches.map((t) => ({ pageX: t.pageX, pageY: t.pageY }));
+const touchesOf = (evt: GestureResponderEvent): Touch[] => evt.nativeEvent.touches.map((touch) => ({ pageX: touch.pageX, pageY: touch.pageY }));
 
 /**
  * One gesture model for every object on a Story (text, emoji, mention, location, date, sticker),

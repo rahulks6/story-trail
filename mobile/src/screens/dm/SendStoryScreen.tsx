@@ -88,10 +88,10 @@ export function SendStoryScreen({ route, navigation }: Props): React.JSX.Element
     }
     // What went is done; what didn't stays chosen for another try.
     setChosen(failed);
-    setError(`Couldn't send to ${[...failed.values()].map((t) => t.name).join(", ")}. ${lastError ?? ""}`.trim());
+    setError(`Couldn't send to ${[...failed.values()].map((target) => target.name).join(", ")}. ${lastError ?? ""}`.trim());
   };
 
-  const chosenNames = useMemo(() => [...chosen.values()].map((t) => t.name.split(" ")[0]).join(", "), [chosen]);
+  const chosenNames = useMemo(() => [...chosen.values()].map((target) => target.name.split(" ")[0]).join(", "), [chosen]);
   return (
     <KeyboardAvoider style={styles.container} topOffset={headerHeight}>
       <RecipientPicker chosen={chosen} onToggle={toggle} emptyHint="Search for someone to send this Story to." />

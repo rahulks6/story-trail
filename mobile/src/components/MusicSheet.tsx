@@ -63,9 +63,9 @@ export function MusicSheet({ visible, current, onClose, onChoose }: Props): Reac
         .catch(() => { if (!cancelled) setError("Couldn't load songs. Check your connection."); });
     };
     // Typing waits for a pause; a mood or opening the sheet loads at once.
-    const t = query ? setTimeout(run, 250) : null;
+    const timer = query ? setTimeout(run, 250) : null;
     if (!query) run();
-    return () => { cancelled = true; if (t) clearTimeout(t); };
+    return () => { cancelled = true; if (timer) clearTimeout(timer); };
   }, [visible, accessToken, query, mood]);
 
   const pick = (track: MusicTrack) => {
@@ -76,7 +76,7 @@ export function MusicSheet({ visible, current, onClose, onChoose }: Props): Reac
     const startMs = Math.min(Math.round(track.durationMs * 0.25), Math.max(0, track.durationMs - durationMs));
     setChoosing({ track, startMs, durationMs });
   };
-  const preview = tracks?.find((t) => t.id === previewId) ?? null;
+  const preview = tracks?.find((track) => track.id === previewId) ?? null;
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={() => (choosing && !current ? setChoosing(null) : onClose())}>
@@ -120,7 +120,7 @@ export function MusicSheet({ visible, current, onClose, onChoose }: Props): Reac
             ) : (
               <FlatList
                 data={tracks!}
-                keyExtractor={(t) => t.id}
+                keyExtractor={(track) => track.id}
                 style={styles.list}
                 keyboardShouldPersistTaps="handled"
                 renderItem={({ item }) => (

@@ -26,7 +26,7 @@ export function UploadQueueScreen():React.JSX.Element {
  const [,setTick]=useState(0);
  const session=useRef<{ownerId:string;token:string}|null>(null);session.current=user&&accessToken?{ownerId:user.id,token:accessToken}:null;
  const mounted=useRef(true);useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;session.current=null;};},[]);
- const refresh=useCallback(async()=>{if(!user)return;try{const next=await listUploads(user.id);if(mounted.current){setJobs(next);setTick(t=>t+1);}}catch{if(mounted.current)setError('Could not load saved uploads. Try again.');}},[user?.id]);
+ const refresh=useCallback(async()=>{if(!user)return;try{const next=await listUploads(user.id);if(mounted.current){setJobs(next);setTick(item=>item+1);}}catch{if(mounted.current)setError('Could not load saved uploads. Try again.');}},[user?.id]);
  useEffect(()=>{void refresh();return subscribeUploads(()=>void refresh());},[refresh]);
  const run=useCallback((job:UploadJob)=>{setError('');void runUpload(job.ownerId,job.id,()=>session.current).catch(e=>{if(mounted.current)setError(e instanceof Error?e.message:'Upload failed.');});},[]);
  // Uploads run in the background (state/UploadRunner); failed or interrupted ones wait here for a Retry.

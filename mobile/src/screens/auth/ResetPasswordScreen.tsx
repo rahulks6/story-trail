@@ -94,7 +94,7 @@ export function ResetPasswordScreen({ navigation, route }: Props): React.JSX.Ele
         <TextField
           label="6-digit code"
           value={code}
-          onChangeText={(t) => setCode(t.replace(/\D/g, "").slice(0, 6))}
+          onChangeText={(text) => setCode(text.replace(/\D/g, "").slice(0, 6))}
           error={errors.code}
           keyboardType="number-pad"
           autoComplete="one-time-code"

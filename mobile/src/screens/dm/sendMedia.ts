@@ -137,9 +137,9 @@ export async function sendPendingMedia(
   onUploaded?: (mediaId: string) => void,
 ): Promise<Message> {
   const token = () => {
-    const t = getToken();
-    if (!t) throw new Error("You're signed out.");
-    return t;
+    const token = getToken();
+    if (!token) throw new Error("You're signed out.");
+    return token;
   };
   let media = item.mediaId ? await existingMedia(item.mediaId, token) : null;
   if (!media) {
