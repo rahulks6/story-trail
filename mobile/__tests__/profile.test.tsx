@@ -5,7 +5,8 @@ import Clipboard from "@react-native-clipboard/clipboard";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ProfileScreen } from "../src/screens/profile/ProfileScreen";
 import { UserProfileScreen } from "../src/screens/profile/UserProfileScreen";
-import { countLabel, formatCount } from "../src/utils/formatCount";
+import { formatCount } from "../src/utils/formatCount";
+import { t } from "../src/i18n";
 import * as usersApi from "../src/api/users";
 import * as storiesApi from "../src/api/stories";
 import { PROFILE_PHOTO_RETRY_DELAYS_MS } from "../src/hooks/useProfilePhotoSource";
@@ -106,8 +107,9 @@ describe("counts", () => {
   test("read like a profile's: exact below 10,000, then rounded down with K and M", () => {
     expect([0, 1, 999, 9999, 10_000, 12_345, 99_999, 123_456, 999_999, 1_000_000, 1_250_000, 2_000_000_000].map(formatCount))
       .toEqual(["0", "1", "999", "9,999", "10K", "12.3K", "99.9K", "123K", "999K", "1M", "1.2M", "2B"]);
-    expect(countLabel(1, "follower", "followers")).toBe("1 follower");
-    expect(countLabel(12_345, "follower", "followers")).toBe("12,345 followers");
+    // What a screen reader hears: the exact count, singular or plural.
+    expect(t("profileHeader.followersSpoken", { count: 1 })).toBe("1 follower");
+    expect(t("profileHeader.followersSpoken", { count: 12_345 })).toBe("12,345 followers");
   });
 });
 

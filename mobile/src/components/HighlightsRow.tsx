@@ -155,7 +155,7 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
             onPress={toggleReordering}
             hitSlop={8}
             accessibilityRole="button"
-            accessibilityLabel={reordering ? "Done reordering Highlights" : "Reorder Highlights"}
+            accessibilityLabel={reordering ? t("highlightsRow.doneReorderingHighlights") : t("highlightsRow.reorderHighlights")}
           >
             <Text style={styles.reorderToggleLabel}>{reordering ? t("common.done") : t("highlightsRow.reorder")}</Text>
           </Pressable>

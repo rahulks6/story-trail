@@ -133,7 +133,7 @@ export function ProfileScreen(): React.JSX.Element {
             onPress={() => navigation.navigate("VerifyEmail")}
             accessibilityRole="button"
             accessibilityLabel={t("common.verifyYourEmail")}
-            accessibilityHint={`Enter the code we sent to ${user.email}`}
+            accessibilityHint={t("profile.enterTheCodeWeSent", { email: user.email ?? "" })}
           >
             <View style={styles.verifyText}>
               <Text style={styles.verifyTitle}>{t("common.verifyYourEmail")}</Text>
@@ -157,18 +157,18 @@ export function ProfileScreen(): React.JSX.Element {
           // Your account's copy changes the moment you switch in Settings.
           professionalCategory={user.professionalCategory !== undefined ? (user.professionalCategoryShown === false ? null : user.professionalCategory) : fetchedCategory}
           hasActiveStory={hasActiveStory}
-          storyLabel="Open your Story"
+          storyLabel={t("profile.openYourStory")}
           onOpenStory={() => navigation.navigate("StoryViewer", { creators: [user.username], startIndex: 0, ...(badge?.verified ? { verifiedCreators: [user.username] } : {}) })}
           onAddStory={() => navigation.navigate("Main", { screen: "Create" })}
           stats={[
             // Everyone sees how many Stories have been posted so far.
-            { key: "stories", value: counts?.storyCount ?? null, singular: "Story", plural: "Stories" },
+            { key: "stories", value: counts?.storyCount ?? null },
             {
-              key: "followers", value: counts?.followerCount ?? null, singular: "Follower", plural: "Followers",
+              key: "followers", value: counts?.followerCount ?? null,
               onPress: () => navigation.navigate("FollowList", { username: user.username, mode: "followers" }),
             },
             {
-              key: "following", value: counts?.followingCount ?? null, singular: "Following", plural: "Following",
+              key: "following", value: counts?.followingCount ?? null,
               onPress: () => navigation.navigate("FollowList", { username: user.username, mode: "following" }),
             },
           ]}

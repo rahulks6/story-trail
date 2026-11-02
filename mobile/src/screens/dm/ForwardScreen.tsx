@@ -101,11 +101,11 @@ export function ForwardScreen({ route, navigation }: Props): React.JSX.Element {
 
   return (
     <KeyboardAvoider style={styles.container} topOffset={headerHeight}>
-      <RecipientPicker chosen={chosen} onToggle={toggle} emptyHint="Search for someone to forward this to." />
+      <RecipientPicker chosen={chosen} onToggle={toggle} emptyHint={t("forward.searchForSomeoneToForward")} />
       {chosen.size || error ? (
         <View style={[styles.footer, { paddingBottom: spacing.sm + bottom }]}>
           {error ? <Text style={styles.error} accessibilityRole="alert">{error}</Text> : null}
-          {chosen.size ? <Button label={chosen.size === 1 ? "Send" : `Send to ${chosen.size}`} onPress={() => void send()} busy={sending} /> : null}
+          {chosen.size ? <Button label={chosen.size === 1 ? t("common.send") : t("forward.sendToSize", { size: chosen.size })} onPress={() => void send()} busy={sending} /> : null}
         </View>
       ) : null}
     </KeyboardAvoider>

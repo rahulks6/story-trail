@@ -19,11 +19,7 @@ import { t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ProfessionalAccount">;
 
-const PERKS = [
-  "A dashboard of your reach, Story views, likes, replies and shares",
-  "Followers gained and lost each day, and your top Stories",
-  "When your followers are online, so you can post when they're around",
-];
+const perks = (): string[] => [t("professionalAccount.perkDashboard"), t("professionalAccount.perkFollowers"), t("professionalAccount.perkActiveHours")];
 
 /**
  * Settings > Professional account: switch (free, any time), pick the category shown quietly
@@ -128,14 +124,14 @@ export function ProfessionalAccountScreen({ navigation }: Props): React.JSX.Elem
         <Text style={typography.title} accessibilityRole="header">{pro ? t("common.professionalAccount") : t("common.switchToProfessional")}</Text>
         <Text style={styles.introText}>
           {pro
-            ? `You're a professional account${professionalCategoryLabel(pro.category) ? ` (${professionalCategoryLabel(pro.category)})` : ""}. Your dashboard is behind the Insights button on your profile.`
+            ? (professionalCategoryLabel(pro.category) ? t("professionalAccount.youreAProfessionalAccountCategory", { category: professionalCategoryLabel(pro.category)! }) : t("professionalAccount.youreAProfessionalAccountYour"))
             : t("professionalAccount.freeForCreatorsArtistsBusinesses")}
         </Text>
       </View>
 
       {!pro ? (
         <View style={styles.perks}>
-          {PERKS.map((perk) => (
+          {perks().map((perk) => (
             <View key={perk} style={styles.perk}>
               <Icon name={ICONS.check} size={16} color={colors.accentText} />
               <Text style={styles.perkText}>{perk}</Text>
@@ -191,7 +187,7 @@ export function ProfessionalAccountScreen({ navigation }: Props): React.JSX.Elem
       </View>
 
       {!pro ? (
-        <Button label={t("professionalAccount.switchToProfessionalAccount")} onPress={() => void save()} disabled={blocked || !category} busy={saving === "save"} accessibilityHint={category ? undefined : "Choose a category first"} />
+        <Button label={t("professionalAccount.switchToProfessionalAccount")} onPress={() => void save()} disabled={blocked || !category} busy={saving === "save"} accessibilityHint={category ? undefined : t("professionalAccount.chooseACategoryFirst")} />
       ) : (
         <>
           {changed ? <Button label={t("common.save")} onPress={() => void save()} busy={saving === "save"} /> : null}

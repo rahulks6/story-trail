@@ -27,7 +27,7 @@ export class ShareFailed extends Error {
   }
 }
 
-const OFFLINE = "Check your connection and try again.";
+const offline = (): string => t("common.checkYourConnectionAndTry");
 
 function wait(ms: number, signal: AbortSignal): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -127,7 +127,7 @@ export async function shareVideoStory(card: React.RefObject<ShareCardHandle | nu
       signal.removeEventListener("abort", onAbort);
     }
     if (signal.aborted) throw new ShareCancelled();
-    if (status !== 200) throw new ShareFailed(OFFLINE);
+    if (status !== 200) throw new ShareFailed(offline());
     const sent = await openShareSheet(file, "video/mp4", input.message);
     if (sent) track("story_shared_external", { kind: "video" });
     return sent;
@@ -137,7 +137,7 @@ export async function shareVideoStory(card: React.RefObject<ShareCardHandle | nu
     // A refusal from the server (the daily limit, a deleted Story) says what happened; anything
     // else is the connection.
     if (error instanceof ApiError && error.status >= 400 && error.status < 500 && error.message) throw new ShareFailed(error.message);
-    throw new ShareFailed(OFFLINE);
+    throw new ShareFailed(offline());
   } finally {
     await remove([overlay, file]);
   }

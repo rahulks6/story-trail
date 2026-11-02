@@ -4,11 +4,12 @@ import { Pressable } from "./Pressable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { mediaColors as colors, radii, spacing, ICONS } from "../theme";
 import { Icon } from "./Icon";
-import { contrastOn, neonCore, neonRadius, STYLE_LABELS, TEXT_STYLES, textStyleLook, tightTextFits } from "./textLook";
+import { contrastOn, neonCore, neonRadius, TEXT_STYLES, textStyleLook, tightTextFits } from "./textLook";
 import type { TextOverlayProperties, TextStyle } from "../models/storyDraft";
 import { tapFeedback } from "../utils/haptics";
 import { TEXT_MAX_WIDTH_FRACTION } from "./OverlayBody";
 import { t } from "../i18n";
+import { textStyleLabel } from "../i18n/names";
 
 const COLORS = ["#FFFFFF", "#000000", "#F5B400", "#FF8A00", "#E4483C", "#FF5DA2", "#A45CFF", "#3E7BFF", "#2EC4E6", "#3FBF7F", "#9A6B4F", "#8E8E93"];
 const ALIGNS: TextOverlayProperties["align"][] = ["center", "left", "right"];
@@ -94,7 +95,7 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
       <View style={[styles.container, { paddingTop: insets.top + spacing.sm, paddingBottom: Math.max(keyboard, insets.bottom) + spacing.xs }]}>
         <View style={styles.topBar}>
           <View style={styles.topTools}>
-            <Pressable onPress={nextAlign} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel={`Alignment: ${align}`} accessibilityHint={t("textToolModal.changesTheTextAlignment")}>
+            <Pressable onPress={nextAlign} hitSlop={8} style={styles.toolButton} accessibilityRole="button" accessibilityLabel={t("textToolModal.alignmentAlign", { align })} accessibilityHint={t("textToolModal.changesTheTextAlignment")}>
               <Icon name={alignIcon} size={24} color={colors.textPrimary} />
             </Pressable>
             <Pressable
@@ -102,7 +103,7 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
               hitSlop={8}
               style={[styles.toolButton, picking === "colors" && styles.toolButtonOn]}
               accessibilityRole="button"
-              accessibilityLabel={picking === "colors" ? "Show text styles" : "Show colours"}
+              accessibilityLabel={picking === "colors" ? t("textToolModal.showTextStyles") : t("textToolModal.showColours")}
             >
               <View style={[styles.colorDot, { backgroundColor: color }]} />
             </Pressable>
@@ -170,12 +171,12 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
                 onPress={() => { setStyle(s); tapFeedback("select"); }}
                 style={[styles.styleChip, style === s && styles.styleChipActive]}
                 accessibilityRole="button"
-                accessibilityLabel={`${STYLE_LABELS[s]} text style`}
+                accessibilityLabel={t("textToolModal.valueTextStyle", { value: textStyleLabel(s) })}
                 accessibilityState={{ selected: style === s }}
               >
                 {/* Each name is written in its own style, so you see the look before choosing. */}
                 <Text style={[styles.styleChipLabel, textStyleLook(s, s === "Highlight" ? NEON_CHIP_GLOW : style === s ? colors.background : colors.textPrimary, 15), s === "Highlight" && styles.neonChipLabel, style === s && styles.styleChipLabelActive]} numberOfLines={1}>
-                  {STYLE_LABELS[s]}
+                  {textStyleLabel(s)}
                 </Text>
               </Pressable>
             ))}
@@ -189,7 +190,7 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
                 hitSlop={4}
                 style={[styles.colorSwatch, { backgroundColor: c }, color === c && styles.colorSwatchActive]}
                 accessibilityRole="button"
-                accessibilityLabel={`Text colour ${c}`}
+                accessibilityLabel={t("textToolModal.textColourC", { c })}
                 accessibilityState={{ selected: color === c }}
               />
             ))}

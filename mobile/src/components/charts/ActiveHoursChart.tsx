@@ -5,14 +5,14 @@ import { Pressable } from "../Pressable";
 import { colors, spacing } from "../../theme";
 import { tapFeedback } from "../../utils/haptics";
 import { barPath } from "./barPath";
-import { t } from "../../i18n";
+import { localeTag, t } from "../../i18n";
 
 const HEIGHT = 110;
 const GAP = 2;
 
 /** "8 PM" (or "20:00" where the phone uses a 24-hour clock) for an hour of the day. */
 export function hourLabel(hour: number): string {
-  return new Date(Date.UTC(2026, 0, 1, hour)).toLocaleTimeString(undefined, { hour: "numeric", timeZone: "UTC" });
+  return new Date(Date.UTC(2026, 0, 1, hour)).toLocaleTimeString(localeTag(), { hour: "numeric", timeZone: "UTC" });
 }
 
 /** "8 PM – 9 PM". */

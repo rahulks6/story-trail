@@ -70,7 +70,7 @@ export function QuestionAnswerSheet({ visible, storyId, sticker, ownerUsername, 
           maxLength={MAX_ANSWER_LENGTH}
           multiline
           autoFocus
-          accessibilityLabel={`Answer: ${sticker?.prompt ?? ""}`}
+          accessibilityLabel={t("questionAnswerSheet.answerPrompt", { prompt: sticker?.prompt ?? "" })}
         />
         {error ? <Text style={styles.error} accessibilityLiveRegion="polite">{error}</Text> : null}
         <Pressable

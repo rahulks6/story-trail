@@ -100,7 +100,7 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
             accessibilityState={{ selected: isFocused }}
             accessibilityLabel={
               showUnreadBadge
-                ? `${options.tabBarAccessibilityLabel ?? label}, ${badgeCount} unread`
+                ? t("bottomTabBar.tabbaraccessibilitylabelBadgecountUn", { tabBarAccessibilityLabel: options.tabBarAccessibilityLabel ?? label, badgeCount })
                 : (options.tabBarAccessibilityLabel ?? label)
             }
             onPress={onPress}

@@ -61,11 +61,11 @@ const CommentRow = React.memo(function CommentRow({ item, onOptions, onOpenProfi
       onLongPress={() => onOptions(item)}
       delayLongPress={350}
       accessibilityRole="text"
-      accessibilityLabel={`@${item.username}${item.verified ? ", verified" : ""}: ${item.body}. ${timeAgo(item.createdAt)}`}
+      accessibilityLabel={(item.verified ? t("commentsSheet.usernameVerifiedBodyCreatedat", { username: item.username, body: item.body, createdAt: timeAgo(item.createdAt) }) : `@${item.username}: ${item.body}. ${timeAgo(item.createdAt)}`)}
       accessibilityActions={item.pending ? undefined : [{ name: "options", label: t("commentsSheet.commentOptions") }]}
       onAccessibilityAction={() => onOptions(item)}
     >
-      <Pressable onPress={() => onOpenProfile(item.username)} hitSlop={6} accessibilityRole="button" accessibilityLabel={`@${item.username}'s profile`}>
+      <Pressable onPress={() => onOpenProfile(item.username)} hitSlop={6} accessibilityRole="button" accessibilityLabel={t("commentsSheet.usernameSProfile", { username: item.username })}>
         <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId ?? null} size={34} />
       </Pressable>
       <View style={styles.rowBody}>
@@ -297,7 +297,7 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
         <KeyboardAvoider style={[styles.sheet, keyboardShown && styles.sheetKeyboard, { paddingBottom: spacing.md + bottomInset }]}>
           <View style={styles.handle} />
           <Text style={[typography.bodyStrong, styles.title]} accessibilityRole="header">
-            {stored > 0 ? `${stored}${hasMore ? "+" : ""} comment${stored === 1 ? "" : "s"}` : t("common.comments")}
+            {stored > 0 ? (hasMore ? t("commentsSheet.comments", { count: stored }) : t("commentsSheet.comments2", { count: stored })) : t("common.comments")}
           </Text>
 
           {loading ? (

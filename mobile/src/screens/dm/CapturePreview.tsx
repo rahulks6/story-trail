@@ -110,7 +110,7 @@ export function CapturePreview({
             onPress={() => void send()}
             disabled={sending}
             accessibilityRole="button"
-            accessibilityLabel={isVideo ? "Send video" : "Send photo"}
+            accessibilityLabel={isVideo ? t("capturePreview.sendVideo") : t("capturePreview.sendPhoto")}
             accessibilityState={{ busy: sending }}
           >
             {sending ? <ActivityIndicator color={colors.onAccent} /> : (

@@ -56,6 +56,7 @@ import { ScheduleSheet } from "../../components/ScheduleSheet";
 import { scheduleProblem, scheduleText } from "../../models/schedule";
 import { showToast } from "../../components/Toast";
 import { t } from "../../i18n";
+import { filterLabel } from "../../i18n/names";
 
 type Props = NativeStackScreenProps<CreateStackParamList, "StoryEditor">;
 type Audience = "public" | "followers" | "close_friends";
@@ -747,7 +748,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
 
         {filterToastName ? (
           <View style={styles.filterToast} pointerEvents="none">
-            <Text style={styles.filterToastLabel}>{filterToastName}</Text>
+            <Text style={styles.filterToastLabel}>{filterLabel(filterToastName)}</Text>
           </View>
         ) : null}
 
@@ -885,7 +886,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             <Pressable onPress={() => setDrawMode(true)} hitSlop={8} style={toolButtonStyle} accessibilityRole="button" accessibilityLabel={t("storyEditor.draw")}>
               <Icon style={topIconStyle} name={ICONS.draw} />
             </Pressable>
-            {musicAvailable || music ? <Pressable onPress={() => setMusicSheetVisible(true)} hitSlop={8} style={[toolButtonStyle, music && styles.toolButtonOn]} accessibilityRole="button" accessibilityLabel={music ? `Music: ${music.track.title}. Change` : "Add music"}>
+            {musicAvailable || music ? <Pressable onPress={() => setMusicSheetVisible(true)} hitSlop={8} style={[toolButtonStyle, music && styles.toolButtonOn]} accessibilityRole="button" accessibilityLabel={music ? t("storyEditor.musicTitleChange", { title: music.track.title }) : t("storyEditor.addMusic")}>
               <Icon style={[topIconStyle, music && styles.topIconOn]} name={ICONS.music} />
             </Pressable> : null}
             {kind === "video" && !boomerang ? (
@@ -893,7 +894,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
                 onPress={() => setDraft((d) => ({ ...d, audioMuted: !d.audioMuted }))}
                 hitSlop={8} style={toolButtonStyle}
                 accessibilityRole="button"
-                accessibilityLabel={draft.audioMuted ? "Audio muted, tap to turn on" : "Audio on, tap to mute"}
+                accessibilityLabel={draft.audioMuted ? t("storyEditor.audioMutedTapToTurn") : t("storyEditor.audioOnTapToMute")}
               >
                 <Icon style={topIconStyle} name={draft.audioMuted ? ICONS.audioMuted : ICONS.audioOn} />
               </Pressable>
@@ -904,7 +905,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
 
       {music && !drawMode && !cropMode && !isDraggingOverlay && !textModalVisible ? (
         <View style={[styles.musicChipRow, { top: insets.top + spacing.md + 56 }]} pointerEvents="box-none">
-          <Pressable style={styles.musicChip} onPress={() => setMusicSheetVisible(true)} accessibilityRole="button" accessibilityLabel={`${music.track.title} by ${music.track.artist}. Change the part that plays`}>
+          <Pressable style={styles.musicChip} onPress={() => setMusicSheetVisible(true)} accessibilityRole="button" accessibilityLabel={t("storyEditor.titleByArtistChangeThe", { title: music.track.title, artist: music.track.artist })}>
             <Icon name={ICONS.music} size={14} color="#FFFFFF" />
             <Text style={styles.musicChipText} numberOfLines={1}>{music.track.title} · {music.track.artist}</Text>
           </Pressable>
@@ -968,7 +969,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               hitSlop={8}
               style={[styles.visibility, styles.visibilityShrink]}
               accessibilityRole="button"
-              accessibilityLabel={`Story settings: ${storySettingsSummary({ ...settings, visibility: storyAudience }, festival && joinFestival && storyAudience === "public" ? festival.name : null, topic)}`}
+              accessibilityLabel={t("storyEditor.storySettingsSummary", { summary: storySettingsSummary({ ...settings, visibility: storyAudience }, festival && joinFestival && storyAudience === "public" ? festival.name : null, topic) })}
             >
               <Text style={styles.visibilityLabel} numberOfLines={1}>{storySettingsSummary({ ...settings, visibility: storyAudience }, festival && joinFestival && storyAudience === "public" ? festival.name : null, topic)}</Text>
               <Icon name={ICONS.chevron} size={14} color={colors.textPrimary} />
@@ -978,7 +979,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               hitSlop={8}
               style={[styles.visibility, publishAt && styles.scheduleOn]}
               accessibilityRole="button"
-              accessibilityLabel={publishAt ? `Scheduled for ${scheduleText(publishAt)}. Change or remove the time` : "Schedule. Choose when this Story posts"}
+              accessibilityLabel={publishAt ? t("storyEditor.scheduledForPublishatChangeOr", { publishAt: scheduleText(publishAt) }) : t("storyEditor.scheduleChooseWhenThisStory")}
             >
               <Icon name={ICONS.timer} size={14} color={publishAt ? colors.onAccent : colors.textPrimary} />
               <Text style={[styles.visibilityLabel, publishAt && styles.scheduleOnLabel]} numberOfLines={1}>{publishAt ? scheduleText(publishAt) : t("storyEditor.schedule")}</Text>
@@ -991,7 +992,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             hitSlop={8}
             style={[styles.visibility, collaborator && styles.collabOn]}
             accessibilityRole="button"
-            accessibilityLabel={collaborator ? `Collab with @${collaborator.username}. Change` : "Invite a collaborator"}
+            accessibilityLabel={collaborator ? t("storyEditor.collabWithUsernameChange", { username: collaborator.username }) : t("storyEditor.inviteACollaborator")}
           >
             {collaborator ? <Avatar username={collaborator.username} avatarMediaId={collaborator.avatarMediaId} size={18} /> : <Icon name={ICONS.add} size={14} color={colors.textPrimary} />}
             <Text style={styles.visibilityLabel} numberOfLines={1}>{collaborator ? t("storyEditor.withUsername", { username: collaborator.username }) : t("storyEditor.inviteCollaborator")}</Text>
@@ -1014,7 +1015,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               disabled={uploadState === "uploading" || uploadState === "done"}
               onPress={() => void onShare(storyAudience)}
               accessibilityRole="button"
-              accessibilityLabel={`${publishAt ? `Schedule for ${scheduleText(publishAt)} to` : "Share to"} Your story, ${storyAudience === "public" ? "everyone" : "followers only"}`}
+              accessibilityLabel={(publishAt ? (storyAudience === "public" ? t("storyEditor.scheduleForPublishatToYour", { publishAt: scheduleText(publishAt) }) : t("storyEditor.scheduleForPublishatToYour2", { publishAt: scheduleText(publishAt) })) : (storyAudience === "public" ? t("storyEditor.shareToYourStoryEveryone") : t("storyEditor.shareToYourStoryFollowers")))}
               accessibilityState={{ busy: uploadState === "uploading" && audience !== "close_friends" }}
             >
               {uploadState === "uploading" && audience !== "close_friends" ? (
@@ -1049,7 +1050,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               }}
               onLongPress={() => rootNavigation.navigate("CloseFriends")}
               accessibilityRole="button"
-              accessibilityLabel={publishAt ? `Schedule for ${scheduleText(publishAt)} to Close Friends` : "Share to Close Friends"}
+              accessibilityLabel={publishAt ? t("storyEditor.scheduleForPublishatToClose", { publishAt: scheduleText(publishAt) }) : t("storyEditor.shareToCloseFriends")}
               accessibilityHint={t("storyEditor.longPressToEditYour")}
               accessibilityState={{ busy: uploadState === "uploading" && audience === "close_friends" }}
             >

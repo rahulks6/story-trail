@@ -140,7 +140,7 @@ export function NewGroupScreen({ navigation, route }: Props): React.JSX.Element 
       </View>
       {chosen.length ? (
         <Text style={styles.count} accessibilityLiveRegion="polite">
-          {chosen.length}{" "}{t("newGroup.chosen")}{chosen.length >= limit ? t("newGroup.aGroupCanHaveUp", { MAX_GROUP_MEMBERS }) : ""}
+          {t("newGroup.countChosen", { count: chosen.length })}{chosen.length >= limit ? t("newGroup.aGroupCanHaveUp", { MAX_GROUP_MEMBERS }) : ""}
         </Text>
       ) : (
         <Text style={styles.count}>{adding ? t("newGroup.choosePeopleToAdd") : t("newGroup.chooseAtLeastTwoPeople")}</Text>
@@ -160,7 +160,7 @@ export function NewGroupScreen({ navigation, route }: Props): React.JSX.Element 
               onPress={() => toggle(item)}
               accessibilityRole="checkbox"
               accessibilityState={{ checked: on }}
-              accessibilityLabel={`${item.displayName}${item.verified ? ", verified" : ""}, @${item.username}`}
+              accessibilityLabel={(item.verified ? t("newGroup.displaynameVerifiedUsername", { displayName: item.displayName, username: item.username }) : `${item.displayName}, @${item.username}`)}
             >
               <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId ?? null} />
               <View style={styles.rowText}>
@@ -173,7 +173,7 @@ export function NewGroupScreen({ navigation, route }: Props): React.JSX.Element 
         }}
       />
       <View style={[styles.footer, { paddingBottom: spacing.sm + bottom }]}>
-        <Button label={adding ? "Add" : "Create group"} onPress={() => void done()} disabled={!enough} busy={saving} />
+        <Button label={adding ? t("common.add") : t("newGroup.createGroup")} onPress={() => void done()} disabled={!enough} busy={saving} />
       </View>
     </KeyboardAvoider>
   );

@@ -22,6 +22,7 @@ import { VerifiedName } from "../../components/VerifiedBadge";
 import { Button } from "../../components/Form";
 import { shareInvite } from "../../state/invites";
 import { t } from "../../i18n";
+import { topicLabel } from "../../i18n/names";
 
 type Props = NativeStackScreenProps<SearchStackParamList, "SearchHome">;
 
@@ -44,7 +45,7 @@ export function suggestionReasonText(reason: SuggestionReason): string {
     case "followed_by":
       return reason.others > 0 ? t("search.followedByUsernameOthersMore", { username: reason.username, others: reason.others }) : t("search.followedByUsername", { username: reason.username });
     case "shared_interest":
-      return t("search.alsoIntoInterest", { interest: reason.interest });
+      return t("search.alsoIntoInterest", { interest: topicLabel(reason.interest) });
     case "new":
       return t("search.newToKatkee");
   }
@@ -223,7 +224,7 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
       <View style={styles.row}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`${item.displayName}${item.verified ? ", verified" : ""}, @${item.username}`}
+          accessibilityLabel={(item.verified ? t("search.displaynameVerifiedUsername", { displayName: item.displayName, username: item.username }) : `${item.displayName}, @${item.username}`)}
           style={styles.rowMain}
           onPress={() => navigation.navigate("UserProfile", { username: item.username })}
         >
@@ -330,7 +331,7 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
           {!loading && !error && results.length === 0 ? (
             <EmptyState
               title={t("common.noOneFound")}
-              message={filter === "following" ? `No one you follow matches "${debouncedQuery}".` : `No people match "${debouncedQuery}". If they're not on Katkee yet, invite them.`}
+              message={filter === "following" ? t("search.noOneYouFollowMatches", { debouncedQuery }) : t("search.noPeopleMatchDebouncedqueryIf", { debouncedQuery })}
             >
               {filter === "all" ? <Button label={t("common.inviteFriends")} variant="secondary" onPress={invite} /> : null}
             </EmptyState>

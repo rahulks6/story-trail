@@ -25,7 +25,7 @@ import {
   isInteractive,
 } from "../models/storyDraft";
 import { InteractiveStickerForm } from "./InteractiveStickerForm";
-import { t } from "../i18n";
+import { localeTag, t } from "../i18n";
 
 /** Location was turned off for Katkee for good: only Settings can turn it back on. */
 function offerLocationSettings(): void {
@@ -245,8 +245,8 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
   const addDateTime = (mode: "date" | "time") => {
     const display =
       mode === "date"
-        ? pickerDate.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
-        : pickerDate.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+        ? pickerDate.toLocaleDateString(localeTag(), { month: "short", day: "numeric", year: "numeric" })
+        : pickerDate.toLocaleTimeString(localeTag(), { hour: "numeric", minute: "2-digit" });
     const properties = { mode, value: pickerDate.toISOString(), display };
     if (editingOverlay && onEditDone) {
       onEditDone(editingOverlay.id, properties);
@@ -270,7 +270,7 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
       <KeyboardAvoider style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]} behavior="padding">
         <View style={styles.handle} />
         {editingOverlay ? (
-          <Text style={styles.editingHeader}>{t("stickerSheet.editing")}{" "}{editingOverlay.type === "location" ? t("stickerSheet.location") : editingOverlay.type === "datetime" ? t("stickerSheet.dateTime") : t("stickerSheet.sticker")}</Text>
+          <Text style={styles.editingHeader}>{editingOverlay.type === "location" ? t("stickerSheet.editingLocation") : editingOverlay.type === "datetime" ? t("stickerSheet.editingDateTime") : t("stickerSheet.editingSticker")}</Text>
         ) : (
           <View style={styles.tabRow}>
             {TABS.map((option) => (
@@ -310,11 +310,11 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
                   close();
                 }}
                 accessibilityRole="button"
-                accessibilityLabel={`Add ${festival.greeting}`}
+                accessibilityLabel={t("stickerSheet.addGreeting", { greeting: festival.greeting })}
               >
                 <Text style={styles.festivalGreetingLabel} numberOfLines={1}>{festival.emoji} {festival.greeting}</Text>
               </Pressable>
-              <Pressable style={styles.festivalEmoji} onPress={() => addEmoji(festival.emoji)} accessibilityRole="button" accessibilityLabel={`Add ${festival.name} emoji`}>
+              <Pressable style={styles.festivalEmoji} onPress={() => addEmoji(festival.emoji)} accessibilityRole="button" accessibilityLabel={t("stickerSheet.addNameEmoji", { name: festival.name })}>
                 <Text style={styles.emojiGlyph}>{festival.emoji}</Text>
               </Pressable>
             </View>
@@ -325,7 +325,7 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
               keyExtractor={(e) => e}
               numColumns={6}
               renderItem={({ item }) => (
-                <Pressable style={styles.emojiCell} onPress={() => addEmoji(item)} accessibilityRole="button" accessibilityLabel={`Add ${item} emoji`}>
+                <Pressable style={styles.emojiCell} onPress={() => addEmoji(item)} accessibilityRole="button" accessibilityLabel={t("stickerSheet.addItemEmoji", { item })}>
                   <Text style={styles.emojiGlyph}>{item}</Text>
                 </Pressable>
               )}
@@ -351,7 +351,7 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
                     style={styles.resultRow}
                     onPress={() => addMention(item)}
                     accessibilityRole="button"
-                    accessibilityLabel={`Mention ${item.displayName}${item.verified ? ", verified" : ""}, @${item.username}`}
+                    accessibilityLabel={(item.verified ? t("stickerSheet.mentionDisplaynameVerifiedUsername", { displayName: item.displayName, username: item.username }) : t("stickerSheet.mentionDisplaynameUsername", { displayName: item.displayName, username: item.username }))}
                   >
                     <VerifiedName name={item.displayName} verified={item.verified} style={typography.body} />
                     <Text style={styles.resultUsername}>@{item.username}</Text>
@@ -388,9 +388,9 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
           {tab === "datetime" ? (
             <View style={styles.dateTimeRow}>
               <Text style={styles.dateTimePreview}>
-                {pickerDate.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
+                {pickerDate.toLocaleDateString(localeTag(), { month: "short", day: "numeric", year: "numeric" })}
                 {"  ·  "}
-                {pickerDate.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}
+                {pickerDate.toLocaleTimeString(localeTag(), { hour: "numeric", minute: "2-digit" })}
               </Text>
 
               <View style={styles.stepperRow}>
@@ -444,7 +444,7 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
                   style={styles.stickerCell}
                   onPress={() => addSticker(item)}
                   accessibilityRole="button"
-                  accessibilityLabel={`Add ${STICKER_NAMES[item] ?? "sticker"}`}
+                  accessibilityLabel={(STICKER_NAMES[item] != null ? t("stickerSheet.add", { value: STICKER_NAMES[item] }) : t("stickerSheet.addSticker"))}
                 >
                   <Text style={styles.stickerGlyph}>{STICKER_GLYPHS[item]}</Text>
                 </Pressable>

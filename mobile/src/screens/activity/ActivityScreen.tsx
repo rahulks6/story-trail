@@ -88,7 +88,7 @@ function messageFor(notification: NotificationRecord): string {
     case "like":
       return t("activity.nameLikedYourStory", { name });
     case "comment":
-      return `${name} commented: "${notification.comment?.body ?? ""}"`;
+      return t("activity.nameCommentedBody", { name, body: notification.comment?.body ?? "" });
     case "follow":
       return t("activity.nameStartedFollowingYou", { name });
     case "follow_request":
@@ -133,10 +133,10 @@ type ActivityRow = GroupedLikeRow | SingleRow;
 
 function messageForGroup(row: GroupedLikeRow): string {
   const [first, second] = row.actorNames;
-  if (row.totalCount <= 1) return `${first ?? "Someone"} liked your Story.`;
+  if (row.totalCount <= 1) return (first != null ? t("activity.firstLikedYourStory", { first }) : t("activity.someoneLikedYourStory"));
   if (row.totalCount === 2) return t("activity.firstAndSecondLikedYour", { first, second });
   const others = row.totalCount - 2;
-  return `${first}, ${second} and ${others} other${others === 1 ? "" : "s"} liked your Story.`;
+  return t("activity.firstSecondAndOthersLiked", { first, second, count: others });
 }
 
 /**
@@ -442,10 +442,10 @@ export function ActivityScreen(): React.JSX.Element {
       const id = n.followRequest.id;
       return (
         <View style={styles.trailingButtons}>
-          <Pressable onPress={() => void answer(id, true)} style={[styles.smallButton, styles.smallButtonPrimary]} accessibilityRole="button" accessibilityLabel={`Confirm @${n.actor?.username ?? ""}`}>
+          <Pressable onPress={() => void answer(id, true)} style={[styles.smallButton, styles.smallButtonPrimary]} accessibilityRole="button" accessibilityLabel={t("activity.confirmUsername", { username: n.actor?.username ?? "" })}>
             <Text style={styles.smallButtonPrimaryText}>{t("common.confirm")}</Text>
           </Pressable>
-          <Pressable onPress={() => void answer(id, false)} style={styles.smallButton} accessibilityRole="button" accessibilityLabel={`Delete @${n.actor?.username ?? ""}'s request`}>
+          <Pressable onPress={() => void answer(id, false)} style={styles.smallButton} accessibilityRole="button" accessibilityLabel={t("activity.deleteUsernameSRequest", { username: n.actor?.username ?? "" })}>
             <Text style={styles.smallButtonText}>{t("common.delete")}</Text>
           </Pressable>
         </View>
@@ -460,10 +460,10 @@ export function ActivityScreen(): React.JSX.Element {
       }
       return (
         <View style={styles.trailingButtons}>
-          <Pressable onPress={() => void answerCollab(storyId, true)} style={[styles.smallButton, styles.smallButtonPrimary]} accessibilityRole="button" accessibilityLabel={`Accept @${n.actor?.username ?? ""}'s collab invitation`}>
+          <Pressable onPress={() => void answerCollab(storyId, true)} style={[styles.smallButton, styles.smallButtonPrimary]} accessibilityRole="button" accessibilityLabel={t("activity.acceptUsernameSCollabInvitation", { username: n.actor?.username ?? "" })}>
             <Text style={styles.smallButtonPrimaryText}>{t("common.accept")}</Text>
           </Pressable>
-          <Pressable onPress={() => void answerCollab(storyId, false)} style={styles.smallButton} accessibilityRole="button" accessibilityLabel={`Decline @${n.actor?.username ?? ""}'s collab invitation`}>
+          <Pressable onPress={() => void answerCollab(storyId, false)} style={styles.smallButton} accessibilityRole="button" accessibilityLabel={t("activity.declineUsernameSCollabInvitation", { username: n.actor?.username ?? "" })}>
             <Text style={styles.smallButtonText}>{t("common.decline")}</Text>
           </Pressable>
         </View>
@@ -478,7 +478,7 @@ export function ActivityScreen(): React.JSX.Element {
       return state ? (
         <Text style={styles.trailingNote}>{state === "requested" ? t("common.requested") : t("common.following")}</Text>
       ) : (
-        <Pressable onPress={() => void followBack(username)} style={[styles.smallButton, styles.smallButtonPrimary]} accessibilityRole="button" accessibilityLabel={n.type === "invite_joined" ? `Follow @${username}` : `Follow @${username} back`}>
+        <Pressable onPress={() => void followBack(username)} style={[styles.smallButton, styles.smallButtonPrimary]} accessibilityRole="button" accessibilityLabel={n.type === "invite_joined" ? t("activity.followUsername", { username }) : t("activity.followUsernameBack", { username })}>
           <Text style={styles.smallButtonPrimaryText}>{label}</Text>
         </Pressable>
       );
@@ -570,7 +570,7 @@ export function ActivityScreen(): React.JSX.Element {
       </ScrollView>
       {tabFiltered.length === 0 ? (
         <View style={styles.emptyTab}>
-          <EmptyState icon="activity" title={activeTab === "follow" ? "No new followers yet" : "No comments yet"} message={activeTab === "follow" ? "When someone follows you, you'll see it here." : "Comments and mentions on your Stories show up here."} />
+          <EmptyState icon="activity" title={activeTab === "follow" ? t("activity.noNewFollowersYet") : t("activity.noCommentsYet")} message={activeTab === "follow" ? t("activity.whenSomeoneFollowsYouYoull") : t("activity.commentsAndMentionsOnYour")} />
         </View>
       ) : (
         <SectionList

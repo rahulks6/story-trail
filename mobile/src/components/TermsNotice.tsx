@@ -3,13 +3,14 @@ import { Alert, Linking, StyleSheet, Text } from "react-native";
 import buildConfig from "../../build-config.json";
 import { colors, typography } from "../theme";
 import { t } from "../i18n";
+import { richText } from "../i18n/rich";
 
 /**
  * What creating an account agrees to (App Review 1.2: apps with user posts need terms with no
  * tolerance for objectionable content or abuse). Terms and Privacy Policy open the live pages
  * set in build-config.json; release builds can't be made without them (scripts/check-release.cjs).
  */
-export function TermsNotice({ action }: { action: string }): React.JSX.Element {
+export function TermsNotice({ action }: { action: "signup" | "continue" }): React.JSX.Element {
   const link = (label: string, url: string) =>
     url ? (
       <Text
@@ -23,7 +24,12 @@ export function TermsNotice({ action }: { action: string }): React.JSX.Element {
       label
     );
   return (
-    <Text style={styles.text}>{t("termsNotice.by")}{" "}{action}{t("termsNotice.youAgreeToKatkees")}{" "}{link("Terms", buildConfig.termsUrl)}{" "}{t("common.and")}{" "}{link("Privacy Policy", buildConfig.privacyPolicyUrl)}{t("termsNotice.katkeeHasNoToleranceFor")}</Text>
+    <Text style={styles.text}>
+      {richText(t(action === "signup" ? "termsNotice.bySigningUp" : "termsNotice.byContinuing"), {
+        terms: (label) => link(label, buildConfig.termsUrl),
+        privacy: (label) => link(label, buildConfig.privacyPolicyUrl),
+      })}
+    </Text>
   );
 }
 

@@ -23,6 +23,9 @@ export type Catalogue = { readonly [K in MessageKey]: English[K] extends string 
 /** "{name} liked {what}" -> "name" | "what". */
 type Placeholders<S> = S extends `${string}{${infer Name}}${infer Rest}` ? Name | Placeholders<Rest> : never;
 
-export type ParamsOf<K extends MessageKey> = English[K] extends string
-  ? Placeholders<English[K]>
-  : English[K] extends { readonly other: infer O } ? Placeholders<O> | "count" : never;
+/** The params a key takes (distributes over a union of keys, e.g. t(short ? "a" : "b", ...)). */
+export type ParamsOf<K extends MessageKey> = K extends MessageKey
+  ? English[K] extends string
+    ? Placeholders<English[K]>
+    : English[K] extends { readonly other: infer O } ? Placeholders<O> | "count" : never
+  : never;

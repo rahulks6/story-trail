@@ -118,7 +118,7 @@ export function ResetPasswordScreen({ navigation, route }: Props): React.JSX.Ele
         <TextField label={t("common.confirmNewPassword")} value={confirm} onChangeText={setConfirm} error={errors.confirm} secureTextEntry autoComplete="new-password" textContentType="newPassword" returnKeyType="done" onSubmitEditing={() => void submit()} />
         <Button label={t("resetPassword.setNewPassword")} onPress={() => void submit()} busy={busy} disabled={!code || !password} />
         <Button
-          label={resendIn > 0 ? `Send a new code in ${resendIn}s` : "Send a new code"}
+          label={resendIn > 0 ? t("resetPassword.sendANewCodeIn", { resendIn }) : t("common.sendANewCode")}
           variant="secondary"
           onPress={() => void resend()}
           disabled={resendIn > 0}

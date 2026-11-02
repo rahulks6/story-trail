@@ -30,12 +30,9 @@ interface Props {
 }
 
 /** What happens, said before the system prompt: the explainer every entry point shows first. */
-export const CONTACTS_EXPLAINER = [
-  "Katkee checks which of your contacts already have an account, so you can follow them.",
-  "Phone numbers and emails are turned into scrambled codes (hashed) on your phone before anything is sent. Names, photos and notes never leave your phone.",
-  "Katkee doesn't keep your contacts. They're checked once and forgotten.",
-  "Anyone can stop being found this way in Settings > Privacy.",
-];
+export function contactsExplainer(): string[] {
+  return [t("contactsFinder.explainerChecks"), t("contactsFinder.explainerHashed"), t("contactsFinder.explainerForgotten"), t("contactsFinder.explainerOptOut")];
+}
 
 /**
  * Contacts on Katkee: the explainer, then (only on Continue) the system permission prompt, then
@@ -104,7 +101,7 @@ export function ContactsFinder({ header, footer, source, onOpenProfile }: Props)
             <>
               <Text style={typography.displayLarge} accessibilityRole="header">{t("contactsFinder.findFriendsFromYourContacts")}</Text>
               <View style={styles.points}>
-                {CONTACTS_EXPLAINER.map((point) => (
+                {contactsExplainer().map((point) => (
                   <View key={point} style={styles.point}>
                     <View style={styles.bullet} accessibilityElementsHidden importantForAccessibility="no" />
                     <Text style={styles.body}>{point}</Text>
@@ -159,7 +156,7 @@ export function ContactsFinder({ header, footer, source, onOpenProfile }: Props)
             {header}
             <Text style={typography.displayLarge} accessibilityRole="header">{t("common.contactsOnKatkee")}</Text>
             <Text style={styles.body}>
-              {people.length === 0 ? t("contactsFinder.noneOfYourContactsAre") : people.length === 1 ? t("contactsFinder.n1OfYourContactsIs") : t("contactsFinder.lengthOfYourContactsAre", { length: people.length })}
+              {people.length === 0 ? t("contactsFinder.noneOfYourContactsAre") : t("contactsFinder.contactsHere", { count: people.length })}
             </Text>
           </View>
         }

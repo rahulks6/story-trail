@@ -16,6 +16,7 @@ import { TOPICS } from "../../models/topics";
 import { ContactsFinder } from "../../components/ContactsFinder";
 import { shareInvite } from "../../state/invites";
 import { t } from "../../i18n";
+import { topicLabel } from "../../i18n/names";
 
 /** What people can pick from; the same words appear on profiles, in "Also into …" and as Story topics. */
 export const INTEREST_CHOICES = TOPICS;
@@ -128,16 +129,16 @@ export function OnboardingScreen(): React.JSX.Element {
                   style={[styles.chip, selected && styles.chipSelected]}
                   accessibilityRole="checkbox"
                   accessibilityState={{ checked: selected }}
-                  accessibilityLabel={interest}
+                  accessibilityLabel={topicLabel(interest)}
                 >
-                  <Text style={[styles.chipLabel, selected && styles.chipLabelSelected]}>{interest}</Text>
+                  <Text style={[styles.chipLabel, selected && styles.chipLabelSelected]}>{topicLabel(interest)}</Text>
                 </Pressable>
               );
             })}
           </View>
         </ScrollView>
         <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.md }]}>
-          <Button label={chosen.length ? `Next (${chosen.length})` : "Next"} onPress={() => void saveInterests()} busy={saving} disabled={chosen.length === 0} />
+          <Button label={chosen.length ? t("onboarding.nextLength", { length: chosen.length }) : t("onboarding.next")} onPress={() => void saveInterests()} busy={saving} disabled={chosen.length === 0} />
           <Button label={t("onboarding.skip")} variant="secondary" onPress={() => setStep("people")} />
         </View>
       </View>
@@ -210,7 +211,7 @@ export function OnboardingScreen(): React.JSX.Element {
         }}
       />
       <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.md }]}>
-        <Button label={followedCount ? "Next" : "Skip"} variant={followedCount ? "primary" : "secondary"} onPress={() => setStep("contacts")} />
+        <Button label={followedCount ? t("onboarding.next") : t("onboarding.skip")} variant={followedCount ? "primary" : "secondary"} onPress={() => setStep("contacts")} />
       </View>
     </View>
   );

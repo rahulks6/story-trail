@@ -1,4 +1,4 @@
-import { t } from "../i18n";
+import { localeTag, t } from "../i18n";
 /**
  * Scheduling a Story (backend stories/scheduled.ts): a time on the phone's own clock and
  * calendar, at least a few minutes ahead and at most 7 days.
@@ -46,12 +46,12 @@ export function dayName(day: Date, now: Date = new Date()): string {
   const diff = Math.round((startOfDay(day).getTime() - startOfDay(now).getTime()) / 86_400_000);
   if (diff === 0) return t("common.today");
   if (diff === 1) return t("schedule.tomorrow");
-  return day.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" });
+  return day.toLocaleDateString(localeTag(), { weekday: "short", day: "numeric", month: "short" });
 }
 
 /** "8:30 PM" (or "20:30" on a 24-hour phone). */
 export function timeText(at: Date): string {
-  return at.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  return at.toLocaleTimeString(localeTag(), { hour: "numeric", minute: "2-digit" });
 }
 
 /** "Today at 8:30 PM", "Tomorrow at 9:00 AM", "Sat, 1 Nov at 6:15 PM". */

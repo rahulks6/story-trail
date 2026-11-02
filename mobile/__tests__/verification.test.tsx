@@ -236,5 +236,5 @@ test("katkee://verification opens this screen; a katkee.com address for it doesn
 test("names can't include check marks", () => {
   for (const name of ["Asha ✓", "✔ Asha", "Asha ✅", "Asha☑", "Asha \u{1F5F8}", "Asha √"]) expect(verificationApi.hasTickLikeCharacter(name)).toBe(true);
   for (const name of ["Asha Kumar", "Zoë", "राहुल", "Asha 🔥"]) expect(verificationApi.hasTickLikeCharacter(name)).toBe(false);
-  expect(verificationApi.NAME_TICK_ERROR).toBe("Names can't include check marks.");
+  expect(verificationApi.nameTickError()).toBe("Names can't include check marks.");
 });

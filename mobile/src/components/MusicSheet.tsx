@@ -106,7 +106,7 @@ export function MusicSheet({ visible, current, onClose, onChoose }: Props): Reac
             {moods.length ? (
               <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.moods} contentContainerStyle={styles.moodsContent} keyboardShouldPersistTaps="handled">
                 {["", ...moods].map((m) => (
-                  <Pressable key={m || "all"} onPress={() => setMood(m)} style={[styles.mood, mood === m && styles.moodOn]} accessibilityRole="button" accessibilityState={{ selected: mood === m }} accessibilityLabel={m || "All moods"}>
+                  <Pressable key={m || "all"} onPress={() => setMood(m)} style={[styles.mood, mood === m && styles.moodOn]} accessibilityRole="button" accessibilityState={{ selected: mood === m }} accessibilityLabel={m || t("musicSheet.allMoods")}>
                     <Text style={[styles.moodLabel, mood === m && styles.moodLabelOn]}>{m || t("musicSheet.forYou")}</Text>
                   </Pressable>
                 ))}
@@ -125,7 +125,7 @@ export function MusicSheet({ visible, current, onClose, onChoose }: Props): Reac
                 style={styles.list}
                 keyboardShouldPersistTaps="handled"
                 renderItem={({ item }) => (
-                  <Pressable style={styles.row} onPress={() => pick(item)} accessibilityRole="button" accessibilityLabel={`${item.title} by ${item.artist}, ${formatClock(item.durationMs)}`} accessibilityHint={t("musicSheet.addsItToYourStory")}>
+                  <Pressable style={styles.row} onPress={() => pick(item)} accessibilityRole="button" accessibilityLabel={t("musicSheet.titleByArtistDurationms", { title: item.title, artist: item.artist, durationMs: formatClock(item.durationMs) })} accessibilityHint={t("musicSheet.addsItToYourStory")}>
                     <View style={styles.cover}><Icon name={ICONS.music} size={20} color={colors.textPrimary} /></View>
                     <View style={styles.rowText}>
                       <Text style={styles.trackTitle} numberOfLines={1}>{item.title}</Text>
@@ -136,7 +136,7 @@ export function MusicSheet({ visible, current, onClose, onChoose }: Props): Reac
                       hitSlop={10}
                       style={styles.playButton}
                       accessibilityRole="button"
-                      accessibilityLabel={previewId === item.id ? `Stop ${item.title}` : `Play ${item.title}`}
+                      accessibilityLabel={previewId === item.id ? t("musicSheet.stopTitle", { title: item.title }) : t("musicSheet.playTitle", { title: item.title })}
                     >
                       <Icon name={previewId === item.id ? ICONS.pause : ICONS.play} size={18} color={colors.textPrimary} />
                     </Pressable>
@@ -220,7 +220,7 @@ function ClipChooser({ music, onChange, onBack, onDone }: { music: ChosenMusic; 
             style={[styles.mood, durationMs === l && styles.moodOn]}
             accessibilityRole="button"
             accessibilityState={{ selected: durationMs === l }}
-            accessibilityLabel={`${l / 1000} seconds`}
+            accessibilityLabel={t("musicSheet.valueSeconds", { value: l / 1000 })}
           >
             <Text style={[styles.moodLabel, durationMs === l && styles.moodLabelOn]}>{t("musicSheet.valueS", { value: l / 1000 })}</Text>
           </Pressable>

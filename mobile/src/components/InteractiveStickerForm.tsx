@@ -18,7 +18,7 @@ import {
   type InteractiveType,
   type Overlay,
 } from "../models/storyDraft";
-import { t } from "../i18n";
+import { localeTag, t } from "../i18n";
 
 /** The six interactive stickers, in the order Instagram's tray puts them. */
 const KINDS: Array<{ type: InteractiveType; label: string; icon: "check" | "help" | "comment" | "timer" | "attach" | "add"; hint: string }> = [
@@ -134,7 +134,7 @@ export function InteractiveStickerForm({ editing, usedTypes, onDone }: Props): R
               disabled={used}
               style={[styles.tile, used && styles.tileUsed]}
               accessibilityRole="button"
-              accessibilityLabel={`${k.label}. ${used ? "Already on this Story" : k.hint}`}
+              accessibilityLabel={(used ? t("interactiveStickerForm.labelAlreadyOnThisStory", { label: k.label }) : `${k.label}. ${k.hint}`)}
               accessibilityState={{ disabled: used }}
             >
               <Icon name={k.icon} size={22} color={used ? colors.textDisabled : colors.accentText} />
@@ -164,9 +164,9 @@ export function InteractiveStickerForm({ editing, usedTypes, onDone }: Props): R
           value={question}
           onChangeText={setQuestion}
           maxLength={MAX_QUESTION_LENGTH}
-          placeholder={type === "poll" ? "Ask a question (optional)" : type === "addYours" ? "Your prompt, like \"Show your view\"" : type === "quiz" ? "Ask a question" : "Ask me anything"}
+          placeholder={type === "poll" ? t("interactiveStickerForm.askAQuestionOptional") : type === "addYours" ? t("interactiveStickerForm.yourPromptLikeShowYour") : type === "quiz" ? t("interactiveStickerForm.askAQuestion") : t("interactiveStickerForm.askMeAnything")}
           placeholderTextColor={colors.textDisabled}
-          accessibilityLabel={type === "addYours" ? "Prompt" : "Question"}
+          accessibilityLabel={type === "addYours" ? t("interactiveStickerForm.prompt") : t("interactiveStickerForm.question")}
           autoFocus={!editing}
         />
       ) : null}
@@ -182,7 +182,7 @@ export function InteractiveStickerForm({ editing, usedTypes, onDone }: Props): R
                   style={[styles.radio, correct === i && styles.radioOn]}
                   accessibilityRole="radio"
                   accessibilityState={{ checked: correct === i }}
-                  accessibilityLabel={`Mark option ${i + 1} as the right answer`}
+                  accessibilityLabel={t("interactiveStickerForm.markOptionValueAsThe", { value: i + 1 })}
                 >
                   {correct === i ? <Icon name="check" size={14} color={colors.onAccent} /> : null}
                 </Pressable>
@@ -192,9 +192,9 @@ export function InteractiveStickerForm({ editing, usedTypes, onDone }: Props): R
                 value={option}
                 onChangeText={(text) => setOptions((all) => all.map((o, j) => (j === i ? text : o)))}
                 maxLength={MAX_OPTION_LENGTH}
-                placeholder={`Option ${i + 1}`}
+                placeholder={t("interactiveStickerForm.optionValue", { value: i + 1 })}
                 placeholderTextColor={colors.textDisabled}
-                accessibilityLabel={`Option ${i + 1}`}
+                accessibilityLabel={t("interactiveStickerForm.optionValue", { value: i + 1 })}
               />
               {options.length > MIN_OPTIONS ? (
                 <Pressable
@@ -204,7 +204,7 @@ export function InteractiveStickerForm({ editing, usedTypes, onDone }: Props): R
                   }}
                   hitSlop={8}
                   accessibilityRole="button"
-                  accessibilityLabel={`Remove option ${i + 1}`}
+                  accessibilityLabel={t("interactiveStickerForm.removeOptionValue", { value: i + 1 })}
                 >
                   <Icon name="close" size={16} color={colors.textSecondary} />
                 </Pressable>
@@ -233,15 +233,15 @@ export function InteractiveStickerForm({ editing, usedTypes, onDone }: Props): R
             accessibilityLabel={t("interactiveStickerForm.countdownName")}
             autoFocus={!editing}
           />
-          <Text style={styles.when} accessibilityLiveRegion="polite">{t("interactiveStickerForm.ends")}{" "}{endsAt.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}{" "}{t("interactiveStickerForm.at")}{" "}{endsAt.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}
+          <Text style={styles.when} accessibilityLiveRegion="polite">{t("interactiveStickerForm.endsAt", { date: endsAt.toLocaleDateString(localeTag(), { weekday: "short", month: "short", day: "numeric" }), time: endsAt.toLocaleTimeString(localeTag(), { hour: "numeric", minute: "2-digit" }) })}
           </Text>
           {(["day", "hour", "minute"] as const).map((unit) => (
             <View key={unit} style={styles.stepperRow}>
               <Text style={styles.stepperLabel}>{unit === "day" ? t("common.day") : unit === "hour" ? t("common.hour") : t("common.minute")}</Text>
-              <Pressable style={styles.stepper} onPress={() => adjust(unit, -1)} accessibilityRole="button" accessibilityLabel={`Earlier by one ${unit === "minute" ? "5 minutes" : unit}`}>
+              <Pressable style={styles.stepper} onPress={() => adjust(unit, -1)} accessibilityRole="button" accessibilityLabel={(unit === "minute" ? t("interactiveStickerForm.earlierByOne5Minutes") : t("interactiveStickerForm.earlierByOneUnit", { unit }))}>
                 <Icon name="minus" size={16} color={colors.textPrimary} />
               </Pressable>
-              <Pressable style={styles.stepper} onPress={() => adjust(unit, 1)} accessibilityRole="button" accessibilityLabel={`Later by one ${unit === "minute" ? "5 minutes" : unit}`}>
+              <Pressable style={styles.stepper} onPress={() => adjust(unit, 1)} accessibilityRole="button" accessibilityLabel={(unit === "minute" ? t("interactiveStickerForm.laterByOne5Minutes") : t("interactiveStickerForm.laterByOneUnit", { unit }))}>
                 <Icon name="add" size={16} color={colors.textPrimary} />
               </Pressable>
             </View>

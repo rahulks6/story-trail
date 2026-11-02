@@ -112,7 +112,7 @@ export function NewChatScreen({ navigation }: Props): React.JSX.Element {
       {searchFailed ? (
         <EmptyState icon="search" title={t("newChat.couldntSearch")} message={t("newChat.checkYourConnectionAndTry")} />
       ) : !loading && debouncedQuery && results.length === 0 ? (
-        <EmptyState icon="search" title={t("common.noOneFound")} message={`No people match "${debouncedQuery}".`} />
+        <EmptyState icon="search" title={t("common.noOneFound")} message={t("newChat.noPeopleMatchDebouncedquery", { debouncedQuery })} />
       ) : (
         <FlatList keyboardShouldPersistTaps="handled"
           data={debouncedQuery ? results : suggested}

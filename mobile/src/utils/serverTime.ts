@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 /**
  * Milliseconds since the epoch for a timestamp from the API, or NaN.
  *
@@ -22,16 +23,21 @@ export function serverDate(value: string | null | undefined): Date | null {
   return Number.isFinite(ms) ? new Date(ms) : null;
 }
 
-/** How long ago an API timestamp was: "just now", "5m ago", "3h ago", "2d ago", "3w ago" ("" if unreadable). */
-export function timeAgo(value: string | null | undefined, now: number = Date.now()): string {
+/**
+ * How long ago an API timestamp was: "just now", "5m ago", "3h ago", "2d ago", "3w ago" ("" if
+ * unreadable); "short" drops the "ago" ("3h"), for a Story's header. In the app's language.
+ */
+export function timeAgo(value: string | null | undefined, now: number = Date.now(), form: "ago" | "short" = "ago"): string {
   const then = serverTimeMs(value);
   if (!Number.isFinite(then)) return "";
   // A phone clock running behind the server must not show negative ages.
   const mins = Math.floor(Math.max(0, now - then) / 60_000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 1) return t("time.justNow");
+  const short = form === "short";
+  if (mins < 60) return t(short ? "time.minutes" : "time.minutesAgo", { count: mins });
   const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return t(short ? "time.hours" : "time.hoursAgo", { count: hours });
   const days = Math.floor(hours / 24);
-  return days < 7 ? `${days}d ago` : `${Math.floor(days / 7)}w ago`;
+  if (days < 7) return t(short ? "time.days" : "time.daysAgo", { count: days });
+  return t(short ? "time.weeks" : "time.weeksAgo", { count: Math.floor(days / 7) });
 }

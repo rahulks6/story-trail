@@ -109,7 +109,7 @@ function CallPill({ state, controls }: { state: CallState; controls: CallControl
         onPress={controls.restore}
         style={styles.pill}
         accessibilityRole="button"
-        accessibilityLabel={`${state.media === "video" ? "Video call" : "Call"} with ${name}, ${status}`}
+        accessibilityLabel={(state.media === "video" ? t("call.videoCallWithNameStatus", { name, status }) : t("call.callWithNameStatus", { name, status }))}
         accessibilityHint={t("call.returnsToTheCall")}
       >
         <Icon name={state.media === "video" ? ICONS.video : ICONS.call} size={16} color="#FFFFFF" />
@@ -139,7 +139,7 @@ export function CallScreen({ state, controls, local, remote }: Props): React.JSX
   const localFull = showLocal && !showRemote && state.phase !== "incoming";
   const name = state.peer?.displayName || state.peer?.username || "";
   const status = callStatusText(state, now);
-  const toggleLabel = (on: boolean, what: string) => `${on ? "Turn off" : "Turn on"} ${what}`;
+  const toggleLabel = (on: boolean, what: string) => (on ? t("call.turnOffWhat", { what }) : t("call.turnOnWhat", { what }));
 
   return (
     <Modal visible animationType="fade" statusBarTranslucent onRequestClose={() => (live && state.phase !== "incoming" ? controls.minimize() : undefined)}>
@@ -163,7 +163,7 @@ export function CallScreen({ state, controls, local, remote }: Props): React.JSX
           <Text style={[styles.status, state.phase === "reconnecting" && styles.statusWarning]} accessibilityLiveRegion="polite" accessibilityRole="text">
             {status}
           </Text>
-          {live && !state.remoteMicrophoneOn ? <Text style={styles.note}>{`${state.peer?.displayName || "They"} muted their microphone`}</Text> : null}
+          {live && !state.remoteMicrophoneOn ? <Text style={styles.note}>{(state.peer?.displayName ? t("call.displaynameMutedTheirMicrophone", { displayName: state.peer?.displayName }) : t("call.theyMutedTheirMicrophone"))}</Text> : null}
           {live && video && !state.remoteCameraOn && (state.phase === "active" || state.phase === "reconnecting") ? <Text style={styles.note}>{t("call.theirCameraIsOff")}</Text> : null}
         </View>
 
@@ -177,14 +177,14 @@ export function CallScreen({ state, controls, local, remote }: Props): React.JSX
           {state.phase === "incoming" ? (
             <View style={styles.row}>
               <CallButton icon={ICONS.endCall} label={t("common.decline")} tone="danger" size={72} onPress={controls.decline} accessibilityLabel={t("call.declineCall")} />
-              <CallButton icon={video ? ICONS.video : ICONS.call} label={t("common.accept")} tone="answer" size={72} onPress={controls.accept} accessibilityLabel={video ? "Accept video call" : "Accept call"} />
+              <CallButton icon={video ? ICONS.video : ICONS.call} label={t("common.accept")} tone="answer" size={72} onPress={controls.accept} accessibilityLabel={video ? t("call.acceptVideoCall") : t("call.acceptCall")} />
             </View>
           ) : live ? (
             <>
               <View style={styles.row}>
                 {video ? <CallButton icon={ICONS.flip} label={t("call.flip")} onPress={controls.flipCamera} accessibilityLabel={t("call.switchCamera")} /> : null}
                 {video ? <CallButton icon={state.cameraOn ? ICONS.video : ICONS.videoOff} label={t("call.camera")} active={!state.cameraOn} onPress={controls.toggleCamera} accessibilityLabel={toggleLabel(state.cameraOn, "camera")} /> : null}
-                <CallButton icon={state.microphoneOn ? ICONS.mic : ICONS.micOff} label={state.microphoneOn ? "Mute" : "Unmute"} active={!state.microphoneOn} onPress={controls.toggleMicrophone} accessibilityLabel={state.microphoneOn ? "Mute microphone" : "Unmute microphone"} />
+                <CallButton icon={state.microphoneOn ? ICONS.mic : ICONS.micOff} label={state.microphoneOn ? t("call.mute") : t("common.unmute")} active={!state.microphoneOn} onPress={controls.toggleMicrophone} accessibilityLabel={state.microphoneOn ? t("call.muteMicrophone") : t("call.unmuteMicrophone")} />
                 <CallButton icon={ICONS.audioOn} label={t("call.speaker")} active={state.speakerOn} onPress={controls.toggleSpeaker} accessibilityLabel={toggleLabel(state.speakerOn, "loudspeaker")} />
               </View>
               <View style={styles.row}>

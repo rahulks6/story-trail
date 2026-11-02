@@ -28,16 +28,15 @@ import { ActionSheet } from "../../components/ActionSheet";
 import { LoadFailed } from "../../components/LoadFailed";
 import { Icon } from "../../components/Icon";
 import { tapFeedback } from "../../utils/haptics";
-import { t } from "../../i18n";
+import { getLanguage, localeTag, t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Verification">;
 
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-/** "12 Nov 2026", the way the server writes dates in its reasons. */
+/** "12 Nov 2026" (in Hindi "12 नव॰ 2026"), the way the server writes dates in its reasons. */
 export function verificationDate(iso: string | null | undefined): string {
   const date = serverDate(iso);
-  return date ? `${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}` : "";
+  // English keeps the day first, like the server (en-GB); Hindi and Marathi write it their way.
+  return date ? date.toLocaleDateString(getLanguage() === "en" ? "en-GB" : localeTag(), { day: "numeric", month: "short", year: "numeric" }) : "";
 }
 
 /** A link the form accepts: https, a real host, at most 300 characters. Returns the problem, or null. */
@@ -170,7 +169,7 @@ export function VerificationScreen({ navigation }: Props): React.JSX.Element {
         <StatusCard
           title={t("verification.inReview")}
           body={t("verification.wereReviewingYourRequestWell")}
-          detail={`Submitted ${verificationDate(request.createdAt)}`}
+          detail={t("verification.submittedCreatedat", { createdAt: verificationDate(request.createdAt) })}
         />
         <Button label={t("verification.withdrawRequest")} variant="destructive" onPress={withdraw} busy={withdrawing} />
       </>
@@ -180,8 +179,8 @@ export function VerificationScreen({ navigation }: Props): React.JSX.Element {
       <>
         <StatusCard
           title={t("verification.notApproved")}
-          body={request.denialReason || "Your request wasn't approved."}
-          detail={`You can apply again on ${verificationDate(reapplyAt)}.`}
+          body={request.denialReason || t("verification.yourRequestWasntApproved")}
+          detail={t("verification.youCanApplyAgainOn", { reapplyAt: verificationDate(reapplyAt) })}
         />
         <Button label={t("verification.applyAgain")} onPress={() => setReapplying(true)} disabled={waiting} />
       </>
@@ -430,7 +429,7 @@ function RequestForm({
           <View key={index} style={styles.linkRow}>
             <View style={styles.linkField}>
               <TextField
-                label={`Link ${index + 1}`}
+                label={t("verification.linkValue", { value: index + 1 })}
                 value={link}
                 onChangeText={(value) => setLink(index, value)}
                 placeholder="https://"
@@ -442,7 +441,7 @@ function RequestForm({
               />
             </View>
             {links.length > 1 ? (
-              <Pressable onPress={() => removeLink(index)} hitSlop={8} style={styles.removeLink} accessibilityRole="button" accessibilityLabel={`Remove link ${index + 1}`}>
+              <Pressable onPress={() => removeLink(index)} hitSlop={8} style={styles.removeLink} accessibilityRole="button" accessibilityLabel={t("verification.removeLinkValue", { value: index + 1 })}>
                 <Icon name={ICONS.close} size={18} color={colors.textSecondary} />
               </Pressable>
             ) : null}

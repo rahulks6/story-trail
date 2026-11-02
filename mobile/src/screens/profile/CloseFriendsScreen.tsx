@@ -168,7 +168,7 @@ export function CloseFriendsScreen(): React.JSX.Element {
                 disabled={busy.has(person.id) || full}
                 style={[styles.button, listed ? styles.buttonRemove : styles.buttonAdd, (busy.has(person.id) || full) && styles.buttonBusy]}
                 accessibilityRole="button"
-                accessibilityLabel={listed ? `Remove @${person.username} from Close Friends` : `Add @${person.username} to Close Friends`}
+                accessibilityLabel={listed ? t("closeFriends.removeUsernameFromCloseFriends", { username: person.username }) : t("closeFriends.addUsernameToCloseFriends", { username: person.username })}
               >
                 <Text style={listed ? styles.buttonRemoveLabel : styles.buttonAddLabel}>{listed ? t("common.remove") : t("common.add")}</Text>
               </Pressable>

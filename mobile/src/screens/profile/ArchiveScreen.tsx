@@ -17,7 +17,7 @@ import { Button } from "../../components/Form";
 import { ApiError } from "../../api/client";
 import { serverDate } from "../../utils/serverTime";
 import { FadeInImage } from "../../components/FadeInImage";
-import { t } from "../../i18n";
+import { localeTag, t } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Archive">;
 
@@ -38,7 +38,7 @@ function monthKey(iso: string): string {
 }
 
 function monthTitle(iso: string): string {
-  return serverDate(iso)?.toLocaleDateString(undefined, { month: "long", year: "numeric" }) ?? t("common.earlier");
+  return serverDate(iso)?.toLocaleDateString(localeTag(), { month: "long", year: "numeric" }) ?? t("common.earlier");
 }
 
 function groupByMonth(stories: PublicStory[]): MonthSection[] {
@@ -114,7 +114,7 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
       style={styles.scheduledRow}
       onPress={() => navigation.navigate("ScheduledStories")}
       accessibilityRole="button"
-      accessibilityLabel={`Scheduled, ${scheduledCount} ${scheduledCount === 1 ? "Story" : "Stories"}`}
+      accessibilityLabel={t("archive.scheduledStories", { count: scheduledCount })}
       accessibilityHint={t("archive.rescheduleOrCancelStoriesThat")}
     >
       <Icon name={ICONS.timer} size={20} color={colors.accentText} />
@@ -179,7 +179,7 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
   const onDelete = () => {
     if (selected.length === 0 || !accessToken) return;
     Alert.alert(
-      `Delete ${selected.length} ${selected.length === 1 ? "Story" : "Stories"}?`,
+      t("archive.deleteStories", { count: selected.length }),
       t("common.thisCantBeUndone"),
       [
         { text: t("common.cancel"), style: "cancel" },
@@ -250,8 +250,8 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
                 return (
                   <Pressable
                     accessibilityRole="button"
-                    accessibilityLabel={`Archived Story, ${serverDate(story.createdAt)?.toLocaleDateString() ?? ""}`}
-                    accessibilityHint={choosing ? undefined : "Long press to select"}
+                    accessibilityLabel={t("archive.archivedStoryCreatedat", { createdAt: serverDate(story.createdAt)?.toLocaleDateString(localeTag()) ?? "" })}
+                    accessibilityHint={choosing ? undefined : t("archive.longPressToSelect")}
                     accessibilityState={{ selected: isSelected }}
                     key={story.id}
                     onPress={() => (choosing ? toggle(story.id) : navigation.navigate("ArchivedStoryViewer", { storyId: story.id }))}

@@ -57,7 +57,7 @@ export function AddToHighlightSheet({ visible, storyIds, onClose, onAdded }: { v
       const current = detail.items.map((item) => item.storyId);
       const next = withAddedStories(current, storyIds);
       if (next.length === current.length) {
-        showToast(`${storyIds.length === 1 ? "Already" : "All already"} in ${highlight.title}`);
+        showToast(t("addToHighlightSheet.allAlreadyInTitle", { title: highlight.title, count: storyIds.length }));
         return;
       }
       await updateHighlight(highlight.id, { storyIds: next }, accessToken);

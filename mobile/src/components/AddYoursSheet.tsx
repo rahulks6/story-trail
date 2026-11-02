@@ -64,7 +64,7 @@ export function AddYoursSheet({ visible, chainId, onClose, onOpenStory, onAddYou
               <Text style={styles.badgeText}>{t("common.addYours2")}</Text>
             </View>
             <Text style={[typography.title, styles.center]}>{chain.prompt}</Text>
-            <Text style={[typography.caption, styles.center]}>{chain.participants === 1 ? t("common.n1Participant") : t("addYoursSheet.participantsParticipants", { participants: chain.participants })}</Text>
+            <Text style={[typography.caption, styles.center]}>{t("common.participants", { count: chain.participants })}</Text>
             <FlatList
               data={stories}
               keyExtractor={(s) => s.storyId}
@@ -76,7 +76,7 @@ export function AddYoursSheet({ visible, chainId, onClose, onOpenStory, onAddYou
                   style={styles.cell}
                   onPress={() => onOpenStory(item.owner.username, item.storyId)}
                   accessibilityRole="button"
-                  accessibilityLabel={`@${item.owner.username}'s Story, ${timeAgo(item.createdAt)}`}
+                  accessibilityLabel={t("addYoursSheet.usernameSStoryCreatedat", { username: item.owner.username, createdAt: timeAgo(item.createdAt) })}
                 >
                   <FadeInImage source={{ uri: mediaFileUrl(item.mediaId, "thumbnail"), headers }} style={styles.thumb} accessibilityIgnoresInvertColors />
                   <View style={styles.cellOwner}>

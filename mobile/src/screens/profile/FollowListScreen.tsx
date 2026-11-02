@@ -93,8 +93,8 @@ export function FollowListScreen({ route }: Props): React.JSX.Element {
   if (users.length === 0) {
     return (
       <EmptyState
-        title={mode === "followers" ? "No followers yet" : "Not following anyone yet"}
-        message={mode === "followers" ? "People who follow @" + username + " will show up here." : "Accounts @" + username + " follows will show up here."}
+        title={mode === "followers" ? t("followList.noFollowersYet") : t("followList.notFollowingAnyoneYet")}
+        message={mode === "followers" ? t("followList.peopleWhoFollowUsername", { username }) : t("followList.accountsUsernameFollows", { username })}
       />
     );
   }

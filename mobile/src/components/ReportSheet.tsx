@@ -81,7 +81,7 @@ export function ReportSheet({ visible, targetType, targetId, conversationId, onC
         />
         <View style={[styles.sheet, { paddingBottom: spacing.xl + bottomInset }]}>
           <View style={styles.handle} />
-          <Text style={[typography.bodyStrong, styles.title]}>{t("common.report")}{" "}{targetType === "user" ? t("reportSheet.profile") : targetType}</Text>
+          <Text style={[typography.bodyStrong, styles.title]}>{targetType === "user" ? t("reportSheet.reportProfile") : targetType === "story" ? t("reportSheet.reportStory") : targetType === "comment" ? t("reportSheet.reportComment") : t("reportSheet.reportMessage")}</Text>
           {targetType === "message" ? (
             <Text style={[typography.caption, styles.disclosure]}>{t("reportSheet.thisMessageAndThe9")}</Text>
           ) : null}

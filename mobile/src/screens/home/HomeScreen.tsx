@@ -31,7 +31,7 @@ export function HomeScreen():React.JSX.Element {
  const {accessToken,user}=useAuth();const navigation=useNavigation<HomeNavigationProp>();
  const {unreadCount}=useNotifications();const insets=useScreenInsets();
  // Activity (likes, comments, follows) lives behind the heart at the top, like Instagram.
- const activityButton=<Pressable onPress={()=>navigation.navigate('Activity')} hitSlop={12} style={[styles.activity,{top:insets.top+spacing.lg}]} accessibilityRole="button" accessibilityLabel={unreadCount>0?`Activity, ${unreadCount} new`:'Activity'}>
+ const activityButton=<Pressable onPress={()=>navigation.navigate('Activity')} hitSlop={12} style={[styles.activity,{top:insets.top+spacing.lg}]} accessibilityRole="button" accessibilityLabel={unreadCount>0?t("home.activityUnreadcountNew", { unreadCount }):t("common.activity")}>
   <Icon name={ICONS.activity} size={26} color={colors.textPrimary}/>{unreadCount>0?<View style={styles.activityDot}/>:null}
  </Pressable>;
  const uploads=<UploadStatusPill top={insets.top+spacing.xl+spacing.sm}/>;
@@ -39,7 +39,7 @@ export function HomeScreen():React.JSX.Element {
  // On a festival day: its Stories from everyone (top left, opposite Activity), or an invitation to post one.
  const {current:festivalInfo,reload:reloadFestival}=useFestival();const festival=festivalInfo?.festival??null;const festivalCreators=festivalInfo?.creators??[];
  const openFestival=useCallback(()=>{if(festivalCreators.length)navigation.navigate('StoryViewer',{creators:festivalCreators,startIndex:0});else navigation.navigate('Create');},[festivalCreators,navigation]);
- const festivalButton=festival?<Pressable onPress={openFestival} hitSlop={8} style={[styles.festival,{top:insets.top+spacing.lg+(feed&&feed.length?FESTIVAL_BELOW_HEADER:0)}]} accessibilityRole="button" accessibilityLabel={festivalCreators.length?`${festival.name} Stories, ${festivalInfo?.storyCount??0}`:`Post your ${festival.name} Story`}>
+ const festivalButton=festival?<Pressable onPress={openFestival} hitSlop={8} style={[styles.festival,{top:insets.top+spacing.lg+(feed&&feed.length?FESTIVAL_BELOW_HEADER:0)}]} accessibilityRole="button" accessibilityLabel={festivalCreators.length?t("home.nameStoriesStorycount", { name: festival.name, storyCount: festivalInfo?.storyCount??0 }):t("home.postYourNameStory", { name: festival.name })}>
   <Text style={styles.festivalEmoji}>{festival.emoji}</Text><Text style={styles.festivalLabel} numberOfLines={1}>{festival.name}</Text>{festivalCreators.length?<View style={styles.festivalCount}><Text style={styles.festivalCountLabel}>{festivalInfo!.storyCount>99?'99+':festivalInfo!.storyCount}</Text></View>:null}
  </Pressable>:null;
  const token=useRef(accessToken);token.current=accessToken;const request=useRef(0),loadingMore=useRef(false);
@@ -89,7 +89,7 @@ export function HomeScreen():React.JSX.Element {
   {festival?<View style={styles.festivalCard}>
    <Text style={styles.festivalCardEmoji}>{festival.emoji}</Text>
    <Text style={styles.festivalCardTitle}>{festival.greeting}!</Text>
-   {festivalCreators.length?<Pressable onPress={openFestival} style={styles.festivalCardButton} accessibilityRole="button"><Text style={styles.festivalCardButtonLabel}>{t("home.see")}{" "}{festivalInfo?.storyCount} {festival.name} {festivalInfo?.storyCount===1?t("common.story"):t("common.stories")}</Text></Pressable>:null}
+   {festivalCreators.length?<Pressable onPress={openFestival} style={styles.festivalCardButton} accessibilityRole="button"><Text style={styles.festivalCardButtonLabel}>{t("home.seeFestivalStories", { count: festivalInfo?.storyCount ?? 0, festival: festival.name })}</Text></Pressable>:null}
    <Pressable onPress={()=>navigation.navigate('Create')} style={styles.emptyButton} accessibilityRole="button"><Text style={styles.emptyButtonLabel}>{t("home.postYourNameStory", { name: festival.name })}</Text></Pressable>
   </View>:null}
   <EmptyState variant="media" icon="create" title={t("home.noActiveStoriesYet")} message={t("home.storiesFromPeopleYouFollow")}/>

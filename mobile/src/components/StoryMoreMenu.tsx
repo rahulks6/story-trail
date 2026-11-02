@@ -110,11 +110,11 @@ export function StoryMoreMenu({ visible, storyId, isOwnStory, isPublic = false, 
         [
           ...(isPublic ? [{ label: t("storyMoreMenu.showMoreLikeThis"), onPress: () => void onMoreLikeThis() }] : []),
           { label: t("storyMoreMenu.notInterested"), onPress: () => void onNotInterested() },
-          { label: `Mute @${otherUsername ?? ""}`, onPress: () => void onMute() },
+          { label: t("storyMoreMenu.muteOtherusername", { otherUsername: otherUsername ?? "" }), onPress: () => void onMute() },
         ],
         [
           { label: t("common.report"), destructive: true, onPress: () => setReportOpen(true) },
-          { label: `Block @${otherUsername ?? ""}`, destructive: true, onPress: onBlock },
+          { label: t("storyMoreMenu.blockOtherusername2", { otherUsername: otherUsername ?? "" }), destructive: true, onPress: onBlock },
         ],
       ];
 

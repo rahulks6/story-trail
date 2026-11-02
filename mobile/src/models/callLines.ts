@@ -10,7 +10,9 @@ export type CallEvent = Extract<GroupEvent, { type: "call" }>;
  * went ("Voice call · No answer"). `mine`: the reader placed the call.
  */
 export function callLineText(event: CallEvent, mine: boolean): string {
-  const kind = event.media === "video" ? t("callLines.videoCall") : t("callLines.voiceCall");
+  const video = event.media === "video";
+  const kind = video ? t("callLines.videoCall") : t("callLines.voiceCall");
+  const missed = video ? t("callLines.missedVideoCall") : t("callLines.missedVoiceCall");
   switch (event.outcome) {
     case "completed":
       return event.durationSeconds !== null ? `${kind} · ${formatCallDuration(event.durationSeconds)}` : kind;
@@ -19,11 +21,11 @@ export function callLineText(event: CallEvent, mine: boolean): string {
     case "failed":
       return t("callLines.kindCouldntConnect", { kind });
     case "busy":
-      return mine ? t("callLines.kindOnAnotherCall", { kind }) : t("callLines.missedKind", { kind: kind.toLowerCase() });
+      return mine ? t("callLines.kindOnAnotherCall", { kind }) : missed;
     case "missed":
-      return mine ? t("callLines.kindNoAnswer", { kind }) : t("callLines.missedKind", { kind: kind.toLowerCase() });
+      return mine ? t("callLines.kindNoAnswer", { kind }) : missed;
     case "cancelled":
-      return mine ? t("callLines.kindCancelled", { kind }) : t("callLines.missedKind", { kind: kind.toLowerCase() });
+      return mine ? t("callLines.kindCancelled", { kind }) : missed;
     default:
       return kind;
   }

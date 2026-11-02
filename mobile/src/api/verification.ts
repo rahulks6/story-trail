@@ -77,7 +77,9 @@ export function withdrawVerification(accessToken: string): Promise<void> {
  */
 const TICK_LIKE = /[\u2713\u2714\u2611\u2705\u237B\u221A\u{1F5F8}\u{1F5F9}]/u;
 
-export const NAME_TICK_ERROR = "Names can't include check marks.";
+export function nameTickError(): string {
+  return t("verification.namesCantIncludeCheckMarks");
+}
 
 export function hasTickLikeCharacter(name: string): boolean {
   return TICK_LIKE.test(name);

@@ -104,7 +104,12 @@ function PollOrQuiz({ overlay, u, interaction }: { overlay: Extract<Overlay, { t
           const right = revealed && correctIndex === i;
           const wrong = revealed && quiz && chosen && correctIndex !== i;
           const fill = right ? colors.success : wrong ? colors.danger : chosen ? colors.accent : "rgba(11,11,11,0.12)";
-          const label = `${option}${results ? `, ${share} percent` : ""}${right ? ", correct answer" : ""}${wrong ? ", your answer, wrong" : chosen ? ", your answer" : ""}`;
+          const label = [
+            option,
+            results ? t("interactiveSticker.sharePercent", { share }) : null,
+            right ? t("interactiveSticker.correctAnswer") : null,
+            wrong ? t("interactiveSticker.yourAnswerWrong") : chosen ? t("interactiveSticker.yourAnswer") : null,
+          ].filter(Boolean).join(", ");
           return (
             <Pressable
               key={i}
@@ -133,7 +138,7 @@ function PollOrQuiz({ overlay, u, interaction }: { overlay: Extract<Overlay, { t
         })}
       </View>
       {results && interaction?.isOwner ? (
-        <Text allowFontScaling={false} style={[styles.meta, { fontSize: 12 * u, marginTop: 8 * u }]}>{results.total === 1 ? t("common.n1Vote") : t("interactiveSticker.totalVotes", { total: results.total })}</Text>
+        <Text allowFontScaling={false} style={[styles.meta, { fontSize: 12 * u, marginTop: 8 * u }]}>{t("common.votes", { count: results.total })}</Text>
       ) : null}
     </Animated.View>
   );
@@ -152,10 +157,10 @@ function QuestionCard({ overlay, u, interaction }: { overlay: Extract<Overlay, {
         pressEffect={interaction && !owner ? "scale" : "none"}
         style={[styles.answerField, { borderRadius: 12 * u, minHeight: 38 * u, paddingHorizontal: 12 * u }]}
         accessibilityRole="button"
-        accessibilityLabel={owner ? `${count} answers to ${overlay.properties.prompt}` : `Answer: ${overlay.properties.prompt}`}
+        accessibilityLabel={owner ? t("interactiveSticker.countAnswersToPrompt", { count, prompt: overlay.properties.prompt }) : t("interactiveSticker.answerPrompt", { prompt: overlay.properties.prompt })}
       >
         <Text allowFontScaling={false} style={[styles.answerHint, { fontSize: 14 * u }]}>
-          {owner ? (count === 1 ? t("interactiveSticker.n1Answer") : t("interactiveSticker.countAnswers", { count })) : answered ? t("interactiveSticker.sentAnswerAgain") : t("common.typeSomething")}
+          {owner ? t("interactiveSticker.answers", { count }) : answered ? t("interactiveSticker.sentAnswerAgain") : t("common.typeSomething")}
         </Text>
       </Pressable>
     </View>
@@ -209,7 +214,7 @@ function CountdownCard({ overlay, u, interaction }: { overlay: Extract<Overlay, 
       </View>
       {owner ? (
         <Text allowFontScaling={false} style={[styles.meta, { fontSize: 12 * u, marginTop: 8 * u }]}>
-          {(overlay.properties.reminderCount ?? 0) === 1 ? t("interactiveSticker.n1ReminderSet") : t("interactiveSticker.remindercountRemindersSet", { reminderCount: overlay.properties.reminderCount ?? 0 })}
+          {t("interactiveSticker.remindersSet", { count: overlay.properties.reminderCount ?? 0 })}
         </Text>
       ) : !left.over ? (
         <Pressable
@@ -218,7 +223,7 @@ function CountdownCard({ overlay, u, interaction }: { overlay: Extract<Overlay, 
           style={[styles.remind, reminded && styles.remindOn, { borderRadius: radii.pill, marginTop: 10 * u, paddingHorizontal: 14 * u, minHeight: 34 * u }]}
           accessibilityRole="switch"
           accessibilityState={{ checked: reminded }}
-          accessibilityLabel={reminded ? "Reminder on. Tap to turn it off" : "Remind me when it ends"}
+          accessibilityLabel={reminded ? t("interactiveSticker.reminderOnTapToTurn") : t("interactiveSticker.remindMeWhenItEnds")}
         >
           <Icon name={reminded ? "check" : "notifications"} size={15 * u} color={reminded ? colors.onAccent : colors.background} />
           <Text allowFontScaling={false} style={[styles.remindText, reminded && styles.remindTextOn, { fontSize: 14 * u }]}>{reminded ? t("interactiveSticker.reminderOn") : t("interactiveSticker.remindMe")}</Text>
@@ -237,7 +242,7 @@ function LinkChip({ overlay, u, interaction }: { overlay: Extract<Overlay, { typ
       disabled={!interaction}
       style={[styles.link, { borderRadius: radii.pill, paddingHorizontal: 14 * u, minHeight: 36 * u, gap: 6 * u }]}
       accessibilityRole="link"
-      accessibilityLabel={`Link: ${text}, opens ${host}`}
+      accessibilityLabel={t("interactiveSticker.linkTextOpensHost", { text, host })}
     >
       <Icon name="attach" size={16 * u} color={colors.accentText} />
       <Text allowFontScaling={false} style={[styles.linkText, { fontSize: 15 * u }]} numberOfLines={1}>{text.toUpperCase()}</Text>
@@ -273,7 +278,7 @@ function AddYoursCard({ overlay, u, interaction }: { overlay: Extract<Overlay, {
         pressEffect="scale"
         style={[styles.participants, { gap: 6 * u, marginBottom: 10 * u }]}
         accessibilityRole="button"
-        accessibilityLabel={`${count === 1 ? "1 person" : `${count} people`} added theirs. See their Stories`}
+        accessibilityLabel={t("interactiveSticker.peopleAddedTheirsSeeTheir", { count })}
       >
         <View style={styles.faces}>
           {(recent ?? []).slice(0, 3).map((p, i) => (
@@ -282,7 +287,7 @@ function AddYoursCard({ overlay, u, interaction }: { overlay: Extract<Overlay, {
             </View>
           ))}
         </View>
-        <Text allowFontScaling={false} style={[styles.meta, { fontSize: 13 * u }]}>{count === 0 ? t("interactiveSticker.beTheFirst") : count === 1 ? t("common.n1Participant") : t("interactiveSticker.countParticipants", { count })}</Text>
+        <Text allowFontScaling={false} style={[styles.meta, { fontSize: 13 * u }]}>{count === 0 ? t("interactiveSticker.beTheFirst") : t("common.participants", { count })}</Text>
       </Pressable>
       {interaction && !interaction.isOwner ? (
         <Animated.View style={{ transform: [{ scale: pulse }] }}>
@@ -290,7 +295,7 @@ function AddYoursCard({ overlay, u, interaction }: { overlay: Extract<Overlay, {
             onPress={() => interaction.onAddYours(overlay)}
             style={[styles.addYoursButton, { borderRadius: radii.pill, paddingHorizontal: 18 * u, minHeight: 38 * u, gap: 6 * u }]}
             accessibilityRole="button"
-            accessibilityLabel={`Add yours: ${prompt}`}
+            accessibilityLabel={t("interactiveSticker.addYoursPrompt", { prompt })}
             accessibilityHint={t("interactiveSticker.opensTheCameraWithThis")}
           >
             <Icon name="camera" size={16 * u} color={colors.onAccent} />

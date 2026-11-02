@@ -157,7 +157,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
   const onClearData = () => {
     if (!draftCount) return;
     Alert.alert(
-      `Clear ${draftCount} saved ${draftCount === 1 ? "draft" : "drafts"}?`,
+      t("settings.clearSavedDrafts2", { count: draftCount }),
       t("settings.anyStoryYouWereMid"),
       [
         { text: t("common.cancel"), style: "cancel" },
@@ -186,7 +186,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
       <View style={styles.card}>
         <ListRow label={t("settings.accountAndSignIn")} icon={ICONS.profile} onPress={() => navigation.navigate("AccountSecurity")} />
         <ListRow
-          label={professional ? "Professional account" : "Switch to professional account"}
+          label={professional ? t("common.professionalAccount") : t("settings.switchToProfessionalAccount")}
           icon={ICONS.insights}
           detail={professional ? professionalCategoryLabel(user?.professionalCategory) ?? undefined : undefined}
           onPress={() => navigation.navigate("ProfessionalAccount")}
@@ -216,7 +216,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
             </Text>
           </View>
           {togglingPrivacy ? <ActivityIndicator color={colors.accentText} /> : (
-            <Switch value={isPrivate} onValueChange={onTogglePrivacy} disabled={professional && !isPrivate} accessibilityLabel={t("common.privateAccount")} accessibilityHint={professional ? "Unavailable for a professional account" : undefined} />
+            <Switch value={isPrivate} onValueChange={onTogglePrivacy} disabled={professional && !isPrivate} accessibilityLabel={t("common.privateAccount")} accessibilityHint={professional ? t("settings.unavailableForAProfessionalAccount") : undefined} />
           )}
         </View>
         <View style={styles.switchRow}>
@@ -253,7 +253,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
           {togglingWeb ? (
             <ActivityIndicator color={colors.accentText} />
           ) : (
-            <Switch value={onWeb && !isPrivate} onValueChange={(next) => void onToggleWeb(next)} disabled={isPrivate} accessibilityLabel={t("settings.showMyProfileOnThe")} accessibilityHint={isPrivate ? "Unavailable for a private account" : undefined} />
+            <Switch value={onWeb && !isPrivate} onValueChange={(next) => void onToggleWeb(next)} disabled={isPrivate} accessibilityLabel={t("settings.showMyProfileOnThe")} accessibilityHint={isPrivate ? t("settings.unavailableForAPrivateAccount") : undefined} />
           )}
         </View>
         <ListRow

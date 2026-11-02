@@ -95,7 +95,7 @@ export function SendStoryScreen({ route, navigation }: Props): React.JSX.Element
   const chosenNames = useMemo(() => [...chosen.values()].map((target) => target.name.split(" ")[0]).join(", "), [chosen]);
   return (
     <KeyboardAvoider style={styles.container} topOffset={headerHeight}>
-      <RecipientPicker chosen={chosen} onToggle={toggle} emptyHint="Search for someone to send this Story to." />
+      <RecipientPicker chosen={chosen} onToggle={toggle} emptyHint={t("sendStory.searchForSomeoneToSend")} />
       {chosen.size ? (
         <View style={[styles.footer, { paddingBottom: spacing.sm + bottom }]}>
           {error ? <Text style={styles.error} accessibilityRole="alert">{error}</Text> : null}
@@ -108,7 +108,7 @@ export function SendStoryScreen({ route, navigation }: Props): React.JSX.Element
             maxLength={MAX_MESSAGE_LENGTH}
             accessibilityLabel={t("sendStory.addAMessageOptional")}
           />
-          <Button label={chosen.size === 1 ? `Send to ${chosenNames}` : `Send to ${chosen.size}`} onPress={() => void send()} busy={sending} />
+          <Button label={chosen.size === 1 ? t("sendStory.sendToChosennames", { chosenNames }) : t("sendStory.sendToSize", { size: chosen.size })} onPress={() => void send()} busy={sending} />
         </View>
       ) : null}
     </KeyboardAvoider>

@@ -231,7 +231,7 @@ function overlayDescription(overlay: Overlay): string {
     case "emoji":
       return t("draggableCanvasObject.emojiEmoji", { emoji: overlay.properties.emoji });
     case "mention":
-      return `Mention of @${overlay.properties.username ?? "unknown"}`;
+      return (overlay.properties.username != null ? t("draggableCanvasObject.mentionOfUsername", { username: overlay.properties.username }) : t("draggableCanvasObject.mentionOfUnknown"));
     case "location":
       return t("draggableCanvasObject.locationLabel", { label: overlay.properties.label });
     case "datetime":

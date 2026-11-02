@@ -7,11 +7,7 @@ import { useAuth } from "../state/AuthContext";
 import { declineNearby, nearbyChoice, turnNearbyOn } from "../state/nearby";
 import { t } from "../i18n";
 
-const FACTS = [
-  "Katkee uses an approximate area about the size of a city, never your exact location.",
-  "Your area is never shown on your profile or to anyone.",
-  "Turn it off anytime in Settings, under Privacy.",
-];
+const facts = (): string[] => [t("nearbyPrompt.factApproximate"), t("nearbyPrompt.factNeverShown"), t("nearbyPrompt.factTurnOff")];
 
 /**
  * Nearby Stories (Phase 9): asked once, a few seconds after you first use Katkee signed in, never
@@ -78,7 +74,7 @@ export function NearbyPrompt({ delayMs = 6000 }: { delayMs?: number }): React.JS
           <Text style={[typography.title, styles.title]} accessibilityRole="header">{t("nearbyPrompt.seeStoriesFromPeopleNear")}</Text>
           <Text style={[typography.body, styles.lead]}>{t("nearbyPrompt.turnOnNearbyStoriesTo")}</Text>
           <View style={styles.facts}>
-            {FACTS.map((fact) => (
+            {facts().map((fact) => (
               <View key={fact} style={styles.fact}>
                 <View style={styles.bullet} />
                 <Text style={[typography.caption, styles.factText]}>{fact}</Text>

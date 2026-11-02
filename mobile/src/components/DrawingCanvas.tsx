@@ -7,6 +7,7 @@ import type { DrawStroke, DrawTool } from "../models/storyDraft";
 import { DrawingStrokes } from "./DrawingStrokes";
 import { tapFeedback } from "../utils/haptics";
 import { t } from "../i18n";
+import { drawToolLabel } from "../i18n/names";
 
 const TOOLS: DrawTool[] = ["pen", "marker", "highlighter", "eraser"];
 const COLORS = ["#FFFFFF", "#000000", "#FCB020", "#E4483C", "#FF5DA2", "#A45CFF", "#3E7BFF", "#3FBF7F"];
@@ -184,7 +185,7 @@ export function DrawingCanvas({ containerWidth, containerHeight, strokes, onChan
                     hitSlop={4}
                     style={[styles.colorSwatch, { backgroundColor: c }, color === c && styles.colorSwatchActive]}
                     accessibilityRole="button"
-                    accessibilityLabel={`Draw colour ${c}`}
+                    accessibilityLabel={t("drawingCanvas.drawColourC", { c })}
                     accessibilityState={{ selected: color === c }}
                   />
                 ))}
@@ -197,10 +198,10 @@ export function DrawingCanvas({ containerWidth, containerHeight, strokes, onChan
                   onPress={pick(() => setTool(option))}
                   style={[styles.toolChip, tool === option && styles.toolChipActive]}
                   accessibilityRole="button"
-                  accessibilityLabel={`${option} tool`}
+                  accessibilityLabel={t("drawingCanvas.optionTool", { option: drawToolLabel(option) })}
                   accessibilityState={{ selected: tool === option }}
                 >
-                  <Text style={[styles.toolLabel, tool === option && styles.toolLabelActive]}>{option}</Text>
+                  <Text style={[styles.toolLabel, tool === option && styles.toolLabelActive]}>{drawToolLabel(option)}</Text>
                 </Pressable>
               ))}
               {tool !== "eraser" ? (

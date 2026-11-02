@@ -2,7 +2,7 @@ import React from "react";
 import { act, create, type ReactTestInstance, type ReactTestRenderer } from "react-test-renderer";
 import { Linking, PermissionsAndroid, Platform, Text } from "react-native";
 import { batches, contactHash, hashesForContacts, normalizeEmail, normalizePhone, sha256Hex, HASH_BATCH_SIZE } from "../src/utils/contactHashes";
-import { ContactsFinder, CONTACTS_EXPLAINER } from "../src/components/ContactsFinder";
+import { ContactsFinder, contactsExplainer } from "../src/components/ContactsFinder";
 import * as growthApi from "../src/api/growth";
 import * as usersApi from "../src/api/users";
 import { track } from "../src/analytics/analytics";
@@ -89,7 +89,7 @@ describe("Contacts on Katkee", () => {
   });
 
   test("explains first; nothing is asked or read until Continue", async () => {
-    expect(texts()).toEqual(expect.arrayContaining(["Find friends from your contacts", ...CONTACTS_EXPLAINER]));
+    expect(texts()).toEqual(expect.arrayContaining(["Find friends from your contacts", ...contactsExplainer()]));
     await settle();
     expect(native.requestPermission).not.toHaveBeenCalled();
     expect(native.getAllWithoutPhotos).not.toHaveBeenCalled();

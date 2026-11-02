@@ -341,7 +341,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
     if (typeof asset.fileSize === "number" && asset.fileSize > limit) {
       Alert.alert(
         kind === "video" ? t("common.videoTooLarge") : t("camera.photoTooLarge"),
-        `Stories can be up to ${Math.round(limit / (1024 * 1024))} MB. ${kind === "video" ? "Trim the video or choose a shorter one." : "Choose a smaller photo."}`,
+        (kind === "video" ? t("camera.storiesCanBeUpTo2", { limit: Math.round(limit / (1024 * 1024)) }) : t("camera.storiesCanBeUpTo3", { limit: Math.round(limit / (1024 * 1024)) })),
       );
       return;
     }
@@ -584,7 +584,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
           <View style={styles.seedChip}>
             <Icon name={seed.kind === "addYours" ? ICONS.add : ICONS.reply} size={14} color={colors.onAccent} />
             <Text style={styles.seedText} numberOfLines={1}>{seed.kind === "addYours" ? t("camera.addYoursPrompt", { prompt: seed.prompt }) : t("camera.sharingAnAnswerPrompt", { prompt: seed.prompt })}</Text>
-            <Pressable onPress={clearCreateSeed} hitSlop={10} accessibilityRole="button" accessibilityLabel={seed.kind === "addYours" ? "Don't add this prompt" : "Don't share this answer"}>
+            <Pressable onPress={clearCreateSeed} hitSlop={10} accessibilityRole="button" accessibilityLabel={seed.kind === "addYours" ? t("camera.dontAddThisPrompt") : t("camera.dontShareThisAnswer")}>
               <Icon name={ICONS.close} size={14} color={colors.onAccent} />
             </Pressable>
           </View>
@@ -612,7 +612,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
             hitSlop={8}
             style={[styles.toolButton, styles.timerButton]}
             accessibilityRole="button"
-            accessibilityLabel={timerSeconds === 0 ? "Timer off" : `Timer, ${timerSeconds} seconds`}
+            accessibilityLabel={timerSeconds === 0 ? t("camera.timerOff") : t("camera.timerTimersecondsSeconds", { timerSeconds })}
           >
             <Icon name="timer" style={[styles.topIcon, timerSeconds > 0 && styles.topIconActive]}/>{timerSeconds > 0 ? <Text style={styles.timerLabel}>{t("camera.timersecondsS", { timerSeconds })}</Text> : null}
           </Pressable>
@@ -628,7 +628,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
 
       {countdown > 0 ? (
         <View style={styles.countdown} pointerEvents="none" accessibilityLiveRegion="assertive">
-          <Text style={styles.countdownLabel} accessibilityLabel={`Taking photo in ${countdown}`}>{countdown}</Text>
+          <Text style={styles.countdownLabel} accessibilityLabel={t("camera.takingPhotoInCountdown", { countdown })}>{countdown}</Text>
         </View>
       ) : null}
 
@@ -692,7 +692,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
           accessible
           accessibilityRole="button"
           accessibilityLabel={shutterLabel(mode, isRecording)}
-          accessibilityHint={isRecording || mode !== "normal" ? undefined : "Use the actions menu to record video instead"}
+          accessibilityHint={isRecording || mode !== "normal" ? undefined : t("camera.useTheActionsMenuTo2")}
           accessibilityActions={[
             { name: "activate", label: shutterLabel(mode, isRecording) },
             ...(mode === "normal" ? [{ name: "longpress", label: t("camera.recordVideo") }] : []),

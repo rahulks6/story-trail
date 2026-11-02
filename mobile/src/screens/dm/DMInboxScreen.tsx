@@ -35,12 +35,12 @@ function previewText(conversation: ConversationSummary, myUserId: string | undef
   if (lastMessage.event) {
     const actor = actorName(lastMessage.senderId, myUserId, lastMessage.senderUsername);
     const known = new Map((conversation.group?.members ?? []).map((m) => [m.id, `@${m.username}`]));
-    return groupEventText(lastMessage.event, actor, (id) => (id === myUserId ? "you" : known.get(id) ?? "someone"));
+    return groupEventText(lastMessage.event, actor, (id) => (id === myUserId ? t("dMInbox.youObject") : known.get(id) ?? t("dMInbox.someoneObject")));
   }
   // In a group, whose message it was.
   const prefix = lastMessage.senderId === myUserId ? t("dMInbox.you") : conversation.kind === "group" && lastMessage.senderUsername ? `${lastMessage.senderUsername}: ` : "";
   if (lastMessage.sharedStoryId) return t("dMInbox.prefixSharedAStory", { prefix });
-  if (lastMessage.mediaKind && !lastMessage.body) return `${prefix}Sent a ${lastMessage.mediaKind === "audio" ? "voice message" : lastMessage.mediaKind}`;
+  if (lastMessage.mediaKind && !lastMessage.body) return (lastMessage.mediaKind === "audio" ? t("dMInbox.prefixSentAVoiceMessage", { prefix }) : (lastMessage.mediaKind === "video" ? t("dMInbox.prefixSentAVideo", { prefix }) : t("dMInbox.prefixSentAPhoto", { prefix })));
   return `${prefix}${lastMessage.body ?? ""}`;
 }
 
@@ -268,7 +268,7 @@ export function DMInboxScreen(): React.JSX.Element {
           }
           onLongPress={() => setMenuFor(item)}
           accessibilityRole="button"
-          accessibilityLabel={`${name}${!group && person?.verified ? ", verified" : ""}${group ? `, group of ${group.memberCount}` : ""}${item.unread ? ", unread" : ""}${item.muted ? ", muted" : ""}`}
+          accessibilityLabel={[name, !group && person?.verified ? t("common.verified") : null, group ? t("dMInbox.groupOf", { count: group.memberCount }) : null, item.unread ? t("dMInbox.unread") : null, item.muted ? t("dMInbox.muted") : null].filter(Boolean).join(", ")}
           accessibilityHint={t("dMInbox.longPressForOptions")}
         >
           {group ? (

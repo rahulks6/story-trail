@@ -51,9 +51,9 @@ export function VoiceNoteBubble({ url, accessToken, durationMs, mine, playing, o
       onLongPress={onLongPress}
       style={[styles.bubble, mine ? styles.mine : styles.theirs]}
       accessibilityRole="button"
-      accessibilityLabel={`${label}. Voice message, ${formatClock(length)}`}
+      accessibilityLabel={t("voiceNote.labelVoiceMessageLength", { label, length: formatClock(length) })}
       accessibilityState={{ busy: !!sending }}
-      accessibilityHint={playing ? "Pauses it" : "Plays it"}
+      accessibilityHint={playing ? t("voiceNote.pausesIt") : t("voiceNote.playsIt")}
     >
       <View style={[styles.play, { borderColor: ink }]}>
         {sending || (playing && loading) ? (

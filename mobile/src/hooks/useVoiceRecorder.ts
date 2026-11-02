@@ -10,13 +10,13 @@ export const MIN_VOICE_MS = 700;
 /** How often the recorder reports progress (seconds); the timer only shows whole seconds. */
 const PROGRESS_INTERVAL_S = 0.25;
 
-export const MIC_REFUSED_MESSAGE = "Allow microphone access in Settings to send voice messages.";
+export const micRefusedMessage = (): string => t("useVoiceRecorder.allowMicrophoneAccessInSettings");
 
 export type RecorderState = { status: "idle" } | { status: "starting" } | { status: "recording"; elapsedMs: number } | { status: "stopping" };
 
 /** The microphone was refused for good: only Settings can turn it back on. */
 function micRefused(): void {
-  Alert.alert(t("useVoiceRecorder.allowMicrophoneAccess"), MIC_REFUSED_MESSAGE, [
+  Alert.alert(t("useVoiceRecorder.allowMicrophoneAccess"), micRefusedMessage(), [
     { text: t("common.notNow"), style: "cancel" },
     { text: t("common.openSettings"), onPress: () => void Linking.openSettings().catch(() => undefined) },
   ]);
@@ -30,7 +30,7 @@ async function androidMicAllowed(onError: (message: string) => void): Promise<bo
   if (result === PermissionsAndroid.RESULTS.GRANTED) return true;
   // "Don't ask again": the system won't show its prompt any more.
   if (result === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) micRefused();
-  else onError(MIC_REFUSED_MESSAGE);
+  else onError(micRefusedMessage());
   return false;
 }
 

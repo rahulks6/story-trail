@@ -155,7 +155,7 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
         </View>
       ) : null}
       {isDone(job) ? (
-        <Pressable onPress={() => stop(job)} hitSlop={10} accessibilityRole="button" accessibilityLabel={job.status === "scheduled" ? "Undo, cancel this scheduled Story" : "Undo, delete this Story"}>
+        <Pressable onPress={() => stop(job)} hitSlop={10} accessibilityRole="button" accessibilityLabel={job.status === "scheduled" ? t("uploadStatusPill.undoCancelThisScheduledStory") : t("uploadStatusPill.undoDeleteThisStory")}>
           <Text style={styles.undo}>{t("common.undo")}</Text>
         </Pressable>
       ) : !stopping && !job.cancelAfterPublish ? (

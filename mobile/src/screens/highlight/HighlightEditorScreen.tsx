@@ -320,7 +320,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
             <Pressable
               accessibilityRole="checkbox"
               accessibilityState={{ checked: isSelected }}
-              accessibilityLabel={isSelected ? `Story ${order + 1} in this Highlight` : "Add Story"}
+              accessibilityLabel={isSelected ? t("highlightEditor.storyValueInThisHighlight", { value: order + 1 }) : t("highlightEditor.addStory")}
               style={styles.thumbWrapper}
               onPress={() => toggle(item.id)}
             >
@@ -355,7 +355,7 @@ export function HighlightEditorScreen({ route, navigation }: Props): React.JSX.E
                     setCoverPickerOpen(false);
                   }}
                   accessibilityRole="button"
-                  accessibilityLabel={chosen ? "Current cover" : "Use as cover"}
+                  accessibilityLabel={chosen ? t("highlightEditor.currentCover") : t("highlightEditor.useAsCover")}
                   accessibilityState={{ selected: chosen }}
                 >
                   <Image source={{ uri: mediaFileUrl(story.mediaId, "thumbnail"), headers: authHeaders }} style={[styles.pickerThumb, chosen && styles.pickerThumbChosen]} resizeMode="cover" />

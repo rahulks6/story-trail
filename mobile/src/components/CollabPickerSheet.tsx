@@ -59,7 +59,7 @@ export function CollabPickerSheet({ visible, current, onChoose, onClose }: Props
           <View style={styles.currentRow}>
             <Avatar username={current.username} avatarMediaId={current.avatarMediaId} size={32} />
             <VerifiedName name={`@${current.username}`} verified={current.verified} style={typography.bodyStrong} containerStyle={styles.name} />
-            <Pressable onPress={() => { onChoose(null); close(); }} style={styles.removeButton} accessibilityRole="button" accessibilityLabel={`Don't invite @${current.username}`}>
+            <Pressable onPress={() => { onChoose(null); close(); }} style={styles.removeButton} accessibilityRole="button" accessibilityLabel={t("collabPickerSheet.dontInviteUsername", { username: current.username })}>
               <Text style={styles.removeLabel}>{t("common.remove")}</Text>
             </Pressable>
           </View>
@@ -87,7 +87,7 @@ export function CollabPickerSheet({ visible, current, onChoose, onClose }: Props
                 style={styles.row}
                 onPress={() => { onChoose(item); close(); }}
                 accessibilityRole="button"
-                accessibilityLabel={`Invite ${item.displayName}${item.verified ? ", verified" : ""}, @${item.username}`}
+                accessibilityLabel={(item.verified ? t("collabPickerSheet.inviteDisplaynameVerifiedUsername", { displayName: item.displayName, username: item.username }) : t("collabPickerSheet.inviteDisplaynameUsername", { displayName: item.displayName, username: item.username }))}
                 accessibilityState={{ selected: current?.id === item.id }}
               >
                 <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} size={36} />

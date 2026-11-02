@@ -80,7 +80,7 @@ export function ReplySheet({ visible, storyId, ownerUsername, onClose, onSent }:
               style={({ pressed }) => [styles.reaction, pressed && styles.reactionPressed]}
               hitSlop={4}
               accessibilityRole="button"
-              accessibilityLabel={`React with ${emoji}`}
+              accessibilityLabel={t("replySheet.reactWithEmoji", { emoji })}
             >
               <Text style={styles.reactionGlyph}>{emoji}</Text>
             </Pressable>
@@ -91,7 +91,7 @@ export function ReplySheet({ visible, storyId, ownerUsername, onClose, onSent }:
             style={styles.input}
             value={text}
             onChangeText={setText}
-            placeholder={`Send a message to @${ownerUsername}`}
+            placeholder={t("replySheet.sendAMessageToOwnerusername", { ownerUsername })}
             placeholderTextColor={colors.textSecondary}
             maxLength={2000}
             multiline

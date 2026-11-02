@@ -159,7 +159,7 @@ export function GroupInfoScreen({ navigation, route }: Props): React.JSX.Element
               <Text style={typography.caption} numberOfLines={1}>@{item.username}{item.role === "admin" ? t("groupInfo.admin") : ""}</Text>
             </View>
             {admin && !me ? (
-              <Pressable onPress={() => remove(item)} hitSlop={8} style={styles.remove} accessibilityRole="button" accessibilityLabel={`Remove @${item.username}`}>
+              <Pressable onPress={() => remove(item)} hitSlop={8} style={styles.remove} accessibilityRole="button" accessibilityLabel={t("groupInfo.removeUsername2", { username: item.username })}>
                 <Text style={styles.removeText}>{t("common.remove")}</Text>
               </Pressable>
             ) : null}

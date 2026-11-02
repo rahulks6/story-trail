@@ -12,7 +12,7 @@ import { colors, spacing, typography, FORM_MAX_WIDTH } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { usernameCheckText, usernameRefused, useUsernameAvailability } from "../../hooks/useUsernameAvailability";
 import { TermsNotice } from "../../components/TermsNotice";
-import { hasTickLikeCharacter, NAME_TICK_ERROR } from "../../api/verification";
+import { hasTickLikeCharacter, nameTickError } from "../../api/verification";
 import { usePendingInviter } from "../../state/invites";
 import { t } from "../../i18n";
 
@@ -41,7 +41,7 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
   const birthDate = birthDateToIso(birth);
   const birthProblem = birthDateFieldProblem(birth);
   // A tick in a name would pass for the verified badge.
-  const nameProblem = hasTickLikeCharacter(displayName) ? NAME_TICK_ERROR : undefined;
+  const nameProblem = hasTickLikeCharacter(displayName) ? nameTickError() : undefined;
   const complete = !!displayName.trim() && !nameProblem && !!username && !!email && !!birthDate && !birthDateProblem(birthDate) && !!password &&
     !passwordProblem && !usernameRefused(availability);
 
@@ -70,7 +70,7 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
         keyboardDismissMode="on-drag"
       >
         <Text style={[typography.title, styles.title]} accessibilityRole="header">{t("common.createYourAccount")}</Text>
-        {inviter ? <Banner tone="info" text={`${inviter.displayName} (@${inviter.username}) invited you to Katkee.`} /> : null}
+        {inviter ? <Banner tone="info" text={t("signup.displaynameUsernameInvitedYouTo", { displayName: inviter.displayName, username: inviter.username })} /> : null}
         {error ? <Banner text={error} /> : null}
 
         <TextField
@@ -90,7 +90,7 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
           ref={usernameInput}
           label={t("common.username")}
           error={fieldErrors?.username ?? (availabilityLine?.tone === "error" ? availabilityLine.text : undefined)}
-          hint={availabilityLine && availabilityLine.tone !== "error" ? availabilityLine.text : "3–30 characters: lowercase letters, numbers, dots and underscores."}
+          hint={availabilityLine && availabilityLine.tone !== "error" ? availabilityLine.text : t("signup.n330CharactersLowercaseLetters")}
           hintTone={availabilityLine?.tone === "success" ? "success" : availabilityLine ? "info" : undefined}
           autoCapitalize="none"
           autoCorrect={false}
@@ -149,7 +149,7 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
         />
 
         <Button label={t("common.signUp")} onPress={() => void onSubmit()} disabled={!complete} busy={submitting} />
-        <TermsNotice action={t("signup.signingUp")} />
+        <TermsNotice action="signup" />
 
         <Pressable style={styles.linkButton} onPress={() => navigation.navigate("Login")} accessibilityRole="button">
           <Text style={typography.body}>{t("signup.alreadyHaveAnAccount")}{" "}<Text style={styles.linkAccent}>{t("common.logIn")}</Text>

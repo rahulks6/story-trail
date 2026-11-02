@@ -6,7 +6,7 @@ import { Button } from "./Form";
 import { colors, radii, spacing, typography } from "../theme";
 import { tapFeedback } from "../utils/haptics";
 import { MINUTE_STEP, atTime, dayName, defaultScheduleTime, scheduleDays, scheduleProblem, scheduleText } from "../models/schedule";
-import { t } from "../i18n";
+import { localeTag, t } from "../i18n";
 
 interface Props {
   visible: boolean;
@@ -26,7 +26,7 @@ const MINUTES = Array.from({ length: 60 / MINUTE_STEP }, (_, i) => i * MINUTE_ST
 const ROW = 44;
 
 function hourText(hour: number): string {
-  return new Date(2026, 0, 1, hour).toLocaleTimeString(undefined, { hour: "numeric" });
+  return new Date(2026, 0, 1, hour).toLocaleTimeString(localeTag(), { hour: "numeric" });
 }
 
 /**
@@ -108,7 +108,7 @@ export function ScheduleSheet({ visible, initial, title = "Schedule your Story",
               {MINUTES.map((m) => {
                 const on = minuteOf === m;
                 return (
-                  <Pressable key={m} style={[styles.cell, on && styles.cellOn]} onPress={() => pick(atTime(chosen, chosen.getHours(), m))} accessibilityRole="button" accessibilityLabel={`${m} minutes`} accessibilityState={{ selected: on }}>
+                  <Pressable key={m} style={[styles.cell, on && styles.cellOn]} onPress={() => pick(atTime(chosen, chosen.getHours(), m))} accessibilityRole="button" accessibilityLabel={t("scheduleSheet.mMinutes", { m })} accessibilityState={{ selected: on }}>
                     <Text style={[styles.cellLabel, on && styles.cellLabelOn]}>{String(m).padStart(2, "0")}</Text>
                   </Pressable>
                 );

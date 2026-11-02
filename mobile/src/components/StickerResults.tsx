@@ -76,14 +76,14 @@ function StickerBlock({ storyId, overlay, onShareAnswer }: { storyId: string; ov
             const share = total ? Math.round((n / total) * 100) : 0;
             const right = overlay.type === "quiz" && overlay.properties.correctIndex === i;
             return (
-              <View key={i} style={styles.resultRow} accessible accessibilityLabel={`${option}: ${n} ${n === 1 ? "vote" : "votes"}, ${share} percent${right ? ", the right answer" : ""}`}>
+              <View key={i} style={styles.resultRow} accessible accessibilityLabel={(n === 1 ? (right ? t("stickerResults.optionNVoteSharePercent", { option, n, share }) : t("stickerResults.optionNVoteSharePercent2", { option, n, share })) : (right ? t("stickerResults.optionNVotesSharePercent", { option, n, share }) : t("stickerResults.optionNVotesSharePercent2", { option, n, share })))}>
                 <View style={[styles.resultFill, { width: `${share}%` }, right && styles.resultRight]} />
                 <Text style={[typography.body, styles.resultText]} numberOfLines={1}>{option}{right ? t("stickerResults.rightAnswer") : ""}</Text>
                 <Text style={typography.bodyStrong}>{share}%</Text>
               </View>
             );
           })}
-          <Text style={typography.caption}>{total === 1 ? t("common.n1Vote") : t("stickerResults.totalVotes", { total })}</Text>
+          <Text style={typography.caption}>{t("common.votes", { count: total })}</Text>
           {voters === null && !failed ? <ActivityIndicator color={colors.accentText} /> : null}
           {(voters ?? []).map((v) => (
             <View key={v.id} style={styles.person}>
@@ -115,7 +115,7 @@ function StickerBlock({ storyId, overlay, onShareAnswer }: { storyId: string; ov
                     <Text style={styles.smallPrimaryLabel}>{t("common.share")}</Text>
                   </Pressable>
                 ) : null}
-                <Pressable onPress={() => clear(a)} style={styles.smallButton} accessibilityRole="button" accessibilityLabel={`Delete @${a.responder.username}'s answer`}>
+                <Pressable onPress={() => clear(a)} style={styles.smallButton} accessibilityRole="button" accessibilityLabel={t("stickerResults.deleteUsernameSAnswer", { username: a.responder.username })}>
                   <Text style={styles.smallLabel}>{t("common.delete")}</Text>
                 </Pressable>
               </View>
@@ -128,14 +128,14 @@ function StickerBlock({ storyId, overlay, onShareAnswer }: { storyId: string; ov
       return (
         <View style={styles.block}>
           <Text style={typography.bodyStrong}>{t("stickerResults.countdownTitle", { title: overlay.properties.title })}</Text>
-          <Text style={typography.caption}>{(overlay.properties.reminderCount ?? 0) === 1 ? t("stickerResults.n1PersonWillBeReminded") : t("stickerResults.remindercountPeopleWillBeReminded", { reminderCount: overlay.properties.reminderCount ?? 0 })}</Text>
+          <Text style={typography.caption}>{t("stickerResults.peopleWillBeReminded", { count: overlay.properties.reminderCount ?? 0 })}</Text>
         </View>
       );
     case "addYours":
       return (
         <View style={styles.block}>
           <Text style={typography.bodyStrong}>{t("stickerResults.addYoursPrompt", { prompt: overlay.properties.prompt })}</Text>
-          <Text style={typography.caption}>{(overlay.properties.participants ?? 0) === 1 ? t("common.n1Participant") : t("stickerResults.participantsParticipants", { participants: overlay.properties.participants ?? 0 })}</Text>
+          <Text style={typography.caption}>{t("common.participants", { count: overlay.properties.participants ?? 0 })}</Text>
         </View>
       );
     default:

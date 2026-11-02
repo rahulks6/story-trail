@@ -11,6 +11,7 @@ import { colors, radii, spacing, typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { getMyInterests, removeLearnedInterest, type MyInterests } from "../../api/interests";
 import { t } from "../../i18n";
+import { topicLabel } from "../../i18n/names";
 
 type Props = NativeStackScreenProps<RootStackParamList, "YourInterests">;
 
@@ -76,12 +77,12 @@ export function YourInterestsScreen({ navigation }: Props): React.JSX.Element {
         <View style={styles.chips}>
           {interests.learned.map(({ topic, strength }) => (
             <View key={topic} style={styles.chip}>
-              <Text style={styles.chipLabel}>{topic}</Text>
+              <Text style={styles.chipLabel}>{topicLabel(topic)}</Text>
               <Text style={styles.chipDetail}>{STRENGTH_LABELS[strength]}</Text>
               {removing === topic ? (
                 <ActivityIndicator size="small" color={colors.accentText} />
               ) : (
-                <Pressable onPress={() => void onRemove(topic)} hitSlop={8} accessibilityRole="button" accessibilityLabel={`Remove ${topic}`}>
+                <Pressable onPress={() => void onRemove(topic)} hitSlop={8} accessibilityRole="button" accessibilityLabel={t("yourInterests.removeTopic", { topic })}>
                   <Icon name={ICONS.close} size={16} color={colors.textSecondary} />
                 </Pressable>
               )}
@@ -97,7 +98,7 @@ export function YourInterestsScreen({ navigation }: Props): React.JSX.Element {
         <View style={styles.chips}>
           {interests.chosen.map((topic) => (
             <View key={topic} style={styles.chip}>
-              <Text style={styles.chipLabel}>{topic}</Text>
+              <Text style={styles.chipLabel}>{topicLabel(topic)}</Text>
             </View>
           ))}
         </View>

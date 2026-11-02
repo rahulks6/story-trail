@@ -11,6 +11,7 @@ import { Banner, Button, TextField } from "../../components/Form";
 import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import { tapFeedback } from "../../utils/haptics";
 import { t } from "../../i18n";
+import { richText } from "../../i18n/rich";
 
 type Props = NativeStackScreenProps<RootStackParamList, "VerifyEmail">;
 
@@ -86,7 +87,7 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
     try {
       await sendEmailCode(accessToken);
       setCode("");
-      setNotice(`We sent a new code to ${user?.email ?? "your email"}.`);
+      setNotice((user?.email != null ? t("verifyEmail.weSentANewCode", { email: user?.email }) : t("verifyEmail.weSentANewCode2")));
       setCooldown(RESEND_SECONDS);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t("verifyEmail.couldntSendACodeCheck"));
@@ -150,7 +151,7 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
     <KeyboardAvoider style={styles.root}>
       <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.xl }]} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
         <Text style={typography.displayLarge} accessibilityRole="header">{t("common.verifyYourEmail")}</Text>
-        <Text style={styles.body}>{t("verifyEmail.weSentA6Digit")}{" "}<Text style={styles.email}>{user?.email ?? t("verifyEmail.yourEmail")}</Text>. {required ? t("verifyEmail.enterItToFinishCreating") : t("verifyEmail.itKeepsYourAccountSecure")}
+        <Text style={styles.body}>{richText(t("verifyEmail.weSentACodeTo", { email: user?.email ?? t("verifyEmail.yourEmail") }), { email: (email) => <Text style={styles.email}>{email}</Text> })}{" "}{required ? t("verifyEmail.enterItToFinishCreating") : t("verifyEmail.itKeepsYourAccountSecure")}
         </Text>
         {error ? <Banner text={error} /> : notice ? <Banner text={notice} tone="success" /> : null}
         <TextField
@@ -170,7 +171,7 @@ export function VerifyEmailScreen({ navigation }: Props): React.JSX.Element {
         <Text style={styles.hint}>{t("verifyEmail.cantFindItCheckYour")}</Text>
         <View style={styles.links}>
           <Button
-            label={cooldown > 0 ? `Send a new code in ${cooldown}s` : "Send a new code"}
+            label={cooldown > 0 ? t("verifyEmail.sendANewCodeIn", { cooldown }) : t("common.sendANewCode")}
             onPress={() => void resend()}
             disabled={cooldown > 0}
             variant="text"

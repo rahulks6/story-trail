@@ -12,18 +12,24 @@ import { COVER_ASPECT } from "../../models/avatarCrop";
 import { Icon } from "../Icon";
 import { VerifiedBadgeSheet, VerifiedName } from "../VerifiedBadge";
 import { colors, radii, spacing, ICONS } from "../../theme";
-import { countLabel, formatCount } from "../../utils/formatCount";
+import { formatCount } from "../../utils/formatCount";
 import { professionalCategoryLabel } from "../../api/professional";
 import { t } from "../../i18n";
+import { topicLabel } from "../../i18n/names";
 
 export interface ProfileStat {
-  key: string;
+  key: "stories" | "followers" | "following";
   /** null while loading, or when it can't be known (a private account you don't follow). */
   value: number | null;
-  singular: string;
-  plural: string;
   onPress?: () => void;
 }
+
+/** Each count's label under the number ("Followers") and what a screen reader says ("12,345 followers"). */
+const STAT_TEXT = {
+  stories: { label: "profileHeader.stories", spoken: "profileHeader.storiesSpoken" },
+  followers: { label: "profileHeader.followers", spoken: "profileHeader.followersSpoken" },
+  following: { label: "profileHeader.following", spoken: "profileHeader.followingSpoken" },
+} as const;
 
 interface Props {
   username: string;
@@ -130,7 +136,7 @@ export function ProfileHeader({
                 {photo}
               </Pressable>
             ) : (
-              <View accessible accessibilityLabel={`${displayName}, profile photo`}>
+              <View accessible accessibilityLabel={t("profileHeader.displaynameProfilePhoto", { displayName })}>
                 {photo}
               </View>
             )}
@@ -142,8 +148,9 @@ export function ProfileHeader({
           </View>
           <View style={[styles.stats, showCover && styles.statsUnderCover]}>
             {stats.map((stat) => {
-              const label = stat.value === 1 ? stat.singular : stat.plural;
-              const spoken = stat.value === null ? stat.plural : countLabel(stat.value, stat.singular.toLowerCase(), stat.plural.toLowerCase());
+              // Unknown counts read as the plural ("Followers"), the way they look.
+              const label = t(STAT_TEXT[stat.key].label, { count: stat.value ?? 2 });
+              const spoken = stat.value === null ? label : t(STAT_TEXT[stat.key].spoken, { count: stat.value });
               const content = (
                 <>
                   <Text style={styles.statValue} numberOfLines={1} adjustsFontSizeToFit>{stat.value === null ? "—" : formatCount(stat.value)}</Text>
@@ -180,7 +187,7 @@ export function ProfileHeader({
         {interests.length > 0 ? (
           <View style={styles.chips}>
             {interests.map((interest) => (
-              <Text key={interest} style={styles.chip}>{interest}</Text>
+              <Text key={interest} style={styles.chip}>{topicLabel(interest)}</Text>
             ))}
           </View>
         ) : null}

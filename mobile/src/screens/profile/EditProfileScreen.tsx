@@ -14,7 +14,7 @@ import { profileChanged } from "../../state/storyChanges";
 import { coverFileUrl, updateMyProfile } from "../../api/users";
 import { uploadPhoto } from "../../api/media";
 import { ApiError } from "../../api/client";
-import { hasTickLikeCharacter, NAME_TICK_ERROR } from "../../api/verification";
+import { hasTickLikeCharacter, nameTickError } from "../../api/verification";
 import { usernameCheckText, usernameRefused, useUsernameAvailability } from "../../hooks/useUsernameAvailability";
 import { Avatar } from "../../components/Avatar";
 import { FadeInImage } from "../../components/FadeInImage";
@@ -24,6 +24,7 @@ import { AvatarCropper, type PickedPhoto } from "../../components/AvatarCropper"
 import { rememberLocalProfilePhoto, useProfilePhotoSource } from "../../hooks/useProfilePhotoSource";
 import { INTEREST_CHOICES, MAX_INTERESTS } from "../onboarding/OnboardingScreen";
 import { t } from "../../i18n";
+import { topicLabel } from "../../i18n/names";
 
 type Props = NativeStackScreenProps<RootStackParamList, "EditProfile">;
 
@@ -230,7 +231,7 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
           disabled={saving}
           onPress={() => openSheet("cover")}
           accessibilityRole="button"
-          accessibilityLabel={hasCover ? "Change cover photo" : "Add cover photo"}
+          accessibilityLabel={hasCover ? t("editProfile.changeCoverPhoto") : t("editProfile.addCoverPhoto")}
         >
           <View style={styles.cover}>
             {cover.kind === "new" ? (
@@ -306,7 +307,7 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
           accessibilityLabel={t("common.displayName")}
         />
         {nameMissing ? <Text style={[styles.hint, styles.unavailable]}>{t("editProfile.enterYourName")}</Text> : null}
-        {nameHasTick ? <Text style={[styles.hint, styles.unavailable]} accessibilityLiveRegion="polite">{NAME_TICK_ERROR}</Text> : null}
+        {nameHasTick ? <Text style={[styles.hint, styles.unavailable]} accessibilityLiveRegion="polite">{nameTickError()}</Text> : null}
 
         <View style={styles.labelRow}>
           <Text style={styles.label}>{t("editProfile.bio")}</Text>
@@ -337,9 +338,9 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
                 style={[styles.chip, selected && styles.chipSelected]}
                 accessibilityRole="checkbox"
                 accessibilityState={{ checked: selected }}
-                accessibilityLabel={interest}
+                accessibilityLabel={topicLabel(interest)}
               >
-                <Text style={[styles.chipLabel, selected && styles.chipLabelSelected]}>{interest}</Text>
+                <Text style={[styles.chipLabel, selected && styles.chipLabelSelected]}>{topicLabel(interest)}</Text>
               </Pressable>
             );
           })}
@@ -360,7 +361,7 @@ export function EditProfileScreen({ navigation }: Props): React.JSX.Element {
 
       <ActionSheet
         visible={sheet.open}
-        title={target === "cover" ? "Cover photo" : "Profile photo"}
+        title={target === "cover" ? t("editProfile.coverPhoto") : t("editProfile.profilePhoto")}
         groups={sheetActions}
         onClose={() => setSheet((current) => ({ ...current, open: false }))}
       />

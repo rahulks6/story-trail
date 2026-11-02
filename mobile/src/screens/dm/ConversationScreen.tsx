@@ -156,16 +156,18 @@ export function quoteSnippet(quote: QuotedMessage): string {
 }
 
 function statusLabel(row: ListRow, nameOf?: RowProps["nameOf"]): string {
-  if (row.kind === "media") return row.status === "failed" ? `${row.error ?? "Not sent"} · Tap to retry` : t("conversation.sending");
+  if (row.kind === "media") return row.status === "failed" ? (row.error != null ? t("conversation.errorTapToRetry", { error: row.error }) : t("conversation.notSentTapToRetry")) : t("conversation.sending");
   if (row.kind === "pending") {
-    if (row.status === "failed") return `${row.error ?? "Not sent"} · Tap to retry`;
+    if (row.status === "failed") return (row.error != null ? t("conversation.errorTapToRetry", { error: row.error }) : t("conversation.notSentTapToRetry"));
     return row.status === "waiting" && row.attempts > 0 ? t("conversation.waitingForConnection") : t("conversation.sending");
   }
   // A group: Seen once everyone has read it; until then, who has.
   if (row.seenBy) {
     if (row.status === "read") return t("conversation.seenByEveryone");
     const names = row.seenBy.map((id) => nameOf?.(id)).filter((n): n is string => !!n).map((n) => `@${n}`);
-    if (names.length) return `Seen by ${names.length <= 2 ? names.join(" and ") : `${names.slice(0, 2).join(", ")} and ${names.length - 2} more`}`;
+    if (names.length === 1) return t("conversation.seenByOne", { name: names[0]! });
+    if (names.length === 2) return t("conversation.seenByTwo", { first: names[0]!, second: names[1]! });
+    if (names.length) return t("conversation.seenByMore", { first: names[0]!, second: names[1]!, count: names.length - 2 });
   }
   switch (row.status) {
     case "read":
@@ -228,15 +230,15 @@ function ReactionPills({ reactions, userId, nameOf, mine, onPress }: { reactions
   const counts = new Map<string, number>();
   for (const r of reactions) counts.set(r.emoji, (counts.get(r.emoji) ?? 0) + 1);
   const ownReaction = reactions.find((r) => r.userId === userId);
-  const spoken = reactions.map((r) => `${r.emoji} from ${r.userId === userId ? "you" : nameOf(r.userId) ? `@${nameOf(r.userId)}` : "them"}`).join(", ");
+  const spoken = reactions.map((r) => (r.userId === userId ? t("conversation.emojiFromYou", { emoji: r.emoji }) : (nameOf(r.userId) ? t("conversation.emojiFromUsername", { emoji: r.emoji, username: nameOf(r.userId)! }) : t("conversation.emojiFromThem", { emoji: r.emoji })))).join(", ");
   return (
     <Pressable
       onPress={onPress}
       hitSlop={6}
       style={({ pressed }) => [styles.reactionPill, mine ? styles.reactionPillMine : styles.reactionPillTheirs, pressed && styles.reactionPillPressed]}
       accessibilityRole="button"
-      accessibilityLabel={`Reactions: ${spoken}`}
-      accessibilityHint={ownReaction ? "Removes your reaction" : "Add a reaction"}
+      accessibilityLabel={t("conversation.reactionsSpoken", { spoken })}
+      accessibilityHint={ownReaction ? t("conversation.removesYourReaction") : t("conversation.addAReaction")}
     >
       {[...counts].map(([emoji, count]) => (
         <Text key={emoji} style={styles.reactionPillText}>{count > 1 ? `${emoji} ${count}` : emoji}</Text>
@@ -298,7 +300,7 @@ function Quote({ quote, userId, labelOf, mine, onPress }: { quote: QuotedMessage
       onPress={() => onPress(quote.id)}
       style={[styles.quote, mine ? styles.quoteMine : styles.quoteTheirs]}
       accessibilityRole="button"
-      accessibilityLabel={`Replying to ${author === "You" ? "you" : author}: ${snippet}`}
+      accessibilityLabel={(author === "You" ? t("conversation.replyingToYouSnippet", { snippet }) : t("conversation.replyingToAuthorSnippet", { author, snippet }))}
       accessibilityHint={t("conversation.showsThatMessage")}
     >
       <Text style={styles.quoteAuthor} numberOfLines={1}>{author}</Text>
@@ -373,7 +375,7 @@ function MessageContent({ row, userId, nameOf, labelOf, senderLabel, accessToken
         style={styles.callLine}
         accessibilityRole="button"
         accessibilityLabel={text}
-        accessibilityHint={media === "video" ? "Starts a video call" : "Starts a voice call"}
+        accessibilityHint={media === "video" ? t("conversation.startsAVideoCall") : t("conversation.startsAVoiceCall")}
       >
         <Icon name={media === "video" ? ICONS.video : ICONS.call} size={14} color={missed ? colors.danger : colors.textSecondary} />
         <Text style={[styles.callLineText, missed && styles.callLineMissed]}>{text}</Text>
@@ -437,8 +439,8 @@ function MessageContent({ row, userId, nameOf, labelOf, senderLabel, accessToken
           {forwarded}
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={`${who}: ${forwarded ? "Forwarded " : ""}${kind === "video" ? "Video" : "Photo"}`}
-            accessibilityHint={row.kind === "media" ? (failedMedia ? "Retry or delete" : undefined) : "Opens it full screen"}
+            accessibilityLabel={(forwarded ? (kind === "video" ? t("conversation.whoForwardedVideo", { who }) : t("conversation.whoForwardedPhoto", { who })) : (kind === "video" ? t("conversation.whoVideo", { who }) : t("conversation.whoPhoto", { who })))}
+            accessibilityHint={row.kind === "media" ? (failedMedia ? t("conversation.retryOrDelete") : undefined) : t("conversation.opensItFullScreen")}
             onPress={() => {
               if (row.kind === "media") actions.onPendingMediaPress(row);
               else onTap(() => actions.onView({ id: row.media!.id, kind: kind === "video" ? "video" : "photo" }));
@@ -477,7 +479,7 @@ function MessageContent({ row, userId, nameOf, labelOf, senderLabel, accessToken
   const replyLabel = reply ? storyReplyLabel(reply, mine) : null;
   const openableStory = row.kind === "sent" ? row.sharedStoryId ?? reply?.storyId ?? null : null;
   const shared = row.kind === "sent"
-    ? (row.sharedStoryId ? (row.sharedStory ? `@${row.sharedStory.ownerUsername}'s Story${row.sharedStory.active ? "" : ", no longer available"}` : t("conversation.sharedAStory")) : replyLabel)
+    ? (row.sharedStoryId ? (row.sharedStory ? (row.sharedStory.active ? t("conversation.ownerusernameSStory", { ownerUsername: row.sharedStory.ownerUsername }) : t("conversation.ownerusernameSStoryNoLonger", { ownerUsername: row.sharedStory.ownerUsername })) : t("conversation.sharedAStory")) : replyLabel)
     : row.storyId ? t("conversation.sharedAStory") : null;
   // Bubbles show who sent what by their side of the screen; a screen reader says it.
   const spoken = [forwarded ? t("conversation.forwarded") : null, shared, row.body].filter(Boolean).join(". ");
@@ -502,10 +504,10 @@ function MessageContent({ row, userId, nameOf, labelOf, senderLabel, accessToken
             else onTap(openableStory ? () => actions.onOpenStory(openableStory) : undefined);
           }}
           onLongPress={() => actions.onLongPress(row)}
-          accessibilityLabel={`${mine ? "You" : otherUsername ? `@${otherUsername}` : "Them"}: ${spoken}`}
+          accessibilityLabel={(mine ? t("conversation.youSpoken", { spoken }) : (otherUsername ? `@${otherUsername}: ${spoken}` : t("conversation.themSpoken", { spoken })))}
           accessibilityHint={
-            row.kind === "pending" && row.status !== "sending" ? "Retry or delete this message"
-              : openableStory ? "Opens the Story" : undefined
+            row.kind === "pending" && row.status !== "sending" ? t("conversation.retryOrDeleteThisMessage")
+              : openableStory ? t("conversation.opensTheStory") : undefined
           }
           accessibilityActions={row.kind === "sent" ? [{ name: "reply", label: t("common.reply") }, { name: "react", label: t("conversation.react") }, ...(canReport ? [{ name: "report", label: t("conversation.reportMessage") }] : [])] : undefined}
           onAccessibilityAction={(event) => {
@@ -855,7 +857,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
             style={styles.header}
             hitSlop={6}
             accessibilityRole="button"
-            accessibilityLabel={`${title}${group ? `, ${group.members.length} people` : ""}`}
+            accessibilityLabel={(group ? t("conversation.titleLengthPeople", { title, length: group.members.length }) : `${title}`)}
             accessibilityHint={t("conversation.showsTheGroupsPeopleAnd")}
           >
             <GroupAvatar members={others} size={34} />
@@ -877,7 +879,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           style={styles.header}
           hitSlop={6}
           accessibilityRole="button"
-          accessibilityLabel={otherUsername ? `${otherDisplayName ?? otherUsername}${otherVerified ? ", verified" : ""}, @${otherUsername}` : "Conversation"}
+          accessibilityLabel={otherUsername ? (otherVerified ? t("conversation.otherdisplaynameVerifiedOtherusernam", { otherDisplayName: otherDisplayName ?? otherUsername, otherUsername }) : `${otherDisplayName ?? otherUsername}, @${otherUsername}`) : t("conversation.conversation")}
           accessibilityHint={t("conversation.opensTheirProfile")}
         >
           {otherUsername ? <Avatar username={otherUsername} displayName={otherDisplayName ?? otherUsername} avatarMediaId={otherAvatarMediaId ?? null} size={34} /> : null}
@@ -891,10 +893,10 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         <View style={styles.headerActions}>
           {canCall ? (
             <>
-              <Pressable onPress={() => placeCall("audio")} hitSlop={6} style={styles.headerMore} accessibilityRole="button" accessibilityLabel={`Voice call ${otherDisplayName || `@${otherUsername}`}`}>
+              <Pressable onPress={() => placeCall("audio")} hitSlop={6} style={styles.headerMore} accessibilityRole="button" accessibilityLabel={t("conversation.voiceCallOtherdisplayname", { otherDisplayName: otherDisplayName || `@${otherUsername}` })}>
                 <Icon name={ICONS.call} size={22} color={colors.textPrimary} />
               </Pressable>
-              <Pressable onPress={() => placeCall("video")} hitSlop={6} style={styles.headerMore} accessibilityRole="button" accessibilityLabel={`Video call ${otherDisplayName || `@${otherUsername}`}`}>
+              <Pressable onPress={() => placeCall("video")} hitSlop={6} style={styles.headerMore} accessibilityRole="button" accessibilityLabel={t("conversation.videoCallOtherdisplayname", { otherDisplayName: otherDisplayName || `@${otherUsername}` })}>
                 <Icon name={ICONS.video} size={24} color={colors.textPrimary} />
               </Pressable>
             </>
@@ -1484,7 +1486,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
           style={styles.pinBar}
           onPress={() => setPinsOpen(true)}
           accessibilityRole="button"
-          accessibilityLabel={`Pinned: ${messagePreview(pins[0]!.message)}${pins.length > 1 ? `, ${pins.length} pinned messages` : ""}`}
+          accessibilityLabel={(pins.length > 1 ? t("conversation.pinnedMessageLengthPinnedMessages", { message: messagePreview(pins[0]!.message), length: pins.length }) : t("conversation.pinnedMessage", { message: messagePreview(pins[0]!.message) }))}
           accessibilityHint={t("conversation.showsThePinnedMessages")}
         >
           <Icon name={ICONS.pin} size={16} color={colors.textSecondary} />
@@ -1571,7 +1573,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
                     style={({ pressed }) => [styles.reactKey, chosen && styles.reactKeyChosen, pressed && styles.reactKeyPressed]}
                     accessibilityRole="menuitem"
                     accessibilityState={{ selected: chosen }}
-                    accessibilityLabel={chosen ? `Remove ${emoji}` : `React ${emoji}`}
+                    accessibilityLabel={chosen ? t("conversation.removeEmoji", { emoji }) : t("conversation.reactEmoji", { emoji })}
                   >
                     <Text style={styles.reactGlyph}>{emoji}</Text>
                   </Pressable>
@@ -1616,7 +1618,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
                       void togglePin(target);
                     }}
                     accessibilityRole="button"
-                    accessibilityLabel={pinned ? "Unpin" : "Pin"}
+                    accessibilityLabel={pinned ? t("conversation.unpin") : t("conversation.pin")}
                   >
                     <Text style={styles.menuText}>{pinned ? t("conversation.unpin") : t("conversation.pin")}</Text>
                     <Icon name={ICONS.pin} size={18} color={colors.textPrimary} />
@@ -1693,7 +1695,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
                     <Text style={styles.pinRowAuthor} numberOfLines={1}>{author}</Text>
                     <Text style={styles.pinRowBody} numberOfLines={3}>{preview}</Text>
                   </Pressable>
-                  <Pressable style={styles.unpinButton} onPress={() => void togglePin(pin.message)} hitSlop={6} accessibilityRole="button" accessibilityLabel={`Unpin ${preview}`}>
+                  <Pressable style={styles.unpinButton} onPress={() => void togglePin(pin.message)} hitSlop={6} accessibilityRole="button" accessibilityLabel={t("conversation.unpinPreview", { preview })}>
                     <Text style={styles.unpinText}>{t("conversation.unpin")}</Text>
                   </Pressable>
                 </View>

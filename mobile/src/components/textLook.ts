@@ -18,10 +18,7 @@ const FONTS: Record<TextStyle, { android?: string; ios?: string; weight?: RNText
   Highlight: { weight: "700" },
 };
 
-/** The names people see. "Highlight" is stored for compatibility and shown as Neon (a glow). */
-export const STYLE_LABELS: Record<TextStyle, string> = {
-  Clean: "Clean", Bold: "Strong", Classic: "Classic", Modern: "Modern", Typewriter: "Typewriter", Outline: "Outline", Soft: "Script", Highlight: "Neon",
-};
+
 
 export const TEXT_STYLES: TextStyle[] = ["Clean", "Bold", "Classic", "Modern", "Typewriter", "Outline", "Soft", "Highlight"];
 

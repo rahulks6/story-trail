@@ -969,7 +969,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         style={[styles.progressRow, chrome, { top: insets.top + spacing.sm }]}
         accessible
         accessibilityRole="progressbar"
-        accessibilityLabel={`Story ${currentStoryIndex + 1} of ${currentStories?.length ?? 1}`}
+        accessibilityLabel={t("storyFeed.storyValueOfLength", { value: currentStoryIndex + 1, length: currentStories?.length ?? 1 })}
       >
         {currentStories?.map((s, i) => (
           <View key={s.id} style={styles.progressTrack}>
@@ -994,12 +994,12 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
             hitSlop={10}
             style={styles.actionButton}
             accessibilityRole="button"
-            accessibilityLabel={muted ? "Sound off, tap to turn on" : "Sound on, tap to mute"}
+            accessibilityLabel={muted ? t("storyFeed.soundOffTapToTurn") : t("storyFeed.soundOnTapToMute")}
           >
             <Icon style={styles.actionIcon} name={muted ? ICONS.audioMuted : ICONS.audioOn} />
           </Pressable>
         ) : null}
-        <Pressable onPress={toggleLike} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel={detail?.viewerHasLiked ? "Unlike" : "Like"}>
+        <Pressable onPress={toggleLike} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel={detail?.viewerHasLiked ? t("storyFeed.unlike") : t("storyFeed.like")}>
           <Icon style={[styles.actionIcon, detail?.viewerHasLiked && styles.actionIconLiked]} name={detail?.viewerHasLiked ? ICONS.liked : ICONS.like} />
           <Text style={styles.actionCount} maxFontSizeMultiplier={1.3}>{detail?.likeCount ?? "—"}</Text>
         </Pressable>
@@ -1037,26 +1037,26 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
               <View style={styles.avatarRing}><Avatar username={liveCollab.owner.username} avatarMediaId={liveCollab.owner.avatarMediaId} size={30} /></View>
               <View style={[styles.avatarRing, styles.collabSecond]}><Avatar username={liveCollab.collaborator.username} avatarMediaId={liveCollab.collaborator.avatarMediaId} size={30} /></View>
             </View>
-            <Pressable onPress={() => onOpenProfile(liveCollab.owner.username)} hitSlop={6} style={styles.usernameRow} accessibilityRole="button" accessibilityLabel={`Open @${liveCollab.owner.username}'s profile`}>
+            <Pressable onPress={() => onOpenProfile(liveCollab.owner.username)} hitSlop={6} style={styles.usernameRow} accessibilityRole="button" accessibilityLabel={t("storyFeed.openUsernameSProfile", { username: liveCollab.owner.username })}>
               <VerifiedName name={liveCollab.owner.username} verified={liveCollab.owner.verified} style={styles.username} />
             </Pressable>
             <Text style={styles.postedAgo}>{t("common.and")}</Text>
-            <Pressable onPress={() => onOpenProfile(liveCollab.collaborator.username)} hitSlop={6} style={styles.usernameRow} accessibilityRole="button" accessibilityLabel={`Open @${liveCollab.collaborator.username}'s profile`}>
+            <Pressable onPress={() => onOpenProfile(liveCollab.collaborator.username)} hitSlop={6} style={styles.usernameRow} accessibilityRole="button" accessibilityLabel={t("storyFeed.openUsernameSProfile", { username: liveCollab.collaborator.username })}>
               <VerifiedName name={liveCollab.collaborator.username} verified={liveCollab.collaborator.verified} style={styles.username} />
             </Pressable>
-            <Text style={styles.postedAgo}>{timeAgo(currentStory.createdAt).replace(" ago", "")}</Text>
+            <Text style={styles.postedAgo}>{timeAgo(currentStory.createdAt, Date.now(), "short")}</Text>
           </View>
         ) : (
-          <Pressable onPress={() => currentUsername && onOpenProfile(currentUsername)} hitSlop={8} style={styles.headerWho} accessibilityRole="button" accessibilityLabel={`Open @${currentUsername ?? ""}'s profile`}>
+          <Pressable onPress={() => currentUsername && onOpenProfile(currentUsername)} hitSlop={8} style={styles.headerWho} accessibilityRole="button" accessibilityLabel={t("storyFeed.openCurrentusernameSProfile", { currentUsername: currentUsername ?? "" })}>
             <View style={styles.avatarRing}>
               <Avatar username={currentUsername ?? ""} size={30} />
             </View>
             <VerifiedName name={currentUsername ?? ""} verified={!!currentUsername && !!verified?.[currentUsername]} style={styles.username} containerStyle={styles.usernameRow} />
-            <Text style={styles.postedAgo}>{timeAgo(currentStory.createdAt).replace(" ago", "")}</Text>
+            <Text style={styles.postedAgo}>{timeAgo(currentStory.createdAt, Date.now(), "short")}</Text>
           </Pressable>
         )}
         {showFollow ? (
-          <Pressable onPress={followed ? undefined : () => void follow()} disabled={followed} hitSlop={8} style={[styles.followButton, followed && styles.followingButton]} accessibilityRole="button" accessibilityLabel={followState === "requested" ? `Requested to follow @${currentUsername}` : followed ? `Following @${currentUsername}` : `Follow @${currentUsername}`}>
+          <Pressable onPress={followed ? undefined : () => void follow()} disabled={followed} hitSlop={8} style={[styles.followButton, followed && styles.followingButton]} accessibilityRole="button" accessibilityLabel={followState === "requested" ? t("storyFeed.requestedToFollowCurrentusername", { currentUsername }) : followed ? t("storyFeed.followingCurrentusername", { currentUsername }) : t("storyFeed.followCurrentusername", { currentUsername })}>
             <Text style={styles.followLabel}>{followState === "requested" ? t("common.requested") : followed ? t("common.following") : t("common.follow")}</Text>
           </Pressable>
         ) : null}
@@ -1079,7 +1079,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
               hitSlop={6}
               onPress={() => Alert.alert(currentStory.music!.title, t("storyFeed.attributionLicenceLicenseLicenseurl", { attribution: currentStory.music!.attribution, license: currentStory.music!.license, licenseUrl: currentStory.music!.licenseUrl }))}
               accessibilityRole="button"
-              accessibilityLabel={`Music: ${currentStory.music.title} by ${currentStory.music.artist}`}
+              accessibilityLabel={t("storyFeed.musicTitleByArtist", { title: currentStory.music.title, artist: currentStory.music.artist })}
               accessibilityHint={t("storyFeed.showsTheSongsCredit")}
             >
               <Icon name={ICONS.music} size={13} color="#FFFFFF" />
@@ -1106,12 +1106,12 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       {/* Like Instagram: write a comment under someone's Story; your own shows who has seen it. */}
       <View style={[styles.bottomBar, chrome, { bottom: spacing.md + insets.bottom }]} pointerEvents={paused ? "none" : "auto"}>
         {isOwnStory ? (
-          <Pressable onPress={() => setInsightsOpen(true)} style={styles.activityButton} accessibilityRole="button" accessibilityLabel={`Activity, ${viewCount ?? 0} views. Open viewers and Insights`}>
+          <Pressable onPress={() => setInsightsOpen(true)} style={styles.activityButton} accessibilityRole="button" accessibilityLabel={t("storyFeed.activityViewcountViewsOpenViewers", { viewCount: viewCount ?? 0 })}>
             <Icon name={ICONS.viewers} size={22} color={colors.textPrimary} />
-            <Text style={styles.activityLabel}>{viewCount === null ? t("common.activity") : `${viewCount} ${viewCount === 1 ? "view" : "views"}`}</Text>
+            <Text style={styles.activityLabel}>{viewCount === null ? t("common.activity") : t("storyFeed.views", { count: viewCount })}</Text>
           </Pressable>
         ) : currentStory.allowComments === "disabled" ? (
-          <Pressable onPress={() => setReplyOpen(true)} style={styles.commentBar} accessibilityRole="button" accessibilityLabel={`Send a message to @${currentUsername ?? ""}`}>
+          <Pressable onPress={() => setReplyOpen(true)} style={styles.commentBar} accessibilityRole="button" accessibilityLabel={t("storyFeed.sendAMessageToCurrentusername", { currentUsername: currentUsername ?? "" })}>
             <Text style={styles.commentPlaceholder}>{t("storyFeed.sendAMessage")}</Text>
           </Pressable>
         ) : (
@@ -1130,7 +1130,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         )}
         {!isOwnStory && currentStory.allowComments !== "disabled" ? (
           // A private reply goes to their messages (comments are public).
-          <Pressable onPress={() => setReplyOpen(true)} hitSlop={8} style={styles.replyButton} accessibilityRole="button" accessibilityLabel={`Message @${currentUsername ?? ""} privately`}>
+          <Pressable onPress={() => setReplyOpen(true)} hitSlop={8} style={styles.replyButton} accessibilityRole="button" accessibilityLabel={t("storyFeed.messageCurrentusernamePrivately", { currentUsername: currentUsername ?? "" })}>
             <Icon name={ICONS.dm} size={26} color={colors.textPrimary} />
           </Pressable>
         ) : null}
@@ -1154,10 +1154,10 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         <View style={[styles.inviteBanner, chrome, { top: insets.top + spacing.lg + 52 }]} pointerEvents={paused ? "none" : "auto"}>
           <Text style={styles.inviteText} numberOfLines={2}>{t("storyFeed.usernameInvitedYouToCollab", { username: invitedToCollab.owner.username })}</Text>
           <View style={styles.inviteButtons}>
-            <Pressable onPress={() => void respondToInvite(true)} disabled={collabBusy} style={[styles.inviteButton, styles.inviteAccept]} accessibilityRole="button" accessibilityLabel={`Accept @${invitedToCollab.owner.username}'s collab invitation`}>
+            <Pressable onPress={() => void respondToInvite(true)} disabled={collabBusy} style={[styles.inviteButton, styles.inviteAccept]} accessibilityRole="button" accessibilityLabel={t("storyFeed.acceptUsernameSCollabInvitation", { username: invitedToCollab.owner.username })}>
               <Text style={styles.inviteAcceptLabel}>{t("common.accept")}</Text>
             </Pressable>
-            <Pressable onPress={() => void respondToInvite(false)} disabled={collabBusy} style={styles.inviteButton} accessibilityRole="button" accessibilityLabel={`Decline @${invitedToCollab.owner.username}'s collab invitation`}>
+            <Pressable onPress={() => void respondToInvite(false)} disabled={collabBusy} style={styles.inviteButton} accessibilityRole="button" accessibilityLabel={t("storyFeed.declineUsernameSCollabInvitation", { username: invitedToCollab.owner.username })}>
               <Text style={styles.inviteDeclineLabel}>{t("common.decline")}</Text>
             </Pressable>
           </View>

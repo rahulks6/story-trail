@@ -7,6 +7,7 @@ import { callIdFromLink } from "../navigation/profileLinks";
 import { deepLinkTarget, linkPath } from "../navigation/profileLinks";
 import { colors, radii, spacing, typography } from "../theme";
 import { tapFeedback } from "../utils/haptics";
+import { t } from "../i18n";
 
 const VISIBLE_MS = 4000;
 
@@ -91,7 +92,7 @@ export function InAppNotificationBanner({ currentRoute, open }: Props): React.JS
           }}
           accessibilityRole="button"
           accessibilityLabel={`${notice.title}. ${notice.body}`}
-          accessibilityHint={notice.url ? "Opens it" : undefined}
+          accessibilityHint={notice.url ? t("inAppNotificationBanner.opensIt") : undefined}
         >
           <Text style={styles.title} numberOfLines={1}>{notice.title}</Text>
           {notice.body ? <Text style={styles.body} numberOfLines={2}>{notice.body}</Text> : null}

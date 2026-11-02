@@ -9,7 +9,7 @@ import { t } from "../i18n";
 export function groupEventText(event: GroupEvent, actor: string, nameOf: (userId: string) => string): string {
   const people = (ids: string[]) => {
     const names = ids.map(nameOf);
-    return names.length <= 2 ? names.join(" and ") : `${names.slice(0, 2).join(", ")} and ${names.length - 2} more`;
+    return names.length <= 2 ? names.join(" and ") : t("groupEvents.andLengthMore", { value: names.slice(0, 2).join(", "), length: names.length - 2 });
   };
   switch (event.type) {
     case "created":

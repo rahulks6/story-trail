@@ -49,8 +49,8 @@ export function InviteLinkScreen({ navigation, route }: Props): React.JSX.Elemen
     return (
       <View style={styles.root}>
         <EmptyState
-          title={problem === "invalid" ? "This invite link doesn't work" : "Couldn't open this invite"}
-          message={problem === "invalid" ? "Ask your friend to send their link again." : "Check your connection and try again."}
+          title={problem === "invalid" ? t("inviteLink.thisInviteLinkDoesntWork") : t("inviteLink.couldntOpenThisInvite")}
+          message={problem === "invalid" ? t("inviteLink.askYourFriendToSend") : t("inviteLink.checkYourConnectionAndTry")}
         />
         <View style={styles.actions}>
           {problem === "offline" ? <Button label={t("common.tryAgain")} onPress={() => setAttempt((n) => n + 1)} /> : null}
@@ -99,7 +99,7 @@ export function InviteLinkScreen({ navigation, route }: Props): React.JSX.Elemen
       </View>
       <View style={styles.actions}>
         <Button
-          label={follow === "following" ? "Following" : follow === "requested" ? "Requested" : `Follow @${inviter.username}`}
+          label={follow === "following" ? t("common.following") : follow === "requested" ? t("common.requested") : t("inviteLink.followUsername", { username: inviter.username })}
           busy={follow === "busy"}
           disabled={follow === "following" || follow === "requested"}
           onPress={() => void onFollow()}

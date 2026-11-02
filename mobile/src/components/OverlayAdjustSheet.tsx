@@ -127,7 +127,7 @@ export function OverlayAdjustSheet({ overlay, onChange, onEditText, onEditLocati
               onClose();
             }}
             accessibilityRole="button"
-            accessibilityLabel={shown.type === "location" ? "Edit location" : shown.type === "datetime" ? "Edit date or time" : "Edit sticker"}
+            accessibilityLabel={shown.type === "location" ? t("overlayAdjustSheet.editLocation") : shown.type === "datetime" ? t("overlayAdjustSheet.editDateOrTime") : t("overlayAdjustSheet.editSticker")}
           >
             <Text style={styles.secondaryButtonLabel}>{shown.type === "location" ? t("overlayAdjustSheet.editLocation") : shown.type === "datetime" ? t("overlayAdjustSheet.editDateAndTime") : t("overlayAdjustSheet.editSticker")}</Text>
           </Pressable>

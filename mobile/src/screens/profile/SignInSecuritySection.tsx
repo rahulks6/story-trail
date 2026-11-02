@@ -15,7 +15,7 @@ import {
 import { Banner, Button, TextField } from "../../components/Form";
 import { deviceLabel } from "../../utils/devices";
 import { serverDate } from "../../utils/serverTime";
-import { t } from "../../i18n";
+import { localeTag, t } from "../../i18n";
 
 const EVENT_LABELS: Record<SecurityEvent["kind"], string> = {
   get login_succeeded() { return t("signInSecuritySection.signedIn"); },
@@ -36,7 +36,7 @@ function when(iso: string): string {
   if (minutes < 1) return t("signInSecuritySection.justNow");
   if (minutes < 60) return t("signInSecuritySection.minutesMinAgo", { minutes });
   if (minutes < 24 * 60) return t("signInSecuritySection.valueHAgo", { value: Math.round(minutes / 60) });
-  return date.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+  return date.toLocaleDateString(localeTag(), { day: "numeric", month: "short", year: "numeric" });
 }
 
 /** Password change, signed-in devices and recent security activity for Account security. */
@@ -124,7 +124,7 @@ export function SignInSecuritySection({ hasPassword }: { hasPassword: boolean })
           setBusy("others");
           try {
             const { ended } = await endOtherSessions(accessToken);
-            setNotice({ text: ended ? `Signed out ${ended} other device${ended === 1 ? "" : "s"}.` : t("signInSecuritySection.noOtherDevicesWereSigned"), tone: "success" });
+            setNotice({ text: ended ? t("signInSecuritySection.signedOutOtherDevices", { count: ended }) : t("signInSecuritySection.noOtherDevicesWereSigned"), tone: "success" });
             await load();
           } catch (error) {
             setNotice({ text: error instanceof ApiError ? error.message : t("signInSecuritySection.couldntSignOutOtherDevices"), tone: "error" });
@@ -163,7 +163,7 @@ export function SignInSecuritySection({ hasPassword }: { hasPassword: boolean })
         ) : (
           <>
             {sessions.map((session) => (
-              <View key={session.id} style={styles.row} accessible accessibilityLabel={`${deviceLabel(session.userAgent)}${session.current ? ", this device" : ""}, last active ${when(session.lastUsedAt)}`}>
+              <View key={session.id} style={styles.row} accessible accessibilityLabel={(session.current ? t("signInSecuritySection.useragentThisDeviceLastActive", { userAgent: deviceLabel(session.userAgent), lastUsedAt: when(session.lastUsedAt) }) : t("signInSecuritySection.useragentLastActiveLastusedat", { userAgent: deviceLabel(session.userAgent), lastUsedAt: when(session.lastUsedAt) }))}>
                 <View style={styles.rowText}>
                   <Text style={typography.bodyStrong}>
                     {deviceLabel(session.userAgent)}

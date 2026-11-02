@@ -7,7 +7,7 @@ import {useHeaderHeight} from '@react-navigation/elements';
 import {KeyboardAvoider} from '../../components/KeyboardAvoider';
 import {colors} from '../../theme';
 import {serverDate} from '../../utils/serverTime';
-import { t } from "../../i18n";
+import { localeTag, t } from "../../i18n";
 type Notice={actionId:string;action:string;reason:string;createdAt:string;appealStatus:string|null;
  /** Removals, restrictions and suspensions without an appeal yet (older servers omit this). */
  appealable?:boolean};
@@ -25,7 +25,7 @@ export function AppealsScreen():React.JSX.Element {
   <Text style={styles.text}>{t("appeals.youCanRequestAReview")}</Text>
   {!access?<><TextInput style={styles.input} value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" placeholder={t("common.email")} placeholderTextColor={colors.textSecondary} accessibilityLabel={t("common.email")}/><TextInput style={styles.input} value={password} onChangeText={setPassword} secureTextEntry placeholder={t("common.password")} placeholderTextColor={colors.textSecondary} accessibilityLabel={t("common.password")}/><Pressable accessibilityRole="button" style={styles.button} disabled={busy||!email||!password} onPress={()=>void run(()=>verify({email,password}))}><Text style={styles.text}>{t("appeals.viewNotices")}</Text></Pressable><ProviderEntry onProof={provider}/></>:<>
    {!access.items.length&&<Text style={styles.text}>{t("appeals.noModerationNoticesForThis")}</Text>}
-   {access.items.map(n=><Pressable accessibilityRole="button" key={n.actionId} disabled={!!n.appealStatus||n.appealable===false} style={[styles.button,selected===n.actionId&&styles.selected]} onPress={()=>setSelected(n.actionId)}><Text style={styles.text}>{n.action.replace(/_/g,' ')} · {(serverDate(n.createdAt)?.toLocaleDateString() ?? "")}</Text><Text style={styles.text}>{n.reason}</Text><Text style={styles.text}>{n.appealStatus?'Appeal: '+(n.appealStatus==='UPHELD'?'accepted — the decision was reversed':n.appealStatus==='DENIED'?'reviewed — the decision stands':'waiting for review'):n.appealable===false?t("appeals.thisNoticeIsForYour"):t("appeals.tapToRequestAReview")}</Text></Pressable>)}
+   {access.items.map(n=><Pressable accessibilityRole="button" key={n.actionId} disabled={!!n.appealStatus||n.appealable===false} style={[styles.button,selected===n.actionId&&styles.selected]} onPress={()=>setSelected(n.actionId)}><Text style={styles.text}>{n.action.replace(/_/g,' ')} · {(serverDate(n.createdAt)?.toLocaleDateString(localeTag()) ?? "")}</Text><Text style={styles.text}>{n.reason}</Text><Text style={styles.text}>{n.appealStatus?(n.appealStatus==='UPHELD'?t("appeals.appealAccepted"):n.appealStatus==='DENIED'?t("appeals.appealDenied"):t("appeals.appealWaiting")):n.appealable===false?t("appeals.thisNoticeIsForYour"):t("appeals.tapToRequestAReview")}</Text></Pressable>)}
    {selected&&<><TextInput style={styles.input} multiline maxLength={1000} value={reason} onChangeText={setReason} placeholder={t("appeals.explainWhyThisDecisionShould")} placeholderTextColor={colors.textSecondary} accessibilityLabel={t("appeals.appealReason")}/><Pressable accessibilityRole="button" style={styles.button} disabled={busy||!reason.trim()} onPress={submit}><Text style={styles.text}>{t("appeals.submitAppeal")}</Text></Pressable></>}
    <Pressable accessibilityRole="button" style={styles.button} onPress={()=>{setAccess(null);setSelected(null);}}><Text style={styles.text}>{t("common.verifyAgain")}</Text></Pressable>
   </>}

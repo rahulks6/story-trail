@@ -41,7 +41,7 @@ export const TextField = forwardRef<React.ComponentRef<typeof TextInput>, TextFi
             hitSlop={12}
             style={styles.reveal}
             accessibilityRole="button"
-            accessibilityLabel={revealed ? `Hide ${label.toLowerCase()}` : `Show ${label.toLowerCase()}`}
+            accessibilityLabel={revealed ? t("form.hideLabel", { label: label.toLowerCase() }) : t("form.showLabel", { label: label.toLowerCase() })}
           >
             <Text style={styles.revealText}>{revealed ? t("form.hide") : t("form.show")}</Text>
           </Pressable>

@@ -114,7 +114,7 @@ export function RecipientPicker({ chosen, onToggle, emptyHint }: Props): React.J
         renderItem={({ item }) => {
           const on = chosen.has(item.key);
           return (
-            <Pressable style={styles.row} onPress={() => onToggle(item)} accessibilityRole="checkbox" accessibilityState={{ checked: on }} accessibilityLabel={`${item.name}${item.verified ? ", verified" : ""}, ${item.detail}`}>
+            <Pressable style={styles.row} onPress={() => onToggle(item)} accessibilityRole="checkbox" accessibilityState={{ checked: on }} accessibilityLabel={(item.verified ? t("recipientPicker.nameVerifiedDetail", { name: item.name, detail: item.detail }) : `${item.name}, ${item.detail}`)}>
               {item.picture}
               <View style={styles.rowText}>
                 <VerifiedName name={item.name} verified={item.verified} style={typography.bodyStrong} />

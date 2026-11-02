@@ -12,7 +12,7 @@ export function StreakBadge({ streak, own }: { streak: PostingStreak | null | un
   if (!streak || streak.days < 1) return null;
   const remind = own && !streak.postedToday;
   return (
-    <View style={styles.badge} accessible accessibilityLabel={`${streak.days}-day posting streak${remind ? ". Post today to keep it" : ""}`}>
+    <View style={styles.badge} accessible accessibilityLabel={(remind ? t("streakBadge.daysDayPostingStreakPost", { days: streak.days }) : t("streakBadge.daysDayPostingStreak", { days: streak.days }))}>
       <Text style={styles.label}>{t("streakBadge.daysDayStreak", { days: streak.days })}</Text>
       {remind ? <Text style={styles.hint}>{t("streakBadge.postTodayToKeepIt")}</Text> : null}
     </View>

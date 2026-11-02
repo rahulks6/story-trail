@@ -164,7 +164,7 @@ function DraggableGridItem({
           {...responder.panHandlers}
           style={styles.fill}
           accessible
-          accessibilityLabel={accessibilityLabel ? `Reorder ${accessibilityLabel}` : "Reorder item"}
+          accessibilityLabel={accessibilityLabel ? t("draggableGrid.reorderAccessibilitylabel", { accessibilityLabel }) : t("draggableGrid.reorderItem")}
           accessibilityHint={t("draggableGrid.useTheActionsMenuTo")}
           accessibilityActions={[
             { name: "moveUp", label: t("draggableGrid.moveEarlierInOrder") },

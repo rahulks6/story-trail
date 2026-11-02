@@ -8,11 +8,11 @@ import { colors, radii, spacing, typography } from "../../theme";
 import { t } from "../../i18n";
 
 /** The public pages the stores also link to (build-config.json; published at katkee.com). */
-const LINKS = [
-  ["Privacy Policy", buildConfig.privacyPolicyUrl],
-  ["Terms of Service", buildConfig.termsUrl],
-  ["Help Center", buildConfig.supportUrl],
-] as const;
+const links = (): [string, string][] => [
+  [t("common.privacyPolicy"), buildConfig.privacyPolicyUrl],
+  [t("about.termsOfService"), buildConfig.termsUrl],
+  [t("about.helpCenter"), buildConfig.supportUrl],
+];
 
 export function openPublicPage(url: string): void {
   void Linking.openURL(url).catch(() => Alert.alert(t("about.couldNotOpenLink"), t("common.pleaseTryAgain")));
@@ -29,7 +29,7 @@ export function AboutScreen(): React.JSX.Element {
         <Text style={[typography.body, styles.tagline]}>{t("common.storyThatConnects")}</Text>
       </View>
       <View style={styles.card}>
-        {LINKS.filter(([, url]) => !!url).map(([label, url]) => (
+        {links().filter(([, url]) => !!url).map(([label, url]) => (
           <ListRow key={label} label={label} onPress={() => openPublicPage(url)} />
         ))}
       </View>

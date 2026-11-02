@@ -6,7 +6,7 @@ import { colors, spacing } from "../../theme";
 import { tapFeedback } from "../../utils/haptics";
 import type { DashboardDay } from "../../api/professional";
 import { barPath, growthColors } from "./barPath";
-import { t } from "../../i18n";
+import { localeTag, t } from "../../i18n";
 
 const HEIGHT = 140;
 const GAP = 2;
@@ -14,7 +14,7 @@ const GAP = 2;
 /** "Tue 28 Oct" for a YYYY-MM-DD day (a calendar day, so it is read without a time zone). */
 export function dayLabel(day: string, options: Intl.DateTimeFormatOptions = { weekday: "short", day: "numeric", month: "short" }): string {
   const [y, m, d] = day.split("-").map(Number);
-  return new Date(Date.UTC(y!, (m ?? 1) - 1, d ?? 1)).toLocaleDateString(undefined, { ...options, timeZone: "UTC" });
+  return new Date(Date.UTC(y!, (m ?? 1) - 1, d ?? 1)).toLocaleDateString(localeTag(), { ...options, timeZone: "UTC" });
 }
 
 /** What one day says, for the line above the chart and for screen readers. */

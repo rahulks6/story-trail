@@ -253,7 +253,7 @@ export function groupName(title: string | null | undefined, people: Array<{ disp
   const names = people.slice(0, 2).map((p) => p.displayName.split(" ")[0] || p.displayName);
   const rest = (total ?? people.length) - names.length;
   if (!names.length) return t("common.group");
-  return rest > 0 ? `${names.join(", ")} and ${rest} other${rest === 1 ? "" : "s"}` : names.join(" and ");
+  return rest > 0 ? t("conversations.andOthers", { value: names.join(", "), count: rest }) : names.join(" and ");
 }
 
 export function getUnreadConversationCount(accessToken: string): Promise<{ count: number }> {

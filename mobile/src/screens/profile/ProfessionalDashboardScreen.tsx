@@ -37,7 +37,7 @@ export function changeText(current: number, previous: number, days: number): str
   if (previous <= 0) return null;
   const change = Math.round(((current - previous) / previous) * 100);
   if (change === 0) return t("professionalDashboard.sameAsThePreviousDays", { days });
-  return `${change > 0 ? "+" : "−"}${Math.abs(change)}% vs the previous ${days} days`;
+  return (change > 0 ? t("professionalDashboard.changeVsThePreviousDays", { change: Math.abs(change), days }) : t("professionalDashboard.changeVsThePreviousDays2", { change: Math.abs(change), days }));
 }
 
 /** "+3", "−2" or "0" for a net change. */
@@ -162,7 +162,7 @@ export function ProfessionalDashboardScreen({ navigation }: Props): React.JSX.El
         <View style={[styles.body, stale && styles.stale]} accessibilityState={{ busy: stale }}>
           <Text style={styles.period}>{dayLabel(data.from, { day: "numeric", month: "short" })} – {dayLabel(data.to, { day: "numeric", month: "short" })}</Text>
 
-          <View style={styles.hero} accessible accessibilityLabel={`Accounts reached: ${data.summary.accountsReached}. ${changeText(data.summary.accountsReached, data.previous.accountsReached, data.days) ?? ""}`}>
+          <View style={styles.hero} accessible accessibilityLabel={t("professionalDashboard.accountsReachedAccountsreachedAccoun", { accountsReached: data.summary.accountsReached, accountsReached2: changeText(data.summary.accountsReached, data.previous.accountsReached, data.days) ?? "" })}>
             <Text style={styles.heroValue}>{formatCount(data.summary.accountsReached)}</Text>
             <Text style={styles.heroLabel}>{t("professionalDashboard.accountsReached")}</Text>
             {changeText(data.summary.accountsReached, data.previous.accountsReached, data.days) ? (
@@ -189,8 +189,8 @@ export function ProfessionalDashboardScreen({ navigation }: Props): React.JSX.El
           <Card
             title={t("common.followers")}
             subtitle={data.summary.followersNet === null
-              ? `${formatCount(data.summary.followers)} followers · changes counted since ${dayLabel(data.followerHistorySince, { day: "numeric", month: "short" })}`
-              : `${formatCount(data.summary.followers)} followers · ${signed(data.summary.followersNet)} in this period`}
+              ? t("professionalDashboard.countFollowersCountedSince", { count: formatCount(data.summary.followers), since: dayLabel(data.followerHistorySince, { day: "numeric", month: "short" }) })
+              : t("professionalDashboard.countFollowersFollowersnetInThis", { count: formatCount(data.summary.followers), followersNet: signed(data.summary.followersNet) })}
           >
             <FollowerGrowthChart days={data.daily} />
           </Card>
@@ -206,7 +206,7 @@ export function ProfessionalDashboardScreen({ navigation }: Props): React.JSX.El
                     style={styles.topStory}
                     onPress={() => navigation.navigate("ArchivedStoryViewer", { storyId: s.id })}
                     accessibilityRole="button"
-                    accessibilityLabel={`Number ${i + 1}, posted ${timeAgo(s.createdAt)}: ${s.views} views, ${s.likes} likes, ${s.replies} replies, ${s.shares} shares`}
+                    accessibilityLabel={t("professionalDashboard.numberValuePostedCreatedatViews", { value: i + 1, createdAt: timeAgo(s.createdAt), views: s.views, likes: s.likes, replies: s.replies, shares: s.shares })}
                     accessibilityHint={t("professionalDashboard.opensTheStory")}
                   >
                     <FadeInImage
@@ -231,7 +231,7 @@ export function ProfessionalDashboardScreen({ navigation }: Props): React.JSX.El
             {data.audience.status === "ready" ? (
               <>
                 <ActiveHoursChart hours={data.audience.hours} peakHour={data.audience.peakHour} />
-                <Text style={styles.muted}>{t("professionalDashboard.mostActive")}{" "}{hourRange(data.audience.peakHour)}.{data.audience.sampled ? t("professionalDashboard.basedOnYourNewest10") : ""}
+                <Text style={styles.muted}>{t("professionalDashboard.mostActiveHours", { hours: hourRange(data.audience.peakHour) })}{data.audience.sampled ? t("professionalDashboard.basedOnYourNewest10") : ""}
                 </Text>
               </>
             ) : (

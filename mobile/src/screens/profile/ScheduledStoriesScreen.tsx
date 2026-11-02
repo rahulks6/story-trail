@@ -129,12 +129,12 @@ export function ScheduledStoriesScreen(_props: Props): React.JSX.Element {
                 {item.media?.status === "processing" && !failedOne ? <Text style={styles.meta}>{t("scheduledStories.stillProcessingItPostsOnce")}</Text> : null}
                 <View style={styles.actions}>
                   {!failedOne ? (
-                    <Pressable style={styles.action} onPress={() => setEditing(item)} accessibilityRole="button" accessibilityLabel={`Reschedule the Story for ${when}`}>
+                    <Pressable style={styles.action} onPress={() => setEditing(item)} accessibilityRole="button" accessibilityLabel={t("scheduledStories.rescheduleTheStoryForWhen", { when })}>
                       <Icon name={ICONS.timer} size={16} color={colors.textPrimary} />
                       <Text style={styles.actionLabel}>{t("scheduledStories.reschedule")}</Text>
                     </Pressable>
                   ) : null}
-                  <Pressable style={styles.action} onPress={() => onCancel(item)} accessibilityRole="button" accessibilityLabel={failedOne ? "Remove from this list" : `Cancel the Story scheduled for ${when}`}>
+                  <Pressable style={styles.action} onPress={() => onCancel(item)} accessibilityRole="button" accessibilityLabel={failedOne ? t("scheduledStories.removeFromThisList2") : t("scheduledStories.cancelTheStoryScheduledFor", { when })}>
                     <Icon name={ICONS.close} size={16} color={colors.danger} />
                     <Text style={[styles.actionLabel, styles.cancelLabel]}>{failedOne ? t("common.remove") : t("common.cancel")}</Text>
                   </Pressable>

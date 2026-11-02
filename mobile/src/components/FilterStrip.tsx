@@ -5,6 +5,8 @@ import { colors, radii, spacing } from "../theme";
 import { FILTER_PREVIEWS, type FilterKey, type FilterPreview } from "../models/filterPreviews";
 import { filterKey, type FilterName } from "../models/storyDraft";
 import { filteredPhotoUri } from "../utils/filterPhoto";
+import { t } from "../i18n";
+import { filterLabel } from "../i18n/names";
 
 const THUMB_EDGE = 160;
 
@@ -34,14 +36,14 @@ export const FilterStrip = memo(function FilterStrip({
             onPress={() => onSelect(f.name)}
             style={styles.item}
             accessibilityRole="button"
-            accessibilityLabel={`${f.name} filter`}
+            accessibilityLabel={t("filterStrip.nameFilter", { name: filterLabel(f.name) })}
             accessibilityState={{ selected: active }}
           >
             <View style={[styles.thumbFrame, active && styles.thumbFrameActive]}>
               {kind === "photo" ? <PhotoThumb uri={mediaUri} filter={f.name} /> : <Swatch preview={f} />}
             </View>
             <Text style={[styles.label, active && styles.labelActive]} numberOfLines={1}>
-              {f.name}
+              {filterLabel(f.name)}
             </Text>
           </Pressable>
         );

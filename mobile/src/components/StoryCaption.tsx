@@ -60,7 +60,7 @@ export function StoryCaption({ text, expanded = false, onToggle }: Props): React
       pressEffect="none"
       accessibilityRole="button"
       accessibilityLabel={text}
-      accessibilityHint={expanded ? "Shows less of the caption" : "Shows the whole caption"}
+      accessibilityHint={expanded ? t("storyCaption.showsLessOfTheCaption") : t("storyCaption.showsTheWholeCaption")}
     >
       {expanded ? (
         <ScrollView style={{ maxHeight }} scrollEnabled={scrolls} showsVerticalScrollIndicator={scrolls} onContentSizeChange={(_w, h) => setScrolls(h > maxHeight)}>

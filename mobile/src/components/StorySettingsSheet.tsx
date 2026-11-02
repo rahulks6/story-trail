@@ -7,6 +7,7 @@ import { colors, radii, spacing, typography, ICONS } from "../theme";
 import { Icon } from "./Icon";
 import { TOPICS } from "../models/topics";
 import { t } from "../i18n";
+import { topicLabel } from "../i18n/names";
 
 export type StoryVisibility = "public" | "followers";
 export type CommentSetting = "everyone" | "followers" | "disabled";
@@ -43,7 +44,7 @@ export function saveStorySettings(settings: StorySettings): void {
 /** One short line for the editor: "Everyone · Comments on · Food". */
 export function storySettingsSummary(s: StorySettings, festivalName?: string | null, topic?: string | null): string {
   const comments = s.allowComments === "everyone" ? t("storySettingsSheet.commentsOn") : s.allowComments === "followers" ? t("storySettingsSheet.commentsFollowers") : t("storySettingsSheet.commentsOff");
-  return [s.visibility === "public" ? t("common.everyone") : t("storySettingsSheet.followersOnly"), comments, ...(festivalName ? [festivalName] : []), ...(topic ? [topic] : [])].join(" · ");
+  return [s.visibility === "public" ? t("common.everyone") : t("storySettingsSheet.followersOnly"), comments, ...(festivalName ? [festivalName] : []), ...(topic ? [topicLabel(topic)] : [])].join(" · ");
 }
 
 function TopicChip({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }): React.JSX.Element {
@@ -53,7 +54,7 @@ function TopicChip({ label, selected, onPress }: { label: string; selected: bool
       onPress={onPress}
       accessibilityRole="radio"
       accessibilityState={{ checked: selected }}
-      accessibilityLabel={label === "None" ? "No topic" : label}
+      accessibilityLabel={label === t("storySettingsSheet.none") ? t("storySettingsSheet.noTopic") : label}
     >
       <Text style={[styles.chipLabel, selected && styles.chipLabelSelected]}>{label}</Text>
     </Pressable>
@@ -131,7 +132,7 @@ export function StorySettingsSheet({
                     <Text style={typography.body}>{t("storySettingsSheet.addToNameStories", { name: festival.name })}</Text>
                     <Text style={styles.hint}>{t("storySettingsSheet.itShowsInTheFestivals")}</Text>
                   </View>
-                  <Switch value={!!joinFestival} onValueChange={onJoinFestival} accessibilityLabel={`Add to ${festival.name} Stories`} />
+                  <Switch value={!!joinFestival} onValueChange={onJoinFestival} accessibilityLabel={t("storySettingsSheet.addToNameStories", { name: festival.name })} />
                 </View>
               ) : null}
             </View>
@@ -141,7 +142,7 @@ export function StorySettingsSheet({
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips} accessibilityRole="radiogroup" accessibilityLabel={t("storySettingsSheet.topic")}>
                   <TopicChip label={t("storySettingsSheet.none")} selected={topic === null} onPress={() => onTopicChange(null)} />
                   {TOPICS.map((option) => (
-                    <TopicChip key={option} label={option} selected={topic === option} onPress={() => onTopicChange(option)} />
+                    <TopicChip key={option} label={topicLabel(option)} selected={topic === option} onPress={() => onTopicChange(option)} />
                   ))}
                 </ScrollView>
                 <Text style={[styles.hint, styles.topicHint]}>{t("storySettingsSheet.helpsPeopleWhoLikeThis")}</Text>

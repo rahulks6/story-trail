@@ -114,7 +114,7 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
       headerRight:
         profile && !profile.isSelf
           ? () => (
-              <Pressable onPress={() => setMoreOpen(true)} hitSlop={10} accessibilityRole="button" accessibilityLabel={`More options for @${profile.username}`}>
+              <Pressable onPress={() => setMoreOpen(true)} hitSlop={10} accessibilityRole="button" accessibilityLabel={t("userProfile.moreOptionsForUsername", { username: profile.username })}>
                 <Icon name={ICONS.more} size={24} color={colors.textPrimary} />
               </Pressable>
             )
@@ -306,18 +306,18 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
         verifiedCategory={profile.verifiedCategory}
         professionalCategory={profile.professionalCategory}
         hasActiveStory={hasActiveStory}
-        storyLabel={`Open ${profile.displayName}'s Story`}
+        storyLabel={t("userProfile.openNamesStory", { name: profile.displayName })}
         onOpenStory={() => rootNavigation.navigate("StoryViewer", { creators: [profile.username], startIndex: 0, ...(profile.verified ? { verifiedCreators: [profile.username] } : {}) })}
         followsYou={!profile.isSelf && profile.viewer.isFollowedBy}
         stats={[
           // Like the follower count, the number of Stories posted shows even on a private account.
-          { key: "stories", value: profile.storyCount ?? null, singular: "Story", plural: "Stories" },
+          { key: "stories", value: profile.storyCount ?? null },
           {
-            key: "followers", value: profile.followerCount, singular: "Follower", plural: "Followers",
+            key: "followers", value: profile.followerCount,
             onPress: locked ? undefined : () => rootNavigation.navigate("FollowList", { username: profile.username, mode: "followers" }),
           },
           {
-            key: "following", value: profile.followingCount, singular: "Following", plural: "Following",
+            key: "following", value: profile.followingCount,
             onPress: locked ? undefined : () => rootNavigation.navigate("FollowList", { username: profile.username, mode: "following" }),
           },
         ]}
@@ -354,7 +354,7 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
       </ProfileHeader>
 
       {locked ? (
-        <View style={styles.card} accessible accessibilityLabel={`This account is private. Follow @${profile.username} to see their Stories and Highlights.`}>
+        <View style={styles.card} accessible accessibilityLabel={t("userProfile.thisAccountIsPrivateFollow", { username: profile.username })}>
           <View style={styles.cardIcon}>
             <Icon name={ICONS.privacy} size={22} color={colors.textPrimary} />
           </View>
