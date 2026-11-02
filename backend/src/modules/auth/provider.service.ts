@@ -8,12 +8,21 @@ import {providerConfig,type VerifiedGoogle} from './providers';
 import {USERNAME_MESSAGES,usernameProblem} from '../users/username-policy';
 import {BIRTH_DATE_MESSAGES,birthDateProblem} from './age';
 import {CHECK_MARK_MESSAGE,hasCheckMark} from '../../shared/verified';
+import {GRANT_COLUMNS,grantOf,revokeQuietly,type AppleGrant,type VerifiedApple} from './apple';
 export const opaque=()=>randomBytes(32).toString('hex');
 export const hash=(v:string)=>createHash('sha256').update(v).digest('hex');
 export const phoneHash=(v:string)=>createHmac('sha256',providerConfig.phoneSecret).update(v).digest('hex');
 export function proofToken(v:unknown):string {if(typeof v!=='string'||! /^[a-f0-9]{64}$/.test(v))throw new HttpError(401,'Verification expired. Please try again.');return hash(v);}
 export async function googleProof(identity:VerifiedGoogle):Promise<string> {
  const token=opaque();await query(`INSERT INTO auth_provider_proofs(token_hash,provider,subject,verified_email,display_name) VALUES(:'hash','GOOGLE',:'subject',${nullable('email','citext')},:'name')`,{hash:hash(token),subject:identity.subject,email:identity.email,name:identity.displayName});return token;
+}
+/** Apple sends no name in its token (the app has it, on the first sign-in only), so the proof has none. */
+export async function appleProof(identity:VerifiedApple,grant:AppleGrant):Promise<string> {
+ const token=opaque();await query(`INSERT INTO auth_provider_proofs(token_hash,provider,subject,verified_email,provider_grant) VALUES(:'hash','APPLE',:'subject',${nullable('email','citext')},jsonb_build_object('clientId',:'client'::text,'refreshToken',:'refresh'::text))`,{hash:hash(token),subject:identity.subject,email:identity.email,client:grant.clientId,refresh:grant.refreshToken});return token;
+}
+/** Moves Apple's grant from a used proof to its identity, which keeps the latest one for revocation. */
+export async function keepGrant(proofHash:string):Promise<void> {
+ await query(`WITH p AS(SELECT provider,subject,provider_grant FROM auth_provider_proofs WHERE token_hash=:'hash' AND provider_grant IS NOT NULL),i AS(UPDATE auth_identities a SET provider_grant=p.provider_grant FROM p WHERE a.provider=p.provider AND a.subject=p.subject) UPDATE auth_provider_proofs SET provider_grant=NULL WHERE token_hash=:'hash' AND provider_grant IS NOT NULL`,{hash:proofHash});
 }
 export function identityError(e:unknown):never {
  if(e instanceof DatabaseError){
@@ -29,7 +38,7 @@ export function identityError(e:unknown):never {
  }
  throw e;
 }
-/** Finishes a Google or phone sign-in. A new account also needs a username and a date of birth (age.ts). */
+/** Finishes a Google, Apple or phone sign-in. A new account also needs a username and a date of birth (age.ts). */
 export async function complete(proof:string,username:unknown,name:unknown,birthDateInput:unknown,client:ClientContext){
  const birthDate=typeof birthDateInput==='string'?birthDateInput.trim():birthDateInput;
  if(username!==undefined){const problem=typeof username==='string'?usernameProblem(username):{message:USERNAME_MESSAGES.invalid};if(problem)throw new HttpError(422,problem.message);}
@@ -37,16 +46,19 @@ export async function complete(proof:string,username:unknown,name:unknown,birthD
  if(typeof name==='string'&&hasCheckMark(name))throw new HttpError(422,CHECK_MARK_MESSAGE,{displayName:CHECK_MARK_MESSAGE});
  if(birthDate!==undefined){
   const problem=birthDateProblem(birthDate);
-  // Someone under 18 is turned away with nothing kept: the verified sign-in (their Google email
-  // and name, or phone identity) is deleted now rather than left to expire.
-  if(problem===BIRTH_DATE_MESSAGES.tooYoung)await query(`DELETE FROM auth_provider_proofs WHERE token_hash=:'hash' AND consumed_at IS NULL`,{hash:proofToken(proof)});
+  // Someone under 18 is turned away with nothing kept: the verified sign-in (their Google or
+  // Apple email and name, or phone identity) is deleted now rather than left to expire, and
+  // Apple's authorisation is revoked.
+  if(problem===BIRTH_DATE_MESSAGES.tooYoung)await revokeQuietly(grantOf(await queryOne(`DELETE FROM auth_provider_proofs WHERE token_hash=:'hash' AND consumed_at IS NULL RETURNING ${GRANT_COLUMNS}`,{hash:proofToken(proof)})));
   if(problem)throw new HttpError(422,problem);
  }
  try{
   const row=await queryOne(`SELECT complete_provider_proof(:'hash',:'username',:'name',${nullable('birth','date')}) AS id`,{hash:proofToken(proof),username:typeof username==='string'?username:'',name:typeof name==='string'?name:'',birth:typeof birthDate==='string'?birthDate:null});
   if(!row?.id)throw new HttpError(401,'Verification expired.');
-  // Google only hands over an email it has verified, so an account using that email needs no code.
-  await query(`UPDATE users u SET email_verified_at=coalesce(u.email_verified_at,now()) FROM auth_provider_proofs p WHERE p.token_hash=:'hash' AND p.provider='GOOGLE' AND u.id=:'id' AND u.email=p.verified_email`,{hash:proofToken(proof),id:row.id});
+  // Google and Apple only hand over an email they have verified (for Apple, possibly a private
+  // relay address that forwards to the person), so an account using that email needs no code.
+  await query(`UPDATE users u SET email_verified_at=coalesce(u.email_verified_at,now()) FROM auth_provider_proofs p WHERE p.token_hash=:'hash' AND p.provider IN ('GOOGLE','APPLE') AND u.id=:'id' AND u.email=p.verified_email`,{hash:proofToken(proof),id:row.id});
+  await keepGrant(proofToken(proof));
   await keepContactKey(proofToken(proof));
   const user=await getPublicUserById(row.id);const tokens=await issueTokenPair(row.id,client.userAgent);await recordLoginSuccess(row.id,(await findUserById(row.id))?.email??null,client);console.info(JSON.stringify({event:'provider_login_succeeded'}));return {user,tokens};
  }catch(e){identityError(e);}
