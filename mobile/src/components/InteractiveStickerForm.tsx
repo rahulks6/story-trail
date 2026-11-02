@@ -6,6 +6,7 @@ import { colors, radii, spacing, typography } from "../theme";
 import { useAuth } from "../state/AuthContext";
 import { checkStickerLink } from "../api/stickers";
 import { ApiError } from "../api/client";
+import { serverDate } from "../utils/serverTime";
 import {
   MAX_COUNTDOWN_TITLE_LENGTH,
   MAX_OPTIONS,
@@ -56,7 +57,10 @@ export function InteractiveStickerForm({ editing, usedTypes, onDone }: Props): R
   const [options, setOptions] = useState<string[]>(Array.isArray(p?.options) ? (p!.options as string[]) : ["", ""]);
   const [correct, setCorrect] = useState<number>(typeof p?.correctIndex === "number" ? p.correctIndex : 0);
   const [title, setTitle] = useState<string>(typeof p?.title === "string" ? p.title : "");
-  const [endsAt, setEndsAt] = useState<Date>(() => (typeof p?.endsAt === "string" && Date.parse(p.endsAt) > Date.now() ? new Date(p.endsAt) : inOneDay()));
+  const [endsAt, setEndsAt] = useState<Date>(() => {
+    const saved = typeof p?.endsAt === "string" ? serverDate(p.endsAt) : null;
+    return saved && saved.getTime() > Date.now() ? saved : inOneDay();
+  });
   const [url, setUrl] = useState<string>(typeof p?.url === "string" ? p.url : "");
   const [label, setLabel] = useState<string>(typeof p?.label === "string" ? p.label : "");
   const [checking, setChecking] = useState(false);

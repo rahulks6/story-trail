@@ -5,6 +5,7 @@ import { Icon } from "./Icon";
 import { Avatar } from "./Avatar";
 import { mediaColors as colors, radii } from "../theme";
 import { tapFeedback } from "../utils/haptics";
+import { serverTimeMs } from "../utils/serverTime";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { linkHost, type Overlay, type VoteResults } from "../models/storyDraft";
 import type { VoteOutcome } from "../api/stickers";
@@ -162,7 +163,9 @@ function QuestionCard({ overlay, u, interaction }: { overlay: Extract<Overlay, {
 
 /** Days, hours, minutes and seconds left; zeros once it's over. */
 export function timeLeft(endsAt: string, now: number): { days: number; hours: number; minutes: number; seconds: number; over: boolean } {
-  const ms = Math.max(0, new Date(endsAt).getTime() - now);
+  // The end time comes from the server: read through utils/serverTime, like every timestamp.
+  const end = serverTimeMs(endsAt);
+  const ms = Number.isFinite(end) ? Math.max(0, end - now) : 0;
   const s = Math.floor(ms / 1000);
   return { days: Math.floor(s / 86400), hours: Math.floor((s % 86400) / 3600), minutes: Math.floor((s % 3600) / 60), seconds: s % 60, over: ms === 0 };
 }
