@@ -11,7 +11,9 @@ so they must be live before you submit (`npm run check:live`).
 | Privacy Policy | https://katkee.com/privacy | `../legal/PRIVACY_POLICY.md` |
 | Terms of Service | https://katkee.com/terms | `../legal/TERMS_OF_SERVICE.md` |
 | Delete your account (Google Play's deletion URL) | https://katkee.com/delete-account | `src/pages/delete-account.html` |
-| Shared profile or Story ("Open in Katkee") | https://katkee.com/u/&lt;username&gt;, /s/&lt;story id&gt; | `src/pages/open.html` |
+| Public profile and its Stories (web player) | https://katkee.com/u/&lt;username&gt;, /s/&lt;story id&gt; | `src/pages/profile.html`, `src/player.js` |
+| Any other shared profile or Story ("Open in Katkee") | https://katkee.com/u/&lt;username&gt;, /s/&lt;story id&gt; | `src/pages/open.html` |
+| Profile sitemap (accounts that show on the web) | https://katkee.com/sitemap-profiles.xml | made by the API |
 | Invite link ("Asha invited you to Katkee") | https://katkee.com/i/&lt;code&gt; | `src/pages/invite.html` |
 | Android App Links | https://katkee.com/.well-known/assetlinks.json | `site.json` (`appLinks.android`) |
 | iOS Universal Links | https://katkee.com/.well-known/apple-app-site-association | `site.json` (`appLinks.ios`) |
@@ -27,8 +29,11 @@ so they must be live before you submit (`npm run check:live`).
   - katkee.com serves only the website; the API and Admin console are never reachable there;
   - www.katkee.com redirects to katkee.com;
   - the website's pages asked for on api.katkee.com redirect to katkee.com.
-- **Strict and private.** No scripts, no cookies, no analytics, nothing loaded from other sites.
-  The Content-Security-Policy allows only the site's own images and stylesheet.
+- **Strict and private.** No cookies, no analytics, nothing loaded from other sites. No scripts,
+  except the Story player on public profiles (`src/player.js`, a content-hashed file from this
+  site; the build allows it on that page only). The Content-Security-Policy allows only the
+  site's own images and stylesheet, plus, on public profiles, that script and Story media from
+  the media CDN.
 - **Fast.** Pages are compressed (brotli or gzip) and revalidated with ETags; images and the
   stylesheet have content-hashed names and are cached for a year.
 - **Brand.** The icon, favicon, Apple touch icon and link-preview card are made from the app icon
@@ -62,12 +67,17 @@ and `https://katkee.com/s/<story id>`.
 - **With the app installed**, the phone opens the link in the app: Android checks
   `/.well-known/assetlinks.json` (App Links), iOS checks `/.well-known/apple-app-site-association`
   (Universal Links).
-- **Without it**, the link shows the "Open in Katkee" page: an "Open in the app" button (the
+- **Without it, for a public account that shows on the web** (public, in good standing, and
+  **Show my profile on the web** on in Settings > Privacy), `/u/<username>` is its profile:
+  photo, cover, name, badge, category, bio, interests, counts, Highlights and active public
+  Stories, which play in the web Story player; `/s/<story id>` plays that public Story. Only
+  Stories shared with everyone appear; watching is never a view. Pages are cached for a minute.
+- **Without it, for anything else**, the link shows the "Open in Katkee" page: an "Open in the app" button (the
   matching `katkee://` link) and the store buttons, or a line that the app is coming soon. The
   API fills in the link (`backend/src/modules/website`) after checking it strictly (a username of
   3 to 30 letters, digits, `_` or `.`; a Story ID that is a UUID); anything else is a 404. The
-  page never looks the account or Story up, so it can't tell anyone whether they exist, are
-  private or have expired. It is `noindex`.
+  page is the same whether the account is private, opted out, suspended or doesn't exist, and
+  whether the Story is followers-only, Close Friends, expired or gone. It is `noindex`.
 
 Invite links (`/i/<code>`, Settings, then Invite friends) get their own page: the API looks the
 code up and puts "<display name> invited you to Katkee" in the headline and title (so chat
