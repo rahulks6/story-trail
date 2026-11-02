@@ -2,14 +2,14 @@
   "command" : {
     "defineVariablesCommand" : {
       "env" : {
-        "PARTNER_USERNAME" : "e2e_and_165585_partner",
-        "PARTNER_EMAIL" : "support+e2e-and-165585-partner@katkee.com",
-        "PARTNER_PASSWORD" : "E2e-9ddceca59be1f412",
-        "USERNAME" : "e2e_and_165585_phone",
-        "EMAIL" : "support+e2e-and-165585-phone@katkee.com",
-        "PASSWORD" : "E2e-60317b098fe0df01",
-        "OIDC_URL" : "https://run-actions-1-azure-eastus.actions.githubusercontent.com/299//idtoken/7d1690b4-b140-4c46-bc17-f717bef1df75/d0c82e68-d30c-5705-a206-2600bceaaf97?api-version=2.0",
-        "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcIlBlcm1pc3Npb25cIjozfSx7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6MX1dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTM2MDYxNzcsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5MzYwMTk3NywiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6ImQwYzgyZTY4LWQzMGMtNTcwNS1hMjA2LTI2MDBiY2VhYWY5NyIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnIiLCJqb2Jfd29ya2Zsb3dfc2hhIjoiOGQ3MGRhNWE1MTgwNTM1ZGU1ZjgzOWZjYWEyODk1YjY4ZjllNmVkNSIsIm5hbWVpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsIm5iZiI6MTc5MzYwMTY3Nywib2lkY19leHRyYSI6IntcImFjdG9yXCI6XCJyYWh1bGtzNlwiLFwiYWN0b3JfaWRcIjpcIjE5NzU0MDkyNFwiLFwiYmFzZV9yZWZcIjpcIlwiLFwiY2hlY2tfcnVuX2lkXCI6XCIxMjUxMzU2NjA2OTVcIixcImV2ZW50X25hbWVcIjpcIndvcmtmbG93X2Rpc3BhdGNoXCIsXCJoZWFkX3JlZlwiOlwiXCIsXCJqb2Jfd29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcImpvYl93b3JrZmxvd19zaGFcIjpcIjhkNzBkYTVhNTE4MDUzNWRlNWY4MzlmY2FhMjg5NWI2OGY5ZTZlZDVcIixcInJlZlwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcInJlZl9wcm90ZWN0ZWRcIjpcImZhbHNlXCIsXCJyZWZfdHlwZVwiOlwiYnJhbmNoXCIsXCJyZXBvc2l0b3J5XCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbFwiLFwicmVwb3NpdG9yeV9pZFwiOlwiMTM3NjkxNTQ5MVwiLFwicmVwb3NpdG9yeV9vd25lclwiOlwicmFodWxrczZcIixcInJlcG9zaXRvcnlfb3duZXJfaWRcIjpcIjE5NzU0MDkyNFwiLFwicmVwb3NpdG9yeV92aXNpYmlsaXR5XCI6XCJwdWJsaWNcIixcInJ1bl9hdHRlbXB0XCI6XCIxXCIsXCJydW5faWRcIjpcIjQxNDAwMTY1NTg1XCIsXCJydW5fbnVtYmVyXCI6XCIzMVwiLFwicnVubmVyX2Vudmlyb25tZW50XCI6XCJnaXRodWItaG9zdGVkXCIsXCJzaGFcIjpcIjhkNzBkYTVhNTE4MDUzNWRlNWY4MzlmY2FhMjg5NWI2OGY5ZTZlZDVcIixcIndvcmtmbG93XCI6XCJBbmRyb2lkIGVtdWxhdG9yIHRlc3RcIixcIndvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvYW5kcm9pZC1lMmUueW1sQHJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyXCIsXCJ3b3JrZmxvd19zaGFcIjpcIjhkNzBkYTVhNTE4MDUzNWRlNWY4MzlmY2FhMjg5NWI2OGY5ZTZlZDVcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyIiwib3JjaF9pZCI6IjdkMTY5MGI0LWIxNDAtNGM0Ni1iYzE3LWY3MTdiZWYxZGY3NS53YWxrdGhyb3VnaC5waG9uZSIsIm93bmVyX2lkIjoiVV9rZ0RPQzhZOFBBIiwicGxhbl9pZCI6IjdkMTY5MGI0LWIxNDAtNGM0Ni1iYzE3LWY3MTdiZWYxZGY3NSIsInJlcG9zaXRvcnlfaWQiOiIxMzc2OTE1NDkxIiwicmVwb3NpdG9yeV9vd25lcl9pZCI6IjE5NzU0MDkyNCIsInJlcG9zaXRvcnlfdmlzaWJpbGl0eSI6InB1YmxpYyIsInJ1bl9pZCI6IjQxNDAwMTY1NTg1IiwicnVuX251bWJlciI6IjMxIiwicnVuX3R5cGUiOiJmdWxsIiwicnVubmVyX2lkIjoiMTAwMDAwMDE1MiIsInJ1bm5lcl90eXBlIjoiaG9zdGVkIiwic2NwIjoiQWN0aW9ucy5SZXN1bHRzOjdkMTY5MGI0LWIxNDAtNGM0Ni1iYzE3LWY3MTdiZWYxZGY3NTpkMGM4MmU2OC1kMzBjLTU3MDUtYTIwNi0yNjAwYmNlYWFmOTcgQWN0aW9ucy5SdW5uZXI6N2QxNjkwYjQtYjE0MC00YzQ2LWJjMTctZjcxN2JlZjFkZjc1OmQwYzgyZTY4LWQzMGMtNTcwNS1hMjA2LTI2MDBiY2VhYWY5NyBBY3Rpb25zLlVwbG9hZEFydGlmYWN0czo3ZDE2OTBiNC1iMTQwLTRjNDYtYmMxNy1mNzE3YmVmMWRmNzU6ZDBjODJlNjgtZDMwYy01NzA1LWEyMDYtMjYwMGJjZWFhZjk3IGdlbmVyYXRlX2lkX3Rva2VuOjdkMTY5MGI0LWIxNDAtNGM0Ni1iYzE3LWY3MTdiZWYxZGY3NTpkMGM4MmU2OC1kMzBjLTU3MDUtYTIwNi0yNjAwYmNlYWFmOTcgQWN0aW9ucy5HZW5lcmljUmVhZDowMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJzaGEiOiI4ZDcwZGE1YTUxODA1MzVkZTVmODM5ZmNhYTI4OTViNjhmOWU2ZWQ1IiwidHJ1c3RfdGllciI6IjIifQ.XSdPRR6K3OI6a2vePUNEg9VS2RZq5uKIW0GDlc2dOTCIhqTBs1dX0U6vbXP_8ufA4SEIVkkaKE5z87gFQMfccXWmBTCsC1jZEzib3PGWSruevDvunymXTOgEqWbnakb1XXBfTNtTr-ynAYXYYU4psgZKtI-55bfAu19_nETwk5RPUA2Gm6XB_EKNdkkNXUQLza1_S785vEKcsAPm7a8250o-p2Z3pH2Hhs0ni2v1lcwIyf0RIUbxCzK6t-0GKc9gOxoXJ9cMJay7uwfQVWNBOp1DOCX5q6l9dRHTVQQUobKXghjJDGq1scsjQpcJwJQiL_mNZmCdv4tc3wZgknj0tA",
+        "PARTNER_USERNAME" : "e2e_and_709077_partner",
+        "PARTNER_EMAIL" : "support+e2e-and-709077-partner@katkee.com",
+        "PARTNER_PASSWORD" : "E2e-e7560e26b11093f7",
+        "USERNAME" : "e2e_and_709077_phone",
+        "EMAIL" : "support+e2e-and-709077-phone@katkee.com",
+        "PASSWORD" : "E2e-e6a20fa655ad8a78",
+        "OIDC_URL" : "https://run-actions-2-azure-eastus.actions.githubusercontent.com/90//idtoken/a227f032-f8ae-49b0-b04e-d4f817f40c54/5b417b2d-8bd5-5231-8fac-b205a1b457c3?api-version=2.0",
+        "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcIlBlcm1pc3Npb25cIjozfSx7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6MX1dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTM2MjkxMzEsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5MzYyNDkzMSwiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6IjViNDE3YjJkLThiZDUtNTIzMS04ZmFjLWIyMDVhMWI0NTdjMyIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnIiLCJqb2Jfd29ya2Zsb3dfc2hhIjoiZmQ4NzA0NTkzZDM4ZWUwNzc3MjQyNWExYWI3MTM2MjY2YzgyNmIzMCIsIm5hbWVpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsIm5iZiI6MTc5MzYyNDYzMSwib2lkY19leHRyYSI6IntcImFjdG9yXCI6XCJyYWh1bGtzNlwiLFwiYWN0b3JfaWRcIjpcIjE5NzU0MDkyNFwiLFwiYmFzZV9yZWZcIjpcIlwiLFwiY2hlY2tfcnVuX2lkXCI6XCIxMjUyOTQwMjIxMDNcIixcImV2ZW50X25hbWVcIjpcIndvcmtmbG93X2Rpc3BhdGNoXCIsXCJoZWFkX3JlZlwiOlwiXCIsXCJqb2Jfd29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcImpvYl93b3JrZmxvd19zaGFcIjpcImZkODcwNDU5M2QzOGVlMDc3NzI0MjVhMWFiNzEzNjI2NmM4MjZiMzBcIixcInJlZlwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcInJlZl9wcm90ZWN0ZWRcIjpcImZhbHNlXCIsXCJyZWZfdHlwZVwiOlwiYnJhbmNoXCIsXCJyZXBvc2l0b3J5XCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbFwiLFwicmVwb3NpdG9yeV9pZFwiOlwiMTM3NjkxNTQ5MVwiLFwicmVwb3NpdG9yeV9vd25lclwiOlwicmFodWxrczZcIixcInJlcG9zaXRvcnlfb3duZXJfaWRcIjpcIjE5NzU0MDkyNFwiLFwicmVwb3NpdG9yeV92aXNpYmlsaXR5XCI6XCJwdWJsaWNcIixcInJ1bl9hdHRlbXB0XCI6XCIxXCIsXCJydW5faWRcIjpcIjQxNDQ4NzA5MDc3XCIsXCJydW5fbnVtYmVyXCI6XCIzM1wiLFwicnVubmVyX2Vudmlyb25tZW50XCI6XCJnaXRodWItaG9zdGVkXCIsXCJzaGFcIjpcImZkODcwNDU5M2QzOGVlMDc3NzI0MjVhMWFiNzEzNjI2NmM4MjZiMzBcIixcIndvcmtmbG93XCI6XCJBbmRyb2lkIGVtdWxhdG9yIHRlc3RcIixcIndvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvYW5kcm9pZC1lMmUueW1sQHJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyXCIsXCJ3b3JrZmxvd19zaGFcIjpcImZkODcwNDU5M2QzOGVlMDc3NzI0MjVhMWFiNzEzNjI2NmM4MjZiMzBcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyIiwib3JjaF9pZCI6ImEyMjdmMDMyLWY4YWUtNDliMC1iMDRlLWQ0ZjgxN2Y0MGM1NC53YWxrdGhyb3VnaC5waG9uZSIsIm93bmVyX2lkIjoiVV9rZ0RPQzhZOFBBIiwicGxhbl9pZCI6ImEyMjdmMDMyLWY4YWUtNDliMC1iMDRlLWQ0ZjgxN2Y0MGM1NCIsInJlcG9zaXRvcnlfaWQiOiIxMzc2OTE1NDkxIiwicmVwb3NpdG9yeV9vd25lcl9pZCI6IjE5NzU0MDkyNCIsInJlcG9zaXRvcnlfdmlzaWJpbGl0eSI6InB1YmxpYyIsInJ1bl9pZCI6IjQxNDQ4NzA5MDc3IiwicnVuX251bWJlciI6IjMzIiwicnVuX3R5cGUiOiJmdWxsIiwicnVubmVyX2lkIjoiMTAwMDAwMDE1NiIsInJ1bm5lcl90eXBlIjoiaG9zdGVkIiwic2NwIjoiQWN0aW9ucy5SZXN1bHRzOmEyMjdmMDMyLWY4YWUtNDliMC1iMDRlLWQ0ZjgxN2Y0MGM1NDo1YjQxN2IyZC04YmQ1LTUyMzEtOGZhYy1iMjA1YTFiNDU3YzMgQWN0aW9ucy5SdW5uZXI6YTIyN2YwMzItZjhhZS00OWIwLWIwNGUtZDRmODE3ZjQwYzU0OjViNDE3YjJkLThiZDUtNTIzMS04ZmFjLWIyMDVhMWI0NTdjMyBBY3Rpb25zLlVwbG9hZEFydGlmYWN0czphMjI3ZjAzMi1mOGFlLTQ5YjAtYjA0ZS1kNGY4MTdmNDBjNTQ6NWI0MTdiMmQtOGJkNS01MjMxLThmYWMtYjIwNWExYjQ1N2MzIGdlbmVyYXRlX2lkX3Rva2VuOmEyMjdmMDMyLWY4YWUtNDliMC1iMDRlLWQ0ZjgxN2Y0MGM1NDo1YjQxN2IyZC04YmQ1LTUyMzEtOGZhYy1iMjA1YTFiNDU3YzMgQWN0aW9ucy5HZW5lcmljUmVhZDowMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJzaGEiOiJmZDg3MDQ1OTNkMzhlZTA3NzcyNDI1YTFhYjcxMzYyNjZjODI2YjMwIiwidHJ1c3RfdGllciI6IjIifQ.xZD3yYIPeMWJHACcFv3YJFbRLnYIcYjlsbzA1cVpRXdiIMxvQaWu0sSCmPhdsZeWQNlIB6MX_1LRYf4vT87f0oyFGQQXj9Cz4UeL_T28EiEDKsKbC5LCkBvOG50oAjZQm1-9wwiLSoMgKOqKphuD-vl4BvkSXEF9OuUAcGby6E1KVN-0HaF9FYGq5VVfofRbdHqouKrQ4JXir6u7DxNDWAEtyNXzu0Qy-DyqZTzNaYLDPuIUSSTpvpREZrrCikwsMKJsqCuiF-jQGstvAC0ZqPwtvX-_T3EiofXTBG4TIVriZ2SaUkfA_lijy2MdGvClreGAM9vWut4acb7kskZOug",
         "MAESTRO_CLI_NO_ANALYTICS" : "1",
         "MAESTRO_FILENAME" : "tour",
         "MAESTRO_DEVICE_UDID" : "emulator-5554",
@@ -21,21 +21,21 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602126705,
+    "timestamp" : 1793625086404,
     "duration" : 7,
     "sequenceNumber" : 0,
     "depth" : 0,
     "evaluatedCommand" : {
       "defineVariablesCommand" : {
         "env" : {
-          "PARTNER_USERNAME" : "e2e_and_165585_partner",
-          "PARTNER_EMAIL" : "support+e2e-and-165585-partner@katkee.com",
-          "PARTNER_PASSWORD" : "E2e-9ddceca59be1f412",
-          "USERNAME" : "e2e_and_165585_phone",
-          "EMAIL" : "support+e2e-and-165585-phone@katkee.com",
-          "PASSWORD" : "E2e-60317b098fe0df01",
-          "OIDC_URL" : "https://run-actions-1-azure-eastus.actions.githubusercontent.com/299//idtoken/7d1690b4-b140-4c46-bc17-f717bef1df75/d0c82e68-d30c-5705-a206-2600bceaaf97?api-version=2.0",
-          "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcIlBlcm1pc3Npb25cIjozfSx7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6MX1dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTM2MDYxNzcsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5MzYwMTk3NywiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6ImQwYzgyZTY4LWQzMGMtNTcwNS1hMjA2LTI2MDBiY2VhYWY5NyIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnIiLCJqb2Jfd29ya2Zsb3dfc2hhIjoiOGQ3MGRhNWE1MTgwNTM1ZGU1ZjgzOWZjYWEyODk1YjY4ZjllNmVkNSIsIm5hbWVpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsIm5iZiI6MTc5MzYwMTY3Nywib2lkY19leHRyYSI6IntcImFjdG9yXCI6XCJyYWh1bGtzNlwiLFwiYWN0b3JfaWRcIjpcIjE5NzU0MDkyNFwiLFwiYmFzZV9yZWZcIjpcIlwiLFwiY2hlY2tfcnVuX2lkXCI6XCIxMjUxMzU2NjA2OTVcIixcImV2ZW50X25hbWVcIjpcIndvcmtmbG93X2Rpc3BhdGNoXCIsXCJoZWFkX3JlZlwiOlwiXCIsXCJqb2Jfd29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcImpvYl93b3JrZmxvd19zaGFcIjpcIjhkNzBkYTVhNTE4MDUzNWRlNWY4MzlmY2FhMjg5NWI2OGY5ZTZlZDVcIixcInJlZlwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcInJlZl9wcm90ZWN0ZWRcIjpcImZhbHNlXCIsXCJyZWZfdHlwZVwiOlwiYnJhbmNoXCIsXCJyZXBvc2l0b3J5XCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbFwiLFwicmVwb3NpdG9yeV9pZFwiOlwiMTM3NjkxNTQ5MVwiLFwicmVwb3NpdG9yeV9vd25lclwiOlwicmFodWxrczZcIixcInJlcG9zaXRvcnlfb3duZXJfaWRcIjpcIjE5NzU0MDkyNFwiLFwicmVwb3NpdG9yeV92aXNpYmlsaXR5XCI6XCJwdWJsaWNcIixcInJ1bl9hdHRlbXB0XCI6XCIxXCIsXCJydW5faWRcIjpcIjQxNDAwMTY1NTg1XCIsXCJydW5fbnVtYmVyXCI6XCIzMVwiLFwicnVubmVyX2Vudmlyb25tZW50XCI6XCJnaXRodWItaG9zdGVkXCIsXCJzaGFcIjpcIjhkNzBkYTVhNTE4MDUzNWRlNWY4MzlmY2FhMjg5NWI2OGY5ZTZlZDVcIixcIndvcmtmbG93XCI6XCJBbmRyb2lkIGVtdWxhdG9yIHRlc3RcIixcIndvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvYW5kcm9pZC1lMmUueW1sQHJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyXCIsXCJ3b3JrZmxvd19zaGFcIjpcIjhkNzBkYTVhNTE4MDUzNWRlNWY4MzlmY2FhMjg5NWI2OGY5ZTZlZDVcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyIiwib3JjaF9pZCI6IjdkMTY5MGI0LWIxNDAtNGM0Ni1iYzE3LWY3MTdiZWYxZGY3NS53YWxrdGhyb3VnaC5waG9uZSIsIm93bmVyX2lkIjoiVV9rZ0RPQzhZOFBBIiwicGxhbl9pZCI6IjdkMTY5MGI0LWIxNDAtNGM0Ni1iYzE3LWY3MTdiZWYxZGY3NSIsInJlcG9zaXRvcnlfaWQiOiIxMzc2OTE1NDkxIiwicmVwb3NpdG9yeV9vd25lcl9pZCI6IjE5NzU0MDkyNCIsInJlcG9zaXRvcnlfdmlzaWJpbGl0eSI6InB1YmxpYyIsInJ1bl9pZCI6IjQxNDAwMTY1NTg1IiwicnVuX251bWJlciI6IjMxIiwicnVuX3R5cGUiOiJmdWxsIiwicnVubmVyX2lkIjoiMTAwMDAwMDE1MiIsInJ1bm5lcl90eXBlIjoiaG9zdGVkIiwic2NwIjoiQWN0aW9ucy5SZXN1bHRzOjdkMTY5MGI0LWIxNDAtNGM0Ni1iYzE3LWY3MTdiZWYxZGY3NTpkMGM4MmU2OC1kMzBjLTU3MDUtYTIwNi0yNjAwYmNlYWFmOTcgQWN0aW9ucy5SdW5uZXI6N2QxNjkwYjQtYjE0MC00YzQ2LWJjMTctZjcxN2JlZjFkZjc1OmQwYzgyZTY4LWQzMGMtNTcwNS1hMjA2LTI2MDBiY2VhYWY5NyBBY3Rpb25zLlVwbG9hZEFydGlmYWN0czo3ZDE2OTBiNC1iMTQwLTRjNDYtYmMxNy1mNzE3YmVmMWRmNzU6ZDBjODJlNjgtZDMwYy01NzA1LWEyMDYtMjYwMGJjZWFhZjk3IGdlbmVyYXRlX2lkX3Rva2VuOjdkMTY5MGI0LWIxNDAtNGM0Ni1iYzE3LWY3MTdiZWYxZGY3NTpkMGM4MmU2OC1kMzBjLTU3MDUtYTIwNi0yNjAwYmNlYWFmOTcgQWN0aW9ucy5HZW5lcmljUmVhZDowMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJzaGEiOiI4ZDcwZGE1YTUxODA1MzVkZTVmODM5ZmNhYTI4OTViNjhmOWU2ZWQ1IiwidHJ1c3RfdGllciI6IjIifQ.XSdPRR6K3OI6a2vePUNEg9VS2RZq5uKIW0GDlc2dOTCIhqTBs1dX0U6vbXP_8ufA4SEIVkkaKE5z87gFQMfccXWmBTCsC1jZEzib3PGWSruevDvunymXTOgEqWbnakb1XXBfTNtTr-ynAYXYYU4psgZKtI-55bfAu19_nETwk5RPUA2Gm6XB_EKNdkkNXUQLza1_S785vEKcsAPm7a8250o-p2Z3pH2Hhs0ni2v1lcwIyf0RIUbxCzK6t-0GKc9gOxoXJ9cMJay7uwfQVWNBOp1DOCX5q6l9dRHTVQQUobKXghjJDGq1scsjQpcJwJQiL_mNZmCdv4tc3wZgknj0tA",
+          "PARTNER_USERNAME" : "e2e_and_709077_partner",
+          "PARTNER_EMAIL" : "support+e2e-and-709077-partner@katkee.com",
+          "PARTNER_PASSWORD" : "E2e-e7560e26b11093f7",
+          "USERNAME" : "e2e_and_709077_phone",
+          "EMAIL" : "support+e2e-and-709077-phone@katkee.com",
+          "PASSWORD" : "E2e-e6a20fa655ad8a78",
+          "OIDC_URL" : "https://run-actions-2-azure-eastus.actions.githubusercontent.com/90//idtoken/a227f032-f8ae-49b0-b04e-d4f817f40c54/5b417b2d-8bd5-5231-8fac-b205a1b457c3?api-version=2.0",
+          "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcIlBlcm1pc3Npb25cIjozfSx7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6MX1dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTM2MjkxMzEsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5MzYyNDkzMSwiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6IjViNDE3YjJkLThiZDUtNTIzMS04ZmFjLWIyMDVhMWI0NTdjMyIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnIiLCJqb2Jfd29ya2Zsb3dfc2hhIjoiZmQ4NzA0NTkzZDM4ZWUwNzc3MjQyNWExYWI3MTM2MjY2YzgyNmIzMCIsIm5hbWVpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsIm5iZiI6MTc5MzYyNDYzMSwib2lkY19leHRyYSI6IntcImFjdG9yXCI6XCJyYWh1bGtzNlwiLFwiYWN0b3JfaWRcIjpcIjE5NzU0MDkyNFwiLFwiYmFzZV9yZWZcIjpcIlwiLFwiY2hlY2tfcnVuX2lkXCI6XCIxMjUyOTQwMjIxMDNcIixcImV2ZW50X25hbWVcIjpcIndvcmtmbG93X2Rpc3BhdGNoXCIsXCJoZWFkX3JlZlwiOlwiXCIsXCJqb2Jfd29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcImpvYl93b3JrZmxvd19zaGFcIjpcImZkODcwNDU5M2QzOGVlMDc3NzI0MjVhMWFiNzEzNjI2NmM4MjZiMzBcIixcInJlZlwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcInJlZl9wcm90ZWN0ZWRcIjpcImZhbHNlXCIsXCJyZWZfdHlwZVwiOlwiYnJhbmNoXCIsXCJyZXBvc2l0b3J5XCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbFwiLFwicmVwb3NpdG9yeV9pZFwiOlwiMTM3NjkxNTQ5MVwiLFwicmVwb3NpdG9yeV9vd25lclwiOlwicmFodWxrczZcIixcInJlcG9zaXRvcnlfb3duZXJfaWRcIjpcIjE5NzU0MDkyNFwiLFwicmVwb3NpdG9yeV92aXNpYmlsaXR5XCI6XCJwdWJsaWNcIixcInJ1bl9hdHRlbXB0XCI6XCIxXCIsXCJydW5faWRcIjpcIjQxNDQ4NzA5MDc3XCIsXCJydW5fbnVtYmVyXCI6XCIzM1wiLFwicnVubmVyX2Vudmlyb25tZW50XCI6XCJnaXRodWItaG9zdGVkXCIsXCJzaGFcIjpcImZkODcwNDU5M2QzOGVlMDc3NzI0MjVhMWFiNzEzNjI2NmM4MjZiMzBcIixcIndvcmtmbG93XCI6XCJBbmRyb2lkIGVtdWxhdG9yIHRlc3RcIixcIndvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvYW5kcm9pZC1lMmUueW1sQHJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyXCIsXCJ3b3JrZmxvd19zaGFcIjpcImZkODcwNDU5M2QzOGVlMDc3NzI0MjVhMWFiNzEzNjI2NmM4MjZiMzBcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyIiwib3JjaF9pZCI6ImEyMjdmMDMyLWY4YWUtNDliMC1iMDRlLWQ0ZjgxN2Y0MGM1NC53YWxrdGhyb3VnaC5waG9uZSIsIm93bmVyX2lkIjoiVV9rZ0RPQzhZOFBBIiwicGxhbl9pZCI6ImEyMjdmMDMyLWY4YWUtNDliMC1iMDRlLWQ0ZjgxN2Y0MGM1NCIsInJlcG9zaXRvcnlfaWQiOiIxMzc2OTE1NDkxIiwicmVwb3NpdG9yeV9vd25lcl9pZCI6IjE5NzU0MDkyNCIsInJlcG9zaXRvcnlfdmlzaWJpbGl0eSI6InB1YmxpYyIsInJ1bl9pZCI6IjQxNDQ4NzA5MDc3IiwicnVuX251bWJlciI6IjMzIiwicnVuX3R5cGUiOiJmdWxsIiwicnVubmVyX2lkIjoiMTAwMDAwMDE1NiIsInJ1bm5lcl90eXBlIjoiaG9zdGVkIiwic2NwIjoiQWN0aW9ucy5SZXN1bHRzOmEyMjdmMDMyLWY4YWUtNDliMC1iMDRlLWQ0ZjgxN2Y0MGM1NDo1YjQxN2IyZC04YmQ1LTUyMzEtOGZhYy1iMjA1YTFiNDU3YzMgQWN0aW9ucy5SdW5uZXI6YTIyN2YwMzItZjhhZS00OWIwLWIwNGUtZDRmODE3ZjQwYzU0OjViNDE3YjJkLThiZDUtNTIzMS04ZmFjLWIyMDVhMWI0NTdjMyBBY3Rpb25zLlVwbG9hZEFydGlmYWN0czphMjI3ZjAzMi1mOGFlLTQ5YjAtYjA0ZS1kNGY4MTdmNDBjNTQ6NWI0MTdiMmQtOGJkNS01MjMxLThmYWMtYjIwNWExYjQ1N2MzIGdlbmVyYXRlX2lkX3Rva2VuOmEyMjdmMDMyLWY4YWUtNDliMC1iMDRlLWQ0ZjgxN2Y0MGM1NDo1YjQxN2IyZC04YmQ1LTUyMzEtOGZhYy1iMjA1YTFiNDU3YzMgQWN0aW9ucy5HZW5lcmljUmVhZDowMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJzaGEiOiJmZDg3MDQ1OTNkMzhlZTA3NzcyNDI1YTFhYjcxMzYyNjZjODI2YjMwIiwidHJ1c3RfdGllciI6IjIifQ.xZD3yYIPeMWJHACcFv3YJFbRLnYIcYjlsbzA1cVpRXdiIMxvQaWu0sSCmPhdsZeWQNlIB6MX_1LRYf4vT87f0oyFGQQXj9Cz4UeL_T28EiEDKsKbC5LCkBvOG50oAjZQm1-9wwiLSoMgKOqKphuD-vl4BvkSXEF9OuUAcGby6E1KVN-0HaF9FYGq5VVfofRbdHqouKrQ4JXir6u7DxNDWAEtyNXzu0Qy-DyqZTzNaYLDPuIUSSTpvpREZrrCikwsMKJsqCuiF-jQGstvAC0ZqPwtvX-_T3EiofXTBG4TIVriZ2SaUkfA_lijy2MdGvClreGAM9vWut4acb7kskZOug",
           "MAESTRO_CLI_NO_ANALYTICS" : "1",
           "MAESTRO_FILENAME" : "tour",
           "MAESTRO_DEVICE_UDID" : "emulator-5554",
@@ -57,8 +57,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602126715,
-    "duration" : 1,
+    "timestamp" : 1793625086413,
+    "duration" : 0,
     "sequenceNumber" : 1,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -83,8 +83,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602126716,
-    "duration" : 1898,
+    "timestamp" : 1793625086414,
+    "duration" : 2407,
     "sequenceNumber" : 2,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -113,8 +113,8 @@
   },
   "metadata" : {
     "status" : "WARNED",
-    "timestamp" : 1793602128615,
-    "duration" : 7711,
+    "timestamp" : 1793625088823,
+    "duration" : 8224,
     "sequenceNumber" : 3,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -152,8 +152,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602138153,
-    "duration" : 295,
+    "timestamp" : 1793625100787,
+    "duration" : 421,
     "sequenceNumber" : 4,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -178,8 +178,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602138448,
-    "duration" : 466,
+    "timestamp" : 1793625101211,
+    "duration" : 1378,
     "sequenceNumber" : 5,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -208,8 +208,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602138914,
-    "duration" : 4632,
+    "timestamp" : 1793625102589,
+    "duration" : 4220,
     "sequenceNumber" : 6,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -240,8 +240,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602143546,
-    "duration" : 277,
+    "timestamp" : 1793625106809,
+    "duration" : 1257,
     "sequenceNumber" : 7,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -272,8 +272,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602143824,
-    "duration" : 11614,
+    "timestamp" : 1793625108067,
+    "duration" : 8280,
     "sequenceNumber" : 8,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -298,8 +298,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602155438,
-    "duration" : 9349,
+    "timestamp" : 1793625116347,
+    "duration" : 6240,
     "sequenceNumber" : 9,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -356,8 +356,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602164788,
-    "duration" : 2235,
+    "timestamp" : 1793625122588,
+    "duration" : 1663,
     "sequenceNumber" : 10,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -416,8 +416,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602164790,
-    "duration" : 1,
+    "timestamp" : 1793625122590,
+    "duration" : 0,
     "sequenceNumber" : 11,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -445,8 +445,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602164792,
-    "duration" : 2230,
+    "timestamp" : 1793625122590,
+    "duration" : 1660,
     "sequenceNumber" : 12,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -471,8 +471,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602164792,
-    "duration" : 2230,
+    "timestamp" : 1793625122591,
+    "duration" : 1658,
     "sequenceNumber" : 13,
     "depth" : 2,
     "evaluatedCommand" : {
@@ -500,8 +500,8 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1793602167023,
-    "duration" : 0,
+    "timestamp" : 1793625124250,
+    "duration" : 1,
     "sequenceNumber" : 14,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -536,8 +536,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602167024,
-    "duration" : 4606,
+    "timestamp" : 1793625124251,
+    "duration" : 4002,
     "sequenceNumber" : 15,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -562,13 +562,13 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602171630,
-    "duration" : 7905,
+    "timestamp" : 1793625128253,
+    "duration" : 7684,
     "sequenceNumber" : 16,
     "depth" : 0,
     "evaluatedCommand" : {
       "inputTextCommand" : {
-        "text" : "e2e_and_165585_phone",
+        "text" : "e2e_and_709077_phone",
         "optional" : false
       }
     }
@@ -620,8 +620,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602179535,
-    "duration" : 1133,
+    "timestamp" : 1793625135938,
+    "duration" : 1124,
     "sequenceNumber" : 17,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -680,7 +680,7 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602179536,
+    "timestamp" : 1793625135939,
     "duration" : 0,
     "sequenceNumber" : 18,
     "depth" : 1,
@@ -709,8 +709,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602179536,
-    "duration" : 1131,
+    "timestamp" : 1793625135940,
+    "duration" : 1121,
     "sequenceNumber" : 19,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -735,8 +735,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602179536,
-    "duration" : 1130,
+    "timestamp" : 1793625135940,
+    "duration" : 1120,
     "sequenceNumber" : 20,
     "depth" : 2,
     "evaluatedCommand" : {
@@ -764,8 +764,8 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1793602180667,
-    "duration" : 1,
+    "timestamp" : 1793625137061,
+    "duration" : 0,
     "sequenceNumber" : 21,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -800,8 +800,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602180668,
-    "duration" : 5481,
+    "timestamp" : 1793625137062,
+    "duration" : 3354,
     "sequenceNumber" : 22,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -826,13 +826,13 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602186150,
-    "duration" : 12305,
+    "timestamp" : 1793625140416,
+    "duration" : 12802,
     "sequenceNumber" : 23,
     "depth" : 0,
     "evaluatedCommand" : {
       "inputTextCommand" : {
-        "text" : "support+e2e-and-165585-phone@katkee.com",
+        "text" : "support+e2e-and-709077-phone@katkee.com",
         "optional" : false
       }
     }
@@ -884,8 +884,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602198456,
-    "duration" : 1230,
+    "timestamp" : 1793625153218,
+    "duration" : 1380,
     "sequenceNumber" : 24,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -944,8 +944,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602198457,
-    "duration" : 2,
+    "timestamp" : 1793625153219,
+    "duration" : 1,
     "sequenceNumber" : 25,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -973,8 +973,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602198459,
-    "duration" : 1223,
+    "timestamp" : 1793625153221,
+    "duration" : 1376,
     "sequenceNumber" : 26,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -999,8 +999,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602198459,
-    "duration" : 1221,
+    "timestamp" : 1793625153221,
+    "duration" : 1375,
     "sequenceNumber" : 27,
     "depth" : 2,
     "evaluatedCommand" : {
@@ -1028,8 +1028,8 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1793602199682,
-    "duration" : 1,
+    "timestamp" : 1793625154597,
+    "duration" : 0,
     "sequenceNumber" : 28,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -1064,8 +1064,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602199687,
-    "duration" : 4018,
+    "timestamp" : 1793625154598,
+    "duration" : 3563,
     "sequenceNumber" : 29,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1090,8 +1090,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602203705,
-    "duration" : 2527,
+    "timestamp" : 1793625158162,
+    "duration" : 3053,
     "sequenceNumber" : 30,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1148,8 +1148,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602206233,
-    "duration" : 1201,
+    "timestamp" : 1793625161215,
+    "duration" : 1070,
     "sequenceNumber" : 31,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1208,7 +1208,7 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602206233,
+    "timestamp" : 1793625161216,
     "duration" : 0,
     "sequenceNumber" : 32,
     "depth" : 1,
@@ -1237,8 +1237,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602206233,
-    "duration" : 1200,
+    "timestamp" : 1793625161216,
+    "duration" : 1068,
     "sequenceNumber" : 33,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -1263,8 +1263,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602206234,
-    "duration" : 1198,
+    "timestamp" : 1793625161217,
+    "duration" : 1066,
     "sequenceNumber" : 34,
     "depth" : 2,
     "evaluatedCommand" : {
@@ -1292,7 +1292,7 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1793602207433,
+    "timestamp" : 1793625162284,
     "duration" : 0,
     "sequenceNumber" : 35,
     "depth" : 1,
@@ -1328,8 +1328,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602207434,
-    "duration" : 3522,
+    "timestamp" : 1793625162285,
+    "duration" : 3543,
     "sequenceNumber" : 36,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1354,13 +1354,13 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602210957,
-    "duration" : 5106,
+    "timestamp" : 1793625165828,
+    "duration" : 4453,
     "sequenceNumber" : 37,
     "depth" : 0,
     "evaluatedCommand" : {
       "inputTextCommand" : {
-        "text" : "E2e-60317b098fe0df01",
+        "text" : "E2e-e6a20fa655ad8a78",
         "optional" : false
       }
     }
@@ -1412,8 +1412,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602216063,
-    "duration" : 984,
+    "timestamp" : 1793625170282,
+    "duration" : 1024,
     "sequenceNumber" : 38,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1472,7 +1472,7 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602216064,
+    "timestamp" : 1793625170282,
     "duration" : 0,
     "sequenceNumber" : 39,
     "depth" : 1,
@@ -1501,8 +1501,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602216064,
-    "duration" : 983,
+    "timestamp" : 1793625170283,
+    "duration" : 1022,
     "sequenceNumber" : 40,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -1527,8 +1527,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602216064,
-    "duration" : 982,
+    "timestamp" : 1793625170283,
+    "duration" : 1022,
     "sequenceNumber" : 41,
     "depth" : 2,
     "evaluatedCommand" : {
@@ -1556,8 +1556,8 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1793602217047,
-    "duration" : 0,
+    "timestamp" : 1793625171305,
+    "duration" : 1,
     "sequenceNumber" : 42,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -1586,8 +1586,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602217047,
-    "duration" : 215,
+    "timestamp" : 1793625171306,
+    "duration" : 149,
     "sequenceNumber" : 43,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1620,8 +1620,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602217263,
-    "duration" : 133,
+    "timestamp" : 1793625171456,
+    "duration" : 165,
     "sequenceNumber" : 44,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1656,8 +1656,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602217396,
-    "duration" : 5132,
+    "timestamp" : 1793625171621,
+    "duration" : 6327,
     "sequenceNumber" : 45,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1688,8 +1688,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602222528,
-    "duration" : 87,
+    "timestamp" : 1793625177948,
+    "duration" : 221,
     "sequenceNumber" : 46,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1714,8 +1714,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602222616,
-    "duration" : 229,
+    "timestamp" : 1793625178170,
+    "duration" : 174,
     "sequenceNumber" : 47,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1740,8 +1740,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602222845,
-    "duration" : 2486,
+    "timestamp" : 1793625178344,
+    "duration" : 1883,
     "sequenceNumber" : 48,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1762,8 +1762,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602225332,
-    "duration" : 246,
+    "timestamp" : 1793625180228,
+    "duration" : 397,
     "sequenceNumber" : 49,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1782,8 +1782,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602225579,
-    "duration" : 3853,
+    "timestamp" : 1793625180625,
+    "duration" : 5334,
     "sequenceNumber" : 50,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1808,8 +1808,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602229433,
-    "duration" : 4402,
+    "timestamp" : 1793625185959,
+    "duration" : 4508,
     "sequenceNumber" : 51,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1953,8 +1953,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602233835,
-    "duration" : 2742,
+    "timestamp" : 1793625190468,
+    "duration" : 2733,
     "sequenceNumber" : 52,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2094,8 +2094,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602233836,
-    "duration" : 0,
+    "timestamp" : 1793625190471,
+    "duration" : 1,
     "sequenceNumber" : 53,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -2219,8 +2219,8 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1793602233836,
-    "duration" : 2741,
+    "timestamp" : 1793625190472,
+    "duration" : 2729,
     "sequenceNumber" : 54,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -2348,8 +2348,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602236577,
-    "duration" : 108,
+    "timestamp" : 1793625193201,
+    "duration" : 133,
     "sequenceNumber" : 55,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2380,8 +2380,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602236685,
-    "duration" : 2940,
+    "timestamp" : 1793625193335,
+    "duration" : 3055,
     "sequenceNumber" : 56,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2412,8 +2412,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602239625,
-    "duration" : 2851,
+    "timestamp" : 1793625196390,
+    "duration" : 3224,
     "sequenceNumber" : 57,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2444,8 +2444,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602242476,
-    "duration" : 2944,
+    "timestamp" : 1793625199615,
+    "duration" : 2955,
     "sequenceNumber" : 58,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2470,7 +2470,7 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602245420,
+    "timestamp" : 1793625202570,
     "duration" : 153,
     "sequenceNumber" : 59,
     "depth" : 0,
@@ -2500,8 +2500,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602245574,
-    "duration" : 2990,
+    "timestamp" : 1793625202723,
+    "duration" : 3147,
     "sequenceNumber" : 60,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2532,8 +2532,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602248564,
-    "duration" : 80,
+    "timestamp" : 1793625205870,
+    "duration" : 105,
     "sequenceNumber" : 61,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2558,8 +2558,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602248644,
-    "duration" : 1669,
+    "timestamp" : 1793625205975,
+    "duration" : 1692,
     "sequenceNumber" : 62,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2578,7 +2578,7 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793602250313,
+    "timestamp" : 1793625207667,
     "duration" : 149,
     "sequenceNumber" : 63,
     "depth" : 0,
@@ -2608,8 +2608,8 @@
   },
   "metadata" : {
     "status" : "FAILED",
-    "timestamp" : 1793602250462,
-    "duration" : 17026,
+    "timestamp" : 1793625207816,
+    "duration" : 16990,
     "error" : {
       "message" : "Element not found: Text matching regex: (Done|Start using Katkee)",
       "debugMessage" : "Element with Text matching regex: (Done|Start using Katkee) not found. Check the UI hierarchy in debug artifacts to verify if the element exists.\n\nPossible causes:\n- Element selector may be incorrect - check if there are similar elements with slightly different names/properties.\n- Element may be temporarily unavailable due to loading state.\n- This could be a real regression that needs to be addressed."

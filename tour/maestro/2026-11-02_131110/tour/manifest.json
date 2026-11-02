@@ -24,12 +24,12 @@
     "kind" : "COMMAND_METADATA",
     "format" : "JSON",
     "relativePath" : "commands.json",
-    "sizeBytes" : 73230
+    "sizeBytes" : 73234
   }, {
     "kind" : "DEVICE_LOG",
     "format" : "TXT",
     "relativePath" : "logs/device-logcat.txt",
-    "sizeBytes" : 6449976,
+    "sizeBytes" : 6235331,
     "metadata" : {
       "source" : "emulator"
     }
