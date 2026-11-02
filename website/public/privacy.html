@@ -82,6 +82,9 @@
 <h3 id="story-stickers-and-collab-stories">Story stickers and Collab Stories</h3>
 <p>When you answer an interactive sticker on someone&#39;s Story, we keep what you did: your vote on a poll or your answer to a quiz (one each, and it can&#39;t be changed), the text you send to a question sticker (&quot;Ask me anything&quot;), and whether you asked to be reminded when a countdown ends (we then send you one notification at that time). If you post from someone&#39;s &quot;Add Yours&quot;, we record that your Story is part of that prompt&#39;s chain. If you invite someone to a Collab Story, or are invited, we keep the invitation and whether it was accepted. When you open a link sticker the app tells us a link was opened, never which one; link stickers are checked against our link-safety rules and, when it&#39;s configured, Google Safe Browsing.</p>
 <p>When you change your profile photo, the app cuts out the square you choose on your phone and uploads only that square. Your cover photo works the same way: only the wide banner you frame is uploaded.</p>
+<h3 id="calls">Calls</h3>
+<p>Voice and video calls go straight between the two phones, encrypted between them (WebRTC). When the phones can&#39;t reach each other directly, the call is relayed by our service provider&#39;s relay servers (see section 5), still encrypted: they can&#39;t hear or see it. We never record calls.</p>
+<p>To set a call up, the two phones exchange connection details (their network addresses and the formats they support) through our servers; we delete them when the call ends. We keep the call log your chat shows (&quot;Missed voice call&quot;, &quot;Video call · 4:12&quot;): who called whom, when, whether it was a voice or video call, how it ended and how long it lasted.</p>
 <h3 id="your-connections">Your connections</h3>
 <p>Who you follow, who follows you, follow requests, and who you&#39;ve blocked or muted.</p>
 <h3 id="your-contacts-contacts-on-katkee-optional">Your contacts (Contacts on Katkee, optional)</h3>
@@ -145,6 +148,7 @@
 <ul>
 <li><strong>Stories</strong>: a public account&#39;s Stories can be seen by anyone, and reach people beyond its followers as described above. A private account&#39;s Stories are seen only by followers it approved. Followers-only Stories are seen only by followers.</li>
 <li><strong>Direct messages</strong>: only the people in the conversation see them. Staff can&#39;t browse messages. A moderator sees a message only when someone reports it.</li>
+<li><strong>Calls</strong>: only the two people on the call hear and see it. The call&#39;s line in your chat is visible to the two of you, like a message.</li>
 <li><strong>Profile photo and cover photo</strong>: anyone signed in who can see your profile, including when your account is private. People you&#39;ve blocked, or who&#39;ve blocked you, never see them.</li>
 <li><strong>Blocking</strong>: hides your content from someone and theirs from you, both ways, at once.</li>
 <li><strong>Sticker answers</strong>: who voted on a poll or quiz and what they chose, and answers to a question sticker, are seen only by the Story&#39;s owner. Other viewers see a poll&#39;s percentages after they vote, and a quiz&#39;s answer after they answer. If the owner shares an answer to a new Story, it shows the question and the answer, not who sent it.</li>
@@ -158,7 +162,7 @@
 <ul>
 <li><strong>Amazon Web Services</strong>: our servers, database, file storage and email.</li>
 <li><strong>Google Firebase Cloud Messaging</strong> and <strong>Apple Push Notification service</strong>: deliver notifications.</li>
-<li><strong>Twilio</strong>: sends phone sign-in codes, if you use phone sign-in.</li>
+<li><strong>Twilio</strong>: sends phone sign-in codes, if you use phone sign-in, and relays calls that can&#39;t connect directly. To relay a call it sees the network addresses of the two phones, never what&#39;s said or shown.</li>
 <li><strong>Google</strong>: Google sign-in, if you use it, and Safe Browsing checks of links posted in Katkee.</li>
 </ul>
 <p>They process data only to provide these services to us. Our servers, database and files are in India (Amazon Web Services, Mumbai); Twilio, Google and Apple may process the data they handle for us outside India.</p>
@@ -183,6 +187,7 @@
 <li><strong>Interests we learn</strong>: each topic fades over time and is deleted 180 days after it last changed; all of them are deleted at once when you delete your account.</li>
 <li><strong>Raw analytics events</strong>: deleted after 90 days; only daily totals that identify nobody remain.</li>
 <li><strong>Crash reports</strong>: deleted after 90 days.</li>
+<li><strong>Calls</strong>: the connection details are deleted when the call ends. The call&#39;s line in your chat stays like a message; our record of the call (who, when, how it ended, how long) is deleted 90 days after it ended.</li>
 <li><strong>Verification ID photo</strong>: deleted 30 days after the request is approved, denied or withdrawn, and at once if you delete your account. The request itself (category, name and links) is kept while your account exists, so we can review your badge.</li>
 <li><strong>Feedback</strong>: kept until we&#39;ve dealt with it, then deleted after 180 days. Deleting your account deletes your feedback and crash reports.</li>
 <li><strong>Security records</strong>: up to 400 days.</li>
@@ -240,7 +245,7 @@
 <ul>
 <li><strong>Privacy questions and requests about your data</strong>: Rahul Katakdhond, <a href="mailto:privacy@katkee.com">privacy@katkee.com</a></li>
 <li><strong>Help with the app</strong>: <a href="mailto:support@katkee.com">support@katkee.com</a>, or <a href="https://katkee.com/support">katkee.com/support</a></li>
-<li><strong>Grievance Officer (India)</strong>: Rahul Katakdhond, <a href="mailto:grievance@katkee.com">grievance@katkee.com</a>. We acknowledge a complaint within 24 hours and resolve it within 15 days. If you&#39;re not satisfied with the decision, you can appeal to the Grievance Appellate Committee at <a href="https://gac.gov.in">gac.gov.in</a> within 30 days. Section 12 of the <a href="/terms">Terms of Service</a> has the details.</li>
+<li><strong>Grievance Officer (India)</strong>: Rahul Katakdhond, <a href="mailto:grievance@katkee.com">grievance@katkee.com</a>. We acknowledge a complaint within 24 hours and resolve it within 15 days. If you&#39;re not satisfied with the decision, you can appeal to the Grievance Appellate Committee at <a href="https://gac.gov.in">gac.gov.in</a> within 30 days. Section 12 of the [Terms</li>
 </ul>
 </div>
 </div>

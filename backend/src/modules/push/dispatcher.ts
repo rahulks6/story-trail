@@ -115,6 +115,11 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
   if (item.kind === "badge") {
     return { message: { title: "", body: "", data: { kind: "badge" }, collapseKey: "badge", badge, badgeOnly: true } };
   }
+  if (item.kind === "call" || item.kind === "call_missed") {
+    // Calls ring whenever pushes are on (like a phone call, the New messages switch and a muted chat don't silence them).
+    if (item.actorId && (row.actor_ok !== "t" || row.blocked === "t")) return { skip: "actor unavailable" };
+    return renderCallPush(item, (row.actor_username as string | null) ?? "someone", badge);
+  }
   if ((item.kind === "message" || item.kind === "message_reaction") && row.messages_enabled !== "t") return { skip: "message pushes turned off" };
   const toggle = SWITCH[item.kind];
   if (toggle && row[toggle] !== "t") return { skip: `${item.kind} pushes turned off` };
@@ -175,6 +180,52 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
       threadId: isMessage && item.refId ? `dm-${item.refId}` : "activity",
       badge,
       channel: isMessage ? "messages" : "activity",
+    },
+  };
+}
+
+/**
+ * A ringing call (on the "calls" channel, which rings like a phone on Android, and never delivered
+ * once the call can't be answered any more), or the "Missed call" that replaces it under the same
+ * collapse key. Tapping either opens the app: a ringing call's katkee://call/<id> link brings up
+ * the incoming-call screen while it still rings.
+ */
+async function renderCallPush(item: OutboxItem, actor: string, badge: number): Promise<Rendered> {
+  const call = item.refId
+    ? await queryOne(
+      `SELECT conversation_id, media, state, GREATEST(0, :'ring'::integer - floor(extract(epoch FROM now() - created_at)))::integer AS rings_for
+       FROM calls WHERE id = :'id'`,
+      { id: item.refId, ring: config.calls.ringSeconds },
+    )
+    : null;
+  if (!call) return { skip: "call gone" };
+  const video = call.media === "video";
+  const conversationId = call.conversation_id as string;
+  if (item.kind === "call") {
+    const ringsFor = Number(call.rings_for);
+    if (call.state !== "ringing" || ringsFor < 3) return { skip: "call over" };
+    return {
+      message: {
+        title: "Katkee",
+        body: video ? `@${actor} is video calling you` : `@${actor} is calling you`,
+        data: { kind: "call", callId: item.refId!, conversationId, media: call.media as string, url: `katkee://call/${item.refId}` },
+        collapseKey: `call-${item.refId}`,
+        threadId: `dm-${conversationId}`,
+        badge,
+        channel: "calls",
+        ttlSeconds: ringsFor,
+      },
+    };
+  }
+  return {
+    message: {
+      title: "Katkee",
+      body: `Missed ${video ? "video" : "voice"} call from @${actor}`,
+      data: { kind: "call_missed", callId: item.refId!, conversationId, url: `katkee://conversation/${conversationId}` },
+      collapseKey: `call-${item.refId}`,
+      threadId: `dm-${conversationId}`,
+      badge,
+      channel: "messages",
     },
   };
 }

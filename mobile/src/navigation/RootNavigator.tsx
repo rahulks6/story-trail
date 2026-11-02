@@ -6,8 +6,9 @@ import { ActivityIndicator, Linking, View } from "react-native";
 import { createNavigationContainerRef, DarkTheme, DefaultTheme, NavigationContainer, type LinkingOptions, type Theme } from "@react-navigation/native";
 import { InAppNotificationBanner } from "../components/InAppNotificationBanner";
 import { colorScheme } from "../theme/colors";
-import { deepLinkTarget, LINK_PREFIXES, linkPath, opensInApp } from "./profileLinks";
+import { callIdFromLink, deepLinkTarget, LINK_PREFIXES, linkPath, opensInApp } from "./profileLinks";
 import { initialNotificationLink, onNotificationOpened } from "../push/pushNotifications";
+import { useCallsIfAvailable } from "../calls/CallContext";
 import { usePushRegistration } from "../push/usePushRegistration";
 import { useAreaSync } from "../state/nearby";
 import { NearbyPrompt } from "../components/NearbyPrompt";
@@ -325,6 +326,10 @@ export function RootNavigator(): React.JSX.Element {
   const navigationRef = useMemo(() => createNavigationContainerRef<RootStackParamList>(), []);
   // The linking listener below, so a tapped in-app banner opens its link like a tapped notification.
   const openLink = useRef<((url: string) => void) | null>(null);
+  // A ringing call's notification (katkee://call/<id>) opens the call screen, not a screen of the app.
+  const calls = useCallsIfAvailable();
+  const openCallLink = useRef(calls?.openCallLink);
+  openCallLink.current = calls?.openCallLink;
   // A profile or Story link that arrives while signed out opens after sign-in.
   useEffect(() => {
     if (status === "signedIn") return;
@@ -341,13 +346,20 @@ export function RootNavigator(): React.JSX.Element {
     getInitialURL: async () => {
       const url = pendingLink.current ?? await Linking.getInitialURL() ?? await initialNotificationLink();
       pendingLink.current = null;
+      if (callIdFromLink(url)) {
+        openCallLink.current?.(url!);
+        return null;
+      }
       return url && opensInApp(url) ? url : null;
     },
     // Links opened from outside, plus taps on push notifications while the app runs.
     subscribe: listener => {
       openLink.current = listener;
       const links = Linking.addEventListener("url", ({ url }) => { if (opensInApp(url)) listener(url); });
-      const stopNotifications = onNotificationOpened(listener);
+      const stopNotifications = onNotificationOpened((url) => {
+        if (callIdFromLink(url)) openCallLink.current?.(url);
+        else listener(url);
+      });
       return () => {
         links.remove();
         stopNotifications();

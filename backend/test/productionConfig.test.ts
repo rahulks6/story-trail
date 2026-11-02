@@ -81,4 +81,17 @@ describe("production startup", () => {
     assert.notEqual(app.status, 0);
     assert.match(app.stderr, /Missing required environment variable: JWT_ACCESS_SECRET/);
   });
+
+  it("keeps calls off until a TURN server is configured", () => {
+    const twilio = { TWILIO_ACCOUNT_SID: `AC${"1".repeat(32)}`, TWILIO_API_KEY_SID: `SK${"2".repeat(32)}`, TWILIO_API_KEY_SECRET: "key-secret" };
+    const off = spawnSync(process.execPath, ["-e", `console.log(require(${JSON.stringify(path.join(__dirname, "../src/config/env.js"))}).config.calls.enabled)`], { cwd: os.tmpdir(), env: production(), encoding: "utf8" });
+    assert.equal(off.stdout.trim(), "false", "off by default in production");
+    const noTurn = load(production({ CALLS_ENABLED: "true" }));
+    assert.notEqual(noTurn.status, 0);
+    assert.match(noTurn.stderr, /CALLS_ENABLED in production requires a TURN server/);
+    assert.equal(load(production({ CALLS_ENABLED: "true", CALLS_TURN_PROVIDER: "twilio", ...twilio })).status, 0);
+    assert.match(load(production({ CALLS_ENABLED: "true", CALLS_TURN_PROVIDER: "twilio", TWILIO_ACCOUNT_SID: twilio.TWILIO_ACCOUNT_SID })).stderr, /needs TWILIO_ACCOUNT_SID and either/);
+    assert.match(load(production({ CALLS_ENABLED: "true", CALLS_TURN_PROVIDER: "secret", CALLS_TURN_URLS: "turn:turn.katkee.example:3478", CALLS_TURN_SECRET: "short" })).stderr, /CALLS_TURN_SECRET of at least/);
+    assert.match(load(production({ CALLS_ENABLED: "true", CALLS_TURN_PROVIDER: "twilio", ...twilio, TWILIO_API_ENDPOINT: "http://127.0.0.1:1" })).stderr, /TWILIO_API_ENDPOINT is for local test servers only/);
+  });
 });

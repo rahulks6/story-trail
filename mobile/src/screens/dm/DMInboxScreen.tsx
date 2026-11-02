@@ -15,6 +15,7 @@ import { groupName, hideConversation, listConversations, setConversationMuted, t
 import { ActionSheet } from "../../components/ActionSheet";
 import { showToast } from "../../components/Toast";
 import { actorName, groupEventText } from "../../models/groupEvents";
+import { callLineText } from "../../models/callLines";
 import { EmptyState } from "../../components/EmptyState";
 import { Button } from "../../components/Form";
 import { Avatar } from "../../components/Avatar";
@@ -29,6 +30,7 @@ const PAGE_SIZE = 50;
 function previewText(conversation: ConversationSummary, myUserId: string | undefined): string {
   const lastMessage = conversation.lastMessage;
   if (!lastMessage) return "No messages yet";
+  if (lastMessage.event?.type === "call") return callLineText(lastMessage.event, lastMessage.senderId === myUserId);
   if (lastMessage.event) {
     const actor = actorName(lastMessage.senderId, myUserId, lastMessage.senderUsername);
     const known = new Map((conversation.group?.members ?? []).map((m) => [m.id, `@${m.username}`]));

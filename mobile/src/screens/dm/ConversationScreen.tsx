@@ -81,6 +81,8 @@ import { ActionSheet } from "../../components/ActionSheet";
 import { blockUser } from "../../api/users";
 import { actorName, groupEventText } from "../../models/groupEvents";
 import { GroupAvatar } from "../../components/GroupAvatar";
+import { callLineText, isMissedCall } from "../../models/callLines";
+import { useCallsIfAvailable } from "../../calls/CallContext";
 
 type Props = NativeStackScreenProps<DMStackParamList, "Conversation">;
 
@@ -196,6 +198,8 @@ interface RowActions {
   onView: (viewing: { id: string; kind: "photo" | "video" }) => void;
   onPlay: (key: string) => void;
   onStop: (key: string) => void;
+  /** A tap on a call's line calls back the same way (voice or video). */
+  onCallBack: (media: "audio" | "video") => void;
 }
 
 interface RowProps {
@@ -356,6 +360,25 @@ function MessageContent({ row, userId, nameOf, labelOf, senderLabel, accessToken
     lastTapAt.current = now;
     if (single) singleTap.current = setTimeout(() => { singleTap.current = null; single(); }, DOUBLE_TAP_MS);
   };
+  // A call's line ("Missed voice call", "Video call · 4:12"), centred; a tap calls back.
+  if (row.kind === "sent" && row.event?.type === "call") {
+    const mine = row.senderId === userId;
+    const text = callLineText(row.event, mine);
+    const missed = isMissedCall(row.event, mine);
+    const media = row.event.media;
+    return (
+      <Pressable
+        onPress={() => actions.onCallBack(media)}
+        style={styles.callLine}
+        accessibilityRole="button"
+        accessibilityLabel={text}
+        accessibilityHint={media === "video" ? "Starts a video call" : "Starts a voice call"}
+      >
+        <Icon name={media === "video" ? ICONS.video : ICONS.call} size={14} color={missed ? colors.danger : colors.textSecondary} />
+        <Text style={[styles.callLineText, missed && styles.callLineMissed]}>{text}</Text>
+      </Pressable>
+    );
+  }
   // A group's "what happened" line, centred, not a bubble.
   if (row.kind === "sent" && row.event) {
     const text = groupEventText(row.event, actorName(row.senderId, userId, nameOf(row.senderId)), (id) => (id === userId ? "you" : nameOf(id) ? `@${nameOf(id)}` : "someone"));
@@ -722,6 +745,10 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
   /** You muted this chat (no pushes from it); and the 1:1 header's ⋯ menu. */
   const [muted, setMuted] = useState(false);
   const [chatMenuOpen, setChatMenuOpen] = useState(false);
+  /** Voice and video calls work here (the server says so: calls on, no block, their account active). */
+  const [callsAvailable, setCallsAvailable] = useState(false);
+  const calls = useCallsIfAvailable();
+  const otherIdRef = useRef<string | null>(null);
   /** A group's name and people (loaded from the server; refreshed when someone joins or leaves). */
   const [group, setGroup] = useState<GroupDetails | null>(null);
   const isGroup = !!isGroupParam || group !== null;
@@ -763,6 +790,8 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         const others = conversation.members.filter((m) => m.userId !== userId);
         navigation.setParams({ group: true, title: groupName(conversation.title, others, others.length) });
       } else if (conversation.otherUser) {
+        setCallsAvailable(!!conversation.callsAvailable);
+        otherIdRef.current = conversation.otherUser.id;
         navigation.setParams({
           otherUsername: conversation.otherUser.username,
           otherDisplayName: conversation.otherUser.displayName,
@@ -793,6 +822,21 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     const username = nameOf(id);
     return username ? `@${username}` : undefined;
   }, [isGroup, members, nameOf, otherDisplayName, userId]);
+
+  // Calls: from a 1:1 chat with someone the server says can be called, in a build that can call.
+  const canCall = !isGroup && callsAvailable && !!calls?.supported && !!otherUsername;
+  const placeCall = useCallback((media: "audio" | "video") => {
+    if (!calls || !otherUsername || !canCall) return;
+    calls.startCall(conversationId, media, {
+      id: otherIdRef.current ?? "",
+      username: otherUsername,
+      displayName: otherDisplayName ?? otherUsername,
+      avatarMediaId: otherAvatarMediaId ?? null,
+      verified: !!otherVerified,
+    });
+  }, [calls, canCall, conversationId, otherAvatarMediaId, otherDisplayName, otherUsername, otherVerified]);
+  const placeCallRef = useRef(placeCall);
+  placeCallRef.current = placeCall;
 
   // The header: who you're talking to, with their photo; a tap opens their profile. `initial: false`
   // keeps the Search tab's own first screen under it (a first visit creates that stack).
@@ -843,12 +887,24 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         </Pressable>
       ),
       headerRight: () => (
-        <Pressable onPress={() => setChatMenuOpen(true)} hitSlop={10} style={styles.headerMore} accessibilityRole="button" accessibilityLabel="Chat options">
-          <Icon name={ICONS.more} size={22} color={colors.textPrimary} />
-        </Pressable>
+        <View style={styles.headerActions}>
+          {canCall ? (
+            <>
+              <Pressable onPress={() => placeCall("audio")} hitSlop={6} style={styles.headerMore} accessibilityRole="button" accessibilityLabel={`Voice call ${otherDisplayName || `@${otherUsername}`}`}>
+                <Icon name={ICONS.call} size={22} color={colors.textPrimary} />
+              </Pressable>
+              <Pressable onPress={() => placeCall("video")} hitSlop={6} style={styles.headerMore} accessibilityRole="button" accessibilityLabel={`Video call ${otherDisplayName || `@${otherUsername}`}`}>
+                <Icon name={ICONS.video} size={24} color={colors.textPrimary} />
+              </Pressable>
+            </>
+          ) : null}
+          <Pressable onPress={() => setChatMenuOpen(true)} hitSlop={10} style={styles.headerMore} accessibilityRole="button" accessibilityLabel="Chat options">
+            <Icon name={ICONS.more} size={22} color={colors.textPrimary} />
+          </Pressable>
+        </View>
       ),
     });
-  }, [conversationId, group, groupTitleParam, isGroup, navigation, openProfile, otherAvatarMediaId, otherDisplayName, otherUsername, otherVerified, userId]);
+  }, [canCall, conversationId, group, groupTitleParam, isGroup, navigation, openProfile, otherAvatarMediaId, otherDisplayName, otherUsername, otherVerified, placeCall, userId]);
 
   // Unsent messages for this thread, kept in sync with the persisted outbox.
   useEffect(() => {
@@ -1332,6 +1388,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
     onView: (item) => setViewing(item),
     onPlay: (key) => setPlayingKey(key),
     onStop: (key) => setPlayingKey((k) => (k === key ? null : k)),
+    onCallBack: (media) => placeCallRef.current(media),
   }), []);
 
   const rows = useMemo((): ListRow[] => {
@@ -1674,6 +1731,10 @@ const styles = StyleSheet.create({
   recordHint: { flex: 1, color: colors.textSecondary, fontSize: 14 },
   header: { flexDirection: "row", alignItems: "center", gap: spacing.sm, maxWidth: 260 },
   headerMore: { paddingHorizontal: spacing.xs, minHeight: 44, justifyContent: "center" },
+  headerActions: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
+  callLine: { alignSelf: "center", flexDirection: "row", alignItems: "center", gap: spacing.xs, marginVertical: spacing.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xs + 2, borderRadius: radii.pill, backgroundColor: colors.surface, minHeight: 32 },
+  callLineText: { color: colors.textSecondary, fontSize: 13, fontWeight: "500" },
+  callLineMissed: { color: colors.danger },
   headerNames: { flexShrink: 1 },
   headerName: { color: colors.textPrimary, fontSize: 16, fontWeight: "700" },
   headerUsername: { color: colors.textSecondary, fontSize: 12 },

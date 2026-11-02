@@ -1,7 +1,10 @@
 package com.katkee
 
 import android.app.Application
+import android.app.Notification
 import android.app.NotificationChannel
+import android.media.AudioAttributes
+import android.media.RingtoneManager
 import android.app.NotificationManager
 import android.os.Build
 import androidx.emoji2.bundled.BundledEmojiCompatConfig
@@ -23,6 +26,8 @@ class MainApplication : Application(), ReactApplication {
           add(0, EmojiTextPackage())
           // Reloads the app when its appearance (light or dark) changes.
           add(AppRestartPackage())
+          // Keeps a call's microphone working in the background (OngoingCallService.kt).
+          add(OngoingCallPackage())
         },
     )
   }
@@ -54,6 +59,19 @@ class MainApplication : Application(), ReactApplication {
           .apply { description = getString(R.string.notification_channel_messages_description) },
         NotificationChannel("activity", getString(R.string.notification_channel_activity), NotificationManager.IMPORTANCE_DEFAULT)
           .apply { description = getString(R.string.notification_channel_activity_description) },
+        // Incoming calls ring with the phone's ringtone, like a phone call; the ongoing-call
+        // notification is posted here silently.
+        NotificationChannel("calls", getString(R.string.notification_channel_calls), NotificationManager.IMPORTANCE_HIGH)
+          .apply {
+            description = getString(R.string.notification_channel_calls_description)
+            setSound(
+              RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE),
+              AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build(),
+            )
+            enableVibration(true)
+            vibrationPattern = longArrayOf(0, 1000, 1000, 1000, 1000)
+            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+          },
       ),
     )
   }

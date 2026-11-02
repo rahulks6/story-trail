@@ -5,4 +5,9 @@
     <string name="notification_channel_messages_description">New direct messages</string>
     <string name="notification_channel_activity">Activity</string>
     <string name="notification_channel_activity_description">Likes, comments, mentions, new followers and follow requests</string>
+    <string name="notification_channel_calls">Calls</string>
+    <string name="notification_channel_calls_description">Incoming voice and video calls, and the call you\'re on</string>
+    <!-- The ongoing-call notification (OngoingCallService.kt). -->
+    <string name="ongoing_voice_call">Ongoing voice call</string>
+    <string name="ongoing_video_call">Ongoing video call</string>
 </resources>
