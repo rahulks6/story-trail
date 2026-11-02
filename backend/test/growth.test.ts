@@ -17,6 +17,7 @@ import { authHeader, makeClient, uniqueUser, ADULT_BIRTH_DATE } from "./helpers"
 // Only the SMS gateway is a stand-in: every code is "246810".
 const server = buildApp({
   async google() { throw new Error("not used"); },
+  async apple() { throw new Error("not used"); },
   async sendPhone() { return "VE" + "3".repeat(32); },
   async checkPhone(_sid, code) { return code === "246810"; },
 });
