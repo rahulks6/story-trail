@@ -70,7 +70,13 @@ appId: com.katkee.app
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: t05-people
-- tapOn: "(Done|Start using Katkee)"
+# Step 3: find friends from contacts (optional), then into the app.
+- tapOn: "(Next|Skip)"
+- extendedWaitUntil:
+    visible: "Start using Katkee"
+    timeout: 20000
+- takeScreenshot: t05b-contacts-step
+- tapOn: "Start using Katkee"
 - extendedWaitUntil:
     visible: "(Home|Not now)"
     timeout: 30000
