@@ -401,6 +401,33 @@ describe("the Admin API", () => {
   });
 });
 
+describe("calls", () => {
+  it("a stranger can't place a call in someone's chat, or see, answer, end or listen in on their call", async () => {
+    refused(await attempt("POST /api/v1/conversations/:id/calls", `/api/v1/conversations/${ids.conversation}/calls`, stranger, { media: "video" }), "call in someone else's chat");
+    const placed = await request("POST", `/api/v1/conversations/${ids.conversation}/calls`, { media: "audio" }, owner.auth);
+    assert.equal(placed.status, 201, placed.text);
+    const call = placed.body.call.id as string;
+    const offer = { kind: "offer", payload: { sdp: "v=0\r\no=- 1 1 IN IP4 127.0.0.1\r\n" } };
+    for (const [key, path, body] of [
+      ["GET /api/v1/calls/:id", `/api/v1/calls/${call}`, undefined],
+      ["POST /api/v1/calls/:id/ringing", `/api/v1/calls/${call}/ringing`, {}],
+      ["POST /api/v1/calls/:id/accept", `/api/v1/calls/${call}/accept`, {}],
+      ["POST /api/v1/calls/:id/decline", `/api/v1/calls/${call}/decline`, {}],
+      ["POST /api/v1/calls/:id/heartbeat", `/api/v1/calls/${call}/heartbeat`, {}],
+      ["POST /api/v1/calls/:id/signals", `/api/v1/calls/${call}/signals`, offer],
+      ["GET /api/v1/calls/:id/signals", `/api/v1/calls/${call}/signals?after=0`, undefined],
+      ["POST /api/v1/calls/:id/end", `/api/v1/calls/${call}/end`, { reason: "hangup" }],
+    ] as const) {
+      refused(await attempt(key, path, stranger, body), key);
+      refused(await request(key.split(" ")[0]!, path, body, {}), `${key} signed out`, [401]);
+    }
+    // Untouched by any of that: still ringing between the two people in the chat.
+    assert.equal((await request("GET", `/api/v1/calls/${call}`, undefined, owner.auth)).body.call.state, "ringing");
+    assert.equal(await count(`call_signals WHERE call_id = :'call'`, { call }), 0, "no signal was stored");
+    await request("POST", `/api/v1/calls/${call}/end`, { reason: "hangup" }, owner.auth);
+  });
+});
+
 describe("invite links", () => {
   it("an invite link (katkee.com/i/, the sign-up lookup) shows the inviter's name and nothing private", async () => {
     const code = await inviteCodeFor(owner.id);
