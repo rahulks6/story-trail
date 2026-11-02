@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://katkee.com/sitemap.xml
+Sitemap: https://katkee.com/sitemap-profiles.xml

@@ -25,10 +25,37 @@
       "headline": "%INVITE_HEADLINE%"
     }
   },
+  "webProfile": {
+    "file": "profile.html",
+    "markers": {
+      "title": "%WEB_TITLE%",
+      "description": "%WEB_PAGE_DESCRIPTION%",
+      "linkPath": "%WEB_PATH%",
+      "robots": "%WEB_ROBOTS%",
+      "ogType": "%WEB_OG_TYPE%",
+      "image": "%WEB_IMAGE%",
+      "imageAlt": "%WEB_IMAGE_ALT%",
+      "card": "%WEB_CARD%",
+      "appLink": "%WEB_APP_LINK%",
+      "start": "%WEB_START%",
+      "cover": "%WEB_COVER%",
+      "avatar": "%WEB_AVATAR%",
+      "name": "%WEB_NAME%",
+      "badge": "%WEB_BADGE%",
+      "handle": "%WEB_HANDLE%",
+      "category": "%WEB_CATEGORY%",
+      "stats": "%WEB_STATS%",
+      "bio": "%WEB_BIO%",
+      "interests": "%WEB_INTERESTS%",
+      "stories": "%WEB_STORIES%",
+      "data": "%WEB_DATA%"
+    }
+  },
   "assets": {
-    "site.66df80a9bd.css": "text/css; charset=utf-8",
+    "site.680e0109c1.css": "text/css; charset=utf-8",
     "katkee-icon.483d838bba.svg": "image/svg+xml",
-    "social-card.5e7e0ce26c.png": "image/png"
+    "social-card.5e7e0ce26c.png": "image/png",
+    "player.57507dbaf0.js": "text/javascript; charset=utf-8"
   },
   "files": {
     "/favicon.ico": {
