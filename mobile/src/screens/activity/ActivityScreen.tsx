@@ -20,6 +20,8 @@ import {
 import { getStoryOwnerUsername, mediaFileUrl } from "../../api/stories";
 import { acceptFollowRequest, declineFollowRequest, followUser } from "../../api/users";
 import { ApiError } from "../../api/client";
+import { respondToCollab } from "../../api/stickers";
+import { tapFeedback } from "../../utils/haptics";
 import { Avatar } from "../../components/Avatar";
 import { VerifiedBadge } from "../../components/VerifiedBadge";
 import { EmptyState } from "../../components/EmptyState";
@@ -43,7 +45,8 @@ const TABS: Array<{ key: ActivityTab; label: string }> = [
 function matchesTab(notification: NotificationRecord, tab: ActivityTab): boolean {
   if (tab === "all") return true;
   if (tab === "follow") return notification.type === "follow" || notification.type === "follow_request" || notification.type === "follow_accepted" || notification.type === "invite_joined";
-  if (tab === "comment") return notification.type === "comment" || notification.type === "mention";
+  // Collab invitations are people bringing you into their Story, like a mention.
+  if (tab === "comment") return notification.type === "comment" || notification.type === "mention" || notification.type === "collab_invite" || notification.type === "collab_accepted";
   return notification.type === tab;
 }
 
@@ -96,6 +99,10 @@ function messageFor(notification: NotificationRecord): string {
     case "mention":
       // A mention sticker on their Story, or @you in a comment.
       return notification.comment ? `${name} mentioned you in a comment.` : `${name} mentioned you in their Story.`;
+    case "collab_invite":
+      return `${name} invited you to a collab Story.`;
+    case "collab_accepted":
+      return `${name} accepted your collab Story.`;
     default:
       return `${name} did something.`;
   }
@@ -337,7 +344,13 @@ export function ActivityScreen(): React.JSX.Element {
       return;
     }
 
-    if (notification.type === "mention" && notification.story && accessToken) {
+    // A collab invitation opens the Story itself (you can look before answering); an
+    // acceptance is about your own Story.
+    if (notification.type === "collab_accepted" && notification.story && user) {
+      navigation.navigate("StoryViewer", { creators: [user.username], startIndex: 0, initialStoryId: notification.story.id });
+      return;
+    }
+    if ((notification.type === "mention" || notification.type === "collab_invite") && notification.story && accessToken) {
       // A mention's Story could belong to anyone, unlike like/comment —
       // resolve the real owner via GET /api/v1/stories/:id/owner rather
       // than guessing. Falls back to the actor's profile if that lookup
@@ -399,6 +412,23 @@ export function ActivityScreen(): React.JSX.Element {
       setLoadError(e instanceof ApiError ? e.message : "Couldn't answer that request. Check your connection and try again.");
     }
   };
+  // Collab invitations answered here, by Story (Accept puts the Story in your ring too).
+  const [collabAnswered, setCollabAnswered] = useState<Record<string, "accepted" | "declined">>({});
+  const answerCollab = async (storyId: string, accept: boolean) => {
+    if (!accessToken) return;
+    try {
+      await respondToCollab(storyId, accept, accessToken);
+      tapFeedback(accept ? "success" : "tap");
+      setCollabAnswered((m) => ({ ...m, [storyId]: accept ? "accepted" : "declined" }));
+    } catch (e) {
+      // Answered already, or the invitation was withdrawn or expired: show how it stands now.
+      if (e instanceof ApiError && (e.status === 409 || e.status === 404)) {
+        void loadFirstPage();
+        return;
+      }
+      setLoadError(e instanceof ApiError ? e.message : "Couldn't answer that invitation. Check your connection and try again.");
+    }
+  };
   const authHeaders = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
   const trailing = (row: ActivityRow): React.ReactNode => {
     if (row.kind === "grouped-like") {
@@ -416,6 +446,24 @@ export function ActivityScreen(): React.JSX.Element {
           </Pressable>
           <Pressable onPress={() => void answer(id, false)} style={styles.smallButton} accessibilityRole="button" accessibilityLabel={`Delete @${n.actor?.username ?? ""}'s request`}>
             <Text style={styles.smallButtonText}>Delete</Text>
+          </Pressable>
+        </View>
+      );
+    }
+    if (n.type === "collab_invite" && n.story) {
+      const storyId = n.story.id;
+      const answeredHere = collabAnswered[storyId] as "accepted" | "declined" | undefined;
+      const status = answeredHere ?? n.collab?.status ?? "withdrawn";
+      if (status !== "pending") {
+        return <Text style={styles.trailingNote}>{status === "accepted" ? "Accepted" : status === "declined" ? "Declined" : "Withdrawn"}</Text>;
+      }
+      return (
+        <View style={styles.trailingButtons}>
+          <Pressable onPress={() => void answerCollab(storyId, true)} style={[styles.smallButton, styles.smallButtonPrimary]} accessibilityRole="button" accessibilityLabel={`Accept @${n.actor?.username ?? ""}'s collab invitation`}>
+            <Text style={styles.smallButtonPrimaryText}>Accept</Text>
+          </Pressable>
+          <Pressable onPress={() => void answerCollab(storyId, false)} style={styles.smallButton} accessibilityRole="button" accessibilityLabel={`Decline @${n.actor?.username ?? ""}'s collab invitation`}>
+            <Text style={styles.smallButtonText}>Decline</Text>
           </Pressable>
         </View>
       );

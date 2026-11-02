@@ -240,6 +240,11 @@ export async function deletedAccounts(store: ObjectStore, batch: number, days: n
        -- Already deleted when the account was (verification.service.ts); this is the backstop.
        vr AS (DELETE FROM verification_requests WHERE user_id IN (SELECT id FROM u)),
        cr AS (DELETE FROM crash_reports WHERE user_id IN (SELECT id FROM u)),
+       -- What they did with Story stickers, and their collab invitations (migrations 0062, 0063).
+       sq AS (DELETE FROM story_question_responses WHERE responder_id IN (SELECT id FROM u)),
+       sv AS (DELETE FROM story_sticker_votes WHERE voter_id IN (SELECT id FROM u)),
+       sr AS (DELETE FROM story_countdown_reminders WHERE user_id IN (SELECT id FROM u)),
+       sc AS (DELETE FROM story_collaborators WHERE user_id IN (SELECT id FROM u)),
        -- The invite link stops working with the account; who joined from whose link goes now.
        ic AS (DELETE FROM invite_codes WHERE user_id IN (SELECT id FROM u)),
        ir AS (DELETE FROM invite_redemptions WHERE invitee_id IN (SELECT id FROM u) OR inviter_id IN (SELECT id FROM u))

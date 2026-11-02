@@ -6,8 +6,9 @@ import { apiGet, apiPatch, apiPost } from "./client";
  * lockstep by hand until there's a shared types package.
  */
 /** `verification`: your badge was approved, denied, removed or restored (no actor). */
+/** `collab_invite`: someone invited you to share their Story (Accept/Decline); `collab_accepted`: your invitation was accepted. */
 /** "invite_joined": someone joined Katkee from your invite link (backend growth/invites.ts). */
-export type NotificationType = "like" | "comment" | "follow" | "follow_request" | "follow_accepted" | "mention" | "verification" | "invite_joined";
+export type NotificationType = "like" | "comment" | "follow" | "follow_request" | "follow_accepted" | "mention" | "verification" | "collab_invite" | "collab_accepted" | "invite_joined";
 
 export interface NotificationRecord {
   id: string;
@@ -21,6 +22,8 @@ export interface NotificationRecord {
   followRequest: { id: string; status: string } | null;
   /** Only on a `verification` notification. */
   verification?: { status: "approved" | "denied" | "removed" | "restored"; reason: string | null } | null;
+  /** Only on a `collab_invite`: where the invitation stands now. */
+  collab?: { status: "pending" | "accepted" | "declined" | "withdrawn" } | null;
 }
 
 export function listNotifications(

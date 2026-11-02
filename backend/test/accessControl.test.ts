@@ -181,6 +181,22 @@ describe("a private account's Story", () => {
     assert.equal((await request("GET", s, undefined, friend.auth)).status, 200, "and its follower still sees it");
   });
 
+  it("its stickers, Add Yours chain and collab can't be answered, read or taken over by a stranger", async () => {
+    const s = `/api/v1/stories/${ids.story}`;
+    const st = `${s}/stickers/poll-1`;
+    refused(await attempt("POST /api/v1/stories/:id/stickers/:stickerId/vote", `${st}/vote`, stranger, { option: 0 }), "vote");
+    refused(await attempt("POST /api/v1/stories/:id/stickers/:stickerId/answers", `${st}/answers`, stranger, { body: "hi" }), "answer");
+    refused(await attempt("PUT /api/v1/stories/:id/stickers/:stickerId/reminder", `${st}/reminder`, stranger), "remind");
+    refused(await attempt("DELETE /api/v1/stories/:id/stickers/:stickerId/reminder", `${st}/reminder`, stranger), "unremind");
+    refused(await attempt("GET /api/v1/stories/:id/stickers/:stickerId/responses", `${st}/responses`, friend), "responses");
+    refused(await attempt("DELETE /api/v1/stories/:id/stickers/:stickerId/responses/:responseId", `${st}/responses/${randomUUID()}`, friend), "delete response");
+    refused(await attempt("GET /api/v1/add-yours/:chainId", `/api/v1/add-yours/${randomUUID()}`, stranger), "chain");
+    refused(await attempt("POST /api/v1/stories/:id/collab/accept", `${s}/collab/accept`, stranger), "accept collab");
+    refused(await attempt("POST /api/v1/stories/:id/collab/decline", `${s}/collab/decline`, stranger), "decline collab");
+    refused(await attempt("DELETE /api/v1/stories/:id/collab", `${s}/collab`, stranger), "end collab");
+    assert.equal(await count(`story_sticker_votes WHERE story_id = :'id'`, { id: ids.story }), 0);
+  });
+
   it("a follow request alone opens nothing", async () => {
     await attempt("POST /api/v1/users/:username/follow", `/api/v1/users/${owner.username}/follow`, stranger);
     refused(await attempt("GET /api/v1/users/:username/stories", `/api/v1/users/${owner.username}/stories`, stranger), "stories while pending", [403]);

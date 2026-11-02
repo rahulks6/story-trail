@@ -1,7 +1,7 @@
 import { Icon } from "../../components/Icon";
 import { StorySkeleton } from "../../components/Skeleton";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Animated, AppState, Dimensions, Image, PanResponder, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { ActivityIndicator, Alert, Animated, AppState, Dimensions, Image, Linking, PanResponder, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { Pressable } from "../../components/Pressable";
 import { isLongCaption, StoryBottomScrim, StoryCaption } from "../../components/StoryCaption";
 import { useIsFocused } from "@react-navigation/native";
@@ -33,6 +33,14 @@ import { followUser } from "../../api/users";
 import { storyPublished } from "../../state/storyChanges";
 import { AddToHighlightSheet } from "../../components/AddToHighlightSheet";
 import { VerifiedName } from "../../components/VerifiedBadge";
+import { ApiError } from "../../api/client";
+import { track } from "../../analytics/analytics";
+import { respondToCollab, setCountdownReminder, voteOnSticker } from "../../api/stickers";
+import { setCreateSeed } from "../../state/createSeed";
+import { linkHost } from "../../models/storyDraft";
+import type { StickerInteraction } from "../../components/InteractiveSticker";
+import { QuestionAnswerSheet } from "../../components/QuestionAnswerSheet";
+import { AddYoursSheet } from "../../components/AddYoursSheet";
 
 const PHOTO_DURATION_MS = 5000;
 const SLOW_VIDEO_MS = 3000;
@@ -84,6 +92,10 @@ export interface StoryFeedProps {
    * to it after its 24 hours): open it from your Archive instead of starting somewhere else.
    */
   onOpenArchived?: (storyId: string) => void;
+  /** Opens Create (camera): "Add yours" sets what the new Story starts with (state/createSeed.ts) first. */
+  onOpenCreate?: () => void;
+  /** Opens one Story by its creator (an "Add Yours" chain's). */
+  onOpenStory?: (username: string, storyId: string) => void;
 }
 
 /** Sound on or off for Stories with sound, kept while you watch (like Instagram). */
@@ -106,7 +118,7 @@ let viewerMuted = false;
 /** The comment box (or your Story's Activity button) along the bottom. */
 const BOTTOM_BAR_HEIGHT = 46;
 
-export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpenDM, onOpenProfile, onOpenArchived, onRefresh, onNeedMore, onCreate, onFindPeople, onInvite, sponsored = [], following, verified }: StoryFeedProps): React.JSX.Element {
+export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpenDM, onOpenProfile, onOpenArchived, onRefresh, onNeedMore, onCreate, onFindPeople, onInvite, onOpenCreate, onOpenStory, sponsored = [], following, verified }: StoryFeedProps): React.JSX.Element {
   // Overlays clear the status bar / notch; the bottom ones also the home indicator when no tab bar is below.
   const insets = useScreenInsets();
   const { user: authUser, accessToken } = useAuth();
@@ -191,7 +203,14 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   const staleStory = !!listedStory && !!currentUsername && storyUrlsExpired(listedStory) && Date.now() - (expiryRefetchAt.current[currentUsername] ?? 0) >= URL_EXPIRY_MARGIN_MS;
   const currentStory = staleStory ? null : listedStory;
 
-  const sheetOpen = commentsOpen || shareOpen || sharingOut || moreOpen || insightsOpen || replyOpen || highlightOpen;
+  // Interactive stickers: the question being answered, the "Add Yours" chain being looked at,
+  // and a collab invitation being answered — each holds the Story still, like any sheet.
+  const [answering, setAnswering] = useState<{ id: string; prompt: string } | null>(null);
+  const [chainId, setChainId] = useState<string | null>(null);
+  const [linkConfirming, setLinkConfirming] = useState(false);
+  const [collabBusy, setCollabBusy] = useState(false);
+
+  const sheetOpen = commentsOpen || shareOpen || sharingOut || moreOpen || insightsOpen || replyOpen || highlightOpen || !!answering || !!chainId || linkConfirming;
   // Reading a long caption holds the Story, like Instagram.
   const playbackActive = focused && foreground && !paused && !sheetOpen && !captionExpanded && !caughtUp && !loadError && !currentAd;
   // How far the current Story's bar has got (0-1). The bar animates on the native side, so this is
@@ -698,8 +717,82 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   const deliveredVideo = delivery?.videos.find((v) => v.variant === videoVariant) ?? delivery?.videos[0];
   const videoSource = deliveredVideo ? mediaSource(deliveredVideo.url, accessToken) : apiSource(videoVariant);
   const hasLowQuality = delivery ? delivery.videos.some((v) => v.variant === "video_480") : true;
-  const isOwnStory = authUser?.username === currentUsername;
+  // A collab Story is in both creators' rings, but it's only ever its owner's to manage.
+  const collab = (detail ?? currentStory).collab ?? null;
+  const isOwnStory = collab ? currentStory.ownerId === authUser?.id : authUser?.username === currentUsername;
   const highlightAdded = highlightAddedId === currentStory.id;
+  const liveCollab = collab?.status === "accepted" ? collab : null;
+  const invitedToCollab = collab?.status === "pending" && collab.collaborator.id === authUser?.id ? collab : null;
+  const respondToInvite = async (accept: boolean) => {
+    if (!accessToken || collabBusy) return;
+    setCollabBusy(true);
+    try {
+      const { collab: next } = await respondToCollab(currentStory.id, accept, accessToken);
+      tapFeedback(accept ? "success" : "tap");
+      setDetail((d) => (d ? { ...d, collab: next } : d));
+      if (accept) storyPublished();
+    } catch (e) {
+      Alert.alert("Couldn't answer the invitation", e instanceof ApiError ? e.message : "Check your connection and try again.");
+    } finally {
+      setCollabBusy(false);
+    }
+  };
+
+  // What the Story's interactive stickers do here (components/InteractiveSticker.tsx).
+  const stickerInteraction: StickerInteraction = {
+    isOwner: isOwnStory,
+    onVote: async (stickerId, option) => {
+      if (!accessToken) return null;
+      try {
+        return await voteOnSticker(currentStory.id, stickerId, option, accessToken);
+      } catch (e) {
+        Alert.alert("Couldn't send your answer", e instanceof ApiError ? e.message : "Check your connection and try again.");
+        return null;
+      }
+    },
+    onAnswer: (overlay) => setAnswering({ id: overlay.id, prompt: overlay.properties.prompt }),
+    onRemind: async (stickerId, on) => {
+      if (!accessToken) return false;
+      try {
+        await setCountdownReminder(currentStory.id, stickerId, on, accessToken);
+        if (on) showToast("We'll remind you when it ends");
+        return true;
+      } catch (e) {
+        Alert.alert("Couldn't set the reminder", e instanceof ApiError ? e.message : "Check your connection and try again.");
+        return false;
+      }
+    },
+    onOpenLink: (url) => {
+      // People see where a link goes before leaving Katkee (the safety policy checked it too).
+      setLinkConfirming(true);
+      Alert.alert("Open this link?", `You're leaving Katkee for ${linkHost(url)}.`, [
+        { text: "Cancel", style: "cancel", onPress: () => setLinkConfirming(false) },
+        {
+          text: "Open",
+          onPress: () => {
+            setLinkConfirming(false);
+            track("story_link_opened");
+            void Linking.openURL(url).catch(() => Alert.alert("Couldn't open the link"));
+          },
+        },
+      ], { cancelable: true, onDismiss: () => setLinkConfirming(false) });
+    },
+    onAddYours: (overlay) => startAddYours(overlay.properties.chainId ?? null, overlay.properties.prompt),
+    onOpenChain: (id) => setChainId(id),
+  };
+  function startAddYours(chain: string | null, prompt: string) {
+    if (!onOpenCreate || !chain) return;
+    tapFeedback("select");
+    track("add_yours_tapped");
+    setCreateSeed({ kind: "addYours", prompt, chainId: chain });
+    setChainId(null);
+    onOpenCreate();
+  }
+  function showToast(message: string) {
+    setReplySent(message);
+    if (replySentTimer.current) clearTimeout(replySentTimer.current);
+    replySentTimer.current = setTimeout(() => setReplySent(null), 1500);
+  }
 
   const creatorMuted = detail?.audioMuted ?? currentStory.audioMuted;
   const showFollow = !isOwnStory && !!currentUsername && following?.[currentUsername] === false;
@@ -854,6 +947,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
             containerWidth={containerSize.width}
             containerHeight={containerSize.height}
             onMentionPress={onOpenProfile}
+            interaction={stickerInteraction}
           />
         </Animated.View>
       ) : null}
@@ -935,13 +1029,31 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
 
       {/* Who posted it and when, at the top like Instagram; tap to open their profile. */}
       <View style={[styles.header, chrome, { top: insets.top + spacing.lg }]} pointerEvents={paused ? "none" : "box-none"}>
-        <Pressable onPress={() => currentUsername && onOpenProfile(currentUsername)} hitSlop={8} style={styles.headerWho} accessibilityRole="button" accessibilityLabel={`Open @${currentUsername ?? ""}'s profile`}>
-          <View style={styles.avatarRing}>
-            <Avatar username={currentUsername ?? ""} size={30} />
+        {liveCollab ? (
+          // A Collab Story: both creators, the owner first, each name opening their profile.
+          <View style={styles.headerWho}>
+            <View style={styles.collabAvatars}>
+              <View style={styles.avatarRing}><Avatar username={liveCollab.owner.username} avatarMediaId={liveCollab.owner.avatarMediaId} size={30} /></View>
+              <View style={[styles.avatarRing, styles.collabSecond]}><Avatar username={liveCollab.collaborator.username} avatarMediaId={liveCollab.collaborator.avatarMediaId} size={30} /></View>
+            </View>
+            <Pressable onPress={() => onOpenProfile(liveCollab.owner.username)} hitSlop={6} style={styles.usernameRow} accessibilityRole="button" accessibilityLabel={`Open @${liveCollab.owner.username}'s profile`}>
+              <VerifiedName name={liveCollab.owner.username} verified={liveCollab.owner.verified} style={styles.username} />
+            </Pressable>
+            <Text style={styles.postedAgo}>and</Text>
+            <Pressable onPress={() => onOpenProfile(liveCollab.collaborator.username)} hitSlop={6} style={styles.usernameRow} accessibilityRole="button" accessibilityLabel={`Open @${liveCollab.collaborator.username}'s profile`}>
+              <VerifiedName name={liveCollab.collaborator.username} verified={liveCollab.collaborator.verified} style={styles.username} />
+            </Pressable>
+            <Text style={styles.postedAgo}>{timeAgo(currentStory.createdAt).replace(" ago", "")}</Text>
           </View>
-          <VerifiedName name={currentUsername ?? ""} verified={!!currentUsername && !!verified?.[currentUsername]} style={styles.username} containerStyle={styles.usernameRow} />
-          <Text style={styles.postedAgo}>{timeAgo(currentStory.createdAt).replace(" ago", "")}</Text>
-        </Pressable>
+        ) : (
+          <Pressable onPress={() => currentUsername && onOpenProfile(currentUsername)} hitSlop={8} style={styles.headerWho} accessibilityRole="button" accessibilityLabel={`Open @${currentUsername ?? ""}'s profile`}>
+            <View style={styles.avatarRing}>
+              <Avatar username={currentUsername ?? ""} size={30} />
+            </View>
+            <VerifiedName name={currentUsername ?? ""} verified={!!currentUsername && !!verified?.[currentUsername]} style={styles.username} containerStyle={styles.usernameRow} />
+            <Text style={styles.postedAgo}>{timeAgo(currentStory.createdAt).replace(" ago", "")}</Text>
+          </Pressable>
+        )}
         {showFollow ? (
           <Pressable onPress={followed ? undefined : () => void follow()} disabled={followed} hitSlop={8} style={[styles.followButton, followed && styles.followingButton]} accessibilityRole="button" accessibilityLabel={followState === "requested" ? `Requested to follow @${currentUsername}` : followed ? `Following @${currentUsername}` : `Follow @${currentUsername}`}>
             <Text style={styles.followLabel}>{followState === "requested" ? "Requested" : followed ? "Following" : "Follow"}</Text>
@@ -1036,6 +1148,44 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         </Pressable>
       ) : null}
 
+      {invitedToCollab ? (
+        // You were invited to share this Story: answer right here, as well as in Activity.
+        <View style={[styles.inviteBanner, chrome, { top: insets.top + spacing.lg + 52 }]} pointerEvents={paused ? "none" : "auto"}>
+          <Text style={styles.inviteText} numberOfLines={2}>@{invitedToCollab.owner.username} invited you to collab. It shows to your followers too, with both names.</Text>
+          <View style={styles.inviteButtons}>
+            <Pressable onPress={() => void respondToInvite(true)} disabled={collabBusy} style={[styles.inviteButton, styles.inviteAccept]} accessibilityRole="button" accessibilityLabel={`Accept @${invitedToCollab.owner.username}'s collab invitation`}>
+              <Text style={styles.inviteAcceptLabel}>Accept</Text>
+            </Pressable>
+            <Pressable onPress={() => void respondToInvite(false)} disabled={collabBusy} style={styles.inviteButton} accessibilityRole="button" accessibilityLabel={`Decline @${invitedToCollab.owner.username}'s collab invitation`}>
+              <Text style={styles.inviteDeclineLabel}>Decline</Text>
+            </Pressable>
+          </View>
+        </View>
+      ) : null}
+
+      <QuestionAnswerSheet
+        visible={!!answering}
+        storyId={currentStory.id}
+        sticker={answering}
+        ownerUsername={liveCollab?.owner.username ?? currentUsername ?? ""}
+        onClose={() => setAnswering(null)}
+        onSent={() => {
+          showToast("Answer sent");
+          setDetail((d) => (d ? { ...d, overlays: d.overlays.map((o) => (o.type === "question" && o.id === answering?.id ? { ...o, properties: { ...o.properties, viewerAnswered: true } } : o)) } : d));
+        }}
+      />
+      <AddYoursSheet
+        visible={!!chainId}
+        chainId={chainId}
+        canAdd={!isOwnStory && !!onOpenCreate}
+        onClose={() => setChainId(null)}
+        onAddYours={(chain) => startAddYours(chain.id, chain.prompt)}
+        onOpenStory={(username, storyId) => {
+          setChainId(null);
+          onOpenStory?.(username, storyId);
+        }}
+      />
+
       {replySent ? (
         <View style={styles.replyToast} pointerEvents="none" accessibilityLiveRegion="polite">
           <Text style={styles.replyToastText}>{replySent}</Text>
@@ -1127,7 +1277,17 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         />
       ) : null}
       {isOwnStory ? (
-        <StoryInsightsSheet visible={insightsOpen} storyId={currentStory.id} onClose={() => setInsightsOpen(false)} />
+        <StoryInsightsSheet
+          visible={insightsOpen}
+          storyId={currentStory.id}
+          overlays={(detail ?? currentStory).overlays}
+          onClose={() => setInsightsOpen(false)}
+          onShareAnswer={onOpenCreate ? (prompt, answer) => {
+            setInsightsOpen(false);
+            setCreateSeed({ kind: "answer", prompt, answer });
+            onOpenCreate();
+          } : undefined}
+        />
       ) : null}
     </Animated.View>
   );
@@ -1222,6 +1382,15 @@ const styles = StyleSheet.create({
   },
   username: { color: colors.textPrimary, fontWeight: "700", fontSize: 15, flexShrink: 1, textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 3 },
   usernameRow: { flexShrink: 1 },
+  collabAvatars: { flexDirection: "row" },
+  collabSecond: { marginLeft: -12 },
+  inviteBanner: { position: "absolute", left: spacing.md, right: spacing.md, padding: spacing.md, gap: spacing.sm, borderRadius: radii.md, backgroundColor: "rgba(0,0,0,0.72)" },
+  inviteText: { color: colors.textPrimary, fontSize: 14, fontWeight: "600" },
+  inviteButtons: { flexDirection: "row", gap: spacing.sm },
+  inviteButton: { flex: 1, minHeight: 38, borderRadius: radii.pill, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(255,255,255,0.6)" },
+  inviteAccept: { backgroundColor: colors.accent, borderColor: colors.accent },
+  inviteAcceptLabel: { color: colors.onAccent, fontWeight: "800" },
+  inviteDeclineLabel: { color: colors.textPrimary, fontWeight: "700" },
   closeButton: { position: "absolute", top: spacing.xl, right: spacing.md },
   closeFriendsBadge: { flexDirection: "row", alignItems: "center", gap: 3, alignSelf: "flex-start", backgroundColor: colors.success, borderRadius: radii.pill, paddingHorizontal: spacing.sm, paddingVertical: 2, marginTop: 4 },
   closeFriendsBadgeText: { color: colors.onAccent, fontSize: 11, fontWeight: "700" },

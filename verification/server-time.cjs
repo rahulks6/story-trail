@@ -28,7 +28,10 @@ test('timeAgo gives compact ages and never a negative or broken one',()=>{
 const ALLOWED={
  'components/StickerSheet.tsx':2,
  'state/dmOutbox.ts':1,
- 'state/validateSavedDraft.ts':1,
+ // The draft's own saved time, and a countdown sticker's end the editor wrote.
+ 'state/validateSavedDraft.ts':2,
+ // A countdown's default end (a day from now) and the stepper's arithmetic on it.
+ 'components/InteractiveStickerForm.tsx':2,
  'analytics/analytics.ts':4,
  'crashReporting.ts':1,
  'utils/serverTime.ts':3,

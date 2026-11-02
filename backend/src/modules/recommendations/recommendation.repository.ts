@@ -7,12 +7,16 @@ const MAX_FOLLOWED_CANDIDATES = 250;
  * The people the viewer follows who have an active Story the viewer may see: not the viewer,
  * not blocked (either direction) or muted, not marked Not Interested. New people (discovery)
  * come from reach.repository.ts, which also decides how far each public Story has earned reach.
- * Most recently active first.
+ * Most recently active first. A live Collab Story counts for its collaborator as well as its
+ * owner (feed-features.repository.ts then decides which of its Stories the viewer may see).
  */
 export async function listFollowedCreatorIds(viewerId: string): Promise<string[]> {
   const rows = await query(
     `SELECT s.owner_id, max(s.created_at) AS latest_story_at
-     FROM stories s
+     FROM (SELECT owner_id, created_at, deleted_at, expires_at FROM stories
+           UNION ALL
+           SELECT cl.user_id, st.created_at, st.deleted_at, st.expires_at
+           FROM story_collabs_live cl JOIN stories st ON st.id = cl.story_id) s
      JOIN users u ON u.id = s.owner_id
      JOIN follows f ON f.follower_id = :'viewer_id' AND f.followee_id = s.owner_id
      WHERE s.deleted_at IS NULL AND s.expires_at > now()

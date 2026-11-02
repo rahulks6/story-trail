@@ -1,6 +1,6 @@
 # Katkee Privacy Policy
 
-**Last updated:** 30 October 2026
+**Last updated:** 2 November 2026
 
 This policy explains what Katkee collects, how we use it, who can see it, how long we keep it
 and the choices you have. It covers the Katkee apps for iPhone and Android, the website at
@@ -51,6 +51,18 @@ store it with the Story and use it to order Home.
 If you add a song to a Story, we record which song from Katkee's music
 library and which part of it plays. The songs are openly licensed and credited
 on the Story; choosing one tells us nothing else about you.
+
+### Story stickers and Collab Stories
+When you answer an interactive sticker on someone's Story, we keep what you
+did: your vote on a poll or your answer to a quiz (one each, and it can't be
+changed), the text you send to a question sticker ("Ask me anything"), and
+whether you asked to be reminded when a countdown ends (we then send you one
+notification at that time). If you post from someone's "Add Yours", we record
+that your Story is part of that prompt's chain. If you invite someone to a
+Collab Story, or are invited, we keep the invitation and whether it was
+accepted. When you open a link sticker the app tells us a link was opened,
+never which one; link stickers are checked against our link-safety rules and,
+when it's configured, Google Safe Browsing.
 
 When you change your profile photo, the app cuts out the square you choose
 on your phone and uploads only that square. Your cover photo works the same
@@ -231,6 +243,17 @@ message is kept as evidence for the moderator.
   or who've blocked you, never see them.
 - **Blocking**: hides your content from someone and theirs from you, both
   ways, at once.
+- **Sticker answers**: who voted on a poll or quiz and what they chose, and
+  answers to a question sticker, are seen only by the Story's owner. Other
+  viewers see a poll's percentages after they vote, and a quiz's answer after
+  they answer. If the owner shares an answer to a new Story, it shows the
+  question and the answer, not who sent it.
+- **Collab Stories**: once accepted, a Collab Story shows both names and
+  reaches both people's followers, within the owner's own privacy settings (a
+  private account's Collab Story is still seen only by its followers).
+  Neither person's blocks are bypassed, and either can end the collab.
+- **Add Yours**: the Stories in a chain are shown only to people who could
+  already see each of them.
 - **Your area and time zone**: never shown to anyone.
 - **Interests we learn**: only you see them (Settings, then Your interests).
 - **Verification ID photo**: only staff who review verification requests,
@@ -282,6 +305,9 @@ recorded in an audit log that can't be edited.
     kept separately for 180 days after deletion, because India's IT Rules
     2021 (rule 3(1)(h)) require it, then deleted. We use them only to
     answer lawful requests.
+- **Sticker answers, reminders and collab invitations**: kept with the Story
+  they belong to, deleted with it, and deleted when the account that sent
+  them is deleted.
 - **Uploads never used**: deleted after 48 hours.
 - **Photo originals**: deleted 30 days after processing.
 - **A video of your Story prepared for sharing to another app**: deleted

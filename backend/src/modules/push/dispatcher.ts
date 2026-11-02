@@ -45,7 +45,34 @@ const TEXT: Record<string, (actor: string) => string> = {
   // Never the message itself: lock screens and notification logs are not private.
   message: (a) => `@${a} sent you a message`,
   new_story: (a) => `@${a} posted a new Story`,
+  collab_invite: (a) => `@${a} invited you to a collab Story`,
+  collab_accepted: (a) => `@${a} accepted your collab Story`,
 };
+
+/**
+ * "Remind me" on a countdown sticker, sent when it ends. Its text comes from the sticker as it
+ * is now; the reminder must still be on, and the Story not deleted (expired is fine: a
+ * countdown often ends after its 24 hours). Blocks and the owner's account are checked with
+ * every other actor push.
+ */
+async function renderCountdown(item: OutboxItem): Promise<{ body: string; link: string } | null> {
+  if (!item.refId) return null;
+  const row = await queryOne(
+    `SELECT o->'properties'->>'title' AS title, s.expires_at > now() AS active, u.username
+     FROM stories s
+     JOIN users u ON u.id = s.owner_id
+     JOIN story_countdown_reminders r ON r.story_id = s.id AND r.user_id = :'user'
+     CROSS JOIN LATERAL jsonb_array_elements(s.overlays) o
+     WHERE s.id = :'story' AND s.deleted_at IS NULL AND o->>'type' = 'countdown' AND o->>'id' = r.sticker_id
+     LIMIT 1`,
+    { story: item.refId, user: item.userId },
+  );
+  if (!row) return null;
+  return {
+    body: `⏰ ${row.title} — @${row.username}'s countdown has ended`,
+    link: row.active === "t" ? `katkee://story/${item.refId}` : `katkee://user/${row.username}`,
+  };
+}
 
 /** Which preference switch (migration 0051) silences each newer kind. */
 const SWITCH: Record<string, "stories_enabled" | "milestones_enabled" | "reminders_enabled"> = {
@@ -113,6 +140,21 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
     };
   }
   if (item.actorId && (row.actor_ok !== "t" || row.blocked === "t")) return { skip: "actor unavailable" };
+  if (item.kind === "countdown") {
+    const countdown = await renderCountdown(item);
+    if (!countdown) return { skip: "reminder gone" };
+    return {
+      message: {
+        title: "Katkee",
+        body: countdown.body,
+        data: { kind: item.kind, url: countdown.link, storyId: item.refId! },
+        collapseKey: `countdown-${item.refId}`,
+        threadId: "activity",
+        badge,
+        channel: "activity",
+      },
+    };
+  }
   const actor = (row.actor_username as string | null) ?? "someone";
   const text = TEXT[item.kind];
   if (!text) return { skip: `unknown kind ${item.kind}` };

@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, View, type LayoutChangeEvent } from "react-native";
-import type { Overlay, DrawStroke, FilterName } from "../models/storyDraft";
+import { isInteractive, type Overlay, type DrawStroke, type FilterName } from "../models/storyDraft";
+import type { StickerInteraction } from "./InteractiveSticker";
 import { FILTER_PREVIEWS } from "../models/filterPreviews";
 import { OverlayBody } from "./OverlayBody";
 import { DrawingStrokes } from "./DrawingStrokes";
@@ -12,9 +13,11 @@ import { PlacedOverlay } from "./PlacedOverlay";
  * applied, `filterApplied` false), drawing, and overlays exactly where they
  * were placed (same normalized x/y/scale/rotation, same OverlayBody used
  * while editing — spec section 47's "preview accuracy"). Not interactive
- * except a mention, which is the one overlay type the spec requires stay
- * tappable after publish (section 30: "tapping a mention must navigate to
- * that user's live profile").
+ * except a mention, which the spec requires stay tappable after publish
+ * (section 30: "tapping a mention must navigate to that user's live
+ * profile"), and, when `interaction` is given, the interactive stickers
+ * (polls, quizzes, questions, countdowns, links, Add Yours). They sit above
+ * the Story's tap layer, so a tap on one never also moves to the next Story.
  */
 export function StoryOverlayLayer({
   overlays,
@@ -24,6 +27,7 @@ export function StoryOverlayLayer({
   containerWidth,
   containerHeight,
   onMentionPress,
+  interaction,
 }: {
   overlays: Overlay[];
   drawing: DrawStroke[];
@@ -33,6 +37,8 @@ export function StoryOverlayLayer({
   containerWidth: number;
   containerHeight: number;
   onMentionPress?: (username: string) => void;
+  /** Interactive stickers take taps (vote, answer, remind, open a link, Add yours) when given. */
+  interaction?: StickerInteraction;
 }): React.JSX.Element {
   const activeFilter = filterApplied ? FILTER_PREVIEWS[0] : FILTER_PREVIEWS.find((f) => f.name === filter) ?? FILTER_PREVIEWS[0];
   const sorted = [...overlays].sort((a, b) => a.zIndex - b.zIndex);
@@ -55,9 +61,9 @@ export function StoryOverlayLayer({
               overlay={overlay}
               containerWidth={containerWidth}
               containerHeight={containerHeight}
-              pointerEvents={overlay.type === "mention" ? "auto" : "none"}
+              pointerEvents={overlay.type === "mention" || (interaction && isInteractive(overlay)) ? "auto" : "none"}
             >
-              <OverlayBody overlay={overlay} containerWidth={containerWidth} containerHeight={containerHeight} onMentionPress={onMentionPress} />
+              <OverlayBody overlay={overlay} containerWidth={containerWidth} containerHeight={containerHeight} onMentionPress={onMentionPress} interaction={interaction} />
             </PlacedOverlay>
           ))
         : null}

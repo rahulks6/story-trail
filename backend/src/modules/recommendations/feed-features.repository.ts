@@ -1,6 +1,6 @@
 import {query} from '../../db/psql';
 import type {Audience} from '../stories/stories.repository';
-import {AUDIENCE_SQL} from '../stories/audience';
+import {AUDIENCE_SQL,COLLAB_BLOCKS_SQL,VISIBLE_STORY_SQL} from '../stories/audience';
 import {verifiedSql} from '../../shared/verified';
 export interface FeedFeatures {
  owner:{id:string;username:string;displayName:string;avatarMediaId:string|null;verified:boolean};isFollowing:boolean;
@@ -19,7 +19,10 @@ export async function feedFeatures(viewer:string,ids:string[]):Promise<FeedFeatu
  AND NOT EXISTS(SELECT 1 FROM blocks b WHERE (b.blocker_id=:'viewer' AND b.blocked_id=u.id) OR (b.blocker_id=u.id AND b.blocked_id=:'viewer'))
  AND NOT EXISTS(SELECT 1 FROM mutes m WHERE m.muter_id=:'viewer' AND m.muted_id=u.id)
  AND NOT EXISTS(SELECT 1 FROM creator_not_interested n WHERE n.viewer_id=:'viewer' AND n.creator_id=u.id)))),
- visible AS(SELECT s.* FROM stories s JOIN owners o ON o.id=s.owner_id WHERE s.deleted_at IS NULL AND s.expires_at>now() AND (s.owner_id=:'viewer' OR ${AUDIENCE_SQL})),
+ visible AS(SELECT o.id AS owner_id,s.id,s.media_id,s.caption,s.audience,s.created_at,s.expires_at,s.topic FROM stories s JOIN owners o ON o.id=s.owner_id WHERE s.deleted_at IS NULL AND s.expires_at>now() AND (s.owner_id=:'viewer' OR (${AUDIENCE_SQL} AND ${COLLAB_BLOCKS_SQL}))
+ -- A live Collab Story is in its collaborator's ring too, through the owner's own gates (audience.ts).
+ UNION ALL SELECT o.id,s.id,s.media_id,s.caption,s.audience,s.created_at,s.expires_at,s.topic FROM story_collabs_live cl JOIN owners o ON o.id=cl.user_id JOIN stories s ON s.id=cl.story_id
+ WHERE s.deleted_at IS NULL AND s.expires_at>now() AND ${VISIBLE_STORY_SQL}),
  summaries AS(SELECT owner_id,jsonb_agg(jsonb_build_object('id',id,'mediaId',media_id,'caption',caption,'audience',audience,'createdAt',created_at,'expiresAt',expires_at,'topic',topic) ORDER BY created_at,id) AS stories FROM visible GROUP BY owner_id),
  quality AS(SELECT owner_id,sum(likes) AS likes,sum(comments) AS comments,sum(shares) AS shares,sum(views) AS views FROM (
  SELECT s.owner_id,count(*) AS likes,0::bigint AS comments,0::bigint AS shares,0::bigint AS views FROM story_likes l JOIN visible s ON s.id=l.story_id GROUP BY s.owner_id

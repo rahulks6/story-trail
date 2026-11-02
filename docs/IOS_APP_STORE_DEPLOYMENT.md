@@ -211,7 +211,7 @@ match `mobile/ios/KatkeeMobile/PrivacyInfo.xcprivacy`, and none is used for trac
 | Photos or Videos (Stories, profile and cover photos, chat photos, and the ID photo sent with an optional verification request) | Yes | No | App Functionality |
 | Audio Data (sound in video Stories, voice messages in chats) | Yes | No | App Functionality |
 | Emails or Text Messages (direct messages) | Yes | No | App Functionality |
-| Other User Content (bio, captions, comments, interests) | Yes | No | App Functionality, Product Personalization, Developer's Advertising (interests choose which Sponsored Stories appear) |
+| Other User Content (bio, captions, comments, interests, Story sticker answers such as poll votes and question answers) | Yes | No | App Functionality, Product Personalization, Developer's Advertising (interests choose which Sponsored Stories appear) |
 | User ID | Yes | No | App Functionality, Analytics |
 | Product Interaction (views, likes, follows) | Yes | No | App Functionality, Analytics, Product Personalization |
 | Other Diagnostic Data (crash counts) | Yes | No | Analytics |

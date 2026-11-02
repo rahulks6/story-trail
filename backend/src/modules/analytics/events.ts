@@ -11,6 +11,8 @@ import { platformOf } from "./activity";
 export const ANALYTICS_EVENTS = [
   "app_session_started", "app_crash", "story_created", "highlight_viewed",
   "profile_viewed", "search_performed", "upload_succeeded", "upload_failed", "story_shared_external",
+  // A link sticker opened in the browser (never which link), and "Add yours" tapped on a Story.
+  "story_link_opened", "add_yours_tapped",
   "invite_shared", "invite_link_opened", "contacts_checked",
 ] as const;
 export type AnalyticsEventName = (typeof ANALYTICS_EVENTS)[number];
@@ -45,6 +47,8 @@ const PROPERTIES: Record<AnalyticsEventName, Record<string, PropertyRule>> = {
   },
   // Your own Story sent to another app as a picture or video (which app is never known).
   story_shared_external: { kind: MEDIA_KIND },
+  story_link_opened: {},
+  add_yours_tapped: {},
   // Your invite link handed to the share sheet, and from where (never whom it went to).
   invite_shared: { from: { kind: "enum", values: INVITE_SOURCES } },
   // An invite link opened in the app; who joined from one is counted from invite_redemptions.

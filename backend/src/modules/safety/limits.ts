@@ -8,7 +8,7 @@ import { config } from "../../config/env";
 import { queryOne } from "../../db/psql";
 import { HttpError } from "../../http/errors";
 
-export type ActionKind = "like" | "comment" | "follow" | "message" | "conversation" | "view";
+export type ActionKind = "like" | "comment" | "follow" | "message" | "conversation" | "view" | "vote" | "answer";
 
 interface Budget {
   perMinute?: number;
@@ -26,6 +26,10 @@ const DEFAULTS: Record<ActionKind, Budget> = {
   conversation: { perHour: 40, newAccountPerHour: 10 },
   // Views beyond this are not counted (playback is never refused).
   view: { perMinute: 120, perHour: 2400 },
+  // Poll and quiz answers and countdown reminders: one tap each, budgeted like likes.
+  vote: { perMinute: 60, perHour: 600, newAccountPerHour: 150 },
+  // Answers to question stickers are private text to the creator, budgeted like comments.
+  answer: { perMinute: 10, perHour: 120, newAccountPerHour: 30 },
 };
 
 function loadBudgets(): Record<ActionKind, Budget> {
@@ -45,6 +49,8 @@ const MESSAGES: Record<ActionKind, string> = {
   message: "You're sending messages too fast",
   conversation: "You've started too many new conversations",
   view: "Too many views",
+  vote: "You're answering Stories too fast",
+  answer: "You're sending answers too fast",
 };
 
 /**

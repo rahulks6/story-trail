@@ -52,14 +52,17 @@ CREATE TABLE invite_redemptions (
 CREATE INDEX invite_redemptions_inviter_idx ON invite_redemptions (inviter_id, created_at DESC);
 CREATE INDEX invite_redemptions_created_brin ON invite_redemptions USING brin (created_at);
 
--- "@x joined from your invite": an Activity row and a push, like a follow.
+-- "@x joined from your invite": an Activity row and a push, like a follow. The lists keep the
+-- countdown and collab kinds added by 0062/0063, which run before this file.
 ALTER TABLE notifications DROP CONSTRAINT notifications_type_valid;
 ALTER TABLE notifications ADD CONSTRAINT notifications_type_valid
-    CHECK (type IN ('like', 'comment', 'follow', 'follow_request', 'follow_accepted', 'mention', 'verification', 'invite_joined'));
+    CHECK (type IN ('like', 'comment', 'follow', 'follow_request', 'follow_accepted', 'mention', 'verification', 'invite_joined',
+                    'collab_invite', 'collab_accepted'));
 ALTER TABLE push_outbox DROP CONSTRAINT push_outbox_kind_check;
 ALTER TABLE push_outbox ADD CONSTRAINT push_outbox_kind_check
   CHECK (kind IN ('like', 'comment', 'follow', 'follow_request', 'follow_accepted', 'mention', 'message', 'badge',
-                  'new_story', 'story_milestone', 'festival', 'streak', 'nudge', 'message_reaction', 'verification', 'invite_joined'));
+                  'new_story', 'story_milestone', 'festival', 'streak', 'nudge', 'message_reaction', 'verification', 'invite_joined',
+                  'countdown', 'collab_invite', 'collab_accepted'));
 
 -- 5. The app reports an invite shared (and from where), an invite link opened in the app, and how
 --    many contacts were found; never who, and never the contacts themselves.
