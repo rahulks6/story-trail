@@ -62,7 +62,7 @@ CREATE INDEX story_add_yours_chain_idx ON story_add_yours (chain_id, joined_at D
 ALTER TABLE push_outbox DROP CONSTRAINT push_outbox_kind_check;
 ALTER TABLE push_outbox ADD CONSTRAINT push_outbox_kind_check
   CHECK (kind IN ('like', 'comment', 'follow', 'follow_request', 'follow_accepted', 'mention', 'message', 'badge',
-                  'new_story', 'story_milestone', 'festival', 'streak', 'nudge', 'message_reaction', 'verification',
+                  'new_story', 'story_milestone', 'festival', 'streak', 'nudge', 'message_reaction', 'verification', 'invite_joined',
                   'countdown'));
 -- A reminder switched off before its countdown ends takes its queued push with it.
 CREATE INDEX push_outbox_countdown_idx ON push_outbox (user_id, ref_id) WHERE kind = 'countdown' AND status = 'queued';

@@ -41,6 +41,7 @@ const TEXT: Record<string, (actor: string) => string> = {
   follow: (a) => `@${a} started following you`,
   follow_request: (a) => `@${a} requested to follow you`,
   follow_accepted: (a) => `@${a} accepted your follow request`,
+  invite_joined: (a) => `@${a} joined from your invite`,
   // Never the message itself: lock screens and notification logs are not private.
   message: (a) => `@${a} sent you a message`,
   new_story: (a) => `@${a} posted a new Story`,

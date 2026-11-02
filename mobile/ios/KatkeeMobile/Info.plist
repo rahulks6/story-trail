@@ -43,6 +43,7 @@
 	<key>NSCameraUsageDescription</key><string>Take photos and videos for your Katkee Stories, and a profile photo if you choose.</string>
 <key>NSMicrophoneUsageDescription</key><string>Katkee uses the microphone to record sound for your Story videos and the voice messages you send in chats.</string>
 <key>NSPhotoLibraryUsageDescription</key><string>Choose a photo or video to share as a Story, or a photo for your profile.</string>
+<key>NSContactsUsageDescription</key><string>If you choose Find friends from your contacts, Katkee checks which of your contacts are on Katkee. Phone numbers and emails are hashed on your iPhone before they are sent, and Katkee does not keep them.</string>
 <key>NSPhotoLibraryAddUsageDescription</key><string>Save your own Story to your photos when you choose Save in the share sheet.</string>
 <key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

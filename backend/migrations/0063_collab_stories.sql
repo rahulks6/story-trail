@@ -28,12 +28,12 @@ CREATE VIEW story_collabs_live AS
 -- "@x invited you to a collab Story" (with Accept/Decline) and "@x accepted your collab".
 ALTER TABLE notifications DROP CONSTRAINT notifications_type_valid;
 ALTER TABLE notifications ADD CONSTRAINT notifications_type_valid
-    CHECK (type IN ('like', 'comment', 'follow', 'follow_request', 'follow_accepted', 'mention', 'verification',
+    CHECK (type IN ('like', 'comment', 'follow', 'follow_request', 'follow_accepted', 'mention', 'verification', 'invite_joined',
                     'collab_invite', 'collab_accepted'));
 ALTER TABLE push_outbox DROP CONSTRAINT push_outbox_kind_check;
 ALTER TABLE push_outbox ADD CONSTRAINT push_outbox_kind_check
   CHECK (kind IN ('like', 'comment', 'follow', 'follow_request', 'follow_accepted', 'mention', 'message', 'badge',
-                  'new_story', 'story_milestone', 'festival', 'streak', 'nudge', 'message_reaction', 'verification',
+                  'new_story', 'story_milestone', 'festival', 'streak', 'nudge', 'message_reaction', 'verification', 'invite_joined',
                   'countdown', 'collab_invite', 'collab_accepted'));
 
 -- A Story published by the media worker (once its media is ready) brings its invitation with

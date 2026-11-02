@@ -39,6 +39,9 @@ const OPERATOR_VALUES: Record<string, string> = {
   APNS_KEY_ID: "ABC123DEFG",
   APNS_TEAM_ID: "DEF456GHIJ",
   APNS_PRIVATE_KEY: pem(generateKeyPairSync("ec", { namedCurve: "prime256v1" }).privateKey),
+  APPLE_TEAM_ID: "GHI789JKLM",
+  APPLE_KEY_ID: "JKL012MNOP",
+  APPLE_PRIVATE_KEY: pem(generateKeyPairSync("ec", { namedCurve: "prime256v1" }).privateKey),
   TWILIO_ACCOUNT_SID: `AC${randomBytes(16).toString("hex")}`,
   TWILIO_AUTH_TOKEN: randomBytes(16).toString("hex"),
   SAFE_BROWSING_API_KEY: `AIza${randomBytes(26).toString("base64url").slice(0, 35)}`,
@@ -194,6 +197,8 @@ describe("a credential left as its placeholder stops startup", () => {
     ["CLOUDFRONT_PRIVATE_KEY", "api", /CLOUDFRONT_PRIVATE_KEY must be the private key of the CloudFront key pair/],
     ["CLOUDFRONT_PRIVATE_KEY", "worker", /CLOUDFRONT_PRIVATE_KEY must be the private key of the CloudFront key pair/],
     ["TWILIO_ACCOUNT_SID", "api", /Phone authentication provider configuration is incomplete/],
+    ["APPLE_PRIVATE_KEY", "api", /Sign in with Apple requires/],
+    ["APPLE_TEAM_ID", "api", /Sign in with Apple requires/],
     ["FCM_SERVICE_ACCOUNT_JSON", "worker", /FCM_SERVICE_ACCOUNT_JSON must be a Firebase service account key/],
     ["APNS_PRIVATE_KEY", "worker", /APNS_PRIVATE_KEY must be a private key/],
   ];

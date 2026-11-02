@@ -101,6 +101,7 @@ export function registerUserRoutes(router: Router): void {
         verifiedCategory: user.verifiedCategory,
         interests: user.interests,
         isPrivate: user.isPrivate,
+        findableByContacts: user.findableByContacts,
       },
     });
   });

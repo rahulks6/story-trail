@@ -36,6 +36,7 @@ import { registerAnalyticsRoutes } from "./modules/analytics/analytics.routes";
 import { registerSupportRoutes } from "./modules/support/support.routes";
 import { registerVerificationRoutes } from "./modules/verification/verification.routes";
 import { registerWebsiteRoutes, websiteGate } from "./modules/website/website.routes";
+import { registerGrowthRoutes } from "./modules/growth/growth.routes";
 import { RealtimeHub } from "./realtime/hub";
 
 /** The API server, with its readiness/shutdown state (see http/lifecycle.ts) and its route table. */
@@ -122,6 +123,7 @@ export function buildApp(providers?:ProviderGateway): KatkeeServer {
   registerAnalyticsRoutes(router);
   registerSupportRoutes(router);
   registerVerificationRoutes(router);
+  registerGrowthRoutes(router);
   registerRealtimeRoutes(router);
   registerPushRoutes(router);
   registerWebsiteRoutes(router);

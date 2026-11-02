@@ -18,7 +18,7 @@ What is already done in the code, and what only you can do:
 | Camera, microphone, photos and location explanations (`Info.plist`); approximate location only; standard encryption declared | |
 | Privacy manifest (`PrivacyInfo.xcprivacy`) listing what the app collects; no tracking | |
 | In-app account deletion, report, block, moderation, terms notice at sign-up (App Review 1.2 and 5.1.1(v)) | |
-| Google sign-in hidden on iOS unless configured (avoids the Sign in with Apple rule, 4.8) | |
+| Sign in with Apple (iPhone, above Google), off until the server is configured; Google shows on iPhone only beside it (4.8) | Create the Sign in with Apple key and register email sources (`docs/PROVIDER_AUTH_ROLLOUT.md`) |
 | A release check that refuses to build until all of this is set (`check-release.cjs`). It passes today | |
 
 ---
@@ -135,10 +135,12 @@ In Xcode, select the **KatkeeMobile** target:
    number on every upload.
 3. Drag `GoogleService-Info.plist` into the KatkeeMobile group, with "Copy items if needed"
    and the KatkeeMobile target ticked.
-4. **Google sign-in on iOS**: leave `googleIosClientId` empty in
-   `mobile/src/config/providers.ts`. The app then hides the Google button on iPhone. If you
-   want Google on iPhone, App Review (guideline 4.8) also expects **Sign in with Apple**, which
-   Katkee doesn't have yet. Email and phone sign-in don't trigger that rule.
+4. **Sign in with Apple and Google on iOS**: add the **Sign in with Apple** capability if it
+   isn't listed (`KatkeeMobile.entitlements` already asks for it; the App ID needs it enabled).
+   The button appears once the server has `APPLE_AUTH_ENABLED` (`docs/PROVIDER_AUTH_ROLLOUT.md`).
+   Google shows on iPhone only when `googleIosClientId` is set in
+   `mobile/src/config/providers.ts` and Sign in with Apple is offered beside it, as App Review
+   (guideline 4.8) expects. Email and phone sign-in don't trigger that rule.
 5. Plug in your iPhone, choose it as the run destination and press Run (Debug). On iOS 16 or
    later, turn on Developer Mode on the phone when asked.
 
@@ -215,6 +217,7 @@ match `mobile/ios/KatkeeMobile/PrivacyInfo.xcprivacy`, and none is used for trac
 | Other Diagnostic Data (crash counts) | Yes | No | Analytics |
 | Crash Data (crash reports to Katkee's own server: the error, its trace, the screen, phone model and app version) | Yes | No | App Functionality |
 | Customer Support (Send feedback: the note and a screenshot the person chooses to attach) | Yes | No | App Functionality |
+| Contacts (only with Find friends from your contacts: emails and phone numbers hashed on the phone, matched and not kept) | Yes | No | App Functionality |
 
 Advertisers never see who anyone is, and messages and location are never used for ads.
 
@@ -263,9 +266,9 @@ Advertising" here and in the privacy manifest.
 |---|---|---|
 | 1.2 User-generated content | Agree to terms with no tolerance for objectionable content; filter; report; block; published contact | Terms notice at sign-up and onboarding; moderation and link safety; Report on Stories, profiles and messages; Block; Support URL |
 | 2.1 App completeness | A working backend, a demo account, no placeholder content | Your steps 2 and 7 |
-| 4.8 Login services | Sign in with Apple beside Google, Facebook and similar | Google hidden on iPhone unless configured |
-| 5.1.1 Data collection | Clear purpose strings; ask only when needed | Camera, microphone, photos and location ask in context; location is opt-in and approximate |
-| 5.1.1(v) Account deletion | Delete the account inside the app | Settings, then Delete account |
+| 4.8 Login services | Sign in with Apple beside Google, Facebook and similar | Sign in with Apple above Google; Google hidden on iPhone without it |
+| 5.1.1 Data collection | Clear purpose strings; ask only when needed | Camera, microphone, photos and location ask in context; location is opt-in and approximate; contacts are asked for only after an explainer, hashed on the phone and not kept (5.1.1(viii)/(ix): no contact database is built) |
+| 5.1.1(v) Account deletion | Delete the account inside the app; revoke Sign in with Apple tokens | Settings, then Delete account; the server revokes the Apple authorisation |
 | 5.1.2 Data use | No tracking without permission | No tracking, no advertising identifier, so no tracking prompt |
 
 ## 9. After release

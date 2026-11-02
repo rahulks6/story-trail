@@ -1,4 +1,5 @@
 import type { NavigatorScreenParams } from "@react-navigation/native";
+import type { InviteSource } from "../state/invites";
 
 export type AuthStackParamList = {
   Login: undefined;
@@ -113,6 +114,10 @@ export type RootStackParamList = {
   CloseFriends: undefined;
   /** Settings > Your interests: what Katkee has learned you like (removable) and the interests you chose. */
   YourInterests: undefined;
+  /** Settings > Contacts on Katkee, and Search's "Find friends from your contacts": explainer, then the people found. */
+  ContactsOnKatkee: { from?: InviteSource } | undefined;
+  /** katkee.com/i/<code> and katkee://invite/<code> opened while signed in: who invited you, with Follow. */
+  InviteLink: { code: string };
   /** A profile's real follower or following list — the count on a profile has looked tappable since Phase 1, but never was until now. */
   FollowList: { username: string; mode: "followers" | "following" };
 };

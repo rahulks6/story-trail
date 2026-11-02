@@ -4,7 +4,8 @@ import { verifiedSql } from "../../shared/verified";
 export type NotificationType =
   | "like" | "comment" | "follow" | "follow_request" | "follow_accepted" | "mention" | "verification"
   /** Collab Stories (migration 0063): an invitation to answer, and the owner told it was accepted. */
-  | "collab_invite" | "collab_accepted";
+  | "collab_invite" | "collab_accepted"
+  | "invite_joined";
 
 /** What happened to the recipient's own verified badge (modules/verification). */
 export type VerificationOutcome = "approved" | "denied" | "removed" | "restored";
@@ -161,6 +162,8 @@ async function isTypeEnabled(recipientId: string, type: NotificationType): Promi
       return prefs.commentsEnabled;
     case "follow":
     case "follow_accepted":
+    // Someone joining from your invite is news about people, like a follow.
+    case "invite_joined":
       return prefs.followsEnabled;
     case "mention":
       return prefs.mentionsEnabled;

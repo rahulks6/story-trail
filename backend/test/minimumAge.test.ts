@@ -11,6 +11,7 @@ import type { AddressInfo } from "node:net";
 import { buildApp } from "../src/app";
 import { queryOne } from "../src/db/psql";
 import { HttpError } from "../src/http/errors";
+import { liveProviders } from "../src/modules/auth/providers";
 import { ageOn, birthDateProblem, BIRTH_DATE_MESSAGES, MINIMUM_AGE, todayInIndia } from "../src/modules/auth/age";
 import { ADULT_BIRTH_DATE, authHeader, makeClient, uniqueUser } from "./helpers";
 
@@ -20,6 +21,7 @@ const server = buildApp({
     if (!token.startsWith("verified-")) throw new HttpError(401, "Invalid test assertion");
     return { subject: `${token}-${tag}`, email: `${token}-${tag}@example.com`, displayName: "Age test" };
   },
+  apple: liveProviders.apple,
   async sendPhone() {
     return "VE" + "3".repeat(32);
   },

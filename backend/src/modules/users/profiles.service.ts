@@ -11,6 +11,7 @@ import * as storiesRepo from "../stories/stories.repository";
 import * as storiesService from "../stories/stories.service";
 import * as refreshTokensRepo from "../auth/refresh-tokens.repository";
 import { verifyPassword } from "../auth/password";
+import { revokeAppleGrants } from "../auth/apple";
 
 export interface ProfileView {
   id: string;
@@ -131,6 +132,7 @@ export interface UpdateProfileInput {
   displayName?: string;
   bio?: string;
   isPrivate?: boolean;
+  findableByContacts?: boolean;
   interests?: string[];
   avatarMediaId?: string | null;
   coverMediaId?: string | null;
@@ -226,6 +228,8 @@ export async function removeAccount(userId: string): Promise<void> {
   await usersRepo.softDeleteUser(userId);
   await refreshTokensRepo.revokeAllRefreshTokensForUser(userId);
   await deleteVerificationQuietly(userId);
+  // App Review 5.1.1(v): Katkee no longer appears under the person's Apple Account sign-ins.
+  await revokeAppleGrants(userId);
 }
 
 /**

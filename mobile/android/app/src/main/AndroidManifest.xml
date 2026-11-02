@@ -12,6 +12,10 @@
     <!-- Approximate location only (Nearby Stories and the location sticker), never precise:
          the Privacy Policy says so, and iOS asks with reduced accuracy too. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- Contacts on Katkee: read only, asked after an explainer and only when the person taps
+         Continue. Emails and numbers are hashed on the phone; nothing is ever written back. -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" tools:node="remove" />
     <!-- react-native-fs declares this; Katkee keeps its files in its own storage only, and the
          photo picker needs no storage permission. -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="remove" />
@@ -43,7 +47,7 @@
         </intent-filter>
         <!-- katkee://user/<username>, katkee://story/<id> (Share sheet), katkee://reset-password (reset email),
              katkee://conversation/<id>, katkee://activity, katkee://home and katkee://verification
-             (push notifications). -->
+             (push notifications), katkee://invite/<code> (the invite page's button). -->
         <intent-filter>
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
@@ -56,8 +60,10 @@
             <data android:scheme="katkee" android:host="follow-requests" />
             <data android:scheme="katkee" android:host="home" />
             <data android:scheme="katkee" android:host="verification" />
+            <data android:scheme="katkee" android:host="invite" />
         </intent-filter>
-        <!-- Shared profiles and Stories: https://katkee.com/u/<username> and /s/<id> (App Links).
+        <!-- Shared profiles, Stories and invites: https://katkee.com/u/<username>, /s/<id> and
+             /i/<code> (App Links).
              Android checks katkee.com/.well-known/assetlinks.json for this app's signing key, then
              opens these links here without asking; anywhere else they show the website's
              "Open in Katkee" page. Only katkee.com: www redirects, and a host that fails
@@ -70,6 +76,7 @@
             <data android:host="katkee.com" />
             <data android:pathPrefix="/u/" />
             <data android:pathPrefix="/s/" />
+            <data android:pathPrefix="/i/" />
         </intent-filter>
       </activity>
       <!-- Notifications drawn by Firebase while the app is in the background use this
@@ -78,5 +85,17 @@
       <meta-data
         android:name="com.google.firebase.messaging.default_notification_icon"
         android:resource="@drawable/ic_notification" />
+      <!-- emoji2 would otherwise start EmojiCompat with the downloadable font before
+           MainApplication.onCreate, and the first configuration wins. The provider stays for
+           androidx.startup's other initialisers. -->
+      <provider
+        android:name="androidx.startup.InitializationProvider"
+        android:authorities="${applicationId}.androidx-startup"
+        android:exported="false"
+        tools:node="merge">
+        <meta-data
+          android:name="androidx.emoji2.text.EmojiCompatInitializer"
+          tools:node="remove" />
+      </provider>
     </application>
 </manifest>

@@ -1,6 +1,6 @@
 # Katkee Privacy Policy
 
-**Last updated:** 26 October 2026
+**Last updated:** 30 October 2026
 
 This policy explains what Katkee collects, how we use it, who can see it, how long we keep it
 and the choices you have. It covers the Katkee apps for iPhone and Android, the website at
@@ -59,6 +59,34 @@ way: only the wide banner you frame is uploaded.
 ### Your connections
 Who you follow, who follows you, follow requests, and who you've blocked or
 muted.
+
+### Your contacts (Contacts on Katkee, optional)
+Only if you choose **Find friends from your contacts** and allow it on your
+phone. Before anything is sent, the app turns each email address and phone
+number in your contacts into a scrambled code (a SHA-256 hash) on your
+phone. Only those codes are sent; names, photos, notes and the rest of your
+contacts never leave your phone. We compare the codes with the verified
+email addresses and phone numbers of accounts that allow being found this
+way, show you the accounts that match, and then **forget the codes: we
+never store your contacts or the codes made from them**, and never use
+them for anything else (not for ads, suggestions or to contact anyone).
+
+The codes are not encryption: someone who had one could work out the
+phone number behind it by trying every number. That is why we don't keep
+them. You can run the check again or never; turning off contacts for
+Katkee in your phone's settings stops it.
+
+Others can find you the same way, from your verified email or phone
+number, unless you turn off **Let people find me from their contacts**
+(Settings, then Privacy). They see your account, never your email or
+number.
+
+### Invites
+Your personal invite link (katkee.com/i/...) shows your display name to
+whoever opens it. If someone creates an account after opening your link, we
+record that they joined from your invite, tell you, and suggest you to each
+other. We don't track installs through the app stores and don't use any
+attribution service.
 
 ### Your approximate area (Nearby Stories, optional)
 Only if you turn on **Nearby Stories**. The app reads an approximate
@@ -169,7 +197,9 @@ message is kept as evidence for the moderator.
   no analytics or advertising trackers.
 
 ### What we do **not** collect or do
-- We don't access your contacts or your precise location.
+- We don't access your contacts unless you choose Contacts on Katkee, and
+  then we don't keep them (see above). We never access your precise
+  location.
 - We remove location details (EXIF/GPS and similar metadata) from the copies
   of your photos and videos that we show, and delete uploaded originals 30
   days after processing.
@@ -284,6 +314,8 @@ In the app you can:
 - edit your profile;
 - make your account private;
 - turn Nearby Stories on or off (Settings, then Privacy);
+- choose whether people can find you from their contacts (Settings, then
+  Privacy);
 - see and remove the interests Katkee has learned (Settings, then Your
   interests);
 - turn notification types on or off;
@@ -326,7 +358,8 @@ time. The legal bases we rely on:
   and our own analytics, which identify nobody once counted
   (Article 6(1)(f)). You can object to any of these; for Sponsored Stories,
   removing your interests in Edit Profile stops them being used.
-- **Consent**: Nearby Stories (your area) and a location sticker; you can
+- **Consent**: Nearby Stories (your area), a location sticker, and Contacts
+  on Katkee (checked once each time you choose it, and not kept); you can
   turn them off at any time.
 - **Legal obligation**: keeping server logs and the details of deleted
   accounts for as long as the law requires (section 7).
