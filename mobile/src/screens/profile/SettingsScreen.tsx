@@ -45,6 +45,8 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
   // Missing from older servers' answers: it has always been on there.
   const [findable, setFindable] = useState(user?.findableByContacts ?? true);
   const [togglingFindable, setTogglingFindable] = useState(false);
+  const [onWeb, setOnWeb] = useState(user?.showOnWeb ?? true);
+  const [togglingWeb, setTogglingWeb] = useState(false);
   const [draftCount, setDraftCount] = useState<number | null>(null);
   const [pendingRequestCount, setPendingRequestCount] = useState<number | null>(null);
   const [nearbyOn, setNearbyOn] = useState<boolean | null>(null);
@@ -56,6 +58,9 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
   useEffect(() => {
     setFindable(user?.findableByContacts ?? true);
   }, [user?.findableByContacts]);
+  useEffect(() => {
+    setOnWeb(user?.showOnWeb ?? true);
+  }, [user?.showOnWeb]);
 
   useFocusEffect(
     useCallback(() => {
@@ -99,6 +104,22 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
       Alert.alert("Couldn't update", "Try again.");
     } finally {
       setTogglingFindable(false);
+    }
+  };
+
+  // Off: katkee.com/u/<username> shows the same minimal "Open in Katkee" page as a private account.
+  const onToggleWeb = async (next: boolean) => {
+    if (!accessToken || togglingWeb) return;
+    setTogglingWeb(true);
+    setOnWeb(next);
+    try {
+      const { user: saved } = await updateMyProfile({ showOnWeb: next }, accessToken);
+      applyProfile(saved);
+    } catch {
+      setOnWeb(!next);
+      Alert.alert("Couldn't update", "Try again.");
+    } finally {
+      setTogglingWeb(false);
     }
   };
 
@@ -217,6 +238,21 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
             <ActivityIndicator color={colors.accentText} />
           ) : (
             <Switch value={findable} onValueChange={(next) => void onToggleFindable(next)} accessibilityLabel="Let people find me from their contacts" />
+          )}
+        </View>
+        <View style={styles.switchRow}>
+          <View style={styles.switchLabelGroup}>
+            <Text style={typography.body}>Show my profile on the web</Text>
+            <Text style={styles.switchHint}>
+              {isPrivate
+                ? "Private accounts never show on the web."
+                : "Anyone with your link can see your profile, Highlights and public Stories at katkee.com, and search engines may list it."}
+            </Text>
+          </View>
+          {togglingWeb ? (
+            <ActivityIndicator color={colors.accentText} />
+          ) : (
+            <Switch value={onWeb && !isPrivate} onValueChange={(next) => void onToggleWeb(next)} disabled={isPrivate} accessibilityLabel="Show my profile on the web" accessibilityHint={isPrivate ? "Unavailable for a private account" : undefined} />
           )}
         </View>
         <ListRow

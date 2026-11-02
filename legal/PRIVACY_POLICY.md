@@ -223,7 +223,9 @@ message is kept as evidence for the moderator.
   notifications.
 - When you visit katkee.com, our servers log your IP address and the page
   you asked for, as any website does. The website sets no cookies and has
-  no analytics or advertising trackers.
+  no analytics or advertising trackers. When someone opens a web profile or
+  a Story on katkee.com, we count only how many such pages were opened each
+  day, not who opened them or whose profile it was.
 
 ### What we do **not** collect or do
 - We don't access your contacts unless you choose Contacts on Katkee, and
@@ -260,6 +262,19 @@ message is kept as evidence for the moderator.
 - **Profile photo and cover photo**: anyone signed in who can see your
   profile, including when your account is private. People you've blocked,
   or who've blocked you, never see them.
+- **Your profile on the web**: if your account is public, anyone can see
+  your profile at katkee.com/u/your-username without the app or signing in:
+  your name, username, photo, cover photo, verified badge, professional
+  category (if you show it), bio, interests, follower and following counts,
+  the Highlights and Stories you shared with everyone, and their captions,
+  text, stickers and music credit. Search engines may list your profile.
+  Followers-only and Close Friends Stories, likes, comments, viewers and
+  view counts never appear there, and watching a Story on the web doesn't
+  count as a view. Turn off **Show my profile on the web** (Settings, then
+  Privacy) to keep only a plain "Open in Katkee" page at that address; a
+  private, suspended or deleted account always has only that page. Changes
+  take effect within a few minutes, though search engines may take longer
+  to update what they show.
 - **Blocking**: hides your content from someone and theirs from you, both
   ways, at once.
 - **Sticker answers**: who voted on a poll or quiz and what they chose, and
@@ -365,6 +380,8 @@ In the app you can:
 - make your account private;
 - turn Nearby Stories on or off (Settings, then Privacy);
 - choose whether people can find you from their contacts (Settings, then
+  Privacy);
+- choose whether your public profile shows on the web (Settings, then
   Privacy);
 - see and remove the interests Katkee has learned (Settings, then Your
   interests);

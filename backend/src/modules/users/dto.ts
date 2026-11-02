@@ -60,6 +60,14 @@ export function parseUpdateProfileInput(body: unknown): UpdateProfileInput {
     }
   }
 
+  if (b.showOnWeb !== undefined) {
+    if (typeof b.showOnWeb !== "boolean") {
+      errors.showOnWeb = "showOnWeb must be a boolean.";
+    } else {
+      result.showOnWeb = b.showOnWeb;
+    }
+  }
+
   if (b.interests !== undefined) {
     if (!Array.isArray(b.interests) || b.interests.length > 5 || b.interests.some((value) => typeof value !== "string" || value.trim().length < 1 || value.trim().length > 30)) {
       errors.interests = "Choose up to 5 interests, each 1-30 characters.";

@@ -415,7 +415,22 @@ describe("the Admin API", () => {
         for (const secret of [...Object.values(SECRET), owner.email, owner.username.replace("_", " ")]) assert.ok(!reply.text.includes(secret), `${key} leaked ${secret}`);
         if (method === "GET") assert.equal(strip(reply.text), nobody, key);
       }
+      // Nor does the media behind a web profile: a private account's photo and Story aren't served.
+      for (const [key, path] of [
+        [`${method} /u/:username/:file`, `/u/${owner.username}/photo`],
+        [`${method} /s/:storyId/:file`, `/s/${ids.story}/image`],
+      ] as const) refused(await attempt(key, path, stranger), key, [404]);
     }
+  });
+
+  it("a public account's web profile shows its public Stories only, never a followers-only one", async () => {
+    await query(`UPDATE media SET status = 'ready' WHERE owner_id = :'id'`, { id: creator.id });
+    const page = await request("GET", `/u/${creator.username}`);
+    assert.equal(page.status, 200);
+    assert.ok(page.text.includes(ids.publicStory), "the public Story plays on the web");
+    assert.ok(!page.text.includes(ids.followersStory) && !page.text.includes("followers-only-"), "the followers-only one never does");
+    refused(await request("GET", `/s/${ids.followersStory}/image`), "followers-only Story media on the web", [404]);
+    assert.ok(!(await request("GET", `/s/${ids.followersStory}`)).text.includes("followers-only-"));
   });
 });
 

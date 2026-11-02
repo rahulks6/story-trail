@@ -10,7 +10,8 @@
  *   node website/build.cjs --check   fail if website/public/ is not exactly what the sources make
  *
  * public/ is committed: the API serves it on katkee.com (backend/src/modules/website), and it
- * can be uploaded to any static host as it is. No scripts, no cookies, no third-party requests.
+ * can be uploaded to any static host as it is. No cookies, no third-party requests, and no scripts
+ * except the web Story player (src/player.js) on public profile pages, which the API serves.
  */
 const crypto = require('node:crypto');
 const fs = require('node:fs');
@@ -138,7 +139,7 @@ function markdown(source, where) {
 const TYPES = {
   '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon',
   '.html': 'text/html; charset=utf-8', '.txt': 'text/plain; charset=utf-8', '.xml': 'application/xml; charset=utf-8',
-  '.json': 'application/json',
+  '.json': 'application/json', '.js': 'text/javascript; charset=utf-8',
 };
 
 /**
@@ -153,8 +154,21 @@ const OPEN_MARKERS = { appLink: '%APP_LINK%', linkPath: '%LINK_PATH%' };
  * headline, which is the page title too, so a link preview in a chat names the friend.
  */
 const INVITE_MARKERS = { appLink: '%INVITE_APP_LINK%', linkPath: '%INVITE_PATH%', headline: '%INVITE_HEADLINE%' };
+/**
+ * A public account's web profile (/u/<username>), and a public Story on it (/s/<story id>): one
+ * template whose head (title, description, address, robots, link-preview image) and profile
+ * parts the API fills in per request, escaped (backend/src/modules/website/web-pages.ts). The
+ * page's only script is the Story player, from this site; the Stories it plays are a JSON data
+ * block (never run), and the player builds everything from it.
+ */
+const WEB_MARKERS = {
+  title: '%WEB_TITLE%', description: '%WEB_PAGE_DESCRIPTION%', linkPath: '%WEB_PATH%', robots: '%WEB_ROBOTS%',
+  ogType: '%WEB_OG_TYPE%', image: '%WEB_IMAGE%', imageAlt: '%WEB_IMAGE_ALT%', card: '%WEB_CARD%', appLink: '%WEB_APP_LINK%',
+  start: '%WEB_START%', cover: '%WEB_COVER%', avatar: '%WEB_AVATAR%', name: '%WEB_NAME%', badge: '%WEB_BADGE%', handle: '%WEB_HANDLE%',
+  category: '%WEB_CATEGORY%', stats: '%WEB_STATS%', bio: '%WEB_BIO%', interests: '%WEB_INTERESTS%', stories: '%WEB_STORIES%', data: '%WEB_DATA%',
+};
 /** Which page each set of per-request markers belongs on. */
-const MARKERS_BY_FILE = { 'open.html': OPEN_MARKERS, 'invite.html': INVITE_MARKERS };
+const MARKERS_BY_FILE = { 'open.html': OPEN_MARKERS, 'invite.html': INVITE_MARKERS, 'profile.html': WEB_MARKERS };
 const FINGERPRINT = /^([0-9A-F]{2}:){31}[0-9A-F]{2}$/;
 
 function hashed(name, data) {
@@ -214,7 +228,7 @@ function build() {
   const files = new Map();
   const assets = {};
   const assetUrl = {};
-  for (const [name, source] of [['site.css', 'src/site.css'], ['katkee-icon.svg', 'src/images/katkee-icon.svg'], ['social-card.png', 'src/images/social-card.png']]) {
+  for (const [name, source] of [['site.css', 'src/site.css'], ['katkee-icon.svg', 'src/images/katkee-icon.svg'], ['social-card.png', 'src/images/social-card.png'], ['player.js', 'src/player.js']]) {
     const data = fs.readFileSync(path.join(here, source));
     const file = hashed(name, data);
     files.set(`assets/${file}`, data);
@@ -261,6 +275,12 @@ ${doc.html}
     { route: null, file: 'open.html', title: `Open in ${site.name}`, description: `Someone shared this with you on ${site.name}. Open it in the app.`, content: read('src/pages/open.html'), body: 'open', url: `${site.origin}/${OPEN_MARKERS.linkPath}`, appLink: OPEN_MARKERS.appLink },
     // Invite links (/i/<code>) from Settings > Invite friends. noindex, like the open page.
     { route: null, file: 'invite.html', title: INVITE_MARKERS.headline, description: `Join your friends on ${site.name}: Stories with the people you know.`, content: read('src/pages/invite.html'), body: 'open', url: `${site.origin}/${INVITE_MARKERS.linkPath}` },
+    // Public accounts' web profiles and their Stories. Indexed or not as the API says per account.
+    {
+      route: null, file: 'profile.html', title: WEB_MARKERS.title, description: WEB_MARKERS.description, content: read('src/pages/profile.html'), body: 'web-profile',
+      url: `${site.origin}/${WEB_MARKERS.linkPath}`, robots: WEB_MARKERS.robots, ogType: WEB_MARKERS.ogType, ogImage: WEB_MARKERS.image, ogImageSize: '',
+      ogImageAlt: WEB_MARKERS.imageAlt, twitterCard: WEB_MARKERS.card, scripts: `\n<script src="${assetUrl['player.js']}" defer></script>`,
+    },
   ];
   const routes = new Set(pages.filter((p) => p.route).map((p) => p.route));
   const layout = read('src/layout.html');
@@ -278,11 +298,19 @@ ${doc.html}
     .replace(/\{\{([\w.]+)\}\}/g, (_, key) => escape(lookup(key, page)));
 
   for (const page of pages) {
-    const pageContext = { ...page, url: page.url ?? `${site.origin}${page.route ?? '/'}`, robots: page.route ? 'index, follow' : 'noindex' };
+    const pageContext = {
+      ogType: 'website', ogImage: `${site.origin}${assetUrl['social-card.png']}`, ogImageAlt: 'The Katkee app icon', twitterCard: 'summary_large_image',
+      ogImageSize: '<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">\n', scripts: '',
+      ...page, url: page.url ?? `${site.origin}${page.route ?? '/'}`, robots: page.robots ?? (page.route ? 'index, follow' : 'noindex'),
+    };
     const html = fill(layout, { ...pageContext, content: fill(page.content, pageContext) });
     // Refuse what would break the strict Content-Security-Policy, or a broken link.
     if (/\{\{|\}\}/.test(html)) throw new Error(`${page.file}: unfilled placeholder`);
-    if (/<script|\son[a-z]+=|\sstyle=|javascript:/i.test(html)) throw new Error(`${page.file}: scripts and inline styles are not allowed (the site's Content-Security-Policy blocks them)`);
+    // The web profile's player script and its JSON data block are the only scripts anywhere.
+    const scriptless = page.file === 'profile.html'
+      ? html.replace(`<script src="${assetUrl['player.js']}" defer></script>`, '').replace(`<script type="application/json" id="web-data">${WEB_MARKERS.data}</script>`, '')
+      : html;
+    if (/<script|\son[a-z]+=|\sstyle=|javascript:/i.test(scriptless)) throw new Error(`${page.file}: scripts and inline styles are not allowed (the site's Content-Security-Policy blocks them)`);
     for (const [, href] of html.matchAll(/\shref="([^"]+)"/g)) {
       if (href.startsWith('#') || href.startsWith('mailto:')) continue;
       // The open and invite pages' own addresses and app links are filled in per request by the API.
@@ -316,7 +344,8 @@ ${doc.html}
     }
   }
 
-  const robots = `User-agent: *\nAllow: /\n\nSitemap: ${site.origin}/sitemap.xml\n`;
+  // Profiles that show on the web are listed by the API (sitemap-profiles.xml), newest first.
+  const robots = `User-agent: *\nAllow: /\n\nSitemap: ${site.origin}/sitemap.xml\nSitemap: ${site.origin}/sitemap-profiles.xml\n`;
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[...routes].map((r) => `  <url><loc>${site.origin}${r}</loc></url>`).join('\n')}\n</urlset>\n`;
   rootFiles['/robots.txt'] = ['robots.txt', Buffer.from(robots)];
   rootFiles['/sitemap.xml'] = ['sitemap.xml', Buffer.from(sitemap)];
@@ -330,6 +359,7 @@ ${doc.html}
     notFound: '404.html',
     openInApp: { file: 'open.html', markers: OPEN_MARKERS },
     invite: { file: 'invite.html', markers: INVITE_MARKERS },
+    webProfile: { file: 'profile.html', markers: WEB_MARKERS },
     assets,
     files: Object.fromEntries(Object.entries(rootFiles).map(([route, [file]]) => [route, { file, type: TYPES[path.extname(file)] }])),
   };

@@ -29,7 +29,7 @@ test('website/public is exactly what the sources build',()=>{
 
 test('every page is well-formed, self-contained and accessible',()=>{
  const manifest=JSON.parse(fs.readFileSync(path.join(root,'website/public/manifest.json'),'utf8'));
- const pages=[...Object.values(manifest.pages),manifest.notFound,manifest.openInApp.file,manifest.invite.file];
+ const pages=[...Object.values(manifest.pages),manifest.notFound,manifest.openInApp.file,manifest.invite.file,manifest.webProfile.file];
  const ids=new Map(pages.map(p=>[p,new Set([...fs.readFileSync(path.join(root,'website/public',p),'utf8').matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]))]));
  for(const page of pages){
   const html=fs.readFileSync(path.join(root,'website/public',page),'utf8');
@@ -151,6 +151,35 @@ test('invite links: one noindex page whose headline, title and app link the API 
  const s=sandbox(t);
  s.edit('website/src/pages/404.html','</section>','<p>%INVITE_HEADLINE%</p></section>');
  assert.throws(s.run,/%INVITE_HEADLINE% belongs on invite\.html only/);
+});
+
+test('web profiles: one template the API fills in, whose only script is the site\'s own Story player',t=>{
+ const files=build();
+ const manifest=JSON.parse(files.get('manifest.json').toString());
+ const {file,markers}=manifest.webProfile;
+ const page=files.get(file).toString();
+ for(const marker of Object.values(markers))assert.ok(page.includes(marker),`${file} has ${marker}`);
+ const player=Object.keys(manifest.assets).find(a=>/^player\.[0-9a-f]{10}\.js$/.test(a));
+ assert.ok(player,'the player is a content-hashed asset');
+ assert.equal(manifest.assets[player],'text/javascript; charset=utf-8');
+ assert.deepEqual([...page.matchAll(/<script[^>]*>/g)].map(m=>m[0]),[`<script src="/assets/${player}" defer>`,'<script type="application/json" id="web-data">']);
+ assert.ok(page.includes(`<meta name="robots" content="${markers.robots}">`),'the API says whether a profile is indexed');
+ assert.ok(page.includes(`<meta property="og:image" content="${markers.image}">`)&&page.includes(`<meta name="twitter:card" content="${markers.card}">`));
+ assert.ok(page.includes(`<link rel="canonical" href="${site.origin}/${markers.linkPath}">`));
+ assert.ok(page.includes('id="get-katkee"'),'a clear way to get the app');
+ for(const other of [...files.keys()].filter(f=>f.endsWith('.html')&&f!==file))assert.doesNotMatch(files.get(other).toString(),/<script/,`${other} runs no script`);
+ assert.match(files.get('robots.txt').toString(),/Sitemap: https:\/\/katkee\.com\/sitemap-profiles\.xml/);
+ // The player builds the page with textContent and CSSOM only: nothing a Story says is parsed as HTML.
+ const source=fs.readFileSync(path.join(root,'website/src/player.js'),'utf8');
+ assert.doesNotMatch(source,/innerHTML|outerHTML|insertAdjacentHTML|document\.write|eval\(|new Function|setAttribute\('style'|fetch\(|XMLHttpRequest|sendBeacon|document\.cookie|localStorage/);
+ for(const [from,to,error] of [
+  ['<script type="application/json" id="web-data">','<script>alert(1)</script><script type="application/json" id="web-data">',/scripts and inline styles are not allowed/],
+  ['%WEB_START%','',/%WEB_START% belongs on profile\.html only/],
+ ]){
+  const s=sandbox(t);
+  s.edit('website/src/pages/profile.html',from,to);
+  assert.throws(s.run,error,to);
+ }
 });
 
 test('the legal pages render the Markdown faithfully',()=>{
