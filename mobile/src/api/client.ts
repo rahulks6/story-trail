@@ -23,6 +23,8 @@ export interface PublicUser {
   isPrivate: boolean;
   /** "Let people find me from their contacts" (Settings > Privacy); absent from older servers, meaning on. */
   findableByContacts?: boolean;
+  /** "Show my profile on the web" (Settings > Privacy): katkee.com/u/<username> for a public account; absent from older servers, meaning on. */
+  showOnWeb?: boolean;
   /** The verified badge, and what kind of account it confirms (absent from servers before the badge). */
   verified?: boolean;
   verifiedCategory?: string | null;
