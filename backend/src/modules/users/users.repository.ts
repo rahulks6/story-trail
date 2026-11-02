@@ -25,10 +25,15 @@ export interface UserRecord {
   verified: boolean;
   /** What the account is verified as; null unless `verified`. */
   verifiedCategory: string | null;
+  /** A professional account's category (professional/professional.service.ts); null for a personal account. */
+  professionalCategory: string | null;
+  /** Whether the category shows under the name on the profile (the owner can hide it). */
+  professionalCategoryShown: boolean;
 }
 
 const SELECT_COLUMNS = "id, username, email, password_hash, display_name, bio, avatar_media_id, cover_media_id, interests_json, is_private, is_active, is_moderator, email_verified_at IS NOT NULL AS email_verified, email_verification_required, created_at, " +
-  `${verifiedSql()} AS verified, CASE WHEN ${verifiedSql()} THEN verified_category END AS verified_category`;
+  `${verifiedSql()} AS verified, CASE WHEN ${verifiedSql()} THEN verified_category END AS verified_category, ` +
+  "professional_category, professional_category_shown";
 
 function parseInterests(json: string | null | undefined): string[] {
   try {
@@ -58,6 +63,8 @@ function mapRow(row: Record<string, string | null>): UserRecord {
     createdAt: row.created_at as string,
     verified: row.verified === "t",
     verifiedCategory: row.verified_category ?? null,
+    professionalCategory: row.professional_category ?? null,
+    professionalCategoryShown: row.professional_category_shown !== "f",
   };
 }
 

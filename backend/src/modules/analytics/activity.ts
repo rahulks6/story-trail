@@ -26,6 +26,33 @@ const recorded = new Set<string>();
 let recordedDay = "";
 const MAX_REMEMBERED = 200_000;
 
+const HALF_HOUR_MS = 30 * 60 * 1000;
+// Who this process has recorded in the current half hour (activity_half_hours), the same way.
+const slotRecorded = new Set<string>();
+let recordedSlot = 0;
+
+/**
+ * Marks the person active in this half hour: what a professional dashboard's "when your
+ * followers are most active" is counted from (professional/dashboard.ts), as totals only.
+ */
+function noteActiveSlot(userId: string, now: Date): void {
+  const slot = Math.floor(now.getTime() / HALF_HOUR_MS) * HALF_HOUR_MS;
+  if (slot !== recordedSlot) {
+    slotRecorded.clear();
+    recordedSlot = slot;
+  }
+  if (slotRecorded.has(userId)) return;
+  if (slotRecorded.size >= MAX_REMEMBERED) slotRecorded.clear();
+  slotRecorded.add(userId);
+  void query(
+    `INSERT INTO activity_half_hours (user_id, slot) VALUES (:'user', :'slot'::timestamptz) ON CONFLICT DO NOTHING`,
+    { user: userId, slot: new Date(slot).toISOString() },
+  ).catch((error: unknown) => {
+    slotRecorded.delete(userId); // try again on their next request
+    console.warn(JSON.stringify({ event: "analytics_activity_failed", message: error instanceof Error ? error.message : String(error) }));
+  });
+}
+
 /**
  * Marks the person active today on this platform: the source of DAU/WAU/MAU, the platform
  * split and retention. Called for every authenticated request. It never throws and never
@@ -33,6 +60,7 @@ const MAX_REMEMBERED = 200_000;
  */
 export function noteActivity(userId: string, platformHeader: unknown, now: Date = new Date()): void {
   if (!config.analytics.enabled) return;
+  noteActiveSlot(userId, now);
   const day = analyticsDay(now);
   if (day !== recordedDay) {
     recorded.clear();
@@ -57,4 +85,6 @@ export function noteActivity(userId: string, platformHeader: unknown, now: Date 
 export function resetActivityCache(): void {
   recorded.clear();
   recordedDay = "";
+  slotRecorded.clear();
+  recordedSlot = 0;
 }

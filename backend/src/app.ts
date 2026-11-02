@@ -34,6 +34,7 @@ import { registerPushRoutes } from "./modules/push/push.routes";
 import { registerAnalyticsRoutes } from "./modules/analytics/analytics.routes";
 import { registerSupportRoutes } from "./modules/support/support.routes";
 import { registerVerificationRoutes } from "./modules/verification/verification.routes";
+import { registerProfessionalRoutes } from "./modules/professional/professional.routes";
 import { registerWebsiteRoutes, websiteGate } from "./modules/website/website.routes";
 import { RealtimeHub } from "./realtime/hub";
 
@@ -120,6 +121,7 @@ export function buildApp(providers?:ProviderGateway): KatkeeServer {
   registerAnalyticsRoutes(router);
   registerSupportRoutes(router);
   registerVerificationRoutes(router);
+  registerProfessionalRoutes(router);
   registerRealtimeRoutes(router);
   registerPushRoutes(router);
   registerWebsiteRoutes(router);

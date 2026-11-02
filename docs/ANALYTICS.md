@@ -47,6 +47,20 @@ Spec section 15. Implemented in Phase 4 (October 2026). Report: `docs/phases/PHA
 | `highlight_viewed`, `profile_viewed`, `search_performed` | none |
 | `upload_succeeded` | `mediaKind`, `attempts` (1–100), `durationMs` (0–3,600,000) |
 | `upload_failed` | `mediaKind`, `stage` (`upload`/`processing`/`publish`), `reason` (`network`/`server`/`rejected`/`timeout`/`unknown`), `attempts` |
+| `professional_dashboard_viewed` | `range` (`7d`/`30d`); stored, not yet in the daily totals (like `story_shared_external`) |
+
+### Professional dashboards (creators' own numbers)
+
+A professional account's dashboard (`backend/src/modules/professional/dashboard.ts`) is shown
+only to that account. It counts from the same rows as above (`story_views`, `story_likes`,
+`story_comments`, `story_shares`, Story replies in `messages` by `reply_story_id`, counts only),
+plus two small tables written for it (migration 0066):
+
+- `follower_changes`: +1/−1 per follow or unfollow of an account, with no follower id. Kept 40 days.
+- `activity_half_hours`: which half hours each person had the app open, written from signed-in
+  requests like `analytics_active_days`. Kept 8 days, deleted with the account, and only ever
+  read as totals across at least 10 of an account's followers, stored as each hour's share of
+  the busiest hour (`professional_audience_hours`), never as counts.
 
 `POST /api/v1/analytics/events` (signed in): `{ platform?, appVersion?, events: [{ id, name, occurredAt, sessionId?, properties? }] }`,
 1–50 events, 60 batches a minute per person. Events older than 7 days or more than 10 minutes

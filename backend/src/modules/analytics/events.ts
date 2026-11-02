@@ -11,6 +11,7 @@ import { platformOf } from "./activity";
 export const ANALYTICS_EVENTS = [
   "app_session_started", "app_crash", "story_created", "highlight_viewed",
   "profile_viewed", "search_performed", "upload_succeeded", "upload_failed", "story_shared_external",
+  "professional_dashboard_viewed",
 ] as const;
 export type AnalyticsEventName = (typeof ANALYTICS_EVENTS)[number];
 
@@ -42,6 +43,8 @@ const PROPERTIES: Record<AnalyticsEventName, Record<string, PropertyRule>> = {
   },
   // Your own Story sent to another app as a picture or video (which app is never known).
   story_shared_external: { kind: MEDIA_KIND },
+  // The professional dashboard opened, and for which period; nothing about what it showed.
+  professional_dashboard_viewed: { range: { kind: "enum", values: ["7d", "30d"] } },
 };
 
 export const MAX_EVENTS_PER_BATCH = 50;

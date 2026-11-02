@@ -108,11 +108,16 @@ describe("DM privacy", () => {
       "modules/conversations/conversations.repository.ts",
       // Group membership, and who sent a reported message: never a message's body.
       "modules/conversations/groups.repository.ts",
+      // The professional dashboard counts replies to the owner's own Stories (reply_story_id):
+      // counts only, never a body, a sender or a conversation.
+      "modules/professional/dashboard.ts",
       // Unread badge only: counts conversations by message timestamps, never selects a body.
       "modules/push/dispatcher.ts",
     ], "a new reader of DM tables needs a privacy review (and an update here)");
     const dispatcher = fs.readFileSync(path.join(src, "modules/push/dispatcher.ts"), "utf8");
     assert.ok(!/\bm\.body\b|messages\.body|SELECT\s+body/i.test(dispatcher), "the dispatcher never reads message bodies");
+    const dashboard = fs.readFileSync(path.join(src, "modules/professional/dashboard.ts"), "utf8");
+    assert.ok(!/\bm\.(body|conversation_id)\b|SELECT\s+body/i.test(dashboard), "the dashboard only counts replies");
     const groups = fs.readFileSync(path.join(src, "modules/conversations/groups.repository.ts"), "utf8");
     assert.ok(!/\bbody\b/i.test(groups), "group membership code never reads message bodies");
 
