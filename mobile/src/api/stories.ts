@@ -1,4 +1,4 @@
-import { API_BASE_URL, apiDelete, apiGet, apiPost } from "./client";
+import { API_BASE_URL, apiDelete, apiGet, apiPatch, apiPost } from "./client";
 import type { Overlay, DrawStroke, StoryCrop } from "../models/storyDraft";
 import type { MediaDelivery } from "./media";
 
@@ -75,15 +75,52 @@ export interface PublishStoryInput {
   festival?: string;
   /** One topic from models/topics.ts; left out for none. */
   topic?: string;
+  /**
+   * Schedule it instead of posting now: an ISO time with its offset, up to 7 days ahead. The
+   * server keeps it unpublished until then (backend stories/scheduled.ts).
+   */
+  publishAt?: string;
 }
 
 /**
  * 201 `{story}` when published; 202 `{publish}` when the media is still processing,
- * in which case the server publishes it as soon as processing finishes.
+ * in which case the server publishes it as soon as processing finishes; 201 `{scheduled}`
+ * when it was scheduled (`publishAt`), and posts by itself at that time.
  */
 export type PublishStoryResult =
   | { story: PublicStory }
-  | { publish: { state: "processing"; requestId: string; mediaId: string } };
+  | { publish: { state: "processing"; requestId: string; mediaId: string } }
+  | { scheduled: ScheduledStory };
+
+/** Mirrors backend/src/modules/stories/scheduled.ts's ScheduledStoryView. */
+export interface ScheduledStory {
+  id: string;
+  requestId: string;
+  state: "scheduled" | "published" | "canceled" | "failed";
+  publishAt: string;
+  createdAt: string;
+  /** Why it couldn't be posted, written for people. */
+  error: string | null;
+  storyId: string | null;
+  caption: string;
+  audience: StoryAudience;
+  mediaId: string;
+  media: MediaDelivery | null;
+}
+
+/** Your Scheduled list: waiting ones soonest first, then recent ones that couldn't be posted. */
+export function getScheduledStories(accessToken: string): Promise<{ scheduled: ScheduledStory[] }> {
+  return apiGet("/api/v1/stories/scheduled", accessToken);
+}
+
+export function rescheduleStory(id: string, publishAt: string, accessToken: string): Promise<{ scheduled: ScheduledStory }> {
+  return apiPatch(`/api/v1/stories/scheduled/${encodeURIComponent(id)}`, { publishAt }, accessToken);
+}
+
+/** Cancels one that hasn't posted, or dismisses one that failed. */
+export function cancelScheduledStory(id: string, accessToken: string): Promise<void> {
+  return apiDelete(`/api/v1/stories/scheduled/${encodeURIComponent(id)}`, accessToken);
+}
 
 export function publishStory(input: PublishStoryInput, accessToken: string): Promise<PublishStoryResult> {
   return apiPost("/api/v1/stories", input, accessToken);

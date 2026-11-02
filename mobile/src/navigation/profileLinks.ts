@@ -34,6 +34,7 @@ export type DeepLinkTarget =
   | { kind: "home" }
   | { kind: "followRequests" }
   | { kind: "verification" }
+  | { kind: "scheduled" }
   | { kind: "resetPassword"; email?: string; code?: string };
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -61,6 +62,8 @@ export function deepLinkTarget(path: string): DeepLinkTarget | null {
   if (/^follow-requests\/?$/i.test(rawPath)) return { kind: "followRequests" };
   // Verification notifications: Settings > Request verification.
   if (/^verification\/?$/i.test(rawPath)) return { kind: "verification" };
+  // A scheduled Story that couldn't be posted: Archive > Scheduled, where it says why.
+  if (/^scheduled\/?$/i.test(rawPath)) return { kind: "scheduled" };
   if (/^reset-password\/?$/i.test(rawPath)) {
     const query = new URLSearchParams(rawQuery);
     const email = query.get("email")?.trim().toLowerCase();

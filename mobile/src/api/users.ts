@@ -19,6 +19,8 @@ export interface ProfileView {
   /** The verified badge (not shown while it's on hold), and its category (null unless verified). */
   verified?: boolean;
   verifiedCategory?: string | null;
+  /** A professional account's category, shown quietly under the name; null when personal or hidden. */
+  professionalCategory?: string | null;
   followerCount: number;
   followingCount: number;
   /** Stories posted so far (not deleted, expired included); missing from a server before release r3. */

@@ -33,6 +33,12 @@ const ALLOWED={
  'crashReporting.ts':1,
  'utils/serverTime.ts':3,
  'utils/birthDate.ts':2,
+ // Calendar arithmetic on the phone's own clock: days and hours offered for scheduling, and
+ // labels for a dashboard day (YYYY-MM-DD) or hour of the day.
+ 'models/schedule.ts':4,
+ 'components/ScheduleSheet.tsx':1,
+ 'components/charts/ActiveHoursChart.tsx':1,
+ 'components/charts/FollowerGrowthChart.tsx':1,
 };
 test('no screen parses a server timestamp with Date directly',()=>{
  const found={};

@@ -11,6 +11,7 @@ import { ListRow } from "../../components/ListRow";
 import { ActionSheet } from "../../components/ActionSheet";
 import { appearanceChoice, setAppearance, type AppearanceChoice } from "../../theme/appearance";
 import { nearbyChoice, turnNearbyOff, turnNearbyOn } from "../../state/nearby";
+import { professionalCategoryLabel } from "../../api/professional";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Settings">;
 
@@ -38,6 +39,8 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
     if (!restarted) Alert.alert("Appearance saved", "Close Katkee and open it again to see the new colours.");
   };
   const [togglingPrivacy, setTogglingPrivacy] = useState(false);
+  // A professional account stays public (the server refuses otherwise): switching back comes first.
+  const professional = !!user?.professionalCategory;
   const [draftCount, setDraftCount] = useState<number | null>(null);
   const [pendingRequestCount, setPendingRequestCount] = useState<number | null>(null);
   const [nearbyOn, setNearbyOn] = useState<boolean | null>(null);
@@ -137,6 +140,12 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
       <Text style={[styles.sectionHeader, styles.firstHeader]}>Account</Text>
       <View style={styles.card}>
         <ListRow label="Account and sign-in" icon={ICONS.profile} onPress={() => navigation.navigate("AccountSecurity")} />
+        <ListRow
+          label={professional ? "Professional account" : "Switch to professional account"}
+          icon={ICONS.insights}
+          detail={professional ? professionalCategoryLabel(user?.professionalCategory) ?? undefined : undefined}
+          onPress={() => navigation.navigate("ProfessionalAccount")}
+        />
         <ListRow label="Request verification" icon={ICONS.verified} onPress={() => navigation.navigate("Verification")} />
         <ListRow label="Notifications" icon={ICONS.notifications} onPress={() => navigation.navigate("NotificationSettings")} />
         <ListRow label="Appearance" icon={ICONS.settings} detail={APPEARANCE_LABELS[appearanceChoice()]} onPress={() => setAppearanceOpen(true)} />
@@ -157,9 +166,13 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
         <View style={styles.switchRow}>
           <View style={styles.switchLabelGroup}>
             <Text style={typography.body}>Private account</Text>
-            <Text style={styles.switchHint}>Only followers you approve see your Stories.</Text>
+            <Text style={styles.switchHint}>
+              {professional ? "Professional accounts are public. Switch to a personal account to make yours private." : "Only followers you approve see your Stories."}
+            </Text>
           </View>
-          {togglingPrivacy ? <ActivityIndicator color={colors.accentText} /> : <Switch value={isPrivate} onValueChange={onTogglePrivacy} accessibilityLabel="Private account" />}
+          {togglingPrivacy ? <ActivityIndicator color={colors.accentText} /> : (
+            <Switch value={isPrivate} onValueChange={onTogglePrivacy} disabled={professional && !isPrivate} accessibilityLabel="Private account" accessibilityHint={professional ? "Unavailable for a professional account" : undefined} />
+          )}
         </View>
         <View style={styles.switchRow}>
           <View style={styles.switchLabelGroup}>

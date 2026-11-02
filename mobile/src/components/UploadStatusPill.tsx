@@ -7,8 +7,10 @@ import type { RootStackParamList } from "../navigation/types";
 import { mediaColors as colors, radii, spacing, ICONS } from "../theme";
 import { Icon } from "./Icon";
 import { useAuth } from "../state/AuthContext";
-import { cancelUpload, listUploads, needsAttention, removeUpload, subscribeUploads, uploadPreviewUri, uploadProgress, uploadRunning, type UploadJob } from "../state/uploadQueue";
-import { deleteStory } from "../api/stories";
+import { cancelUpload, isDone, listUploads, needsAttention, removeUpload, subscribeUploads, uploadPreviewUri, uploadProgress, uploadRunning, type UploadJob } from "../state/uploadQueue";
+import { cancelScheduledStory, deleteStory } from "../api/stories";
+import { scheduleText } from "../models/schedule";
+import { serverDate } from "../utils/serverTime";
 import { storyPublished } from "../state/storyChanges";
 
 /** How long "Shared" stays before the pill goes away. */
@@ -17,6 +19,7 @@ export const SHARED_NOTICE_MS = 5000;
 /** What the pill says for a Story on its way. */
 export function pillLabel(job: UploadJob, percent: number | undefined, running: boolean): string {
   if (job.status === "published") return "Shared to your Story";
+  if (job.status === "scheduled") return serverDate(job.payload.publishAt) ? `Scheduled for ${scheduleText(serverDate(job.payload.publishAt)!)}` : "Scheduled";
   if (job.status === "failed") return "Couldn't share · Tap to retry";
   if (job.status === "uploading" && percent !== undefined) return `Sharing… ${Math.round(percent * 100)}%`;
   if (!running && job.status !== "queued" && job.status !== "processing") return "Paused · Tap to continue";
@@ -47,7 +50,7 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
     setJob(latest);
     setAttention(jobs.filter(needsAttention).length);
     setTick((t) => t + 1);
-    if (latest?.status === "published" && !dismissTimer.current) {
+    if (latest && isDone(latest) && !dismissTimer.current) {
       dismissTimer.current = setTimeout(() => {
         dismissTimer.current = null;
         void removeUpload(latest.ownerId, latest.id).catch(() => undefined);
@@ -67,6 +70,24 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
 
   // Stop a Story that is still on its way, or take back one that has just posted.
   const stop = (current: UploadJob) => {
+    if (current.status === "scheduled") {
+      Alert.alert("Cancel this scheduled Story?", "It won't be posted. Your photo or video stays on your phone.", [
+        { text: "Keep it", style: "cancel" },
+        {
+          text: "Cancel Story",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              if (current.scheduledId && accessToken) await cancelScheduledStory(current.scheduledId, accessToken);
+              await removeUpload(current.ownerId, current.id).catch(() => undefined);
+            } catch {
+              Alert.alert("Couldn't cancel", "Open Archive, then Scheduled, and cancel it there.");
+            }
+          },
+        },
+      ]);
+      return;
+    }
     if (current.status === "published") {
       Alert.alert("Delete this Story?", "It has been shared. Deleting removes it for everyone.", [
         { text: "Keep it", style: "cancel" },
@@ -107,7 +128,7 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
   const label = stopping ? "Stopping…" : job.cancelAfterPublish ? "Removing…" : pillLabel(job, percent, running);
   const othersLabel = attention > 1 ? `${attention} Stories need attention` : null;
   const preview = uploadPreviewUri(job);
-  const shown = job.status === "uploading" && percent !== undefined ? percent : job.status === "published" || job.status === "processing" ? 1 : 0.05;
+  const shown = job.status === "uploading" && percent !== undefined ? percent : isDone(job) || job.status === "processing" ? 1 : 0.05;
 
   return (
     <Pressable
@@ -121,7 +142,7 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
       {preview ? <Image source={{ uri: preview }} style={styles.thumb} /> : <View style={[styles.thumb, styles.thumbVideo]}><Icon name={ICONS.create} size={14} color={colors.textPrimary} /></View>}
       <View style={styles.body}>
         <Text style={[styles.label, job.status === "failed" && styles.failed]} numberOfLines={1}>{label}</Text>
-        {job.status !== "failed" && job.status !== "published" ? (
+        {job.status !== "failed" && !isDone(job) ? (
           <View style={styles.track}>
             <View style={[styles.fill, { width: `${Math.round(shown * 100)}%` }]} />
           </View>
@@ -132,8 +153,8 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
           <Text style={styles.badgeText}>{attention}</Text>
         </View>
       ) : null}
-      {job.status === "published" ? (
-        <Pressable onPress={() => stop(job)} hitSlop={10} accessibilityRole="button" accessibilityLabel="Undo, delete this Story">
+      {isDone(job) ? (
+        <Pressable onPress={() => stop(job)} hitSlop={10} accessibilityRole="button" accessibilityLabel={job.status === "scheduled" ? "Undo, cancel this scheduled Story" : "Undo, delete this Story"}>
           <Text style={styles.undo}>Undo</Text>
         </Pressable>
       ) : !stopping && !job.cancelAfterPublish ? (

@@ -13,6 +13,7 @@ import { Icon } from "../Icon";
 import { VerifiedBadgeSheet, VerifiedName } from "../VerifiedBadge";
 import { colors, radii, spacing, ICONS } from "../../theme";
 import { countLabel, formatCount } from "../../utils/formatCount";
+import { professionalCategoryLabel } from "../../api/professional";
 
 export interface ProfileStat {
   key: string;
@@ -40,6 +41,8 @@ interface Props {
   /** The badge after the name; tapping it explains it, naming the category. */
   verified?: boolean;
   verifiedCategory?: string | null;
+  /** A professional account's category (api/professional.ts), shown quietly under the name. */
+  professionalCategory?: string | null;
   /** An active Story: the amber ring shows, and tapping the photo opens it. */
   hasActiveStory: boolean;
   storyLabel: string;
@@ -100,10 +103,11 @@ function ProfileCover({ source, bleed, onError }: {
  */
 export function ProfileHeader({
   username, displayName, bio, interests, avatarMediaId, coverMediaId, coverBleed = DEFAULT_BLEED, isPrivate, verified, verifiedCategory,
-  hasActiveStory, storyLabel, onOpenStory, onAddStory, followsYou, stats, children,
+  professionalCategory, hasActiveStory, storyLabel, onOpenStory, onAddStory, followsYou, stats, children,
 }: Props): React.JSX.Element {
   const [badgeSheetOpen, setBadgeSheetOpen] = useState(false);
   const { accessToken } = useAuth();
+  const categoryLabel = professionalCategoryLabel(professionalCategory);
   const cover = useProfilePhotoSource(coverMediaId ? coverFileUrl(username, coverMediaId) : null, coverMediaId, accessToken);
   const showCover = !!coverMediaId && !!accessToken && !cover.failed;
   const photo = (
@@ -161,6 +165,7 @@ export function ProfileHeader({
 
       <View style={styles.identity}>
         <VerifiedName name={displayName} verified={verified} style={styles.displayName} onPressBadge={() => setBadgeSheetOpen(true)} />
+        {categoryLabel ? <Text style={styles.category} numberOfLines={1}>{categoryLabel}</Text> : null}
         <View style={styles.handleRow}>
           <Text style={styles.handle} numberOfLines={1}>@{username}</Text>
           {isPrivate ? (
@@ -257,6 +262,8 @@ const styles = StyleSheet.create({
   statLabel: { color: colors.textSecondary, fontSize: 13 },
   identity: { gap: spacing.xs },
   displayName: { color: colors.textPrimary, fontSize: 16, fontWeight: "700" },
+  // Like a byline: there, but quieter than the name.
+  category: { color: colors.textSecondary, fontSize: 13, marginTop: -2 },
   handleRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs, flexWrap: "wrap" },
   handle: { color: colors.textSecondary, fontSize: 14, flexShrink: 1 },
   followsYou: {

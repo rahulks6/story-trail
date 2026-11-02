@@ -24,6 +24,9 @@ export interface PublicUser {
   /** The verified badge, and what kind of account it confirms (absent from servers before the badge). */
   verified?: boolean;
   verifiedCategory?: string | null;
+  /** A professional account's category and whether it shows on the profile (absent from older servers). */
+  professionalCategory?: string | null;
+  professionalCategoryShown?: boolean;
   /** False until the email is confirmed with a code (absent from older servers and caches). */
   emailVerified?: boolean;
   /** A new account whose email isn't verified yet: only the code screen is shown until it is. */

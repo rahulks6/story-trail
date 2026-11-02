@@ -24,6 +24,9 @@ import { HighlightViewerScreen } from "../screens/highlight/HighlightViewerScree
 import { HighlightEditorScreen } from "../screens/highlight/HighlightEditorScreen";
 import { ArchiveScreen } from "../screens/profile/ArchiveScreen";
 import { SequenceInsightsScreen } from "../screens/profile/SequenceInsightsScreen";
+import { ProfessionalDashboardScreen } from "../screens/profile/ProfessionalDashboardScreen";
+import { ProfessionalAccountScreen } from "../screens/profile/ProfessionalAccountScreen";
+import { ScheduledStoriesScreen } from "../screens/profile/ScheduledStoriesScreen";
 import { ArchivedStoryViewerScreen } from "../screens/profile/ArchivedStoryViewerScreen";
 import { EditProfileScreen } from "../screens/profile/EditProfileScreen";
 import { SettingsScreen } from "../screens/profile/SettingsScreen";
@@ -133,6 +136,21 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
         }}
+      />
+      <Stack.Screen
+        name="ProfessionalDashboard"
+        component={ProfessionalDashboardScreen}
+        options={{ headerShown: true, title: "Professional dashboard", headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary, headerShadowVisible: false }}
+      />
+      <Stack.Screen
+        name="ProfessionalAccount"
+        component={ProfessionalAccountScreen}
+        options={{ headerShown: true, title: "Professional account", headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary, headerShadowVisible: false }}
+      />
+      <Stack.Screen
+        name="ScheduledStories"
+        component={ScheduledStoriesScreen}
+        options={{ headerShown: true, title: "Scheduled", headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary, headerShadowVisible: false }}
       />
       <Stack.Screen
         name="ArchivedStoryViewer"
@@ -351,6 +369,7 @@ export function RootNavigator(): React.JSX.Element {
       if (target?.kind === "home") return { routes: [{ name: "Main", state: { routes: [{ name: "Home" }] } }] };
       if (target?.kind === "followRequests") return { routes: [{ name: "Main" }, { name: "FollowRequests" }] };
       if (target?.kind === "verification") return { routes: [{ name: "Main" }, { name: "Settings" }, { name: "Verification" }] };
+      if (target?.kind === "scheduled") return { routes: [{ name: "Main" }, { name: "Archive" }, { name: "ScheduledStories" }] };
       return undefined;
     },
   }), []);

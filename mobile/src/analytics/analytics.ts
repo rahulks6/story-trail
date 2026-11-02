@@ -18,7 +18,8 @@ import { appEnv } from "../config/env";
  */
 export type AnalyticsEventName =
   | "app_session_started" | "app_crash" | "story_created" | "highlight_viewed"
-  | "profile_viewed" | "search_performed" | "upload_succeeded" | "upload_failed" | "story_shared_external";
+  | "profile_viewed" | "search_performed" | "upload_succeeded" | "upload_failed" | "story_shared_external"
+  | "professional_dashboard_viewed";
 export type AnalyticsProperties = Record<string, string | number | boolean>;
 
 interface QueuedEvent {

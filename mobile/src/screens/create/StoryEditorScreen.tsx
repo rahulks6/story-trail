@@ -47,6 +47,9 @@ import { useScreenReader } from "../../hooks/useScreenReader";
 import { DEFAULT_STORY_SETTINGS, loadStorySettings, saveStorySettings, StorySettingsSheet, storySettingsSummary, type StorySettings, type StoryVisibility } from "../../components/StorySettingsSheet";
 import { Avatar } from "../../components/Avatar";
 import { listCloseFriends } from "../../api/users";
+import { ScheduleSheet } from "../../components/ScheduleSheet";
+import { scheduleProblem, scheduleText } from "../../models/schedule";
+import { showToast } from "../../components/Toast";
 
 type Props = NativeStackScreenProps<CreateStackParamList, "StoryEditor">;
 type Audience = "public" | "followers" | "close_friends";
@@ -188,6 +191,9 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   // The object two fingers on the photo resize and rotate: the last one touched or added.
   const activeOverlayId = useRef<string | null>(null);
   const [uploadState, setUploadState] = useState<"idle" | "uploading" | "done" | "error">("idle");
+  // Schedule (models/schedule.ts): when set, sharing uploads now and the Story posts at this time.
+  const [publishAt, setPublishAt] = useState<Date | null>(null);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [filterToastName, setFilterToastName] = useState<string | null>(null);
   // The photo as it will be published: the filter applied on the phone with the server's own
@@ -603,6 +609,11 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
 
   const onShare = async (target: Audience = audience) => {
     if (!accessToken||!user||submittingUpload.current) return;
+    // The chosen time can pass while the Story is being edited: choose again rather than surprise.
+    if (publishAt && scheduleProblem(publishAt)) {
+      Alert.alert("Choose a new time", scheduleProblem(publishAt) ?? undefined, [{ text: "OK", onPress: () => setScheduleOpen(true) }]);
+      return;
+    }
     submittingUpload.current=true;
     setAudience(target);
     setUploadState("uploading");
@@ -623,11 +634,13 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           // Public festival Stories join the festival's ring on Home.
           ...(festival && joinFestival && target === "public" ? { festival: festival.slug } : {}),
           ...(topic ? { topic } : {}),
+          ...(publishAt ? { publishAt: publishAt.toISOString() } : {}),
         },
         boomerang ? "boomerang" : undefined,
       );
       setUploadState("done");
       tapFeedback("success");
+      if (publishAt) showToast(`Scheduled for ${scheduleText(publishAt)}`);
       void clearPendingDraft(user.id, mediaUri);
       // Back to Home, where a small status shows the Story sharing (components/UploadStatusPill).
       rootNavigation.reset({ index: 0, routes: [{ name: "Main" }] });
@@ -918,17 +931,29 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             ) : null}
           </View>
 
-          {/* One quiet line for who can see, comment and share; the choices are in a sheet. */}
-          <Pressable
-            onPress={() => setSettingsOpen(true)}
-            hitSlop={8}
-            style={styles.visibility}
-            accessibilityRole="button"
-            accessibilityLabel={`Story settings: ${storySettingsSummary({ ...settings, visibility: storyAudience }, festival && joinFestival && storyAudience === "public" ? festival.name : null, topic)}`}
-          >
-            <Text style={styles.visibilityLabel} numberOfLines={1}>{storySettingsSummary({ ...settings, visibility: storyAudience }, festival && joinFestival && storyAudience === "public" ? festival.name : null, topic)}</Text>
-            <Icon name={ICONS.chevron} size={14} color={colors.textPrimary} />
-          </Pressable>
+          {/* One quiet line for who can see, comment and share (the choices are in a sheet), and when it posts. */}
+          <View style={styles.optionsRow}>
+            <Pressable
+              onPress={() => setSettingsOpen(true)}
+              hitSlop={8}
+              style={[styles.visibility, styles.visibilityShrink]}
+              accessibilityRole="button"
+              accessibilityLabel={`Story settings: ${storySettingsSummary({ ...settings, visibility: storyAudience }, festival && joinFestival && storyAudience === "public" ? festival.name : null, topic)}`}
+            >
+              <Text style={styles.visibilityLabel} numberOfLines={1}>{storySettingsSummary({ ...settings, visibility: storyAudience }, festival && joinFestival && storyAudience === "public" ? festival.name : null, topic)}</Text>
+              <Icon name={ICONS.chevron} size={14} color={colors.textPrimary} />
+            </Pressable>
+            <Pressable
+              onPress={() => setScheduleOpen(true)}
+              hitSlop={8}
+              style={[styles.visibility, publishAt && styles.scheduleOn]}
+              accessibilityRole="button"
+              accessibilityLabel={publishAt ? `Scheduled for ${scheduleText(publishAt)}. Change or remove the time` : "Schedule. Choose when this Story posts"}
+            >
+              <Icon name={ICONS.timer} size={14} color={publishAt ? colors.onAccent : colors.textPrimary} />
+              <Text style={[styles.visibilityLabel, publishAt && styles.scheduleOnLabel]} numberOfLines={1}>{publishAt ? scheduleText(publishAt) : "Schedule"}</Text>
+            </Pressable>
+          </View>
 
           {uploadError ? (
             <View>
@@ -947,7 +972,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               disabled={uploadState === "uploading" || uploadState === "done"}
               onPress={() => void onShare(storyAudience)}
               accessibilityRole="button"
-              accessibilityLabel={`Share to Your story, ${storyAudience === "public" ? "everyone" : "followers only"}`}
+              accessibilityLabel={`${publishAt ? `Schedule for ${scheduleText(publishAt)} to` : "Share to"} Your story, ${storyAudience === "public" ? "everyone" : "followers only"}`}
               accessibilityState={{ busy: uploadState === "uploading" && audience !== "close_friends" }}
             >
               {uploadState === "uploading" && audience !== "close_friends" ? (
@@ -974,7 +999,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               }}
               onLongPress={() => rootNavigation.navigate("CloseFriends")}
               accessibilityRole="button"
-              accessibilityLabel="Share to Close Friends"
+              accessibilityLabel={publishAt ? `Schedule for ${scheduleText(publishAt)} to Close Friends` : "Share to Close Friends"}
               accessibilityHint="Long press to edit your Close Friends list"
               accessibilityState={{ busy: uploadState === "uploading" && audience === "close_friends" }}
             >
@@ -991,6 +1016,19 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         </KeyboardAvoider>
       ) : null}
 
+      <ScheduleSheet
+        visible={scheduleOpen}
+        initial={publishAt}
+        onConfirm={(at) => {
+          setPublishAt(at);
+          setScheduleOpen(false);
+        }}
+        onClear={publishAt ? () => {
+          setPublishAt(null);
+          setScheduleOpen(false);
+        } : undefined}
+        onClose={() => setScheduleOpen(false)}
+      />
       <StorySettingsSheet
         visible={settingsOpen}
         settings={{ ...settings, visibility: storyAudience }}
@@ -1115,6 +1153,10 @@ const styles = StyleSheet.create({
   filterName: { color: colors.textPrimary, fontWeight: "700", minWidth: 90, textAlign: "center" },
   visibility: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: spacing.sm, paddingVertical: 4, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.35)" },
   visibilityLabel: { color: colors.textPrimary, fontSize: 13, fontWeight: "600" },
+  optionsRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
+  visibilityShrink: { flexShrink: 1 },
+  scheduleOn: { backgroundColor: colors.accent },
+  scheduleOnLabel: { color: colors.onAccent },
   shareRow: { flexDirection: "row", gap: spacing.sm },
   shareButton: { flex: 1, minHeight: 48, paddingVertical: spacing.sm, paddingHorizontal: spacing.sm, borderRadius: radii.pill, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm },
   shareYourStory: { backgroundColor: colors.textPrimary },
