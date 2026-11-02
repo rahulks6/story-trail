@@ -19,6 +19,7 @@ import {
 import { HttpError } from "../../http/errors";
 import { DatabaseError } from "../../db/psql";
 import { USERNAME_MESSAGES } from "../users/username-policy";
+import type { Locale } from "../../shared/locale";
 
 export class AuthError extends Error {
   constructor(
@@ -44,6 +45,8 @@ export interface PublicUser {
   findableByContacts: boolean;
   /** "Show my profile on the web" (Settings > Privacy): katkee.com/u/<username> for a public account. */
   showOnWeb: boolean;
+  /** The app's language as last sent (Settings > Language); pushes and emails use it. */
+  locale: Locale;
   /** False until the email is proved with a code; phone-only accounts have no email. */
   emailVerified: boolean;
   /** A new account whose email isn't verified yet: the app shows only the code screen. */
@@ -70,6 +73,7 @@ function toPublicUser(user: usersRepo.UserRecord): PublicUser {
     isPrivate: user.isPrivate,
     findableByContacts: user.findableByContacts,
     showOnWeb: user.showOnWeb,
+    locale: user.locale,
     emailVerified: user.emailVerified,
     emailVerificationRequired: user.emailVerificationRequired && !!user.email && !user.emailVerified,
     verified: user.verified,
@@ -115,6 +119,7 @@ export async function signup(
       passwordHash,
       displayName: input.displayName,
       birthDate: input.birthDate,
+      ...(input.locale ? { locale: input.locale } : {}),
     });
   } catch (error) {
     if (error instanceof DatabaseError && error.detail.includes("USERNAME_HELD")) throw new AuthError(USERNAME_MESSAGES.held, 409);

@@ -301,11 +301,13 @@ export async function createMessage(
      -- Everyone else still in the conversation gets the push; a group's says which group.
      c AS (SELECT cm.user_id AS recipient_id FROM conversation_members cm
            WHERE cm.conversation_id = :'conversation_id' AND cm.left_at IS NULL AND cm.user_id <> :'sender_id' AND NOT cm.muted),
-     p AS (INSERT INTO push_outbox (user_id, kind, actor_id, ref_id, body, link)
+     p AS (INSERT INTO push_outbox (user_id, kind, actor_id, ref_id, body, link, params)
            SELECT c.recipient_id, 'message', m.sender_id, m.conversation_id,
                   CASE WHEN conv.kind = 'group' THEN
                     '@' || (SELECT username FROM users WHERE id = m.sender_id) || ' sent a message in ' || coalesce(conv.title, 'your group') END,
-                  CASE WHEN conv.kind = 'group' THEN 'katkee://conversation/' || m.conversation_id END
+                  CASE WHEN conv.kind = 'group' THEN 'katkee://conversation/' || m.conversation_id END,
+                  -- The group's name, for the push in the recipient's language (push-text.ts).
+                  CASE WHEN conv.kind = 'group' THEN jsonb_build_object('group', conv.title) END
            FROM m, c, conv RETURNING id),
      n AS (SELECT pg_notify('realtime', json_build_object('u', ${ACTIVE_MEMBERS_JSON(":'conversation_id'")},
              'e', json_build_object('type', 'message', 'conversationId', m.conversation_id, 'messageId', m.id,
@@ -770,10 +772,10 @@ export async function setMessageReaction(conversationId: string, messageId: stri
        ON CONFLICT (message_id, user_id) DO UPDATE SET emoji = EXCLUDED.emoji, created_at = now()
        RETURNING message_id),
      pushed AS (
-       INSERT INTO push_outbox (user_id, kind, actor_id, ref_id, body, link)
+       INSERT INTO push_outbox (user_id, kind, actor_id, ref_id, body, link, params)
        SELECT m.sender_id, 'message_reaction', :'user', :'conversation',
               '@' || (SELECT username FROM users WHERE id = :'user') || ' reacted ' || :'emoji' || ' to your message',
-              'katkee://conversation/' || :'conversation'
+              'katkee://conversation/' || :'conversation', jsonb_build_object('emoji', :'emoji')
        FROM m, saved WHERE m.sender_id <> :'user'
          AND EXISTS (SELECT 1 FROM conversation_members cm WHERE cm.conversation_id = :'conversation' AND cm.user_id = m.sender_id AND cm.left_at IS NULL AND NOT cm.muted)
        RETURNING id),

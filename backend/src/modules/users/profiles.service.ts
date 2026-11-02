@@ -13,6 +13,7 @@ import { cancelAllScheduledStories } from "../stories/scheduled";
 import * as refreshTokensRepo from "../auth/refresh-tokens.repository";
 import { verifyPassword } from "../auth/password";
 import { revokeAppleGrants } from "../auth/apple";
+import type { Locale } from "../../shared/locale";
 
 export interface ProfileView {
   id: string;
@@ -138,6 +139,8 @@ export interface UpdateProfileInput {
   isPrivate?: boolean;
   findableByContacts?: boolean;
   showOnWeb?: boolean;
+  /** The app's language (Settings > Language): pushes and emails use it. */
+  locale?: Locale;
   interests?: string[];
   avatarMediaId?: string | null;
   coverMediaId?: string | null;

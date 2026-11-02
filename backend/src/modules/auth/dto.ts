@@ -7,6 +7,7 @@ import { EMAIL_RE } from "../../shared/validation";
 import { usernameProblem } from "../users/username-policy";
 import { birthDateProblem } from "./age";
 import { CHECK_MARK_MESSAGE, hasCheckMark } from "../../shared/verified";
+import { isLocale, type Locale } from "../../shared/locale";
 
 export class ValidationError extends Error {
   constructor(public readonly fieldErrors: Record<string, string>) {
@@ -22,6 +23,8 @@ export interface SignupInput {
   displayName: string;
   /** YYYY-MM-DD; the person is at least MINIMUM_AGE (age.ts). */
   birthDate: string;
+  /** The app's language; an unknown or missing one leaves English (older apps send none). */
+  locale?: Locale;
 }
 
 export function parseSignupInput(body: unknown): SignupInput {
@@ -56,7 +59,7 @@ export function parseSignupInput(body: unknown): SignupInput {
   }
 
   if (Object.keys(errors).length > 0) throw new ValidationError(errors);
-  return { username, email, password, displayName, birthDate: birthDate as string };
+  return { username, email, password, displayName, birthDate: birthDate as string, ...(isLocale(b.locale) ? { locale: b.locale } : {}) };
 }
 
 export interface LoginInput {

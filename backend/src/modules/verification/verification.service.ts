@@ -241,8 +241,8 @@ const PUSH_TEXT: Record<Outcome, string> = {
 const NOTIFY = `
   n AS (INSERT INTO notifications (recipient_id, actor_id, type, verification_status, verification_reason)
         SELECT user_id, NULL, 'verification', :'outcome', NULLIF(:'reason', '') FROM target RETURNING id, recipient_id),
-  p AS (INSERT INTO push_outbox (user_id, kind, body, link)
-        SELECT recipient_id, 'verification', :'push', 'katkee://verification' FROM n RETURNING id),
+  p AS (INSERT INTO push_outbox (user_id, kind, body, link, params)
+        SELECT recipient_id, 'verification', :'push', 'katkee://verification', jsonb_build_object('outcome', :'outcome') FROM n RETURNING id),
   rt AS (SELECT pg_notify('realtime', json_build_object('u', json_build_array(n.recipient_id),
            'e', json_build_object('type', 'notification', 'id', n.id, 'kind', 'verification'))::text) AS x FROM n)`;
 

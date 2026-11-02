@@ -62,9 +62,10 @@ export async function queueViewMilestones(): Promise<number> {
        INSERT INTO push_sent (user_id, kind, ref_key)
        SELECT owner_id, 'story_milestone', id::text || ':' || n FROM hit WHERE n IS NOT NULL
        ON CONFLICT DO NOTHING RETURNING user_id, ref_key)
-     INSERT INTO push_outbox (user_id, kind, ref_id, body, link)
+     INSERT INTO push_outbox (user_id, kind, ref_id, body, link, params)
      SELECT user_id, 'story_milestone', split_part(ref_key, ':', 1)::uuid,
-            'Your Story reached ' || split_part(ref_key, ':', 2) || ' views 🎉', 'katkee://story/' || split_part(ref_key, ':', 1)
+            'Your Story reached ' || split_part(ref_key, ':', 2) || ' views 🎉', 'katkee://story/' || split_part(ref_key, ':', 1),
+            jsonb_build_object('views', split_part(ref_key, ':', 2)::integer)
      FROM sent
      RETURNING id`,
     { milestones: `{${VIEW_MILESTONES.join(",")}}` },
@@ -89,8 +90,9 @@ export async function queueFestivalGreetings(): Promise<number> {
      sent AS (
        INSERT INTO push_sent (user_id, kind, ref_key) SELECT t.id, 'festival', f.slug FROM targets t, f
        ON CONFLICT DO NOTHING RETURNING user_id)
-     INSERT INTO push_outbox (user_id, kind, body, link)
-     SELECT sent.user_id, 'festival', f.emoji || ' ' || f.greeting || '! Share your ' || f.name || ' Story on Katkee', 'katkee://home'
+     INSERT INTO push_outbox (user_id, kind, body, link, params)
+     SELECT sent.user_id, 'festival', f.emoji || ' ' || f.greeting || '! Share your ' || f.name || ' Story on Katkee', 'katkee://home',
+            jsonb_build_object('emoji', f.emoji, 'greeting', f.greeting, 'name', f.name)
      FROM sent, f
      RETURNING id`,
     { batch: BATCH },
@@ -115,8 +117,9 @@ export async function queueStreakReminders(): Promise<number> {
        INSERT INTO push_sent (user_id, kind, ref_key)
        SELECT id, 'streak', to_char(${DAY}, 'YYYY-MM-DD') || ':' || days FROM targets WHERE days >= 2
        ON CONFLICT DO NOTHING RETURNING user_id, ref_key)
-     INSERT INTO push_outbox (user_id, kind, body, link)
-     SELECT user_id, 'streak', '🔥 Keep your ' || split_part(ref_key, ':', 2) || '-day streak going: post a Story today', 'katkee://home'
+     INSERT INTO push_outbox (user_id, kind, body, link, params)
+     SELECT user_id, 'streak', '🔥 Keep your ' || split_part(ref_key, ':', 2) || '-day streak going: post a Story today', 'katkee://home',
+            jsonb_build_object('days', split_part(ref_key, ':', 2)::integer)
      FROM sent
      RETURNING id`,
     { batch: BATCH },
@@ -138,11 +141,11 @@ export async function queueNudges(): Promise<number> {
        INSERT INTO push_sent (user_id, kind, ref_key)
        SELECT id, 'nudge', to_char(${DAY}, 'YYYY-MM-DD') || ':' || CASE WHEN last_story IS NULL THEN 'first' ELSE 'back' END FROM targets
        ON CONFLICT DO NOTHING RETURNING user_id, ref_key)
-     INSERT INTO push_outbox (user_id, kind, body, link)
+     INSERT INTO push_outbox (user_id, kind, body, link, params)
      SELECT user_id, 'nudge',
             CASE WHEN split_part(ref_key, ':', 2) = 'first' THEN 'Share your first Story: your friends on Katkee will see it 👋'
                  ELSE 'Your friends miss your Stories 👀 Share what you''re up to today' END,
-            'katkee://home'
+            'katkee://home', jsonb_build_object('variant', split_part(ref_key, ':', 2))
      FROM sent
      RETURNING id`,
     { batch: BATCH },

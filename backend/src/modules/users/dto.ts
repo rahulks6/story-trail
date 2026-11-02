@@ -2,6 +2,7 @@ import { ValidationError } from "../auth/dto";
 import type { UpdateProfileInput } from "./profiles.service";
 import { USERNAME_RE } from "../../shared/validation";
 import { CHECK_MARK_MESSAGE, hasCheckMark } from "../../shared/verified";
+import { isLocale, LOCALES } from "../../shared/locale";
 
 const MAX_BIO_LENGTH = 150;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -65,6 +66,14 @@ export function parseUpdateProfileInput(body: unknown): UpdateProfileInput {
       errors.showOnWeb = "showOnWeb must be a boolean.";
     } else {
       result.showOnWeb = b.showOnWeb;
+    }
+  }
+
+  if (b.locale !== undefined) {
+    if (!isLocale(b.locale)) {
+      errors.locale = `locale must be one of ${LOCALES.join(", ")}.`;
+    } else {
+      result.locale = b.locale;
     }
   }
 

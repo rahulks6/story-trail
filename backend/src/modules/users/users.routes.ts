@@ -105,6 +105,7 @@ export function registerUserRoutes(router: Router): void {
         isPrivate: user.isPrivate,
         findableByContacts: user.findableByContacts,
         showOnWeb: user.showOnWeb,
+        locale: user.locale,
       },
     });
   });

@@ -1,6 +1,7 @@
 import { containsPattern, escapeLike } from "../../shared/validation";
 import { nullable, query, queryOne } from "../../db/psql";
 import { verifiedSql } from "../../shared/verified";
+import { asLocale, type Locale } from "../../shared/locale";
 
 export interface UserRecord {
   id: string;
@@ -18,6 +19,8 @@ export interface UserRecord {
   findableByContacts: boolean;
   /** "Show my profile on the web" (Settings > Privacy); on unless turned off. Only a public account shows. */
   showOnWeb: boolean;
+  /** The app's language as last sent from a phone (migration 0070): pushes and emails use it. */
+  locale: Locale;
   isActive: boolean;
   isModerator: boolean;
   /** The email has been proved with a code (signup verification or a password reset). */
@@ -35,7 +38,7 @@ export interface UserRecord {
   professionalCategoryShown: boolean;
 }
 
-const SELECT_COLUMNS = "id, username, email, password_hash, display_name, bio, avatar_media_id, cover_media_id, interests_json, is_private, findable_by_contacts, show_on_web, is_active, is_moderator, email_verified_at IS NOT NULL AS email_verified, email_verification_required, created_at, " +
+const SELECT_COLUMNS = "id, username, email, password_hash, display_name, bio, avatar_media_id, cover_media_id, interests_json, is_private, findable_by_contacts, show_on_web, locale, is_active, is_moderator, email_verified_at IS NOT NULL AS email_verified, email_verification_required, created_at, " +
   `${verifiedSql()} AS verified, CASE WHEN ${verifiedSql()} THEN verified_category END AS verified_category, ` +
   "professional_category, professional_category_shown";
 
@@ -62,6 +65,7 @@ function mapRow(row: Record<string, string | null>): UserRecord {
     isPrivate: row.is_private === "t",
     findableByContacts: row.findable_by_contacts === "t",
     showOnWeb: row.show_on_web === "t",
+    locale: asLocale(row.locale),
     isActive: row.is_active === "t",
     isModerator: row.is_moderator === "t",
     emailVerified: row.email_verified === "t",
@@ -81,10 +85,12 @@ export async function createUser(input: {
   displayName: string;
   /** YYYY-MM-DD, already checked (auth/age.ts). Stored only: never selected back. */
   birthDate: string;
+  /** The app's language at sign-up, so the first verification email is in it. */
+  locale?: Locale;
 }): Promise<UserRecord> {
   const row = await queryOne(
-    `INSERT INTO users (username, email, password_hash, display_name, birth_date)
-     VALUES (:'username', :'email', :'password_hash', :'display_name', :'birth_date'::date)
+    `INSERT INTO users (username, email, password_hash, display_name, birth_date, locale)
+     VALUES (:'username', :'email', :'password_hash', :'display_name', :'birth_date'::date, :'locale')
      RETURNING ${SELECT_COLUMNS}`,
     {
       username: input.username,
@@ -92,6 +98,7 @@ export async function createUser(input: {
       password_hash: input.passwordHash,
       display_name: input.displayName,
       birth_date: input.birthDate,
+      locale: input.locale ?? "en",
     },
   );
   if (!row) throw new Error("Insert did not return a row");
@@ -154,7 +161,7 @@ export async function usernameTaken(username: string, exceptUserId: string): Pro
  */
 export async function setProfile(
   id: string,
-  values: { username?: string; displayName?: string; bio?: string; isPrivate?: boolean; findableByContacts?: boolean; showOnWeb?: boolean; interests?: string[]; avatarMediaId?: string | null; coverMediaId?: string | null },
+  values: { username?: string; displayName?: string; bio?: string; isPrivate?: boolean; findableByContacts?: boolean; showOnWeb?: boolean; locale?: Locale; interests?: string[]; avatarMediaId?: string | null; coverMediaId?: string | null },
 ): Promise<UserRecord> {
   const row = await queryOne(
     `UPDATE users
@@ -165,6 +172,7 @@ export async function setProfile(
          is_private = CASE WHEN :'has_private'::boolean THEN :'is_private'::boolean ELSE is_private END,
          findable_by_contacts = CASE WHEN :'has_findable'::boolean THEN :'findable'::boolean ELSE findable_by_contacts END,
          show_on_web = CASE WHEN :'has_web'::boolean THEN :'web'::boolean ELSE show_on_web END,
+         locale = CASE WHEN :'has_locale'::boolean THEN :'locale' ELSE locale END,
          avatar_media_id = CASE WHEN :'has_avatar'::boolean THEN ${nullable("avatar_media_id", "uuid")} ELSE avatar_media_id END,
          cover_media_id = CASE WHEN :'has_cover'::boolean THEN ${nullable("cover_media_id", "uuid")} ELSE cover_media_id END
      WHERE id = :'id' AND deleted_at IS NULL
@@ -180,6 +188,7 @@ export async function setProfile(
       is_private: values.isPrivate ?? false,
       findable: values.findableByContacts ?? true,
       web: values.showOnWeb ?? true,
+      locale: values.locale ?? "en",
       has_username: values.username !== undefined,
       has_name: values.displayName !== undefined,
       has_bio: values.bio !== undefined,
@@ -187,6 +196,7 @@ export async function setProfile(
       has_private: values.isPrivate !== undefined,
       has_findable: values.findableByContacts !== undefined,
       has_web: values.showOnWeb !== undefined,
+      has_locale: values.locale !== undefined,
       has_avatar: values.avatarMediaId !== undefined,
       has_cover: values.coverMediaId !== undefined,
     },

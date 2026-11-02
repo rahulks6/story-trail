@@ -3,6 +3,8 @@ import { config } from "../../config/env";
 import { codeHash, deviceHash, numericCode, safeEqualHex } from "../../shared/crypto";
 import { hitSharedLimit } from "../../shared/sharedRateLimit";
 import { sendEmailSafely } from "../email/email";
+import { EMAIL_TEMPLATES } from "../email/templates";
+import { asLocale } from "../../shared/locale";
 import { HttpError } from "../../http/errors";
 
 export type SecurityEventKind =
@@ -76,14 +78,12 @@ export async function recordLoginSuccess(userId: string, email: string | null, c
   if (newDevice) {
     await recordSecurityEvent(userId, "login_new_device", client);
     if (email) {
+      // In the language the account's app uses.
+      const locale = asLocale((await queryOne(`SELECT locale FROM users WHERE id = :'id'`, { id: userId }))?.locale);
       void sendEmailSafely({
         kind: "new_device_login",
         to: email,
-        subject: "New sign-in to your Katkee account",
-        text:
-          `Your Katkee account was just signed in on a new device${client.userAgent ? ` (${client.userAgent.slice(0, 120)})` : ""}.\n\n` +
-          "If this was you, there's nothing to do.\n" +
-          "If it wasn't, open Katkee → Profile → Settings → Account security, choose \"Sign out of all devices\", and reset your password.",
+        ...EMAIL_TEMPLATES[locale].newDeviceLogin(client.userAgent ? client.userAgent.slice(0, 120) : null),
       });
     }
   }
@@ -99,7 +99,7 @@ export const RESET_MAX_ATTEMPTS = 5;
  */
 export async function requestPasswordReset(email: string, client: ClientContext): Promise<void> {
   const user = await queryOne(
-    `SELECT id, email FROM users WHERE email = :'email' AND deleted_at IS NULL AND is_active AND password_hash IS NOT NULL`,
+    `SELECT id, email, locale FROM users WHERE email = :'email' AND deleted_at IS NULL AND is_active AND password_hash IS NOT NULL`,
     { email },
   );
   if (!user) return;
@@ -118,11 +118,7 @@ export async function requestPasswordReset(email: string, client: ClientContext)
   await sendEmailSafely({
     kind: "password_reset",
     to: user.email as string,
-    subject: `${code} is your Katkee password reset code`,
-    text:
-      `Your Katkee password reset code is ${code}. It expires in 15 minutes.\n\n` +
-      `Open this link on your phone to continue: ${link}\n\n` +
-      "If you didn't ask to reset your password, you can ignore this email — your password won't change.",
+    ...EMAIL_TEMPLATES[asLocale(user.locale)].passwordReset(code, link),
   });
 }
 
@@ -212,7 +208,7 @@ export const VERIFY_MAX_ATTEMPTS = 5;
  */
 export async function sendEmailVerificationCode(userId: string): Promise<void> {
   const user = await queryOne(
-    `SELECT id, email FROM users WHERE id = :'id' AND deleted_at IS NULL AND is_active AND email IS NOT NULL AND email_verified_at IS NULL`,
+    `SELECT id, email, locale FROM users WHERE id = :'id' AND deleted_at IS NULL AND is_active AND email IS NOT NULL AND email_verified_at IS NULL`,
     { id: userId },
   );
   if (!user) return;
@@ -232,11 +228,7 @@ export async function sendEmailVerificationCode(userId: string): Promise<void> {
   await sendEmailSafely({
     kind: "email_verification",
     to: user.email as string,
-    subject: `${code} is your Katkee verification code`,
-    text:
-      `Your Katkee verification code is ${code}. It expires in 30 minutes.\n\n` +
-      "Enter it in the Katkee app to confirm this is your email address.\n\n" +
-      "If you didn't create a Katkee account, you can ignore this email.",
+    ...EMAIL_TEMPLATES[asLocale(user.locale)].emailVerification(code),
   });
 }
 

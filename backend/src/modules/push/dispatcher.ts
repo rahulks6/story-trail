@@ -4,11 +4,14 @@
  * are re-checked; DM text never leaves the server in a push. Invalid device tokens are
  * disabled; transient provider failures retry with backoff. A 'badge' item (queued
  * when a read lowers the unread total, migration 0036) silently sets the iPhone
- * app-icon badge to the total at send time.
+ * app-icon badge to the total at send time. Text is in the recipient's language (users.locale,
+ * migration 0070; push-text.ts).
  */
 import { config } from "../../config/env";
 import { query, queryOne } from "../../db/psql";
+import { asLocale, type Locale } from "../../shared/locale";
 import { ApnsProvider, FcmProvider, parseServiceAccount, type PushMessage, type PushProvider } from "./providers";
+import { PUSH_TEXT, pushOnlyText } from "./push-text";
 
 export type ProviderMap = Map<"fcm" | "apns", PushProvider>;
 
@@ -29,25 +32,12 @@ interface OutboxItem {
   actorId: string | null;
   refId: string | null;
   attempts: number;
-  /** Push-only kinds (milestones, festivals, reminders) carry their text and link. */
+  /** Push-only kinds (milestones, festivals, reminders) carry their text (English) and link. */
   body?: string | null;
   link?: string | null;
+  /** What that text is made from (migration 0070), so it's written in the recipient's language. */
+  params?: Record<string, unknown> | null;
 }
-
-const TEXT: Record<string, (actor: string) => string> = {
-  like: (a) => `@${a} liked your Story`,
-  comment: (a) => `@${a} commented on your Story`,
-  mention: (a) => `@${a} mentioned you`,
-  follow: (a) => `@${a} started following you`,
-  follow_request: (a) => `@${a} requested to follow you`,
-  follow_accepted: (a) => `@${a} accepted your follow request`,
-  invite_joined: (a) => `@${a} joined from your invite`,
-  // Never the message itself: lock screens and notification logs are not private.
-  message: (a) => `@${a} sent you a message`,
-  new_story: (a) => `@${a} posted a new Story`,
-  collab_invite: (a) => `@${a} invited you to a collab Story`,
-  collab_accepted: (a) => `@${a} accepted your collab Story`,
-};
 
 /**
  * "Remind me" on a countdown sticker, sent when it ends. Its text comes from the sticker as it
@@ -55,7 +45,7 @@ const TEXT: Record<string, (actor: string) => string> = {
  * countdown often ends after its 24 hours). Blocks and the owner's account are checked with
  * every other actor push.
  */
-async function renderCountdown(item: OutboxItem): Promise<{ body: string; link: string } | null> {
+async function renderCountdown(item: OutboxItem, locale: Locale): Promise<{ body: string; link: string } | null> {
   if (!item.refId) return null;
   const row = await queryOne(
     `SELECT o->'properties'->>'title' AS title, s.expires_at > now() AS active, u.username
@@ -69,7 +59,7 @@ async function renderCountdown(item: OutboxItem): Promise<{ body: string; link: 
   );
   if (!row) return null;
   return {
-    body: `⏰ ${row.title} — @${row.username}'s countdown has ended`,
+    body: PUSH_TEXT[locale].countdown(row.title as string, row.username as string),
     link: row.active === "t" ? `katkee://story/${item.refId}` : `katkee://user/${row.username}`,
   };
 }
@@ -88,7 +78,7 @@ type Rendered = { message: PushMessage } | { skip: string };
 /** Exported for tests: what this outbox item would show, or why it is skipped. */
 export async function renderPush(item: OutboxItem): Promise<Rendered> {
   const row = await queryOne(
-    `SELECT (u.is_active AND u.deleted_at IS NULL) AS recipient_ok,
+    `SELECT (u.is_active AND u.deleted_at IS NULL) AS recipient_ok, u.locale,
             coalesce(p.push_enabled, true) AS push_enabled,
             coalesce(p.messages_enabled, true) AS messages_enabled,
             coalesce(p.stories_enabled, true) AS stories_enabled,
@@ -110,6 +100,8 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
     { user: item.userId, actor: item.actorId ?? "" },
   );
   if (!row || row.recipient_ok !== "t") return { skip: "recipient unavailable" };
+  const locale = asLocale(row.locale);
+  const text = PUSH_TEXT[locale];
   if (row.push_enabled !== "t") return { skip: "push turned off" };
   const badge = Number(row.unread_activity ?? 0) + Number(row.unread_conversations ?? 0);
   if (item.kind === "badge") {
@@ -118,7 +110,7 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
   if (item.kind === "call" || item.kind === "call_missed") {
     // Calls ring whenever pushes are on (like a phone call, the New messages switch and a muted chat don't silence them).
     if (item.actorId && (row.actor_ok !== "t" || row.blocked === "t")) return { skip: "actor unavailable" };
-    return renderCallPush(item, (row.actor_username as string | null) ?? "someone", badge);
+    return renderCallPush(item, (row.actor_username as string | null) ?? text.someone, badge, locale);
   }
   if ((item.kind === "message" || item.kind === "message_reaction") && row.messages_enabled !== "t") return { skip: "message pushes turned off" };
   const toggle = SWITCH[item.kind];
@@ -132,10 +124,12 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
     // A group message's push names the group; it's still a message (and never from someone blocked).
     const conversation = (item.kind === "message_reaction" || item.kind === "message") && item.refId;
     if (conversation && item.actorId && (row.actor_ok !== "t" || row.blocked === "t")) return { skip: "actor unavailable" };
+    // Written now in the recipient's language when the values came with it; else the stored English.
+    const body = pushOnlyText(item.kind, item.params ?? null, locale, (row.actor_username as string | null) ?? null) ?? item.body;
     return {
       message: {
         title: "Katkee",
-        body: item.body,
+        body,
         data: { kind: item.kind, url: item.link ?? "katkee://home", ...(item.refId ? (conversation ? { conversationId: item.refId } : { storyId: item.refId }) : {}) },
         collapseKey: item.refId ? (item.kind === "message" ? `dm-${item.refId}` : `${item.kind}-${item.refId}`) : item.kind,
         threadId: conversation ? `dm-${item.refId}` : "activity",
@@ -146,7 +140,7 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
   }
   if (item.actorId && (row.actor_ok !== "t" || row.blocked === "t")) return { skip: "actor unavailable" };
   if (item.kind === "countdown") {
-    const countdown = await renderCountdown(item);
+    const countdown = await renderCountdown(item, locale);
     if (!countdown) return { skip: "reminder gone" };
     return {
       message: {
@@ -160,9 +154,9 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
       },
     };
   }
-  const actor = (row.actor_username as string | null) ?? "someone";
-  const text = TEXT[item.kind];
-  if (!text) return { skip: `unknown kind ${item.kind}` };
+  const actor = (row.actor_username as string | null) ?? text.someone;
+  const actorText = text.actor[item.kind];
+  if (!actorText) return { skip: `unknown kind ${item.kind}` };
   const isMessage = item.kind === "message";
   const data: Record<string, string> = { kind: item.kind };
   if (row.actor_username) data.actorUsername = row.actor_username;
@@ -174,7 +168,7 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
   return {
     message: {
       title: "Katkee",
-      body: text(actor),
+      body: actorText(actor),
       data,
       collapseKey: isMessage && item.refId ? `dm-${item.refId}` : item.refId ? `${item.kind}-${item.refId}` : undefined,
       threadId: isMessage && item.refId ? `dm-${item.refId}` : "activity",
@@ -190,7 +184,7 @@ export async function renderPush(item: OutboxItem): Promise<Rendered> {
  * collapse key. Tapping either opens the app: a ringing call's katkee://call/<id> link brings up
  * the incoming-call screen while it still rings.
  */
-async function renderCallPush(item: OutboxItem, actor: string, badge: number): Promise<Rendered> {
+async function renderCallPush(item: OutboxItem, actor: string, badge: number, locale: Locale): Promise<Rendered> {
   const call = item.refId
     ? await queryOne(
       `SELECT conversation_id, media, state, GREATEST(0, :'ring'::integer - floor(extract(epoch FROM now() - created_at)))::integer AS rings_for
@@ -207,7 +201,7 @@ async function renderCallPush(item: OutboxItem, actor: string, badge: number): P
     return {
       message: {
         title: "Katkee",
-        body: video ? `@${actor} is video calling you` : `@${actor} is calling you`,
+        body: PUSH_TEXT[locale].call(actor, video),
         data: { kind: "call", callId: item.refId!, conversationId, media: call.media as string, url: `katkee://call/${item.refId}` },
         collapseKey: `call-${item.refId}`,
         threadId: `dm-${conversationId}`,
@@ -220,7 +214,7 @@ async function renderCallPush(item: OutboxItem, actor: string, badge: number): P
   return {
     message: {
       title: "Katkee",
-      body: `Missed ${video ? "video" : "voice"} call from @${actor}`,
+      body: PUSH_TEXT[locale].missedCall(actor, video),
       data: { kind: "call_missed", callId: item.refId!, conversationId, url: `katkee://conversation/${conversationId}` },
       collapseKey: `call-${item.refId}`,
       threadId: `dm-${conversationId}`,
@@ -237,11 +231,21 @@ async function finish(item: OutboxItem, status: "sent" | "failed" | "skipped", d
   );
 }
 
+function parseParams(value: string | null | undefined): Record<string, unknown> | null {
+  if (!value) return null;
+  try {
+    const parsed = JSON.parse(value);
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
 /** Claims and sends one batch. Returns how many outbox items were handled. */
 export async function dispatchPushBatch(providers: ProviderMap, options: { maxAttempts: number; batchSize?: number; log?: (e: Record<string, unknown>) => void }): Promise<number> {
-  const rows = await query(`SELECT id, user_id, kind, actor_id, ref_id, attempts, body, link FROM claim_push_batch(:'limit', 60)`, { limit: options.batchSize ?? 25 });
+  const rows = await query(`SELECT id, user_id, kind, actor_id, ref_id, attempts, body, link, params FROM claim_push_batch(:'limit', 60)`, { limit: options.batchSize ?? 25 });
   for (const r of rows) {
-    const item: OutboxItem = { id: r.id as string, userId: r.user_id as string, kind: r.kind as string, actorId: r.actor_id ?? null, refId: r.ref_id ?? null, attempts: Number(r.attempts), body: r.body ?? null, link: r.link ?? null };
+    const item: OutboxItem = { id: r.id as string, userId: r.user_id as string, kind: r.kind as string, actorId: r.actor_id ?? null, refId: r.ref_id ?? null, attempts: Number(r.attempts), body: r.body ?? null, link: r.link ?? null, params: parseParams(r.params) };
     const rendered = await renderPush(item);
     if ("skip" in rendered) {
       await finish(item, "skipped", rendered.skip);
