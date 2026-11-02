@@ -8,6 +8,7 @@ import { after, before, describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import type { AddressInfo } from "node:net";
+import { inviteCodeFor } from "../src/modules/growth/invites";
 import { buildApp } from "../src/app";
 import { query, queryOne } from "../src/db/psql";
 import { buildTestPng } from "./fixtures";
@@ -381,6 +382,22 @@ describe("the Admin API", () => {
         if (method === "GET") assert.equal(strip(reply.text), nobody, key);
       }
     }
+  });
+});
+
+describe("invite links", () => {
+  it("an invite link (katkee.com/i/, the sign-up lookup) shows the inviter's name and nothing private", async () => {
+    const code = await inviteCodeFor(owner.id);
+    const lookup = await attempt("GET /api/v1/invites/:code", `/api/v1/invites/${code}`, null);
+    assert.equal(lookup.status, 200);
+    assert.deepEqual(Object.keys(JSON.parse(lookup.text).inviter).sort(), ["displayName", "username", "verified"]);
+    for (const method of ["GET", "HEAD"]) {
+      const page = await attempt(`${method} /i/:code`, `/i/${code}`, stranger);
+      assert.equal(page.status, 200, method);
+      for (const secret of [...Object.values(SECRET), owner.email]) assert.ok(!page.text.includes(secret), `invite page leaked ${secret}`);
+    }
+    for (const secret of [...Object.values(SECRET), owner.email]) assert.ok(!lookup.text.includes(secret), `invite lookup leaked ${secret}`);
+    refused(await request("GET", "/api/v1/invites/notarealcode", undefined, {}), "unknown invite", [404, 422]);
   });
 });
 
