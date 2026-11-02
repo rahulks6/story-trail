@@ -1,4 +1,5 @@
 import { apiDelete, apiDeleteWithBody, apiGet, apiPost, type PublicUser, type TokenPair } from "./client";
+import { getLanguage } from "../i18n";
 
 export interface SignupPayload {
   username: string;
@@ -20,7 +21,8 @@ interface AuthResponse {
 }
 
 export function signup(payload: SignupPayload): Promise<AuthResponse> {
-  return apiPost<AuthResponse>("/api/v1/auth/signup", payload);
+  // The app's language, so the first verification email (sent straight away) is already in it.
+  return apiPost<AuthResponse>("/api/v1/auth/signup", { ...payload, locale: getLanguage() });
 }
 
 export function login(payload: LoginPayload): Promise<AuthResponse> {
