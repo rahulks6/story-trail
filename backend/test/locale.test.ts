@@ -47,7 +47,7 @@ describe("the account's language", () => {
     assert.equal(saved.status, 200);
     assert.equal(saved.body.user.locale, "mr");
     // An unknown language is refused, and an unknown one at sign-up just leaves English.
-    assert.equal((await setLocale(hindi, "fr")).status, 400);
+    assert.equal((await setLocale(hindi, "fr")).status, 422);
     const french = await signup({ locale: "fr" });
     assert.equal((await query(`SELECT locale FROM users WHERE id = :'id'`, { id: french.id }))[0]?.locale, "en");
   });
