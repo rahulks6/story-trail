@@ -1,8 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <testsuites>
-  <testsuite name="Test Suite" device="test" tests="1" failures="1" time="109.45" timestamp="2026-11-02T13:31:20">
-    <testcase id="tour" name="tour" classname="tour" file="/home/runner/work/story-trail/story-trail/mobile/.maestro/tour.yaml" time="109.38" timestamp="2026-11-02T13:31:20" status="ERROR">
-      <failure>Assertion is false: "Verify your email" is visible</failure>
-    </testcase>
+  <testsuite name="Test Suite" device="test" tests="1" failures="0" time="447.253" timestamp="2026-11-02T13:50:35">
+    <testcase id="tour" name="tour" classname="tour" file="/home/runner/work/story-trail/story-trail/mobile/.maestro/tour.yaml" time="447.191" timestamp="2026-11-02T13:50:35" status="SUCCESS"/>
   </testsuite>
 </testsuites>
