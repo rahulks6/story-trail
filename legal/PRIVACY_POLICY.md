@@ -138,6 +138,11 @@ things:
 - to decide how far a public Story reaches beyond its owner's followers;
 - to give creators aggregate Insights.
 
+For professional accounts' "When your followers are active" chart, we note
+which half hours of the day you had Katkee open (not what you did), and keep
+it for 8 days. A creator sees only each hour's share of their busiest hour,
+never who was active, and only once at least 10 followers were.
+
 ### Interests we learn from your activity
 To order your Home, Katkee also works out which topics you seem to like,
 from the same list of topics you can choose on your profile. When you watch
