@@ -20,6 +20,7 @@ const siteRoot = path.join(__dirname, "../../../website/public");
 const manifest = JSON.parse(fs.readFileSync(path.join(siteRoot, "manifest.json"), "utf8")) as {
   pages: Record<string, string>; notFound: string; assets: Record<string, string>; files: Record<string, { file: string; type: string }>;
   openInApp?: { file: string; markers: { appLink: string; linkPath: string } };
+  webProfile?: { file: string; markers: Record<string, string> };
 };
 /** The website's host as production sets it (the config is read-only in its type only). */
 const setSiteHost = (host: string) => { (config.website as { host: string }).host = host; };
@@ -140,14 +141,14 @@ describe("the website's pages", () => {
     const assets = Object.entries(manifest.assets);
     assert.ok(assets.length >= 3);
     for (const [name, type] of assets) {
-      assert.match(name, /^[a-z-]+\.[0-9a-f]{10}\.(css|svg|png)$/);
+      assert.match(name, /^[a-z-]+\.[0-9a-f]{10}\.(css|svg|png|js)$/);
       const reply = await get(`/assets/${name}`);
       assert.equal(reply.status, 200, name);
       assert.equal(reply.headers["content-type"], type, name);
       assert.equal(reply.headers["cache-control"], "public, max-age=31536000, immutable", name);
       assert.ok(reply.body.equals(file(`assets/${name}`)), name);
       // Every page that uses an asset uses exactly this version of it.
-      assert.ok(Object.values(manifest.pages).some((page) => file(page).toString().includes(`/assets/${name}`)), `${name} is used`);
+      assert.ok([...Object.values(manifest.pages), manifest.webProfile!.file].some((page) => file(page).toString().includes(`/assets/${name}`)), `${name} is used`);
     }
     for (const [route, { file: name, type }] of Object.entries(manifest.files)) {
       const reply = await get(route);
