@@ -606,8 +606,6 @@ export const hi: Catalogue = {
   "externalShareModal.weCouldntPrepareYourStory": "हम आपकी स्टोरी तैयार नहीं कर सके। फिर से कोशिश करें।",
   "externalShareModal.couldntLoadThisPhotoTry": "यह फ़ोटो लोड नहीं हो सकी। फिर से कोशिश करें।",
   // feedback
-  "feedback.andPhoneModelSoWe": ") और फ़ोन मॉडल के साथ भेजा जाता है, ताकि हम इसकी जाँच कर सकें।",
-  "feedback.sentWithYourUsernameApp": "आपके यूज़रनेम, ऐप वर्ज़न (",
   "feedback.attachAScreenshot": "स्क्रीनशॉट जोड़ें",
   "feedback.removeScreenshot": "स्क्रीनशॉट हटाएँ",
   "feedback.eGTheMusicPicker": "जैसे: गाना खोजने के बाद म्यूज़िक पिकर रुक गया।",
@@ -907,7 +905,6 @@ export const hi: Catalogue = {
   "professionalAccount.openYourDashboard": "अपना डैशबोर्ड खोलें",
   "professionalAccount.switchToProfessionalAccount": "प्रोफ़ेशनल अकाउंट पर स्विच करें",
   "professionalAccount.showCategoryOnProfile": "प्रोफ़ाइल पर कैटेगरी दिखाएँ",
-  "professionalAccount.shownQuietlyUnderYourName": "आपके नाम के नीचे हल्के से दिखती है, जैसे \"",
   "professionalAccount.category": "कैटेगरी",
   "professionalAccount.aProfessionalAccountIsAbout": "प्रोफ़ेशनल अकाउंट का मकसद लोगों तक पहुँचना है, इसलिए उसकी स्टोरीज़ और कैटेगरी पब्लिक होनी चाहिए। स्विच करने के लिए सेटिंग्स में प्राइवेट अकाउंट बंद करें।",
   "professionalAccount.privateAccountsCantBeProfessional": "प्राइवेट अकाउंट प्रोफ़ेशनल नहीं हो सकते।",
@@ -1010,9 +1007,6 @@ export const hi: Catalogue = {
   // resetPassword
   "resetPassword.setNewPassword": "नया पासवर्ड सेट करें",
   "resetPassword.atLeast8CharactersAvoid": "कम से कम 8 अक्षर। कहीं और इस्तेमाल किए गए पासवर्ड न रखें।",
-  "resetPassword.itExpiresIn15Minutes": "। यह 15 मिनट में एक्सपायर हो जाएगा।",
-  "resetPassword.toEmail": " {email} पर",
-  "resetPassword.weEmailedA6Digit": "हमने 6 अंकों का कोड ईमेल किया",
   "resetPassword.enterYourCode": "अपना कोड डालें",
   "resetPassword.couldntSendANewCode": "नया कोड नहीं भेजा जा सका। थोड़ी देर बाद फिर कोशिश करें।",
   "resetPassword.ifAnAccountUsesThat": "अगर इस ईमेल से कोई अकाउंट है, तो नया कोड आ रहा है। सिर्फ़ सबसे नया कोड काम करेगा।",
@@ -2052,4 +2046,9 @@ export const hi: Catalogue = {
   "verifyEmail.weSentACodeTo": "हमने <email>{email}</email> पर 6 अंकों का कोड भेजा है।",
   // settings
   "settings.language": "भाषा",
+  // Whole sentences (were pieces)
+  "resetPassword.weEmailedACodeTo": "हमने {email} पर 6 अंकों का कोड ईमेल किया है। यह 15 मिनट में एक्सपायर हो जाएगा।",
+  "resetPassword.weEmailedACode": "हमने 6 अंकों का कोड ईमेल किया है। यह 15 मिनट में एक्सपायर हो जाएगा।",
+  "feedback.sentWithDetails": "आपके यूज़रनेम, ऐप वर्ज़न ({version}) और फ़ोन मॉडल के साथ भेजा जाता है, ताकि हम इसकी जाँच कर सकें।",
+  "professionalAccount.shownUnderYourName": "आपके नाम के नीचे हल्के से दिखती है, जैसे \"{category}\"।",
 };

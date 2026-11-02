@@ -88,7 +88,7 @@ export function FeedbackScreen(): React.JSX.Element {
             <Text style={styles.attachText}>{t("feedback.attachAScreenshot")}</Text>
           </Pressable>
         )}
-        <Text style={styles.note}>{t("feedback.sentWithYourUsernameApp")}{appEnv.appVersion || t("common.unknown")}{t("feedback.andPhoneModelSoWe")}</Text>
+        <Text style={styles.note}>{t("feedback.sentWithDetails", { version: appEnv.appVersion || t("common.unknown") })}</Text>
         <Button label={t("common.send")} onPress={() => void send()} disabled={!body.trim()} busy={sending} />
       </ScrollView>
     </KeyboardAvoider>

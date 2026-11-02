@@ -274,8 +274,6 @@ export const en = {
   // screens/profile/ArchivedStoryViewerScreen.tsx
   "archivedStoryViewer.addedToAdded": "Added to {added}",
 
-  // api/auth.ts
-
   // state/AuthContext.tsx
   "authContext.networkErrorCheckYourConnection": "Network error - check your connection and try again.",
   "authContext.cantConnectToKatkeeCheck": "Can't connect to Katkee. Check your connection and try again.",
@@ -649,8 +647,6 @@ export const en = {
   "externalShareModal.couldntLoadThisPhotoTry": "Couldn't load this photo. Try again.",
 
   // screens/profile/FeedbackScreen.tsx
-  "feedback.andPhoneModelSoWe": ") and phone model, so we can look into it.",
-  "feedback.sentWithYourUsernameApp": "Sent with your username, app version (",
   "feedback.attachAScreenshot": "Attach a screenshot",
   "feedback.removeScreenshot": "Remove screenshot",
   "feedback.eGTheMusicPicker": "e.g. The music picker froze after I searched for a song.",
@@ -965,8 +961,6 @@ export const en = {
   "passwordRules.thatPasswordIsTooLong": "That password is too long.",
   "passwordRules.useAtLeast8Characters": "Use at least 8 characters.",
 
-  // components/PlacedOverlay.tsx
-
   // api/professional.ts
   "professional.aNonProfitSchoolOr": "A non-profit, school or government body",
   "professional.organisation": "Organisation",
@@ -983,7 +977,6 @@ export const en = {
   "professionalAccount.openYourDashboard": "Open your dashboard",
   "professionalAccount.switchToProfessionalAccount": "Switch to professional account",
   "professionalAccount.showCategoryOnProfile": "Show category on profile",
-  "professionalAccount.shownQuietlyUnderYourName": "Shown quietly under your name, like \"",
   "professionalAccount.category": "Category",
   "professionalAccount.aProfessionalAccountIsAbout": "A professional account is about reaching people, so its Stories and category need to be public. Turn off Private account in Settings to switch.",
   "professionalAccount.privateAccountsCantBeProfessional": "Private accounts can't be professional.",
@@ -1035,8 +1028,6 @@ export const en = {
   // components/profile/ProfileHeader.tsx
   "profileHeader.loadingProfile": "Loading profile",
   "profileHeader.addToYourStory": "Add to your Story",
-
-  // navigation/profileLinks.ts
 
   // components/profile/ProfileMoreSheet.tsx
   "profileMoreSheet.mute": "Mute",
@@ -1098,9 +1089,6 @@ export const en = {
   // screens/auth/ResetPasswordScreen.tsx
   "resetPassword.setNewPassword": "Set new password",
   "resetPassword.atLeast8CharactersAvoid": "At least 8 characters. Avoid passwords you use elsewhere.",
-  "resetPassword.itExpiresIn15Minutes": ". It expires in 15 minutes.",
-  "resetPassword.toEmail": " to {email}",
-  "resetPassword.weEmailedA6Digit": "We emailed a 6-digit code",
   "resetPassword.enterYourCode": "Enter your code",
   "resetPassword.couldntSendANewCode": "Couldn't send a new code. Try again shortly.",
   "resetPassword.ifAnAccountUsesThat": "If an account uses that email, a new code is on its way. Only the newest code works.",
@@ -1303,8 +1291,6 @@ export const en = {
   "stickerResults.rightAnswer": " (right answer)",
   "stickerResults.deleteThisAnswer": "Delete this answer?",
   "stickerResults.stickerResponses": "Sticker responses",
-
-  // api/stickers.ts
 
   // components/StickerSheet.tsx
   "stickerSheet.addAsTimeSticker": "Add as time sticker",
@@ -1567,8 +1553,6 @@ export const en = {
   "userProfile.couldntOpenThatConversationTry": "Couldn't open that conversation. Try again.",
   "userProfile.thisAccountIsntAvailable": "This account isn't available.",
   "userProfile.couldntRefreshThisProfilePull": "Couldn't refresh this profile. Pull down to try again.",
-
-  // api/users.ts
 
   // hooks/useUsernameAvailability.ts
   "useUsernameAvailability.available": "Available.",
@@ -2121,4 +2105,9 @@ export const en = {
 
   // Settings > Language
   "settings.language": "Language",
+  // Whole sentences (were pieces)
+  "resetPassword.weEmailedACodeTo": "We emailed a 6-digit code to {email}. It expires in 15 minutes.",
+  "resetPassword.weEmailedACode": "We emailed a 6-digit code. It expires in 15 minutes.",
+  "feedback.sentWithDetails": "Sent with your username, app version ({version}) and phone model, so we can look into it.",
+  "professionalAccount.shownUnderYourName": "Shown quietly under your name, like \"{category}\".",
 } as const;

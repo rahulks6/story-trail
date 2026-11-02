@@ -181,7 +181,7 @@ export function ProfessionalAccountScreen({ navigation }: Props): React.JSX.Elem
       <View style={[styles.card, styles.switchRow, blocked && styles.dim]}>
         <View style={styles.optionText}>
           <Text style={typography.body}>{t("professionalAccount.showCategoryOnProfile")}</Text>
-          <Text style={styles.caption}>{t("professionalAccount.shownQuietlyUnderYourName")}{professionalCategoryLabel(category ?? "creator")}".</Text>
+          <Text style={styles.caption}>{t("professionalAccount.shownUnderYourName", { category: professionalCategoryLabel(category ?? "creator") ?? "" })}</Text>
         </View>
         <Switch value={showCategory} onValueChange={setShowCategory} disabled={blocked} accessibilityLabel={t("professionalAccount.showCategoryOnProfile")} />
       </View>

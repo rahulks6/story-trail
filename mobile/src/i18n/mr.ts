@@ -606,8 +606,6 @@ export const mr: Catalogue = {
   "externalShareModal.weCouldntPrepareYourStory": "आम्ही तुमची स्टोरी तयार करू शकलो नाही. पुन्हा प्रयत्न करा.",
   "externalShareModal.couldntLoadThisPhotoTry": "हा फोटो लोड करता आला नाही. पुन्हा प्रयत्न करा.",
   // feedback
-  "feedback.andPhoneModelSoWe": ") आणि फोन मॉडेलसह पाठवले जाते, म्हणजे आम्ही ते तपासू शकू.",
-  "feedback.sentWithYourUsernameApp": "तुमचे युजरनेम, ॲप व्हर्जन (",
   "feedback.attachAScreenshot": "स्क्रीनशॉट जोडा",
   "feedback.removeScreenshot": "स्क्रीनशॉट काढा",
   "feedback.eGTheMusicPicker": "उदा. गाणे शोधल्यानंतर म्युझिक पिकर अडकला.",
@@ -907,7 +905,6 @@ export const mr: Catalogue = {
   "professionalAccount.openYourDashboard": "तुमचा डॅशबोर्ड उघडा",
   "professionalAccount.switchToProfessionalAccount": "प्रोफेशनल अकाउंटवर स्विच करा",
   "professionalAccount.showCategoryOnProfile": "प्रोफाइलवर कॅटेगरी दाखवा",
-  "professionalAccount.shownQuietlyUnderYourName": "तुमच्या नावाखाली हलकेच दिसते, जसे \"",
   "professionalAccount.category": "कॅटेगरी",
   "professionalAccount.aProfessionalAccountIsAbout": "प्रोफेशनल अकाउंटचा उद्देश लोकांपर्यंत पोहोचणे आहे, त्यामुळे त्याच्या स्टोरीज आणि कॅटेगरी पब्लिक असायला हव्यात. स्विच करण्यासाठी सेटिंग्जमध्ये प्रायव्हेट अकाउंट बंद करा.",
   "professionalAccount.privateAccountsCantBeProfessional": "प्रायव्हेट अकाउंट प्रोफेशनल होऊ शकत नाहीत.",
@@ -1010,9 +1007,6 @@ export const mr: Catalogue = {
   // resetPassword
   "resetPassword.setNewPassword": "नवीन पासवर्ड सेट करा",
   "resetPassword.atLeast8CharactersAvoid": "किमान 8 अक्षरे. इतरत्र वापरलेले पासवर्ड टाळा.",
-  "resetPassword.itExpiresIn15Minutes": ". तो 15 मिनिटांत एक्सपायर होईल.",
-  "resetPassword.toEmail": " {email} वर",
-  "resetPassword.weEmailedA6Digit": "आम्ही 6 अंकी कोड ईमेल केला",
   "resetPassword.enterYourCode": "तुमचा कोड टाका",
   "resetPassword.couldntSendANewCode": "नवीन कोड पाठवता आला नाही. थोड्या वेळाने पुन्हा प्रयत्न करा.",
   "resetPassword.ifAnAccountUsesThat": "त्या ईमेलचे अकाउंट असल्यास, नवीन कोड येत आहे. फक्त सर्वात नवीन कोड चालेल.",
@@ -2052,4 +2046,9 @@ export const mr: Catalogue = {
   "verifyEmail.weSentACodeTo": "आम्ही <email>{email}</email> वर 6 अंकी कोड पाठवला आहे.",
   // settings
   "settings.language": "भाषा",
+  // Whole sentences (were pieces)
+  "resetPassword.weEmailedACodeTo": "आम्ही {email} वर 6 अंकी कोड ईमेल केला आहे. तो 15 मिनिटांत एक्सपायर होईल.",
+  "resetPassword.weEmailedACode": "आम्ही 6 अंकी कोड ईमेल केला आहे. तो 15 मिनिटांत एक्सपायर होईल.",
+  "feedback.sentWithDetails": "तुमचे युजरनेम, ॲप व्हर्जन ({version}) आणि फोन मॉडेलसह पाठवले जाते, म्हणजे आम्ही ते तपासू शकू.",
+  "professionalAccount.shownUnderYourName": "तुमच्या नावाखाली हलकेच दिसते, जसे \"{category}\".",
 };

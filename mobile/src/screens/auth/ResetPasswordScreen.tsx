@@ -84,7 +84,7 @@ export function ResetPasswordScreen({ navigation, route }: Props): React.JSX.Ele
       {/* The header is see-through: keep the content clear of it and of the bottom inset. */}
       <ScrollView contentContainerStyle={[styles.content, { paddingTop: headerHeight + spacing.md, paddingBottom: insets.bottom + spacing.xl }]} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
         <Text style={typography.displayLarge} accessibilityRole="header">{t("resetPassword.enterYourCode")}</Text>
-        <Text style={styles.body}>{t("resetPassword.weEmailedA6Digit")}{email ? t("resetPassword.toEmail", { email }) : ""}{t("resetPassword.itExpiresIn15Minutes")}</Text>
+        <Text style={styles.body}>{email ? t("resetPassword.weEmailedACodeTo", { email }) : t("resetPassword.weEmailedACode")}</Text>
         {banner ? <Banner text={banner.text} tone={banner.tone} /> : null}
         {/* Shown whenever the email needs fixing, even if it came from the previous screen. */}
         {!route.params?.email || errors.email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim()) ? (
