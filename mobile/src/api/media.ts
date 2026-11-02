@@ -153,18 +153,18 @@ async function uploadBlob(path: string, blob: Blob, mimeType: string, accessToke
 
 export async function uploadPhoto(localUri: string, mimeType: string, accessToken: string): Promise<UploadedMedia> {
   const blob = await fileUriToBlob(localUri);
-  return uploadBlob(t("media.apiV1MediaPhotos"), blob, mimeType, accessToken);
+  return uploadBlob("/api/v1/media/photos", blob, mimeType, accessToken);
 }
 
 /** A voice note (M4A/AAC) for a direct message. */
 export async function uploadAudio(localUri: string, accessToken: string): Promise<UploadedMedia> {
   const blob = await fileUriToBlob(localUri);
-  return uploadBlob(t("media.apiV1MediaAudio"), blob, "audio/mp4", accessToken);
+  return uploadBlob("/api/v1/media/audio", blob, "audio/mp4", accessToken);
 }
 
 export async function uploadVideo(localUri: string, mimeType: string, accessToken: string): Promise<UploadedMedia> {
   const blob = await fileUriToBlob(localUri);
-  return uploadBlob(t("media.apiV1MediaVideos"), blob, mimeType, accessToken);
+  return uploadBlob("/api/v1/media/videos", blob, mimeType, accessToken);
 }
 
 /**

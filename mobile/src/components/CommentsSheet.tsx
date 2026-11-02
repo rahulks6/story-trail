@@ -212,7 +212,7 @@ export function CommentsSheet({ visible, storyId, storyOwnerId, commentsDisabled
     const { accessToken: token, user: me, comments: before, stored: storedBefore } = latest.current;
     if (!token || !me) return body;
     const knownIds = new Set(before.map((c) => c.id));
-    const tempId = t("commentsSheet.pendingDate", { Date: Date.now() });
+    const tempId = `pending-${Date.now()}`;
     const temp: Row = {
       id: tempId, storyId, userId: me.id, username: me.username, displayName: me.displayName ?? me.username,
       avatarMediaId: me.avatarMediaId ?? null, verified: me.verified, body, createdAt: new Date().toISOString(), pending: true,

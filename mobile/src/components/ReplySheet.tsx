@@ -20,7 +20,7 @@ interface Props {
   onSent: (kind: StoryReplyKind) => void;
 }
 
-const newClientId = () => t("replySheet.replyValueValue2", { value: Date.now().toString(36), value2: Math.random().toString(36).slice(2, 12) });
+const newClientId = () => `reply_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 12)}`;
 
 /**
  * Reply to a Story (like Instagram): one tap sends a quick reaction, or write a message. Either

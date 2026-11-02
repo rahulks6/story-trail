@@ -263,7 +263,6 @@ export const en = {
   "archive.chooseStories": "Choose Stories",
   "archive.lengthSelected": "{length} selected",
   "archive.couldntLoadMoreTryAgain": "Couldn't load more. Try again",
-  "archive.idRow": "{id}-row",
   "archive.everyStoryYouPublishStays": "Every Story you publish stays here, even after it expires.",
   "archive.yourArchiveIsEmpty": "Your Archive is empty",
   "archive.couldntLoadYourArchiveCheck": "Couldn't load your Archive. Check your connection and try again.",
@@ -276,7 +275,6 @@ export const en = {
   "archivedStoryViewer.addedToAdded": "Added to {added}",
 
   // api/auth.ts
-  "auth.apiV1UsersMe": "/api/v1/users/me",
 
   // state/AuthContext.tsx
   "authContext.networkErrorCheckYourConnection": "Network error - check your connection and try again.",
@@ -445,7 +443,6 @@ export const en = {
   "commentsSheet.couldntDeleteThatComment": "Couldn't delete that comment.",
   "commentsSheet.deleteComment": "Delete comment?",
   "commentsSheet.couldntPostThatComment": "Couldn't post that comment.",
-  "commentsSheet.pendingDate": "pending-{Date}",
   "commentsSheet.post": "Post",
   "commentsSheet.postComment": "Post comment",
   "commentsSheet.commentOptions": "Comment options",
@@ -852,9 +849,6 @@ export const en = {
 
   // api/media.ts
   "media.theUploadResponseIsIncomplete": "The upload response is incomplete. Please try again.",
-  "media.apiV1MediaVideos": "/api/v1/media/videos",
-  "media.apiV1MediaAudio": "/api/v1/media/audio",
-  "media.apiV1MediaPhotos": "/api/v1/media/photos",
   "media.theSelectedFileIsEmpty": "The selected file is empty.",
   "media.uploadTimedOutCheckYour": "Upload timed out. Check your connection.",
   "media.uploadInterruptedCheckYourConnection": "Upload interrupted. Check your connection.",
@@ -972,7 +966,6 @@ export const en = {
   "passwordRules.useAtLeast8Characters": "Use at least 8 characters.",
 
   // components/PlacedOverlay.tsx
-  "placedOverlay.rotationDeg": "{rotation}deg",
 
   // api/professional.ts
   "professional.aNonProfitSchoolOr": "A non-profit, school or government body",
@@ -1044,7 +1037,6 @@ export const en = {
   "profileHeader.addToYourStory": "Add to your Story",
 
   // navigation/profileLinks.ts
-  "profileLinks.webOriginUUsernameId": "{WEB_ORIGIN}/u/{username}?id={userId}",
 
   // components/profile/ProfileMoreSheet.tsx
   "profileMoreSheet.mute": "Mute",
@@ -1092,7 +1084,6 @@ export const en = {
   "replySheet.sendReply": "Send reply",
   "replySheet.replyToOwnerusername": "Reply to @{ownerUsername}",
   "replySheet.couldntSendCheckYourConnection": "Couldn't send. Check your connection and try again.",
-  "replySheet.replyValueValue2": "reply_{value}_{value2}",
 
   // components/ReportSheet.tsx
   "reportSheet.chooseADifferentReason": "Choose a different reason",
@@ -1239,7 +1230,6 @@ export const en = {
   // utils/shareStoryExternally.ts
   "shareStoryExternally.weCouldntPrepareThisVideo": "We couldn't prepare this video. Try again.",
   "shareStoryExternally.thisIsTakingLongerThan": "This is taking longer than usual. Try again in a moment.",
-  "shareStoryExternally.cachesdirectorypathKatkeeShareDateVa": "{CachesDirectoryPath}/katkee-share-{Date}-{value}.{ext}",
   "shareStoryExternally.cancelled": "Cancelled.",
 
   // screens/profile/SignInSecuritySection.tsx
@@ -1315,7 +1305,6 @@ export const en = {
   "stickerResults.stickerResponses": "Sticker responses",
 
   // api/stickers.ts
-  "stickers.apiV1StoriesStoryidStickers": "/api/v1/stories/{storyId}/stickers/{stickerId}",
 
   // components/StickerSheet.tsx
   "stickerSheet.addAsTimeSticker": "Add as time sticker",
@@ -1580,8 +1569,6 @@ export const en = {
   "userProfile.couldntRefreshThisProfilePull": "Couldn't refresh this profile. Pull down to try again.",
 
   // api/users.ts
-  "users.apiBaseUrlApiV1": "{API_BASE_URL}/api/v1/users/{username}/cover/file?v={coverMediaId}",
-  "users.apiBaseUrlApiV12": "{API_BASE_URL}/api/v1/users/{username}/avatar/file{version}",
 
   // hooks/useUsernameAvailability.ts
   "useUsernameAvailability.available": "Available.",

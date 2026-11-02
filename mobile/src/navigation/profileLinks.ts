@@ -1,4 +1,3 @@
-import { t } from "../i18n";
 /** Shared profiles and Stories are katkee.com addresses, so they work for people without the app. */
 export const WEB_ORIGIN = "https://katkee.com";
 
@@ -108,7 +107,7 @@ export function callIdFromLink(url: string | null | undefined): string | null {
  * app where it's installed, and katkee.com's "Open in Katkee" page anywhere else.
  */
 export function profileShareLink(username: string, userId: string): string {
-  return t("profileLinks.webOriginUUsernameId", { WEB_ORIGIN, username, userId });
+  return `${WEB_ORIGIN}/u/${username}?id=${userId}`;
 }
 
 /** The link a shared Story carries (Share via…, Copy link). */

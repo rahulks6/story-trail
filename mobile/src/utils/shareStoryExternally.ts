@@ -45,7 +45,7 @@ const stripScheme = (uri: string) => uri.replace(/^file:\/\//, "");
  * provider covers (view-shot may write to the external cache instead).
  */
 async function intoCache(uri: string, ext: string): Promise<string> {
-  const target = t("shareStoryExternally.cachesdirectorypathKatkeeShareDateVa", { CachesDirectoryPath: RNFS.CachesDirectoryPath, Date: Date.now(), value: Math.random().toString(36).slice(2, 8), ext });
+  const target = `${RNFS.CachesDirectoryPath}/katkee-share-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
   await RNFS.moveFile(stripScheme(uri), target);
   return target;
 }

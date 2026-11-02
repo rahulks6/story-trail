@@ -233,7 +233,7 @@ export function ArchiveScreen({ navigation }: Props): React.JSX.Element {
         <SectionList
           ListHeaderComponent={scheduledRow ?? undefined}
           sections={sections}
-          keyExtractor={(row, index) => t("archive.idRow", { id: row[0]?.id ?? index })}
+          keyExtractor={(row, index) => `${row[0]?.id ?? index}-row`}
           contentContainerStyle={styles.listContent}
           onEndReachedThreshold={0.4}
           onEndReached={() => void onEndReached()}

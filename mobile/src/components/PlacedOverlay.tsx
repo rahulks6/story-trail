@@ -1,7 +1,6 @@
 import React, { memo, useState } from "react";
 import { View, type ViewProps } from "react-native";
 import type { Overlay } from "../models/storyDraft";
-import { t } from "../i18n";
 
 type Props = ViewProps & {
   overlay: Pick<Overlay, "x" | "y" | "scale" | "rotation" | "zIndex">;
@@ -35,7 +34,7 @@ function PlacedOverlayImpl({ overlay, containerWidth, containerHeight, dimmed = 
           top: overlay.y * containerHeight - (size?.height ?? 0) / 2,
           zIndex: overlay.zIndex,
           opacity: size ? (dimmed ? 0.85 : 1) : 0,
-          transform: [{ scale: overlay.scale }, { rotate: t("placedOverlay.rotationDeg", { rotation: overlay.rotation }) }],
+          transform: [{ scale: overlay.scale }, { rotate: `${overlay.rotation}deg` }],
         },
       ]}
     >
