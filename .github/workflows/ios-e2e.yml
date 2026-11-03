@@ -65,7 +65,8 @@ jobs:
           ls -la build/Build/Products/Release-iphonesimulator/KatkeeMobile.app/Frameworks > "$I/app-frameworks.txt" 2>&1 || true
           otool -L build/Build/Products/Release-iphonesimulator/KatkeeMobile.app/KatkeeMobile > "$I/app-links.txt" 2>&1 || true
           cat "Pods/Target Support Files/Pods-KatkeeMobile/Pods-KatkeeMobile-frameworks-Release-input-files.xcfilelist" > "$I/embed-inputs.txt" 2>&1 || true
-          grep -nE "warning:|Embed Pods|React.framework" xcodebuild.log | tail -150 > "$I/build-notes.txt" || true
+          grep -nE "error:|\*\* BUILD" xcodebuild.log > "$I/build-result.txt" || true
+          grep -nE -A40 "Embed Pods Frameworks" xcodebuild.log | head -300 > "$I/embed-phase.txt" || true
           cd build/Build/Products/Release-iphonesimulator && zip -qr "$GITHUB_WORKSPACE/KatkeeMobile-simulator.zip" KatkeeMobile.app
 
       - name: Simulator app (for appetize.io)
