@@ -59,6 +59,8 @@ jobs:
           xcodebuild -workspace KatkeeMobile.xcworkspace -scheme KatkeeMobile -configuration Release \
             -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO build | tee xcodebuild.log | grep -E "error:|\*\* BUILD" || true
+          # A failed build can still leave a half-made app behind (no JS bundle, no frameworks).
+          grep -q "\*\* BUILD SUCCEEDED \*\*" xcodebuild.log || { grep -nE -B5 -A25 "error|PhaseScriptExecution failed" xcodebuild.log | tail -80; exit 1; }
           test -d build/Build/Products/Release-iphonesimulator/KatkeeMobile.app
           # What the app links and carries, so a "Library not loaded" at launch can be traced.
           I="$GITHUB_WORKSPACE/ios-e2e/build-info"
