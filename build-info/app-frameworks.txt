@@ -1,0 +1,7 @@
+total 0
+drwxr-xr-x   6 runner  staff   192 Nov  3 08:35 .
+drwxr-xr-x  34 runner  staff  1088 Nov  3 08:35 ..
+drwxr-xr-x   4 runner  staff   128 Aug 21 10:10 hermesvm.framework
+drwxr-xr-x   7 runner  staff   224 Aug 26 13:17 React.framework
+drwxr-xr-x   9 runner  staff   288 Aug 26 12:57 ReactNativeDependencies.framework
+drwxr-xr-x   5 runner  staff   160 Nov  3 08:06 WebRTC.framework

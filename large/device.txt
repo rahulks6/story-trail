@@ -1,0 +1,1 @@
+com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro-Max

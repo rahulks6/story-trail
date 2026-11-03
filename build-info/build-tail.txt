@@ -1,0 +1,120 @@
+    export TARGET_TEMP_DIR\=/Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex/KatkeeMobile.build/Release-iphonesimulator/KatkeeMobile.build
+    export TEMP_DIR\=/Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex/KatkeeMobile.build/Release-iphonesimulator/KatkeeMobile.build
+    export TEMP_FILES_DIR\=/Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex/KatkeeMobile.build/Release-iphonesimulator/KatkeeMobile.build
+    export TEMP_FILE_DIR\=/Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex/KatkeeMobile.build/Release-iphonesimulator/KatkeeMobile.build
+    export TEMP_ROOT\=/Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex
+    export TEMP_SANDBOX_DIR\=/Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex/TemporaryTaskSandboxes
+    export TEST_FRAMEWORK_SEARCH_PATHS\=\ /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks\ /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk/Developer/Library/Frameworks
+    export TEST_LIBRARY_SEARCH_PATHS\=\ /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib
+    export TOOLCHAINS\=com.apple.dt.toolchain.Metal.32023.883\ com.apple.dt.toolchain.XcodeDefault
+    export TOOLCHAIN_DIR\=/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.KPLJ0o/Metal.xctoolchain
+    export TOOLCHAIN_VERSION\=32023.883
+    export TREAT_MISSING_BASELINES_AS_TEST_FAILURES\=NO
+    export TREAT_MISSING_SCRIPT_PHASE_OUTPUTS_AS_ERRORS\=NO
+    export UID\=501
+    export UNINSTALLED_PRODUCTS_DIR\=/Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex/UninstalledProducts
+    export UNLOCALIZED_RESOURCES_FOLDER_PATH\=KatkeeMobile.app
+    export UNLOCALIZED_RESOURCES_FOLDER_PATH_SHALLOW_BUNDLE_NO\=KatkeeMobile.app/Resources
+    export UNLOCALIZED_RESOURCES_FOLDER_PATH_SHALLOW_BUNDLE_YES\=KatkeeMobile.app
+    export UNSTRIPPED_PRODUCT\=NO
+    export USER\=runner
+    export USER_APPS_DIR\=/Users/runner/Applications
+    export USER_LIBRARY_DIR\=/Users/runner/Library
+    export USE_DYNAMIC_NO_PIC\=YES
+    export USE_HEADERMAP\=YES
+    export USE_HEADER_SYMLINKS\=NO
+    export USE_HERMES\=true
+    export USE_RECURSIVE_SCRIPT_INPUTS_IN_SCRIPT_PHASES\=YES
+    export VALIDATE_DEVELOPMENT_ASSET_PATHS\=YES_ERROR
+    export VALIDATE_PRODUCT\=YES
+    export VALID_ARCHS\=arm64\ x86_64
+    export VERBOSE_PBXCP\=NO
+    export VERSIONING_SYSTEM\=apple-generic
+    export VERSIONPLIST_PATH\=KatkeeMobile.app/version.plist
+    export VERSION_INFO_BUILDER\=runner
+    export VERSION_INFO_FILE\=KatkeeMobile_vers.c
+    export VERSION_INFO_STRING\=\"@\(\#\)PROGRAM:KatkeeMobile\ \ PROJECT:KatkeeMobile-1\"
+    export WARNING_CFLAGS\=-Wno-comma\ -Wno-shorten-64-to-32
+    export WORKSPACE_DIR\=/Users/runner/work/story-trail/story-trail/mobile/ios
+    export WRAPPER_EXTENSION\=app
+    export WRAPPER_NAME\=KatkeeMobile.app
+    export WRAPPER_SUFFIX\=.app
+    export WRAP_ASSET_PACKS_IN_SEPARATE_DIRECTORIES\=NO
+    export XCODE_APP_SUPPORT_DIR\=/Applications/Xcode_26.6.app/Contents/Developer/Library/Xcode
+    export XCODE_PRODUCT_BUILD_VERSION\=17F113
+    export XCODE_VERSION_ACTUAL\=2660
+    export XCODE_VERSION_MAJOR\=2600
+    export XCODE_VERSION_MINOR\=2660
+    export XPCSERVICES_FOLDER_PATH\=KatkeeMobile.app/XPCServices
+    export YACC\=yacc
+    export _DISCOVER_COMMAND_LINE_LINKER_INPUTS\=YES
+    export _DISCOVER_COMMAND_LINE_LINKER_INPUTS_INCLUDE_WL\=YES
+    export _LD_MULTIARCH\=YES
+    export _WRAPPER_CONTENTS_DIR_SHALLOW_BUNDLE_NO\=/Contents
+    export _WRAPPER_PARENT_PATH_SHALLOW_BUNDLE_NO\=/..
+    export _WRAPPER_RESOURCES_DIR_SHALLOW_BUNDLE_NO\=/Resources
+    export __DIAGNOSE_DEPRECATED_ARCHS\=YES
+    export __IS_NOT_MACOS\=YES
+    export __IS_NOT_MACOS_macosx\=NO
+    export __IS_NOT_SIMULATOR\=NO
+    export __IS_NOT_SIMULATOR_simulator\=NO
+    export __ORIGINAL_SDK_DEFINED_LLVM_TARGET_TRIPLE_SYS\=ios
+    export arch\=undefined_arch
+    export variant\=normal
+    /bin/sh -c /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex/KatkeeMobile.build/Release-iphonesimulator/KatkeeMobile.build/Script-D678CB956AC30B4B89425EE7.sh
+note: -> RNFB build script started
+note: 1) Locating firebase.json file:
+note:      (1 of 2) Searching in '/Users/runner/work/story-trail/story-trail/mobile' for a firebase.json file.
+note:      firebase.json found at /Users/runner/work/story-trail/story-trail/mobile/firebase.json
+note: 2) Injecting Info.plist entries: 
+    ->  0) firebase_json_raw string eyJtZXNzYWdpbmdfYW5kcm9pZF9ub3RpZmljYXRpb25fY2hhbm5lbF9pZCI6ICJhY3Rpdml0eSIsICJtZXNzYWdpbmdfYW5kcm9pZF9ub3RpZmljYXRpb25fY29sb3IiOiAiQGNvbG9yL25vdGlmaWNhdGlvbl9hY2NlbnQiLCAibWVzc2FnaW5nX2lvc19mb3JlZ3JvdW5kX3ByZXNlbnRhdGlvbl9vcHRpb25zIjogWyJiYWRnZSJdfQ==
+    ->  1) FirebaseCrashlyticsCollectionEnabled bool NO
+note:      setting plist entry 'firebase_json_raw' of type 'string' in file '/Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app/Info.plist'
+note:      setting plist entry 'FirebaseCrashlyticsCollectionEnabled' of type 'bool' in file '/Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app/Info.plist'
+note:      setting plist entry 'firebase_json_raw' of type 'string' in file '/Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app.dSYM/Contents/Info.plist'
+note:      setting plist entry 'FirebaseCrashlyticsCollectionEnabled' of type 'bool' in file '/Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app.dSYM/Contents/Info.plist'
+note: <- RNFB build script finished
+
+CopySwiftLibs /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app (in target 'KatkeeMobile' from project 'KatkeeMobile')
+    cd /Users/runner/work/story-trail/story-trail/mobile/ios
+    builtin-swiftStdLibTool --copy --verbose --scan-executable /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app/KatkeeMobile --scan-folder /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app/Frameworks --scan-folder /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app/PlugIns --scan-folder /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app/SystemExtensions --scan-folder /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app/Extensions --scan-folder /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/Pods_KatkeeMobile.framework --platform iphonesimulator --toolchain /var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.KPLJ0o/Metal.xctoolchain --toolchain /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex/KatkeeMobile.build/Release-iphonesimulator/KatkeeMobile.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os --back-deploy-swift-span
+Ignoring --strip-bitcode because --sign was not passed
+
+ExtractAppIntentsMetadata (in target 'KatkeeMobile' from project 'KatkeeMobile')
+    cd /Users/runner/work/story-trail/story-trail/mobile/ios
+    /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.KPLJ0o/Metal.xctoolchain --module-name KatkeeMobile --sdk-root /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk --xcode-version 17F113 --platform-family iOS --deployment-target 15.1 --bundle-identifier com.katkee.app --output /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app --target-triple arm64-apple-ios15.1-simulator --target-triple x86_64-apple-ios15.1-simulator --binary-file /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app/KatkeeMobile --dependency-file /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex/KatkeeMobile.build/Release-iphonesimulator/KatkeeMobile.build/Objects-normal/arm64/KatkeeMobile_dependency_info.dat --dependency-file /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex/KatkeeMobile.build/Release-iphonesimulator/KatkeeMobile.build/Objects-normal/x86_64/KatkeeMobile_dependency_info.dat --stringsdata-file /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex/KatkeeMobile.build/Release-iphonesimulator/KatkeeMobile.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --stringsdata-file /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex/KatkeeMobile.build/Release-iphonesimulator/KatkeeMobile.build/Objects-normal/x86_64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex/KatkeeMobile.build/Release-iphonesimulator/KatkeeMobile.build/Objects-normal/arm64/KatkeeMobile.SwiftFileList --source-file-list /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex/KatkeeMobile.build/Release-iphonesimulator/KatkeeMobile.build/Objects-normal/x86_64/KatkeeMobile.SwiftFileList --metadata-file-list /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex/KatkeeMobile.build/Release-iphonesimulator/KatkeeMobile.build/KatkeeMobile.DependencyMetadataFileList --static-metadata-file-list /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex/KatkeeMobile.build/Release-iphonesimulator/KatkeeMobile.build/KatkeeMobile.DependencyStaticMetadataFileList --swift-const-vals-list /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex/KatkeeMobile.build/Release-iphonesimulator/KatkeeMobile.build/Objects-normal/arm64/KatkeeMobile.SwiftConstValuesFileList --swift-const-vals-list /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex/KatkeeMobile.build/Release-iphonesimulator/KatkeeMobile.build/Objects-normal/x86_64/KatkeeMobile.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-11-03 08:35:40.880 appintentsmetadataprocessor[55593:140232] Starting appintentsmetadataprocessor export
+2026-11-03 08:35:40.950 appintentsmetadataprocessor[55593:140232] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+
+AppIntentsSSUTraining (in target 'KatkeeMobile' from project 'KatkeeMobile')
+    cd /Users/runner/work/story-trail/story-trail/mobile/ios
+    /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app/Info.plist --temp-dir-path /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex/KatkeeMobile.build/Release-iphonesimulator/KatkeeMobile.build/ssu --bundle-id com.katkee.app --product-path /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app --extracted-metadata-path /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app/Metadata.appintents --metadata-file-list /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Intermediates.noindex/KatkeeMobile.build/Release-iphonesimulator/KatkeeMobile.build/KatkeeMobile.DependencyMetadataFileList --source-file /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app/Info.plist --archive-ssu-assets
+2026-11-03 08:35:41.070 appintentsnltrainingprocessor[55610:140276] Parsing options for appintentsnltrainingprocessor
+2026-11-03 08:35:41.074 appintentsnltrainingprocessor[55610:140276] Starting AppIntents SSU YAML Generation
+2026-11-03 08:35:41.085 appintentsnltrainingprocessor[55610:140276] No AppShortcuts found - Skipping.
+
+RegisterExecutionPolicyException /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app (in target 'KatkeeMobile' from project 'KatkeeMobile')
+    cd /Users/runner/work/story-trail/story-trail/mobile/ios
+    builtin-RegisterExecutionPolicyException /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app
+
+Validate /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app (in target 'KatkeeMobile' from project 'KatkeeMobile')
+    cd /Users/runner/work/story-trail/story-trail/mobile/ios
+    builtin-validationUtility /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app -validate-for-store -shallow-bundle -infoplist-subpath Info.plist
+
+Touch /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app (in target 'KatkeeMobile' from project 'KatkeeMobile')
+    cd /Users/runner/work/story-trail/story-trail/mobile/ios
+    /usr/bin/touch -c /Users/runner/work/story-trail/story-trail/mobile/ios/build/Build/Products/Release-iphonesimulator/KatkeeMobile.app
+
+warning: Run script build phase '[CP-User] [Hermes] Replace Hermes for the right configuration, if needed' will be run during every build because it does not specify any outputs. To address this issue, either add output dependencies to the script phase, or configure it to run in every build by unchecking "Based on dependency analysis" in the script phase. (in target 'hermes-engine' from project 'Pods')
+note: Run script build phase '[CP-User] [RNDeps] Replace React Native Dependencies for the right configuration, if needed' will be run during every build because the option to run the script phase "Based on dependency analysis" is unchecked. (in target 'ReactNativeDependencies' from project 'Pods')
+note: Run script build phase '[CP-User] [RN]Check FBReactNativeSpec' will be run during every build because the option to run the script phase "Based on dependency analysis" is unchecked. (in target 'React-RCTFBReactNativeSpec' from project 'Pods')
+note: Run script build phase '[CP-User] [RNCore] Replace React Native Core for the right configuration, if needed' will be run during every build because the option to run the script phase "Based on dependency analysis" is unchecked. (in target 'React-Core-prebuilt' from project 'Pods')
+warning: Run script build phase 'Bundle React Native code and images' will be run during every build because it does not specify any outputs. To address this issue, either add output dependencies to the script phase, or configure it to run in every build by unchecking "Based on dependency analysis" in the script phase. (in target 'KatkeeMobile' from project 'KatkeeMobile')
+warning: Run script build phase '[CP-User] [RNFB] Core Configuration' will be run during every build because it does not specify any outputs. To address this issue, either add output dependencies to the script phase, or configure it to run in every build by unchecking "Based on dependency analysis" in the script phase. (in target 'KatkeeMobile' from project 'KatkeeMobile')
+/Users/runner/work/story-trail/story-trail/mobile/ios/Pods/Pods.xcodeproj: warning: The iOS Simulator deployment target 'IPHONEOS_DEPLOYMENT_TARGET' is set to 9.0, but the range of supported deployment target versions is 12.0 to 26.5.99. (in target 'react-native-image-picker-RNImagePickerPrivacyInfo' from project 'Pods')
+warning: Run script build phase 'Create Symlinks to Header Folders' will be run during every build because it does not specify any outputs. To address this issue, either add output dependencies to the script phase, or configure it to run in every build by unchecking "Based on dependency analysis" in the script phase. (in target 'ReactCodegen' from project 'Pods')
+/Users/runner/work/story-trail/story-trail/mobile/ios/Pods/Pods.xcodeproj: warning: The iOS Simulator deployment target 'IPHONEOS_DEPLOYMENT_TARGET' is set to 9.0, but the range of supported deployment target versions is 12.0 to 26.5.99. (in target 'PromisesSwift-Promises_Privacy' from project 'Pods')
+/Users/runner/work/story-trail/story-trail/mobile/ios/Pods/Pods.xcodeproj: warning: The iOS Simulator deployment target 'IPHONEOS_DEPLOYMENT_TARGET' is set to 9.0, but the range of supported deployment target versions is 12.0 to 26.5.99. (in target 'PromisesObjC-FBLPromises_Privacy' from project 'Pods')
+/Users/runner/work/story-trail/story-trail/mobile/ios/Pods/Pods.xcodeproj: warning: The iOS Simulator deployment target 'IPHONEOS_DEPLOYMENT_TARGET' is set to 10.0, but the range of supported deployment target versions is 12.0 to 26.5.99. (in target 'GTMSessionFetcher-GTMSessionFetcher_Core_Privacy' from project 'Pods')
+** BUILD SUCCEEDED **
+

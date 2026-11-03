@@ -1,0 +1,199 @@
+09:15:20.132 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Define variables RUNNING
+09:15:20.139 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Define variables COMPLETED
+09:15:20.143 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+09:15:20.144 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+09:15:20.145 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Launch app "com.katkee.app" with clear state RUNNING
+09:15:20.147 [ INFO] maestro.Maestro.clearAppState$lambda$9: Clearing app state com.katkee.app
+09:17:06.084 [ INFO] maestro.Maestro.launchApp$lambda$6: Launching app com.katkee.app
+09:17:06.134 [ INFO] maestro.Maestro.launchApp$lambda$6: Stopping com.katkee.app app during launch
+09:19:32.498 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Launch app "com.katkee.app" with clear state COMPLETED
+09:19:33.160 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on (Optional) "Wait" RUNNING
+09:19:39.959 [ INFO] maestro.orchestra.Orchestra.executeCommands: [Command execution] CommandWarned: Element not found: Text matching regex: Wait
+09:19:40.771 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+09:19:40.776 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+09:19:41.070 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on (Optional) "Wait" WARNED
+09:19:41.071 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Log in" is visible RUNNING
+09:19:41.599 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Log in" is visible COMPLETED
+09:19:41.600 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 01-login RUNNING
+09:19:41.608 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+09:19:41.609 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+09:19:41.910 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 01-login COMPLETED
+09:19:41.911 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on ".*Sign up.*" RUNNING
+09:19:42.197 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Don't have an account? Sign up, title=, value=, text=, hintText=, resource-id=, bounds=[110,814][329,858], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=110, y=814, width=219, height=44))
+09:19:42.698 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+09:19:42.708 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (219, 836) using hierarchy based logic for wait
+09:19:42.718 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+09:19:42.719 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+09:19:46.615 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+09:19:46.616 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on ".*Sign up.*" COMPLETED
+09:19:46.616 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Create your account" is visible RUNNING
+09:19:46.927 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Create your account" is visible COMPLETED
+09:19:46.927 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 02-signup RUNNING
+09:19:46.928 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+09:19:46.929 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+09:19:47.127 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 02-signup COMPLETED
+09:19:47.127 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Display name" RUNNING
+09:19:47.458 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Display name, title=, value=, text=, hintText=, resource-id=, bounds=[49,211][391,247], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=49, y=211, width=342, height=36))
+09:19:47.851 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+09:19:47.853 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (220, 229) using hierarchy based logic for wait
+09:19:47.854 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+09:19:47.854 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+09:19:49.066 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+09:19:49.066 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Display name" COMPLETED
+09:19:49.067 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text Katkee iPhone Test RUNNING
+09:19:49.076 [ INFO] maestro.Maestro.inputText: Inputting text: Katkee iPhone Test
+09:19:51.838 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text Katkee iPhone Test COMPLETED
+09:19:51.843 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run close-keyboard.yaml RUNNING
+09:19:51.882 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+09:19:51.883 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+09:19:51.884 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is ANDROID RUNNING
+09:19:51.887 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+09:19:51.887 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is ANDROID SKIPPED
+09:19:51.888 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is IOS RUNNING
+09:19:51.894 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Swipe from (50%, 25%) to (50%, 40%) in 300 ms RUNNING
+09:19:54.586 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Swipe from (50%, 25%) to (50%, 40%) in 300 ms COMPLETED
+09:19:54.587 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is IOS COMPLETED
+09:19:54.587 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run close-keyboard.yaml COMPLETED
+09:19:54.587 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Username" RUNNING
+09:19:54.953 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Username, title=, value=, text=, hintText=, resource-id=, bounds=[49,287][391,322], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=49, y=287, width=342, height=35))
+09:19:55.330 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via stabilised hierarchy (null settle after a scroll)
+09:19:55.643 [ INFO] maestro.Maestro.refreshElementUntilStable-Hkttul8: Element is still moving (null -> Bounds(x=49, y=287, width=342, height=35)). Waiting for its position to settle.
+09:19:56.185 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (220, 304) using hierarchy based logic for wait
+09:19:56.186 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+09:19:56.187 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+09:19:58.081 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+09:19:58.083 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Username" COMPLETED
+09:19:58.084 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text ${USERNAME} RUNNING
+09:20:01.833 [ INFO] maestro.Maestro.inputText: Inputting text: e2e_ios_548993_large2
+09:20:04.536 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text ${USERNAME} COMPLETED
+09:20:04.536 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run close-keyboard.yaml RUNNING
+09:20:04.538 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+09:20:04.538 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+09:20:04.539 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is ANDROID RUNNING
+09:20:04.539 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+09:20:04.539 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is ANDROID SKIPPED
+09:20:04.539 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is IOS RUNNING
+09:20:04.539 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Swipe from (50%, 25%) to (50%, 40%) in 300 ms RUNNING
+09:20:07.025 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Swipe from (50%, 25%) to (50%, 40%) in 300 ms COMPLETED
+09:20:07.026 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is IOS COMPLETED
+09:20:07.026 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run close-keyboard.yaml COMPLETED
+09:20:07.028 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Email" RUNNING
+09:20:07.381 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Email, title=, value=, text=, hintText=, resource-id=, bounds=[49,390][391,425], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=49, y=390, width=342, height=35))
+09:20:07.769 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via stabilised hierarchy (null settle after a scroll)
+09:20:08.122 [ INFO] maestro.Maestro.refreshElementUntilStable-Hkttul8: Element is still moving (null -> Bounds(x=49, y=390, width=342, height=35)). Waiting for its position to settle.
+09:20:08.650 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (220, 407) using hierarchy based logic for wait
+09:20:08.652 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+09:20:08.652 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+09:20:10.493 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+09:20:10.494 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Email" COMPLETED
+09:20:10.494 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text ${EMAIL} RUNNING
+09:20:11.212 [ INFO] maestro.Maestro.inputText: Inputting text: support+e2e-548993-large2@katkee.com
+09:20:13.984 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text ${EMAIL} COMPLETED
+09:20:13.986 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run close-keyboard.yaml RUNNING
+09:20:13.992 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+09:20:13.993 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+09:20:13.993 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is ANDROID RUNNING
+09:20:13.993 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+09:20:13.993 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is ANDROID SKIPPED
+09:20:13.993 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is IOS RUNNING
+09:20:13.994 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Swipe from (50%, 25%) to (50%, 40%) in 300 ms RUNNING
+09:20:17.491 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Swipe from (50%, 25%) to (50%, 40%) in 300 ms COMPLETED
+09:20:17.493 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is IOS COMPLETED
+09:20:17.493 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run close-keyboard.yaml COMPLETED
+09:20:17.494 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Date of birth" RUNNING
+09:20:17.892 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Date of birth, title=, value=, text=, hintText=DD/MM/YYYY, resource-id=, bounds=[49,466][391,501], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=49, y=466, width=342, height=35))
+09:20:18.309 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via stabilised hierarchy (null settle after a scroll)
+09:20:18.755 [ INFO] maestro.Maestro.refreshElementUntilStable-Hkttul8: Element is still moving (null -> Bounds(x=49, y=466, width=342, height=35)). Waiting for its position to settle.
+09:20:19.363 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (220, 483) using hierarchy based logic for wait
+09:20:19.364 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+09:20:19.364 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+09:20:22.800 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+09:20:22.810 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Date of birth" COMPLETED
+09:20:22.822 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text 01011995 RUNNING
+09:20:22.838 [ INFO] maestro.Maestro.inputText: Inputting text: 01011995
+09:20:24.620 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text 01011995 COMPLETED
+09:20:24.621 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run close-keyboard.yaml RUNNING
+09:20:24.623 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+09:20:24.624 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+09:20:24.625 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is ANDROID RUNNING
+09:20:24.631 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+09:20:24.633 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is ANDROID SKIPPED
+09:20:24.634 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is IOS RUNNING
+09:20:24.635 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Swipe from (50%, 25%) to (50%, 40%) in 300 ms RUNNING
+09:20:27.275 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Swipe from (50%, 25%) to (50%, 40%) in 300 ms COMPLETED
+09:20:27.276 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is IOS COMPLETED
+09:20:27.276 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run close-keyboard.yaml COMPLETED
+09:20:27.277 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Password" RUNNING
+09:20:27.610 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Password, title=, value=, text=, hintText=, resource-id=, bounds=[49,577][346,612], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=49, y=577, width=297, height=35))
+09:20:27.963 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via stabilised hierarchy (null settle after a scroll)
+09:20:28.334 [ INFO] maestro.Maestro.refreshElementUntilStable-Hkttul8: Element is still moving (null -> Bounds(x=49, y=577, width=297, height=35)). Waiting for its position to settle.
+09:20:29.007 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (197, 594) using hierarchy based logic for wait
+09:20:29.008 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+09:20:29.008 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+09:20:31.150 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+09:20:31.151 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Password" COMPLETED
+09:20:31.152 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text ${PASSWORD} RUNNING
+09:20:31.816 [ INFO] maestro.Maestro.inputText: Inputting text: E2e-80ea444644e1cc50
+09:20:33.974 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text ${PASSWORD} COMPLETED
+09:20:33.986 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run close-keyboard.yaml RUNNING
+09:20:33.998 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+09:20:33.999 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+09:20:34.000 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is ANDROID RUNNING
+09:20:34.001 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+09:20:34.002 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is ANDROID SKIPPED
+09:20:34.003 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is IOS RUNNING
+09:20:34.004 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Swipe from (50%, 25%) to (50%, 40%) in 300 ms RUNNING
+09:20:36.356 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Swipe from (50%, 25%) to (50%, 40%) in 300 ms COMPLETED
+09:20:36.357 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is IOS COMPLETED
+09:20:36.357 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run close-keyboard.yaml COMPLETED
+09:20:36.357 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 03-signup-filled RUNNING
+09:20:36.363 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+09:20:36.364 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+09:20:36.545 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 03-signup-filled COMPLETED
+09:20:36.566 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until "Sign up" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+09:20:37.110 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 440, DeviceWidth: 956
+09:20:37.125 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=32, y=646, width=376, height=48)
+09:20:37.164 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+09:20:37.260 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Sign up, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=true).centerElement
+09:20:37.260 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+09:20:37.260 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until "Sign up" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+09:20:37.260 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Sign up" RUNNING
+09:20:37.790 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Sign up, title=, value=, text=, hintText=, resource-id=, bounds=[32,646][408,694], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=32, y=646, width=376, height=48))
+09:20:38.182 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via stabilised hierarchy (null settle after a scroll)
+09:20:38.562 [ INFO] maestro.Maestro.refreshElementUntilStable-Hkttul8: Element is still moving (null -> Bounds(x=32, y=646, width=376, height=48)). Waiting for its position to settle.
+09:20:39.408 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (220, 670) using hierarchy based logic for wait
+09:20:39.413 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+09:20:39.413 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+09:20:44.891 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+09:20:44.895 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Sign up" COMPLETED
+09:20:44.897 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Verify your email" is visible RUNNING
+09:20:45.366 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Verify your email" is visible COMPLETED
+09:20:45.369 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 04-verify-email RUNNING
+09:20:45.371 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+09:20:45.373 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+09:20:45.607 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 04-verify-email COMPLETED
+09:20:45.608 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Verify your email" RUNNING
+09:20:46.135 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Verify your email, title=, value=, text=, hintText=, resource-id=, bounds=[32,94][408,127], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=32, y=94, width=376, height=33))
+09:20:46.624 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+09:20:46.626 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (220, 110) using hierarchy based logic for wait
+09:20:46.627 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+09:20:46.628 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+09:20:48.440 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+09:20:48.441 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Verify your email" COMPLETED
+09:20:48.441 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Change email" is visible RUNNING
+09:20:48.792 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Change email" is visible COMPLETED
+09:20:48.793 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Later" is not visible RUNNING
+09:20:49.954 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Later" is not visible COMPLETED
+09:20:49.954 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Change email" RUNNING
+09:20:50.405 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Change email, title=, value=, text=, hintText=, resource-id=, bounds=[262,393][407,437], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=262, y=393, width=145, height=44))
+09:20:50.810 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+09:20:50.812 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (334, 415) using hierarchy based logic for wait
+09:20:50.813 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+09:20:50.814 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+09:20:52.035 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+09:20:52.036 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Change email" COMPLETED
+09:20:52.036 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Change your email" is visible RUNNING
+09:21:07.980 [ERROR] maestro.orchestra.Orchestra.executeCommands: [Command execution] CommandFailed: Assertion is false: "Change your email" is visible
+09:21:08.296 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+09:21:08.298 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+09:21:08.549 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Change your email" is visible FAILED
