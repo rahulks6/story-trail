@@ -66,6 +66,7 @@ jobs:
           otool -L build/Build/Products/Release-iphonesimulator/KatkeeMobile.app/KatkeeMobile > "$I/app-links.txt" 2>&1 || true
           cat "Pods/Target Support Files/Pods-KatkeeMobile/Pods-KatkeeMobile-frameworks-Release-input-files.xcfilelist" > "$I/embed-inputs.txt" 2>&1 || true
           grep -nE "error:|\*\* BUILD" xcodebuild.log > "$I/build-result.txt" || true
+          tail -120 xcodebuild.log > "$I/build-tail.txt" || true
           grep -nE -A40 "Embed Pods Frameworks" xcodebuild.log | head -300 > "$I/embed-phase.txt" || true
           cd build/Build/Products/Release-iphonesimulator && zip -qr "$GITHUB_WORKSPACE/KatkeeMobile-simulator.zip" KatkeeMobile.app
 
