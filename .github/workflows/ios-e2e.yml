@@ -101,11 +101,18 @@ jobs:
             xcrun simctl bootstatus "$UDID" -b
             xcrun simctl install "$UDID" "$APP"
             mkdir -p "$OUT/$size"
+            touch "$OUT/$size/device-booted"
             # A first look that doesn't depend on Maestro: launch Katkee and screenshot it.
             sleep 30
             xcrun simctl launch "$UDID" com.katkee.app || true
             sleep 25
             xcrun simctl io "$UDID" screenshot "$OUT/$size/00-first-launch.png" || true
+            # If Katkee closed by itself, what it said on the way out: its own log lines (React Native's
+            # "Unhandled JS Exception" included) and the crash report the simulator writes on the Mac.
+            xcrun simctl spawn "$UDID" log show --last 3m --style compact \
+              --predicate 'processImagePath CONTAINS "Katkee" OR eventMessage CONTAINS "com.katkee.app"' > "$OUT/$size/first-launch-log.txt" 2>/dev/null || true
+            mkdir -p "$OUT/$size/crashes"
+            find "$HOME/Library/Logs/DiagnosticReports" -newer "$OUT/$size/device-booted" -name "Katkee*" -exec cp {} "$OUT/$size/crashes/" \; 2>/dev/null || true
             xcrun simctl terminate "$UDID" com.katkee.app || true
             echo "$TYPE" > "$OUT/$size/device.txt"
             xcrun simctl io "$UDID" recordVideo --codec=h264 --force "$OUT/$size/walkthrough.mp4" &
@@ -133,7 +140,7 @@ jobs:
             [ "$passed" = 1 ] || status=1
             kill -INT "$REC" || true
             sleep 3
-            xcrun simctl spawn "$UDID" log show --last 15m --predicate 'process == "KatkeeMobile"' --style compact > "$OUT/$size/app-log.txt" 2>/dev/null || true
+            xcrun simctl spawn "$UDID" log show --last 15m --predicate 'processImagePath CONTAINS "Katkee"' --style compact > "$OUT/$size/app-log.txt" 2>/dev/null || true
             xcrun simctl shutdown "$UDID" || true
           done
           exit $status
@@ -170,7 +177,7 @@ jobs:
           [ -d ios-e2e ] || exit 0
           R="$RUNNER_TEMP/results"
           mkdir -p "$R"
-          (cd ios-e2e && find . -type f \( -name '*.png' -o -name '*.txt' -o -name '*.xml' -o -name '*.json' -o -name '*.log' \) -size -20M -exec rsync -R {} "$R/" \;)
+          (cd ios-e2e && find . -type f \( -name '*.png' -o -name '*.txt' -o -name '*.xml' -o -name '*.json' -o -name '*.log' -o -name '*.ips' \) -size -20M -exec rsync -R {} "$R/" \;)
           cd "$R"
           git init -q -b ci/ios-e2e-results
           git config user.name "github-actions"
