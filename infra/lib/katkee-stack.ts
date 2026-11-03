@@ -60,6 +60,14 @@ export interface KatkeeSettings {
   /** RDS instance type without the "db." prefix, e.g. t4g.medium or m7g.large. */
   databaseInstanceType: string;
   /**
+   * Cost against resilience while the audience is small (defaults are the resilient setup):
+   * a standby database in the second zone, a NAT gateway per zone (1 shares one), and at least
+   * this many API tasks. Raising them back is a context change and a deploy.
+   */
+  databaseMultiAz?: boolean;
+  natGateways?: number;
+  apiMinTasks?: number;
+  /**
    * Recovery only: the endpoint of a restored instance (docs/BACKUP_AND_RESTORE.md) for the
    * services and migrations to use instead of the stack's own database.
    */
@@ -145,6 +153,8 @@ export function validateSettings(s: KatkeeSettings): void {
   }
   if (s.providers.apple && (!s.providers.apple.clientIds.length || s.providers.apple.clientIds.some((id) => !/^[A-Za-z0-9.-]+$/.test(id)))) problems.push("appleClientIds must be the iOS bundle ID, such as com.katkee.app");
   if (!Number.isFinite(s.monthlyBudgetUsd) || s.monthlyBudgetUsd <= 0) problems.push("monthlyBudgetUsd must be a positive number");
+  if (s.natGateways !== undefined && ![1, 2].includes(s.natGateways)) problems.push("natGateways must be 1 or 2 (the app subnets need a way out)");
+  if (s.apiMinTasks !== undefined && (!Number.isInteger(s.apiMinTasks) || s.apiMinTasks < 1 || s.apiMinTasks > 10)) problems.push("apiMinTasks must be 1 to 10");
   if (problems.length) throw new Error(`Katkee settings: ${problems.join("; ")}.`);
 }
 
@@ -173,7 +183,8 @@ export class KatkeeStack extends Stack {
     const vpc = new ec2.Vpc(this, "Vpc", {
       ipAddresses: ec2.IpAddresses.cidr("10.40.0.0/16"),
       maxAzs: 2,
-      natGateways: 2, // one per zone: losing a zone doesn't cut the other zone's outbound calls
+      // One per zone by default: losing a zone doesn't cut the other zone's outbound calls.
+      natGateways: s.natGateways ?? 2,
       subnetConfiguration: [
         { name: "public", subnetType: ec2.SubnetType.PUBLIC, cidrMask: 24 },
         { name: "app", subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS, cidrMask: 20 },
@@ -240,7 +251,7 @@ export class KatkeeStack extends Stack {
       vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
       securityGroups: [dbSg],
       publiclyAccessible: false,
-      multiAz: true,
+      multiAz: s.databaseMultiAz ?? true,
       databaseName: "katkee",
       // The schema owner: migrations and break-glass access only.
       credentials: rds.Credentials.fromGeneratedSecret("katkee_owner", { encryptionKey: dataKey, secretName: `${SECRET_PREFIX}db-owner` }),
@@ -527,7 +538,7 @@ export class KatkeeStack extends Stack {
       healthCheckGracePeriod: Duration.seconds(60),
     });
     api.attachToApplicationTargetGroup(apiTargets);
-    api.autoScaleTaskCount({ minCapacity: s.bootstrap ? 0 : 2, maxCapacity: 10 })
+    api.autoScaleTaskCount({ minCapacity: s.bootstrap ? 0 : s.apiMinTasks ?? 2, maxCapacity: 10 })
       .scaleOnCpuUtilization("Cpu", { targetUtilizationPercent: 60 });
 
     const worker = new ecs.FargateService(this, "WorkerService", {

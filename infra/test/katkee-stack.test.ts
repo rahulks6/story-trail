@@ -399,3 +399,14 @@ describe("modes and settings", () => {
     for (const [overrides, error] of refusals) assert.throws(() => synth(settings(overrides)), error, JSON.stringify(overrides));
   });
 });
+
+describe("lean setup while the audience is small", () => {
+  it("drops the standby database, shares one NAT gateway and keeps one API task; defaults stay resilient", () => {
+    const lean = synth({ ...everything(), databaseMultiAz: false, natGateways: 1, apiMinTasks: 1 }).template;
+    assert.equal(resources(lean, "AWS::RDS::DBInstance")[0]![1].Properties.MultiAZ, false);
+    assert.equal(resources(lean, "AWS::EC2::NatGateway").length, 1);
+    assert.deepEqual(resources(lean, "AWS::ApplicationAutoScaling::ScalableTarget").map(([, t]) => t.Properties.MinCapacity).sort(), [1, 1]);
+    assert.equal(resources(template, "AWS::EC2::NatGateway").length, 2);
+    assert.throws(() => synth({ ...everything(), natGateways: 0 }), /natGateways must be 1 or 2/);
+  });
+});
