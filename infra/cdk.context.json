@@ -9,10 +9,14 @@
   "cloudFrontPublicKeyFile": "cloudfront-public.pem",
   "alarmEmail": "ops@katkee.com",
   "adminConsoleEnabled": "true",
-  "monthlyBudgetUsd": "400",
+  "monthlyBudgetUsd": "250",
   "availability-zones:account=249101171547:region=ap-south-1": [
     "ap-south-1a",
     "ap-south-1b",
     "ap-south-1c"
-  ]
+  ],
+  "databaseInstanceType": "t4g.small",
+  "databaseMultiAz": "false",
+  "natGateways": "1",
+  "apiMinTasks": "1"
 }
