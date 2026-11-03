@@ -48,7 +48,9 @@ jobs:
         run: npm ci
 
       - name: CocoaPods
-        run: cd ios && bundle exec pod install
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/ios-e2e/build-info"
+          cd ios && bundle exec pod install | tee "$GITHUB_WORKSPACE/ios-e2e/build-info/pod-install.txt"
 
       - name: Simulator build
         run: |
@@ -58,6 +60,12 @@ jobs:
             -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO build | tee xcodebuild.log | grep -E "error:|\*\* BUILD" || true
           test -d build/Build/Products/Release-iphonesimulator/KatkeeMobile.app
+          # What the app links and carries, so a "Library not loaded" at launch can be traced.
+          I="$GITHUB_WORKSPACE/ios-e2e/build-info"
+          ls -la build/Build/Products/Release-iphonesimulator/KatkeeMobile.app/Frameworks > "$I/app-frameworks.txt" 2>&1 || true
+          otool -L build/Build/Products/Release-iphonesimulator/KatkeeMobile.app/KatkeeMobile > "$I/app-links.txt" 2>&1 || true
+          cat "Pods/Target Support Files/Pods-KatkeeMobile/Pods-KatkeeMobile-frameworks-Release-input-files.xcfilelist" > "$I/embed-inputs.txt" 2>&1 || true
+          grep -nE "warning:|Embed Pods|React.framework" xcodebuild.log | tail -150 > "$I/build-notes.txt" || true
           cd build/Build/Products/Release-iphonesimulator && zip -qr "$GITHUB_WORKSPACE/KatkeeMobile-simulator.zip" KatkeeMobile.app
 
       - name: Simulator app (for appetize.io)
