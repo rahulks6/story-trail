@@ -13,7 +13,7 @@ import type { RootStackParamList } from "../../navigation/types";
 import { mediaColors as colors, radii, spacing, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { getStoryDetail, type StoryDetail } from "../../api/engagement";
-import { getMedia } from "../../api/media";
+import { getMedia, STORY_VIDEO_BUFFER } from "../../api/media";
 import { mediaFileUrl } from "../../api/stories";
 import { ApiError } from "../../api/client";
 import { StoryOverlayLayer, useContainerLayout } from "../../components/StoryOverlayLayer";
@@ -152,7 +152,7 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
       {mediaKind === "video" ? (
         <Video
           key={attempt}
-          source={{ uri: mediaUrl, headers: authHeaders }}
+          source={{ uri: mediaUrl, headers: authHeaders, bufferConfig: STORY_VIDEO_BUFFER }}
           poster={{ source: { uri: mediaFileUrl(detail.mediaId, "poster"), headers: authHeaders }, resizeMode: "cover" }}
           style={[StyleSheet.absoluteFill, mediaTransformStyle(detail.crop, containerSize.width, containerSize.height)]}
           resizeMode="cover"

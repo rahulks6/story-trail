@@ -10,7 +10,7 @@ import { mediaColors as colors, radii, spacing, mediaTypography as typography, I
 import { useAuth } from "../../state/AuthContext";
 import { takeWarmStories } from "../../state/warmStories";
 import { getMyActiveStories, getUserActiveStories, getViewCount, mediaFileUrl, recordStoryView, type PublicStory } from "../../api/stories";
-import { getMedia, mediaSource } from "../../api/media";
+import { getMedia, mediaSource, STORY_VIDEO_BUFFER } from "../../api/media";
 import { getStoryDetail, likeStory, unlikeStory, type StoryDetail } from "../../api/engagement";
 import { recordEvent } from "../../api/events";
 import { EmptyState } from "../../components/EmptyState";
@@ -864,7 +864,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       {mediaKind === "video" ? (
         <Video
           ref={videoRef}
-          source={videoSource}
+          source={{ ...videoSource, bufferConfig: STORY_VIDEO_BUFFER }}
           poster={{ source: imageSource, resizeMode: "cover" }}
           style={[StyleSheet.absoluteFill, mediaTransformStyle(detail?.crop ?? currentStory.crop, containerSize.width, containerSize.height)]}
           resizeMode="cover"

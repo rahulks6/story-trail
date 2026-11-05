@@ -193,6 +193,19 @@ export async function getMedia(mediaId: string, accessToken: string): Promise<Up
 }
 
 /** An Image/Video source for a delivery URL: the bearer token only goes to this API, never to the CDN. */
+/**
+ * How a Story video buffers (Android; iOS ignores it). The player's default waits for 2.5 s of
+ * video before it starts; a Story starts after half a second, keeps a little more in hand after a
+ * stall, and replays from a small cache on the phone instead of downloading again.
+ */
+export const STORY_VIDEO_BUFFER = {
+  minBufferMs: 2500,
+  maxBufferMs: 15000,
+  bufferForPlaybackMs: 500,
+  bufferForPlaybackAfterRebufferMs: 1500,
+  cacheSizeMB: 100,
+} as const;
+
 export function mediaSource(url: string, accessToken: string | null | undefined): { uri: string; headers?: Record<string, string> } {
   if (!url.startsWith("/")) return { uri: url };
   return { uri: `${API_BASE_URL}${url}`, headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined };

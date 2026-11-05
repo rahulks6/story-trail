@@ -27,7 +27,7 @@ jest.mock("../src/components/StoryOverlayLayer", () => ({
   useContainerLayout: () => [{ width: 390, height: 844 }, () => undefined],
 }));
 jest.mock("../src/components/MusicPlayer", () => ({ MusicPlayer: () => null }));
-jest.mock("../src/api/media", () => ({ getMedia: jest.fn(async () => ({ kind: "photo" })) }));
+jest.mock("../src/api/media", () => ({ STORY_VIDEO_BUFFER: jest.requireActual("../src/api/media").STORY_VIDEO_BUFFER, getMedia: jest.fn(async () => ({ kind: "photo" })) }));
 jest.mock("../src/api/stories", () => ({
   mediaFileUrl: (id: string) => `https://api.test/media/${id}`,
   // The Archive's first page doesn't reach the Highlight's oldest Story (s-old).

@@ -23,7 +23,7 @@ jest.mock("../src/components/StoryMoreMenu", () => ({ StoryMoreMenu: (p: object)
 jest.mock("../src/components/StoryInsightsSheet", () => ({ StoryInsightsSheet: (p: object) => require("react").createElement("StoryInsightsSheet", p) }));
 jest.mock("../src/components/AddToHighlightSheet", () => ({ AddToHighlightSheet: (p: object) => require("react").createElement("AddToHighlightSheet", p) }));
 jest.mock("../src/api/events", () => ({ recordEvent: jest.fn(async () => undefined) }));
-jest.mock("../src/api/media", () => ({ getMedia: jest.fn(async () => ({ kind: "photo" })), mediaSource: (uri: string) => ({ uri }) }));
+jest.mock("../src/api/media", () => ({ STORY_VIDEO_BUFFER: jest.requireActual("../src/api/media").STORY_VIDEO_BUFFER, getMedia: jest.fn(async () => ({ kind: "photo" })), mediaSource: (uri: string) => ({ uri }) }));
 jest.mock("../src/api/stories", () => {
   const story = (id: string, ownerId: string) => ({
     id, ownerId, mediaId: `m-${id}`, caption: `Caption ${id}`, audience: "public", allowComments: "everyone", allowSharing: true,
@@ -370,6 +370,8 @@ test("a video Story shows its first frame at once, spins while buffering, and dr
     // Before the video has loaded: its poster frame, not a black screen.
     expect(tree.root.findAll((n) => n.type === Image && n.props.source?.uri === "https://cdn.test/a1/poster").length).toBeGreaterThan(0);
     expect(player().props.source.uri).toBe("https://cdn.test/a1/720");
+    // Starts after half a second of video, not the player's default 2.5 s.
+    expect(player().props.source.bufferConfig.bufferForPlaybackMs).toBe(500);
     // 720p can't be played: the smaller copy instead of an error.
     await act(async () => player().props.onError({}));
     expect(player().props.source.uri).toBe("https://cdn.test/a1/480");

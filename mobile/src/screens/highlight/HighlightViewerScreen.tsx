@@ -14,7 +14,7 @@ import { deleteHighlight, getHighlightDetail, getHighlightItemDetail, updateHigh
 import { ActionSheet } from "../../components/ActionSheet";
 import { tapFeedback } from "../../utils/haptics";
 import { track } from "../../analytics/analytics";
-import { getMedia } from "../../api/media";
+import { getMedia, STORY_VIDEO_BUFFER } from "../../api/media";
 import { mediaFileUrl } from "../../api/stories";
 import { MusicPlayer } from "../../components/MusicPlayer";
 import { ApiError } from "../../api/client";
@@ -271,7 +271,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
       ) : null}
       {mediaKind === "video" ? (
         <Video
-          source={{ uri: mediaUrl, headers: authHeaders }}
+          source={{ uri: mediaUrl, headers: authHeaders, bufferConfig: STORY_VIDEO_BUFFER }}
           poster={{ source: { uri: mediaFileUrl(currentItem.mediaId, "poster"), headers: authHeaders }, resizeMode: "cover" }}
           style={[StyleSheet.absoluteFill, mediaTransformStyle(detail?.crop ?? DEFAULT_CROP, containerSize.width, containerSize.height)]}
           resizeMode="cover"

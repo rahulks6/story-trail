@@ -15,7 +15,7 @@ jest.mock("@react-navigation/native", () => ({
 }));
 jest.mock("../src/components/StoryOverlayLayer", () => ({ StoryOverlayLayer: () => null, useContainerLayout: () => [{ width: 390, height: 844 }, () => undefined] }));
 jest.mock("../src/components/AddToHighlightSheet", () => ({ AddToHighlightSheet: () => null }));
-jest.mock("../src/api/media", () => ({ getMedia: jest.fn(async () => ({ kind: "video" })) }));
+jest.mock("../src/api/media", () => ({ STORY_VIDEO_BUFFER: jest.requireActual("../src/api/media").STORY_VIDEO_BUFFER, getMedia: jest.fn(async () => ({ kind: "video" })) }));
 jest.mock("../src/api/stories", () => ({ mediaFileUrl: (id: string, variant: string) => `https://api.test/media/${id}/${variant}` }));
 jest.mock("../src/api/engagement", () => ({
   getStoryDetail: jest.fn(async (id: string) => ({ story: { id, mediaId: `m-${id}`, caption: "", overlays: [], drawing: [], filter: "original", audioMuted: false, crop: { zoom: 1, offsetX: 0, offsetY: 0 } } })),
