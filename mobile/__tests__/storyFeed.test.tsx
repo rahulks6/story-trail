@@ -370,6 +370,9 @@ test("a video Story shows its first frame at once, spins while buffering, and dr
     // Before the video has loaded: its poster frame, not a black screen.
     expect(tree.root.findAll((n) => n.type === Image && n.props.source?.uri === "https://cdn.test/a1/poster").length).toBeGreaterThan(0);
     expect(player().props.source.uri).toBe("https://cdn.test/a1/720");
+    // Drawn in the normal view layer: on many real phones a separate video surface under the
+    // Story's text kept showing the poster, so a video Story with text looked like a photo.
+    expect(player().props.viewType).toBe(0);
     // 720p can't be played: the smaller copy instead of an error.
     await act(async () => player().props.onError({}));
     expect(player().props.source.uri).toBe("https://cdn.test/a1/480");

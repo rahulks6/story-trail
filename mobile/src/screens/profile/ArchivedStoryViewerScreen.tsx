@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Animated, Image, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "../../components/Pressable";
 import { StoryBottomScrim, StoryCaption } from "../../components/StoryCaption";
-import Video from "react-native-video";
+import Video, { ViewType } from "react-native-video";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useAppForeground } from "../../hooks/useAppForeground";
@@ -150,7 +150,7 @@ export function ArchivedStoryViewerScreen({ route, navigation }: Props): React.J
   return (
     <View style={styles.container} onLayout={onContainerLayout}>
       {mediaKind === "video" ? (
-        <Video
+        <Video viewType={ViewType.TEXTURE}
           key={attempt}
           source={{ uri: mediaUrl, headers: authHeaders }}
           poster={{ source: { uri: mediaFileUrl(detail.mediaId, "poster"), headers: authHeaders }, resizeMode: "cover" }}

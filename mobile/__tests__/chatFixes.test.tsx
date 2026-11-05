@@ -15,7 +15,7 @@ jest.mock("react-native-video", () => {
     ReactLib.useImperativeHandle(ref, () => ({ seek: mockSeek }));
     return ReactLib.createElement("Video", props);
   });
-  return { __esModule: true, default: Video };
+  return { __esModule: true, default: Video, ViewType: { TEXTURE: 0, SURFACE: 1, SURFACE_SECURE: 2 } };
 });
 
 afterEach(() => jest.restoreAllMocks());
