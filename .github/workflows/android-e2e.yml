@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       flow:
-        description: "smoke (every main screen, phone + tablet) or tour (every feature, phone)"
+        description: "smoke (every main screen, phone + tablet), tour (every feature, phone) or videotext (a video Story with text, phone)"
         required: false
         default: smoke
 
@@ -79,7 +79,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        size: ${{ inputs.flow == 'tour' && fromJSON('["phone"]') || fromJSON('["phone", "tablet"]') }}
+        size: ${{ (inputs.flow == 'tour' || inputs.flow == 'videotext') && fromJSON('["phone"]') || fromJSON('["phone", "tablet"]') }}
     steps:
       - uses: actions/checkout@v5
 

@@ -1,0 +1,145 @@
+# A video Story with text, run on an Android emulator by .github/workflows/android-e2e.yml with
+# flow=videotext: sign up, choose the test video from the gallery, add text, share, then watch it.
+# Screenshots a moment apart show whether the video is still playing (a moving picture) or has
+# become a still, in the editor after the text tool and in the posted Story.
+appId: com.katkee.app
+---
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "Log in"
+    timeout: 60000
+- takeScreenshot: t01-login
+- tapOn:
+    text: ".*Sign up.*"
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible: "Create your account"
+    timeout: 30000
+- tapOn: "Display name"
+- inputText: "Riya Tester"
+- runFlow: close-keyboard.yaml
+- tapOn: "Username"
+- inputText: ${USERNAME}
+- runFlow: close-keyboard.yaml
+- tapOn: "Email"
+- inputText: ${EMAIL}
+- runFlow: close-keyboard.yaml
+- tapOn: "Date of birth"
+- inputText: "01011995"
+- runFlow: close-keyboard.yaml
+- tapOn: "Password"
+- inputText: ${PASSWORD}
+- runFlow: close-keyboard.yaml
+- takeScreenshot: t02-signup
+- scrollUntilVisible:
+    element: "Sign up"
+    optional: true
+- tapOn: "Sign up"
+- extendedWaitUntil:
+    visible: "Verify your email"
+    timeout: 45000
+- takeScreenshot: t03-verify
+- runScript: ci-verify.js
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "(What are you into\\?|Forgot password\\?)"
+    timeout: 30000
+- runFlow: login-if-needed.yaml
+
+# Onboarding
+- extendedWaitUntil:
+    visible: "What are you into?"
+    timeout: 30000
+- tapOn: "Cricket"
+- tapOn: "Food"
+- tapOn: "Festivals"
+- takeScreenshot: t04-interests
+- tapOn: "Next.*"
+- extendedWaitUntil:
+    visible: "People to follow"
+    timeout: 20000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: t05-people
+# Step 3: find friends from contacts (optional), then into the app.
+- tapOn: "(Next|Skip)"
+- extendedWaitUntil:
+    visible: "Start using Katkee"
+    timeout: 20000
+- takeScreenshot: t05b-contacts-step
+- tapOn: "Start using Katkee"
+- extendedWaitUntil:
+    visible: "(Home|Not now)"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "Not now"
+    timeout: 15000
+    optional: true
+- takeScreenshot: t06-nearby-offer
+- tapOn:
+    text: "Not now"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: t07-home
+
+# A video from the gallery
+- tapOn: "Create a Story"
+- waitForAnimationToEnd:
+    timeout: 5000
+- tapOn: "Choose from gallery"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: v01-picker
+- tapOn:
+    text: "Video.*"
+    index: 0
+    optional: true
+- tapOn:
+    id: ".*icon_thumbnail"
+    index: 0
+    optional: true
+- extendedWaitUntil:
+    visible: "Your story"
+    timeout: 20000
+- takeScreenshot: v02-editor-a
+- takeScreenshot: v03-editor-b
+- tapOn: "Add text"
+- inputText: "Video with text"
+- takeScreenshot: v04-text-tool
+- tapOn: "Done"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: v05-after-text-a
+- takeScreenshot: v06-after-text-b
+- tapOn: "Your story"
+- extendedWaitUntil:
+    visible: "Home"
+    timeout: 30000
+- takeScreenshot: v07-posting
+# Wait for the server to finish the video, then open it.
+- repeat:
+    times: 12
+    while:
+      notVisible: "Open your Story"
+    commands:
+      - tapOn: "Profile"
+      - waitForAnimationToEnd:
+          timeout: 5000
+- tapOn: "Profile"
+- extendedWaitUntil:
+    visible: "Open your Story"
+    timeout: 60000
+- tapOn:
+    text: "Open your Story"
+    waitToSettleTimeoutMs: 500
+- takeScreenshot: v08-story-a
+- takeScreenshot: v09-story-b
+- takeScreenshot: v10-story-c

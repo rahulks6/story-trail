@@ -32,6 +32,11 @@ USERNAME="e2e_and_${RUN}_${SIZE}"
 EMAIL="support+e2e-and-${RUN}-${SIZE}@katkee.com"
 echo "$USERNAME $EMAIL $PASSWORD" >> "$RUNNER_TEMP/accounts"
 EXTRA=()
+if [ "$FLOW" = videotext ]; then
+  # A short moving test video, in the gallery the photo picker shows.
+  adb push "$GITHUB_WORKSPACE/mobile/.maestro/assets/tour-video.mp4" /sdcard/Movies/tour-video.mp4 > /dev/null
+  adb shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/Movies/tour-video.mp4 > /dev/null
+fi
 if [ "$FLOW" = tour ]; then
   # The tour's photo, in the gallery the photo picker shows.
   adb push "$GITHUB_WORKSPACE/mobile/.maestro/assets/tour-photo.jpg" /sdcard/Pictures/tour-photo.jpg > /dev/null
