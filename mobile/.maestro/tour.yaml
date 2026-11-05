@@ -324,46 +324,132 @@ appId: com.katkee.app
     text: "Discard"
     optional: true
 
-# Settings and every page under it
+# Settings and every page under it. Each row is scrolled to and opened (not optional), so a
+# Settings page that fails to open fails the tour; Back returns to Settings each time.
 - tapOn: "Settings"
 - waitForAnimationToEnd:
     timeout: 3000
 - takeScreenshot: t39-settings
-- tapOn:
-    text: "Notifications"
-    optional: true
+- scrollUntilVisible:
+    element: "Notifications"
+    direction: DOWN
+- tapOn: "Notifications"
+- waitForAnimationToEnd:
+    timeout: 3000
 - takeScreenshot: t40-notifications
 - pressKey: Back
-- tapOn:
-    text: "Your interests"
-    optional: true
+# A page that opened the keyboard takes a second Back.
+- runFlow:
+    when:
+      notVisible: "Settings"
+    commands:
+      - pressKey: Back
+- extendedWaitUntil:
+    visible: "Settings"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Your interests"
+    direction: DOWN
+- tapOn: "Your interests"
+- waitForAnimationToEnd:
+    timeout: 3000
 - takeScreenshot: t41-your-interests
 - pressKey: Back
-- tapOn:
-    text: "Close Friends"
-    optional: true
+# A page that opened the keyboard takes a second Back.
+- runFlow:
+    when:
+      notVisible: "Settings"
+    commands:
+      - pressKey: Back
+- extendedWaitUntil:
+    visible: "Settings"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Close Friends"
+    direction: DOWN
+- tapOn: "Close Friends"
+- waitForAnimationToEnd:
+    timeout: 3000
 - takeScreenshot: t42-close-friends
 - pressKey: Back
+# A page that opened the keyboard takes a second Back.
+- runFlow:
+    when:
+      notVisible: "Settings"
+    commands:
+      - pressKey: Back
+- extendedWaitUntil:
+    visible: "Settings"
+    timeout: 10000
 - scrollUntilVisible:
     element: "Blocked accounts"
-    optional: true
-- takeScreenshot: t43-settings-middle
-- tapOn:
-    text: "Request verification"
-    optional: true
+    direction: DOWN
+- tapOn: "Blocked accounts"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: t43-blocked
+- pressKey: Back
+# A page that opened the keyboard takes a second Back.
+- runFlow:
+    when:
+      notVisible: "Settings"
+    commands:
+      - pressKey: Back
+- extendedWaitUntil:
+    visible: "Settings"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Request verification"
+    direction: DOWN
+- tapOn: "Request verification"
+- waitForAnimationToEnd:
+    timeout: 3000
 - takeScreenshot: t44-verification
 - pressKey: Back
+# A page that opened the keyboard takes a second Back.
+- runFlow:
+    when:
+      notVisible: "Settings"
+    commands:
+      - pressKey: Back
+- extendedWaitUntil:
+    visible: "Settings"
+    timeout: 10000
 - scrollUntilVisible:
-    element: "Log out"
-    optional: true
-- takeScreenshot: t45-settings-bottom
-- tapOn:
-    text: "Send feedback"
-    optional: true
+    element: "Send feedback"
+    direction: DOWN
+- tapOn: "Send feedback"
+- waitForAnimationToEnd:
+    timeout: 3000
 - takeScreenshot: t46-feedback
 - pressKey: Back
-- tapOn:
-    text: "About"
-    optional: true
+# A page that opened the keyboard takes a second Back.
+- runFlow:
+    when:
+      notVisible: "Settings"
+    commands:
+      - pressKey: Back
+- extendedWaitUntil:
+    visible: "Settings"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "About"
+    direction: DOWN
+- tapOn: "About"
+- waitForAnimationToEnd:
+    timeout: 3000
 - takeScreenshot: t47-about
 - pressKey: Back
+# A page that opened the keyboard takes a second Back.
+- runFlow:
+    when:
+      notVisible: "Settings"
+    commands:
+      - pressKey: Back
+- extendedWaitUntil:
+    visible: "Settings"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Log out"
+    direction: DOWN
+- takeScreenshot: t45-settings-bottom
