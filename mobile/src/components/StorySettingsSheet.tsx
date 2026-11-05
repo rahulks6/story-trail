@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { colors, radii, spacing, typography, ICONS } from "../theme";
 import { Icon } from "./Icon";
+import { KeyboardAvoider } from "./KeyboardAvoider";
 import { TOPICS } from "../models/topics";
 import { t } from "../i18n";
 import { topicLabel } from "../i18n/names";
@@ -112,7 +113,8 @@ export function StorySettingsSheet({
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.fill}>
         <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel={t("common.close")} />
-        <View style={[styles.sheet, { paddingBottom: spacing.md + bottom }]} accessibilityViewIsModal>
+        {/* Lifted above the keyboard while the picture description is typed. */}
+        <KeyboardAvoider style={[styles.sheet, { paddingBottom: spacing.md + bottom }]} behavior="padding">
           <View style={styles.handle} />
           <Text style={styles.title} accessibilityRole="header">{t("storySettingsSheet.storySettings")}</Text>
           <ScrollView>
@@ -177,7 +179,7 @@ export function StorySettingsSheet({
           <Pressable style={styles.done} onPress={onClose} accessibilityRole="button">
             <Text style={styles.doneText}>{t("common.done")}</Text>
           </Pressable>
-        </View>
+        </KeyboardAvoider>
       </View>
     </Modal>
   );
