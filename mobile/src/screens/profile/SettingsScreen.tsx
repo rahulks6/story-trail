@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Linking, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Linking, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Toggle } from "../../components/Toggle";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import type { RootStackParamList } from "../../navigation/types";
@@ -195,8 +196,8 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
         />
         <ListRow label={t("common.requestVerification")} icon={ICONS.verified} onPress={() => navigation.navigate("Verification")} />
         <ListRow label={t("common.notifications")} icon={ICONS.notifications} onPress={() => navigation.navigate("NotificationSettings")} />
-        <ListRow label={t("settings.appearance")} icon={ICONS.settings} detail={APPEARANCE_LABELS[appearanceChoice()]} onPress={() => setAppearanceOpen(true)} />
-        <ListRow label={t("settings.language")} icon={ICONS.settings} detail={LANGUAGE_NAMES[language]} onPress={() => setLanguageOpen(true)} />
+        <ListRow label={t("settings.appearance")} icon={ICONS.appearance} detail={APPEARANCE_LABELS[appearanceChoice()]} onPress={() => setAppearanceOpen(true)} />
+        <ListRow label={t("settings.language")} icon={ICONS.language} detail={LANGUAGE_NAMES[language]} onPress={() => setLanguageOpen(true)} />
       </View>
       <ActionSheet
         visible={languageOpen}
@@ -235,7 +236,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
             </Text>
           </View>
           {togglingPrivacy ? <ActivityIndicator color={colors.accentText} /> : (
-            <Switch value={isPrivate} onValueChange={onTogglePrivacy} disabled={professional && !isPrivate} accessibilityLabel={t("common.privateAccount")} accessibilityHint={professional ? t("settings.unavailableForAProfessionalAccount") : undefined} />
+            <Toggle value={isPrivate} onValueChange={onTogglePrivacy} disabled={professional && !isPrivate} accessibilityLabel={t("common.privateAccount")} accessibilityHint={professional ? t("settings.unavailableForAProfessionalAccount") : undefined} />
           )}
         </View>
         <View style={styles.switchRow}>
@@ -246,7 +247,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
           {togglingNearby || nearbyOn === null ? (
             <ActivityIndicator color={colors.accentText} />
           ) : (
-            <Switch value={nearbyOn} onValueChange={(next) => void onToggleNearby(next)} accessibilityLabel={t("settings.nearbyStories")} />
+            <Toggle value={nearbyOn} onValueChange={(next) => void onToggleNearby(next)} accessibilityLabel={t("settings.nearbyStories")} />
           )}
         </View>
         <View style={styles.switchRow}>
@@ -257,7 +258,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
           {togglingFindable ? (
             <ActivityIndicator color={colors.accentText} />
           ) : (
-            <Switch value={findable} onValueChange={(next) => void onToggleFindable(next)} accessibilityLabel={t("settings.letPeopleFindMeFrom")} />
+            <Toggle value={findable} onValueChange={(next) => void onToggleFindable(next)} accessibilityLabel={t("settings.letPeopleFindMeFrom")} />
           )}
         </View>
         <View style={styles.switchRow}>
@@ -272,7 +273,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
           {togglingWeb ? (
             <ActivityIndicator color={colors.accentText} />
           ) : (
-            <Switch value={onWeb && !isPrivate} onValueChange={(next) => void onToggleWeb(next)} disabled={isPrivate} accessibilityLabel={t("settings.showMyProfileOnThe")} accessibilityHint={isPrivate ? t("settings.unavailableForAPrivateAccount") : undefined} />
+            <Toggle value={onWeb && !isPrivate} onValueChange={(next) => void onToggleWeb(next)} disabled={isPrivate} accessibilityLabel={t("settings.showMyProfileOnThe")} accessibilityHint={isPrivate ? t("settings.unavailableForAPrivateAccount") : undefined} />
           )}
         </View>
         <ListRow
@@ -310,7 +311,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
         <ListRow label={t("common.help")} icon={ICONS.help} onPress={() => navigation.navigate("Help")} />
         <ListRow label={t("common.sendFeedback")} icon={ICONS.dm} onPress={() => navigation.navigate("Feedback")} />
         <ListRow label={t("settings.downloadYourData")} icon={ICONS.archive} onPress={() => navigation.navigate("DataExport")} />
-        <ListRow label={t("settings.accountStatus")} icon={ICONS.about} onPress={() => navigation.navigate("Appeals")} />
+        <ListRow label={t("settings.accountStatus")} icon={ICONS.report} onPress={() => navigation.navigate("Appeals")} />
         <ListRow label={t("common.about")} icon={ICONS.about} onPress={() => navigation.navigate("About")} />
       </View>
 

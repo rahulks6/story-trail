@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, AppState, Linking, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
+import { ActivityIndicator, AppState, Linking, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Toggle } from "../../components/Toggle";
 import { Pressable } from "../../components/Pressable";
 import { colors, radii, spacing, typography } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
@@ -127,7 +128,7 @@ export function NotificationSettingsScreen(): React.JSX.Element {
           {pending.has(row.key) ? (
             <ActivityIndicator color={colors.accentText} />
           ) : (
-            <Switch
+            <Toggle
               value={prefs[row.key]}
               disabled={disabled}
               onValueChange={(value) => void onToggle(row.key, value)}

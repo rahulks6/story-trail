@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Toggle } from "../../components/Toggle";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../navigation/types";
 import { colors, radii, spacing, typography, ICONS } from "../../theme";
@@ -183,7 +184,7 @@ export function ProfessionalAccountScreen({ navigation }: Props): React.JSX.Elem
           <Text style={typography.body}>{t("professionalAccount.showCategoryOnProfile")}</Text>
           <Text style={styles.caption}>{t("professionalAccount.shownUnderYourName", { category: professionalCategoryLabel(category ?? "creator") ?? "" })}</Text>
         </View>
-        <Switch value={showCategory} onValueChange={setShowCategory} disabled={blocked} accessibilityLabel={t("professionalAccount.showCategoryOnProfile")} />
+        <Toggle value={showCategory} onValueChange={setShowCategory} disabled={blocked} accessibilityLabel={t("professionalAccount.showCategoryOnProfile")} />
       </View>
 
       {!pro ? (

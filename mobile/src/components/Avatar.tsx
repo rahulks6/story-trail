@@ -36,13 +36,28 @@ export function Avatar({ username, displayName, avatarMediaId, size = 44, style 
       {photo.source ? (
         <FadeInImage source={photo.source} style={round} onError={photo.onError} />
       ) : (
-        <Text style={[styles.initial, { fontSize: Math.round(size * 0.4) }]}>{initialOf(displayName || username || "") || "?"}</Text>
+        <View style={[StyleSheet.absoluteFill, styles.initialFill, { backgroundColor: initialColor(username || displayName || "") }]}>
+          <Text style={[styles.initial, { fontSize: Math.round(size * 0.4) }]}>{initialOf(displayName || username || "") || "?"}</Text>
+        </View>
       )}
     </View>
   );
 }
 
+/**
+ * Someone without a photo gets their initial on a colour of their own (the same everywhere, from
+ * their username), as other social apps do, instead of a grey disc. Deep enough for white text.
+ */
+export const INITIAL_COLORS = ["#E07B00", "#E0445E", "#B4479F", "#6E56CF", "#2F7BD8", "#0F8F7E", "#3E8E4F", "#C2552E"] as const;
+
+export function initialColor(name: string): string {
+  let hash = 0;
+  for (const ch of name.toLowerCase()) hash = (hash * 31 + ch.codePointAt(0)!) >>> 0;
+  return INITIAL_COLORS[hash % INITIAL_COLORS.length]!;
+}
+
 const styles = StyleSheet.create({
   circle: { borderRadius: radii.pill, backgroundColor: colors.surfaceElevated, alignItems: "center", justifyContent: "center", overflow: "hidden" },
-  initial: { color: colors.textPrimary, fontWeight: "700" },
+  initialFill: { alignItems: "center", justifyContent: "center" },
+  initial: { color: "#FFFFFF", fontWeight: "700" },
 });

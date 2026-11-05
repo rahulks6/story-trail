@@ -1,5 +1,6 @@
 import React from "react";
-import { Modal, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
+import { Modal, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Toggle } from "./Toggle";
 import { Pressable } from "./Pressable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -124,7 +125,7 @@ export function StorySettingsSheet({
                   <Text style={typography.body}>{t("storySettingsSheet.allowSharing")}</Text>
                   <Text style={styles.hint}>{t("storySettingsSheet.othersCanSendItTo")}</Text>
                 </View>
-                <Switch value={settings.allowSharing} onValueChange={(v) => set({ allowSharing: v })} accessibilityLabel={t("storySettingsSheet.allowSharing")} />
+                <Toggle value={settings.allowSharing} onValueChange={(v) => set({ allowSharing: v })} accessibilityLabel={t("storySettingsSheet.allowSharing")} />
               </View>
               {festival && onJoinFestival && settings.visibility === "public" ? (
                 <View style={styles.row}>
@@ -132,7 +133,7 @@ export function StorySettingsSheet({
                     <Text style={typography.body}>{t("storySettingsSheet.addToNameStories", { name: festival.name })}</Text>
                     <Text style={styles.hint}>{t("storySettingsSheet.itShowsInTheFestivals")}</Text>
                   </View>
-                  <Switch value={!!joinFestival} onValueChange={onJoinFestival} accessibilityLabel={t("storySettingsSheet.addToNameStories", { name: festival.name })} />
+                  <Toggle value={!!joinFestival} onValueChange={onJoinFestival} accessibilityLabel={t("storySettingsSheet.addToNameStories", { name: festival.name })} />
                 </View>
               ) : null}
             </View>

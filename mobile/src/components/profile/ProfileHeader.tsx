@@ -3,6 +3,7 @@ import type { ImageURISource } from "react-native";
 import { StyleSheet, Text, View } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Pressable } from "../Pressable";
+import { StoryRing } from "../StoryRing";
 import { Avatar } from "../Avatar";
 import { FadeInImage } from "../FadeInImage";
 import { coverFileUrl } from "../../api/users";
@@ -118,7 +119,8 @@ export function ProfileHeader({
   const cover = useProfilePhotoSource(coverMediaId ? coverFileUrl(username, coverMediaId) : null, coverMediaId, accessToken);
   const showCover = !!coverMediaId && !!accessToken && !cover.failed;
   const photo = (
-    <View style={[styles.ring, showCover && styles.ringOverCover, hasActiveStory && styles.ringActive]}>
+    <View style={[styles.ring, showCover && styles.ringOverCover]}>
+      {hasActiveStory ? <StoryRing size={RING_SIZE} width={RING_WIDTH} /> : null}
       <Avatar username={username} displayName={displayName} avatarMediaId={avatarMediaId} size={PHOTO_SIZE} />
     </View>
   );
@@ -241,14 +243,12 @@ const styles = StyleSheet.create({
     width: RING_SIZE,
     height: RING_SIZE,
     borderRadius: RING_SIZE / 2,
-    borderWidth: RING_WIDTH,
-    borderColor: "transparent",
+    // The ring is drawn (StoryRing) over the whole box; the photo sits in the middle.
     alignItems: "center",
     justifyContent: "center",
   },
   // A ring of page colour separates the photo from the cover behind it.
   ringOverCover: { backgroundColor: colors.background },
-  ringActive: { borderColor: colors.accentText },
   addBadge: {
     position: "absolute",
     right: 2,

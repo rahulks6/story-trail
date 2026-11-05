@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from "react";
-import { ActivityIndicator, Alert, FlatList, StyleSheet, Switch, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, TextInput, View } from "react-native";
+import { Toggle } from "../../components/Toggle";
 import { Pressable } from "../../components/Pressable";
 import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -142,7 +143,7 @@ export function GroupInfoScreen({ navigation, route }: Props): React.JSX.Element
             ) : null}
             <View style={styles.switchRow}>
               <Text style={typography.body}>{t("common.muteNotifications")}</Text>
-              <Switch value={!!group.muted} onValueChange={(next) => void toggleMute(next)} accessibilityLabel={t("common.muteNotifications")} />
+              <Toggle value={!!group.muted} onValueChange={(next) => void toggleMute(next)} accessibilityLabel={t("common.muteNotifications")} />
             </View>
           </View>
           {error ? <Banner text={error} /> : null}

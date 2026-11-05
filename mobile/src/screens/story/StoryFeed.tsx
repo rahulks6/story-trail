@@ -9,6 +9,7 @@ import Video, {type VideoRef} from "react-native-video";
 import { mediaColors as colors, radii, spacing, mediaTypography as typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { takeWarmStories } from "../../state/warmStories";
+import { StoryRing } from "../../components/StoryRing";
 import { getMyActiveStories, getUserActiveStories, getViewCount, mediaFileUrl, recordStoryView, type PublicStory } from "../../api/stories";
 import { getMedia, mediaSource, STORY_VIDEO_BUFFER } from "../../api/media";
 import { getStoryDetail, likeStory, unlikeStory, type StoryDetail } from "../../api/engagement";
@@ -1049,8 +1050,8 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           // A Collab Story: both creators, the owner first, each name opening their profile.
           <View style={styles.headerWho}>
             <View style={styles.collabAvatars}>
-              <View style={styles.avatarRing}><Avatar username={liveCollab.owner.username} avatarMediaId={liveCollab.owner.avatarMediaId} size={30} /></View>
-              <View style={[styles.avatarRing, styles.collabSecond]}><Avatar username={liveCollab.collaborator.username} avatarMediaId={liveCollab.collaborator.avatarMediaId} size={30} /></View>
+              <View style={styles.avatarRing}><StoryRing size={36} width={2} /><Avatar username={liveCollab.owner.username} avatarMediaId={liveCollab.owner.avatarMediaId} size={30} /></View>
+              <View style={[styles.avatarRing, styles.collabSecond]}><StoryRing size={36} width={2} /><Avatar username={liveCollab.collaborator.username} avatarMediaId={liveCollab.collaborator.avatarMediaId} size={30} /></View>
             </View>
             <Pressable onPress={() => onOpenProfile(liveCollab.owner.username)} hitSlop={6} style={styles.usernameRow} accessibilityRole="button" accessibilityLabel={t("storyFeed.openUsernameSProfile", { username: liveCollab.owner.username })}>
               <VerifiedName name={liveCollab.owner.username} verified={liveCollab.owner.verified} style={styles.username} />
@@ -1064,6 +1065,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         ) : (
           <Pressable onPress={() => currentUsername && onOpenProfile(currentUsername)} hitSlop={8} style={styles.headerWho} accessibilityRole="button" accessibilityLabel={t("storyFeed.openCurrentusernameSProfile", { currentUsername: currentUsername ?? "" })}>
             <View style={styles.avatarRing}>
+              <StoryRing size={36} width={2} />
               <Avatar username={currentUsername ?? ""} size={30} />
             </View>
             <VerifiedName name={currentUsername ?? ""} verified={!!currentUsername && !!verified?.[currentUsername]} style={styles.username} containerStyle={styles.usernameRow} />
@@ -1385,13 +1387,11 @@ const styles = StyleSheet.create({
   followingButton: { borderColor: "rgba(255,255,255,0.5)" },
   followLabel: { color: colors.textPrimary, fontWeight: "700", fontSize: 13 },
   chromeHidden: { opacity: 0 },
-  // The creator's photo inside the accent Story ring.
+  // The creator's photo inside Katkee's gradient Story ring (StoryRing).
   avatarRing: {
     width: 36,
     height: 36,
     borderRadius: radii.pill,
-    borderWidth: 2,
-    borderColor: colors.accentText,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.surface,

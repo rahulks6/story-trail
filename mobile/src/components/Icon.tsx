@@ -30,6 +30,9 @@ export function Icon({name,size,color,selected=false,style}: {name:IconName;size
   audioOn:'M3 9h4l5-5v16l-5-5H3ZM16 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14',
   audioMuted:'M3 9h4l5-5v16l-5-5H3ZM16 9l6 6m0-6-6 6',
   crop:'M6 2v16h16M2 6h16v16',
+  // Appearance: a circle, half light and half dark. Language: a globe.
+  appearance:'M12 3a9 9 0 1 1 0 18a9 9 0 1 1 0-18ZM12 3v18M12 7h4M12 11h6M12 15h5',
+  language:'M12 3a9 9 0 1 1 0 18a9 9 0 1 1 0-18ZM3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18',
   // Trim: the kept part of a clip between two brackets.
   trim:'M8 3H4v18h4M16 3h4v18h-4M10 12h4',
   viewers:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z',
