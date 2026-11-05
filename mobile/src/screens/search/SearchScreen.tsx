@@ -2,6 +2,8 @@ import { Icon } from "../../components/Icon";
 import { ListSkeleton } from "../../components/Skeleton";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, TextInput, View } from "react-native";
+import { ExploreGrid } from "../../components/ExploreGrid";
+import { getExplore, type ExploreTile } from "../../api/stories";
 import { Pressable } from "../../components/Pressable";
 import type { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
@@ -94,6 +96,8 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<SearchFilter>("all");
   const [suggestions, setSuggestions] = useState<SuggestedPerson[] | null>(null);
+  // Explore: new people's Stories as a grid above the suggestions (empty when there are none).
+  const [explore, setExplore] = useState<ExploreTile[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   // Follow state changed here, by username, over what the server sent with the list.
   const [relations, setRelations] = useState<Record<string, ListRelationship>>({});
@@ -103,6 +107,8 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
 
   const loadSuggestions = useCallback(async (signal?: AbortSignal) => {
     if (!accessToken) return;
+    // Explore loads alongside; it never holds up the people list, and a failure just hides it.
+    void Promise.resolve().then(() => getExplore(accessToken, signal)).then(({ explore: tiles }) => { if (!signal?.aborted) setExplore(tiles); }).catch(() => undefined);
     try {
       const { suggestions: found } = await getSuggestions(accessToken, signal);
       if (!signal?.aborted) {
@@ -119,6 +125,16 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
     void loadSuggestions(controller.signal);
     return () => controller.abort();
   }, [loadSuggestions]);
+
+  // A tile opens that person's Stories; swiping on goes through the rest of the grid, in order.
+  const openExplore = useCallback((index: number) => {
+    rootNavigation.navigate("StoryViewer", {
+      creators: explore.map((tile) => tile.owner.username),
+      startIndex: index,
+      initialStoryId: explore[index]?.story.id,
+      verifiedCreators: explore.filter((tile) => tile.owner.verified).map((tile) => tile.owner.username),
+    });
+  }, [explore, rootNavigation]);
 
   // Re-selecting the Search tab puts the cursor back in the box.
   useEffect(
@@ -296,7 +312,7 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
       {!debouncedQuery ? (
         suggestions === null ? (
           <ListSkeleton rows={6} label={t("search.loadingSuggestions")} />
-        ) : suggestions.length === 0 ? (
+        ) : suggestions.length === 0 && explore.length === 0 ? (
           <View style={styles.fill}>
             {findFriends}
             <EmptyState icon="search" title={t("common.findPeople")} message={t("search.searchByNameUsernameOr")}>
@@ -311,7 +327,8 @@ export function SearchScreen({ navigation }: Props): React.JSX.Element {
             ListHeaderComponent={
               <>
                 {findFriends}
-                <Text style={[typography.label, styles.sectionTitle]} accessibilityRole="header">{t("search.suggestedForYou")}</Text>
+                <ExploreGrid tiles={explore} accessToken={accessToken} onOpen={openExplore} />
+                {suggestions.length ? <Text style={[typography.label, styles.sectionTitle]} accessibilityRole="header">{t("search.suggestedForYou")}</Text> : null}
               </>
             }
             keyboardShouldPersistTaps="handled"

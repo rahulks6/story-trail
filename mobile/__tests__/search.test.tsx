@@ -20,7 +20,7 @@ jest.mock("../src/api/users", () => ({
   unfollowUser: jest.fn(),
   getProfile: jest.fn(),
 }));
-jest.mock("../src/api/stories", () => ({ getUserActiveStories: jest.fn(async () => ({ stories: [] })) }));
+jest.mock("../src/api/stories", () => ({ getUserActiveStories: jest.fn(async () => ({ stories: [] })), getExplore: jest.fn(async () => ({ explore: [] })) }));
 jest.mock("../src/api/conversations", () => ({ openConversation: jest.fn() }));
 jest.mock("../src/state/invites", () => ({ shareInvite: jest.fn() }));
 jest.mock("../src/components/HighlightsRow", () => ({ HighlightsRow: () => null }));
@@ -216,5 +216,34 @@ describe("profile links", () => {
     api.getProfile.mockResolvedValue({ profile: profile({ username: "bob" }) });
     await renderProfile({ username: "bob" });
     expect(api.getProfile).toHaveBeenCalledWith("bob", "token");
+  });
+});
+
+describe("Explore, before you type", () => {
+  const storiesApi = jest.requireMock("../src/api/stories") as { getExplore: jest.Mock };
+  const tile = (name: string, kind: "photo" | "video" = "photo", verified = false) => ({
+    owner: { id: `id-${name}`, username: name, displayName: name.toUpperCase(), avatarMediaId: null, verified },
+    story: { id: `s-${name}`, mediaId: `m-${name}`, createdAt: "2026-11-05T10:00:00Z", kind, thumbnailUrl: `https://cdn.test/${name}/thumb`, imageUrl: null, urlsExpireAt: null },
+  });
+
+  test("shows new people's Stories as a grid, and a tap opens them with the rest of the grid after", async () => {
+    storiesApi.getExplore.mockResolvedValueOnce({ explore: [tile("asha"), tile("ravi", "video", true), tile("meera")] });
+    await renderSearch();
+    expect(texts()).toContain("Explore");
+    expect(texts()).toEqual(expect.arrayContaining(["asha", "ravi", "meera"]));
+    await press("Open RAVI's video Story");
+    expect(mockRootNavigation.navigate).toHaveBeenCalledWith("StoryViewer", { creators: ["asha", "ravi", "meera"], startIndex: 1, initialStoryId: "s-ravi", verifiedCreators: ["ravi"] });
+  });
+
+  test("is simply not there when nobody new has posted, and never while searching", async () => {
+    await renderSearch();
+    expect(texts()).not.toContain("Explore");
+    storiesApi.getExplore.mockResolvedValueOnce({ explore: [tile("asha")] });
+    await act(async () => tree.unmount());
+    await renderSearch();
+    expect(texts()).toContain("Explore");
+    api.searchUsers.mockResolvedValue({ results: [], nextOffset: null } as never);
+    await typeQuery("zz");
+    expect(texts()).not.toContain("Explore");
   });
 });

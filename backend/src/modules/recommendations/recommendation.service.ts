@@ -61,3 +61,36 @@ export async function getRankedHomeFeed(viewerId:string):Promise<RankedFeedEntry
  const strip=({newestAt:_n,...e}:RankedFeedEntry&{newestAt:string}):RankedFeedEntry=>e;
  return [...own,...mixFeed(followed,diversifyTopics(fresh,e=>e.ranking!.primaryTopic)).map(strip)];
 }
+
+/** People shown on Explore at most. */
+export const EXPLORE_LIMIT = 30;
+
+export interface ExploreTile {
+  owner: FeedFeatures['owner'];
+  /** That person's newest public Story: the tile shows it, and a tap opens their Stories there. */
+  story: { id: string; mediaId: string; createdAt: string; topic: string | null };
+}
+
+/**
+ * Explore (the Search tab before you type): new people whose public Stories have earned reach to
+ * you, best match for your interests first, one tile each, from the same pool, rules and ranking
+ * as the new people on Home. Only public Stories, never Close Friends or followers-only ones.
+ */
+export async function getExplore(viewerId:string, limit=EXPLORE_LIMIT):Promise<ExploreTile[]> {
+ const [discovery,profile]=await Promise.all([listDiscoveryCandidates(viewerId,currentReachSettings(),DISCOVERY_POOL),viewerTopicProfile(viewerId)]);
+ if(!discovery.length)return [];
+ const weights=topicWeights(profile);
+ const locality=new Map(discovery.map(d=>[d.ownerId,d.locality]));
+ const entries=(await feedFeatures(viewerId,discovery.map(d=>d.ownerId).filter(id=>id!==viewerId)))
+  .filter(f=>!f.isFollowing&&f.owner.id!==viewerId)
+  .map(f=>rankFeatures(f,viewerId,weights))
+  .map(e=>({...e,score:e.score*LOCALITY_BOOST[locality.get(e.owner.id)??3],newestAt:e.ranking!.newestAt}));
+ const ranked=diversifyTopics(rankOrder(entries),e=>e.ranking!.primaryTopic);
+ const tiles:ExploreTile[]=[];
+ for(const e of ranked){
+  const story=[...e.stories].filter(s=>s.audience==='public').sort((a,b)=>b.createdAt.localeCompare(a.createdAt))[0];
+  if(story)tiles.push({owner:e.owner,story:{id:story.id,mediaId:story.mediaId,createdAt:story.createdAt,topic:story.topic}});
+  if(tiles.length>=limit)break;
+ }
+ return tiles;
+}

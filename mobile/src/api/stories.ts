@@ -270,3 +270,13 @@ export function mediaFileUrl(mediaId: string, variant?: MediaVariant): string {
   // With a CDN the API answers with a redirect to a signed URL; small variants keep grids light.
   return `${API_BASE_URL}/api/v1/media/${mediaId}/file${variant ? `?variant=${variant}` : ""}`;
 }
+
+/** One Explore tile (backend recommendation.routes.ts): a new person's newest public Story. */
+export interface ExploreTile {
+  owner: { id: string; username: string; displayName: string; avatarMediaId: string | null; verified: boolean };
+  story: { id: string; mediaId: string; createdAt: string; kind: "photo" | "video"; thumbnailUrl: string | null; imageUrl: string | null; urlsExpireAt: string | null };
+}
+
+export function getExplore(accessToken: string, signal?: AbortSignal): Promise<{ explore: ExploreTile[] }> {
+  return apiGet("/api/v1/explore", accessToken, signal);
+}

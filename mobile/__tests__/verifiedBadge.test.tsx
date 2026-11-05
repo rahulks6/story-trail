@@ -22,7 +22,7 @@ jest.mock("../src/api/users", () => ({
   searchUsers: jest.fn(),
   listFollowRequests: jest.fn(async () => ({ requests: [], limit: 50, offset: 0 })),
 }));
-jest.mock("../src/api/stories", () => ({ getUserActiveStories: jest.fn(async () => ({ stories: [] })) }));
+jest.mock("../src/api/stories", () => ({ getUserActiveStories: jest.fn(async () => ({ stories: [] })), getExplore: jest.fn(async () => ({ explore: [] })) }));
 jest.mock("../src/api/conversations", () => ({ openConversation: jest.fn() }));
 jest.mock("../src/components/HighlightsRow", () => ({ HighlightsRow: () => null }));
 jest.mock("../src/components/ReportSheet", () => ({ ReportSheet: () => null }));
