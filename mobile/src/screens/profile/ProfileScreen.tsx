@@ -17,6 +17,7 @@ import { profileShareLink } from "../../navigation/profileLinks";
 import type { RootStackParamList } from "../../navigation/types";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
 import { onStoryPublished } from "../../state/storyChanges";
+import { AccountSwitcherSheet } from "../../components/AccountSwitcherSheet";
 import { warmStories } from "../../state/warmStories";
 import { t } from "../../i18n";
 
@@ -42,6 +43,7 @@ export function ProfileScreen(): React.JSX.Element {
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [refreshToken, setRefreshToken] = useState(0);
+  const [switcherOpen, setSwitcherOpen] = useState(false);
 
   const load = useCallback(async () => {
     if (!user || !accessToken) return;
@@ -116,7 +118,11 @@ export function ProfileScreen(): React.JSX.Element {
               <Icon name={ICONS.privacy} size={16} color={colors.textPrimary} />
             </View>
           ) : null}
-          <Text style={styles.topBarUsername} numberOfLines={1} accessibilityRole="header">{user.username}</Text>
+          {/* Tap your username for your accounts on this phone (AccountSwitcherSheet), as on Instagram. */}
+          <Pressable onPress={() => setSwitcherOpen(true)} hitSlop={8} style={styles.usernameButton} accessibilityRole="button" accessibilityLabel={t("accounts.openSwitcher")} accessibilityHint={user.username}>
+            <Text style={styles.topBarUsername} numberOfLines={1} accessibilityRole="header">{user.username}</Text>
+            <Icon name={ICONS.down} size={16} color={colors.textPrimary} />
+          </Pressable>
         </View>
         <View style={styles.topBarActions}>
           <Pressable style={styles.topBarButton} onPress={() => navigation.navigate("Archive")} hitSlop={8} accessibilityRole="button" accessibilityLabel={t("common.archive")}>
@@ -201,6 +207,7 @@ export function ProfileScreen(): React.JSX.Element {
           refreshToken={refreshToken}
         />
       </ScrollView>
+      <AccountSwitcherSheet visible={switcherOpen} onClose={() => setSwitcherOpen(false)} />
     </View>
   );
 }
@@ -217,6 +224,7 @@ const styles = StyleSheet.create({
   },
   topBarTitle: { flexDirection: "row", alignItems: "center", gap: spacing.xs, flexShrink: 1 },
   topBarUsername: { ...typography.title, flexShrink: 1 },
+  usernameButton: { flexDirection: "row", alignItems: "center", gap: 4, flexShrink: 1 },
   topBarActions: { flexDirection: "row", alignItems: "center", gap: spacing.md },
   topBarButton: { padding: spacing.xs },
   content: { paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.xxl, gap: spacing.md },

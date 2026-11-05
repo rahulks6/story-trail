@@ -5,6 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as authApi from "../api/auth";
 import { ApiError, setSessionHandler, type PublicUser } from "../api/client";
 import { TwoStepPrompt } from "../components/TwoStepPrompt";
+import { listSavedAccounts, saveAccount, takeAccount, type SavedAccount } from "./savedAccounts";
 import { clearTokens, loadTokens, saveTokens, type StoredTokens } from "./tokenStorage";
 import { unregisterForPush } from "../push/pushNotifications";
 import { clearOutbox } from "./dmOutbox";
@@ -80,6 +81,12 @@ interface AuthContextValue extends AuthState {
   connectionError: string | null;
   /** Checks the saved session again now (also happens on its own, and when the app returns). */
   retryConnection: () => void;
+  /** Other accounts signed in on this phone (state/savedAccounts.ts), most recent first. */
+  savedAccounts: SavedAccount[];
+  /** Opens another saved account; this one is kept, ready to switch back to. */
+  switchAccount: (userId: string) => Promise<void>;
+  /** Keeps this account and goes to sign-in for another one. */
+  addAccount: () => Promise<void>;
   /** Set when a sign-in needs the two-step login code (components/TwoStepPrompt asks for it). */
   twoStep: { challenge: string; expiresAt: number } | null;
   /** Finishes the sign-in with a code from the authenticator app, or a backup code. */
@@ -243,6 +250,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
   }, []);
 
   const [twoStep, setTwoStep] = useState<{ challenge: string; expiresAt: number } | null>(null);
+  const setSavedAccountsRef = useRef<(accounts: SavedAccount[]) => void>(() => undefined);
   const runAuthAction = useCallback(async (action: () => Promise<{ user: PublicUser; tokens: StoredTokens } | authApi.TwoStepRequired>) => {
     setError(null);
     setFieldErrors(undefined);
@@ -257,6 +265,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
       }
       setTwoStep(null);
       const { user, tokens } = result;
+      // Now the active account: never also in the saved list.
+      void takeAccount(user.id).then(() => listSavedAccounts()).then(setSavedAccountsRef.current).catch(() => undefined);
       await persistTokens(tokens);
       tokensRef.current = tokens;
       knownTokens.current = new Set([tokens.accessToken]);
@@ -315,13 +325,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
     setConnectionError(null);
     setState(signedOut);
   }, []);
+  // Several accounts on one phone: the active one lives in tokenStorage, the others in savedAccounts.
+  const [savedAccounts, setSavedAccounts] = useState<SavedAccount[]>([]);
+  setSavedAccountsRef.current = setSavedAccounts;
+  const reloadSaved = useCallback(async () => { setSavedAccounts(await listSavedAccounts()); }, []);
+  useEffect(() => { void reloadSaved(); }, [reloadSaved]);
+  /** Puts the active account in the saved list (and stops its pushes on this phone). */
+  const shelveActive = useCallback(async () => {
+    const tokens = tokensRef.current;
+    if (state.status !== "signedIn" || !state.user || !tokens) return;
+    await saveAccount({ user: state.user, tokens });
+    await unregisterForPush(tokens.accessToken).catch(() => undefined);
+  }, [state.status, state.user]);
+  /** Opens a saved account with fresh tokens (its own refresh token), or drops it if it no longer works. */
+  const openSaved = useCallback(async (userId: string) => {
+    const target = await takeAccount(userId);
+    if (!target) return;
+    try {
+      await runAuthAction(async () => {
+        const { tokens } = await authApi.refresh(target.tokens.refreshToken);
+        const { user } = await authApi.fetchMe(tokens.accessToken);
+        return { user, tokens };
+      });
+    } finally {
+      await reloadSaved();
+    }
+  }, [runAuthAction, reloadSaved]);
+  const switchAccount = useCallback(async (userId: string) => {
+    if (userId === userIdRef.current) return;
+    if (refreshInFlight.current) await refreshInFlight.current.catch(() => undefined);
+    await shelveActive();
+    await openSaved(userId);
+  }, [shelveActive, openSaved]);
+  const addAccount = useCallback(async () => {
+    if (refreshInFlight.current) await refreshInFlight.current.catch(() => undefined);
+    await shelveActive();
+    // Signed out here only: the server session stays, so this account is one tap away.
+    await endLocalSession();
+    await reloadSaved();
+  }, [shelveActive, endLocalSession, reloadSaved]);
   const logout = useCallback(async () => {
     if (refreshInFlight.current) await refreshInFlight.current.catch(() => undefined);
     const refreshToken = tokensRef.current?.refreshToken;
     await forgetDeviceState(userIdRef.current, tokensRef.current?.accessToken ?? null);
     await endLocalSession();
     if (refreshToken) await authApi.logout(refreshToken).catch(() => undefined);
-  }, [endLocalSession]);
+    // Another account on this phone: open it, as Instagram does, rather than the sign-in screen.
+    const next = (await listSavedAccounts())[0];
+    if (next) await openSaved(next.user.id).catch(() => undefined);
+    else await reloadSaved();
+  }, [endLocalSession, openSaved, reloadSaved]);
   const deleteAccount = useCallback(async (password: string) => {
     if (!state.accessToken) return;
     await authApi.deleteMyAccount(password, state.accessToken);
@@ -349,8 +402,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
   const retryConnection = useCallback(() => verifyNow.current(), []);
   const clearError = useCallback(() => { setError(null); setFieldErrors(undefined); }, []);
   const value = useMemo<AuthContextValue>(
-    () => ({ ...state, justSignedUp, acceptSession, signup, login, resetPassword, adoptTokens, logout, deleteAccount, refreshUser, applyProfile, error, fieldErrors, clearError, connectionError, retryConnection, twoStep, verifyTwoStep, cancelTwoStep }),
-    [state, justSignedUp, acceptSession, signup, login, resetPassword, adoptTokens, logout, deleteAccount, refreshUser, applyProfile, error, fieldErrors, clearError, connectionError, retryConnection, twoStep, verifyTwoStep, cancelTwoStep],
+    () => ({ ...state, justSignedUp, acceptSession, signup, login, resetPassword, adoptTokens, logout, deleteAccount, refreshUser, applyProfile, error, fieldErrors, clearError, connectionError, retryConnection, twoStep, verifyTwoStep, cancelTwoStep, savedAccounts, switchAccount, addAccount }),
+    [state, justSignedUp, acceptSession, signup, login, resetPassword, adoptTokens, logout, deleteAccount, refreshUser, applyProfile, error, fieldErrors, clearError, connectionError, retryConnection, twoStep, verifyTwoStep, cancelTwoStep, savedAccounts, switchAccount, addAccount],
   );
   return (
     <AuthContext.Provider value={value}>
