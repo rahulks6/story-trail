@@ -1,8 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <testsuites>
-  <testsuite name="Test Suite" device="test" tests="1" failures="1" time="321.422" timestamp="2026-11-05T08:49:03">
-    <testcase id="videotext" name="videotext" classname="videotext" file="/home/runner/work/story-trail/story-trail/mobile/.maestro/videotext.yaml" time="321.343" timestamp="2026-11-05T08:49:03" status="ERROR">
-      <failure>Assertion is false: "Open your Story" is visible</failure>
-    </testcase>
+  <testsuite name="Test Suite" device="test" tests="1" failures="0" time="211.029" timestamp="2026-11-05T10:34:15">
+    <testcase id="videotext" name="videotext" classname="videotext" file="/home/runner/work/story-trail/story-trail/mobile/.maestro/videotext.yaml" time="210.937" timestamp="2026-11-05T10:34:15" status="SUCCESS"/>
   </testsuite>
 </testsuites>

@@ -2,11 +2,11 @@
   "command" : {
     "defineVariablesCommand" : {
       "env" : {
-        "USERNAME" : "e2e_and_554720_phone",
-        "EMAIL" : "support+e2e-and-554720-phone@katkee.com",
-        "PASSWORD" : "E2e-4e1f9160961ea893",
-        "OIDC_URL" : "https://run-actions-3-azure-eastus.actions.githubusercontent.com/265//idtoken/52a8d7e8-f457-4fd2-8807-37ace19d678e/95ccb94a-7601-583d-85e0-041848105410?api-version=2.0",
-        "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcIlBlcm1pc3Npb25cIjozfSx7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6MX1dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTM4NzI1OTEsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5Mzg2ODM5MSwiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6Ijk1Y2NiOTRhLTc2MDEtNTgzZC04NWUwLTA0MTg0ODEwNTQxMCIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnIiLCJqb2Jfd29ya2Zsb3dfc2hhIjoiMjRmOGZhOTg2NjYwYWM4OGJhNTIzMmY3MjM0ZjkxMWYzYjQ3NWE4YiIsIm5hbWVpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsIm5iZiI6MTc5Mzg2ODA5MSwib2lkY19leHRyYSI6IntcImFjdG9yXCI6XCJyYWh1bGtzNlwiLFwiYWN0b3JfaWRcIjpcIjE5NzU0MDkyNFwiLFwiYmFzZV9yZWZcIjpcIlwiLFwiY2hlY2tfcnVuX2lkXCI6XCIxMjcxNDI3MTU4NzFcIixcImV2ZW50X25hbWVcIjpcIndvcmtmbG93X2Rpc3BhdGNoXCIsXCJoZWFkX3JlZlwiOlwiXCIsXCJqb2Jfd29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcImpvYl93b3JrZmxvd19zaGFcIjpcIjI0ZjhmYTk4NjY2MGFjODhiYTUyMzJmNzIzNGY5MTFmM2I0NzVhOGJcIixcInJlZlwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcInJlZl9wcm90ZWN0ZWRcIjpcImZhbHNlXCIsXCJyZWZfdHlwZVwiOlwiYnJhbmNoXCIsXCJyZXBvc2l0b3J5XCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbFwiLFwicmVwb3NpdG9yeV9pZFwiOlwiMTM3NjkxNTQ5MVwiLFwicmVwb3NpdG9yeV9vd25lclwiOlwicmFodWxrczZcIixcInJlcG9zaXRvcnlfb3duZXJfaWRcIjpcIjE5NzU0MDkyNFwiLFwicmVwb3NpdG9yeV92aXNpYmlsaXR5XCI6XCJwdWJsaWNcIixcInJ1bl9hdHRlbXB0XCI6XCIxXCIsXCJydW5faWRcIjpcIjQxOTk1NTU0NzIwXCIsXCJydW5fbnVtYmVyXCI6XCI0NFwiLFwicnVubmVyX2Vudmlyb25tZW50XCI6XCJnaXRodWItaG9zdGVkXCIsXCJzaGFcIjpcIjI0ZjhmYTk4NjY2MGFjODhiYTUyMzJmNzIzNGY5MTFmM2I0NzVhOGJcIixcIndvcmtmbG93XCI6XCJBbmRyb2lkIGVtdWxhdG9yIHRlc3RcIixcIndvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvYW5kcm9pZC1lMmUueW1sQHJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyXCIsXCJ3b3JrZmxvd19zaGFcIjpcIjI0ZjhmYTk4NjY2MGFjODhiYTUyMzJmNzIzNGY5MTFmM2I0NzVhOGJcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyIiwib3JjaF9pZCI6IjUyYThkN2U4LWY0NTctNGZkMi04ODA3LTM3YWNlMTlkNjc4ZS53YWxrdGhyb3VnaC5waG9uZSIsIm93bmVyX2lkIjoiVV9rZ0RPQzhZOFBBIiwicGxhbl9pZCI6IjUyYThkN2U4LWY0NTctNGZkMi04ODA3LTM3YWNlMTlkNjc4ZSIsInJlcG9zaXRvcnlfaWQiOiIxMzc2OTE1NDkxIiwicmVwb3NpdG9yeV9vd25lcl9pZCI6IjE5NzU0MDkyNCIsInJlcG9zaXRvcnlfdmlzaWJpbGl0eSI6InB1YmxpYyIsInJ1bl9pZCI6IjQxOTk1NTU0NzIwIiwicnVuX251bWJlciI6IjQ0IiwicnVuX3R5cGUiOiJmdWxsIiwicnVubmVyX2lkIjoiMTAwMDAwMDE4OCIsInJ1bm5lcl90eXBlIjoiaG9zdGVkIiwic2NwIjoiQWN0aW9ucy5SZXN1bHRzOjUyYThkN2U4LWY0NTctNGZkMi04ODA3LTM3YWNlMTlkNjc4ZTo5NWNjYjk0YS03NjAxLTU4M2QtODVlMC0wNDE4NDgxMDU0MTAgQWN0aW9ucy5SdW5uZXI6NTJhOGQ3ZTgtZjQ1Ny00ZmQyLTg4MDctMzdhY2UxOWQ2NzhlOjk1Y2NiOTRhLTc2MDEtNTgzZC04NWUwLTA0MTg0ODEwNTQxMCBBY3Rpb25zLlVwbG9hZEFydGlmYWN0czo1MmE4ZDdlOC1mNDU3LTRmZDItODgwNy0zN2FjZTE5ZDY3OGU6OTVjY2I5NGEtNzYwMS01ODNkLTg1ZTAtMDQxODQ4MTA1NDEwIGdlbmVyYXRlX2lkX3Rva2VuOjUyYThkN2U4LWY0NTctNGZkMi04ODA3LTM3YWNlMTlkNjc4ZTo5NWNjYjk0YS03NjAxLTU4M2QtODVlMC0wNDE4NDgxMDU0MTAgQWN0aW9ucy5HZW5lcmljUmVhZDowMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJzaGEiOiIyNGY4ZmE5ODY2NjBhYzg4YmE1MjMyZjcyMzRmOTExZjNiNDc1YThiIiwidHJ1c3RfdGllciI6IjIifQ.jnvhdf6fAWuRWP-FAebOYQbfZq2p2NNJKncABi-XR8NdoXR3euhRZel9Ub3lHLdNf7EPygIHu-4I2SWuR8CZv36P3QpqxaOSR00k1AKOBX7TcLwapaeMRLNC_Ouss5Qeru9klX23Fo66t21akjQ6h903Bsk5V9uEmoS8nS0jP2H3GueK-JZDSuQZyRb9yRoXODcSAyVIetvCixNi5KKeVIiGcgbp2k4gIEGDBIQDoBbu5vxUQ8qnlLleuxqYc4BK7gFDZa_SjQYM41gQTXOKBUaOf8mT1NomHx-x0MtMYkZ3P3k_BhVVJ1PiZQYeFhbgvDZM-KBYKJbcdDe6WOiOeQ",
+        "USERNAME" : "e2e_and_846035_phone",
+        "EMAIL" : "support+e2e-and-846035-phone@katkee.com",
+        "PASSWORD" : "E2e-50df6f0f14992c11",
+        "OIDC_URL" : "https://run-actions-3-azure-eastus.actions.githubusercontent.com/165//idtoken/8da14d05-a54f-8710-af10-6c645861f276/08800634-6e74-5dde-8406-843a10bcf8ac?api-version=2.0",
+        "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcIlBlcm1pc3Npb25cIjozfSx7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6MX1dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTM4Nzg5MjAsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5Mzg3NDcyMCwiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6IjA4ODAwNjM0LTZlNzQtNWRkZS04NDA2LTg0M2ExMGJjZjhhYyIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnIiLCJqb2Jfd29ya2Zsb3dfc2hhIjoiOGIwZmRhYmRhYWEzMjljOWQ3NWYyNWI2NmJiZDU1MGIzN2VlYjRhZCIsIm5hbWVpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsIm5iZiI6MTc5Mzg3NDQyMCwib2lkY19leHRyYSI6IntcImFjdG9yXCI6XCJyYWh1bGtzNlwiLFwiYWN0b3JfaWRcIjpcIjE5NzU0MDkyNFwiLFwiYmFzZV9yZWZcIjpcIlwiLFwiY2hlY2tfcnVuX2lkXCI6XCIxMjcxOTEzMjQ3MTlcIixcImV2ZW50X25hbWVcIjpcIndvcmtmbG93X2Rpc3BhdGNoXCIsXCJoZWFkX3JlZlwiOlwiXCIsXCJqb2Jfd29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcImpvYl93b3JrZmxvd19zaGFcIjpcIjhiMGZkYWJkYWFhMzI5YzlkNzVmMjViNjZiYmQ1NTBiMzdlZWI0YWRcIixcInJlZlwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcInJlZl9wcm90ZWN0ZWRcIjpcImZhbHNlXCIsXCJyZWZfdHlwZVwiOlwiYnJhbmNoXCIsXCJyZXBvc2l0b3J5XCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbFwiLFwicmVwb3NpdG9yeV9pZFwiOlwiMTM3NjkxNTQ5MVwiLFwicmVwb3NpdG9yeV9vd25lclwiOlwicmFodWxrczZcIixcInJlcG9zaXRvcnlfb3duZXJfaWRcIjpcIjE5NzU0MDkyNFwiLFwicmVwb3NpdG9yeV92aXNpYmlsaXR5XCI6XCJwdWJsaWNcIixcInJ1bl9hdHRlbXB0XCI6XCIyXCIsXCJydW5faWRcIjpcIjQyMDAwODQ2MDM1XCIsXCJydW5fbnVtYmVyXCI6XCI0NVwiLFwicnVubmVyX2Vudmlyb25tZW50XCI6XCJnaXRodWItaG9zdGVkXCIsXCJzaGFcIjpcIjhiMGZkYWJkYWFhMzI5YzlkNzVmMjViNjZiYmQ1NTBiMzdlZWI0YWRcIixcIndvcmtmbG93XCI6XCJBbmRyb2lkIGVtdWxhdG9yIHRlc3RcIixcIndvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvYW5kcm9pZC1lMmUueW1sQHJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyXCIsXCJ3b3JrZmxvd19zaGFcIjpcIjhiMGZkYWJkYWFhMzI5YzlkNzVmMjViNjZiYmQ1NTBiMzdlZWI0YWRcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyIiwib3JjaF9pZCI6IjhkYTE0ZDA1LWE1NGYtODcxMC1hZjEwLTZjNjQ1ODYxZjI3Ni53YWxrdGhyb3VnaC5waG9uZSIsIm93bmVyX2lkIjoiVV9rZ0RPQzhZOFBBIiwicGxhbl9pZCI6IjhkYTE0ZDA1LWE1NGYtODcxMC1hZjEwLTZjNjQ1ODYxZjI3NiIsInJlcG9zaXRvcnlfaWQiOiIxMzc2OTE1NDkxIiwicmVwb3NpdG9yeV9vd25lcl9pZCI6IjE5NzU0MDkyNCIsInJlcG9zaXRvcnlfdmlzaWJpbGl0eSI6InB1YmxpYyIsInJ1bl9pZCI6IjQyMDAwODQ2MDM1IiwicnVuX251bWJlciI6IjQ1IiwicnVuX3R5cGUiOiJwYXJ0aWFsIiwicnVubmVyX2lkIjoiMTAwMDAwMDE5MSIsInJ1bm5lcl90eXBlIjoiaG9zdGVkIiwic2NwIjoiQWN0aW9ucy5SZXN1bHRzOjhkYTE0ZDA1LWE1NGYtODcxMC1hZjEwLTZjNjQ1ODYxZjI3NjowODgwMDYzNC02ZTc0LTVkZGUtODQwNi04NDNhMTBiY2Y4YWMgQWN0aW9ucy5SdW5uZXI6OGRhMTRkMDUtYTU0Zi04NzEwLWFmMTAtNmM2NDU4NjFmMjc2OjA4ODAwNjM0LTZlNzQtNWRkZS04NDA2LTg0M2ExMGJjZjhhYyBBY3Rpb25zLlVwbG9hZEFydGlmYWN0czo4ZGExNGQwNS1hNTRmLTg3MTAtYWYxMC02YzY0NTg2MWYyNzY6MDg4MDA2MzQtNmU3NC01ZGRlLTg0MDYtODQzYTEwYmNmOGFjIGdlbmVyYXRlX2lkX3Rva2VuOjhkYTE0ZDA1LWE1NGYtODcxMC1hZjEwLTZjNjQ1ODYxZjI3NjowODgwMDYzNC02ZTc0LTVkZGUtODQwNi04NDNhMTBiY2Y4YWMgQWN0aW9ucy5HZW5lcmljUmVhZDowMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJzaGEiOiI4YjBmZGFiZGFhYTMyOWM5ZDc1ZjI1YjY2YmJkNTUwYjM3ZWViNGFkIiwidHJ1c3RfdGllciI6IjIifQ.QkmGIQp_C7qQhM3n_sl9LTWc3x0bcleaJpC_Jd6u76zwN3URgLHwN-oItDcFIyEn6ZPQ3hKoXfW_uharfMD5-117nsUxHojUS4c8AzCXVKMxlT_mNW7thRgQxyxooTaiIzm6f2EwNIQwsPRGk9cie9naNkWglJDRcKkZkNVsSRSj1oDO2TpvJoArrX8KV5Xilx7hdy2aAajofP4aM08CpmnnCoYe76fxl2bAOFjMZShUPlgYw_z4ZVGtBzWQAwd-Xe0Dkh_PjGkToRffjUrWOF2__a39EtPKd66l_Tht4P711OPJSQoxYH7O58aGVhcdEjBcLldcNGH1S5wkkSCcAg",
         "MAESTRO_CLI_NO_ANALYTICS" : "1",
         "MAESTRO_FILENAME" : "videotext",
         "MAESTRO_DEVICE_UDID" : "emulator-5554",
@@ -18,18 +18,18 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868544255,
-    "duration" : 17,
+    "timestamp" : 1793874855898,
+    "duration" : 8,
     "sequenceNumber" : 0,
     "depth" : 0,
     "evaluatedCommand" : {
       "defineVariablesCommand" : {
         "env" : {
-          "USERNAME" : "e2e_and_554720_phone",
-          "EMAIL" : "support+e2e-and-554720-phone@katkee.com",
-          "PASSWORD" : "E2e-4e1f9160961ea893",
-          "OIDC_URL" : "https://run-actions-3-azure-eastus.actions.githubusercontent.com/265//idtoken/52a8d7e8-f457-4fd2-8807-37ace19d678e/95ccb94a-7601-583d-85e0-041848105410?api-version=2.0",
-          "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcIlBlcm1pc3Npb25cIjozfSx7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6MX1dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTM4NzI1OTEsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5Mzg2ODM5MSwiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6Ijk1Y2NiOTRhLTc2MDEtNTgzZC04NWUwLTA0MTg0ODEwNTQxMCIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnIiLCJqb2Jfd29ya2Zsb3dfc2hhIjoiMjRmOGZhOTg2NjYwYWM4OGJhNTIzMmY3MjM0ZjkxMWYzYjQ3NWE4YiIsIm5hbWVpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsIm5iZiI6MTc5Mzg2ODA5MSwib2lkY19leHRyYSI6IntcImFjdG9yXCI6XCJyYWh1bGtzNlwiLFwiYWN0b3JfaWRcIjpcIjE5NzU0MDkyNFwiLFwiYmFzZV9yZWZcIjpcIlwiLFwiY2hlY2tfcnVuX2lkXCI6XCIxMjcxNDI3MTU4NzFcIixcImV2ZW50X25hbWVcIjpcIndvcmtmbG93X2Rpc3BhdGNoXCIsXCJoZWFkX3JlZlwiOlwiXCIsXCJqb2Jfd29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcImpvYl93b3JrZmxvd19zaGFcIjpcIjI0ZjhmYTk4NjY2MGFjODhiYTUyMzJmNzIzNGY5MTFmM2I0NzVhOGJcIixcInJlZlwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcInJlZl9wcm90ZWN0ZWRcIjpcImZhbHNlXCIsXCJyZWZfdHlwZVwiOlwiYnJhbmNoXCIsXCJyZXBvc2l0b3J5XCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbFwiLFwicmVwb3NpdG9yeV9pZFwiOlwiMTM3NjkxNTQ5MVwiLFwicmVwb3NpdG9yeV9vd25lclwiOlwicmFodWxrczZcIixcInJlcG9zaXRvcnlfb3duZXJfaWRcIjpcIjE5NzU0MDkyNFwiLFwicmVwb3NpdG9yeV92aXNpYmlsaXR5XCI6XCJwdWJsaWNcIixcInJ1bl9hdHRlbXB0XCI6XCIxXCIsXCJydW5faWRcIjpcIjQxOTk1NTU0NzIwXCIsXCJydW5fbnVtYmVyXCI6XCI0NFwiLFwicnVubmVyX2Vudmlyb25tZW50XCI6XCJnaXRodWItaG9zdGVkXCIsXCJzaGFcIjpcIjI0ZjhmYTk4NjY2MGFjODhiYTUyMzJmNzIzNGY5MTFmM2I0NzVhOGJcIixcIndvcmtmbG93XCI6XCJBbmRyb2lkIGVtdWxhdG9yIHRlc3RcIixcIndvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvYW5kcm9pZC1lMmUueW1sQHJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyXCIsXCJ3b3JrZmxvd19zaGFcIjpcIjI0ZjhmYTk4NjY2MGFjODhiYTUyMzJmNzIzNGY5MTFmM2I0NzVhOGJcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyIiwib3JjaF9pZCI6IjUyYThkN2U4LWY0NTctNGZkMi04ODA3LTM3YWNlMTlkNjc4ZS53YWxrdGhyb3VnaC5waG9uZSIsIm93bmVyX2lkIjoiVV9rZ0RPQzhZOFBBIiwicGxhbl9pZCI6IjUyYThkN2U4LWY0NTctNGZkMi04ODA3LTM3YWNlMTlkNjc4ZSIsInJlcG9zaXRvcnlfaWQiOiIxMzc2OTE1NDkxIiwicmVwb3NpdG9yeV9vd25lcl9pZCI6IjE5NzU0MDkyNCIsInJlcG9zaXRvcnlfdmlzaWJpbGl0eSI6InB1YmxpYyIsInJ1bl9pZCI6IjQxOTk1NTU0NzIwIiwicnVuX251bWJlciI6IjQ0IiwicnVuX3R5cGUiOiJmdWxsIiwicnVubmVyX2lkIjoiMTAwMDAwMDE4OCIsInJ1bm5lcl90eXBlIjoiaG9zdGVkIiwic2NwIjoiQWN0aW9ucy5SZXN1bHRzOjUyYThkN2U4LWY0NTctNGZkMi04ODA3LTM3YWNlMTlkNjc4ZTo5NWNjYjk0YS03NjAxLTU4M2QtODVlMC0wNDE4NDgxMDU0MTAgQWN0aW9ucy5SdW5uZXI6NTJhOGQ3ZTgtZjQ1Ny00ZmQyLTg4MDctMzdhY2UxOWQ2NzhlOjk1Y2NiOTRhLTc2MDEtNTgzZC04NWUwLTA0MTg0ODEwNTQxMCBBY3Rpb25zLlVwbG9hZEFydGlmYWN0czo1MmE4ZDdlOC1mNDU3LTRmZDItODgwNy0zN2FjZTE5ZDY3OGU6OTVjY2I5NGEtNzYwMS01ODNkLTg1ZTAtMDQxODQ4MTA1NDEwIGdlbmVyYXRlX2lkX3Rva2VuOjUyYThkN2U4LWY0NTctNGZkMi04ODA3LTM3YWNlMTlkNjc4ZTo5NWNjYjk0YS03NjAxLTU4M2QtODVlMC0wNDE4NDgxMDU0MTAgQWN0aW9ucy5HZW5lcmljUmVhZDowMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJzaGEiOiIyNGY4ZmE5ODY2NjBhYzg4YmE1MjMyZjcyMzRmOTExZjNiNDc1YThiIiwidHJ1c3RfdGllciI6IjIifQ.jnvhdf6fAWuRWP-FAebOYQbfZq2p2NNJKncABi-XR8NdoXR3euhRZel9Ub3lHLdNf7EPygIHu-4I2SWuR8CZv36P3QpqxaOSR00k1AKOBX7TcLwapaeMRLNC_Ouss5Qeru9klX23Fo66t21akjQ6h903Bsk5V9uEmoS8nS0jP2H3GueK-JZDSuQZyRb9yRoXODcSAyVIetvCixNi5KKeVIiGcgbp2k4gIEGDBIQDoBbu5vxUQ8qnlLleuxqYc4BK7gFDZa_SjQYM41gQTXOKBUaOf8mT1NomHx-x0MtMYkZ3P3k_BhVVJ1PiZQYeFhbgvDZM-KBYKJbcdDe6WOiOeQ",
+          "USERNAME" : "e2e_and_846035_phone",
+          "EMAIL" : "support+e2e-and-846035-phone@katkee.com",
+          "PASSWORD" : "E2e-50df6f0f14992c11",
+          "OIDC_URL" : "https://run-actions-3-azure-eastus.actions.githubusercontent.com/165//idtoken/8da14d05-a54f-8710-af10-6c645861f276/08800634-6e74-5dde-8406-843a10bcf8ac?api-version=2.0",
+          "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcIlBlcm1pc3Npb25cIjozfSx7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6MX1dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTM4Nzg5MjAsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5Mzg3NDcyMCwiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6IjA4ODAwNjM0LTZlNzQtNWRkZS04NDA2LTg0M2ExMGJjZjhhYyIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnIiLCJqb2Jfd29ya2Zsb3dfc2hhIjoiOGIwZmRhYmRhYWEzMjljOWQ3NWYyNWI2NmJiZDU1MGIzN2VlYjRhZCIsIm5hbWVpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsIm5iZiI6MTc5Mzg3NDQyMCwib2lkY19leHRyYSI6IntcImFjdG9yXCI6XCJyYWh1bGtzNlwiLFwiYWN0b3JfaWRcIjpcIjE5NzU0MDkyNFwiLFwiYmFzZV9yZWZcIjpcIlwiLFwiY2hlY2tfcnVuX2lkXCI6XCIxMjcxOTEzMjQ3MTlcIixcImV2ZW50X25hbWVcIjpcIndvcmtmbG93X2Rpc3BhdGNoXCIsXCJoZWFkX3JlZlwiOlwiXCIsXCJqb2Jfd29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcImpvYl93b3JrZmxvd19zaGFcIjpcIjhiMGZkYWJkYWFhMzI5YzlkNzVmMjViNjZiYmQ1NTBiMzdlZWI0YWRcIixcInJlZlwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcInJlZl9wcm90ZWN0ZWRcIjpcImZhbHNlXCIsXCJyZWZfdHlwZVwiOlwiYnJhbmNoXCIsXCJyZXBvc2l0b3J5XCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbFwiLFwicmVwb3NpdG9yeV9pZFwiOlwiMTM3NjkxNTQ5MVwiLFwicmVwb3NpdG9yeV9vd25lclwiOlwicmFodWxrczZcIixcInJlcG9zaXRvcnlfb3duZXJfaWRcIjpcIjE5NzU0MDkyNFwiLFwicmVwb3NpdG9yeV92aXNpYmlsaXR5XCI6XCJwdWJsaWNcIixcInJ1bl9hdHRlbXB0XCI6XCIyXCIsXCJydW5faWRcIjpcIjQyMDAwODQ2MDM1XCIsXCJydW5fbnVtYmVyXCI6XCI0NVwiLFwicnVubmVyX2Vudmlyb25tZW50XCI6XCJnaXRodWItaG9zdGVkXCIsXCJzaGFcIjpcIjhiMGZkYWJkYWFhMzI5YzlkNzVmMjViNjZiYmQ1NTBiMzdlZWI0YWRcIixcIndvcmtmbG93XCI6XCJBbmRyb2lkIGVtdWxhdG9yIHRlc3RcIixcIndvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvYW5kcm9pZC1lMmUueW1sQHJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyXCIsXCJ3b3JrZmxvd19zaGFcIjpcIjhiMGZkYWJkYWFhMzI5YzlkNzVmMjViNjZiYmQ1NTBiMzdlZWI0YWRcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyIiwib3JjaF9pZCI6IjhkYTE0ZDA1LWE1NGYtODcxMC1hZjEwLTZjNjQ1ODYxZjI3Ni53YWxrdGhyb3VnaC5waG9uZSIsIm93bmVyX2lkIjoiVV9rZ0RPQzhZOFBBIiwicGxhbl9pZCI6IjhkYTE0ZDA1LWE1NGYtODcxMC1hZjEwLTZjNjQ1ODYxZjI3NiIsInJlcG9zaXRvcnlfaWQiOiIxMzc2OTE1NDkxIiwicmVwb3NpdG9yeV9vd25lcl9pZCI6IjE5NzU0MDkyNCIsInJlcG9zaXRvcnlfdmlzaWJpbGl0eSI6InB1YmxpYyIsInJ1bl9pZCI6IjQyMDAwODQ2MDM1IiwicnVuX251bWJlciI6IjQ1IiwicnVuX3R5cGUiOiJwYXJ0aWFsIiwicnVubmVyX2lkIjoiMTAwMDAwMDE5MSIsInJ1bm5lcl90eXBlIjoiaG9zdGVkIiwic2NwIjoiQWN0aW9ucy5SZXN1bHRzOjhkYTE0ZDA1LWE1NGYtODcxMC1hZjEwLTZjNjQ1ODYxZjI3NjowODgwMDYzNC02ZTc0LTVkZGUtODQwNi04NDNhMTBiY2Y4YWMgQWN0aW9ucy5SdW5uZXI6OGRhMTRkMDUtYTU0Zi04NzEwLWFmMTAtNmM2NDU4NjFmMjc2OjA4ODAwNjM0LTZlNzQtNWRkZS04NDA2LTg0M2ExMGJjZjhhYyBBY3Rpb25zLlVwbG9hZEFydGlmYWN0czo4ZGExNGQwNS1hNTRmLTg3MTAtYWYxMC02YzY0NTg2MWYyNzY6MDg4MDA2MzQtNmU3NC01ZGRlLTg0MDYtODQzYTEwYmNmOGFjIGdlbmVyYXRlX2lkX3Rva2VuOjhkYTE0ZDA1LWE1NGYtODcxMC1hZjEwLTZjNjQ1ODYxZjI3NjowODgwMDYzNC02ZTc0LTVkZGUtODQwNi04NDNhMTBiY2Y4YWMgQWN0aW9ucy5HZW5lcmljUmVhZDowMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJzaGEiOiI4YjBmZGFiZGFhYTMyOWM5ZDc1ZjI1YjY2YmJkNTUwYjM3ZWViNGFkIiwidHJ1c3RfdGllciI6IjIifQ.QkmGIQp_C7qQhM3n_sl9LTWc3x0bcleaJpC_Jd6u76zwN3URgLHwN-oItDcFIyEn6ZPQ3hKoXfW_uharfMD5-117nsUxHojUS4c8AzCXVKMxlT_mNW7thRgQxyxooTaiIzm6f2EwNIQwsPRGk9cie9naNkWglJDRcKkZkNVsSRSj1oDO2TpvJoArrX8KV5Xilx7hdy2aAajofP4aM08CpmnnCoYe76fxl2bAOFjMZShUPlgYw_z4ZVGtBzWQAwd-Xe0Dkh_PjGkToRffjUrWOF2__a39EtPKd66l_Tht4P711OPJSQoxYH7O58aGVhcdEjBcLldcNGH1S5wkkSCcAg",
           "MAESTRO_CLI_NO_ANALYTICS" : "1",
           "MAESTRO_FILENAME" : "videotext",
           "MAESTRO_DEVICE_UDID" : "emulator-5554",
@@ -51,8 +51,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868544277,
-    "duration" : 4,
+    "timestamp" : 1793874855914,
+    "duration" : 0,
     "sequenceNumber" : 1,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -77,8 +77,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868544281,
-    "duration" : 3334,
+    "timestamp" : 1793874855915,
+    "duration" : 1633,
     "sequenceNumber" : 2,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -107,8 +107,8 @@
   },
   "metadata" : {
     "status" : "WARNED",
-    "timestamp" : 1793868547617,
-    "duration" : 7201,
+    "timestamp" : 1793874857548,
+    "duration" : 7792,
     "sequenceNumber" : 3,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -146,8 +146,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868555890,
-    "duration" : 165,
+    "timestamp" : 1793874866571,
+    "duration" : 603,
     "sequenceNumber" : 4,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -172,8 +172,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868556055,
-    "duration" : 325,
+    "timestamp" : 1793874867178,
+    "duration" : 628,
     "sequenceNumber" : 5,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -202,8 +202,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868556380,
-    "duration" : 3858,
+    "timestamp" : 1793874867807,
+    "duration" : 4165,
     "sequenceNumber" : 6,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -234,8 +234,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868560239,
-    "duration" : 816,
+    "timestamp" : 1793874871973,
+    "duration" : 325,
     "sequenceNumber" : 7,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -266,8 +266,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868561056,
-    "duration" : 4327,
+    "timestamp" : 1793874872298,
+    "duration" : 3393,
     "sequenceNumber" : 8,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -292,8 +292,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868565383,
-    "duration" : 12375,
+    "timestamp" : 1793874875691,
+    "duration" : 7691,
     "sequenceNumber" : 9,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -350,8 +350,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868577759,
-    "duration" : 2706,
+    "timestamp" : 1793874883383,
+    "duration" : 1378,
     "sequenceNumber" : 10,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -410,8 +410,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868577760,
-    "duration" : 1,
+    "timestamp" : 1793874883385,
+    "duration" : 0,
     "sequenceNumber" : 11,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -439,8 +439,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868577762,
-    "duration" : 2702,
+    "timestamp" : 1793874883386,
+    "duration" : 1374,
     "sequenceNumber" : 12,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -465,8 +465,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868577762,
-    "duration" : 2701,
+    "timestamp" : 1793874883386,
+    "duration" : 1374,
     "sequenceNumber" : 13,
     "depth" : 2,
     "evaluatedCommand" : {
@@ -494,8 +494,8 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1793868580464,
-    "duration" : 0,
+    "timestamp" : 1793874884760,
+    "duration" : 1,
     "sequenceNumber" : 14,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -530,8 +530,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868580465,
-    "duration" : 6792,
+    "timestamp" : 1793874884761,
+    "duration" : 4285,
     "sequenceNumber" : 15,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -556,13 +556,13 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868587257,
-    "duration" : 11335,
+    "timestamp" : 1793874889047,
+    "duration" : 6699,
     "sequenceNumber" : 16,
     "depth" : 0,
     "evaluatedCommand" : {
       "inputTextCommand" : {
-        "text" : "e2e_and_554720_phone",
+        "text" : "e2e_and_846035_phone",
         "optional" : false
       }
     }
@@ -614,8 +614,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868598592,
-    "duration" : 1610,
+    "timestamp" : 1793874895747,
+    "duration" : 1166,
     "sequenceNumber" : 17,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -674,8 +674,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868598593,
-    "duration" : 0,
+    "timestamp" : 1793874895747,
+    "duration" : 1,
     "sequenceNumber" : 18,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -703,8 +703,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868598593,
-    "duration" : 1608,
+    "timestamp" : 1793874895748,
+    "duration" : 1165,
     "sequenceNumber" : 19,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -729,8 +729,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868598593,
-    "duration" : 1607,
+    "timestamp" : 1793874895748,
+    "duration" : 1164,
     "sequenceNumber" : 20,
     "depth" : 2,
     "evaluatedCommand" : {
@@ -758,7 +758,7 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1793868600202,
+    "timestamp" : 1793874896913,
     "duration" : 0,
     "sequenceNumber" : 21,
     "depth" : 1,
@@ -794,8 +794,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868600202,
-    "duration" : 3841,
+    "timestamp" : 1793874896913,
+    "duration" : 4163,
     "sequenceNumber" : 22,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -820,13 +820,13 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868604043,
-    "duration" : 11337,
+    "timestamp" : 1793874901076,
+    "duration" : 9216,
     "sequenceNumber" : 23,
     "depth" : 0,
     "evaluatedCommand" : {
       "inputTextCommand" : {
-        "text" : "support+e2e-and-554720-phone@katkee.com",
+        "text" : "support+e2e-and-846035-phone@katkee.com",
         "optional" : false
       }
     }
@@ -878,8 +878,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868615380,
-    "duration" : 1197,
+    "timestamp" : 1793874910293,
+    "duration" : 1259,
     "sequenceNumber" : 24,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -938,7 +938,7 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868615381,
+    "timestamp" : 1793874910293,
     "duration" : 0,
     "sequenceNumber" : 25,
     "depth" : 1,
@@ -967,8 +967,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868615381,
-    "duration" : 1194,
+    "timestamp" : 1793874910293,
+    "duration" : 1258,
     "sequenceNumber" : 26,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -993,8 +993,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868615381,
-    "duration" : 1193,
+    "timestamp" : 1793874910294,
+    "duration" : 1257,
     "sequenceNumber" : 27,
     "depth" : 2,
     "evaluatedCommand" : {
@@ -1022,8 +1022,8 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1793868616575,
-    "duration" : 1,
+    "timestamp" : 1793874911552,
+    "duration" : 0,
     "sequenceNumber" : 28,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -1058,8 +1058,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868616577,
-    "duration" : 3448,
+    "timestamp" : 1793874911552,
+    "duration" : 3107,
     "sequenceNumber" : 29,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1084,8 +1084,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868620025,
-    "duration" : 2464,
+    "timestamp" : 1793874914660,
+    "duration" : 1961,
     "sequenceNumber" : 30,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1142,8 +1142,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868622489,
-    "duration" : 1132,
+    "timestamp" : 1793874916622,
+    "duration" : 917,
     "sequenceNumber" : 31,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1202,7 +1202,7 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868622491,
+    "timestamp" : 1793874916622,
     "duration" : 0,
     "sequenceNumber" : 32,
     "depth" : 1,
@@ -1231,8 +1231,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868622491,
-    "duration" : 1129,
+    "timestamp" : 1793874916622,
+    "duration" : 916,
     "sequenceNumber" : 33,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -1257,8 +1257,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868622491,
-    "duration" : 1128,
+    "timestamp" : 1793874916623,
+    "duration" : 915,
     "sequenceNumber" : 34,
     "depth" : 2,
     "evaluatedCommand" : {
@@ -1286,8 +1286,8 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1793868623620,
-    "duration" : 1,
+    "timestamp" : 1793874917539,
+    "duration" : 0,
     "sequenceNumber" : 35,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -1322,8 +1322,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868623621,
-    "duration" : 3389,
+    "timestamp" : 1793874917539,
+    "duration" : 3104,
     "sequenceNumber" : 36,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1348,13 +1348,13 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868627010,
-    "duration" : 4500,
+    "timestamp" : 1793874920643,
+    "duration" : 4069,
     "sequenceNumber" : 37,
     "depth" : 0,
     "evaluatedCommand" : {
       "inputTextCommand" : {
-        "text" : "E2e-4e1f9160961ea893",
+        "text" : "E2e-50df6f0f14992c11",
         "optional" : false
       }
     }
@@ -1406,8 +1406,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868631511,
-    "duration" : 995,
+    "timestamp" : 1793874924712,
+    "duration" : 907,
     "sequenceNumber" : 38,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1466,7 +1466,7 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868631511,
+    "timestamp" : 1793874924713,
     "duration" : 0,
     "sequenceNumber" : 39,
     "depth" : 1,
@@ -1495,8 +1495,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868631511,
-    "duration" : 994,
+    "timestamp" : 1793874924713,
+    "duration" : 905,
     "sequenceNumber" : 40,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -1521,8 +1521,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868631512,
-    "duration" : 993,
+    "timestamp" : 1793874924713,
+    "duration" : 904,
     "sequenceNumber" : 41,
     "depth" : 2,
     "evaluatedCommand" : {
@@ -1550,8 +1550,8 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1793868632505,
-    "duration" : 1,
+    "timestamp" : 1793874925618,
+    "duration" : 0,
     "sequenceNumber" : 42,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -1580,8 +1580,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868632506,
-    "duration" : 158,
+    "timestamp" : 1793874925619,
+    "duration" : 97,
     "sequenceNumber" : 43,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1614,8 +1614,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868632665,
-    "duration" : 224,
+    "timestamp" : 1793874925716,
+    "duration" : 82,
     "sequenceNumber" : 44,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1650,8 +1650,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868632889,
-    "duration" : 5160,
+    "timestamp" : 1793874925799,
+    "duration" : 4957,
     "sequenceNumber" : 45,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1682,8 +1682,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868638049,
-    "duration" : 111,
+    "timestamp" : 1793874930757,
+    "duration" : 73,
     "sequenceNumber" : 46,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1708,8 +1708,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868638160,
-    "duration" : 159,
+    "timestamp" : 1793874930830,
+    "duration" : 138,
     "sequenceNumber" : 47,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1734,8 +1734,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868638320,
-    "duration" : 1575,
+    "timestamp" : 1793874930968,
+    "duration" : 2431,
     "sequenceNumber" : 48,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1756,8 +1756,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868639896,
-    "duration" : 109,
+    "timestamp" : 1793874933399,
+    "duration" : 68,
     "sequenceNumber" : 49,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1776,8 +1776,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868640005,
-    "duration" : 5075,
+    "timestamp" : 1793874933468,
+    "duration" : 3211,
     "sequenceNumber" : 50,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1802,8 +1802,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868645080,
-    "duration" : 4684,
+    "timestamp" : 1793874936679,
+    "duration" : 4186,
     "sequenceNumber" : 51,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1947,8 +1947,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868649764,
-    "duration" : 2471,
+    "timestamp" : 1793874940865,
+    "duration" : 2996,
     "sequenceNumber" : 52,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2088,7 +2088,7 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868649765,
+    "timestamp" : 1793874940866,
     "duration" : 0,
     "sequenceNumber" : 53,
     "depth" : 1,
@@ -2213,8 +2213,8 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1793868649765,
-    "duration" : 2470,
+    "timestamp" : 1793874940866,
+    "duration" : 2995,
     "sequenceNumber" : 54,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -2342,8 +2342,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868652235,
-    "duration" : 106,
+    "timestamp" : 1793874943861,
+    "duration" : 118,
     "sequenceNumber" : 55,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2374,8 +2374,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868652342,
-    "duration" : 2922,
+    "timestamp" : 1793874943979,
+    "duration" : 2853,
     "sequenceNumber" : 56,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2406,8 +2406,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868655264,
-    "duration" : 2928,
+    "timestamp" : 1793874946832,
+    "duration" : 2805,
     "sequenceNumber" : 57,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2438,8 +2438,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868658192,
-    "duration" : 3043,
+    "timestamp" : 1793874949637,
+    "duration" : 2885,
     "sequenceNumber" : 58,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2464,8 +2464,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868661235,
-    "duration" : 156,
+    "timestamp" : 1793874952523,
+    "duration" : 111,
     "sequenceNumber" : 59,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2494,8 +2494,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868661392,
-    "duration" : 2884,
+    "timestamp" : 1793874952635,
+    "duration" : 2910,
     "sequenceNumber" : 60,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2526,8 +2526,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868664276,
-    "duration" : 93,
+    "timestamp" : 1793874955545,
+    "duration" : 120,
     "sequenceNumber" : 61,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2552,8 +2552,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868664370,
-    "duration" : 2051,
+    "timestamp" : 1793874955665,
+    "duration" : 2470,
     "sequenceNumber" : 62,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2572,8 +2572,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868666421,
-    "duration" : 188,
+    "timestamp" : 1793874958136,
+    "duration" : 90,
     "sequenceNumber" : 63,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2602,8 +2602,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868666610,
-    "duration" : 2466,
+    "timestamp" : 1793874958226,
+    "duration" : 2510,
     "sequenceNumber" : 64,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2634,8 +2634,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868669076,
-    "duration" : 24,
+    "timestamp" : 1793874960737,
+    "duration" : 62,
     "sequenceNumber" : 65,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2660,8 +2660,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868669100,
-    "duration" : 178,
+    "timestamp" : 1793874960800,
+    "duration" : 134,
     "sequenceNumber" : 66,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2690,8 +2690,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868669278,
-    "duration" : 3036,
+    "timestamp" : 1793874960934,
+    "duration" : 2904,
     "sequenceNumber" : 67,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2722,8 +2722,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868672314,
-    "duration" : 83,
+    "timestamp" : 1793874963838,
+    "duration" : 106,
     "sequenceNumber" : 68,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2754,8 +2754,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868672398,
-    "duration" : 5746,
+    "timestamp" : 1793874963945,
+    "duration" : 5796,
     "sequenceNumber" : 69,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2780,8 +2780,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868678145,
-    "duration" : 208,
+    "timestamp" : 1793874969741,
+    "duration" : 106,
     "sequenceNumber" : 70,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2810,8 +2810,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868678353,
-    "duration" : 2306,
+    "timestamp" : 1793874969848,
+    "duration" : 2358,
     "sequenceNumber" : 71,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2836,8 +2836,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868680659,
-    "duration" : 658,
+    "timestamp" : 1793874972206,
+    "duration" : 445,
     "sequenceNumber" : 72,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2856,8 +2856,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868681318,
-    "duration" : 146,
+    "timestamp" : 1793874972651,
+    "duration" : 90,
     "sequenceNumber" : 73,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2886,8 +2886,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868681464,
-    "duration" : 2520,
+    "timestamp" : 1793874972742,
+    "duration" : 2438,
     "sequenceNumber" : 74,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2912,8 +2912,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868683985,
-    "duration" : 589,
+    "timestamp" : 1793874975180,
+    "duration" : 448,
     "sequenceNumber" : 75,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2938,8 +2938,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868684575,
-    "duration" : 7737,
+    "timestamp" : 1793874975629,
+    "duration" : 6979,
     "sequenceNumber" : 76,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2964,8 +2964,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868692312,
-    "duration" : 615,
+    "timestamp" : 1793874982608,
+    "duration" : 435,
     "sequenceNumber" : 77,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2984,8 +2984,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868692927,
-    "duration" : 157,
+    "timestamp" : 1793874983044,
+    "duration" : 100,
     "sequenceNumber" : 78,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -3014,8 +3014,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868693084,
-    "duration" : 11792,
+    "timestamp" : 1793874983144,
+    "duration" : 10902,
     "sequenceNumber" : 79,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -3058,8 +3058,8 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1793868704877,
-    "duration" : 7196,
+    "timestamp" : 1793874994046,
+    "duration" : 7571,
     "sequenceNumber" : 80,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -3102,8 +3102,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868712073,
-    "duration" : 211,
+    "timestamp" : 1793875001618,
+    "duration" : 2389,
     "sequenceNumber" : 81,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -3128,8 +3128,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868712285,
-    "duration" : 628,
+    "timestamp" : 1793875004011,
+    "duration" : 505,
     "sequenceNumber" : 82,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -3152,8 +3152,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868712913,
-    "duration" : 345,
+    "timestamp" : 1793875004516,
+    "duration" : 464,
     "sequenceNumber" : 83,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -3182,8 +3182,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868713258,
-    "duration" : 4347,
+    "timestamp" : 1793875004980,
+    "duration" : 11962,
     "sequenceNumber" : 84,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -3208,8 +3208,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868717605,
-    "duration" : 12512,
+    "timestamp" : 1793875016942,
+    "duration" : 12828,
     "sequenceNumber" : 85,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -3228,8 +3228,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868730118,
-    "duration" : 814,
+    "timestamp" : 1793875029770,
+    "duration" : 540,
     "sequenceNumber" : 86,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -3258,8 +3258,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868730932,
-    "duration" : 6254,
+    "timestamp" : 1793875030310,
+    "duration" : 4642,
     "sequenceNumber" : 87,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -3284,8 +3284,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868737188,
-    "duration" : 4676,
+    "timestamp" : 1793875034952,
+    "duration" : 695,
     "sequenceNumber" : 88,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -3304,8 +3304,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868741865,
-    "duration" : 587,
+    "timestamp" : 1793875035647,
+    "duration" : 232,
     "sequenceNumber" : 89,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -3328,8 +3328,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868742452,
-    "duration" : 720,
+    "timestamp" : 1793875035879,
+    "duration" : 211,
     "sequenceNumber" : 90,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -3358,8 +3358,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868743173,
-    "duration" : 5755,
+    "timestamp" : 1793875036091,
+    "duration" : 4055,
     "sequenceNumber" : 91,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -3390,8 +3390,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868748927,
-    "duration" : 521,
+    "timestamp" : 1793875040146,
+    "duration" : 133,
     "sequenceNumber" : 92,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -3416,8 +3416,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868749448,
-    "duration" : 176,
+    "timestamp" : 1793875040279,
+    "duration" : 395,
     "sequenceNumber" : 93,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -3444,6 +3444,17 @@
       "commands" : [ {
         "tapOnElement" : {
           "selector" : {
+            "textRegex" : "Home",
+            "optional" : false
+          },
+          "retryIfNoChange" : false,
+          "waitUntilVisible" : false,
+          "longPress" : false,
+          "optional" : false
+        }
+      }, {
+        "tapOnElement" : {
+          "selector" : {
             "textRegex" : "Profile",
             "optional" : false
           },
@@ -3463,8 +3474,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868749625,
-    "duration" : 50787,
+    "timestamp" : 1793875040674,
+    "duration" : 13836,
     "sequenceNumber" : 94,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -3477,6 +3488,17 @@
           }
         },
         "commands" : [ {
+          "tapOnElement" : {
+            "selector" : {
+              "textRegex" : "Home",
+              "optional" : false
+            },
+            "retryIfNoChange" : false,
+            "waitUntilVisible" : false,
+            "longPress" : false,
+            "optional" : false
+          }
+        }, {
           "tapOnElement" : {
             "selector" : {
               "textRegex" : "Profile",
@@ -3501,7 +3523,7 @@
   "command" : {
     "tapOnElement" : {
       "selector" : {
-        "textRegex" : "Profile",
+        "textRegex" : "Home",
         "optional" : false
       },
       "retryIfNoChange" : false,
@@ -3512,14 +3534,14 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868751000,
-    "duration" : 3459,
+    "timestamp" : 1793875041331,
+    "duration" : 2893,
     "sequenceNumber" : 95,
     "depth" : 1,
     "evaluatedCommand" : {
       "tapOnElement" : {
         "selector" : {
-          "textRegex" : "Profile",
+          "textRegex" : "Home",
           "optional" : false
         },
         "retryIfNoChange" : false,
@@ -3531,614 +3553,74 @@
   }
 }, {
   "command" : {
-    "waitForAnimationToEndCommand" : {
-      "timeout" : "5000",
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Profile",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
       "optional" : false
     }
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868754459,
-    "duration" : 931,
+    "timestamp" : 1793875044224,
+    "duration" : 2865,
     "sequenceNumber" : 96,
     "depth" : 1,
     "evaluatedCommand" : {
-      "waitForAnimationToEndCommand" : {
-        "timeout" : "5000",
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Profile",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
         "optional" : false
       }
     }
   }
 }, {
   "command" : {
-    "tapOnElement" : {
-      "selector" : {
-        "textRegex" : "Profile",
-        "optional" : false
-      },
-      "retryIfNoChange" : false,
-      "waitUntilVisible" : false,
-      "longPress" : false,
+    "waitForAnimationToEndCommand" : {
+      "timeout" : "5000",
       "optional" : false
     }
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868756026,
-    "duration" : 2588,
+    "timestamp" : 1793875047089,
+    "duration" : 414,
     "sequenceNumber" : 97,
     "depth" : 1,
     "evaluatedCommand" : {
-      "tapOnElement" : {
-        "selector" : {
-          "textRegex" : "Profile",
-          "optional" : false
-        },
-        "retryIfNoChange" : false,
-        "waitUntilVisible" : false,
-        "longPress" : false,
+      "waitForAnimationToEndCommand" : {
+        "timeout" : "5000",
         "optional" : false
       }
     }
   }
 }, {
   "command" : {
-    "waitForAnimationToEndCommand" : {
-      "timeout" : "5000",
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Profile",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
       "optional" : false
     }
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793868758614,
-    "duration" : 662,
+    "timestamp" : 1793875054511,
+    "duration" : 2583,
     "sequenceNumber" : 98,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "waitForAnimationToEndCommand" : {
-        "timeout" : "5000",
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "tapOnElement" : {
-      "selector" : {
-        "textRegex" : "Profile",
-        "optional" : false
-      },
-      "retryIfNoChange" : false,
-      "waitUntilVisible" : false,
-      "longPress" : false,
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868759916,
-    "duration" : 2722,
-    "sequenceNumber" : 99,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "tapOnElement" : {
-        "selector" : {
-          "textRegex" : "Profile",
-          "optional" : false
-        },
-        "retryIfNoChange" : false,
-        "waitUntilVisible" : false,
-        "longPress" : false,
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "waitForAnimationToEndCommand" : {
-      "timeout" : "5000",
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868762638,
-    "duration" : 671,
-    "sequenceNumber" : 100,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "waitForAnimationToEndCommand" : {
-        "timeout" : "5000",
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "tapOnElement" : {
-      "selector" : {
-        "textRegex" : "Profile",
-        "optional" : false
-      },
-      "retryIfNoChange" : false,
-      "waitUntilVisible" : false,
-      "longPress" : false,
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868763968,
-    "duration" : 2730,
-    "sequenceNumber" : 101,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "tapOnElement" : {
-        "selector" : {
-          "textRegex" : "Profile",
-          "optional" : false
-        },
-        "retryIfNoChange" : false,
-        "waitUntilVisible" : false,
-        "longPress" : false,
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "waitForAnimationToEndCommand" : {
-      "timeout" : "5000",
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868766698,
-    "duration" : 622,
-    "sequenceNumber" : 102,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "waitForAnimationToEndCommand" : {
-        "timeout" : "5000",
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "tapOnElement" : {
-      "selector" : {
-        "textRegex" : "Profile",
-        "optional" : false
-      },
-      "retryIfNoChange" : false,
-      "waitUntilVisible" : false,
-      "longPress" : false,
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868767962,
-    "duration" : 2662,
-    "sequenceNumber" : 103,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "tapOnElement" : {
-        "selector" : {
-          "textRegex" : "Profile",
-          "optional" : false
-        },
-        "retryIfNoChange" : false,
-        "waitUntilVisible" : false,
-        "longPress" : false,
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "waitForAnimationToEndCommand" : {
-      "timeout" : "5000",
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868770624,
-    "duration" : 627,
-    "sequenceNumber" : 104,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "waitForAnimationToEndCommand" : {
-        "timeout" : "5000",
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "tapOnElement" : {
-      "selector" : {
-        "textRegex" : "Profile",
-        "optional" : false
-      },
-      "retryIfNoChange" : false,
-      "waitUntilVisible" : false,
-      "longPress" : false,
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868771920,
-    "duration" : 2776,
-    "sequenceNumber" : 105,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "tapOnElement" : {
-        "selector" : {
-          "textRegex" : "Profile",
-          "optional" : false
-        },
-        "retryIfNoChange" : false,
-        "waitUntilVisible" : false,
-        "longPress" : false,
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "waitForAnimationToEndCommand" : {
-      "timeout" : "5000",
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868774696,
-    "duration" : 618,
-    "sequenceNumber" : 106,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "waitForAnimationToEndCommand" : {
-        "timeout" : "5000",
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "tapOnElement" : {
-      "selector" : {
-        "textRegex" : "Profile",
-        "optional" : false
-      },
-      "retryIfNoChange" : false,
-      "waitUntilVisible" : false,
-      "longPress" : false,
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868775953,
-    "duration" : 2783,
-    "sequenceNumber" : 107,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "tapOnElement" : {
-        "selector" : {
-          "textRegex" : "Profile",
-          "optional" : false
-        },
-        "retryIfNoChange" : false,
-        "waitUntilVisible" : false,
-        "longPress" : false,
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "waitForAnimationToEndCommand" : {
-      "timeout" : "5000",
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868778737,
-    "duration" : 616,
-    "sequenceNumber" : 108,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "waitForAnimationToEndCommand" : {
-        "timeout" : "5000",
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "tapOnElement" : {
-      "selector" : {
-        "textRegex" : "Profile",
-        "optional" : false
-      },
-      "retryIfNoChange" : false,
-      "waitUntilVisible" : false,
-      "longPress" : false,
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868780090,
-    "duration" : 2897,
-    "sequenceNumber" : 109,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "tapOnElement" : {
-        "selector" : {
-          "textRegex" : "Profile",
-          "optional" : false
-        },
-        "retryIfNoChange" : false,
-        "waitUntilVisible" : false,
-        "longPress" : false,
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "waitForAnimationToEndCommand" : {
-      "timeout" : "5000",
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868782987,
-    "duration" : 627,
-    "sequenceNumber" : 110,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "waitForAnimationToEndCommand" : {
-        "timeout" : "5000",
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "tapOnElement" : {
-      "selector" : {
-        "textRegex" : "Profile",
-        "optional" : false
-      },
-      "retryIfNoChange" : false,
-      "waitUntilVisible" : false,
-      "longPress" : false,
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868784271,
-    "duration" : 2672,
-    "sequenceNumber" : 111,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "tapOnElement" : {
-        "selector" : {
-          "textRegex" : "Profile",
-          "optional" : false
-        },
-        "retryIfNoChange" : false,
-        "waitUntilVisible" : false,
-        "longPress" : false,
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "waitForAnimationToEndCommand" : {
-      "timeout" : "5000",
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868786943,
-    "duration" : 616,
-    "sequenceNumber" : 112,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "waitForAnimationToEndCommand" : {
-        "timeout" : "5000",
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "tapOnElement" : {
-      "selector" : {
-        "textRegex" : "Profile",
-        "optional" : false
-      },
-      "retryIfNoChange" : false,
-      "waitUntilVisible" : false,
-      "longPress" : false,
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868788222,
-    "duration" : 2882,
-    "sequenceNumber" : 113,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "tapOnElement" : {
-        "selector" : {
-          "textRegex" : "Profile",
-          "optional" : false
-        },
-        "retryIfNoChange" : false,
-        "waitUntilVisible" : false,
-        "longPress" : false,
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "waitForAnimationToEndCommand" : {
-      "timeout" : "5000",
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868791104,
-    "duration" : 631,
-    "sequenceNumber" : 114,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "waitForAnimationToEndCommand" : {
-        "timeout" : "5000",
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "tapOnElement" : {
-      "selector" : {
-        "textRegex" : "Profile",
-        "optional" : false
-      },
-      "retryIfNoChange" : false,
-      "waitUntilVisible" : false,
-      "longPress" : false,
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868792376,
-    "duration" : 2726,
-    "sequenceNumber" : 115,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "tapOnElement" : {
-        "selector" : {
-          "textRegex" : "Profile",
-          "optional" : false
-        },
-        "retryIfNoChange" : false,
-        "waitUntilVisible" : false,
-        "longPress" : false,
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "waitForAnimationToEndCommand" : {
-      "timeout" : "5000",
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868795102,
-    "duration" : 621,
-    "sequenceNumber" : 116,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "waitForAnimationToEndCommand" : {
-        "timeout" : "5000",
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "tapOnElement" : {
-      "selector" : {
-        "textRegex" : "Profile",
-        "optional" : false
-      },
-      "retryIfNoChange" : false,
-      "waitUntilVisible" : false,
-      "longPress" : false,
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868796382,
-    "duration" : 2760,
-    "sequenceNumber" : 117,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "tapOnElement" : {
-        "selector" : {
-          "textRegex" : "Profile",
-          "optional" : false
-        },
-        "retryIfNoChange" : false,
-        "waitUntilVisible" : false,
-        "longPress" : false,
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "waitForAnimationToEndCommand" : {
-      "timeout" : "5000",
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868799142,
-    "duration" : 627,
-    "sequenceNumber" : 118,
-    "depth" : 1,
-    "evaluatedCommand" : {
-      "waitForAnimationToEndCommand" : {
-        "timeout" : "5000",
-        "optional" : false
-      }
-    }
-  }
-}, {
-  "command" : {
-    "tapOnElement" : {
-      "selector" : {
-        "textRegex" : "Profile",
-        "optional" : false
-      },
-      "retryIfNoChange" : false,
-      "waitUntilVisible" : false,
-      "longPress" : false,
-      "optional" : false
-    }
-  },
-  "metadata" : {
-    "status" : "COMPLETED",
-    "timestamp" : 1793868800413,
-    "duration" : 2910,
-    "sequenceNumber" : 119,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
@@ -4167,14 +3649,10 @@
     }
   },
   "metadata" : {
-    "status" : "FAILED",
-    "timestamp" : 1793868803323,
-    "duration" : 60274,
-    "error" : {
-      "message" : "Assertion is false: \"Open your Story\" is visible",
-      "debugMessage" : "Assertion '\"Open your Story\" is visible' failed. Check the UI hierarchy in debug artifacts to verify the element state and properties.\n\nPossible causes:\n- Element selector may be incorrect - check if there are similar elements with slightly different names/properties.\n- Element may be temporarily unavailable due to loading state\n- This could be a real regression that needs to be addressed"
-    },
-    "sequenceNumber" : 120,
+    "status" : "COMPLETED",
+    "timestamp" : 1793875057095,
+    "duration" : 76,
+    "sequenceNumber" : 99,
     "depth" : 0,
     "evaluatedCommand" : {
       "assertConditionCommand" : {
@@ -4187,13 +3665,112 @@
         "timeout" : "60000",
         "optional" : false
       }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Open your Story",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "waitToSettleTimeoutMs" : 500,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793875057171,
+    "duration" : 3026,
+    "sequenceNumber" : 100,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Open your Story",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "waitToSettleTimeoutMs" : 500,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "takeScreenshotCommand" : {
+      "path" : "v08-story-a",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793875060197,
+    "duration" : 528,
+    "sequenceNumber" : 101,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "takeScreenshotCommand" : {
+        "path" : "v08-story-a",
+        "optional" : false
+      }
     },
     "artifacts" : [ {
-      "type" : "SCREEN_HIERARCHY",
-      "path" : "screen-hierarchy/step-121-assertCondition-Open_your_Story.json"
-    }, {
-      "type" : "SCREENSHOT",
-      "path" : "screenshots/step-121-assertCondition-Open_your_Story.png"
+      "type" : "TAKE_SCREENSHOT",
+      "path" : "takeScreenshot/v08-story-a.png"
+    } ]
+  }
+}, {
+  "command" : {
+    "takeScreenshotCommand" : {
+      "path" : "v09-story-b",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793875060725,
+    "duration" : 1845,
+    "sequenceNumber" : 102,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "takeScreenshotCommand" : {
+        "path" : "v09-story-b",
+        "optional" : false
+      }
+    },
+    "artifacts" : [ {
+      "type" : "TAKE_SCREENSHOT",
+      "path" : "takeScreenshot/v09-story-b.png"
+    } ]
+  }
+}, {
+  "command" : {
+    "takeScreenshotCommand" : {
+      "path" : "v10-story-c",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793875062570,
+    "duration" : 938,
+    "sequenceNumber" : 103,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "takeScreenshotCommand" : {
+        "path" : "v10-story-c",
+        "optional" : false
+      }
+    },
+    "artifacts" : [ {
+      "type" : "TAKE_SCREENSHOT",
+      "path" : "takeScreenshot/v10-story-c.png"
     } ]
   }
 } ]
