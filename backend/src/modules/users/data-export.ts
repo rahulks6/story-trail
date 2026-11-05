@@ -175,7 +175,7 @@ async function build(userId: string, store: ObjectStore, file: string, workDir: 
   }));
 
   const stories = await query(
-    `SELECT id, media_id, caption, audience, allow_comments, allow_sharing, created_at, expires_at, deleted_at, overlays, filter, music, topic, festival
+    `SELECT id, media_id, caption, alt_text, audience, allow_comments, allow_sharing, created_at, expires_at, deleted_at, overlays, filter, music, topic, festival
        FROM stories WHERE owner_id = :'id' ORDER BY created_at`,
     { id: userId },
   );
@@ -202,7 +202,7 @@ async function build(userId: string, store: ObjectStore, file: string, workDir: 
     }
     storyRows.push({
       id: s.id, postedAt: at(s.created_at), expiredAt: at(s.expires_at), deletedAt: at(s.deleted_at),
-      caption: s.caption, audience: s.audience, comments: s.allow_comments, sharing: s.allow_sharing === "t",
+      caption: s.caption, pictureDescription: s.alt_text, audience: s.audience, comments: s.allow_comments, sharing: s.allow_sharing === "t",
       textAndStickers: JSON.parse((s.overlays as string) || "[]"), filter: s.filter, music: s.music ? JSON.parse(s.music as string) : null,
       topic: s.topic, festival: s.festival, file: mediaFile,
     });

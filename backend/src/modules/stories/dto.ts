@@ -23,6 +23,8 @@ export interface PublishStoryInput {
   requestId?: string;
   mediaId: string;
   caption: string;
+  /** A description of the picture for screen readers (Story settings); null when none. */
+  altText?: string | null;
   audience: Audience;
   allowComments: CommentSetting;
   allowSharing: boolean;
@@ -304,10 +306,13 @@ function parseCrop(raw: unknown): StoryCrop {
   };
 }
 
+/** The longest picture description (stories.alt_text, migration 0074). */
+export const MAX_ALT_TEXT_LENGTH = 500;
+
 /** The caption plus any text overlays: everything a viewer reads on the Story. */
 export function captionText(input: PublishStoryInput): string {
   const overlays = (input as { overlays?: { type?: string; properties?: { text?: unknown } }[] }).overlays ?? [];
-  return [input.caption ?? "", ...overlays.filter((o) => o?.type === "text" && typeof o.properties?.text === "string").map((o) => String(o.properties!.text))].join("\n");
+  return [input.caption ?? "", input.altText ?? "", ...overlays.filter((o) => o?.type === "text" && typeof o.properties?.text === "string").map((o) => String(o.properties!.text))].join("\n");
 }
 
 export function parsePublishStoryInput(body: unknown): PublishStoryInput {
@@ -319,6 +324,9 @@ export function parsePublishStoryInput(body: unknown): PublishStoryInput {
   if (!/^[0-9a-f-]{36}$/i.test(mediaId)) errors.mediaId = "mediaId must be a valid media id.";
 
   const caption = typeof b.caption === "string" ? b.caption : "";
+  const altRaw = typeof b.altText === "string" ? b.altText.trim() : "";
+  if (b.altText !== undefined && b.altText !== null && typeof b.altText !== "string") errors.altText = "altText must be text.";
+  else if (altRaw.length > MAX_ALT_TEXT_LENGTH) errors.altText = `A picture description can be up to ${MAX_ALT_TEXT_LENGTH} characters.`;
   if (caption.length > MAX_CAPTION_LENGTH) errors.caption = `Caption must be at most ${MAX_CAPTION_LENGTH} characters.`;
 
   const audience = (b.audience as Audience) ?? "public";
@@ -363,6 +371,7 @@ export function parsePublishStoryInput(body: unknown): PublishStoryInput {
     mediaId,
     ...(typeof b.requestId==='string'?{requestId:b.requestId}:{}),
     caption,
+    altText: altRaw || null,
     audience,
     allowComments,
     allowSharing: allowSharing as boolean,

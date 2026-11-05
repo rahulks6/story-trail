@@ -36,6 +36,8 @@ export interface PublicStory {
   ownerId: string;
   mediaId: string;
   caption: string;
+  /** What the picture shows, for screen readers; null when the creator gave none. */
+  altText: string | null;
   audience: storiesRepo.Audience;
   allowComments: storiesRepo.CommentSetting;
   allowSharing: boolean;
@@ -131,6 +133,7 @@ async function toPublicStory(
     ownerId: story.ownerId,
     mediaId: story.mediaId,
     caption: story.caption,
+    altText: story.altText,
     audience: story.audience,
     allowComments: story.allowComments,
     allowSharing: story.allowSharing,
@@ -201,6 +204,7 @@ export async function publishStory(
     ownerId,
     mediaId: input.mediaId,
     caption: input.caption,
+    altText: input.altText ?? null,
     audience: input.audience,
     allowComments: input.allowComments,
     allowSharing: input.allowSharing,

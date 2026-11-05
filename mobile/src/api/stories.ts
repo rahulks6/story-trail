@@ -11,6 +11,8 @@ export interface PublicStory {
   ownerId: string;
   mediaId: string;
   caption: string;
+  /** What the picture shows, for screen readers (Story settings). */
+  altText?: string | null;
   audience: StoryAudience;
   allowComments: "everyone" | "followers" | "disabled";
   allowSharing: boolean;
@@ -77,6 +79,7 @@ export interface PublishStoryInput {
   requestId?: string;
   mediaId: string;
   caption?: string;
+  altText?: string | null;
   audience?: StoryAudience;
   allowComments?: "everyone" | "followers" | "disabled";
   allowSharing?: boolean;

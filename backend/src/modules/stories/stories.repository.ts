@@ -8,7 +8,7 @@ export type Audience = "public" | "followers" | "close_friends";
 export type CommentSetting = "everyone" | "followers" | "disabled";
 
 const STORY_COLUMNS =
-  "id, owner_id, media_id, caption, audience, allow_comments, allow_sharing, created_at, expires_at, deleted_at, overlays, drawing, filter, audio_muted, crop, music, topic";
+  "id, owner_id, media_id, caption, alt_text, audience, allow_comments, allow_sharing, created_at, expires_at, deleted_at, overlays, drawing, filter, audio_muted, crop, music, topic";
 
 const DEFAULT_CROP: StoryCrop = { zoom: 1, offsetX: 0, offsetY: 0 };
 
@@ -17,6 +17,7 @@ export interface StoryRecord {
   ownerId: string;
   mediaId: string;
   caption: string;
+  altText: string | null;
   audience: Audience;
   allowComments: CommentSetting;
   allowSharing: boolean;
@@ -63,6 +64,7 @@ function mapRow(row: Row): StoryRecord {
     ownerId: row.owner_id as string,
     mediaId: row.media_id as string,
     caption: row.caption as string,
+    altText: (row.alt_text as string | null) ?? null,
     audience: row.audience as Audience,
     allowComments: row.allow_comments as CommentSetting,
     allowSharing: row.allow_sharing === "t",
@@ -93,6 +95,7 @@ export async function createStory(input: {
   ownerId: string;
   mediaId: string;
   caption: string;
+  altText?: string | null;
   audience: Audience;
   allowComments: CommentSetting;
   allowSharing: boolean;
@@ -107,14 +110,15 @@ export async function createStory(input: {
   topic?: string | null;
 }): Promise<StoryRecord> {
   const row = await queryOne(
-    `INSERT INTO stories (owner_id, media_id, caption, audience, allow_comments, allow_sharing, expires_at, overlays, drawing, filter, audio_muted, crop, music, festival, topic)
-     VALUES (:'owner_id', :'media_id', :'caption', :'audience', :'allow_comments', :'allow_sharing', :'expires_at', :'overlays'::jsonb, :'drawing'::jsonb, :'filter', :'audio_muted', :'crop'::jsonb,
+    `INSERT INTO stories (owner_id, media_id, caption, alt_text, audience, allow_comments, allow_sharing, expires_at, overlays, drawing, filter, audio_muted, crop, music, festival, topic)
+     VALUES (:'owner_id', :'media_id', :'caption', NULLIF(:'alt_text', ''), :'audience', :'allow_comments', :'allow_sharing', :'expires_at', :'overlays'::jsonb, :'drawing'::jsonb, :'filter', :'audio_muted', :'crop'::jsonb,
              NULLIF(:'music', '')::jsonb, NULLIF(:'festival', ''), NULLIF(:'topic', ''))
      RETURNING ${STORY_COLUMNS}`,
     {
       owner_id: input.ownerId,
       media_id: input.mediaId,
       caption: input.caption,
+      alt_text: input.altText ?? "",
       audience: input.audience,
       allow_comments: input.allowComments,
       allow_sharing: input.allowSharing,

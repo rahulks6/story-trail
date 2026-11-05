@@ -7,6 +7,8 @@ export interface StoryDetail {
   ownerId: string;
   mediaId: string;
   caption: string;
+  /** What the picture shows, for screen readers (Story settings). */
+  altText?: string | null;
   audience: "public" | "followers" | "close_friends";
   allowComments: "everyone" | "followers" | "disabled";
   allowSharing: boolean;

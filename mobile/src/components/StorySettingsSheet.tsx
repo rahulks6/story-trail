@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Modal, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Toggle } from "./Toggle";
 import { Pressable } from "./Pressable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -43,6 +43,9 @@ export function saveStorySettings(settings: StorySettings): void {
 }
 
 /** One short line for the editor: "Everyone · Comments on · Food". */
+/** The longest picture description (the server's MAX_ALT_TEXT_LENGTH). */
+export const MAX_ALT_TEXT_LENGTH = 500;
+
 export function storySettingsSummary(s: StorySettings, festivalName?: string | null, topic?: string | null): string {
   const comments = s.allowComments === "everyone" ? t("storySettingsSheet.commentsOn") : s.allowComments === "followers" ? t("storySettingsSheet.commentsFollowers") : t("storySettingsSheet.commentsOff");
   return [s.visibility === "public" ? t("common.everyone") : t("storySettingsSheet.followersOnly"), comments, ...(festivalName ? [festivalName] : []), ...(topic ? [topicLabel(topic)] : [])].join(" · ");
@@ -87,6 +90,8 @@ export function StorySettingsSheet({
   onJoinFestival,
   topic = null,
   onTopicChange,
+  altText,
+  onAltTextChange,
 }: {
   visible: boolean;
   settings: StorySettings;
@@ -97,6 +102,9 @@ export function StorySettingsSheet({
   onJoinFestival?: (join: boolean) => void;
   topic?: string | null;
   onTopicChange?: (topic: string | null) => void;
+  /** A description of the picture for screen readers (sent as the Story's altText). */
+  altText?: string;
+  onAltTextChange?: (text: string) => void;
 }): React.JSX.Element {
   const { bottom } = useSafeAreaInsets();
   const set = (patch: Partial<StorySettings>) => onChange({ ...settings, ...patch });
@@ -149,6 +157,22 @@ export function StorySettingsSheet({
                 <Text style={[styles.hint, styles.topicHint]}>{t("storySettingsSheet.helpsPeopleWhoLikeThis")}</Text>
               </>
             ) : null}
+            {onAltTextChange ? (
+              <>
+                <Text style={styles.section}>{t("storySettingsSheet.pictureDescription")}</Text>
+                <TextInput
+                  value={altText ?? ""}
+                  onChangeText={onAltTextChange}
+                  maxLength={MAX_ALT_TEXT_LENGTH}
+                  multiline
+                  placeholder={t("storySettingsSheet.pictureDescriptionPlaceholder")}
+                  placeholderTextColor={colors.textSecondary}
+                  style={styles.altInput}
+                  accessibilityLabel={t("storySettingsSheet.pictureDescription")}
+                />
+                <Text style={[styles.hint, styles.topicHint]}>{t("storySettingsSheet.pictureDescriptionHint")}</Text>
+              </>
+            ) : null}
           </ScrollView>
           <Pressable style={styles.done} onPress={onClose} accessibilityRole="button">
             <Text style={styles.doneText}>{t("common.done")}</Text>
@@ -179,6 +203,7 @@ const styles = StyleSheet.create({
   chipLabel: { ...typography.body, color: colors.textPrimary, fontWeight: "600" },
   chipLabelSelected: { color: colors.onAccent },
   topicHint: { marginTop: spacing.xs },
+  altInput: { ...typography.body, color: colors.textPrimary, backgroundColor: colors.surfaceElevated, borderRadius: radii.md, padding: spacing.md, minHeight: 72, textAlignVertical: "top" },
   done: { marginTop: spacing.md, minHeight: 48, borderRadius: radii.md, alignItems: "center", justifyContent: "center", backgroundColor: colors.accent },
   doneText: { color: colors.onAccent, fontSize: 16, fontWeight: "700" },
 });

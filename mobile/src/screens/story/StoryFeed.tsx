@@ -861,7 +861,10 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           accessibilityIgnoresInvertColors
         />
       ) : null}
-      <Animated.View style={[StyleSheet.absoluteFill, { opacity: reveal }]} pointerEvents="none">
+      {/* The creator's picture description, for a screen reader (Story settings). */}
+      <Animated.View style={[StyleSheet.absoluteFill, { opacity: reveal }]} pointerEvents="none"
+        accessible={!!(detail ?? currentStory).altText} accessibilityRole="image"
+        accessibilityLabel={(detail ?? currentStory).altText ? `${t("storyFeed.storyPicture")}: ${(detail ?? currentStory).altText}` : undefined}>
       {mediaKind === "video" ? (
         <Video
           ref={videoRef}

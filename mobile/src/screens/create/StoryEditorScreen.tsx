@@ -150,6 +150,8 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   const [captionFocused, setCaptionFocused] = useState(false);
   // This Story's topic (Story settings sheet): chosen for each Story, never remembered for the next.
   const [topic, setTopic] = useState<string | null>(null);
+  // A description of the picture for screen readers (Story settings), sent with the Story.
+  const [altText, setAltText] = useState("");
   useEffect(() => {
     void loadStorySettings().then((saved) => {
       setSettings(saved);
@@ -679,6 +681,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           // Public festival Stories join the festival's ring on Home.
           ...(festival && joinFestival && target === "public" ? { festival: festival.slug } : {}),
           ...(topic ? { topic } : {}),
+          ...(altText.trim() ? { altText: altText.trim() } : {}),
           ...(publishAt ? { publishAt: publishAt.toISOString() } : {}),
           ...(collaborator && target !== "close_friends" ? { collaboratorId: collaborator.id } : {}),
         },
@@ -1148,6 +1151,8 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         onJoinFestival={setJoinFestival}
         topic={topic}
         onTopicChange={setTopic}
+        altText={altText}
+        onAltTextChange={setAltText}
       />
       <TextToolModal
         // Starts fresh each time it opens: new text, or the text being edited.
