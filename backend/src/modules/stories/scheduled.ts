@@ -12,7 +12,7 @@
 import { createHash } from "node:crypto";
 import type { Client } from "pg";
 import { config } from "../../config/env";
-import { DatabaseError, openDedicatedConnection, query, queryOne, type Row } from "../../db/psql";
+import { DatabaseError, connectionBroken, discardConnection, openDedicatedConnection, query, queryOne, type Row } from "../../db/psql";
 import { HttpError } from "../../http/errors";
 import { ValidationError } from "../auth/dto";
 import { assertCanContribute } from "../admin/account-policy";
@@ -263,6 +263,7 @@ export class ScheduledStoriesWorker {
 
   /** One round if this worker holds the lock; null when another worker has it. */
   async runOnce(): Promise<{ published: number; failed: number } | null> {
+    if (connectionBroken(this.connection)) this.connection = null;
     const connection = this.connection ?? (this.connection = await openDedicatedConnection());
     const lock = await connection.query<{ ok: boolean }>("SELECT pg_try_advisory_lock($1) AS ok", [LOCK]);
     if (!lock.rows[0]?.ok) return null;
@@ -291,6 +292,10 @@ export class ScheduledStoriesWorker {
           if (result && result.published + result.failed > 0) this.options.log?.({ event: "scheduled_stories_published", ...result });
         } catch (error) {
           this.options.log?.({ event: "scheduled_stories_error", error: (error as Error).message });
+          // A dead connection is replaced next round.
+          const dead = this.connection;
+          this.connection = null;
+          await discardConnection(dead);
         }
         if (this.running) {
           await new Promise<void>((resolve) => {

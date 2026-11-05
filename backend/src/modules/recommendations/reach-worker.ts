@@ -1,5 +1,5 @@
 import type { Client } from "pg";
-import { openDedicatedConnection } from "../../db/psql";
+import { connectionBroken, discardConnection, openDedicatedConnection } from "../../db/psql";
 import { evaluateReachBatch } from "./reach.repository";
 import type { ReachSettings } from "./reach";
 
@@ -27,6 +27,7 @@ export class ReachWorker {
 
   /** One round if this worker holds the lock; null when another worker is judging. */
   async runOnce(now = new Date()): Promise<{ evaluated: number; changed: number } | null> {
+    if (connectionBroken(this.connection)) this.connection = null;
     const connection = this.connection ?? (this.connection = await openDedicatedConnection());
     const lock = await connection.query<{ ok: boolean }>("SELECT pg_try_advisory_lock($1) AS ok", [REACH_LOCK]);
     if (!lock.rows[0]?.ok) return null;
@@ -47,6 +48,10 @@ export class ReachWorker {
           if (result?.changed) this.options.log?.({ event: "reach_evaluated", ...result });
         } catch (error) {
           this.options.log?.({ event: "reach_worker_error", error: (error as Error).message });
+          // A dead connection is replaced next round.
+          const dead = this.connection;
+          this.connection = null;
+          await discardConnection(dead);
         }
         if (this.running) {
           await new Promise<void>((resolve) => {

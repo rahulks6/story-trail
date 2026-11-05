@@ -1,5 +1,5 @@
 import type { Client } from "pg";
-import { openDedicatedConnection } from "../../db/psql";
+import { connectionBroken, discardConnection, openDedicatedConnection } from "../../db/psql";
 import { dispatchPushBatch, type ProviderMap } from "./dispatcher";
 
 export interface PushWorkerOptions {
@@ -38,13 +38,13 @@ export class PushWorker {
   async start(): Promise<void> {
     if (this.running) return;
     this.running = true;
-    this.listener = await openDedicatedConnection();
-    this.listener.on("notification", () => this.wake?.());
-    await this.listener.query("LISTEN push_outbox");
+    await this.listen();
     this.loop = (async () => {
       while (this.running) {
         let handled = 0;
         try {
+          // The listener died with the database (a restart or failover): open it again.
+          if (connectionBroken(this.listener)) await this.listen();
           handled = await this.runOnce();
         } catch (error) {
           this.options.log?.({ event: "push_worker_error", error: (error as Error).message });
@@ -52,6 +52,17 @@ export class PushWorker {
         if (!handled && this.running) await this.idle(this.options.pollMs);
       }
     })();
+  }
+
+  /** Opens the LISTEN connection (again, after the old one failed). */
+  private async listen(): Promise<void> {
+    const old = this.listener;
+    this.listener = null;
+    await discardConnection(old);
+    const listener = await openDedicatedConnection();
+    listener.on("notification", () => this.wake?.());
+    await listener.query("LISTEN push_outbox");
+    this.listener = listener;
   }
 
   async stop(): Promise<void> {

@@ -238,4 +238,20 @@ describe("at its time", () => {
     const story = await queryOne(`SELECT festival FROM stories WHERE publish_request_id = :'r'`, { r: scheduled.requestId });
     assert.equal(story?.festival, null);
   });
+  it("keeps working after the database drops the worker's connection (a restart or failover)", async () => {
+    const me = await signup();
+    const scheduled = (await share(me, await upload(me), { publishAt: inHours(1) })).body.scheduled;
+    const worker = new ScheduledStoriesWorker({ everyMs: 60_000 });
+    try {
+      assert.deepEqual(await worker.runOnce(), { published: 0, failed: 0 });
+      // The database ends the worker's own connection, as on 3 November.
+      const pid = await (worker as unknown as { connection: import("pg").Client }).connection.query<{ pid: number }>("SELECT pg_backend_pid() AS pid");
+      await query(`SELECT pg_terminate_backend(:'pid')`, { pid: pid.rows[0]!.pid });
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      await makeDue(scheduled.id);
+      assert.deepEqual(await worker.runOnce(), { published: 1, failed: 0 }, "a new connection, not 'not queryable' forever");
+    } finally {
+      await worker.stop();
+    }
+  });
 });

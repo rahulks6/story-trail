@@ -1,5 +1,5 @@
 import type { Client } from "pg";
-import { openDedicatedConnection, query, queryOne } from "../../db/psql";
+import { connectionBroken, discardConnection, openDedicatedConnection, query, queryOne } from "../../db/psql";
 import type { Router } from "../../http/router";
 import { requireAuth } from "../../http/middleware/auth.middleware";
 import { sendJson } from "../../http/respond";
@@ -184,6 +184,7 @@ export class ReturnReasonsWorker {
 
   /** One round if this worker holds the lock; null when another worker has it. */
   async runOnce(now = new Date()): Promise<Record<string, number> | null> {
+    if (connectionBroken(this.connection)) this.connection = null;
     const connection = this.connection ?? (this.connection = await openDedicatedConnection());
     const lock = await connection.query<{ ok: boolean }>("SELECT pg_try_advisory_lock($1) AS ok", [LOCK]);
     if (!lock.rows[0]?.ok) return null;
@@ -204,6 +205,10 @@ export class ReturnReasonsWorker {
           if (queued && Object.values(queued).some((n) => n > 0)) this.options.log?.({ event: "return_reasons_queued", ...queued });
         } catch (error) {
           this.options.log?.({ event: "return_reasons_error", error: (error as Error).message });
+          // A dead connection is replaced next round.
+          const dead = this.connection;
+          this.connection = null;
+          await discardConnection(dead);
         }
         if (this.running) {
           await new Promise<void>((resolve) => {

@@ -5,7 +5,7 @@ import { hostname } from "node:os";
 import { randomBytes } from "node:crypto";
 import type { Client } from "pg";
 import { config } from "../../config/env";
-import { openDedicatedConnection, query } from "../../db/psql";
+import { connectionBroken, discardConnection, openDedicatedConnection, query } from "../../db/psql";
 import { notifyMentionsQuietly } from "../stories/stories.service";
 import type { ObjectStore } from "./storage";
 import { findMediaById } from "./media.repository";
@@ -195,9 +195,7 @@ export class MediaWorker {
   async start(): Promise<void> {
     if (this.running) return;
     this.running = true;
-    this.listener = await openDedicatedConnection();
-    this.listener.on("notification", () => this.poke());
-    await this.listener.query("LISTEN media_jobs");
+    await this.listen();
     for (let i = 0; i < Math.max(1, this.options.concurrency); i++) this.loops.push(this.loop());
     if (this.options.heartbeatFile) {
       await this.beat();
@@ -208,9 +206,11 @@ export class MediaWorker {
     const periodic = this.options.periodic;
     if (periodic) {
       const tick = async () => {
-        if (!this.running || !this.listener) return;
+        if (!this.running) return;
         try {
-          await periodic.task(this.listener);
+          // The listener died with the database (a restart or failover): open it again.
+          if (connectionBroken(this.listener)) await this.listen();
+          await periodic.task(this.listener!);
         } catch (error) {
           (this.options.log ?? defaultLog)({ event: "periodic_task_error", error: (error as Error).message });
         }
@@ -218,6 +218,17 @@ export class MediaWorker {
       };
       this.periodicTimer = setTimeout(() => void tick(), 1000);
     }
+  }
+
+  /** Opens the LISTEN connection (again, after the old one failed). */
+  private async listen(): Promise<void> {
+    const old = this.listener;
+    this.listener = null;
+    await discardConnection(old);
+    const listener = await openDedicatedConnection();
+    listener.on("notification", () => this.poke());
+    await listener.query("LISTEN media_jobs");
+    this.listener = listener;
   }
 
   async stop(): Promise<void> {

@@ -146,9 +146,25 @@ export async function closeDatabase(): Promise<void> { const existing=pool;pool=
  */
 export async function openDedicatedConnection(): Promise<Client> {
  const client=new Client({ ...config.db, connectionTimeoutMillis: 5000 });
- client.on('error', () => console.warn(JSON.stringify({event:'database_connection_error',connection:'dedicated'})));
+ client.on('error', () => { broken.add(client); console.warn(JSON.stringify({event:'database_connection_error',connection:'dedicated'})); });
+ client.on('end', () => broken.add(client));
  await client.connect();
  return client;
+}
+
+/** Dedicated connections that failed or closed: never usable again, so the owner opens a new one. */
+const broken=new WeakSet<Client>();
+export function connectionBroken(client: Client | null | undefined): boolean { return !client || broken.has(client); }
+
+/**
+ * Closes a dedicated connection after a failed round so the next round opens a fresh one. A
+ * database restart or failover otherwise leaves the worker holding a dead connection forever
+ * ("Client has encountered a connection error and is not queryable").
+ */
+export async function discardConnection(client: Client | null | undefined): Promise<void> {
+ if (!client) return;
+ broken.add(client);
+ await client.end().catch(() => undefined);
 }
 
 export async function queryOne(sql: string, params: SqlParams = {}): Promise<Row | null> {
