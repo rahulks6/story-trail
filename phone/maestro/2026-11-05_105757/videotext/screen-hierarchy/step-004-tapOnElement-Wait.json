@@ -828,8 +828,8 @@
                   },
                   "children" : [ {
                     "attributes" : {
-                      "text" : "10:34",
-                      "accessibilityText" : "10:34 AM",
+                      "text" : "10:58",
+                      "accessibilityText" : "10:58 AM",
                       "ignoreBoundsFiltering" : "false",
                       "resource-id" : "com.android.systemui:id/clock",
                       "clickable" : "false",

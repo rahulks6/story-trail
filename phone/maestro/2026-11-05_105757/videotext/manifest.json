@@ -4,7 +4,7 @@
     "kind" : "MAESTRO_LOG",
     "format" : "TXT",
     "relativePath" : "logs/maestro.log",
-    "sizeBytes" : 60347
+    "sizeBytes" : 60215
   }, {
     "kind" : "SCREEN_HIERARCHY",
     "format" : "JSON",
@@ -24,12 +24,12 @@
     "kind" : "COMMAND_METADATA",
     "format" : "JSON",
     "relativePath" : "commands.json",
-    "sizeBytes" : 97310
+    "sizeBytes" : 97301
   }, {
     "kind" : "DEVICE_LOG",
     "format" : "TXT",
     "relativePath" : "logs/device-logcat.txt",
-    "sizeBytes" : 8596462,
+    "sizeBytes" : 8467727,
     "metadata" : {
       "source" : "emulator"
     }
