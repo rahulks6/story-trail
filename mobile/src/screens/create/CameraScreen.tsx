@@ -688,6 +688,17 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
               <Text style={[styles.modeLabel, m.mode === mode && styles.modeLabelActive]} numberOfLines={1}>{m.label}</Text>
             </Pressable>
           ))}
+          {/* Not a camera mode: several photos from the gallery in one Story (LayoutScreen). */}
+          <Pressable
+            onPress={() => { if (!recordingRef.current && !capturingRef.current) navigation.navigate("Layout"); }}
+            hitSlop={8}
+            style={styles.modeChip}
+            accessibilityRole="button"
+            accessibilityLabel={t("camera.layout")}
+            accessibilityHint={t("camera.layoutHint")}
+          >
+            <Text style={styles.modeLabel} numberOfLines={1}>{t("camera.layout")}</Text>
+          </Pressable>
         </ScrollView>
       ) : null}
 

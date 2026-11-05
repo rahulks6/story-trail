@@ -40,6 +40,8 @@ export type MainTabParamList = {
 
 export type CreateStackParamList = {
   Camera: undefined;
+  /** Several photos in one Story (LayoutScreen): the collage opens in StoryEditor as a photo. */
+  Layout: undefined;
   StoryEditor: {
     mediaUri: string;
     kind: "photo" | "video";

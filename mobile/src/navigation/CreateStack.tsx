@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { CreateStackParamList } from "./types";
 import { CameraScreen } from "../screens/create/CameraScreen";
 import { StoryEditorScreen } from "../screens/create/StoryEditorScreen";
+import { LayoutScreen } from "../screens/create/LayoutScreen";
 
 const Stack = createNativeStackNavigator<CreateStackParamList>();
 
@@ -12,6 +13,7 @@ export function CreateStack(): React.JSX.Element {
     <Stack.Navigator screenOptions={{ headerShown: false, presentation: "fullScreenModal" }}>
       <Stack.Screen name="Camera" component={CameraScreen} />
       <Stack.Screen name="StoryEditor" component={StoryEditorScreen} />
+      <Stack.Screen name="Layout" component={LayoutScreen} />
     </Stack.Navigator>
   );
 }
