@@ -28,6 +28,12 @@ Katkee is the Stories app for your people. Share your day as Stories that disapp
 • Mention friends, add your location and a caption
 • Keep your best moments as Highlights on your profile
 • Close Friends: share a Story with only your closest people
+• Schedule a Story to post later
+
+🗳️ STICKERS THAT GET REPLIES
+• Polls, quizzes, questions and countdowns on your Story
+• Add Yours: start a trend and see everyone who joins in
+• Post a Story together with a friend
 
 ✨ STORIES PICKED FOR WHAT YOU LOVE
 • Choose your interests: cricket, food, travel, Bollywood, music, festivals, fashion and more
@@ -40,6 +46,7 @@ Katkee is the Stories app for your people. Share your day as Stories that disapp
 • React with a tap, reply to any message, pin and forward
 • Group chats with up to 32 friends
 • Reply to a Story straight from the Story
+• Find friends from your contacts (only if you allow it) or invite them with a link
 
 🪔 FESTIVAL WISHES & GREETINGS
 • Festival greetings and stickers for Diwali, Holi, Eid, Christmas and more
@@ -58,7 +65,7 @@ Katkee is the Stories app for your people. Share your day as Stories that disapp
 • Delete your account any time from Settings
 • We don't sell your data
 
-🌗 Light and dark mode.
+🌗 Light and dark mode. In English, हिन्दी and मराठी.
 
 Katkee is for people 18 and older.
 Questions? support@katkee.com · katkee.com
@@ -72,7 +79,7 @@ phone. Use real screens only, with a short caption on top of each:
 4. A group chat: "Group chats with up to 32 friends"
 5. A festival Story with a greeting: "Celebrate every festival"
 6. A profile with a cover photo and Highlights: "Keep the best as Highlights"
-7. The Story editor's text styles: "Text, stickers, music"
+7. A Story with a poll or Add Yours sticker: "Polls, quizzes, Add Yours"
 8. Privacy settings: "Private when you want it"
 
 **Promo video:** upload one of the reels to YouTube and paste the link.
@@ -102,6 +109,12 @@ Katkee आपके अपनों के लिए स्टोरीज़ �
 • दोस्तों को मेंशन करें, लोकेशन और कैप्शन जोड़ें
 • अपने सबसे अच्छे पलों को प्रोफ़ाइल पर हाइलाइट्स में रखें
 • क्लोज़ फ़्रेंड्स: स्टोरी सिर्फ़ अपने सबसे करीबी लोगों के साथ शेयर करें
+• स्टोरी को बाद में पोस्ट होने के लिए शेड्यूल करें
+
+🗳️ स्टिकर जिन पर सब जवाब दें
+• अपनी स्टोरी पर पोल, क्विज़, सवाल और काउंटडाउन
+• Add Yours: एक ट्रेंड शुरू करें और देखें कौन-कौन जुड़ा
+• किसी दोस्त के साथ मिलकर स्टोरी पोस्ट करें
 
 ✨ आपकी पसंद की स्टोरीज़
 • अपनी पसंद चुनें: क्रिकेट, खाना, ट्रैवल, बॉलीवुड, म्यूज़िक, त्योहार, फ़ैशन और भी बहुत कुछ
@@ -114,6 +127,7 @@ Katkee आपके अपनों के लिए स्टोरीज़ �
 • एक टैप में रिएक्ट करें, किसी भी मैसेज का जवाब दें, पिन और फ़ॉरवर्ड करें
 • 32 दोस्तों तक के ग्रुप चैट
 • स्टोरी से ही उसका जवाब दें
+• अपने कॉन्टैक्ट्स से दोस्त ढूँढें (सिर्फ़ आपकी अनुमति से) या लिंक से उन्हें बुलाएँ
 
 🪔 त्योहारों की बधाई और शुभकामनाएँ
 • दिवाली, होली, ईद, क्रिसमस और दूसरे त्योहारों के लिए बधाई और स्टिकर
@@ -154,6 +168,12 @@ Katkee ही तुमच्या माणसांसाठी स्टो�
 • मित्रांना मेंशन करा, लोकेशन आणि कॅप्शन जोडा
 • तुमचे सर्वोत्तम क्षण प्रोफाइलवर हायलाइट्समध्ये ठेवा
 • क्लोज फ्रेंड्स: स्टोरी फक्त तुमच्या जवळच्या लोकांसोबत शेअर करा
+• स्टोरी नंतर पोस्ट होण्यासाठी शेड्यूल करा
+
+🗳️ उत्तरं मिळवणारे स्टिकर
+• तुमच्या स्टोरीवर पोल, क्विझ, प्रश्न आणि काउंटडाउन
+• Add Yours: एखादा ट्रेंड सुरू करा आणि कोण कोण सामील झाले ते पाहा
+• मित्रासोबत मिळून स्टोरी पोस्ट करा
 
 ✨ तुमच्या आवडीच्या स्टोरीज
 • तुमच्या आवडी निवडा: क्रिकेट, खाणे, प्रवास, बॉलिवूड, म्युझिक, सण, फॅशन आणि बरेच काही
@@ -166,6 +186,7 @@ Katkee ही तुमच्या माणसांसाठी स्टो�
 • एका टॅपमध्ये रिॲक्ट करा, कोणत्याही मेसेजला उत्तर द्या, पिन आणि फॉरवर्ड करा
 • 32 मित्रांपर्यंतचे ग्रुप चॅट
 • स्टोरीवरूनच तिला उत्तर द्या
+• तुमच्या कॉन्टॅक्ट्समधून मित्र शोधा (फक्त तुमच्या परवानगीने) किंवा लिंकने त्यांना बोलवा
 
 🪔 सणांच्या शुभेच्छा
 • दिवाळी, होळी, ईद, ख्रिसमस आणि इतर सणांसाठी शुभेच्छा आणि स्टिकर
@@ -214,7 +235,10 @@ them (guideline 2.3.7), and Play treats them as misleading.
    posting a third Story, never at launch.)
 2. **Reply to every review** in Play Console within a day.
 3. **Seasonal promo text.** Change the iOS promotional text and the first line of the Play
-   description for each festival (Diwali, Christmas, Holi). It needs no review on iOS.
+   description for each festival. It needs no review on iOS. After Diwali: Christmas and New
+   Year (late December), Makar Sankranti (14 January), Valentine's week (February), Holi (March),
+   Gudi Padwa (March or April, big in Maharashtra).
+   Never mention voice or video calls in any listing until calls are switched on in production.
 4. **Localise.** Add a Hindi listing (Play Console → Store listing → Manage translations). Most
    users in India search in English, but a Hindi listing ranks in Hindi searches with almost no
    competition.
