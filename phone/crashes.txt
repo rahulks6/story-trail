@@ -1,100 +1,116 @@
-11-05 08:29:59.051 D/AndroidRuntime( 3697): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-11-05 08:29:59.059 D/FileUtils(  564): Rounded bytes from 2593198080 to 4000000000
-11-05 08:29:59.065 I/Icing   ( 1558): Indexing com.google.android.gms-apps from com.google.android.gms
-11-05 08:29:59.067 I/Icing   ( 1558): Indexing done com.google.android.gms-apps
-11-05 08:29:59.068 I/AndroidRuntime( 3697): Using default boot image
-11-05 08:29:59.069 I/AndroidRuntime( 3697): Leaving lock profiling enabled
-11-05 08:29:59.072 W/system_server(  564): Long monitor contention with owner binder:564_7 (1018) at int com.android.server.am.ActivityManagerService.bindServiceInstance(android.app.IApplicationThread, android.os.IBinder, android.content.Intent, java.lang.String, android.app.IServiceConnection, long, java.lang.String, boolean, int, java.lang.String, android.app.IApplicationThread, java.lang.String, int)(ActivityManagerService.java:14231) waiters=3 in boolean com.android.server.am.ActivityManagerService.unbindService(android.app.IServiceConnection) for 156ms
-11-05 08:29:59.076 I/app_process( 3697): Core platform API reporting enabled, enforcing=false
-11-05 08:29:59.077 I/app_process( 3697): Using CollectorTypeCMC GC.
-11-05 08:29:59.081 D/OemPaidWifiNetworkFactory(  564): got request NetworkRequest [ REQUEST id=104, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10152 RequestorUid: 1000 RequestorPkg: android UnderlyingNetworks: Null] ]
-11-05 08:29:59.086 D/MultiInternetWifiNetworkFactory(  564): got request NetworkRequest [ REQUEST id=104, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10152 RequestorUid: 1000 RequestorPkg: android UnderlyingNetworks: Null] ]
-11-05 08:29:59.086 D/WifiNetworkFactory(  564): got request NetworkRequest [ REQUEST id=104, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10152 RequestorUid: 1000 RequestorPkg: android UnderlyingNetworks: Null] ]
-11-05 08:29:59.086 D/UntrustedWifiNetworkFactory(  564): got request NetworkRequest [ REQUEST id=104, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10152 RequestorUid: 1000 RequestorPkg: android UnderlyingNetworks: Null] ]
-11-05 08:29:59.092 D/ConnectivityService(  564): NetReassign [104 : null → 100] [c 1] [a 36] [i 15]
-11-05 08:29:59.095 I/system_server(  564): Background concurrent mark compact GC freed 16MB AllocSpace bytes, 33(684KB) LOS objects, 43% free, 30MB/54MB, paused 30.760ms,19.680ms total 2.004s
-11-05 08:29:59.100 I/netd    (  365): bandwidthSetGlobalAlert(2097152) <0.11ms>
-11-05 08:29:59.139 I/AppWidgetServiceImpl(  564): getAppWidgetIds() 0
-11-05 08:29:59.141 V/BackupManagerConstants(  564): getFullBackupIntervalMilliseconds(...) returns 86400000
-11-05 08:29:59.141 V/BackupManagerConstants(  564): getFullBackupRequiredNetworkType(...) returns 2
-11-05 08:29:59.141 V/BackupManagerConstants(  564): getFullBackupRequireCharging(...) returns true
-11-05 08:29:59.159 I/AppWidgetServiceImpl(  564): getAppWidgetIds() 0
-11-05 08:29:59.171 I/AppWidgetServiceImpl(  564): getAppWidgetIds() 0
-11-05 08:29:59.172 V/GrammaticalInflectionUtils(  564): AttributionSource: AttributionSource { uid = 10152, packageName = null, attributionTag = null, token = android.os.Binder@14cb306, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
-11-05 08:29:59.187 E/SmsApplication( 1091): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
-11-05 08:29:59.191 W/AppOpService(  564): Ignored setUidMode call for runtime permission app op: uid = 10135, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
-11-05 08:29:59.207 D/FileUtils(  564): Rounded bytes from 2593198080 to 4000000000
-11-05 08:29:59.216 D/Zygote  (  366): Forked child process 3704
-11-05 08:29:59.221 I/Bugle   ( 3309): BroadcastReceiverAsyncWorkTracker: Launching foreground service for com.google.android.apps.messaging.shared.receiver.RestoreReceiver@bdef539
-11-05 08:29:59.233 W/ActivityManager(  564): Slow operation: 53ms so far, now at startProcess: done updating battery stats
-11-05 08:29:59.233 W/ActivityManager(  564): Slow operation: 53ms so far, now at startProcess: building log message
-11-05 08:29:59.234 I/ActivityManager(  564): Start proc 3704:com.google.android.webview:webview_apk/u0a152 for service {com.google.android.webview/org.chromium.android_webview.nonembedded.AwComponentUpdateService}
-11-05 08:29:59.234 W/ActivityManager(  564): Slow operation: 53ms so far, now at startProcess: starting to update pids map
-11-05 08:29:59.243 W/ActivityManager(  564): Slow operation: 63ms so far, now at startProcess: done updating pids map
-11-05 08:29:59.251 I/Icing   ( 1558): Indexing com.google.android.gms-apps from com.google.android.gms
-11-05 08:29:59.256 I/Icing   ( 1558): Indexing done com.google.android.gms-apps
-11-05 08:29:59.264 D/VolumeSliceHelper( 1093): Unregistering uri broadcast relay: content://com.android.settings.slices/action/notification_volume
+11-05 08:49:00.091 D/AndroidRuntime( 3750): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-05 08:49:00.095 I/AndroidRuntime( 3750): Using default boot image
+11-05 08:49:00.095 I/AiAiEcho( 1426): EchoTargets: 
+11-05 08:49:00.095 I/AiAiEcho( 1426): Filtered by AiAi flag check: 
+11-05 08:49:00.095 I/AiAiEcho( 1426): [CONTEXT ratelimit_period="10 SECONDS" ]
+11-05 08:49:00.095 I/AiAiEcho( 1426): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+11-05 08:49:00.095 I/AiAiEcho( 1426): #remoteViewsTwiddler: feature disabled.
+11-05 08:49:00.096 I/AiAiEcho( 1426): Predicting[0]:  [CONTEXT sampling_count=5 ]
+11-05 08:49:00.096 I/AiAiEcho( 1426): EchoTargets: 
+11-05 08:49:00.096 I/AiAiEcho( 1426): Filtered by AiAi flag check: 
+11-05 08:49:00.096 I/AiAiEcho( 1426): [CONTEXT ratelimit_period="10 SECONDS" ]
+11-05 08:49:00.096 I/AiAiEcho( 1426): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+11-05 08:49:00.096 I/AiAiEcho( 1426): #remoteViewsTwiddler: feature disabled.
+11-05 08:49:00.096 I/AiAiEcho( 1426): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+11-05 08:49:00.096 I/AiAiEcho( 1426): #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+11-05 08:49:00.097 D/SsBaseTemplateCard( 1170): No text view can be set up
+11-05 08:49:00.097 D/SsBaseTemplateCard( 1170): Passed-in item info is null
+11-05 08:49:00.097 D/SsBaseTemplateCard( 1170): Passed-in item info is null
+11-05 08:49:00.097 D/SsBaseTemplateCard( 1170): Passed-in item info is null
+11-05 08:49:00.097 I/SsBaseTemplateCard( 1170): Secondary card pane is null
+11-05 08:49:00.097 W/PageIndicator(  915): Total number of pages invalid: 0. Assuming 1 page.
+11-05 08:49:00.100 I/AndroidRuntime( 3750): Leaving lock profiling enabled
+11-05 08:49:00.110 D/EGL_emulation( 1170): app_time_stats: avg=854.93ms min=94.60ms max=1615.27ms count=2
+11-05 08:49:00.121 W/SearchServiceCore( 1587): Abort, client detached.
+11-05 08:49:00.122 E/SmsApplication( 1093): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
+11-05 08:49:00.122 W/SearchServiceCore( 1587): Abort, client detached.
+11-05 08:49:00.123 W/AppOpService(  555): Ignored setUidMode call for runtime permission app op: uid = 10134, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+11-05 08:49:00.140 W/MagnificationConnectionManager(  555): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-05 08:49:00.141 W/Looper  (  555): Slow dispatch took 114ms main h=com.android.server.accessibility.AccessibilityManagerService$MainHandler c=<recycled PooledLambda@46360a3> m=0
+11-05 08:49:00.143 D/TransparencyService(  555): Not an update. Skipping...
+11-05 08:49:00.162 I/PermissionControllerServiceImpl(  927): Updating user sensitive for uid 10211
+11-05 08:49:00.165 E/CellBroadcastUtils( 1093): getDefaultCellBroadcastReceiverPackageName: no package found
+11-05 08:49:00.165 I/app_process( 3750): Core platform API reporting enabled, enforcing=false
+11-05 08:49:00.166 I/app_process( 3750): Using CollectorTypeCMC GC.
+11-05 08:49:00.167 W/AppOpService(  555): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-05 08:49:00.197 W/AppOpService(  555): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-05 08:49:00.198 I/Fitness ( 1204): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+11-05 08:49:00.199 W/AppOpService(  555): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_WAP_PUSH, mode = allow, callingUid = 1001, oldMode = allow
+11-05 08:49:00.199 W/AppOpService(  555): Ignored setUidMode call for runtime permission app op: uid = 1001, code = SEND_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-05 08:49:00.199 W/AppOpService(  555): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+11-05 08:49:00.202 D/BufferPoolAccessor2.0(  499): bufferpool2 0x7dec72c109a8 : 1(3888000 size) total buffers - 1(3888000 size) used buffers - 18/20 (recycle/alloc) - 2/19 (fetch/transfer)
+11-05 08:49:00.219 D/ImsResolver( 1093): maybeAddedImsService, packageName: dev.mobile.maestro.test
+11-05 08:49:00.243 V/WifiPickerTracker( 1101): onWifiEntriesChanged: reason=0
+11-05 08:49:00.243 V/WifiPickerTracker( 1101): Entry 1/1: [StandardWifiEntry][AndroidWifi][][Level:4][Connected][Internet][Primary][Saved]
+11-05 08:49:00.243 V/WifiPickerTracker( 1101): MergedCarrierEntry: [MergedCarrierEntry][][][Level:-1][SubId:1]
+11-05 08:49:00.249 D/EGL_emulation(  915): app_time_stats: avg=22775.20ms min=22775.20ms max=22775.20ms count=1
+11-05 08:49:00.289 W/SystemServiceRegistry( 2322): No service published for: persistent_data_block
+11-05 08:49:00.292 V/BackupManagerConstants(  555): getFullBackupIntervalMilliseconds(...) returns 86400000
+11-05 08:49:00.292 V/BackupManagerConstants(  555): getFullBackupRequiredNetworkType(...) returns 2
+11-05 08:49:00.296 V/BackupManagerConstants(  555): getFullBackupRequireCharging(...) returns true
+11-05 08:49:00.305 W/Looper  (  555): Slow dispatch took 147ms main h=android.app.ActivityThread$H c=android.app.LoadedApk$ReceiverDispatcher$Args$$ExternalSyntheticLambda0@8bc3801 m=0
+11-05 08:49:00.308 D/PackageUpdatedTask( 1170): Package updated: mOp=ADD packages=[dev.mobile.maestro.test]
 --
-11-05 08:29:59.724 D/AndroidRuntime( 3697): Calling main entry com.android.commands.am.Am
-11-05 08:29:59.730 D/TrafficStats( 2372): tagSocket(133) with statsTag=0x1809, statsUid=-1
-11-05 08:29:59.731 W/ziparchive( 3704): Unable to open '/data/app/~~wTR0IYaVNaViX4JoqCnpFg==/com.google.android.trichromelibrary_636771938-axlBa503_KoVx9Fpf4h3sg==/TrichromeLibrary.dm': No such file or directory
-11-05 08:29:59.731 W/ziparchive( 3704): Unable to open '/data/app/~~wTR0IYaVNaViX4JoqCnpFg==/com.google.android.trichromelibrary_636771938-axlBa503_KoVx9Fpf4h3sg==/TrichromeLibrary.dm': No such file or directory
-11-05 08:29:59.731 W/iew:webview_apk( 3704): Entry not found
-11-05 08:29:59.731 D/nativeloader( 3704): Configuring clns-7 for other apk /data/app/~~wTR0IYaVNaViX4JoqCnpFg==/com.google.android.trichromelibrary_636771938-axlBa503_KoVx9Fpf4h3sg==/TrichromeLibrary.apk. target_sdk_version=34, uses_libraries=ALL, library_path=/data/app/~~4bWIrLpK588JlNl6Bx682Q==/com.google.android.webview-rTdXTUZ3jjCxeEQo3mzLoQ==/lib/x86_64:/data/app/~~4bWIrLpK588JlNl6Bx682Q==/com.google.android.webview-rTdXTUZ3jjCxeEQo3mzLoQ==/WebViewGoogle.apk!/lib/x86_64:/data/app/~~wTR0IYaVNaViX4JoqCnpFg==/com.google.android.trichromelibrary_636771938-axlBa503_KoVx9Fpf4h3sg==/TrichromeLibrary.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.google.android.webview
-11-05 08:29:59.732 D/ApplicationLoaders( 3704): Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
-11-05 08:29:59.733 D/UiAutomationConnection( 3697): Created on user UserHandle{0}
-11-05 08:29:59.733 W/AllAppsList( 1198): updatePromiseInstallInfo: no Activities matched updated package, removing all apps from package=dev.mobile.maestro.test
-11-05 08:29:59.734 D/nativeloader( 3704): Configuring clns-8 for other apk /data/app/~~4bWIrLpK588JlNl6Bx682Q==/com.google.android.webview-rTdXTUZ3jjCxeEQo3mzLoQ==/WebViewGoogle.apk. target_sdk_version=34, uses_libraries=, library_path=/data/app/~~4bWIrLpK588JlNl6Bx682Q==/com.google.android.webview-rTdXTUZ3jjCxeEQo3mzLoQ==/lib/x86_64:/data/app/~~4bWIrLpK588JlNl6Bx682Q==/com.google.android.webview-rTdXTUZ3jjCxeEQo3mzLoQ==/WebViewGoogle.apk!/lib/x86_64:/data/app/~~wTR0IYaVNaViX4JoqCnpFg==/com.google.android.trichromelibrary_636771938-axlBa503_KoVx9Fpf4h3sg==/TrichromeLibrary.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.google.android.webview
-11-05 08:29:59.740 D/ShortcutService(  564): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=null
-11-05 08:29:59.766 I/ActivityManager(  564): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-11-05 08:29:59.766 I/Checkin ( 1558): [CheckinOperation] Starting Checkin: Default Task Reason : 8 Force : false UserId : 0 Start time : 95183
-11-05 08:29:59.780 V/GraphicsEnvironment( 3704): Currently set values for:
-11-05 08:29:59.780 V/GraphicsEnvironment( 3704):   angle_gl_driver_selection_pkgs=[]
-11-05 08:29:59.780 V/GraphicsEnvironment( 3704):   angle_gl_driver_selection_values=[]
-11-05 08:29:59.780 V/GraphicsEnvironment( 3704): Global.Settings values are invalid: number of packages: 0, number of values: 0
-11-05 08:29:59.780 V/GraphicsEnvironment( 3704): Neither updatable production driver nor prerelease driver is supported.
-11-05 08:29:59.789 I/Fitness ( 1280): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
-11-05 08:29:59.791 D/CarrierSvcBindHelper( 1091): onPackageModified: dev.mobile.maestro.test
-11-05 08:29:59.793 D/CarrierSvcBindHelper( 1091): No carrier app for: 0
-11-05 08:29:59.803 I/LoadedApk( 3704): No resource references to update in package com.google.android.trichromelibrary
-11-05 08:29:59.806 I/AppWidgetServiceImpl(  564): getInstalledProvidersForProfiles() 0
-11-05 08:29:59.807 W/ParceledListSlice(  564): Element #25 is 19764 bytes.
-11-05 08:29:59.807 W/ParceledListSlice(  564): Element #26 is 19800 bytes.
-11-05 08:29:59.808 W/ParceledListSlice(  564): Element #27 is 19644 bytes.
-11-05 08:29:59.808 W/ParceledListSlice(  564): Element #28 is 19552 bytes.
-11-05 08:29:59.808 W/ParceledListSlice(  564): Element #29 is 19664 bytes.
-11-05 08:29:59.810 W/PackageManager( 1521): Failure retrieving text 0x7f130786 in package com.android.systemui
-11-05 08:29:59.810 W/PackageManager( 1521): android.content.res.Resources$NotFoundException: String resource ID #0x7f130786
-11-05 08:29:59.810 W/PackageManager( 1521): 	at android.content.res.Resources.getText(Resources.java:466)
+11-05 08:49:00.673 D/AndroidRuntime( 3750): Calling main entry com.android.commands.am.Am
+11-05 08:49:00.677 D/UiAutomationConnection( 3750): Created on user UserHandle{0}
+11-05 08:49:00.681 I/Fitness ( 1204): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-05 08:49:00.681 D/WifiNl80211Manager(  555): Scan result ready event
+11-05 08:49:00.682 D/WifiNative(  555): Scan result ready event
+11-05 08:49:00.687 I/ActivityManager(  555): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+11-05 08:49:00.693 I/m.android.phone( 1093): Background concurrent mark compact GC freed 4040KB AllocSpace bytes, 0(0B) LOS objects, 49% free, 3537KB/7074KB, paused 155us,5.030ms total 102.044ms
+11-05 08:49:00.695 W/System  ( 1093): A resource failed to call AbstractCursor.close. 
+11-05 08:49:00.696 W/System  ( 1093): A resource failed to call AbstractCursor.close. 
+11-05 08:49:00.696 W/System  ( 1093): A resource failed to call AbstractCursor.close. 
+11-05 08:49:00.696 W/System  ( 1093): A resource failed to call AbstractCursor.close. 
+11-05 08:49:00.697 W/System  ( 1093): A resource failed to call AbstractCursor.close. 
+11-05 08:49:00.697 W/System  ( 1093): A resource failed to call AbstractCursor.close. 
+11-05 08:49:00.697 W/System  ( 1093): A resource failed to call AbstractCursor.close. 
+11-05 08:49:00.703 I/HalDevMgr(  555): bestIfaceCreationProposal is null, requestIface=STA, existingIface=[name=wlan0 type=STA]
+11-05 08:49:00.707 V/GrammaticalInflectionUtils(  555): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@89a01d0, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+11-05 08:49:00.710 I/AppsFilter(  555): interaction: PackageSetting{2fa56a6 com.android.microdroid.empty_payload/10193} -> PackageSetting{54cc7aa dev.mobile.maestro/10210} BLOCKED
+11-05 08:49:00.720 I/NetworkScheduler( 1204): ignoring stale queue check message
+11-05 08:49:00.724 W/SearchServiceCore( 1587): Abort, client detached.
+11-05 08:49:00.725 W/SearchServiceCore( 1587): Abort, client detached.
+11-05 08:49:00.727 D/Zygote  (  359): Forked child process 3769
+11-05 08:49:00.734 V/WifiPickerTracker( 1101): Received scan results from first scan request.
+11-05 08:49:00.741 I/ActivityManager(  555): Start proc 3769:dev.mobile.maestro/u0a210 for added application dev.mobile.maestro
+11-05 08:49:00.743 I/.mobile.maestro( 3769): Late-enabling -Xcheck:jni
+11-05 08:49:00.747 I/AppWidgetServiceImpl(  555): Received broadcast: android.intent.action.PACKAGE_UNSTOPPED on user 0
+11-05 08:49:00.747 I/AppWidgetServiceImpl(  555): Updating package stopped masked state for uid 10210 package dev.mobile.maestro isStopped false
+11-05 08:49:00.749 W/Role    (  555): Default holder doesn't have required signing certificate: com.google.android.retaildemo:6547c73dee150c103980bfdffe55cc9a011d785dd694a5f99afd8205bcaf1f80
+11-05 08:49:00.750 E/RoleControllerServiceImpl(  555): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION
+11-05 08:49:00.758 I/Fitness ( 1204): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+11-05 08:49:00.760 I/.mobile.maestro( 3769): Using CollectorTypeCMC GC.
+11-05 08:49:00.761 W/.mobile.maestro( 3769): Unexpected CPU variant for x86: x86_64.
 --
-11-05 08:33:31.236 I/AndroidRuntime( 3697): VM exiting with result code 0.
-11-05 08:33:31.273 I/init    (    0): starting service 'artd'...
-11-05 08:33:31.288 W/IPCThreadState(  564): Sending oneway calls to frozen process.
-11-05 08:33:31.288 W/IPCThreadState(  564): Sending oneway calls to frozen process.
-11-05 08:33:31.288 W/IPCThreadState(  564): Sending oneway calls to frozen process.
-11-05 08:33:31.307 I/BugleRcsEngine( 3834): handleMessage processing message:[NOTIFY_UPTIME_IGNORE_STATE_CHANGED] with [non-null]:RcsEngineImpl reference [CONTEXT log_prefix="RcsEngineImpl[DUAL_REG]:[36099bd9-a000]>Handler" thread_id=64 ]
-11-05 08:33:31.309 I/BugleRcsEngine( 3834): Connected state: [1], networkType: [WIFI] [CONTEXT thread_id=62 ]
-11-05 08:33:31.493 I/init    (    0): ... started service 'artd' has pid 5842
-11-05 08:33:31.496 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 149 (/system/bin/servicemanager)
-11-05 08:33:31.403 W/ContentProviderHelper(  564): Slow operation: 92ms so far, now at getContentProviderImpl: after updateOomAdj
-11-05 08:33:31.404 W/ContentProviderHelper(  564): Slow operation: 93ms so far, now at getContentProviderImpl: done!
-11-05 08:33:31.409 I/ChimeraSrvcProxy( 1280): NullBinder for android.net.action.RECOMMEND_NETWORKS triggering remote TransactionTooLargeException due to Service without Chimera impl
-11-05 08:33:31.543 I/binder_alloc(    0): 3732: binder_alloc_buf, no vma
-11-05 08:33:31.545 W/binder_debug(    0): 68 callbacks suppressed
-11-05 08:33:31.545 I/binder  (    0): cannot allocate buffer: vma cleared, target dead or dying
-11-05 08:33:31.546 I/binder  (    0): 564:1201 transaction async to 3732:0 failed 449316/29189/-3, size 192-0 line 3544
-11-05 08:33:31.412 I/BugleRcsEngine( 3834): No RCS Configuration was found in Bugle for simID: redacted-pii:sim_id[chars:20,last3:897] [CONTEXT log_prefix="ProvisioningEngineDataRetriever" thread_id=64 ]
-11-05 08:33:31.427 E/IPCThreadState(  564): Binder transaction failure. id: 449316, BR_*: 29189, error: -3 (No such process)
-11-05 08:33:31.427 W/ActivityManager(  564): pid 564 system sent binder code 1 with flags 1 to frozen apps and got error -32
-11-05 08:33:31.431 W/MagnificationConnectionManager(  564): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-11-05 08:33:31.431 V/UiAutomationManager(  564): UiAutomation service owner died
-11-05 08:33:31.431 W/IPCThreadState(  564): Sending oneway calls to frozen process.
-11-05 08:33:31.431 W/IPCThreadState(  564): Sending oneway calls to frozen process.
-11-05 08:33:31.431 W/IPCThreadState(  564): Sending oneway calls to frozen process.
-11-05 08:33:31.432 W/IPCThreadState(  564): Sending oneway calls to frozen process.
-11-05 08:33:31.432 W/IPCThreadState(  564): Sending oneway calls to frozen process.
-11-05 08:33:31.432 W/IPCThreadState(  564): Sending oneway calls to frozen process.
-11-05 08:33:31.432 W/IPCThreadState(  564): Sending oneway calls to frozen process.
-11-05 08:33:31.432 W/IPCThreadState(  564): Sending oneway calls to frozen process.
-11-05 08:33:31.432 W/IPCThreadState(  564): Sending oneway calls to frozen process.
-11-05 08:33:31.432 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-05 08:54:24.495 I/AndroidRuntime( 3750): VM exiting with result code 0.
+11-05 08:54:24.662 I/init    (    0): starting service 'artd'...
+11-05 08:54:24.501 W/ActivityManager(  555): pid 555 system sent binder code 1 with flags 1 to frozen apps and got error -32
+11-05 08:54:24.502 I/Zygote  (  359): Process 3769 exited due to signal 9 (Killed)
+11-05 08:54:24.505 W/MagnificationConnectionManager(  555): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-05 08:54:24.506 W/MagnificationConnectionManager(  555): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-05 08:54:24.508 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.508 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.509 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.509 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.509 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.509 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.509 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.509 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.509 I/adbd    (  436): Remote process closed the socket (on MSG_PEEK)
+11-05 08:54:24.510 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.510 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.510 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.510 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.510 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.510 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.510 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.510 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.510 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.510 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.510 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.510 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.510 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.510 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.510 W/IPCThreadState(  555): Sending oneway calls to frozen process.
+11-05 08:54:24.510 W/IPCThreadState(  555): Sending oneway calls to frozen process.

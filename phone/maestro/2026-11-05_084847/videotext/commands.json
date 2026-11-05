@@ -2,11 +2,11 @@
   "command" : {
     "defineVariablesCommand" : {
       "env" : {
-        "USERNAME" : "e2e_and_016048_phone",
-        "EMAIL" : "support+e2e-and-016048-phone@katkee.com",
-        "PASSWORD" : "E2e-9922f82045319c93",
-        "OIDC_URL" : "https://run-actions-3-azure-eastus.actions.githubusercontent.com/75//idtoken/f97e2270-f76d-40aa-b0db-40ff1da3cf51/62fec1d6-8c68-5b2d-a930-c4d131c9c145?api-version=2.0",
-        "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcIlBlcm1pc3Npb25cIjozfSx7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6MX1dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTM4NzE0NDAsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5Mzg2NzI0MCwiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6IjYyZmVjMWQ2LThjNjgtNWIyZC1hOTMwLWM0ZDEzMWM5YzE0NSIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnIiLCJqb2Jfd29ya2Zsb3dfc2hhIjoiYmE5NDM0ZTMyOTY0YmFmODkyYzRlYjdhOTQ2YzIxODY4ZDlkZDBhOSIsIm5hbWVpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsIm5iZiI6MTc5Mzg2Njk0MCwib2lkY19leHRyYSI6IntcImFjdG9yXCI6XCJyYWh1bGtzNlwiLFwiYWN0b3JfaWRcIjpcIjE5NzU0MDkyNFwiLFwiYmFzZV9yZWZcIjpcIlwiLFwiY2hlY2tfcnVuX2lkXCI6XCIxMjcxMzQ1NDk3MTBcIixcImV2ZW50X25hbWVcIjpcIndvcmtmbG93X2Rpc3BhdGNoXCIsXCJoZWFkX3JlZlwiOlwiXCIsXCJqb2Jfd29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcImpvYl93b3JrZmxvd19zaGFcIjpcImJhOTQzNGUzMjk2NGJhZjg5MmM0ZWI3YTk0NmMyMTg2OGQ5ZGQwYTlcIixcInJlZlwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcInJlZl9wcm90ZWN0ZWRcIjpcImZhbHNlXCIsXCJyZWZfdHlwZVwiOlwiYnJhbmNoXCIsXCJyZXBvc2l0b3J5XCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbFwiLFwicmVwb3NpdG9yeV9pZFwiOlwiMTM3NjkxNTQ5MVwiLFwicmVwb3NpdG9yeV9vd25lclwiOlwicmFodWxrczZcIixcInJlcG9zaXRvcnlfb3duZXJfaWRcIjpcIjE5NzU0MDkyNFwiLFwicmVwb3NpdG9yeV92aXNpYmlsaXR5XCI6XCJwdWJsaWNcIixcInJ1bl9hdHRlbXB0XCI6XCIxXCIsXCJydW5faWRcIjpcIjQxOTkzMDE2MDQ4XCIsXCJydW5fbnVtYmVyXCI6XCI0M1wiLFwicnVubmVyX2Vudmlyb25tZW50XCI6XCJnaXRodWItaG9zdGVkXCIsXCJzaGFcIjpcImJhOTQzNGUzMjk2NGJhZjg5MmM0ZWI3YTk0NmMyMTg2OGQ5ZGQwYTlcIixcIndvcmtmbG93XCI6XCJBbmRyb2lkIGVtdWxhdG9yIHRlc3RcIixcIndvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvYW5kcm9pZC1lMmUueW1sQHJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyXCIsXCJ3b3JrZmxvd19zaGFcIjpcImJhOTQzNGUzMjk2NGJhZjg5MmM0ZWI3YTk0NmMyMTg2OGQ5ZGQwYTlcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyIiwib3JjaF9pZCI6ImY5N2UyMjcwLWY3NmQtNDBhYS1iMGRiLTQwZmYxZGEzY2Y1MS53YWxrdGhyb3VnaC5waG9uZSIsIm93bmVyX2lkIjoiVV9rZ0RPQzhZOFBBIiwicGxhbl9pZCI6ImY5N2UyMjcwLWY3NmQtNDBhYS1iMGRiLTQwZmYxZGEzY2Y1MSIsInJlcG9zaXRvcnlfaWQiOiIxMzc2OTE1NDkxIiwicmVwb3NpdG9yeV9vd25lcl9pZCI6IjE5NzU0MDkyNCIsInJlcG9zaXRvcnlfdmlzaWJpbGl0eSI6InB1YmxpYyIsInJ1bl9pZCI6IjQxOTkzMDE2MDQ4IiwicnVuX251bWJlciI6IjQzIiwicnVuX3R5cGUiOiJmdWxsIiwicnVubmVyX2lkIjoiMTAwMDAwMDE4NiIsInJ1bm5lcl90eXBlIjoiaG9zdGVkIiwic2NwIjoiQWN0aW9ucy5SZXN1bHRzOmY5N2UyMjcwLWY3NmQtNDBhYS1iMGRiLTQwZmYxZGEzY2Y1MTo2MmZlYzFkNi04YzY4LTViMmQtYTkzMC1jNGQxMzFjOWMxNDUgQWN0aW9ucy5SdW5uZXI6Zjk3ZTIyNzAtZjc2ZC00MGFhLWIwZGItNDBmZjFkYTNjZjUxOjYyZmVjMWQ2LThjNjgtNWIyZC1hOTMwLWM0ZDEzMWM5YzE0NSBBY3Rpb25zLlVwbG9hZEFydGlmYWN0czpmOTdlMjI3MC1mNzZkLTQwYWEtYjBkYi00MGZmMWRhM2NmNTE6NjJmZWMxZDYtOGM2OC01YjJkLWE5MzAtYzRkMTMxYzljMTQ1IGdlbmVyYXRlX2lkX3Rva2VuOmY5N2UyMjcwLWY3NmQtNDBhYS1iMGRiLTQwZmYxZGEzY2Y1MTo2MmZlYzFkNi04YzY4LTViMmQtYTkzMC1jNGQxMzFjOWMxNDUgQWN0aW9ucy5HZW5lcmljUmVhZDowMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJzaGEiOiJiYTk0MzRlMzI5NjRiYWY4OTJjNGViN2E5NDZjMjE4NjhkOWRkMGE5IiwidHJ1c3RfdGllciI6IjIifQ.BMmDMbMespgyYiGaMtOaFv9wFmg48lbUrs2pVlCMvDxIDZsBxCdPsnWRPN7LNQb6Ou7dqFC-8YQRfHFR0B6dDFdj2QRF6mIKZzp80fnwtawMyCQZTOjNGirphitmd1xbRgJFg96kf6y8hdr66a0dlnpetMynxV6x7KGq8e4NeXLBT4x2-P6l7o-OI1brbPOAcTj6WoVh_STNiQ1Em77aC6ejTTQY4CKUg5LulsmFB8p-cUnKJXXZLIpuqLNhlB9OCO5CpL5k4nFd3ZNze-PbelOg4Tgg5pjyogI-AbEwJpdZ2D2ZFe8JQYGLqvv_ANerdeOlRdpT9-ziYhIVUKGFhA",
+        "USERNAME" : "e2e_and_554720_phone",
+        "EMAIL" : "support+e2e-and-554720-phone@katkee.com",
+        "PASSWORD" : "E2e-4e1f9160961ea893",
+        "OIDC_URL" : "https://run-actions-3-azure-eastus.actions.githubusercontent.com/265//idtoken/52a8d7e8-f457-4fd2-8807-37ace19d678e/95ccb94a-7601-583d-85e0-041848105410?api-version=2.0",
+        "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcIlBlcm1pc3Npb25cIjozfSx7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6MX1dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTM4NzI1OTEsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5Mzg2ODM5MSwiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6Ijk1Y2NiOTRhLTc2MDEtNTgzZC04NWUwLTA0MTg0ODEwNTQxMCIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnIiLCJqb2Jfd29ya2Zsb3dfc2hhIjoiMjRmOGZhOTg2NjYwYWM4OGJhNTIzMmY3MjM0ZjkxMWYzYjQ3NWE4YiIsIm5hbWVpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsIm5iZiI6MTc5Mzg2ODA5MSwib2lkY19leHRyYSI6IntcImFjdG9yXCI6XCJyYWh1bGtzNlwiLFwiYWN0b3JfaWRcIjpcIjE5NzU0MDkyNFwiLFwiYmFzZV9yZWZcIjpcIlwiLFwiY2hlY2tfcnVuX2lkXCI6XCIxMjcxNDI3MTU4NzFcIixcImV2ZW50X25hbWVcIjpcIndvcmtmbG93X2Rpc3BhdGNoXCIsXCJoZWFkX3JlZlwiOlwiXCIsXCJqb2Jfd29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcImpvYl93b3JrZmxvd19zaGFcIjpcIjI0ZjhmYTk4NjY2MGFjODhiYTUyMzJmNzIzNGY5MTFmM2I0NzVhOGJcIixcInJlZlwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcInJlZl9wcm90ZWN0ZWRcIjpcImZhbHNlXCIsXCJyZWZfdHlwZVwiOlwiYnJhbmNoXCIsXCJyZXBvc2l0b3J5XCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbFwiLFwicmVwb3NpdG9yeV9pZFwiOlwiMTM3NjkxNTQ5MVwiLFwicmVwb3NpdG9yeV9vd25lclwiOlwicmFodWxrczZcIixcInJlcG9zaXRvcnlfb3duZXJfaWRcIjpcIjE5NzU0MDkyNFwiLFwicmVwb3NpdG9yeV92aXNpYmlsaXR5XCI6XCJwdWJsaWNcIixcInJ1bl9hdHRlbXB0XCI6XCIxXCIsXCJydW5faWRcIjpcIjQxOTk1NTU0NzIwXCIsXCJydW5fbnVtYmVyXCI6XCI0NFwiLFwicnVubmVyX2Vudmlyb25tZW50XCI6XCJnaXRodWItaG9zdGVkXCIsXCJzaGFcIjpcIjI0ZjhmYTk4NjY2MGFjODhiYTUyMzJmNzIzNGY5MTFmM2I0NzVhOGJcIixcIndvcmtmbG93XCI6XCJBbmRyb2lkIGVtdWxhdG9yIHRlc3RcIixcIndvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvYW5kcm9pZC1lMmUueW1sQHJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyXCIsXCJ3b3JrZmxvd19zaGFcIjpcIjI0ZjhmYTk4NjY2MGFjODhiYTUyMzJmNzIzNGY5MTFmM2I0NzVhOGJcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyIiwib3JjaF9pZCI6IjUyYThkN2U4LWY0NTctNGZkMi04ODA3LTM3YWNlMTlkNjc4ZS53YWxrdGhyb3VnaC5waG9uZSIsIm93bmVyX2lkIjoiVV9rZ0RPQzhZOFBBIiwicGxhbl9pZCI6IjUyYThkN2U4LWY0NTctNGZkMi04ODA3LTM3YWNlMTlkNjc4ZSIsInJlcG9zaXRvcnlfaWQiOiIxMzc2OTE1NDkxIiwicmVwb3NpdG9yeV9vd25lcl9pZCI6IjE5NzU0MDkyNCIsInJlcG9zaXRvcnlfdmlzaWJpbGl0eSI6InB1YmxpYyIsInJ1bl9pZCI6IjQxOTk1NTU0NzIwIiwicnVuX251bWJlciI6IjQ0IiwicnVuX3R5cGUiOiJmdWxsIiwicnVubmVyX2lkIjoiMTAwMDAwMDE4OCIsInJ1bm5lcl90eXBlIjoiaG9zdGVkIiwic2NwIjoiQWN0aW9ucy5SZXN1bHRzOjUyYThkN2U4LWY0NTctNGZkMi04ODA3LTM3YWNlMTlkNjc4ZTo5NWNjYjk0YS03NjAxLTU4M2QtODVlMC0wNDE4NDgxMDU0MTAgQWN0aW9ucy5SdW5uZXI6NTJhOGQ3ZTgtZjQ1Ny00ZmQyLTg4MDctMzdhY2UxOWQ2NzhlOjk1Y2NiOTRhLTc2MDEtNTgzZC04NWUwLTA0MTg0ODEwNTQxMCBBY3Rpb25zLlVwbG9hZEFydGlmYWN0czo1MmE4ZDdlOC1mNDU3LTRmZDItODgwNy0zN2FjZTE5ZDY3OGU6OTVjY2I5NGEtNzYwMS01ODNkLTg1ZTAtMDQxODQ4MTA1NDEwIGdlbmVyYXRlX2lkX3Rva2VuOjUyYThkN2U4LWY0NTctNGZkMi04ODA3LTM3YWNlMTlkNjc4ZTo5NWNjYjk0YS03NjAxLTU4M2QtODVlMC0wNDE4NDgxMDU0MTAgQWN0aW9ucy5HZW5lcmljUmVhZDowMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJzaGEiOiIyNGY4ZmE5ODY2NjBhYzg4YmE1MjMyZjcyMzRmOTExZjNiNDc1YThiIiwidHJ1c3RfdGllciI6IjIifQ.jnvhdf6fAWuRWP-FAebOYQbfZq2p2NNJKncABi-XR8NdoXR3euhRZel9Ub3lHLdNf7EPygIHu-4I2SWuR8CZv36P3QpqxaOSR00k1AKOBX7TcLwapaeMRLNC_Ouss5Qeru9klX23Fo66t21akjQ6h903Bsk5V9uEmoS8nS0jP2H3GueK-JZDSuQZyRb9yRoXODcSAyVIetvCixNi5KKeVIiGcgbp2k4gIEGDBIQDoBbu5vxUQ8qnlLleuxqYc4BK7gFDZa_SjQYM41gQTXOKBUaOf8mT1NomHx-x0MtMYkZ3P3k_BhVVJ1PiZQYeFhbgvDZM-KBYKJbcdDe6WOiOeQ",
         "MAESTRO_CLI_NO_ANALYTICS" : "1",
         "MAESTRO_FILENAME" : "videotext",
         "MAESTRO_DEVICE_UDID" : "emulator-5554",
@@ -18,18 +18,18 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867408311,
-    "duration" : 10,
+    "timestamp" : 1793868544255,
+    "duration" : 17,
     "sequenceNumber" : 0,
     "depth" : 0,
     "evaluatedCommand" : {
       "defineVariablesCommand" : {
         "env" : {
-          "USERNAME" : "e2e_and_016048_phone",
-          "EMAIL" : "support+e2e-and-016048-phone@katkee.com",
-          "PASSWORD" : "E2e-9922f82045319c93",
-          "OIDC_URL" : "https://run-actions-3-azure-eastus.actions.githubusercontent.com/75//idtoken/f97e2270-f76d-40aa-b0db-40ff1da3cf51/62fec1d6-8c68-5b2d-a930-c4d131c9c145?api-version=2.0",
-          "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcIlBlcm1pc3Npb25cIjozfSx7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6MX1dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTM4NzE0NDAsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5Mzg2NzI0MCwiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6IjYyZmVjMWQ2LThjNjgtNWIyZC1hOTMwLWM0ZDEzMWM5YzE0NSIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnIiLCJqb2Jfd29ya2Zsb3dfc2hhIjoiYmE5NDM0ZTMyOTY0YmFmODkyYzRlYjdhOTQ2YzIxODY4ZDlkZDBhOSIsIm5hbWVpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsIm5iZiI6MTc5Mzg2Njk0MCwib2lkY19leHRyYSI6IntcImFjdG9yXCI6XCJyYWh1bGtzNlwiLFwiYWN0b3JfaWRcIjpcIjE5NzU0MDkyNFwiLFwiYmFzZV9yZWZcIjpcIlwiLFwiY2hlY2tfcnVuX2lkXCI6XCIxMjcxMzQ1NDk3MTBcIixcImV2ZW50X25hbWVcIjpcIndvcmtmbG93X2Rpc3BhdGNoXCIsXCJoZWFkX3JlZlwiOlwiXCIsXCJqb2Jfd29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcImpvYl93b3JrZmxvd19zaGFcIjpcImJhOTQzNGUzMjk2NGJhZjg5MmM0ZWI3YTk0NmMyMTg2OGQ5ZGQwYTlcIixcInJlZlwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcInJlZl9wcm90ZWN0ZWRcIjpcImZhbHNlXCIsXCJyZWZfdHlwZVwiOlwiYnJhbmNoXCIsXCJyZXBvc2l0b3J5XCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbFwiLFwicmVwb3NpdG9yeV9pZFwiOlwiMTM3NjkxNTQ5MVwiLFwicmVwb3NpdG9yeV9vd25lclwiOlwicmFodWxrczZcIixcInJlcG9zaXRvcnlfb3duZXJfaWRcIjpcIjE5NzU0MDkyNFwiLFwicmVwb3NpdG9yeV92aXNpYmlsaXR5XCI6XCJwdWJsaWNcIixcInJ1bl9hdHRlbXB0XCI6XCIxXCIsXCJydW5faWRcIjpcIjQxOTkzMDE2MDQ4XCIsXCJydW5fbnVtYmVyXCI6XCI0M1wiLFwicnVubmVyX2Vudmlyb25tZW50XCI6XCJnaXRodWItaG9zdGVkXCIsXCJzaGFcIjpcImJhOTQzNGUzMjk2NGJhZjg5MmM0ZWI3YTk0NmMyMTg2OGQ5ZGQwYTlcIixcIndvcmtmbG93XCI6XCJBbmRyb2lkIGVtdWxhdG9yIHRlc3RcIixcIndvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvYW5kcm9pZC1lMmUueW1sQHJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyXCIsXCJ3b3JrZmxvd19zaGFcIjpcImJhOTQzNGUzMjk2NGJhZjg5MmM0ZWI3YTk0NmMyMTg2OGQ5ZGQwYTlcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyIiwib3JjaF9pZCI6ImY5N2UyMjcwLWY3NmQtNDBhYS1iMGRiLTQwZmYxZGEzY2Y1MS53YWxrdGhyb3VnaC5waG9uZSIsIm93bmVyX2lkIjoiVV9rZ0RPQzhZOFBBIiwicGxhbl9pZCI6ImY5N2UyMjcwLWY3NmQtNDBhYS1iMGRiLTQwZmYxZGEzY2Y1MSIsInJlcG9zaXRvcnlfaWQiOiIxMzc2OTE1NDkxIiwicmVwb3NpdG9yeV9vd25lcl9pZCI6IjE5NzU0MDkyNCIsInJlcG9zaXRvcnlfdmlzaWJpbGl0eSI6InB1YmxpYyIsInJ1bl9pZCI6IjQxOTkzMDE2MDQ4IiwicnVuX251bWJlciI6IjQzIiwicnVuX3R5cGUiOiJmdWxsIiwicnVubmVyX2lkIjoiMTAwMDAwMDE4NiIsInJ1bm5lcl90eXBlIjoiaG9zdGVkIiwic2NwIjoiQWN0aW9ucy5SZXN1bHRzOmY5N2UyMjcwLWY3NmQtNDBhYS1iMGRiLTQwZmYxZGEzY2Y1MTo2MmZlYzFkNi04YzY4LTViMmQtYTkzMC1jNGQxMzFjOWMxNDUgQWN0aW9ucy5SdW5uZXI6Zjk3ZTIyNzAtZjc2ZC00MGFhLWIwZGItNDBmZjFkYTNjZjUxOjYyZmVjMWQ2LThjNjgtNWIyZC1hOTMwLWM0ZDEzMWM5YzE0NSBBY3Rpb25zLlVwbG9hZEFydGlmYWN0czpmOTdlMjI3MC1mNzZkLTQwYWEtYjBkYi00MGZmMWRhM2NmNTE6NjJmZWMxZDYtOGM2OC01YjJkLWE5MzAtYzRkMTMxYzljMTQ1IGdlbmVyYXRlX2lkX3Rva2VuOmY5N2UyMjcwLWY3NmQtNDBhYS1iMGRiLTQwZmYxZGEzY2Y1MTo2MmZlYzFkNi04YzY4LTViMmQtYTkzMC1jNGQxMzFjOWMxNDUgQWN0aW9ucy5HZW5lcmljUmVhZDowMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJzaGEiOiJiYTk0MzRlMzI5NjRiYWY4OTJjNGViN2E5NDZjMjE4NjhkOWRkMGE5IiwidHJ1c3RfdGllciI6IjIifQ.BMmDMbMespgyYiGaMtOaFv9wFmg48lbUrs2pVlCMvDxIDZsBxCdPsnWRPN7LNQb6Ou7dqFC-8YQRfHFR0B6dDFdj2QRF6mIKZzp80fnwtawMyCQZTOjNGirphitmd1xbRgJFg96kf6y8hdr66a0dlnpetMynxV6x7KGq8e4NeXLBT4x2-P6l7o-OI1brbPOAcTj6WoVh_STNiQ1Em77aC6ejTTQY4CKUg5LulsmFB8p-cUnKJXXZLIpuqLNhlB9OCO5CpL5k4nFd3ZNze-PbelOg4Tgg5pjyogI-AbEwJpdZ2D2ZFe8JQYGLqvv_ANerdeOlRdpT9-ziYhIVUKGFhA",
+          "USERNAME" : "e2e_and_554720_phone",
+          "EMAIL" : "support+e2e-and-554720-phone@katkee.com",
+          "PASSWORD" : "E2e-4e1f9160961ea893",
+          "OIDC_URL" : "https://run-actions-3-azure-eastus.actions.githubusercontent.com/265//idtoken/52a8d7e8-f457-4fd2-8807-37ace19d678e/95ccb94a-7601-583d-85e0-041848105410?api-version=2.0",
+          "OIDC_TOKEN" : "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4ODI2YjE3LTZhMzAtNWY5Yi1iMTY5LThiZWI4MjAyZjcyMyIsInR5cCI6IkpXVCIsIng1dCI6InlrTmFZNHFNX3RhNGsyVGdaT0NFWUxrY1lsQSJ9.eyJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJhYyI6Ilt7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcIlBlcm1pc3Npb25cIjozfSx7XCJTY29wZVwiOlwicmVmcy9oZWFkcy9jbGF1ZGUva2F0a2VlLXByb2R1Y3Rpb24tYXVkaXQta3VleHJhXCIsXCJQZXJtaXNzaW9uXCI6MX1dIiwiYWNzbCI6IjEwIiwiYXVkIjoidnNvOmZiNTI3Mzg5LTlhZGEtNGExMy05NzMxLTE3N2QyMWEwNjMyNSIsImJpbGxpbmdfb3duZXJfaWQiOiJVX2tnRE9DOFk4UEEiLCJleHAiOjE3OTM4NzI1OTEsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcHJpbWFyeXNpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsImlhdCI6MTc5Mzg2ODM5MSwiaXNzIjoiaHR0cHM6Ly90b2tlbi5hY3Rpb25zLmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImpvYl9pZCI6Ijk1Y2NiOTRhLTc2MDEtNTgzZC04NWUwLTA0MTg0ODEwNTQxMCIsImpvYl93b3JrZmxvd19yZWYiOiJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnIiLCJqb2Jfd29ya2Zsb3dfc2hhIjoiMjRmOGZhOTg2NjYwYWM4OGJhNTIzMmY3MjM0ZjkxMWYzYjQ3NWE4YiIsIm5hbWVpZCI6ImRkZGRkZGRkLWRkZGQtZGRkZC1kZGRkLWRkZGRkZGRkZGRkZCIsIm5iZiI6MTc5Mzg2ODA5MSwib2lkY19leHRyYSI6IntcImFjdG9yXCI6XCJyYWh1bGtzNlwiLFwiYWN0b3JfaWRcIjpcIjE5NzU0MDkyNFwiLFwiYmFzZV9yZWZcIjpcIlwiLFwiY2hlY2tfcnVuX2lkXCI6XCIxMjcxNDI3MTU4NzFcIixcImV2ZW50X25hbWVcIjpcIndvcmtmbG93X2Rpc3BhdGNoXCIsXCJoZWFkX3JlZlwiOlwiXCIsXCJqb2Jfd29ya2Zsb3dfcmVmXCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbC8uZ2l0aHViL3dvcmtmbG93cy9hbmRyb2lkLWUyZS55bWxAcmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcImpvYl93b3JrZmxvd19zaGFcIjpcIjI0ZjhmYTk4NjY2MGFjODhiYTUyMzJmNzIzNGY5MTFmM2I0NzVhOGJcIixcInJlZlwiOlwicmVmcy9oZWFkcy9jbGF1ZGUvYWRvcmluZy1icm93bi05Z2lyZnJcIixcInJlZl9wcm90ZWN0ZWRcIjpcImZhbHNlXCIsXCJyZWZfdHlwZVwiOlwiYnJhbmNoXCIsXCJyZXBvc2l0b3J5XCI6XCJyYWh1bGtzNi9zdG9yeS10cmFpbFwiLFwicmVwb3NpdG9yeV9pZFwiOlwiMTM3NjkxNTQ5MVwiLFwicmVwb3NpdG9yeV9vd25lclwiOlwicmFodWxrczZcIixcInJlcG9zaXRvcnlfb3duZXJfaWRcIjpcIjE5NzU0MDkyNFwiLFwicmVwb3NpdG9yeV92aXNpYmlsaXR5XCI6XCJwdWJsaWNcIixcInJ1bl9hdHRlbXB0XCI6XCIxXCIsXCJydW5faWRcIjpcIjQxOTk1NTU0NzIwXCIsXCJydW5fbnVtYmVyXCI6XCI0NFwiLFwicnVubmVyX2Vudmlyb25tZW50XCI6XCJnaXRodWItaG9zdGVkXCIsXCJzaGFcIjpcIjI0ZjhmYTk4NjY2MGFjODhiYTUyMzJmNzIzNGY5MTFmM2I0NzVhOGJcIixcIndvcmtmbG93XCI6XCJBbmRyb2lkIGVtdWxhdG9yIHRlc3RcIixcIndvcmtmbG93X3JlZlwiOlwicmFodWxrczYvc3RvcnktdHJhaWwvLmdpdGh1Yi93b3JrZmxvd3MvYW5kcm9pZC1lMmUueW1sQHJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyXCIsXCJ3b3JrZmxvd19zaGFcIjpcIjI0ZjhmYTk4NjY2MGFjODhiYTUyMzJmNzIzNGY5MTFmM2I0NzVhOGJcIn0iLCJvaWRjX3N1YiI6InJlcG86cmFodWxrczZAMTk3NTQwOTI0L3N0b3J5LXRyYWlsQDEzNzY5MTU0OTE6cmVmOnJlZnMvaGVhZHMvY2xhdWRlL2Fkb3JpbmctYnJvd24tOWdpcmZyIiwib3JjaF9pZCI6IjUyYThkN2U4LWY0NTctNGZkMi04ODA3LTM3YWNlMTlkNjc4ZS53YWxrdGhyb3VnaC5waG9uZSIsIm93bmVyX2lkIjoiVV9rZ0RPQzhZOFBBIiwicGxhbl9pZCI6IjUyYThkN2U4LWY0NTctNGZkMi04ODA3LTM3YWNlMTlkNjc4ZSIsInJlcG9zaXRvcnlfaWQiOiIxMzc2OTE1NDkxIiwicmVwb3NpdG9yeV9vd25lcl9pZCI6IjE5NzU0MDkyNCIsInJlcG9zaXRvcnlfdmlzaWJpbGl0eSI6InB1YmxpYyIsInJ1bl9pZCI6IjQxOTk1NTU0NzIwIiwicnVuX251bWJlciI6IjQ0IiwicnVuX3R5cGUiOiJmdWxsIiwicnVubmVyX2lkIjoiMTAwMDAwMDE4OCIsInJ1bm5lcl90eXBlIjoiaG9zdGVkIiwic2NwIjoiQWN0aW9ucy5SZXN1bHRzOjUyYThkN2U4LWY0NTctNGZkMi04ODA3LTM3YWNlMTlkNjc4ZTo5NWNjYjk0YS03NjAxLTU4M2QtODVlMC0wNDE4NDgxMDU0MTAgQWN0aW9ucy5SdW5uZXI6NTJhOGQ3ZTgtZjQ1Ny00ZmQyLTg4MDctMzdhY2UxOWQ2NzhlOjk1Y2NiOTRhLTc2MDEtNTgzZC04NWUwLTA0MTg0ODEwNTQxMCBBY3Rpb25zLlVwbG9hZEFydGlmYWN0czo1MmE4ZDdlOC1mNDU3LTRmZDItODgwNy0zN2FjZTE5ZDY3OGU6OTVjY2I5NGEtNzYwMS01ODNkLTg1ZTAtMDQxODQ4MTA1NDEwIGdlbmVyYXRlX2lkX3Rva2VuOjUyYThkN2U4LWY0NTctNGZkMi04ODA3LTM3YWNlMTlkNjc4ZTo5NWNjYjk0YS03NjAxLTU4M2QtODVlMC0wNDE4NDgxMDU0MTAgQWN0aW9ucy5HZW5lcmljUmVhZDowMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJzaGEiOiIyNGY4ZmE5ODY2NjBhYzg4YmE1MjMyZjcyMzRmOTExZjNiNDc1YThiIiwidHJ1c3RfdGllciI6IjIifQ.jnvhdf6fAWuRWP-FAebOYQbfZq2p2NNJKncABi-XR8NdoXR3euhRZel9Ub3lHLdNf7EPygIHu-4I2SWuR8CZv36P3QpqxaOSR00k1AKOBX7TcLwapaeMRLNC_Ouss5Qeru9klX23Fo66t21akjQ6h903Bsk5V9uEmoS8nS0jP2H3GueK-JZDSuQZyRb9yRoXODcSAyVIetvCixNi5KKeVIiGcgbp2k4gIEGDBIQDoBbu5vxUQ8qnlLleuxqYc4BK7gFDZa_SjQYM41gQTXOKBUaOf8mT1NomHx-x0MtMYkZ3P3k_BhVVJ1PiZQYeFhbgvDZM-KBYKJbcdDe6WOiOeQ",
           "MAESTRO_CLI_NO_ANALYTICS" : "1",
           "MAESTRO_FILENAME" : "videotext",
           "MAESTRO_DEVICE_UDID" : "emulator-5554",
@@ -51,8 +51,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867408325,
-    "duration" : 1,
+    "timestamp" : 1793868544277,
+    "duration" : 4,
     "sequenceNumber" : 1,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -77,8 +77,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867408326,
-    "duration" : 2452,
+    "timestamp" : 1793868544281,
+    "duration" : 3334,
     "sequenceNumber" : 2,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -107,8 +107,8 @@
   },
   "metadata" : {
     "status" : "WARNED",
-    "timestamp" : 1793867410779,
-    "duration" : 8211,
+    "timestamp" : 1793868547617,
+    "duration" : 7201,
     "sequenceNumber" : 3,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -146,8 +146,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867420728,
-    "duration" : 604,
+    "timestamp" : 1793868555890,
+    "duration" : 165,
     "sequenceNumber" : 4,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -172,8 +172,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867421333,
-    "duration" : 1046,
+    "timestamp" : 1793868556055,
+    "duration" : 325,
     "sequenceNumber" : 5,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -202,8 +202,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867422380,
-    "duration" : 4726,
+    "timestamp" : 1793868556380,
+    "duration" : 3858,
     "sequenceNumber" : 6,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -234,8 +234,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867427106,
-    "duration" : 274,
+    "timestamp" : 1793868560239,
+    "duration" : 816,
     "sequenceNumber" : 7,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -266,8 +266,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867427380,
-    "duration" : 3430,
+    "timestamp" : 1793868561056,
+    "duration" : 4327,
     "sequenceNumber" : 8,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -292,8 +292,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867430810,
-    "duration" : 10157,
+    "timestamp" : 1793868565383,
+    "duration" : 12375,
     "sequenceNumber" : 9,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -350,8 +350,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867440967,
-    "duration" : 1581,
+    "timestamp" : 1793868577759,
+    "duration" : 2706,
     "sequenceNumber" : 10,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -410,7 +410,7 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867440969,
+    "timestamp" : 1793868577760,
     "duration" : 1,
     "sequenceNumber" : 11,
     "depth" : 1,
@@ -439,8 +439,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867440971,
-    "duration" : 1572,
+    "timestamp" : 1793868577762,
+    "duration" : 2702,
     "sequenceNumber" : 12,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -465,8 +465,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867440971,
-    "duration" : 1567,
+    "timestamp" : 1793868577762,
+    "duration" : 2701,
     "sequenceNumber" : 13,
     "depth" : 2,
     "evaluatedCommand" : {
@@ -494,8 +494,8 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1793867442543,
-    "duration" : 1,
+    "timestamp" : 1793868580464,
+    "duration" : 0,
     "sequenceNumber" : 14,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -530,8 +530,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867442549,
-    "duration" : 4058,
+    "timestamp" : 1793868580465,
+    "duration" : 6792,
     "sequenceNumber" : 15,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -556,13 +556,13 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867446608,
-    "duration" : 10236,
+    "timestamp" : 1793868587257,
+    "duration" : 11335,
     "sequenceNumber" : 16,
     "depth" : 0,
     "evaluatedCommand" : {
       "inputTextCommand" : {
-        "text" : "e2e_and_016048_phone",
+        "text" : "e2e_and_554720_phone",
         "optional" : false
       }
     }
@@ -614,8 +614,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867456845,
-    "duration" : 2035,
+    "timestamp" : 1793868598592,
+    "duration" : 1610,
     "sequenceNumber" : 17,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -674,7 +674,7 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867456846,
+    "timestamp" : 1793868598593,
     "duration" : 0,
     "sequenceNumber" : 18,
     "depth" : 1,
@@ -703,8 +703,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867456846,
-    "duration" : 2033,
+    "timestamp" : 1793868598593,
+    "duration" : 1608,
     "sequenceNumber" : 19,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -729,8 +729,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867456846,
-    "duration" : 2033,
+    "timestamp" : 1793868598593,
+    "duration" : 1607,
     "sequenceNumber" : 20,
     "depth" : 2,
     "evaluatedCommand" : {
@@ -758,7 +758,7 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1793867458880,
+    "timestamp" : 1793868600202,
     "duration" : 0,
     "sequenceNumber" : 21,
     "depth" : 1,
@@ -794,8 +794,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867458880,
-    "duration" : 10214,
+    "timestamp" : 1793868600202,
+    "duration" : 3841,
     "sequenceNumber" : 22,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -820,13 +820,13 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867469095,
-    "duration" : 15703,
+    "timestamp" : 1793868604043,
+    "duration" : 11337,
     "sequenceNumber" : 23,
     "depth" : 0,
     "evaluatedCommand" : {
       "inputTextCommand" : {
-        "text" : "support+e2e-and-016048-phone@katkee.com",
+        "text" : "support+e2e-and-554720-phone@katkee.com",
         "optional" : false
       }
     }
@@ -878,8 +878,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867484799,
-    "duration" : 1373,
+    "timestamp" : 1793868615380,
+    "duration" : 1197,
     "sequenceNumber" : 24,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -938,7 +938,7 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867484799,
+    "timestamp" : 1793868615381,
     "duration" : 0,
     "sequenceNumber" : 25,
     "depth" : 1,
@@ -967,8 +967,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867484800,
-    "duration" : 1371,
+    "timestamp" : 1793868615381,
+    "duration" : 1194,
     "sequenceNumber" : 26,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -993,8 +993,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867484800,
-    "duration" : 1370,
+    "timestamp" : 1793868615381,
+    "duration" : 1193,
     "sequenceNumber" : 27,
     "depth" : 2,
     "evaluatedCommand" : {
@@ -1022,7 +1022,7 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1793867486171,
+    "timestamp" : 1793868616575,
     "duration" : 1,
     "sequenceNumber" : 28,
     "depth" : 1,
@@ -1058,8 +1058,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867486172,
-    "duration" : 4727,
+    "timestamp" : 1793868616577,
+    "duration" : 3448,
     "sequenceNumber" : 29,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1084,8 +1084,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867490899,
-    "duration" : 3671,
+    "timestamp" : 1793868620025,
+    "duration" : 2464,
     "sequenceNumber" : 30,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1142,8 +1142,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867494571,
-    "duration" : 2368,
+    "timestamp" : 1793868622489,
+    "duration" : 1132,
     "sequenceNumber" : 31,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1202,7 +1202,7 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867494572,
+    "timestamp" : 1793868622491,
     "duration" : 0,
     "sequenceNumber" : 32,
     "depth" : 1,
@@ -1231,8 +1231,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867494573,
-    "duration" : 2362,
+    "timestamp" : 1793868622491,
+    "duration" : 1129,
     "sequenceNumber" : 33,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -1257,8 +1257,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867494573,
-    "duration" : 2361,
+    "timestamp" : 1793868622491,
+    "duration" : 1128,
     "sequenceNumber" : 34,
     "depth" : 2,
     "evaluatedCommand" : {
@@ -1286,8 +1286,8 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1793867496936,
-    "duration" : 3,
+    "timestamp" : 1793868623620,
+    "duration" : 1,
     "sequenceNumber" : 35,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -1322,8 +1322,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867496940,
-    "duration" : 5124,
+    "timestamp" : 1793868623621,
+    "duration" : 3389,
     "sequenceNumber" : 36,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1348,13 +1348,13 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867502065,
-    "duration" : 6440,
+    "timestamp" : 1793868627010,
+    "duration" : 4500,
     "sequenceNumber" : 37,
     "depth" : 0,
     "evaluatedCommand" : {
       "inputTextCommand" : {
-        "text" : "E2e-9922f82045319c93",
+        "text" : "E2e-4e1f9160961ea893",
         "optional" : false
       }
     }
@@ -1406,8 +1406,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867508505,
-    "duration" : 1519,
+    "timestamp" : 1793868631511,
+    "duration" : 995,
     "sequenceNumber" : 38,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1466,7 +1466,7 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867508507,
+    "timestamp" : 1793868631511,
     "duration" : 0,
     "sequenceNumber" : 39,
     "depth" : 1,
@@ -1495,8 +1495,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867508507,
-    "duration" : 1515,
+    "timestamp" : 1793868631511,
+    "duration" : 994,
     "sequenceNumber" : 40,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -1521,8 +1521,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867508508,
-    "duration" : 1514,
+    "timestamp" : 1793868631512,
+    "duration" : 993,
     "sequenceNumber" : 41,
     "depth" : 2,
     "evaluatedCommand" : {
@@ -1550,8 +1550,8 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1793867510023,
-    "duration" : 0,
+    "timestamp" : 1793868632505,
+    "duration" : 1,
     "sequenceNumber" : 42,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -1580,8 +1580,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867510024,
-    "duration" : 475,
+    "timestamp" : 1793868632506,
+    "duration" : 158,
     "sequenceNumber" : 43,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1614,8 +1614,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867510499,
-    "duration" : 252,
+    "timestamp" : 1793868632665,
+    "duration" : 224,
     "sequenceNumber" : 44,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1650,8 +1650,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867510754,
-    "duration" : 9199,
+    "timestamp" : 1793868632889,
+    "duration" : 5160,
     "sequenceNumber" : 45,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1682,8 +1682,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867519953,
-    "duration" : 598,
+    "timestamp" : 1793868638049,
+    "duration" : 111,
     "sequenceNumber" : 46,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1708,8 +1708,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867520552,
-    "duration" : 556,
+    "timestamp" : 1793868638160,
+    "duration" : 159,
     "sequenceNumber" : 47,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1734,8 +1734,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867521109,
-    "duration" : 2597,
+    "timestamp" : 1793868638320,
+    "duration" : 1575,
     "sequenceNumber" : 48,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1756,8 +1756,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867523707,
-    "duration" : 133,
+    "timestamp" : 1793868639896,
+    "duration" : 109,
     "sequenceNumber" : 49,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1776,8 +1776,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867523845,
-    "duration" : 5109,
+    "timestamp" : 1793868640005,
+    "duration" : 5075,
     "sequenceNumber" : 50,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1802,8 +1802,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867528954,
-    "duration" : 5656,
+    "timestamp" : 1793868645080,
+    "duration" : 4684,
     "sequenceNumber" : 51,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -1947,8 +1947,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867534611,
-    "duration" : 1513,
+    "timestamp" : 1793868649764,
+    "duration" : 2471,
     "sequenceNumber" : 52,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2088,8 +2088,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867534611,
-    "duration" : 1,
+    "timestamp" : 1793868649765,
+    "duration" : 0,
     "sequenceNumber" : 53,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -2213,8 +2213,8 @@
   },
   "metadata" : {
     "status" : "SKIPPED",
-    "timestamp" : 1793867534612,
-    "duration" : 1512,
+    "timestamp" : 1793868649765,
+    "duration" : 2470,
     "sequenceNumber" : 54,
     "depth" : 1,
     "evaluatedCommand" : {
@@ -2342,8 +2342,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867536124,
-    "duration" : 128,
+    "timestamp" : 1793868652235,
+    "duration" : 106,
     "sequenceNumber" : 55,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2374,8 +2374,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867536252,
-    "duration" : 3117,
+    "timestamp" : 1793868652342,
+    "duration" : 2922,
     "sequenceNumber" : 56,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2406,8 +2406,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867539369,
-    "duration" : 3076,
+    "timestamp" : 1793868655264,
+    "duration" : 2928,
     "sequenceNumber" : 57,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2438,8 +2438,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867542445,
-    "duration" : 3131,
+    "timestamp" : 1793868658192,
+    "duration" : 3043,
     "sequenceNumber" : 58,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2464,8 +2464,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867545576,
-    "duration" : 163,
+    "timestamp" : 1793868661235,
+    "duration" : 156,
     "sequenceNumber" : 59,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2494,8 +2494,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867545739,
-    "duration" : 3635,
+    "timestamp" : 1793868661392,
+    "duration" : 2884,
     "sequenceNumber" : 60,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2526,8 +2526,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867549374,
-    "duration" : 159,
+    "timestamp" : 1793868664276,
+    "duration" : 93,
     "sequenceNumber" : 61,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2552,8 +2552,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867549534,
-    "duration" : 1875,
+    "timestamp" : 1793868664370,
+    "duration" : 2051,
     "sequenceNumber" : 62,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2572,8 +2572,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867551410,
-    "duration" : 193,
+    "timestamp" : 1793868666421,
+    "duration" : 188,
     "sequenceNumber" : 63,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2602,8 +2602,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867551604,
-    "duration" : 2616,
+    "timestamp" : 1793868666610,
+    "duration" : 2466,
     "sequenceNumber" : 64,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2634,8 +2634,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867554220,
-    "duration" : 81,
+    "timestamp" : 1793868669076,
+    "duration" : 24,
     "sequenceNumber" : 65,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2660,8 +2660,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867554302,
-    "duration" : 259,
+    "timestamp" : 1793868669100,
+    "duration" : 178,
     "sequenceNumber" : 66,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2690,8 +2690,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867554562,
-    "duration" : 3102,
+    "timestamp" : 1793868669278,
+    "duration" : 3036,
     "sequenceNumber" : 67,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2722,8 +2722,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867557664,
-    "duration" : 94,
+    "timestamp" : 1793868672314,
+    "duration" : 83,
     "sequenceNumber" : 68,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2754,8 +2754,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867557759,
-    "duration" : 5555,
+    "timestamp" : 1793868672398,
+    "duration" : 5746,
     "sequenceNumber" : 69,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2780,8 +2780,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867563315,
-    "duration" : 419,
+    "timestamp" : 1793868678145,
+    "duration" : 208,
     "sequenceNumber" : 70,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2810,8 +2810,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867563735,
-    "duration" : 2772,
+    "timestamp" : 1793868678353,
+    "duration" : 2306,
     "sequenceNumber" : 71,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2836,8 +2836,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867566507,
-    "duration" : 627,
+    "timestamp" : 1793868680659,
+    "duration" : 658,
     "sequenceNumber" : 72,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2856,8 +2856,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867567135,
-    "duration" : 157,
+    "timestamp" : 1793868681318,
+    "duration" : 146,
     "sequenceNumber" : 73,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2886,8 +2886,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867567292,
-    "duration" : 2576,
+    "timestamp" : 1793868681464,
+    "duration" : 2520,
     "sequenceNumber" : 74,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2912,8 +2912,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867569868,
-    "duration" : 698,
+    "timestamp" : 1793868683985,
+    "duration" : 589,
     "sequenceNumber" : 75,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2938,8 +2938,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867570567,
-    "duration" : 7277,
+    "timestamp" : 1793868684575,
+    "duration" : 7737,
     "sequenceNumber" : 76,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2964,8 +2964,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867577844,
-    "duration" : 729,
+    "timestamp" : 1793868692312,
+    "duration" : 615,
     "sequenceNumber" : 77,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -2984,8 +2984,8 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867578573,
-    "duration" : 190,
+    "timestamp" : 1793868692927,
+    "duration" : 157,
     "sequenceNumber" : 78,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -3003,8 +3003,7 @@
   "command" : {
     "tapOnElement" : {
       "selector" : {
-        "textRegex" : "Video.*",
-        "index" : "0",
+        "textRegex" : "00:06",
         "optional" : true
       },
       "retryIfNoChange" : false,
@@ -3015,15 +3014,14 @@
   },
   "metadata" : {
     "status" : "COMPLETED",
-    "timestamp" : 1793867578763,
-    "duration" : 6049,
+    "timestamp" : 1793868693084,
+    "duration" : 11792,
     "sequenceNumber" : 79,
     "depth" : 0,
     "evaluatedCommand" : {
       "tapOnElement" : {
         "selector" : {
-          "textRegex" : "Video.*",
-          "index" : "0",
+          "textRegex" : "00:06",
           "optional" : true
         },
         "retryIfNoChange" : false,
@@ -3035,44 +3033,59 @@
   }
 }, {
   "command" : {
-    "tapOnElement" : {
-      "selector" : {
-        "idRegex" : ".*icon_thumbnail",
-        "index" : "0",
-        "optional" : true
+    "runFlowCommand" : {
+      "commands" : [ {
+        "tapOnElement" : {
+          "selector" : {
+            "idRegex" : ".*icon_thumbnail",
+            "index" : "1",
+            "optional" : true
+          },
+          "retryIfNoChange" : false,
+          "waitUntilVisible" : false,
+          "longPress" : false,
+          "optional" : true
+        }
+      } ],
+      "condition" : {
+        "notVisible" : {
+          "textRegex" : "Your story",
+          "optional" : false
+        }
       },
-      "retryIfNoChange" : false,
-      "waitUntilVisible" : false,
-      "longPress" : false,
-      "optional" : true
+      "optional" : false
     }
   },
   "metadata" : {
-    "status" : "WARNED",
-    "timestamp" : 1793867584813,
-    "duration" : 7559,
+    "status" : "SKIPPED",
+    "timestamp" : 1793868704877,
+    "duration" : 7196,
     "sequenceNumber" : 80,
     "depth" : 0,
     "evaluatedCommand" : {
-      "tapOnElement" : {
-        "selector" : {
-          "idRegex" : ".*icon_thumbnail",
-          "index" : "0",
-          "optional" : true
+      "runFlowCommand" : {
+        "commands" : [ {
+          "tapOnElement" : {
+            "selector" : {
+              "idRegex" : ".*icon_thumbnail",
+              "index" : "1",
+              "optional" : true
+            },
+            "retryIfNoChange" : false,
+            "waitUntilVisible" : false,
+            "longPress" : false,
+            "optional" : true
+          }
+        } ],
+        "condition" : {
+          "notVisible" : {
+            "textRegex" : "Your story",
+            "optional" : false
+          }
         },
-        "retryIfNoChange" : false,
-        "waitUntilVisible" : false,
-        "longPress" : false,
-        "optional" : true
+        "optional" : false
       }
-    },
-    "artifacts" : [ {
-      "type" : "SCREEN_HIERARCHY",
-      "path" : "screen-hierarchy/step-081-tapOnElement-icon_thumbnail.json"
-    }, {
-      "type" : "SCREENSHOT",
-      "path" : "screenshots/step-081-tapOnElement-icon_thumbnail.png"
-    } ]
+    }
   }
 }, {
   "command" : {
@@ -3088,13 +3101,9 @@
     }
   },
   "metadata" : {
-    "status" : "FAILED",
-    "timestamp" : 1793867593179,
-    "duration" : 12431,
-    "error" : {
-      "message" : "Assertion is false: \"Your story\" is visible",
-      "debugMessage" : "Assertion '\"Your story\" is visible' failed. Check the UI hierarchy in debug artifacts to verify the element state and properties.\n\nPossible causes:\n- Element selector may be incorrect - check if there are similar elements with slightly different names/properties.\n- Element may be temporarily unavailable due to loading state\n- This could be a real regression that needs to be addressed"
-    },
+    "status" : "COMPLETED",
+    "timestamp" : 1793868712073,
+    "duration" : 211,
     "sequenceNumber" : 81,
     "depth" : 0,
     "evaluatedCommand" : {
@@ -3108,13 +3117,1083 @@
         "timeout" : "20000",
         "optional" : false
       }
+    }
+  }
+}, {
+  "command" : {
+    "takeScreenshotCommand" : {
+      "path" : "v02-editor-a",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868712285,
+    "duration" : 628,
+    "sequenceNumber" : 82,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "takeScreenshotCommand" : {
+        "path" : "v02-editor-a",
+        "optional" : false
+      }
+    },
+    "artifacts" : [ {
+      "type" : "TAKE_SCREENSHOT",
+      "path" : "takeScreenshot/v02-editor-a.png"
+    } ]
+  }
+}, {
+  "command" : {
+    "takeScreenshotCommand" : {
+      "path" : "v03-editor-b",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868712913,
+    "duration" : 345,
+    "sequenceNumber" : 83,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "takeScreenshotCommand" : {
+        "path" : "v03-editor-b",
+        "optional" : false
+      }
+    },
+    "artifacts" : [ {
+      "type" : "TAKE_SCREENSHOT",
+      "path" : "takeScreenshot/v03-editor-b.png"
+    } ]
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Add text",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868713258,
+    "duration" : 4347,
+    "sequenceNumber" : 84,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Add text",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "inputTextCommand" : {
+      "text" : "Video with text",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868717605,
+    "duration" : 12512,
+    "sequenceNumber" : 85,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "inputTextCommand" : {
+        "text" : "Video with text",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "takeScreenshotCommand" : {
+      "path" : "v04-text-tool",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868730118,
+    "duration" : 814,
+    "sequenceNumber" : 86,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "takeScreenshotCommand" : {
+        "path" : "v04-text-tool",
+        "optional" : false
+      }
+    },
+    "artifacts" : [ {
+      "type" : "TAKE_SCREENSHOT",
+      "path" : "takeScreenshot/v04-text-tool.png"
+    } ]
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Done",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868730932,
+    "duration" : 6254,
+    "sequenceNumber" : 87,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Done",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "waitForAnimationToEndCommand" : {
+      "timeout" : "3000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868737188,
+    "duration" : 4676,
+    "sequenceNumber" : 88,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "waitForAnimationToEndCommand" : {
+        "timeout" : "3000",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "takeScreenshotCommand" : {
+      "path" : "v05-after-text-a",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868741865,
+    "duration" : 587,
+    "sequenceNumber" : 89,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "takeScreenshotCommand" : {
+        "path" : "v05-after-text-a",
+        "optional" : false
+      }
+    },
+    "artifacts" : [ {
+      "type" : "TAKE_SCREENSHOT",
+      "path" : "takeScreenshot/v05-after-text-a.png"
+    } ]
+  }
+}, {
+  "command" : {
+    "takeScreenshotCommand" : {
+      "path" : "v06-after-text-b",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868742452,
+    "duration" : 720,
+    "sequenceNumber" : 90,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "takeScreenshotCommand" : {
+        "path" : "v06-after-text-b",
+        "optional" : false
+      }
+    },
+    "artifacts" : [ {
+      "type" : "TAKE_SCREENSHOT",
+      "path" : "takeScreenshot/v06-after-text-b.png"
+    } ]
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Your story",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868743173,
+    "duration" : 5755,
+    "sequenceNumber" : 91,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Your story",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "assertConditionCommand" : {
+      "condition" : {
+        "visible" : {
+          "textRegex" : "Home",
+          "optional" : false
+        }
+      },
+      "timeout" : "30000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868748927,
+    "duration" : 521,
+    "sequenceNumber" : 92,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "assertConditionCommand" : {
+        "condition" : {
+          "visible" : {
+            "textRegex" : "Home",
+            "optional" : false
+          }
+        },
+        "timeout" : "30000",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "takeScreenshotCommand" : {
+      "path" : "v07-posting",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868749448,
+    "duration" : 176,
+    "sequenceNumber" : 93,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "takeScreenshotCommand" : {
+        "path" : "v07-posting",
+        "optional" : false
+      }
+    },
+    "artifacts" : [ {
+      "type" : "TAKE_SCREENSHOT",
+      "path" : "takeScreenshot/v07-posting.png"
+    } ]
+  }
+}, {
+  "command" : {
+    "repeatCommand" : {
+      "times" : "12",
+      "condition" : {
+        "notVisible" : {
+          "textRegex" : "Open your Story",
+          "optional" : false
+        }
+      },
+      "commands" : [ {
+        "tapOnElement" : {
+          "selector" : {
+            "textRegex" : "Profile",
+            "optional" : false
+          },
+          "retryIfNoChange" : false,
+          "waitUntilVisible" : false,
+          "longPress" : false,
+          "optional" : false
+        }
+      }, {
+        "waitForAnimationToEndCommand" : {
+          "timeout" : "5000",
+          "optional" : false
+        }
+      } ],
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868749625,
+    "duration" : 50787,
+    "sequenceNumber" : 94,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "repeatCommand" : {
+        "times" : "12",
+        "condition" : {
+          "notVisible" : {
+            "textRegex" : "Open your Story",
+            "optional" : false
+          }
+        },
+        "commands" : [ {
+          "tapOnElement" : {
+            "selector" : {
+              "textRegex" : "Profile",
+              "optional" : false
+            },
+            "retryIfNoChange" : false,
+            "waitUntilVisible" : false,
+            "longPress" : false,
+            "optional" : false
+          }
+        }, {
+          "waitForAnimationToEndCommand" : {
+            "timeout" : "5000",
+            "optional" : false
+          }
+        } ],
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Profile",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868751000,
+    "duration" : 3459,
+    "sequenceNumber" : 95,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Profile",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "waitForAnimationToEndCommand" : {
+      "timeout" : "5000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868754459,
+    "duration" : 931,
+    "sequenceNumber" : 96,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "waitForAnimationToEndCommand" : {
+        "timeout" : "5000",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Profile",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868756026,
+    "duration" : 2588,
+    "sequenceNumber" : 97,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Profile",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "waitForAnimationToEndCommand" : {
+      "timeout" : "5000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868758614,
+    "duration" : 662,
+    "sequenceNumber" : 98,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "waitForAnimationToEndCommand" : {
+        "timeout" : "5000",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Profile",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868759916,
+    "duration" : 2722,
+    "sequenceNumber" : 99,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Profile",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "waitForAnimationToEndCommand" : {
+      "timeout" : "5000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868762638,
+    "duration" : 671,
+    "sequenceNumber" : 100,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "waitForAnimationToEndCommand" : {
+        "timeout" : "5000",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Profile",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868763968,
+    "duration" : 2730,
+    "sequenceNumber" : 101,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Profile",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "waitForAnimationToEndCommand" : {
+      "timeout" : "5000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868766698,
+    "duration" : 622,
+    "sequenceNumber" : 102,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "waitForAnimationToEndCommand" : {
+        "timeout" : "5000",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Profile",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868767962,
+    "duration" : 2662,
+    "sequenceNumber" : 103,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Profile",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "waitForAnimationToEndCommand" : {
+      "timeout" : "5000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868770624,
+    "duration" : 627,
+    "sequenceNumber" : 104,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "waitForAnimationToEndCommand" : {
+        "timeout" : "5000",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Profile",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868771920,
+    "duration" : 2776,
+    "sequenceNumber" : 105,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Profile",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "waitForAnimationToEndCommand" : {
+      "timeout" : "5000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868774696,
+    "duration" : 618,
+    "sequenceNumber" : 106,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "waitForAnimationToEndCommand" : {
+        "timeout" : "5000",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Profile",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868775953,
+    "duration" : 2783,
+    "sequenceNumber" : 107,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Profile",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "waitForAnimationToEndCommand" : {
+      "timeout" : "5000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868778737,
+    "duration" : 616,
+    "sequenceNumber" : 108,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "waitForAnimationToEndCommand" : {
+        "timeout" : "5000",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Profile",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868780090,
+    "duration" : 2897,
+    "sequenceNumber" : 109,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Profile",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "waitForAnimationToEndCommand" : {
+      "timeout" : "5000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868782987,
+    "duration" : 627,
+    "sequenceNumber" : 110,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "waitForAnimationToEndCommand" : {
+        "timeout" : "5000",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Profile",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868784271,
+    "duration" : 2672,
+    "sequenceNumber" : 111,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Profile",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "waitForAnimationToEndCommand" : {
+      "timeout" : "5000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868786943,
+    "duration" : 616,
+    "sequenceNumber" : 112,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "waitForAnimationToEndCommand" : {
+        "timeout" : "5000",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Profile",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868788222,
+    "duration" : 2882,
+    "sequenceNumber" : 113,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Profile",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "waitForAnimationToEndCommand" : {
+      "timeout" : "5000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868791104,
+    "duration" : 631,
+    "sequenceNumber" : 114,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "waitForAnimationToEndCommand" : {
+        "timeout" : "5000",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Profile",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868792376,
+    "duration" : 2726,
+    "sequenceNumber" : 115,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Profile",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "waitForAnimationToEndCommand" : {
+      "timeout" : "5000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868795102,
+    "duration" : 621,
+    "sequenceNumber" : 116,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "waitForAnimationToEndCommand" : {
+        "timeout" : "5000",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Profile",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868796382,
+    "duration" : 2760,
+    "sequenceNumber" : 117,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Profile",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "waitForAnimationToEndCommand" : {
+      "timeout" : "5000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868799142,
+    "duration" : 627,
+    "sequenceNumber" : 118,
+    "depth" : 1,
+    "evaluatedCommand" : {
+      "waitForAnimationToEndCommand" : {
+        "timeout" : "5000",
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "textRegex" : "Profile",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1793868800413,
+    "duration" : 2910,
+    "sequenceNumber" : 119,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "tapOnElement" : {
+        "selector" : {
+          "textRegex" : "Profile",
+          "optional" : false
+        },
+        "retryIfNoChange" : false,
+        "waitUntilVisible" : false,
+        "longPress" : false,
+        "optional" : false
+      }
+    }
+  }
+}, {
+  "command" : {
+    "assertConditionCommand" : {
+      "condition" : {
+        "visible" : {
+          "textRegex" : "Open your Story",
+          "optional" : false
+        }
+      },
+      "timeout" : "60000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "FAILED",
+    "timestamp" : 1793868803323,
+    "duration" : 60274,
+    "error" : {
+      "message" : "Assertion is false: \"Open your Story\" is visible",
+      "debugMessage" : "Assertion '\"Open your Story\" is visible' failed. Check the UI hierarchy in debug artifacts to verify the element state and properties.\n\nPossible causes:\n- Element selector may be incorrect - check if there are similar elements with slightly different names/properties.\n- Element may be temporarily unavailable due to loading state\n- This could be a real regression that needs to be addressed"
+    },
+    "sequenceNumber" : 120,
+    "depth" : 0,
+    "evaluatedCommand" : {
+      "assertConditionCommand" : {
+        "condition" : {
+          "visible" : {
+            "textRegex" : "Open your Story",
+            "optional" : false
+          }
+        },
+        "timeout" : "60000",
+        "optional" : false
+      }
     },
     "artifacts" : [ {
       "type" : "SCREEN_HIERARCHY",
-      "path" : "screen-hierarchy/step-082-assertCondition-Your_story.json"
+      "path" : "screen-hierarchy/step-121-assertCondition-Open_your_Story.json"
     }, {
       "type" : "SCREENSHOT",
-      "path" : "screenshots/step-082-assertCondition-Your_story.png"
+      "path" : "screenshots/step-121-assertCondition-Open_your_Story.png"
     } ]
   }
 } ]
