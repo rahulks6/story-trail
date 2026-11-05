@@ -174,15 +174,15 @@ export function ProfileHeader({
       <View style={styles.identity}>
         <VerifiedName name={displayName} verified={verified} style={styles.displayName} onPressBadge={() => setBadgeSheetOpen(true)} />
         {categoryLabel ? <Text style={styles.category} numberOfLines={1}>{categoryLabel}</Text> : null}
-        <View style={styles.handleRow}>
-          <Text style={styles.handle} numberOfLines={1}>@{username}</Text>
+        {/* The username is the page's title already: not repeated here (as on Instagram). */}
+        {isPrivate || followsYou ? <View style={styles.handleRow}>
           {isPrivate ? (
             <View accessible accessibilityLabel={t("common.privateAccount")}>
               <Icon name={ICONS.privacy} size={13} color={colors.textSecondary} />
             </View>
           ) : null}
           {followsYou ? <Text style={styles.followsYou}>{t("common.followsYou")}</Text> : null}
-        </View>
+        </View> : null}
         {bio ? <Text style={styles.bio}>{bio}</Text> : null}
         {interests.length > 0 ? (
           <View style={styles.chips}>

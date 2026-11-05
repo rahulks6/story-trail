@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import {StyleSheet, View, type StyleProp, type TextStyle} from 'react-native';
+import {Platform, StyleSheet, View, type StyleProp, type TextStyle} from 'react-native';
 import Svg, {Path, Circle, Rect, G} from 'react-native-svg';
 import {colors} from '../theme/colors';
 import type {IconName} from '../theme/icons';
@@ -32,7 +32,8 @@ export function Icon({name,size,color,selected=false,style}: {name:IconName;size
   crop:'M6 2v16h16M2 6h16v16',
   viewers:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z',
   insights:'M5 21V12m7 9V3m7 18V8',
-  back:'M15 3l-9 9 9 9',
+  // Each platform's own back: an arrow on Android (as its headers draw it), a chevron on iPhone.
+  back:Platform.OS==='android'?'M20 12H4M11 5l-7 7 7 7':'M15 3l-9 9 9 9',
   newChat:'M13 4H5a2 2 0 0 0-2 2v14a1 1 0 0 0 1 1h14a2 2 0 0 0 2-2v-8M10 14l1-5 9-8 3 3-9 9-4 1Z',
   attach:'M9 4h6a3 3 0 0 1 3 3v13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7a3 3 0 0 1 3-3ZM10 8h4v7h-4Z',
   notifications:'M5 17c2-3 1-5 2-9 1-6 9-6 10 0 1 4 0 6 2 9H5Zm5 4h4',

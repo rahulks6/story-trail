@@ -118,7 +118,7 @@ describe("someone else's page", () => {
     api.getProfile.mockResolvedValue({ profile: profile({}, { isFollowedBy: true }) });
     await renderOther();
     expect(navigation.setOptions).toHaveBeenLastCalledWith(expect.objectContaining({ title: "asha_k" }));
-    expect(texts()).toEqual(expect.arrayContaining(["27", "Stories", "12.3K", "Followers", "180", "Following", "Asha K", "@asha_k", "Follows you", "Street food in Pune.", "Food", "Travel"]));
+    expect(texts()).toEqual(expect.arrayContaining(["27", "Stories", "12.3K", "Followers", "180", "Following", "Asha K", "Follows you", "Street food in Pune.", "Food", "Travel"]));
     expect(labelled("12,345 followers")).toHaveLength(1);
     expect(texts()).toContain("Follow back");
     expect(tree.root.findAllByType("HighlightsGrid" as never)).toHaveLength(1);
@@ -215,14 +215,14 @@ describe("someone else's page", () => {
     expect(labelled("Loading profile")).toHaveLength(1);
     await act(async () => resolve({ profile: profile() }));
     await flush();
-    expect(texts()).toContain("@asha_k");
+    expect(texts()).toContain("Asha K");
 
     await act(async () => tree.unmount());
     api.getProfile.mockRejectedValueOnce(new Error("offline")).mockResolvedValueOnce({ profile: profile() });
     await renderOther();
     expect(texts()).toContain("Couldn't load this profile.");
     await press("Try again");
-    expect(texts()).toContain("@asha_k");
+    expect(texts()).toContain("Asha K");
   });
 });
 
@@ -232,7 +232,7 @@ describe("someone else's page: background refreshes and taps in flight", () => {
     await renderOther();
     await press("Follow");
     expect(api.followUser).toHaveBeenCalledTimes(1);
-    expect(texts()).toContain("@asha_k");
+    expect(texts()).toContain("Asha K");
     expect(texts()).toContain("Couldn't refresh this profile. Pull down to try again.");
     expect(texts()).not.toContain("Couldn't load this profile.");
   });
@@ -277,7 +277,9 @@ describe("your own page", () => {
     api.getProfile.mockResolvedValue({ profile: profile({ username: "me_now", isSelf: true, followerCount: 2, followingCount: 1 }) });
     const share = jest.spyOn(Share, "share").mockResolvedValue({ action: "sharedAction" } as never);
     await render(<ProfileScreen />);
-    expect(texts()).toEqual(expect.arrayContaining(["me_now", "Me Now", "@me_now", "Chai and cricket.", "Cricket", "2", "Followers", "1", "Following", "27", "Stories"]));
+    expect(texts()).toEqual(expect.arrayContaining(["me_now", "Me Now", "Chai and cricket.", "Cricket", "2", "Followers", "1", "Following", "27", "Stories"]));
+    // The username is the title at the top, not repeated under the name.
+    expect(texts()).not.toContain("@me_now");
     // Insights is a small icon button beside Edit and Share profile, not a card.
     expect(texts()).not.toContain("Insights");
     await press("Share profile");
@@ -334,7 +336,7 @@ describe("the cover photo", () => {
     expect(covers()[0]!.findAll((n: ReactTestInstance) => typeof n.props.onPress === "function")).toHaveLength(0);
     // Decorative: screen readers skip it; the photo, name and counts still read as before.
     expect(covers()[0]!.props.importantForAccessibility).toBe("no-hide-descendants");
-    expect(texts()).toEqual(expect.arrayContaining(["Asha K", "@asha_k", "12.3K"]));
+    expect(texts()).toEqual(expect.arrayContaining(["Asha K", "12.3K"]));
   });
 
   test("no cover (or a server without covers): no banner at all", async () => {

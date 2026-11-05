@@ -205,7 +205,8 @@ describe("profile links", () => {
     api.followUser.mockResolvedValueOnce({ status: "following" });
     await renderProfile({ username: "alice_old", userId: "11111111-2222-4333-8444-555555555555" });
     expect(api.getProfile).toHaveBeenCalledWith("11111111-2222-4333-8444-555555555555", "token");
-    expect(texts()).toContain("@alice_new");
+    // The page is titled with the current name (the username is the title, not repeated below).
+    expect(texts()).toContain("Alice");
     await act(async () => followButton().props.onPress());
     await flush();
     expect(api.followUser).toHaveBeenCalledWith("alice_new", "token");
