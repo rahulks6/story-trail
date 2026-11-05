@@ -317,7 +317,8 @@ describe("edge protection, monitoring and backups", () => {
     // (The worker's queue-depth scaling adds its own two alarms, which drive scaling, not alerts.)
     const alarms = resources(template, "AWS::CloudWatch::Alarm").map(([id, a]) => [id, a.Properties] as const).filter(([id]) => !id.startsWith("WorkerServiceTaskCountTarget"));
     const names = alarms.map(([id]) => id.replace(/[A-F0-9]{8}$/, "")).sort();
-    assert.deepEqual(names, ["Api5xx", "ApiCpu", "ApiLatencyP99", "ApiUnhealthyTasks", "DatabaseConnections", "DatabaseCpu", "DatabaseStorageLow", "LoadBalancer5xx", "MediaJobsBacklogAge", "MediaJobsDeadLetters", "WorkerMemory"]);
+    assert.deepEqual(names, ["Api5xx", "ApiCpu", "ApiLatencyP99", "ApiUnhealthyTasks", "DatabaseConnections", "DatabaseCpu", "DatabaseStorageLow", "LoadBalancer5xx", "MediaJobsBacklogAge", "MediaJobsDeadLetters", "WorkerJobErrors", "WorkerMemory"]);
+    template.hasResourceProperties("AWS::Logs::MetricFilter", { FilterPattern: '{ $.event = "*_error" }', MetricTransformations: [Match.objectLike({ MetricName: "WorkerErrors", MetricValue: "1" })] });
     const [topicId] = only(template, "AWS::SNS::Topic");
     for (const [id, a] of alarms) assert.deepEqual(a.AlarmActions.map(refTo), [topicId], id);
     const dlq = alarms.find(([id]) => id.startsWith("MediaJobsDeadLetters"))![1];

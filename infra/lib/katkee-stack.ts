@@ -407,6 +407,7 @@ export class KatkeeStack extends Stack {
       ...Object.fromEntries(enabledCredentials.map((name) => [name, fromSecret(name)])),
     };
     const logGroup = (id: string) => new logs.LogGroup(this, id, { retention: logs.RetentionDays.SIX_MONTHS, removalPolicy: RemovalPolicy.RETAIN });
+    const workerLogs = logGroup("WorkerLogs");
     const runtimePlatform = { cpuArchitecture: ecs.CpuArchitecture.X86_64, operatingSystemFamily: ecs.OperatingSystemFamily.LINUX };
     /**
      * A writable /tmp on an otherwise read-only root file system. The image declares /tmp as a
@@ -454,7 +455,7 @@ export class KatkeeStack extends Stack {
         command: ["CMD", "node", "-e", "const s=require('fs').statSync(process.env.WORKER_HEARTBEAT_FILE);process.exit(Date.now()-s.mtimeMs<120000?0:1)"],
         interval: Duration.seconds(30), timeout: Duration.seconds(5), retries: 3, startPeriod: Duration.seconds(60),
       },
-      logging: ecs.LogDrivers.awsLogs({ streamPrefix: "worker", logGroup: logGroup("WorkerLogs") }),
+      logging: ecs.LogDrivers.awsLogs({ streamPrefix: "worker", logGroup: workerLogs }),
     });
     withScratch(workerTask, workerContainer);
     workerTask.addToTaskRolePolicy(new iam.PolicyStatement({
@@ -624,6 +625,19 @@ export class KatkeeStack extends Stack {
     alarm("DatabaseConnections", "Database connections near the limit", db.metricDatabaseConnections(fiveMinutes), 300, 2);
     alarm("MediaJobsDeadLetters", "Media job messages could not be delivered", jobsDlq.metricApproximateNumberOfMessagesVisible({ period: Duration.minutes(5), statistic: "Maximum" }), 1, 1);
     alarm("MediaJobsBacklogAge", "Media jobs waiting over 15 minutes", jobs.metricApproximateAgeOfOldestMessage({ period: Duration.minutes(5), statistic: "Maximum" }), 900, 2);
+    // The worker's background jobs (scheduled Stories, reach, reminders, pushes, media) log
+    // "<job>_error" when a round fails. A steady stream of them is a job that has stopped working,
+    // as on 3 November 2026, when a database hiccup left them failing for two days unnoticed.
+    const workerErrors = new logs.MetricFilter(this, "WorkerErrorEvents", {
+      logGroup: workerLogs,
+      filterPattern: logs.FilterPattern.stringValue("$.event", "=", "*_error"),
+      metricNamespace: "Katkee",
+      metricName: "WorkerErrors",
+      metricValue: "1",
+      defaultValue: 0,
+    });
+    alarm("WorkerJobErrors", "Worker background jobs failing repeatedly (scheduled Stories, reach, reminders, pushes, media)",
+      workerErrors.metric({ ...fiveMinutes, statistic: "Sum" }), 10, 2);
 
     new budgets.CfnBudget(this, "MonthlyBudget", {
       budget: { budgetName: "katkee-monthly", budgetType: "COST", timeUnit: "MONTHLY", budgetLimit: { amount: s.monthlyBudgetUsd, unit: "USD" } },
