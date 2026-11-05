@@ -2,7 +2,7 @@
 export interface ProviderSession {user:PublicUser;tokens:TokenPair}
 export interface ProviderPending {onboardingRequired:true;proof:string;expiresIn:number}
 export interface ProviderProof {proof:string;expiresIn:number}
-export type ProviderResult=ProviderSession|ProviderPending|ProviderProof;
+export type ProviderResult=ProviderSession|ProviderPending|ProviderProof|{twoStepRequired:true;challenge:string;expiresIn:number};
 /** `apple` is missing from servers older than Sign in with Apple. */
 export interface AuthMethods {google:boolean;apple?:boolean;phone:boolean;countries:string[];codeLength:number}
 export const methods=()=>apiGet<AuthMethods>('/api/v1/auth/methods');

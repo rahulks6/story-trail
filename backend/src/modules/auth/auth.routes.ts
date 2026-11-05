@@ -1,3 +1,4 @@
+import * as twoStep from "./two-step";
 import type { KatkeeRequest, Router } from "../../http/router";
 import { requireAuth } from "../../http/middleware/auth.middleware";
 import { HttpError } from "../../http/errors";
@@ -54,6 +55,35 @@ export function registerAuthRoutes(router: Router): void {
     const input = parseLoginInput(req.body);
     const result = await authService.login(input, clientContext(req));
     sendJson(res, 200, result);
+  });
+
+  // Two-step login (two-step.ts): the code after the password, and turning it on or off.
+  router.post("/api/v1/auth/two-step/verify", async (req, res) => {
+    authRateLimiter.check(clientIp(req));
+    const b = (req.body && typeof req.body === "object" ? req.body : {}) as Record<string, unknown>;
+    sendJson(res, 200, await twoStep.answerChallenge(b.challenge, b.code, clientContext(req)));
+  });
+  router.get("/api/v1/auth/two-step", async (req, res) => {
+    requireAuth(req);
+    sendJson(res, 200, await twoStep.status(req.userId as string));
+  });
+  router.post("/api/v1/auth/two-step/setup", async (req, res) => {
+    requireAuth(req);
+    const b = (req.body && typeof req.body === "object" ? req.body : {}) as Record<string, unknown>;
+    sendJson(res, 200, await twoStep.startSetup(req.userId as string, b.reauthTicket));
+  });
+  router.post("/api/v1/auth/two-step/enable", async (req, res) => {
+    requireAuth(req);
+    authRateLimiter.check(req.userId as string);
+    const b = (req.body && typeof req.body === "object" ? req.body : {}) as Record<string, unknown>;
+    sendJson(res, 200, await twoStep.confirmSetup(req.userId as string, b.reauthTicket, b.code, clientContext(req)));
+  });
+  router.post("/api/v1/auth/two-step/disable", async (req, res) => {
+    requireAuth(req);
+    authRateLimiter.check(req.userId as string);
+    const b = (req.body && typeof req.body === "object" ? req.body : {}) as Record<string, unknown>;
+    await twoStep.turnOff(req.userId as string, b.reauthTicket, b.code, clientContext(req));
+    sendJson(res, 204, undefined);
   });
 
   // Not on the per-IP auth budget: a signed, single-use 256-bit token can't be guessed,

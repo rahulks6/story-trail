@@ -2,6 +2,7 @@
 import {query,queryOne,DatabaseError,nullable} from '../../db/psql';
 import {HttpError} from '../../http/errors';
 import {getPublicUserById,issueTokenPair} from './auth.service';
+import {finishSignIn} from './two-step';
 import {recordLoginSuccess,type ClientContext} from './account-security';
 import {findUserById} from '../users/users.repository';
 import {providerConfig,type VerifiedGoogle} from './providers';
@@ -60,7 +61,9 @@ export async function complete(proof:string,username:unknown,name:unknown,birthD
   await query(`UPDATE users u SET email_verified_at=coalesce(u.email_verified_at,now()) FROM auth_provider_proofs p WHERE p.token_hash=:'hash' AND p.provider IN ('GOOGLE','APPLE') AND u.id=:'id' AND u.email=p.verified_email`,{hash:proofToken(proof),id:row.id});
   await keepGrant(proofToken(proof));
   await keepContactKey(proofToken(proof));
-  const user=await getPublicUserById(row.id);const tokens=await issueTokenPair(row.id,client.userAgent);await recordLoginSuccess(row.id,(await findUserById(row.id))?.email??null,client);console.info(JSON.stringify({event:'provider_login_succeeded'}));return {user,tokens};
+  // With two-step login on, a challenge instead: the code finishes the sign-in (two-step.ts).
+  const userId=row.id as string;
+  return finishSignIn(userId,client,async()=>{const user=(await getPublicUserById(userId))!;const tokens=await issueTokenPair(userId,client.userAgent);await recordLoginSuccess(userId,(await findUserById(userId))?.email??null,client);console.info(JSON.stringify({event:'provider_login_succeeded'}));return {user,tokens};});
  }catch(e){identityError(e);}
 }
 export async function resultFor(proof:string,client:ClientContext){

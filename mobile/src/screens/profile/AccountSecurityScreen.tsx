@@ -8,6 +8,7 @@ import {KeyboardAvoider} from '../../components/KeyboardAvoider';
 import {useAuth} from '../../state/AuthContext';
 import {colors} from '../../theme';
 import {SignInSecuritySection} from './SignInSecuritySection';
+import {TwoStepSection} from './TwoStepSection';
 import { t } from "../../i18n";
 interface Identities {items:Array<{provider:'GOOGLE'|'APPLE'|'PHONE';verified_at:string}>;hasPassword:boolean}
 export function AccountSecurityScreen():React.JSX.Element {
@@ -39,6 +40,7 @@ export function AccountSecurityScreen():React.JSX.Element {
    <Pressable accessibilityRole="button" disabled={busy} style={styles.button} onPress={remove}><Text style={styles.error}>{t("common.deleteAccount")}</Text></Pressable>
    <Pressable accessibilityRole="button" style={styles.button} onPress={()=>setTicket(null)}><Text style={styles.text}>{t("common.verifyAgain")}</Text></Pressable>
   </>}
+  <TwoStepSection ticket={ticket} onTicketUsed={()=>setTicket(null)}/>
   {busy&&<ActivityIndicator color={colors.accentText}/>}
  </ScrollView></KeyboardAvoider>;
 }

@@ -1,3 +1,4 @@
+import { finishSignIn, type SignInResult } from "./two-step";
 import { config } from "../../config/env";
 import * as usersRepo from "../users/users.repository";
 import * as refreshTokensRepo from "./refresh-tokens.repository";
@@ -146,7 +147,7 @@ function decoyHash(): Promise<string> {
 export async function login(
   input: LoginInput,
   client: ClientContext,
-): Promise<{ user: PublicUser; tokens: TokenPair }> {
+): Promise<SignInResult> {
   const user = await usersRepo.findUserByEmail(input.email);
   if (!user || !user.isActive) {
     await verifyPassword(input.password, await decoyHash());
@@ -158,9 +159,12 @@ export async function login(
     await recordLoginFailure(user.id, client);
     throw new AuthError("Invalid email or password.", 401);
   }
-  const tokens = await issueTokenPair(user.id, client.userAgent);
-  await recordLoginSuccess(user.id, user.email, client);
-  return { user: toPublicUser(user), tokens };
+  // With two-step login on, a challenge instead: the code finishes the sign-in (two-step.ts).
+  return finishSignIn(user.id, client, async () => {
+    const tokens = await issueTokenPair(user.id, client.userAgent);
+    await recordLoginSuccess(user.id, user.email, client);
+    return { user: toPublicUser(user), tokens };
+  });
 }
 
 export async function refresh(refreshToken: string, userAgent: string | null): Promise<TokenPair> {
@@ -221,16 +225,19 @@ export async function resetPassword(
   code: string,
   newPassword: string,
   client: ClientContext,
-): Promise<{ user: PublicUser; tokens: TokenPair }> {
+): Promise<SignInResult> {
   const userId = await consumePasswordResetCode(email, code);
   await setPasswordAndRevokeSessions(userId, await hashPassword(newPassword));
   await markEmailVerified(userId);
   await recordSecurityEvent(userId, "password_reset_completed", client);
   const user = await usersRepo.findUserById(userId);
   if (!user || !user.isActive) throw new HttpError(403, "Account unavailable.");
-  const tokens = await issueTokenPair(userId, client.userAgent);
-  await recordLoginSuccess(userId, user.email, client);
-  return { user: toPublicUser(user), tokens };
+  // An emailed code isn't a second step: with two-step login on, the authenticator code is still asked.
+  return finishSignIn(userId, client, async () => {
+    const tokens = await issueTokenPair(userId, client.userAgent);
+    await recordLoginSuccess(userId, user.email, client);
+    return { user: toPublicUser(user), tokens };
+  });
 }
 
 /** Changes the password after verifying the current one; every other sign-in ends. */

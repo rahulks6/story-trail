@@ -4,6 +4,7 @@ import { Pressable } from "../components/Pressable";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as authApi from "../api/auth";
 import { ApiError, setSessionHandler, type PublicUser } from "../api/client";
+import { TwoStepPrompt } from "../components/TwoStepPrompt";
 import { clearTokens, loadTokens, saveTokens, type StoredTokens } from "./tokenStorage";
 import { unregisterForPush } from "../push/pushNotifications";
 import { clearOutbox } from "./dmOutbox";
@@ -59,7 +60,7 @@ interface AuthState {
   accessToken: string | null;
 }
 interface AuthContextValue extends AuthState {
-  acceptSession: (session:{user:PublicUser;tokens:StoredTokens})=>Promise<void>;
+  acceptSession: (session:{user:PublicUser;tokens:StoredTokens}|authApi.TwoStepRequired)=>Promise<void>;
   signup: (input: authApi.SignupPayload) => Promise<void>;
   /** Set by sign-up in this app session: the app opens on "Verify your email" first. */
   justSignedUp: boolean;
@@ -79,6 +80,11 @@ interface AuthContextValue extends AuthState {
   connectionError: string | null;
   /** Checks the saved session again now (also happens on its own, and when the app returns). */
   retryConnection: () => void;
+  /** Set when a sign-in needs the two-step login code (components/TwoStepPrompt asks for it). */
+  twoStep: { challenge: string; expiresAt: number } | null;
+  /** Finishes the sign-in with a code from the authenticator app, or a backup code. */
+  verifyTwoStep: (code: string) => Promise<void>;
+  cancelTwoStep: () => void;
 }
 const AuthContext = createContext<AuthContextValue | null>(null);
 const signedOut: AuthState = { status: "signedOut", user: null, accessToken: null };
@@ -236,13 +242,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
     };
   }, []);
 
-  const runAuthAction = useCallback(async (action: () => Promise<{ user: PublicUser; tokens: StoredTokens }>) => {
+  const [twoStep, setTwoStep] = useState<{ challenge: string; expiresAt: number } | null>(null);
+  const runAuthAction = useCallback(async (action: () => Promise<{ user: PublicUser; tokens: StoredTokens } | authApi.TwoStepRequired>) => {
     setError(null);
     setFieldErrors(undefined);
     try {
       // Finish any old session refresh before replacing its persisted tokens.
       if (refreshInFlight.current) await refreshInFlight.current.catch(() => undefined);
-      const { user, tokens } = await action();
+      const result = await action();
+      // Two-step login on: the code screen comes up; the code finishes the sign-in.
+      if ("twoStepRequired" in result) {
+        setTwoStep({ challenge: result.challenge, expiresAt: Date.now() + result.expiresIn * 1000 });
+        return;
+      }
+      setTwoStep(null);
+      const { user, tokens } = result;
       await persistTokens(tokens);
       tokensRef.current = tokens;
       knownTokens.current = new Set([tokens.accessToken]);
@@ -256,7 +270,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
       throw err;
     }
   }, []);
-  const acceptSession = useCallback((session:{user:PublicUser;tokens:StoredTokens}) => runAuthAction(async()=>session), [runAuthAction]);
+  const acceptSession = useCallback((session:{user:PublicUser;tokens:StoredTokens}|authApi.TwoStepRequired) => runAuthAction(async()=>session), [runAuthAction]);
+  const verifyTwoStep = useCallback(async (code: string) => {
+    const pending = twoStep;
+    if (!pending) return;
+    try {
+      await runAuthAction(() => authApi.verifyTwoStep(pending.challenge, code.trim()));
+    } catch (err) {
+      // Expired or too many tries: back to signing in from the start.
+      if (err instanceof ApiError && /too long|too many|Sign in again/i.test(err.message)) setTwoStep(null);
+      throw err;
+    }
+  }, [twoStep, runAuthAction]);
+  const cancelTwoStep = useCallback(() => { setTwoStep(null); setError(null); }, []);
   const [justSignedUp, setJustSignedUp] = useState(false);
   const signup = useCallback(async (input: authApi.SignupPayload) => {
     // Set before the session lands, so the signed-in screens open on email verification.
@@ -323,12 +349,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
   const retryConnection = useCallback(() => verifyNow.current(), []);
   const clearError = useCallback(() => { setError(null); setFieldErrors(undefined); }, []);
   const value = useMemo<AuthContextValue>(
-    () => ({ ...state, justSignedUp, acceptSession, signup, login, resetPassword, adoptTokens, logout, deleteAccount, refreshUser, applyProfile, error, fieldErrors, clearError, connectionError, retryConnection }),
-    [state, justSignedUp, acceptSession, signup, login, resetPassword, adoptTokens, logout, deleteAccount, refreshUser, applyProfile, error, fieldErrors, clearError, connectionError, retryConnection],
+    () => ({ ...state, justSignedUp, acceptSession, signup, login, resetPassword, adoptTokens, logout, deleteAccount, refreshUser, applyProfile, error, fieldErrors, clearError, connectionError, retryConnection, twoStep, verifyTwoStep, cancelTwoStep }),
+    [state, justSignedUp, acceptSession, signup, login, resetPassword, adoptTokens, logout, deleteAccount, refreshUser, applyProfile, error, fieldErrors, clearError, connectionError, retryConnection, twoStep, verifyTwoStep, cancelTwoStep],
   );
   return (
     <AuthContext.Provider value={value}>
       {state.status === "loading" && connectionError ? <CantConnect message={connectionError} onRetry={retryConnection} /> : children}
+      {twoStep && state.status !== "signedIn" ? <TwoStepPrompt /> : null}
     </AuthContext.Provider>
   );
 }

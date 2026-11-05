@@ -55,6 +55,7 @@ test('concurrent refresh requests rotate once, plus at most one grace pair', asy
       finalizeRefreshToken: async () => {},
     },
     './account-security': {},
+    './two-step': { finishSignIn: async (_id, _client, finish) => finish() },
     '../../http/errors': { HttpError: class HttpError extends Error {} },
     '../../db/psql': { DatabaseError: class DatabaseError extends Error {} },
     '../users/username-policy': { USERNAME_MESSAGES: {} },

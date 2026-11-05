@@ -20,6 +20,7 @@ const EXEMPT={
  'screens/profile/CloseFriendsScreen.tsx':'search field at the top of the screen',
  'screens/highlight/HighlightEditorScreen.tsx':'name field at the top of the screen',
  'screens/profile/SignInSecuritySection.tsx':'shown only inside AccountSecurityScreen, which handles the keyboard',
+ 'screens/profile/TwoStepSection.tsx':'shown only inside AccountSecurityScreen, which handles the keyboard',
 };
 // Only these may use React Native's KeyboardAvoidingView directly.
 const DIRECT=['components/KeyboardAvoider.tsx','components/StickerSheet.tsx','components/TextToolModal.tsx'];

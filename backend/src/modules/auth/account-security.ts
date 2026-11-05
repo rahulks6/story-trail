@@ -16,7 +16,10 @@ export type SecurityEventKind =
   | "password_reset_completed"
   | "password_changed"
   | "session_revoked"
-  | "sessions_revoked";
+  | "sessions_revoked"
+  | "two_step_enabled"
+  | "two_step_disabled"
+  | "two_step_failed";
 
 export interface ClientContext {
   ip: string;

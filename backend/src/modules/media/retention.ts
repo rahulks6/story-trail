@@ -303,6 +303,7 @@ export async function expiredRecords(): Promise<number> {
   total += await deleteWhere("admin_login_challenges", "expires_at < now() - interval '1 day'");
   total += await deleteWhere("auth_provider_proofs", "expires_at < now() - interval '1 day'");
   total += await deleteWhere("auth_reauth_tickets", "expires_at < now() - interval '1 day'");
+  total += await deleteWhere("auth_two_step_challenges", "expires_at < now() - interval '1 day'");
   total += await deleteWhere("auth_apple_nonces", "expires_at < now() - interval '1 day'");
   total += await deleteWhere("auth_phone_challenges", "created_at < now() - interval '2 days'");
   total += await deleteWhere("home_feed_snapshots", "expires_at < now() - interval '1 hour'");

@@ -37,6 +37,8 @@ export function ProviderEntry({onProof}:{onProof?:(proof:string)=>Promise<void>}
  useEffect(()=>{if(stage!=='code')return;const timer=setInterval(()=>setNow(Date.now()),1000);return()=>clearInterval(timer);},[stage]);
  async function run(work:()=>Promise<void>){if(busy)return;setBusy(true);setError('');try{await work();}catch(e){setError(e instanceof Error?e.message:t("providerEntry.unableToSignInTry"));}finally{setBusy(false);}}
  async function accept(result:api.ProviderResult,suggestedName=''){
+  // Two-step login on: the code screen (TwoStepPrompt) takes over from here.
+  if('twoStepRequired' in result){await acceptSession(result);setStage('closed');return;}
   if('tokens' in result){await acceptSession(result);await Keychain.resetGenericPassword({service:PENDING_SERVICE});setStage('closed');return;}
   if(onProof){await onProof(result.proof);setStage('closed');return;}
   // A suggested name (Apple's, which it sends only once) is kept with the pending sign-up.

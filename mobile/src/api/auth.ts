@@ -20,13 +20,39 @@ interface AuthResponse {
   tokens: TokenPair;
 }
 
+/** With two-step login on, sign-in answers with a challenge; the authenticator code finishes it. */
+export interface TwoStepRequired {
+  twoStepRequired: true;
+  challenge: string;
+  expiresIn: number;
+}
+export type SignInResponse = AuthResponse | TwoStepRequired;
+
+export function verifyTwoStep(challenge: string, code: string): Promise<AuthResponse> {
+  return apiPost<AuthResponse>("/api/v1/auth/two-step/verify", { challenge, code });
+}
+
+export interface TwoStepStatus { enabled: boolean; backupCodesLeft: number }
+export function twoStepStatus(accessToken: string): Promise<TwoStepStatus> {
+  return apiGet<TwoStepStatus>("/api/v1/auth/two-step", accessToken);
+}
+export function startTwoStep(reauthTicket: string, accessToken: string): Promise<{ secret: string; otpauthUrl: string; qrRows: string[] }> {
+  return apiPost("/api/v1/auth/two-step/setup", { reauthTicket }, accessToken);
+}
+export function enableTwoStep(reauthTicket: string, code: string, accessToken: string): Promise<{ backupCodes: string[] }> {
+  return apiPost("/api/v1/auth/two-step/enable", { reauthTicket, code }, accessToken);
+}
+export function disableTwoStep(reauthTicket: string, code: string, accessToken: string): Promise<void> {
+  return apiPost("/api/v1/auth/two-step/disable", { reauthTicket, code }, accessToken);
+}
+
 export function signup(payload: SignupPayload): Promise<AuthResponse> {
   // The app's language, so the first verification email (sent straight away) is already in it.
   return apiPost<AuthResponse>("/api/v1/auth/signup", { ...payload, locale: getLanguage() });
 }
 
-export function login(payload: LoginPayload): Promise<AuthResponse> {
-  return apiPost<AuthResponse>("/api/v1/auth/login", payload);
+export function login(payload: LoginPayload): Promise<SignInResponse> {
+  return apiPost<SignInResponse>("/api/v1/auth/login", payload);
 }
 
 export function refresh(refreshToken: string): Promise<{ tokens: TokenPair }> {
@@ -67,8 +93,8 @@ export function forgotPassword(email: string): Promise<{ message: string }> {
 }
 
 /** Sets a new password with the emailed 6-digit code; every other sign-in ends and this device is signed in. */
-export function resetPassword(email: string, code: string, newPassword: string): Promise<AuthResponse> {
-  return apiPost<AuthResponse>("/api/v1/auth/password/reset", { email, code, newPassword });
+export function resetPassword(email: string, code: string, newPassword: string): Promise<SignInResponse> {
+  return apiPost<SignInResponse>("/api/v1/auth/password/reset", { email, code, newPassword });
 }
 
 /** Returns a fresh token pair for this device; every other sign-in ends. */
