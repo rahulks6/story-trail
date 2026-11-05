@@ -1,97 +1,98 @@
-11-05 05:30:22.222 D/AndroidRuntime( 4159): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-11-05 05:30:22.228 I/AndroidRuntime( 4159): Using default boot image
-11-05 05:30:22.228 I/AndroidRuntime( 4159): Leaving lock profiling enabled
-11-05 05:30:22.236 I/app_process( 4159): Core platform API reporting enabled, enforcing=false
-11-05 05:30:22.236 I/app_process( 4159): Using CollectorTypeCMC GC.
-11-05 05:30:22.270 D/CarrierSvcBindHelper( 1084): onPackageModified: dev.mobile.maestro.test
-11-05 05:30:22.273 W/AllAppsList( 1147): updatePromiseInstallInfo: no Activities matched updated package, removing all apps from package=dev.mobile.maestro.test
-11-05 05:30:22.274 D/ControlsListingControllerImpl(  905): ServiceConfig reloaded, count: 0
-11-05 05:30:22.278 D/CarrierSvcBindHelper( 1084): No carrier app for: 0
-11-05 05:30:22.303 W/system_server(  553): Long monitor contention with owner ActivityManager (588) at void com.android.server.am.BroadcastQueueModernImpl.updateRunningList()(BroadcastQueueModernImpl.java:450) waiters=0 in boolean com.android.server.am.ActivityManagerService.unbindService(android.app.IServiceConnection) for 112ms
-11-05 05:30:22.304 E/SmsApplication( 1084): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
-11-05 05:30:22.304 W/AppOpService(  553): Ignored setUidMode call for runtime permission app op: uid = 10138, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
-11-05 05:30:22.305 E/CellBroadcastUtils( 1084): getDefaultCellBroadcastReceiverPackageName: no package found
-11-05 05:30:22.305 W/AppOpService(  553): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_SMS, mode = allow, callingUid = 1001, oldMode = allow
-11-05 05:30:22.305 W/system_server(  553): Long monitor contention with owner ActivityManager (588) at void com.android.server.am.BroadcastQueueModernImpl.updateRunningList()(BroadcastQueueModernImpl.java:450) waiters=1 in void com.android.server.am.ActivityManagerService.finishReceiver(android.os.IBinder, int, java.lang.String, android.os.Bundle, boolean, int) for 114ms
-11-05 05:30:22.305 W/AppOpService(  553): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_SMS, mode = allow, callingUid = 1001, oldMode = allow
-11-05 05:30:22.305 W/AppOpService(  553): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_WAP_PUSH, mode = allow, callingUid = 1001, oldMode = allow
-11-05 05:30:22.305 W/AppOpService(  553): Ignored setUidMode call for runtime permission app op: uid = 1001, code = SEND_SMS, mode = allow, callingUid = 1001, oldMode = allow
-11-05 05:30:22.305 W/AppOpService(  553): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
-11-05 05:30:22.306 D/ImsResolver( 1084): maybeAddedImsService, packageName: dev.mobile.maestro.test
-11-05 05:30:22.307 I/GsaVoiceInteractionSrv( 1414): (REDACTED) O received %s
-11-05 05:30:22.311 D/SessionCommitReceiver( 1147): Removing PromiseIcon for package: dev.mobile.maestro.test, install reason: 0, alreadyAddedPromiseIcon: false
-11-05 05:30:22.315 I/ConfigUpdater( 3189): Update downloaded, starting installation
-11-05 05:30:22.321 I/system_server(  553): Background concurrent mark compact GC freed 21MB AllocSpace bytes, 38(848KB) LOS objects, 46% free, 27MB/51MB, paused 71.833ms,54.975ms total 776.574ms
-11-05 05:30:22.323 I/PhenotypeBackgroundRecv( 1465): Skipping com.google.android.libraries.search.soda_apa.device#com.google.android.googlequicksearchbox which doesn't use ProcessStable flags.
-11-05 05:30:22.325 I/GsaVoiceInteractionSrv( 1414): (REDACTED) O received %s
-11-05 05:30:22.348 I/RescueParty(  553): Starting to observe: [com.google.android.as, com.google.android.as.oss], updated namespace: device_personalization_services
-11-05 05:30:22.348 I/PackageWatchdog(  553): Syncing state, reason: observing new packages
-11-05 05:30:22.348 D/PackageWatchdog(  553): rescue-party-observer added the following packages to monitor [com.google.android.as, com.google.android.as.oss]
-11-05 05:30:22.348 I/PackageWatchdog(  553): Syncing state, reason: updated observers
-11-05 05:30:22.348 I/PackageWatchdog(  553): Not pruning observers, elapsed time: 0ms
-11-05 05:30:22.348 I/PackageWatchdog(  553): Saving observer state to file
-11-05 05:30:22.349 I/PackageWatchdog(  553): Syncing health check requests for packages: {com.google.android.as, com.google.android.as.oss}
+11-05 12:52:39.186 D/AndroidRuntime( 4046): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-05 12:52:39.187 W/SystemServiceRegistry( 2172): No service published for: persistent_data_block
+11-05 12:52:39.189 I/AndroidRuntime( 4046): Using default boot image
+11-05 12:52:39.189 I/AndroidRuntime( 4046): Leaving lock profiling enabled
+11-05 12:52:39.191 I/app_process( 4046): Core platform API reporting enabled, enforcing=false
+11-05 12:52:39.191 I/app_process( 4046): Using CollectorTypeCMC GC.
+11-05 12:52:39.205 I/Auth    ( 1334): [SupervisedAccountIntentOperation] onHandleIntent(): android.intent.action.PACKAGE_ADDED
+11-05 12:52:39.219 W/PackageManager(  557): Failed registering loading progress callback. Package is fully loaded.
+11-05 12:52:39.220 I/AiAiEcho( 1517): AppFetcherImplV2 updateApps package:[dev.mobile.maestro.test], userId:[0], reason:[package is added.].
+11-05 12:52:39.221 W/MagnificationConnectionManager(  557): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-05 12:52:39.227 D/PackageUpdatedTask( 1188): Package updated: mOp=ADD packages=[dev.mobile.maestro.test]
+11-05 12:52:39.229 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:52:39.232 V/Backup  ( 1334): [PhotosPackagedAddedIO] Flag is disabled.
+11-05 12:52:39.259 I/EGL_emulation( 2172): Opening libGLESv1_CM_emulation.so
+11-05 12:52:39.259 I/EGL_emulation( 2172): Opening libGLESv2_emulation.so
+11-05 12:52:39.270 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:52:39.287 I/Fitness ( 1185): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+11-05 12:52:39.313 I/.apps.messaging( 3338): Background concurrent mark compact GC freed 585KB AllocSpace bytes, 360(18MB) LOS objects, 49% free, 14MB/28MB, paused 6.867ms,903us total 149.741ms
+11-05 12:52:39.330 I/RoleService(  557): Granting default roles...
+11-05 12:52:39.330 I/AppWidgetServiceImpl(  557): getInstalledProvidersForProfiles() 0
+11-05 12:52:39.343 D/BaseIconCache( 1188): Default icon returned for dev.mobile.maestro.test
+11-05 12:52:39.348 I/Dck     ( 1334): disableDckSupport: false [CONTEXT service_id=289 ]
+11-05 12:52:39.349 I/Dck     ( 1334): doesDeviceHaveSupportedWirelessCapabilities: wccSysProp:0, wccMendel:3, deviceWccOverride:false [CONTEXT service_id=289 ]
+11-05 12:52:39.350 I/Dck     ( 1334): Dck module condition - hasWccSupport: false [CONTEXT service_id=289 ]
+11-05 12:52:39.350 I/Dck     ( 1334): Dck module condition - downloadAllowed: false [CONTEXT service_id=289 ]
+11-05 12:52:39.356 W/Dck     ( 1334): Dck module not eligible for asynchronous downloading [CONTEXT service_id=289 ]
+11-05 12:52:39.373 W/system_server(  557): Suspending all threads took: 26.665ms
+11-05 12:52:39.378 D/nativeloader( 4046): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+11-05 12:52:39.391 W/Looper  (  557): Slow dispatch took 203ms android.fg h=android.os.Handler c=com.android.server.om.OverlayManagerService$$ExternalSyntheticLambda1@42fc9b8 m=0
+11-05 12:52:39.399 D/nativeloader( 4046): Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+11-05 12:52:39.401 D/app_process( 4046): u_setTimeZoneFilesDirectory("/apex/com.android.tzdata/etc/tz/versioned/8/icu") succeeded. 
+11-05 12:52:39.401 D/app_process( 4046): I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt75l.dat
+11-05 12:52:39.404 D/nativeloader( 4046): Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+11-05 12:52:39.407 D/nativeloader( 4046): Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
 --
-11-05 05:30:22.538 D/AndroidRuntime( 4159): Calling main entry com.android.commands.am.Am
-11-05 05:30:22.543 D/UiAutomationConnection( 4159): Created on user UserHandle{0}
-11-05 05:30:22.544 I/BugleDataModel( 3356): ActionExecutorImpl: Starting ActionService
-11-05 05:30:22.550 I/ActivityManager(  553): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-11-05 05:30:22.555 V/GrammaticalInflectionUtils(  553): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@90e1b81, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
-11-05 05:30:22.555 I/AppsFilter(  553): interaction: PackageSetting{2036094 com.android.microdroid.empty_payload/10199} -> PackageSetting{1f2356f dev.mobile.maestro/10210} BLOCKED
-11-05 05:30:22.558 I/Zygote  (  360): Entering forkRepeatedly native zygote loop
-11-05 05:30:22.563 I/BugleDataModel( 3356): ActionExecutorImpl: ACTION_EXECUTE_QUEUED_GenericWorkerQueueAction
-11-05 05:30:22.566 I/AppWidgetServiceImpl(  553): Received broadcast: android.intent.action.PACKAGE_UNSTOPPED on user 0
-11-05 05:30:22.566 I/AppWidgetServiceImpl(  553): Updating package stopped masked state for uid 10210 package dev.mobile.maestro isStopped false
-11-05 05:30:22.573 D/Zygote  (  360): Forked child process 4186
-11-05 05:30:22.577 I/.apps.messaging( 3356): Compiler allocated 5895KB to compile java.lang.Object aflc.x()
-11-05 05:30:22.578 I/ActivityManager(  553): Start proc 4186:dev.mobile.maestro/u0a210 for added application dev.mobile.maestro
-11-05 05:30:22.582 I/RoleService(  553): Granting default roles...
-11-05 05:30:22.588 W/Role    (  553): Default holder doesn't have required signing certificate: com.google.android.retaildemo:6547c73dee150c103980bfdffe55cc9a011d785dd694a5f99afd8205bcaf1f80
-11-05 05:30:22.589 I/Fitness ( 1219): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
-11-05 05:30:22.591 E/RoleControllerServiceImpl(  553): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION
-11-05 05:30:22.592 W/Role    (  553): Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58
-11-05 05:30:22.594 V/DownloadManager( 1605): Deleting /data/data/com.android.providers.downloads/cache/en.model.metadata via provider delete
-11-05 05:30:22.597 I/Fitness ( 1219): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
-11-05 05:30:22.601 I/Auth    ( 1622): [SupervisedAccountIntentOperation] onHandleIntent(): android.intent.action.PACKAGE_ADDED
-11-05 05:30:22.601 I/Auth    ( 1622): [SupervisedAccountIntentOperation] This operation is disabled
-11-05 05:30:22.602 V/Backup  ( 1622): [PhotosPackagedAddedIO] Flag is disabled.
-11-05 05:30:22.606 I/Blockstore( 1622): [DataStoreImpl] Clearing Blockstore Data for package dev.mobile.maestro [CONTEXT service_id=258 ]
-11-05 05:30:22.607 I/BugleDataModel( 3356): ExecuteActionRunnable: running action GenericWorkerQueueAction
-11-05 05:30:22.608 I/BugleDataModel( 3356): ActionExecutorImpl: ACTION_BACKGROUND_QUEUED_GenericWorkerQueueAction
-11-05 05:30:22.609 I/BugleJobs( 3356): GenericWorkerQueueAction: Bailing early, no work found, no failed work found
-11-05 05:30:22.610 I/BugleDataModel( 3356): ActionExecutorImpl: ACTION_RESPONSE_QUEUED_GenericWorkerQueueAction
-11-05 05:30:22.613 I/BugleDataModel( 3356): ActionExecutorImpl: Stopping ActionService
-11-05 05:30:22.614 I/.mobile.maestro( 4186): Late-enabling -Xcheck:jni
-11-05 05:30:22.619 I/Blockstore( 1622): [DataStoreImpl] Keyless data not found or its IsLastInstallationData = false. [CONTEXT service_id=258 ]
+11-05 12:52:39.470 D/AndroidRuntime( 4046): Calling main entry com.android.commands.am.Am
+11-05 12:52:39.476 D/UiAutomationConnection( 4046): Created on user UserHandle{0}
+11-05 12:52:39.480 D/ShortcutService(  557): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=null
+11-05 12:52:39.484 D/ControlsListingControllerImpl(  930): ServiceConfig reloaded, count: 0
+11-05 12:52:39.488 W/Role    (  557): Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58
+11-05 12:52:39.500 I/PhenotypeResourceReader( 1185): unable to find any Phenotype resource metadata for com.google.android.apps.wallpaper
+11-05 12:52:39.524 I/ActivityManager(  557): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+11-05 12:52:39.527 V/GrammaticalInflectionUtils(  557): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@d817607, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+11-05 12:52:39.528 I/AppsFilter(  557): interaction: PackageSetting{9c48d5c com.android.microdroid.empty_payload/10196} -> PackageSetting{c03c431 dev.mobile.maestro/10210} BLOCKED
+11-05 12:52:39.536 D/Zygote  (  361): Forked child process 4058
+11-05 12:52:39.545 I/ForegroundDownloadTaskWorker( 1434): ForegroundDownloadTaskWorker$1.onSuccess():68 onSuccess
+11-05 12:52:39.558 I/DataFileManager( 1434): DataFileManager.addDataWithoutNotify():185 adding data en-840 mdd
+11-05 12:52:39.558 I/DelightKLPDownloader( 1434): DelightKLPDownloader$2.onSuccess():207 klp en_840 downloaded with version 2024070900
+11-05 12:52:39.559 I/WM-WorkerWrapper( 1434): Worker result SUCCESS for Work [ id=e75c243c-41a3-48a0-bbaf-77bb57a79f81, tags={ com.google.android.libraries.inputmethod.mdd.ForegroundDownloadTaskWorker } ]
+11-05 12:52:39.568 I/.mobile.maestro( 4058): Late-enabling -Xcheck:jni
+11-05 12:52:39.585 I/.mobile.maestro( 4058): Using CollectorTypeCMC GC.
+11-05 12:52:39.585 W/.mobile.maestro( 4058): Unexpected CPU variant for x86: x86_64.
+11-05 12:52:39.585 W/.mobile.maestro( 4058): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
+11-05 12:52:39.590 I/adbd    (  440): jdwp connection from 4058
+11-05 12:52:39.599 I/AppWidgetServiceImpl(  557): getInstalledProvidersForProfiles() 0
+11-05 12:52:39.609 I/Icing   ( 1334): Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
+11-05 12:52:39.613 W/ParceledListSlice(  557): Element #25 is 19828 bytes.
+11-05 12:52:39.626 W/ParceledListSlice(  557): Element #26 is 19864 bytes.
+11-05 12:52:39.627 I/AiAiEcho( 1517): AppFetcherImpl onPackageChanged dev.mobile.maestro.test.
+11-05 12:52:39.628 D/PackageUpdatedTask( 1188): Package updated: mOp=UPDATE packages=[dev.mobile.maestro.test]
+11-05 12:52:39.629 I/AiAiEcho( 1517): AppIndexer Package:[dev.mobile.maestro.test] UserProfile:[0] Enabled:[true].
+11-05 12:52:39.629 I/AiAiEcho( 1517): AppFetcherImplV2 updateApps package:[dev.mobile.maestro.test], userId:[0], reason:[package is updated.].
+11-05 12:52:39.630 W/ParceledListSlice(  557): Element #27 is 19708 bytes.
+11-05 12:52:39.630 W/ParceledListSlice(  557): Element #28 is 19616 bytes.
+11-05 12:52:39.630 W/ParceledListSlice(  557): Element #29 is 19728 bytes.
+11-05 12:52:39.631 W/PackageManager( 1517): Failure retrieving text 0x7f130786 in package com.android.systemui
 --
-11-05 05:33:49.777 I/AndroidRuntime( 4159): VM exiting with result code 0.
-11-05 05:33:50.013 I/servicemanager(    0): Caller(pid=553,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
-11-05 05:33:50.027 I/init    (    0): starting service 'artd'...
-11-05 05:33:49.791 I/netd    (  354): tetherGetStats() -> {[]} <3.81ms>
-11-05 05:33:49.794 W/IPCThreadState(  553): Sending oneway calls to frozen process.
-11-05 05:33:49.795 W/MagnificationConnectionManager(  553): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-11-05 05:33:49.795 V/UiAutomationManager(  553): UiAutomation service owner died
-11-05 05:33:49.796 W/IPCThreadState(  553): Sending oneway calls to frozen process.
-11-05 05:33:49.797 W/IPCThreadState(  553): Sending oneway calls to frozen process.
-11-05 05:33:49.797 W/IPCThreadState(  553): Sending oneway calls to frozen process.
-11-05 05:33:49.797 W/IPCThreadState(  553): Sending oneway calls to frozen process.
-11-05 05:33:49.797 W/IPCThreadState(  553): Sending oneway calls to frozen process.
-11-05 05:33:49.797 W/IPCThreadState(  553): Sending oneway calls to frozen process.
-11-05 05:33:49.797 W/IPCThreadState(  553): Sending oneway calls to frozen process.
-11-05 05:33:49.798 W/IPCThreadState(  553): Sending oneway calls to frozen process.
-11-05 05:33:49.799 I/AiAiEcho( 1392): Settings changed for uri: content://settings/secure/accessibility_enabled
-11-05 05:33:49.800 W/IPCThreadState(  553): Sending oneway calls to frozen process.
-11-05 05:33:49.800 W/IPCThreadState(  553): Sending oneway calls to frozen process.
-11-05 05:33:49.802 I/AiAiEcho( 1392): Predicting[0]:  [CONTEXT sampling_count=5 ]
-11-05 05:33:49.802 W/IPCThreadState(  553): Sending oneway calls to frozen process.
-11-05 05:33:49.802 W/IPCThreadState(  553): Sending oneway calls to frozen process.
-11-05 05:33:49.802 W/IPCThreadState(  553): Sending oneway calls to frozen process.
-11-05 05:33:49.802 W/IPCThreadState(  553): Sending oneway calls to frozen process.
-11-05 05:33:49.802 W/IPCThreadState(  553): Sending oneway calls to frozen process.
-11-05 05:33:49.802 W/IPCThreadState(  553): Sending oneway calls to frozen process.
-11-05 05:33:49.802 W/IPCThreadState(  553): Sending oneway calls to frozen process.
-11-05 05:33:49.802 W/IPCThreadState(  553): Sending oneway calls to frozen process.
-11-05 05:33:49.802 I/AiAiEcho( 1392): EchoTargets: 
-11-05 05:33:49.802 I/AiAiEcho( 1392): Filtered by AiAi flag check: 
-11-05 05:33:49.802 I/AiAiEcho( 1392): [CONTEXT ratelimit_period="10 SECONDS" ]
-11-05 05:33:49.805 I/AiAiEcho( 1392): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+11-05 12:55:58.954 I/AndroidRuntime( 4046): VM exiting with result code 0.
+11-05 12:55:59.094 I/init    (    0): ... started service 'artd' has pid 6141
+11-05 12:55:59.095 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 151 (/system/bin/servicemanager)
+11-05 12:55:58.972 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:55:58.973 W/MagnificationConnectionManager(  557): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-05 12:55:58.973 V/UiAutomationManager(  557): UiAutomation service owner died
+11-05 12:55:58.973 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:55:58.973 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:55:58.973 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:55:58.973 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:55:58.973 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:55:58.977 I/AiAiEcho( 1517): Settings changed for uri: content://settings/secure/accessibility_enabled
+11-05 12:55:59.103 I/init    (    0): Untracked pid 4046 exited with status 0
+11-05 12:55:58.977 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:55:58.977 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:55:58.978 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:55:58.978 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:55:58.978 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:55:58.978 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:55:58.978 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:55:58.978 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:55:58.978 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:55:58.978 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:55:58.978 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:55:58.979 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:55:58.979 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-05 12:55:58.979 I/AiAiEcho( 1517): Predicting[0]:  [CONTEXT sampling_count=5 ]
+11-05 12:55:58.979 I/AiAiEcho( 1517): EchoTargets: 
+11-05 12:55:58.979 I/AiAiEcho( 1517): Filtered by AiAi flag check: 
+11-05 12:55:58.979 I/AiAiEcho( 1517): [CONTEXT ratelimit_period="10 SECONDS" ]
+11-05 12:55:58.979 I/AiAiEcho( 1517): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
