@@ -2,7 +2,7 @@ import {Icon} from "../../components/Icon";
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Image, Linking, Modal, ScrollView, PanResponder, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "../../components/Pressable";
-import Video, { ViewType } from 'react-native-video';
+import Video from 'react-native-video';
 import { API_BASE_URL } from '../../api/client';
 import { adCtaAction, recordAd, reportAd, validateAd, type SponsoredPlacement } from '../../api/ads';
 import { useAuth } from '../../state/AuthContext';
@@ -109,7 +109,7 @@ export function SponsoredStory({ ad, active, onNext, onPrevious, onHide, onOpenP
     <Pressable accessibilityRole="button" onPress={() => setMenu(false)}><Text style={styles.menuOption}>{t("common.cancel")}</Text></Pressable>
    </ScrollView></View>
   </Modal>
-  {valid && (ad.mediaKind === 'video' ? <Video viewType={ViewType.TEXTURE} source={source} style={StyleSheet.absoluteFill} resizeMode="cover" paused={!active || paused || !!menu} onReadyForDisplay={() => setReady(true)} onError={fail} onEnd={() => { if (active) {
+  {valid && (ad.mediaKind === 'video' ? <Video source={source} style={StyleSheet.absoluteFill} resizeMode="cover" paused={!active || paused || !!menu} onReadyForDisplay={() => setReady(true)} onError={fail} onEnd={() => { if (active) {
         emit('ad_complete');
         leave();
     } }}/> : <Image source={source} style={StyleSheet.absoluteFill} resizeMode="cover" onLoad={() => setReady(true)} onError={fail}/>)}

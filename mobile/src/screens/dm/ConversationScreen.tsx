@@ -55,7 +55,7 @@ import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import { applyReaction, applyReceipt, mergeMessages, newestId, oldestId, QUOTE_LENGTH, truncateText } from "./threadState";
 import { tapFeedback } from "../../utils/haptics";
 import { launchCamera, launchImageLibrary, type Asset, type ImagePickerResponse } from "react-native-image-picker";
-import Video, { ViewType } from "react-native-video";
+import Video from "react-native-video";
 import { Avatar } from "../../components/Avatar";
 import { VerifiedName } from "../../components/VerifiedBadge";
 import { mediaFileUrl } from "../../api/stories";
@@ -1530,7 +1530,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
       <Modal visible={viewing !== null} animationType="fade" transparent={false} statusBarTranslucent navigationBarTranslucent onRequestClose={() => setViewing(null)}>
         <View style={styles.viewer}>
           {viewing?.kind === "video" && viewing.id ? (
-            <Video viewType={ViewType.TEXTURE}
+            <Video
               source={{ uri: mediaFileUrl(viewing.id, "video_720"), headers: authHeaders(accessToken) }}
               style={StyleSheet.absoluteFill}
               resizeMode="contain"

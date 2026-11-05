@@ -3,7 +3,7 @@ import { Icon } from "../../components/Icon";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, Animated, Image, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "../../components/Pressable";
-import Video, { ViewType } from "react-native-video";
+import Video from "react-native-video";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
 import { useAppForeground } from "../../hooks/useAppForeground";
@@ -270,7 +270,7 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
         <MusicPlayer key={detail.id} url={detail.music.url} accessToken={accessToken} startMs={detail.music.startMs} durationMs={detail.music.durationMs} paused={!active} />
       ) : null}
       {mediaKind === "video" ? (
-        <Video viewType={ViewType.TEXTURE}
+        <Video
           source={{ uri: mediaUrl, headers: authHeaders }}
           poster={{ source: { uri: mediaFileUrl(currentItem.mediaId, "poster"), headers: authHeaders }, resizeMode: "cover" }}
           style={[StyleSheet.absoluteFill, mediaTransformStyle(detail?.crop ?? DEFAULT_CROP, containerSize.width, containerSize.height)]}

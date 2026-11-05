@@ -5,7 +5,7 @@ import { ActivityIndicator, Alert, Animated, AppState, Dimensions, Image, Linkin
 import { Pressable } from "../../components/Pressable";
 import { isLongCaption, StoryBottomScrim, StoryCaption } from "../../components/StoryCaption";
 import { useIsFocused } from "@react-navigation/native";
-import Video, { type VideoRef, ViewType } from "react-native-video";
+import Video, {type VideoRef} from "react-native-video";
 import { mediaColors as colors, radii, spacing, mediaTypography as typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { getMyActiveStories, getUserActiveStories, getViewCount, mediaFileUrl, recordStoryView, type PublicStory } from "../../api/stories";
@@ -847,7 +847,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       ) : null}
       <Animated.View style={[StyleSheet.absoluteFill, { opacity: reveal }]} pointerEvents="none">
       {mediaKind === "video" ? (
-        <Video viewType={ViewType.TEXTURE}
+        <Video
           ref={videoRef}
           source={videoSource}
           poster={{ source: imageSource, resizeMode: "cover" }}

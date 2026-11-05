@@ -4,7 +4,7 @@ import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Alert, BackHandler, Dimensions, Image, Keyboard, PanResponder, PixelRatio, StyleSheet, Text, TextInput, View, useWindowDimensions, type GestureResponderEvent, type LayoutChangeEvent } from "react-native";
 import { Pressable } from "../../components/Pressable";
-import Video, { ViewType } from "react-native-video";
+import Video from "react-native-video";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
 import type { CreateStackParamList, RootStackParamList } from "../../navigation/types";
@@ -712,7 +712,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             ) : null}
           </>
         ) : (
-          <Video viewType={ViewType.TEXTURE}
+          <Video
             source={{ uri: mediaUri }}
             style={[StyleSheet.absoluteFill, mediaTransformStyle(draft.crop, containerSize.width, containerSize.height)]}
             resizeMode="cover"

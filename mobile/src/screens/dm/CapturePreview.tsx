@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Image, Modal, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "../../components/Pressable";
-import Video, { ViewType } from "react-native-video";
+import Video from "react-native-video";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing, ICONS } from "../../theme";
 import { Icon } from "../../components/Icon";
@@ -88,7 +88,7 @@ export function CapturePreview({
       <View style={styles.root}>
         {capture ? (
           isVideo ? (
-            <Video viewType={ViewType.TEXTURE} source={{ uri }} style={StyleSheet.absoluteFill} resizeMode="contain" repeat muted={false} />
+            <Video source={{ uri }} style={StyleSheet.absoluteFill} resizeMode="contain" repeat muted={false} />
           ) : (
             <Image source={{ uri: filter !== "Original" && shown?.filter === filter ? shown.uri : uri }} style={StyleSheet.absoluteFill} resizeMode="contain" />
           )
