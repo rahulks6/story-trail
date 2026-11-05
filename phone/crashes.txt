@@ -1,0 +1,98 @@
+11-05 14:13:20.586 D/AndroidRuntime( 3581): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-05 14:13:20.591 D/SettingsSliceProvider( 1086): Built slice (content://com.android.settings.slices/action/gesture_double_tap_power) in: 11
+11-05 14:13:20.600 I/AndroidRuntime( 3581): Using default boot image
+11-05 14:13:20.600 I/AndroidRuntime( 3581): Leaving lock profiling enabled
+11-05 14:13:20.608 D/SlicesIndexer( 1086): Slices already indexed - returning.
+11-05 14:13:20.609 D/VolumeSliceHelper( 1086): Registering uri for broadcast relay: content://com.android.settings.slices/action/media_volume
+11-05 14:13:20.609 D/SliceBroadcastRelay( 1086): Registering Uri for broadcast relay: content://com.android.settings.slices/action/volume_slices
+11-05 14:13:20.615 D/t       ( 1679): Starting download: https://www.gstatic.com/android-search/hotword/x_google/efbb5cd69e0d7d2c2329dbc1884c8cfe/hotword.data
+11-05 14:13:20.615 D/SettingsSliceProvider( 1086): Starting background worker for: content://com.android.settings.slices/action/media_volume
+11-05 14:13:20.615 D/SliceBackgroundWorker( 1086): create instance: class com.android.settings.media.MediaOutputIndicatorWorker
+11-05 14:13:20.616 V/t       ( 1679): Is http uri, downloading (uri: https://www.gstatic.com/android-search/hotword/x_google/efbb5cd69e0d7d2c2329dbc1884c8cfe/hotword.data)
+11-05 14:13:20.617 I/app_process( 3581): Core platform API reporting enabled, enforcing=false
+11-05 14:13:20.618 I/app_process( 3581): Using CollectorTypeCMC GC.
+11-05 14:13:20.628 D/SettingsSliceProvider( 1086): Built slice (content://com.android.settings.slices/action/media_volume) in: 20
+11-05 14:13:20.637 D/SlicesIndexer( 1086): Slices already indexed - returning.
+11-05 14:13:20.644 I/A       ( 1679): [Upload] Connected
+11-05 14:13:20.652 D/VolumeSliceHelper( 1086): Registering uri for broadcast relay: content://com.android.settings.slices/action/call_volume
+11-05 14:13:20.657 I/AiAiEcho( 1489): EchoSearch: WidgetFetcherImpl is initialized with [33] widgets [reason=package added for userId: 0]
+11-05 14:13:20.659 D/CarrierSvcBindHelper( 1085): onPackageModified: dev.mobile.maestro.test
+11-05 14:13:20.659 D/CarrierSvcBindHelper( 1085): No carrier app for: 0
+11-05 14:13:20.663 I/NetworkRecognitionRnr( 1679): Using pair HTTP connection
+11-05 14:13:20.664 I/GCM-GMS ( 1336): Registering GMS 745476177629
+11-05 14:13:20.664 I/GCM-GMS ( 1336): Got GMS registration
+11-05 14:13:20.668 I/A       ( 1679): [Upload] Connected
+11-05 14:13:20.672 E/A       ( 1679): onError
+11-05 14:13:20.672 E/A       ( 1679): com.google.android.apps.gsa.shared.speech.b.l: errorCode: 65561, engine: 2
+11-05 14:13:20.672 E/A       ( 1679): 	at com.google.android.apps.gsa.staticplugins.bp.a.f.a(PG:23)
+11-05 14:13:20.672 E/A       ( 1679): 	at com.google.android.apps.gsa.s3.o.hi(PG:13)
+11-05 14:13:20.672 E/A       ( 1679): 	at com.google.ci.g.a.f.e(PG:9)
+11-05 14:13:20.672 E/A       ( 1679): 	at com.google.android.apps.gsa.speech.k.a.g.d(PG:162)
+11-05 14:13:20.672 E/A       ( 1679): 	at com.google.android.apps.gsa.speech.k.a.g.iO(PG:26)
+11-05 14:13:20.672 E/A       ( 1679): 	at com.google.android.apps.gsa.s3.p.c(PG:102)
+11-05 14:13:20.672 E/A       ( 1679): 	at com.google.android.apps.gsa.s3.q.run(PG:1)
+11-05 14:13:20.672 E/A       ( 1679): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
+--
+11-05 14:13:21.138 D/AndroidRuntime( 3581): Calling main entry com.android.commands.am.Am
+11-05 14:13:21.140 D/SubscriptionRepository( 1086): getSelectableSubscriptionInfoList: [[SubscriptionInfo: id=1 iccId=89860318640220133897 simSlotIndex=0 portIndex=0 isEmbedded=false carrierId=1 displayName=T-Mobile carrierName=T-Mobile isOpportunistic=false groupUuid=null groupOwner= isGroupDisabled=false displayNameSource=CARRIER iconTint=-4716942 number=+15551234567 dataRoaming=0 mcc=310 mnc=260 ehplmns=[] hplmns=[] cardString=89860318640220133897 cardId=0 nativeAccessRules=null carrierConfigAccessRules=[cert: 92B5F8117FBD9BD5738FF168A4FA12CBE284BE834EDE1A7BB44DD8455BA15920 pkg: com.tmobile.rsuapp access: 0, cert: 92B5F8117FBD9BD5738FF168A4FA12CBE284BE834EDE1A7BB44DD8455BA15920 pkg: com.tmobile.echolocate access: 0, cert: 92B5F8117FBD9BD5738FF168A4FA12CBE284BE834EDE1A7BB44DD8455BA15920 pkg: com.tmobile.services.nameid access: 0, cert: 92B5F8117FBD9BD5738FF168A4FA12CBE284BE834EDE1A7BB44DD8455BA15920 pkg: com.tmobile.pr.mytmobile access: 0, cert: 92B5F8117FBD9BD5738FF168A4FA12CBE284BE834EDE1A7BB44DD8455BA15920 pkg: com.tmobile.vvm.application access: 0, cert: 3D1A4BEF6EE7AF7D34D120E7B1AAC0DD245585DE6237CF100F68333AFACFF562 pkg: com.tmobile.rsuapp access: 0, cert: 3D1A4BEF6EE7AF7D34D120E7B1AAC0DD245585DE6237CF100F68333AFACFF562 pkg: com.tmobile.echolocate access: 0, cert: 3D1A4BEF6EE7AF7D34D120E7B1AAC0DD245585DE6237CF100F68333AFACFF562 pkg: com.tmobile.services.nameid access: 0, cert: 3D1A4BEF6EE7AF7D34D120E7B1AAC0DD245585DE6237CF100F68333AFACFF562 pkg: com.tmobile.pr.mytmobile access: 0, cert: 3D1A4BEF6EE7AF7D34D120E7B1AAC0DD245585DE6237CF100F68333AFACFF562 pkg: com.tmobile.vvm.application access: 0, cert: 6892793FC413019D2DF609DFED7AF622D0F2D8FCF96EFA7E3FB87EEA34E10B93 pkg: com.tmobile.rsuapp access: 0, cert: 6892793FC413019D2DF609DFED7AF622D0F2D8FCF96EFA7E3FB87EEA34E10B93 pkg: com.tmobile.echolocate access: 0, cert: 6892793FC413019D2DF609DFED7AF622D0F2D8FCF96EFA7E3FB87EEA34E10B93 pkg: com.tmobile.services.nameid access: 0, cert: 6892793FC413019D2DF609DFED7AF622D0F2D8FCF96EFA7E3FB87EEA34E10B93 pkg: com.tmobile.pr.mytmobile access: 0, cert: 6892793FC413019D2DF609DFED7AF622D0F2D8FCF96EFA7E3FB87EEA34E10B93 pkg: com.tmobile.vvm.application access: 0, cert: 7B68FD9D4E7610C9CB35FC0C6CC06EA04C6906E3DFA9F48F9A05460AF36BFFFC pkg: com.tmobile.rsuapp access: 0, cert: 7B68FD9D4E7610C9CB35FC0C6CC06EA04C6906E3DFA9F48F9A05460AF36BFFFC pkg: com.tmobile.echolocate access: 0, cert: 7B68FD9D4E7610C9CB35FC0C6CC06EA04C6906E3DFA9F48F9A05460AF36BFFFC pkg: com.tmobile.services.nameid access: 0, cert: 7B68FD9D4E7610C9CB35FC0C6CC06EA04C6906E3DFA9F48F9A05460AF36BFFFC pkg: com.tmobile.pr.mytmobile access: 0, cert: 7B68FD9D4E7610C9CB35FC0C6CC06EA04C6906E3DFA9F48F9A05460AF36BFFFC pkg: com.tmobile.vvm.application access: 0] countryIso=us profileClass=-1 mType=LOCAL_SIM areUiccApplicationsEnabled=true usageSetting=DEFAULT isOnlyNonTerrestrialNetwork=false serviceCapabilities=[1, 2, 3] transferStatus=0]]
+11-05 14:13:21.141 D/SubscriptionUtil( 1086): remove cached display name : 1
+11-05 14:13:21.146 D/SubscriptionRepository( 1086): getSelectableSubscriptionInfoList: [[SubscriptionInfo: id=1 iccId=89860318640220133897 simSlotIndex=0 portIndex=0 isEmbedded=false carrierId=1 displayName=T-Mobile carrierName=T-Mobile isOpportunistic=false groupUuid=null groupOwner= isGroupDisabled=false displayNameSource=CARRIER iconTint=-4716942 number=+15551234567 dataRoaming=0 mcc=310 mnc=260 ehplmns=[] hplmns=[] cardString=89860318640220133897 cardId=0 nativeAccessRules=null carrierConfigAccessRules=[cert: 92B5F8117FBD9BD5738FF168A4FA12CBE284BE834EDE1A7BB44DD8455BA15920 pkg: com.tmobile.rsuapp access: 0, cert: 92B5F8117FBD9BD5738FF168A4FA12CBE284BE834EDE1A7BB44DD8455BA15920 pkg: com.tmobile.echolocate access: 0, cert: 92B5F8117FBD9BD5738FF168A4FA12CBE284BE834EDE1A7BB44DD8455BA15920 pkg: com.tmobile.services.nameid access: 0, cert: 92B5F8117FBD9BD5738FF168A4FA12CBE284BE834EDE1A7BB44DD8455BA15920 pkg: com.tmobile.pr.mytmobile access: 0, cert: 92B5F8117FBD9BD5738FF168A4FA12CBE284BE834EDE1A7BB44DD8455BA15920 pkg: com.tmobile.vvm.application access: 0, cert: 3D1A4BEF6EE7AF7D34D120E7B1AAC0DD245585DE6237CF100F68333AFACFF562 pkg: com.tmobile.rsuapp access: 0, cert: 3D1A4BEF6EE7AF7D34D120E7B1AAC0DD245585DE6237CF100F68333AFACFF562 pkg: com.tmobile.echolocate access: 0, cert: 3D1A4BEF6EE7AF7D34D120E7B1AAC0DD245585DE6237CF100F68333AFACFF562 pkg: com.tmobile.services.nameid access: 0, cert: 3D1A4BEF6EE7AF7D34D120E7B1AAC0DD245585DE6237CF100F68333AFACFF562 pkg: com.tmobile.pr.mytmobile access: 0, cert: 3D1A4BEF6EE7AF7D34D120E7B1AAC0DD245585DE6237CF100F68333AFACFF562 pkg: com.tmobile.vvm.application access: 0, cert: 6892793FC413019D2DF609DFED7AF622D0F2D8FCF96EFA7E3FB87EEA34E10B93 pkg: com.tmobile.rsuapp access: 0, cert: 6892793FC413019D2DF609DFED7AF622D0F2D8FCF96EFA7E3FB87EEA34E10B93 pkg: com.tmobile.echolocate access: 0, cert: 6892793FC413019D2DF609DFED7AF622D0F2D8FCF96EFA7E3FB87EEA34E10B93 pkg: com.tmobile.services.nameid access: 0, cert: 6892793FC413019D2DF609DFED7AF622D0F2D8FCF96EFA7E3FB87EEA34E10B93 pkg: com.tmobile.pr.mytmobile access: 0, cert: 6892793FC413019D2DF609DFED7AF622D0F2D8FCF96EFA7E3FB87EEA34E10B93 pkg: com.tmobile.vvm.application access: 0, cert: 7B68FD9D4E7610C9CB35FC0C6CC06EA04C6906E3DFA9F48F9A05460AF36BFFFC pkg: com.tmobile.rsuapp access: 0, cert: 7B68FD9D4E7610C9CB35FC0C6CC06EA04C6906E3DFA9F48F9A05460AF36BFFFC pkg: com.tmobile.echolocate access: 0, cert: 7B68FD9D4E7610C9CB35FC0C6CC06EA04C6906E3DFA9F48F9A05460AF36BFFFC pkg: com.tmobile.services.nameid access: 0, cert: 7B68FD9D4E7610C9CB35FC0C6CC06EA04C6906E3DFA9F48F9A05460AF36BFFFC pkg: com.tmobile.pr.mytmobile access: 0, cert: 7B68FD9D4E7610C9CB35FC0C6CC06EA04C6906E3DFA9F48F9A05460AF36BFFFC pkg: com.tmobile.vvm.application access: 0] countryIso=us profileClass=-1 mType=LOCAL_SIM areUiccApplicationsEnabled=true usageSetting=DEFAULT isOnlyNonTerrestrialNetwork=false serviceCapabilities=[1, 2, 3] transferStatus=0]]
+11-05 14:13:21.146 D/SubscriptionUtil( 1086): remove cached display name : 1
+11-05 14:13:21.147 D/UiAutomationConnection( 3581): Created on user UserHandle{0}
+11-05 14:13:21.150 I/NetworkScheduler.Stats( 1171): Task com.google.android.gms/com.google.android.gms.gcm.gmsproc.GcmInGmsTaskService finished executing. cause:5 result: 1 elapsed_millis: 1323 uptime_millis: 1323 exec_start_elapsed_seconds: 66 [CONTEXT service_id=218 ]
+11-05 14:13:21.154 I/ActivityManager(  554): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+11-05 14:13:21.163 W/.apps.wallpaper( 2294): ApkAssets: Deleting an ApkAssets object '<empty> and /system_ext/priv-app/ThemePicker/ThemePicker.apk' with 1 weak references
+11-05 14:13:21.187 I/Zygote  (  359): Process 1112 exited due to signal 9 (Killed)
+11-05 14:13:21.201 V/GrammaticalInflectionUtils(  554): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@bb24e65, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+11-05 14:13:21.213 I/AppsFilter(  554): interaction: PackageSetting{8559a5b com.android.microdroid.empty_payload/10190} -> PackageSetting{16c3a96 dev.mobile.maestro/10210} BLOCKED
+11-05 14:13:21.217 I/Zygote  (  359): Process 1917 exited due to signal 9 (Killed)
+11-05 14:13:21.219 I/ActivityManager(  554): Process com.android.bluetooth (pid 1112) has died: cch+99 CEM 
+11-05 14:13:21.219 I/libprocessgroup(  554): Removed cgroup /sys/fs/cgroup/uid_1002/pid_1112
+11-05 14:13:21.220 E/MDD     ( 1679): DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.googlequicksearchbox/files/datadownload/shared/public/datadownloadfile_1793888000395
+11-05 14:13:21.221 I/ActivityManager(  554): Process com.android.localtransport (pid 1917) has died: cch+95 CEM 
+11-05 14:13:21.221 I/libprocessgroup(  554): Removed cgroup /sys/fs/cgroup/uid_1000/pid_1917
+11-05 14:13:21.232 I/Icing   ( 1336): Indexing com.google.android.gms-apps from com.google.android.gms
+11-05 14:13:21.240 D/Zygote  (  359): Forked child process 3597
+11-05 14:13:21.250 I/ActivityManager(  554): Start proc 3597:dev.mobile.maestro/u0a210 for added application dev.mobile.maestro
+11-05 14:13:21.251 I/ShortcutBadger( 3284): Checking if platform supports badge counters, attempt 3/3.
+11-05 14:13:21.253 I/SP.AiAi ( 1489): GC for 'captions_i18n_v0_en-US' (10) with ttl of 0 ms took 0 ms (0/0/0)
+11-05 14:13:21.253 I/AiAiNowPlaying( 1489): Superpacks changed. Refreshing FA controller
+11-05 14:13:21.254 I/AiAiCaptions( 1489): downloadSuperpack(): Successfully downloaded superpack 'captions_i18n_v0_en-US' version 20210623.
+11-05 14:13:21.259 I/AiAiCaptions( 1489): ComponentsManagerImpl::update()
+11-05 14:13:21.259 I/AiAiCaptions( 1489): updateBasicComponents::updateBasicComponents()
+11-05 14:13:21.260 I/AiAiCaptions( 1489): Would enable com.google.android.apps.miphone.aiai.captions.settingsui.settingsactivity.CaptionsSettingsActivity but already enabled
+11-05 14:13:21.263 I/.mobile.maestro( 3597): Late-enabling -Xcheck:jni
+11-05 14:13:21.264 D/FileUtils(  554): Rounded bytes from 2593198080 to 4000000000
+11-05 14:13:21.278 I/AiAiCaptions( 1489): Would enable com.google.android.apps.miphone.aiai.captions.CaptionsSettingsActivity but already enabled
+--
+11-05 14:16:51.851 I/AndroidRuntime( 3581): VM exiting with result code 0.
+11-05 14:16:51.855 I/ActivityManager(  554): Force stopping dev.mobile.maestro appid=10210 user=0: finished inst
+11-05 14:16:51.855 W/ProcessStats(  554): Tracking association SourceState{3ac9d25 system/1000 BFgs #7068} whose proc state 4 is better than process ProcessState{c35696b com.google.android.ext.services/10207 pkg=com.google.android.ext.services} proc state 14 (29 skipped)
+11-05 14:16:51.991 I/servicemanager(    0): Caller(pid=554,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+11-05 14:16:52.002 I/init    (    0): starting service 'artd'...
+11-05 14:16:51.859 I/netd    (  356): tetherGetStats() -> {[]} <1.32ms>
+11-05 14:16:52.009 I/init    (    0): ... started service 'artd' has pid 6283
+11-05 14:16:52.010 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 144 (/system/bin/servicemanager)
+11-05 14:16:52.010 I/binder  (    0): undelivered transaction 487034, process died.
+11-05 14:16:51.872 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-05 14:16:51.873 W/MagnificationConnectionManager(  554): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-05 14:16:51.873 V/UiAutomationManager(  554): UiAutomation service owner died
+11-05 14:16:52.016 I/init    (    0): Untracked pid 3581 exited with status 0
+11-05 14:16:52.019 I/init    (    0): Untracked pid 3581 did not have an associated service entry and will not be reaped
+11-05 14:16:51.874 I/AiAiEcho( 1489): Settings changed for uri: content://settings/secure/accessibility_enabled
+11-05 14:16:51.875 I/AiAiEcho( 1489): Predicting[0]:  [CONTEXT sampling_count=5 ]
+11-05 14:16:51.875 I/AiAiEcho( 1489): EchoTargets: 
+11-05 14:16:51.875 I/AiAiEcho( 1489): Filtered by AiAi flag check: 
+11-05 14:16:51.875 I/AiAiEcho( 1489): [CONTEXT ratelimit_period="10 SECONDS" ]
+11-05 14:16:51.875 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-05 14:16:51.875 I/AiAiEcho( 1489): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+11-05 14:16:51.875 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-05 14:16:51.875 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-05 14:16:51.875 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-05 14:16:51.875 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-05 14:16:51.875 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-05 14:16:51.875 I/AiAiEcho( 1489): #remoteViewsTwiddler: feature disabled.
+11-05 14:16:51.876 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-05 14:16:51.876 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-05 14:16:51.876 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-05 14:16:51.876 W/IPCThreadState(  554): Sending oneway calls to frozen process.
