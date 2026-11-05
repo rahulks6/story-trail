@@ -30,6 +30,8 @@ export function Icon({name,size,color,selected=false,style}: {name:IconName;size
   audioOn:'M3 9h4l5-5v16l-5-5H3ZM16 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14',
   audioMuted:'M3 9h4l5-5v16l-5-5H3ZM16 9l6 6m0-6-6 6',
   crop:'M6 2v16h16M2 6h16v16',
+  // Trim: the kept part of a clip between two brackets.
+  trim:'M8 3H4v18h4M16 3h4v18h-4M10 12h4',
   viewers:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z',
   insights:'M5 21V12m7 9V3m7 18V8',
   // Each platform's own back: an arrow on Android (as its headers draw it), a chevron on iPhone.

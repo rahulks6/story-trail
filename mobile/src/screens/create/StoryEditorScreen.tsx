@@ -4,7 +4,7 @@ import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Alert, BackHandler, Dimensions, Image, Keyboard, PanResponder, PixelRatio, StyleSheet, Text, TextInput, View, useWindowDimensions, type GestureResponderEvent, type LayoutChangeEvent } from "react-native";
 import { Pressable } from "../../components/Pressable";
-import Video from "react-native-video";
+import Video, { type VideoRef } from "react-native-video";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
 import type { CreateStackParamList, RootStackParamList } from "../../navigation/types";
@@ -21,6 +21,7 @@ import { filterSwipeStep, pinchPlacement, TAP_SLOP, type Placement, type Touch }
 import {
   clampOverlayPosition,
   createEmptyDraft,
+  type StoryDraft,
   hasMeaningfulEdits,
   filterKey,
   mediaTransformStyle,
@@ -56,6 +57,8 @@ import { ScheduleSheet } from "../../components/ScheduleSheet";
 import { scheduleProblem, scheduleText } from "../../models/schedule";
 import { showToast } from "../../components/Toast";
 import { t } from "../../i18n";
+import { TrimBar } from "../../components/TrimBar";
+import { initialTrim, isTrimmed, MAX_STORY_VIDEO_SECONDS, type TrimRange } from "../../models/trim";
 import { filterLabel } from "../../i18n/names";
 
 type Props = NativeStackScreenProps<CreateStackParamList, "StoryEditor">;
@@ -159,7 +162,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
     saveStorySettings(next);
   };
 
-  const [draft, setDraft] = useState(() => createEmptyDraft({ uri: mediaUri, kind, width: route.params.width, height: route.params.height }));
+  const [draft, setDraft] = useState<StoryDraft>(() => ({ ...createEmptyDraft({ uri: mediaUri, kind, width: route.params.width, height: route.params.height }), trim: route.params.initialTrim ?? null }));
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [textModalVisible, setTextModalVisible] = useState(false);
   const [stickerSheetVisible, setStickerSheetVisible] = useState(false);
@@ -180,6 +183,19 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   }, [accessToken]);
   const [drawMode, setDrawMode] = useState(false);
   const [cropMode, setCropMode] = useState(false);
+  // Trimming a video: opens by itself for a gallery video longer than a Story.
+  const [trimMode, setTrimMode] = useState(!!route.params.initialTrim);
+  const videoRef = useRef<VideoRef>(null);
+  const [videoDurationMs, setVideoDurationMs] = useState<number | null>(null);
+  const [playheadMs, setPlayheadMs] = useState(0);
+  const canTrim = kind === "video" && !boomerang;
+  const changeTrim = (next: TrimRange) => {
+    const before = draft.trim;
+    setDraft((d) => ({ ...d, trim: next }));
+    // Show the moment being chosen: the new start, or just before the new end.
+    const at = !before || before.startMs !== next.startMs ? next.startMs : Math.max(next.startMs, next.endMs - 1500);
+    videoRef.current?.seek(at / 1000);
+  };
   const [editingOverlayId, setEditingOverlayId] = useState<string | null>(null);
   const [editingStickerOverlayId, setEditingStickerOverlayId] = useState<string | null>(null);
   const [selectedOverlayId, setSelectedOverlayId] = useState<string | null>(null);
@@ -621,6 +637,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
     // Back leaves drawing or cropping first, like their Done buttons.
     if (drawMode) setDrawMode(false);
     else if (cropMode) setCropMode(false);
+    else if (trimMode) setTrimMode(false);
     else onClose();
   };
 
@@ -666,6 +683,8 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           ...(collaborator && target !== "close_friends" ? { collaboratorId: collaborator.id } : {}),
         },
         boomerang ? "boomerang" : undefined,
+        // Only a real cut is sent; the whole video needs none.
+        canTrim && draft.trim && (route.params.initialTrim || isTrimmed(draft.trim, videoDurationMs)) ? draft.trim : null,
       );
       setUploadState("done");
       tapFeedback("success");
@@ -713,6 +732,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           </>
         ) : (
           <Video
+            ref={videoRef}
             source={{ uri: mediaUri }}
             style={[StyleSheet.absoluteFill, mediaTransformStyle(draft.crop, containerSize.width, containerSize.height)]}
             resizeMode="cover"
@@ -720,6 +740,17 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             muted={boomerang || draft.audioMuted}
             rate={boomerang ? 1.5 : 1}
             paused={false}
+            onLoad={(meta) => {
+              setVideoDurationMs(Math.round(meta.duration * 1000));
+              if (draft.trim) videoRef.current?.seek(draft.trim.startMs / 1000);
+            }}
+            onProgress={({ currentTime }) => {
+              const ms = currentTime * 1000;
+              if (trimMode) setPlayheadMs(ms);
+              // The preview plays only the part being kept, round and round.
+              const trim = draft.trim;
+              if (trim && (ms >= trim.endMs || ms < trim.startMs - 250)) videoRef.current?.seek(trim.startMs / 1000);
+            }}
           />
         )}
 
@@ -730,7 +761,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           />
         ) : null}
 
-        {!drawMode && !cropMode ? (
+        {!drawMode && !cropMode && !trimMode ? (
           <View
             style={StyleSheet.absoluteFill}
             collapsable={false}
@@ -761,7 +792,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           />
         ) : null}
 
-        {containerSize.width > 0 && !drawMode && !cropMode
+        {containerSize.width > 0 && !drawMode && !cropMode && !trimMode
           ? // The text being edited is shown only in the text tool, never twice.
             draft.overlays.filter((o) => !(textModalVisible && o.id === editingOverlayId)).map((overlay) => (
               <DraggableCanvasObject
@@ -838,7 +869,29 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         </>
       ) : null}
 
-      {!drawMode && !cropMode && !isDraggingOverlay && !textModalVisible ? (
+      {trimMode && canTrim ? (
+        <>
+          <View style={[styles.topBar, { top: insets.top + spacing.md }]}>
+            <Text style={styles.cropHint}>{t("storyEditor.trimHint", { seconds: MAX_STORY_VIDEO_SECONDS })}</Text>
+            <Pressable onPress={() => setTrimMode(false)} hitSlop={12} style={styles.cropDoneButton} accessibilityRole="button" accessibilityLabel={t("storyEditor.doneTrimming")}>
+              <Text style={styles.cropDoneLabel}>{t("common.done")}</Text>
+            </Pressable>
+          </View>
+          {videoDurationMs ? (
+            <View style={[styles.trimBar, { bottom: spacing.xxl + insets.bottom }]}>
+              <TrimBar
+                durationMs={videoDurationMs}
+                value={draft.trim ?? initialTrim(videoDurationMs, MAX_STORY_VIDEO_SECONDS * 1000)}
+                positionMs={playheadMs}
+                maxMs={MAX_STORY_VIDEO_SECONDS * 1000}
+                onChange={changeTrim}
+              />
+            </View>
+          ) : null}
+        </>
+      ) : null}
+
+      {!drawMode && !cropMode && !trimMode && !isDraggingOverlay && !textModalVisible ? (
         <View style={[styles.topBar, { top: insets.top + spacing.md }]}>
           <Pressable onPress={onClose} hitSlop={8} style={toolButtonStyle} accessibilityRole="button" accessibilityLabel={t("storyEditor.closeEditor")}>
             <Icon style={topIconStyle} name={ICONS.close} />
@@ -889,6 +942,11 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             {musicAvailable || music ? <Pressable onPress={() => setMusicSheetVisible(true)} hitSlop={8} style={[toolButtonStyle, music && styles.toolButtonOn]} accessibilityRole="button" accessibilityLabel={music ? t("storyEditor.musicTitleChange", { title: music.track.title }) : t("storyEditor.addMusic")}>
               <Icon style={[topIconStyle, music && styles.topIconOn]} name={ICONS.music} />
             </Pressable> : null}
+            {canTrim ? (
+              <Pressable onPress={() => setTrimMode(true)} hitSlop={8} style={[toolButtonStyle, isTrimmed(draft.trim, videoDurationMs) && styles.toolButtonOn]} accessibilityRole="button" accessibilityLabel={t("storyEditor.trimVideo")}>
+                <Icon style={[topIconStyle, isTrimmed(draft.trim, videoDurationMs) && styles.topIconOn]} name={ICONS.trim} />
+              </Pressable>
+            ) : null}
             {kind === "video" && !boomerang ? (
               <Pressable
                 onPress={() => setDraft((d) => ({ ...d, audioMuted: !d.audioMuted }))}
@@ -918,7 +976,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         <MusicPlayer url={music.track.url} accessToken={accessToken} startMs={music.startMs} durationMs={music.durationMs} paused={!focused || musicSheetVisible || uploadState !== "idle"} />
       ) : null}
 
-      {!drawMode && !cropMode && !isDraggingOverlay && !textModalVisible ? (
+      {!drawMode && !cropMode && !trimMode && !isDraggingOverlay && !textModalVisible ? (
         // Lifted above the keyboard while the caption is typed (the canvas behind stays put).
         <KeyboardAvoider
           behavior="position"
@@ -1159,6 +1217,7 @@ const styles = StyleSheet.create({
   musicRemove: { width: 28, height: 28, borderRadius: 14, backgroundColor: "rgba(0,0,0,0.5)", alignItems: "center", justifyContent: "center" },
   topIcon: { color: colors.textPrimary, fontSize: 24, fontWeight: "600" },
   topIconCompact: { fontSize: 20 },
+  trimBar: { position: "absolute", left: spacing.lg, right: spacing.lg },
   cropHint: { color: "rgba(255,255,255,0.85)", fontSize: 13 },
   cropDoneButton: { backgroundColor: colors.accent, borderRadius: radii.pill, paddingHorizontal: spacing.md, paddingVertical: 6 },
   cropDoneLabel: { color: colors.onAccent, fontWeight: "700" },

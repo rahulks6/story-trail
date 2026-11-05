@@ -1,3 +1,4 @@
+import type { TrimRange } from "./trim";
 /**
  * Per spec section 26, generalized for the Camera + Editor module: every
  * canvas object (text/emoji/mention/location/datetime/sticker) shares one
@@ -239,6 +240,8 @@ export interface StoryDraft {
   /** Video only — original recorded audio is kept by default (spec section 44). */
   audioMuted: boolean;
   crop: StoryCrop;
+  /** Video only: the part to keep (models/trim.ts); absent or null keeps all of it. */
+  trim?: TrimRange | null;
 }
 
 export function createEmptyDraft(sourceMedia: SourceMedia): StoryDraft {
@@ -255,7 +258,8 @@ export function hasMeaningfulEdits(draft: StoryDraft): boolean {
     draft.audioMuted ||
     draft.crop.zoom !== 1 ||
     draft.crop.offsetX !== 0 ||
-    draft.crop.offsetY !== 0
+    draft.crop.offsetY !== 0 ||
+    !!draft.trim
   );
 }
 

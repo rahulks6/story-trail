@@ -48,6 +48,8 @@ export type CreateStackParamList = {
     height: number | null;
     /** Recorded in Boomerang mode: the server makes the forward-and-back loop. */
     effect?: "boomerang";
+    /** A gallery video longer than a Story: opens trimming, with this part chosen. */
+    initialTrim?: { startMs: number; endMs: number };
   };
 };
 

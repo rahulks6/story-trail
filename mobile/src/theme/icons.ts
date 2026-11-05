@@ -23,6 +23,7 @@ export const ICONS = {minus:"minus",up:"up",down:"down",left:"left",right:"right
   "audioOn": "audioOn",
   "audioMuted": "audioMuted",
   "crop": "crop",
+  "trim": "trim",
   "viewers": "viewers",
   "insights": "insights",
   "clear": "clear",

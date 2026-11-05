@@ -29,6 +29,7 @@ import { useScreenInsets } from "../../hooks/useScreenInsets";
 import { clearCreateSeed, currentCreateSeed, onCreateSeedChange, type CreateSeed } from "../../state/createSeed";
 import { BOOMERANG_RECORD_MS, CAPTURE_MODES, shutterLabel, shutterTap, type CaptureMode, type MediaEffect } from "../../models/captureModes";
 import { t } from "../../i18n";
+import { MAX_TRIM_SOURCE_MS, type TrimRange } from "../../models/trim";
 
 type Props = NativeStackScreenProps<CreateStackParamList, "Camera">;
 
@@ -139,7 +140,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   const [foreground,setForeground]=useState(AppState.currentState==='active');
   const activeRef=useRef(false);activeRef.current=focused&&foreground;
   const recordingRef=useRef(false),stoppingRef=useRef(false),capturingRef=useRef(false);
-  const pendingCapture=useRef<{uri:string;kind:'photo'|'video';width:number|null;height:number|null;mimeType?:string;effect:MediaEffect}|null>(null);
+  const pendingCapture=useRef<{uri:string;kind:'photo'|'video';width:number|null;height:number|null;mimeType?:string;effect:MediaEffect;initialTrim?:TrimRange}|null>(null);
   useEffect(()=>{const sub=AppState.addEventListener('change',state=>setForeground(state==='active'));return()=>{activeRef.current=false;sub.remove();};},[]);
   const recordingTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const zoomIndicatorTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -233,8 +234,8 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   );
 
   const goToEditor = useCallback(
-    (mediaUri: string, kind: "photo" | "video", width: number | null, height: number | null, mimeType?: string, effect: MediaEffect = "none") => {
-      if(!activeRef.current){pendingCapture.current={uri:mediaUri,kind,width,height,mimeType,effect};return;}
+    (mediaUri: string, kind: "photo" | "video", width: number | null, height: number | null, mimeType?: string, effect: MediaEffect = "none", initialTrim?: TrimRange) => {
+      if(!activeRef.current){pendingCapture.current={uri:mediaUri,kind,width,height,mimeType,effect,initialTrim};return;}
       navigation.replace("StoryEditor", {
         mediaUri,
         kind,
@@ -242,11 +243,12 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
         height,
         mimeType: mimeType ?? guessMimeTypeFromUri(mediaUri, kind),
         ...(effect === "boomerang" ? { effect } : {}),
+        ...(initialTrim ? { initialTrim } : {}),
       });
     },
     [navigation],
   );
-  useEffect(()=>{if(focused&&foreground&&pendingCapture.current){const pending=pendingCapture.current;pendingCapture.current=null;goToEditor(pending.uri,pending.kind,pending.width,pending.height,pending.mimeType,pending.effect);}},[focused,foreground,goToEditor]);
+  useEffect(()=>{if(focused&&foreground&&pendingCapture.current){const pending=pendingCapture.current;pendingCapture.current=null;goToEditor(pending.uri,pending.kind,pending.width,pending.height,pending.mimeType,pending.effect,pending.initialTrim);}},[focused,foreground,goToEditor]);
 
   const takePhoto = useCallback(async () => {
     if (!camera.current||capturingRef.current||recordingRef.current||!activeRef.current) return;
@@ -355,17 +357,22 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
       );
       return;
     }
-    // The server turns these away only after the whole file is uploaded: say so before editing.
+    // Longer than a Story: open trimming with the first part chosen. Only a very long one (which
+    // the server won't cut) is turned away, before editing rather than after a long upload.
+    let initialTrim: TrimRange | undefined;
     if (kind === "video" && typeof asset.duration === "number" && asset.duration > MAX_RECORDING_SECONDS + 0.5) {
-      Alert.alert(t("camera.videoTooLong"), t("camera.storiesCanBeUpTo", { MAX_RECORDING_SECONDS }));
-      return;
+      if (asset.duration * 1000 > MAX_TRIM_SOURCE_MS) {
+        Alert.alert(t("camera.videoTooLong"), t("camera.videoTooLongToTrim", { minutes: MAX_TRIM_SOURCE_MS / 60000 }));
+        return;
+      }
+      initialTrim = { startMs: 0, endMs: MAX_RECORDING_SECONDS * 1000 };
     }
     // Android hands over HEIC photos as they are ("compatible" converts them on iOS only).
     if (kind === "photo" && /^image\/hei[cf]/i.test(asset.type ?? "")) {
       Alert.alert(t("camera.photoFormatNotSupported"), t("camera.heicPhotosArentSupportedYet"));
       return;
     }
-    goToEditor(asset.uri, kind, asset.width ?? null, asset.height ?? null, asset.type);
+    goToEditor(asset.uri, kind, asset.width ?? null, asset.height ?? null, asset.type, "none", initialTrim);
     }catch{if(activeRef.current)Alert.alert(t("camera.couldNotOpenGallery"),t("camera.checkPhotoAccessInSettings"));}
   }, [goToEditor]);
 

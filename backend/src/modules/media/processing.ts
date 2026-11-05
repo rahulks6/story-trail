@@ -21,7 +21,7 @@ import sharp from "sharp";
 import type { Metadata, Sharp } from "sharp";
 import type { FilterKey } from "../stories/overlays";
 import { applyToPixels, transformFor, writeCubeFile } from "./filters";
-import type { MediaEffect } from "./media.repository";
+import type { MediaEffect, VideoTrim } from "./media.repository";
 
 sharp.block({ operation: ["VipsForeignLoad"] });
 sharp.unblock({
@@ -226,6 +226,9 @@ const RENDITIONS = [
   { name: "video_480" as const, shortMax: 480, longMax: 854, crf: 26, maxrateK: 1200, audioK: 96 },
 ];
 
+/** The longest video that can be trimmed down to a Story (the upload is still at most 200 MiB). */
+export const MAX_TRIM_SOURCE_SECONDS = 15 * 60;
+
 /** How much of a Boomerang clip is used: the loop is this, then the same backwards, three times. */
 export const BOOMERANG_CLIP_SECONDS = 1.2;
 
@@ -236,6 +239,7 @@ export async function processVideo(
   tools: VideoTools,
   filter: FilterKey = "original",
   effect: MediaEffect = "none",
+  trim: VideoTrim | null = null,
 ): Promise<ProcessedMedia> {
   if (!VIDEO_MIME_TYPES.includes(declaredMime)) throw new MediaRejectedError("Only MP4 and MOV videos are supported.");
   const head = await readHead(input, 12);
@@ -253,7 +257,14 @@ export async function processVideo(
   if (!video?.width || !video.height) throw new MediaRejectedError("This file doesn't contain a playable video.");
   const seconds = Number(info.format?.duration ?? video.duration);
   if (!Number.isFinite(seconds) || seconds <= 0) throw new MediaRejectedError("We couldn't read this video's length.");
-  if (seconds > tools.maxSeconds + 0.5) throw new MediaRejectedError(`Videos can be up to ${tools.maxSeconds} seconds. Trim it and try again.`);
+  // A trimmed video keeps only the part chosen in the editor, so the whole file may be longer.
+  if (trim) {
+    if (seconds > MAX_TRIM_SOURCE_SECONDS + 0.5) throw new MediaRejectedError(`Videos up to ${MAX_TRIM_SOURCE_SECONDS / 60} minutes long can be trimmed.`);
+    if (trim.startMs / 1000 >= seconds - 0.1) throw new MediaRejectedError("The trimmed part starts after the video ends.");
+  } else if (seconds > tools.maxSeconds + 0.5) throw new MediaRejectedError(`Videos can be up to ${tools.maxSeconds} seconds. Trim it and try again.`);
+  // Frame-accurate cut while encoding (input seeking with a re-encode), not an extra pass.
+  const cut = trim ? ["-ss", (trim.startMs / 1000).toFixed(3), "-t", ((trim.endMs - trim.startMs) / 1000).toFixed(3)] : [];
+  const keptSeconds = trim ? Math.min((trim.endMs - trim.startMs) / 1000, seconds - trim.startMs / 1000) : seconds;
   const rotated = rotationOf(video) % 180 === 90;
   const width = rotated ? video.height : video.width;
   const height = rotated ? video.width : video.height;
@@ -316,7 +327,7 @@ export async function processVideo(
 
   const posterSize = fitInside(width, height, DISPLAY_BOX.width, DISPLAY_BOX.height);
   const posterFile = path.join(workDir, "poster.jpg");
-  await encode((transfer) => ["-hide_banner", "-nostdin", "-y", ...SAFE_INPUT, "-i", input, "-map", "0:v:0", "-frames:v", "1",
+  await encode((transfer) => ["-hide_banner", "-nostdin", "-y", ...SAFE_INPUT, ...cut, "-i", input, "-map", "0:v:0", "-frames:v", "1",
     "-vf", videoFilter(posterSize, transfer, lutFile), "-map_metadata", "-1", "-q:v", "3", posterFile]);
   const posterStat = await fsp.stat(posterFile);
   variants.push({ name: "poster", file: posterFile, fileName: "poster.jpg", mimeType: "image/jpeg", ...posterSize, byteSize: posterStat.size });
@@ -334,7 +345,7 @@ export async function processVideo(
       ? `[0:v:0]split=${targets.length}${targets.map((_, i) => `[s${i}]`).join("")};${branches.join(";")}`
       : `[0:v:0]${videoFilter(targets[0]!.size, transfer, lutFile)}[o0]`;
     return [
-      "-hide_banner", "-nostdin", "-y", ...SAFE_INPUT, "-i", input, "-filter_complex", graph,
+      "-hide_banner", "-nostdin", "-y", ...SAFE_INPUT, ...cut, "-i", input, "-filter_complex", graph,
       ...targets.flatMap((t, i) => [
         "-map", `[o${i}]`, "-map", "0:a:0?", "-map_metadata", "-1", "-map_chapters", "-1", "-sn", "-dn", "-fpsmax", "30",
         "-c:v", "libx264", "-preset", "veryfast", "-profile:v", "high", "-crf", String(t.crf),
@@ -355,7 +366,7 @@ export async function processVideo(
     });
   }
 
-  return { width, height, durationMs: Math.round(seconds * 1000), checksumSha256: await sha256File(input), variants };
+  return { width, height, durationMs: Math.round(keptSeconds * 1000), checksumSha256: await sha256File(input), variants };
 }
 
 /** A shared Story video: 9:16 at 720p, the size the overlay is drawn at. */

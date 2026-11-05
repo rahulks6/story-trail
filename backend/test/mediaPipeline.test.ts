@@ -592,3 +592,55 @@ describe("Boomerang", () => {
     assert.equal(odd.status, 422);
   });
 });
+
+describe("trimming a video in the editor", () => {
+  it("keeps only the chosen part, cut on the frame", async () => {
+    const owner = await signup();
+    const clip = makeVideo({ width: 640, height: 360, seconds: 4 });
+    const uploaded = await uploadDirect(baseUrl, owner.token, clip, "video", "video/mp4", { trim: { startMs: 1000, endMs: 3000 } });
+    await worker.drain();
+    const ready = (await media(owner.token, uploaded.id)).body.media;
+    assert.equal(ready.status, "ready", ready.processingError);
+    assert.ok(Math.abs(ready.durationMs - 2000) < 150, `two seconds kept: ${ready.durationMs} ms`);
+    const video = probe((await fileBytes(owner.token, ready.delivery.videos[0].url)).bytes);
+    const fileSeconds = Number((video.format as { duration?: string }).duration);
+    assert.ok(Math.abs(fileSeconds - 2) < 0.2, `the file itself is two seconds: ${fileSeconds}`);
+  });
+
+  it("lets a video longer than a Story through when the part kept fits", async () => {
+    const owner = await signup();
+    // Tests run with 3-second Stories (test/env.ts): a 6-second video is too long whole.
+    const long = makeVideo({ width: 160, height: 90, seconds: 6, audio: false });
+    const untrimmed = await uploadDirect(baseUrl, owner.token, long, "video", "video/mp4");
+    const trimmed = await uploadDirect(baseUrl, owner.token, long, "video", "video/mp4", { trim: { startMs: 3000, endMs: 5500 } });
+    await worker.drain();
+    assert.equal((await media(owner.token, untrimmed.id)).body.media.status, "failed", "the whole video is still too long");
+    const ready = (await media(owner.token, trimmed.id)).body.media;
+    assert.equal(ready.status, "ready", ready.processingError);
+    assert.ok(Math.abs(ready.durationMs - 2500) < 200, `two and a half seconds kept: ${ready.durationMs} ms`);
+  });
+
+  it("refuses a trim that isn't a video's, or is too short, too long or backwards", async () => {
+    const owner = await signup();
+    const make = (extra: Record<string, unknown>, kind = "video", mimeType = "video/mp4") =>
+      createUploadSession(baseUrl, owner.token, { clientUploadId: clientUploadId(), kind, mimeType, byteSize: 1000, ...extra });
+    for (const [extra, kind, mime] of [
+      [{ trim: { startMs: 0, endMs: 2000 } }, "photo", "image/jpeg"],
+      [{ trim: { startMs: 0, endMs: 2000 }, effect: "boomerang" }, "video", "video/mp4"],
+      [{ trim: { startMs: 0, endMs: 500 } }, "video", "video/mp4"],
+      [{ trim: { startMs: 0, endMs: 61_000 } }, "video", "video/mp4"],
+      [{ trim: { startMs: 3000, endMs: 1000 } }, "video", "video/mp4"],
+      [{ trim: { startMs: 0.5, endMs: 2000 } }, "video", "video/mp4"],
+    ] as const) {
+      const res = await make(extra as Record<string, unknown>, kind, mime);
+      assert.equal(res.status, 422, JSON.stringify(extra));
+      assert.ok(res.body.fields.trim, JSON.stringify(res.body));
+    }
+    // The same outbox id with a different trim is a different file.
+    const id = clientUploadId();
+    const first = await createUploadSession(baseUrl, owner.token, { clientUploadId: id, kind: "video", mimeType: "video/mp4", byteSize: 1000, trim: { startMs: 0, endMs: 2000 } });
+    assert.equal(first.status, 201);
+    const again = await createUploadSession(baseUrl, owner.token, { clientUploadId: id, kind: "video", mimeType: "video/mp4", byteSize: 1000, trim: { startMs: 0, endMs: 3000 } });
+    assert.equal(again.status, 409);
+  });
+});

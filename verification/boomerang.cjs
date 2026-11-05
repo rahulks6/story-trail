@@ -7,11 +7,11 @@ const read=(file)=>fs.readFileSync(path.join(root,file),'utf8');
 
 test('the effect travels from the camera to the upload request',()=>{
  assert.match(read('mobile/src/screens/create/CameraScreen.tsx'),/"video", null, null, 'video\/mp4', effect\);/);
- assert.match(read('mobile/src/screens/create/StoryEditorScreen.tsx'),/boomerang \? "boomerang" : undefined,\n\s*\);/);
+ assert.match(read('mobile/src/screens/create/StoryEditorScreen.tsx'),/boomerang \? "boomerang" : undefined,\n/);
  const queue=read('mobile/src/state/uploadQueue.ts');
- assert.match(queue,/\.\.\.\(job\.effect\?\{effect:job\.effect\}:\{\}\)\},token\(\)\)/);
+ assert.match(queue,/\.\.\.\(job\.effect\?\{effect:job\.effect\}:\{\}\),\.\.\.\(job\.trim\?\{trim:job\.trim\}:\{\}\)\},token\(\)\)/);
  assert.match(read('mobile/src/api/media.ts'),/effect\?: "none" \| "boomerang"/);
- assert.match(read('backend/src/modules/media/worker.ts'),/media\.filter, media\.effect\)/);
+ assert.match(read('backend/src/modules/media/worker.ts'),/media\.filter, media\.effect, media\.trim\)/);
 });
 
 test('the burst covers the clip the server keeps, and only videos can be Boomerangs',()=>{

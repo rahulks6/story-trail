@@ -24,7 +24,9 @@ export type UploadJob={id:string;ownerId:string;kind:'photo'|'video';mimeType:st
  /** 2 = resumable direct upload. Older outbox items (uploaded in one request) have no version. */
  uploadVersion?:2;
  /** A server-side effect made while processing the video (Boomerang). */
- effect?:'boomerang';mediaId?:string;storyId?:string;error?:string;
+ effect?:'boomerang';
+ /** The part of the video to keep (the editor's trim): the server cuts it while processing. */
+ trim?:{startMs:number;endMs:number};mediaId?:string;storyId?:string;error?:string;
  /** A scheduled share: the server's schedule, to cancel from the uploads pill. */
  scheduledId?:string;
  /** For a processing failure: whether Retry can help (true) or the file itself is unusable (false). */
@@ -70,7 +72,7 @@ export async function listUploads(ownerId:string):Promise<UploadJob[]>{
  const rows=Object.values(await AsyncStorage.getMany(keys));
  return rows.flatMap(raw=>{try{const job=JSON.parse(raw||'null') as UploadJob;if(!job||job.ownerId!==ownerId)return [];validate(ownerId,job.id);return [job];}catch{return [];}}).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
 }
-export function enqueueUpload(ownerId:string,uri:string,kind:UploadJob['kind'],mimeType:string,payload:UploadJob['payload'],effect?:'boomerang'):Promise<UploadJob>{return serial(async()=>{
+export function enqueueUpload(ownerId:string,uri:string,kind:UploadJob['kind'],mimeType:string,payload:UploadJob['payload'],effect?:'boomerang',trim?:{startMs:number;endMs:number}|null):Promise<UploadJob>{return serial(async()=>{
  const existing=await listUploads(ownerId);if(existing.filter(j=>!isDone(j)).length>=10)throw Error(t("uploadQueue.finishOrRemoveAPending"));
  // This is an idempotency key, not an authentication secret. It is scoped by authenticated owner server-side.
  const id='story_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2)+'_'+Math.random().toString(36).slice(2);
@@ -80,7 +82,7 @@ export function enqueueUpload(ownerId:string,uri:string,kind:UploadJob['kind'],m
   await RNFS.copyFile(uri.startsWith('file://')?decodeURI(uri.slice(7)):uri,target);
   const stat=await RNFS.stat(target);const size=Number(stat.size);
   if(size<=0||size>(kind==='photo'?25:200)*1024*1024)throw Error(t("uploadQueue.thisMediaIsEmptyOr"));
-  const job:UploadJob={id,ownerId,kind,mimeType,payload:JSON.parse(JSON.stringify(payload)),status:'queued',createdAt:new Date().toISOString(),uploadVersion:2,byteSize:size,...(effect==='boomerang'&&kind==='video'?{effect}:{})};
+  const job:UploadJob={id,ownerId,kind,mimeType,payload:JSON.parse(JSON.stringify(payload)),status:'queued',createdAt:new Date().toISOString(),uploadVersion:2,byteSize:size,...(effect==='boomerang'&&kind==='video'?{effect}:{}),...(trim&&kind==='video'&&effect!=='boomerang'?{trim:{startMs:Math.round(trim.startMs),endMs:Math.round(trim.endMs)}}:{})};
   await save(job);return job;
  }catch(e){await RNFS.unlink(target).catch(()=>undefined);throw e;}
 });}
@@ -89,7 +91,7 @@ export function enqueueUpload(ownerId:string,uri:string,kind:UploadJob['kind'],m
 async function sendBytes(job:UploadJob,path:string,storageKey:string,token:()=>string,persist:(next:UploadJob)=>Promise<UploadJob>):Promise<UploadJob>{
  const size=Number((await RNFS.stat(path)).size);
  // The Story filter travels with the upload: the server applies it while processing the media.
- let session:UploadSessionResponse=await createUploadSession({clientUploadId:job.id,kind:job.kind,mimeType:job.mimeType,byteSize:size,filter:job.payload.filter||'original',...(job.effect?{effect:job.effect}:{})},token());
+ let session:UploadSessionResponse=await createUploadSession({clientUploadId:job.id,kind:job.kind,mimeType:job.mimeType,byteSize:size,filter:job.payload.filter||'original',...(job.effect?{effect:job.effect}:{}),...(job.trim?{trim:job.trim}:{})},token());
  job=await persist({...job,mediaId:session.media.id,byteSize:size});
  for(let round=0;session.upload;round++){
   if(round>=4)throw Error(t("uploadQueue.uploadCouldNotBeCompleted"));

@@ -38,6 +38,8 @@ export interface MediaRecord {
   filter: FilterKey;
   /** A video effect built while processing: "boomerang", or "none". */
   effect: MediaEffect;
+  /** The part of a video to keep (Story editor's trim), cut before processing; null for all of it. */
+  trim: VideoTrim | null;
   /** A government ID attached to a verification request: admins only, never the media routes. */
   verificationDocument: boolean;
   /** The drawn layer of a Story being shared to other apps (exports.ts): its owner's export only, never served. */
@@ -46,9 +48,14 @@ export interface MediaRecord {
 
 export type MediaEffect = "none" | "boomerang";
 
+export interface VideoTrim {
+  startMs: number;
+  endMs: number;
+}
+
 export const MEDIA_COLUMNS =
   "id, owner_id, kind, mime_type, byte_size, width, height, duration_ms, checksum_sha256, storage_key, status, created_at, " +
-  "variants, processing_error, processing_error_retryable, processed_at, original_purged_at, purged_at, filter, effect, verification_document, export_overlay";
+  "variants, processing_error, processing_error_retryable, processed_at, original_purged_at, purged_at, filter, effect, trim_start_ms, trim_end_ms, verification_document, export_overlay";
 
 export function mapMediaRow(row: Record<string, string | null>): MediaRecord {
   let variants: MediaRecord["variants"] = {};
@@ -78,6 +85,9 @@ export function mapMediaRow(row: Record<string, string | null>): MediaRecord {
     purgedAt: row.purged_at ?? null,
     filter: isFilterKey(row.filter) ? row.filter : "original",
     effect: row.effect === "boomerang" ? "boomerang" : "none",
+    trim: row.trim_start_ms !== null && row.trim_start_ms !== undefined && row.trim_end_ms !== null && row.trim_end_ms !== undefined
+      ? { startMs: Number(row.trim_start_ms), endMs: Number(row.trim_end_ms) }
+      : null,
     verificationDocument: row.verification_document === "t" || row.verification_document === "true",
     exportOverlay: row.export_overlay === "t" || row.export_overlay === "true",
   };
