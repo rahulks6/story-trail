@@ -331,6 +331,23 @@ appId: com.katkee.app
     timeout: 3000
 - takeScreenshot: t39-settings
 - scrollUntilVisible:
+    element: "Request verification"
+    direction: DOWN
+- tapOn: "Request verification"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: t44-verification
+- pressKey: Back
+# A page that opened the keyboard takes a second Back.
+- runFlow:
+    when:
+      notVisible: "Settings"
+    commands:
+      - pressKey: Back
+- extendedWaitUntil:
+    visible: "Settings"
+    timeout: 10000
+- scrollUntilVisible:
     element: "Notifications"
     direction: DOWN
 - tapOn: "Notifications"
@@ -388,23 +405,6 @@ appId: com.katkee.app
 - waitForAnimationToEnd:
     timeout: 3000
 - takeScreenshot: t43-blocked
-- pressKey: Back
-# A page that opened the keyboard takes a second Back.
-- runFlow:
-    when:
-      notVisible: "Settings"
-    commands:
-      - pressKey: Back
-- extendedWaitUntil:
-    visible: "Settings"
-    timeout: 10000
-- scrollUntilVisible:
-    element: "Request verification"
-    direction: DOWN
-- tapOn: "Request verification"
-- waitForAnimationToEnd:
-    timeout: 3000
-- takeScreenshot: t44-verification
 - pressKey: Back
 # A page that opened the keyboard takes a second Back.
 - runFlow:
