@@ -1,5 +1,5 @@
 import { Icon } from "../../components/Icon";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, Share, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "../../components/Pressable";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -16,6 +16,7 @@ import { profileButton, profileIconButton } from "../../components/profile/profi
 import { profileShareLink } from "../../navigation/profileLinks";
 import type { RootStackParamList } from "../../navigation/types";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
+import { onStoryPublished } from "../../state/storyChanges";
 import { t } from "../../i18n";
 
 /**
@@ -74,6 +75,9 @@ export function ProfileScreen(): React.JSX.Element {
       loadStreak();
     }, [load, loadStreak]),
   );
+  // A video finishes processing a little after you leave the editor: when it posts while you're
+  // already here, the ring and the Story count appear without leaving the tab.
+  useEffect(() => onStoryPublished(() => { void load(); loadStreak(); }), [load, loadStreak]);
 
   if (!user) {
     return (

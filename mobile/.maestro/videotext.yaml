@@ -134,6 +134,7 @@ appId: com.katkee.app
     while:
       notVisible: "Open your Story"
     commands:
+      - tapOn: "Home"
       - tapOn: "Profile"
       - waitForAnimationToEnd:
           timeout: 5000
