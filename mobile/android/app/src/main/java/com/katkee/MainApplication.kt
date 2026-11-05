@@ -26,8 +26,7 @@ class MainApplication : Application(), ReactApplication {
           add(0, EmojiTextPackage())
           // Reloads the app when its appearance (light or dark) changes.
           add(AppRestartPackage())
-          // Keeps a call's microphone working in the background (OngoingCallService.kt).
-          add(OngoingCallPackage())
+          // OngoingCallPackage() (OngoingCallService.kt) comes back with calls; see the manifest.
         },
     )
   }

@@ -11,15 +11,16 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <!-- Voice and video calls (src/calls): switching between earpiece and loudspeaker, a Bluetooth
          headset (asked for when a call starts; refusing it only keeps the call off the headset),
-         the screen darkened at your ear (proximity wake lock), and a foreground service that keeps
-         the microphone and camera working while you use another app (OngoingCallService.kt). -->
+         the screen darkened at your ear (proximity wake lock). No foreground service while calls are
+         switched off in production: Play needs a declaration (and a video of a working call) for
+         the microphone and camera service types. When calls are switched on, restore
+         OngoingCallService below with its three permissions and its package in MainApplication.kt,
+         and declare "Calls" in Play Console. -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" tools:node="remove" />
     <!-- Approximate location only (Nearby Stories and the location sticker), never precise:
          the Privacy Policy says so, and iOS asks with reduced accuracy too. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -93,12 +94,8 @@
       <!-- Notifications drawn by Firebase while the app is in the background use this
            status-bar icon (shape only, tinted). The default channel and colour come from
            firebase.json, which @react-native-firebase/messaging merges into the manifest. -->
-      <!-- A call carrying on while Katkee is in the background (Play Console: declare the
-           microphone and camera foreground service types for "Calls"). -->
-      <service
-        android:name=".OngoingCallService"
-        android:exported="false"
-        android:foregroundServiceType="microphone|camera" />
+      <!-- react-native-webrtc's screen-sharing service: Katkee never shares the screen. -->
+      <service android:name="com.oney.WebRTCModule.MediaProjectionService" tools:node="remove" />
       <meta-data
         android:name="com.google.firebase.messaging.default_notification_icon"
         android:resource="@drawable/ic_notification" />

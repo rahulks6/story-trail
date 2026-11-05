@@ -19,8 +19,6 @@ const RULES=[
  {name:'calls',uses:/require\("react-native-webrtc"\)/,android:['android.permission.CAMERA','android.permission.RECORD_AUDIO','android.permission.MODIFY_AUDIO_SETTINGS'],ios:['NSCameraUsageDescription','NSMicrophoneUsageDescription']},
  // Earpiece/loudspeaker, Bluetooth headsets and the proximity sensor's screen-off wake lock.
  {name:'call audio',uses:/require\("react-native-incall-manager"\)/,android:['android.permission.MODIFY_AUDIO_SETTINGS','android.permission.BLUETOOTH_CONNECT','android.permission.WAKE_LOCK']},
- // The ongoing-call foreground service (OngoingCallService.kt): Android 14 refuses one without its type's permission.
- {name:'ongoing call',uses:/KatkeeOngoingCall/,android:['android.permission.FOREGROUND_SERVICE','android.permission.FOREGROUND_SERVICE_MICROPHONE','android.permission.FOREGROUND_SERVICE_CAMERA']},
  // Contacts on Katkee reads the address book (react-native-contacts) after its explainer.
  {name:'contacts',uses:/require\("react-native-contacts"\)|from "react-native-contacts"/,android:['android.permission.READ_CONTACTS'],ios:['NSContactsUsageDescription']},
 ];
@@ -59,14 +57,15 @@ test('the check is not vacuous: the app does use these capabilities, and a missi
  for(const rule of RULES)assert.ok(code.some(t=>rule.uses.test(t)),`no code uses ${rule.name} any more; drop or update the rule`);
  assert.deepEqual(missingDeclarations(code,manifest.replace(/<uses-permission android:name="android.permission.VIBRATE" \/>/,''),plist),['vibration: AndroidManifest.xml lacks android.permission.VIBRATE']);
  assert.deepEqual(missingDeclarations(code,manifest,plist.replace(/<key>NSCameraUsageDescription<\/key>\s*<string>[^<]*<\/string>/,'')),['camera: Info.plist lacks a NSCameraUsageDescription explanation','calls: Info.plist lacks a NSCameraUsageDescription explanation']);
- assert.deepEqual(missingDeclarations(code,manifest.replace(/<uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" \/>/,''),plist),['ongoing call: AndroidManifest.xml lacks android.permission.FOREGROUND_SERVICE_MICROPHONE']);
 });
 
-test('calls keep going in the background, and only what they need is declared for it',()=>{
- // Android: the service exists with exactly the types its permissions cover.
- assert.match(manifest,/<service\s+android:name="\.OngoingCallService"\s+android:exported="false"\s+android:foregroundServiceType="microphone\|camera"\s*\/>/);
- assert.ok(fs.existsSync(path.join(mobile,'android/app/src/main/java/com/katkee/OngoingCallService.kt')));
- assert.match(fs.readFileSync(path.join(mobile,'android/app/src/main/java/com/katkee/MainApplication.kt'),'utf8'),/add\(OngoingCallPackage\(\)\)/);
+test('calls declare only what they need; no foreground service while calls are off in production',()=>{
+ // Android: Play needs a declaration and a video of a working call for a camera or microphone
+ // foreground service, so none ships until calls are switched on (the manifest says how to restore it).
+ assert.doesNotMatch(manifest,/FOREGROUND_SERVICE_(MICROPHONE|CAMERA|MEDIA_PROJECTION)|android:foregroundServiceType/);
+ assert.match(manifest,/<uses-permission android:name="android\.permission\.FOREGROUND_SERVICE" tools:node="remove" \/>/);
+ assert.match(manifest,/<service android:name="com\.oney\.WebRTCModule\.MediaProjectionService" tools:node="remove" \/>/);
+ assert.doesNotMatch(fs.readFileSync(path.join(mobile,'android/app/src/main/java/com/katkee/MainApplication.kt'),'utf8'),/add\(OngoingCallPackage\(\)\)/);
  // Bluetooth below Android 12 only through the legacy permission, never location-based scanning.
  assert.match(manifest,/<uses-permission android:name="android\.permission\.BLUETOOTH" android:maxSdkVersion="30" \/>/);
  assert.doesNotMatch(manifest,/BLUETOOTH_SCAN|BLUETOOTH_ADMIN|USE_FULL_SCREEN_INTENT|MANAGE_OWN_CALLS|FOREGROUND_SERVICE_PHONE_CALL/);
