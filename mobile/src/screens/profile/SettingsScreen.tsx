@@ -309,6 +309,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
       <View style={styles.card}>
         <ListRow label={t("common.help")} icon={ICONS.help} onPress={() => navigation.navigate("Help")} />
         <ListRow label={t("common.sendFeedback")} icon={ICONS.dm} onPress={() => navigation.navigate("Feedback")} />
+        <ListRow label={t("settings.downloadYourData")} icon={ICONS.archive} onPress={() => navigation.navigate("DataExport")} />
         <ListRow label={t("settings.accountStatus")} icon={ICONS.about} onPress={() => navigation.navigate("Appeals")} />
         <ListRow label={t("common.about")} icon={ICONS.about} onPress={() => navigation.navigate("About")} />
       </View>

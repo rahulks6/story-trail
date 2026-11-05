@@ -115,6 +115,9 @@ describe("DM privacy", () => {
       "modules/professional/dashboard.ts",
       // Unread badge only: counts conversations by message timestamps, never selects a body.
       "modules/push/dispatcher.ts",
+      // Download your data: the person's own messages only (sender_id = them), for their own copy;
+      // never anyone else's message (test/dataExport.test.ts checks).
+      "modules/users/data-export.ts",
     ], "a new reader of DM tables needs a privacy review (and an update here)");
     const dispatcher = fs.readFileSync(path.join(src, "modules/push/dispatcher.ts"), "utf8");
     assert.ok(!/\bm\.body\b|messages\.body|SELECT\s+body/i.test(dispatcher), "the dispatcher never reads message bodies");

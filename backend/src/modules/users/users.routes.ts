@@ -14,6 +14,7 @@ import { parseVariant, sendMediaFile } from "../media/delivery";
 import { HttpError } from "../../http/errors";
 import { queryOne } from "../../db/psql";
 import { cleanUsername, USERNAME_MESSAGES, usernameProblem } from "./username-policy";
+import * as dataExport from "./data-export";
 
 const USER_ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
@@ -81,6 +82,23 @@ export function registerUserRoutes(router: Router): void {
       ? await profilesService.getProfileById(param, req.userId as string)
       : await profilesService.getProfileByUsername(parseUsernameParam(param), req.userId as string);
     sendJson(res, 200, { profile });
+  });
+
+  // Download your data (data-export.ts): ask for a copy, see how it's going, save the file.
+  router.post("/api/v1/users/me/data-export", async (req, res) => {
+    requireAuth(req);
+    const result = await dataExport.requestDataExport(req.userId as string);
+    sendJson(res, result.created ? 202 : 200, { export: result.export });
+  });
+
+  router.get("/api/v1/users/me/data-export", async (req, res) => {
+    requireAuth(req);
+    sendJson(res, 200, { export: await dataExport.getDataExport(req.userId as string) });
+  });
+
+  router.get("/api/v1/users/me/data-export/:id/file", async (req, res) => {
+    requireAuth(req);
+    await dataExport.sendDataExportFile(req, res, req.userId as string, req.params.id as string, mediaStorage);
   });
 
   router.patch("/api/v1/users/me", async (req, res) => {

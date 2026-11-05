@@ -48,6 +48,7 @@ import { VerificationScreen } from "../screens/profile/VerificationScreen";
 import { ActivityScreen } from "../screens/activity/ActivityScreen";
 import { UploadRunner } from "../state/UploadRunner";
 import { FeedbackScreen } from "../screens/profile/FeedbackScreen";
+import { DataExportScreen } from "../screens/profile/DataExportScreen";
 import { SendStoryScreen } from "../screens/dm/SendStoryScreen";
 import { ForwardScreen } from "../screens/dm/ForwardScreen";
 import { setCurrentScreen } from "../crashReporting";
@@ -202,6 +203,17 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         options={{
           headerShown: true,
           title: t("common.help"),
+          headerStyle: { backgroundColor: colors.background },
+          headerTintColor: colors.textPrimary,
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="DataExport"
+        component={DataExportScreen}
+        options={{
+          headerShown: true,
+          title: t("settings.downloadYourData"),
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,

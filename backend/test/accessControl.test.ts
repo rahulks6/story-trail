@@ -170,6 +170,13 @@ describe("a private account's Story", () => {
     refused(await attempt("GET /api/v1/stories/:id/export/:exportId", `${s}/export/${exportId}`, friend), "export status");
     refused(await attempt("GET /api/v1/stories/:id/export/:exportId/file", `${s}/export/${exportId}/file`, stranger), "export file");
     assert.equal(await count(`story_exports WHERE story_id = :'id'`, { id: ids.story }), 1, "no export was queued");
+    // Someone's "Download your data" archive is theirs alone, whoever knows its id.
+    const dataExportId = (await queryOne(
+      `INSERT INTO data_exports (user_id, status, storage_key, byte_size, expires_at) VALUES (:'owner', 'ready', 'm/00000000-0000-4000-8000-000000000002/katkee-data.zip', 10, now() + interval '1 day') RETURNING id`,
+      { owner: owner.id },
+    ))!.id!;
+    refused(await attempt("GET /api/v1/users/me/data-export/:id/file", `/api/v1/users/me/data-export/${dataExportId}/file`, friend), "data export file");
+    refused(await attempt("GET /api/v1/users/me/data-export/:id/file", `/api/v1/users/me/data-export/${dataExportId}/file`, stranger), "data export file");
     refused(await attempt("DELETE /api/v1/comments/:id", `/api/v1/comments/${ids.comment}`, stranger), "delete comment");
     refused(await attempt("DELETE /api/v1/stories/:id", s, stranger), "delete story");
 

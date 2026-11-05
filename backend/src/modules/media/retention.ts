@@ -34,6 +34,7 @@ import { query, queryOne } from "../../db/psql";
 import { LocalObjectStore, type ObjectStore } from "./storage";
 import { MEDIA_COLUMNS, mapMediaRow, type MediaRecord } from "./media.repository";
 import { expiredExports } from "./exports";
+import { expiredDataExports } from "../users/data-export";
 
 export interface RetentionReport {
   task: string;
@@ -407,6 +408,7 @@ export async function runRetention(store: ObjectStore): Promise<RetentionReport[
     await recorded("processed_originals", () => processedOriginals(store, r.batchSize, r.originalMediaDays)),
     await recorded("verification_photos", () => verificationPhotos(store, r.batchSize, VERIFICATION_PHOTO_DAYS)),
     await recorded("story_exports", () => expiredExports(store, r.batchSize)),
+    await recorded("data_exports", () => expiredDataExports(store, r.batchSize)),
     await recorded("report_message_evidence", () => reportMessageEvidence(r.batchSize, r.moderationEvidenceDays)),
     await recorded("ad_campaign_completion", () => completeFinishedCampaigns()),
     await recorded("analytics_rollup", () => rollupAnalytics()),

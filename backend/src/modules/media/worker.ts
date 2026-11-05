@@ -13,6 +13,7 @@ import { MAX_AUDIO_BYTES, MAX_PHOTO_BYTES, MAX_VIDEO_BYTES } from "./validation"
 import { MediaRejectedError, processAudio, processPhoto, processVideo } from "./processing";
 import { claimMediaJob, closeMediaJob, extendLease, failMediaJob, finishMediaJob, SqsJobSignal, jobSignal, type MediaJob } from "./jobs";
 import { claimExportJob, processExportJob } from "./exports";
+import { claimDataExport, processDataExport } from "../users/data-export";
 
 /** Variants never change once written under a key, so caches may keep them. */
 export const VARIANT_CACHE_CONTROL = "public, max-age=31536000, immutable";
@@ -139,10 +140,18 @@ export class MediaWorker {
     return true;
   }
 
+  /** Builds one due "Download your data" archive (users/data-export.ts). False when nothing was due. */
+  async runDataExportOnce(): Promise<boolean> {
+    const job = await claimDataExport(this.options.workerId, Math.max(this.options.leaseSeconds, 900));
+    if (!job) return false;
+    await processDataExport(job, this.options.store, this.options.workerId);
+    return true;
+  }
+
   /** Processes due jobs, then due exports, until none are left (tests, one-off backfills). */
   async drain(): Promise<number> {
     let count = 0;
-    while ((await this.runOnce()) || (await this.runExportOnce())) count++;
+    while ((await this.runOnce()) || (await this.runExportOnce()) || (await this.runDataExportOnce())) count++;
     return count;
   }
 
@@ -167,7 +176,7 @@ export class MediaWorker {
       let worked = false;
       try {
         // Uploads first: someone is waiting to post. Exports share the same NOTIFY wake-up.
-        worked = (await this.runOnce()) || (await this.runExportOnce());
+        worked = (await this.runOnce()) || (await this.runExportOnce()) || (await this.runDataExportOnce());
       } catch (error) {
         (this.options.log ?? defaultLog)({ event: "media_worker_error", error: (error as Error).message });
         await this.idle(2000);

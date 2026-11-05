@@ -109,6 +109,7 @@ export type RootStackParamList = {
   Help: undefined;
   /** Settings > Help > Send feedback, with an optional screenshot. */
   Feedback: undefined;
+  DataExport: undefined;
   About: undefined;
   /** Incoming, still-pending follow requests on a private account — accept/decline each one. */
   FollowRequests: undefined;

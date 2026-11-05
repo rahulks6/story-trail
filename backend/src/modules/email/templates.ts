@@ -14,6 +14,7 @@ interface Templates {
   passwordReset: (code: string, link: string) => Email;
   emailVerification: (code: string) => Email;
   newDeviceLogin: (device: string | null) => Email;
+  dataExportReady: (days: number) => Email;
 }
 
 const en: Templates = {
@@ -37,6 +38,14 @@ const en: Templates = {
       `Your Katkee account was just signed in on a new device${device ? ` (${device})` : ""}.\n\n` +
       "If this was you, there's nothing to do.\n" +
       "If it wasn't, open Katkee → Profile → Settings → Account security, choose \"Sign out of all devices\", and reset your password.",
+  }),
+  dataExportReady: (days) => ({
+    subject: "Your Katkee data is ready to download",
+    text:
+      "The copy of your Katkee data you asked for is ready.\n\n" +
+      "Open Katkee → Profile → Settings → Download your data to save it. " +
+      `It's kept for ${days} days, then deleted.\n\n` +
+      "If you didn't ask for this, change your password and choose \"Sign out of all devices\" in Account security.",
   }),
 };
 
@@ -62,6 +71,14 @@ const hi: Templates = {
       "अगर यह आप थे, तो कुछ करने की ज़रूरत नहीं।\n" +
       "अगर नहीं, तो Katkee → प्रोफ़ाइल → सेटिंग्स → अकाउंट सुरक्षा खोलें, \"बाकी सभी डिवाइस से साइन आउट करें\" चुनें, और अपना पासवर्ड रीसेट करें।",
   }),
+  dataExportReady: (days) => ({
+    subject: "आपका Katkee डेटा डाउनलोड के लिए तैयार है",
+    text:
+      "आपने अपने Katkee डेटा की जो कॉपी माँगी थी, वह तैयार है।\n\n" +
+      "सेव करने के लिए Katkee → प्रोफ़ाइल → सेटिंग्स → अपना डेटा डाउनलोड करें खोलें। " +
+      `यह ${days} दिन तक रहेगा, फिर हटा दिया जाएगा।\n\n` +
+      "अगर आपने यह नहीं माँगा था, तो अपना पासवर्ड बदलें और अकाउंट सुरक्षा में \"बाकी सभी डिवाइस से साइन आउट करें\" चुनें।",
+  }),
 };
 
 const mr: Templates = {
@@ -85,6 +102,14 @@ const mr: Templates = {
       `तुमच्या Katkee अकाउंटमध्ये आत्ताच एका नवीन डिव्हाइसवरून${device ? ` (${device})` : ""} साइन इन झाले.\n\n` +
       "हे तुम्हीच असाल, तर काहीही करण्याची गरज नाही.\n" +
       "तुम्ही नसाल, तर Katkee → प्रोफाइल → सेटिंग्ज → अकाउंट सुरक्षा उघडा, \"इतर सर्व डिव्हाइसवरून साइन आउट करा\" निवडा, आणि तुमचा पासवर्ड रीसेट करा.",
+  }),
+  dataExportReady: (days) => ({
+    subject: "तुमचा Katkee डेटा डाउनलोडसाठी तयार आहे",
+    text:
+      "तुम्ही मागितलेली तुमच्या Katkee डेटाची प्रत तयार आहे.\n\n" +
+      "सेव्ह करण्यासाठी Katkee → प्रोफाइल → सेटिंग्ज → तुमचा डेटा डाउनलोड करा उघडा. " +
+      `ती ${days} दिवस ठेवली जाईल, नंतर हटवली जाईल.\n\n` +
+      "तुम्ही हे मागितले नसेल, तर तुमचा पासवर्ड बदला आणि अकाउंट सुरक्षामध्ये \"इतर सर्व डिव्हाइसवरून साइन आउट करा\" निवडा.",
   }),
 };
 

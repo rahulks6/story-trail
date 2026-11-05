@@ -284,3 +284,23 @@ export function addCloseFriend(username: string, accessToken: string): Promise<v
 export function removeCloseFriend(username: string, accessToken: string): Promise<void> {
   return apiDelete(`/api/v1/close-friends/${encodeURIComponent(username)}`, accessToken);
 }
+
+/** "Download your data" (backend users/data-export.ts). */
+export interface DataExport {
+  id: string;
+  status: "queued" | "running" | "ready" | "failed";
+  createdAt: string;
+  readyAt: string | null;
+  expiresAt: string;
+  byteSize: number;
+  /** This API's path to the file, once ready (sign-in header needed). */
+  downloadUrl: string | null;
+}
+
+export function getDataExport(accessToken: string): Promise<{ export: DataExport | null }> {
+  return apiGet("/api/v1/users/me/data-export", accessToken);
+}
+
+export function requestDataExport(accessToken: string): Promise<{ export: DataExport }> {
+  return apiPost("/api/v1/users/me/data-export", undefined, accessToken);
+}
