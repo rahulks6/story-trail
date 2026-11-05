@@ -52,6 +52,25 @@ describe("the sharing status on Home", () => {
     expect(remove).toHaveBeenCalledWith(owner, "story_abcdefghijklmnop");
   });
 
+  it("marks the moment it posts: one success buzz and a tick, not again on the next refresh", async () => {
+    const haptics = (globalThis as unknown as { __haptics: string[] }).__haptics;
+    let notify: () => void = () => undefined;
+    jest.spyOn(queue, "subscribeUploads").mockImplementation((fn) => { notify = fn; return () => undefined; });
+    const list = jest.spyOn(queue, "listUploads").mockResolvedValue([job("uploading")]);
+    await act(async () => { tree = create(<UploadStatusPill top={40} />); });
+    await flush();
+    haptics.length = 0;
+    expect(tree.root.findAll((n) => n.props.name === "check")).toHaveLength(0);
+    list.mockResolvedValue([job("published")]);
+    await act(async () => notify());
+    await flush();
+    expect(haptics).toEqual(["notificationSuccess"]);
+    expect(tree.root.findAll((n) => n.props.name === "check").length).toBeGreaterThan(0);
+    await act(async () => notify());
+    await flush();
+    expect(haptics).toEqual(["notificationSuccess"]);
+  });
+
   it("stops a Story still on its way, and takes back one that has just posted", async () => {
     const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
     const confirm = async (button: string) => {

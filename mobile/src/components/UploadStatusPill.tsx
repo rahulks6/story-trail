@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Alert, Image, StyleSheet, Text, View } from "react-native";
+import { Alert, Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "./Pressable";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -13,6 +13,8 @@ import { scheduleText } from "../models/schedule";
 import { serverDate } from "../utils/serverTime";
 import { storyPublished } from "../state/storyChanges";
 import { t } from "../i18n";
+import { tapFeedback } from "../utils/haptics";
+import { useReducedMotion } from "../hooks/useReducedMotion";
 
 /** How long "Shared" stays before the pill goes away. */
 export const SHARED_NOTICE_MS = 5000;
@@ -123,29 +125,55 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
     ]);
   };
 
+  // The moment it posts: a little pop, a success buzz and a tick, once per Story.
+  const reducedMotion = useReducedMotion();
+  const pop = useRef(new Animated.Value(1)).current;
+  const celebrated = useRef<string | null>(null);
+  const done = !!job && job.status === "published" && !job.cancelAfterPublish;
+  useEffect(() => {
+    if (!job || !done || celebrated.current === job.id) return;
+    celebrated.current = job.id;
+    tapFeedback("success");
+    if (reducedMotion) return;
+    Animated.sequence([
+      Animated.timing(pop, { toValue: 1.06, duration: 140, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+      Animated.spring(pop, { toValue: 1, useNativeDriver: true, speed: 14, bounciness: 10 }),
+    ]).start();
+  }, [job, done, pop, reducedMotion]);
+  // The bar fills smoothly between progress reports instead of jumping.
+  const fill = useRef(new Animated.Value(0)).current;
+  const target = !job ? 0 : job.status === "uploading" ? (uploadProgress(job.ownerId, job.id) ?? 0.05) : isDone(job) || job.status === "processing" ? 1 : 0.05;
+  useEffect(() => {
+    if (reducedMotion) { fill.setValue(target); return; }
+    Animated.timing(fill, { toValue: target, duration: 300, easing: Easing.out(Easing.cubic), useNativeDriver: false }).start();
+  }, [target, fill, reducedMotion]);
+
   if (!job) return null;
   const percent = uploadProgress(job.ownerId, job.id);
   const running = uploadRunning(job.ownerId, job.id);
   const label = stopping ? t("uploadStatusPill.stopping") : job.cancelAfterPublish ? t("uploadStatusPill.removing") : pillLabel(job, percent, running);
   const othersLabel = attention > 1 ? t("uploadStatusPill.attentionStoriesNeedAttention", { attention }) : null;
   const preview = uploadPreviewUri(job);
-  const shown = job.status === "uploading" && percent !== undefined ? percent : isDone(job) || job.status === "processing" ? 1 : 0.05;
 
   return (
+    <Animated.View style={[styles.pill, { top, transform: [{ scale: pop }] }]}>
     <Pressable
       onPress={() => navigation.navigate("UploadQueue")}
-      style={[styles.pill, { top }]}
+      style={styles.pillInner}
       accessibilityRole="button"
       accessibilityLabel={othersLabel ? `${label}. ${othersLabel}` : label}
       accessibilityHint={t("uploadStatusPill.opensYourStoryUploads")}
       accessibilityLiveRegion="polite"
     >
-      {preview ? <Image source={{ uri: preview }} style={styles.thumb} /> : <View style={[styles.thumb, styles.thumbVideo]}><Icon name={ICONS.create} size={14} color={colors.textPrimary} /></View>}
+      <View>
+        {preview ? <Image source={{ uri: preview }} style={[styles.thumb, done && styles.thumbDone]} /> : <View style={[styles.thumb, styles.thumbVideo, done && styles.thumbDone]}><Icon name={ICONS.create} size={14} color={colors.textPrimary} /></View>}
+        {done ? <View style={styles.tick}><Icon name={ICONS.check} size={10} color={colors.onAccent} /></View> : null}
+      </View>
       <View style={styles.body}>
         <Text style={[styles.label, job.status === "failed" && styles.failed]} numberOfLines={1}>{label}</Text>
         {job.status !== "failed" && !isDone(job) ? (
           <View style={styles.track}>
-            <View style={[styles.fill, { width: `${Math.round(shown * 100)}%` }]} />
+            <Animated.View style={[styles.fill, { width: fill.interpolate({ inputRange: [0, 1], outputRange: ["0%", "100%"], extrapolate: "clamp" }) }]} />
           </View>
         ) : null}
       </View>
@@ -164,6 +192,7 @@ export function UploadStatusPill({ top }: { top: number }): React.JSX.Element | 
         </Pressable>
       ) : null}
     </Pressable>
+    </Animated.View>
   );
 }
 
@@ -171,6 +200,10 @@ const styles = StyleSheet.create({
   pill: {
     position: "absolute",
     alignSelf: "center",
+    maxWidth: 300,
+    borderRadius: radii.pill,
+  },
+  pillInner: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
@@ -183,6 +216,8 @@ const styles = StyleSheet.create({
   },
   thumb: { width: 30, height: 30, borderRadius: 15, backgroundColor: colors.surface },
   thumbVideo: { alignItems: "center", justifyContent: "center" },
+  thumbDone: { borderWidth: 2, borderColor: colors.accent },
+  tick: { position: "absolute", right: -3, bottom: -3, width: 16, height: 16, borderRadius: 8, alignItems: "center", justifyContent: "center", backgroundColor: colors.accent, borderWidth: 1.5, borderColor: "#000000" },
   body: { gap: 4, flexShrink: 1, minWidth: 140 },
   label: { color: colors.textPrimary, fontSize: 13, fontWeight: "600" },
   failed: { color: colors.danger },
