@@ -15,6 +15,7 @@ import {
   useMicrophonePermission,
   usePhotoOutput,
   useVideoOutput,
+  type Constraint,
 } from "react-native-vision-camera";
 import { launchImageLibrary } from "react-native-image-picker";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -122,6 +123,15 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   const videoOutput = useVideoOutput({ enableAudio: audioEnabled, fileType: "mp4", targetBitRate: VIDEO_BIT_RATE });
   // A camera error first restarts the camera quietly; only repeated errors are shown.
   const outputs = useMemo(() => [photoOutput, videoOutput], [photoOutput, videoOutput]);
+  // Steadier video: stabilisation where this camera says it has it (Android leaves it off unless
+  // asked). Never requested where unsupported, so those phones record exactly as before.
+  const constraints = useMemo<Constraint[]>(() => {
+    try {
+      return device?.supportsVideoStabilizationMode("standard") ? [{ videoStabilizationMode: "standard" }] : [];
+    } catch {
+      return [];
+    }
+  }, [device]);
   const [cameraKey, setCameraKey] = useState(0);
   const cameraErrors = useRef<number[]>([]);
   const recorderRef = useRef<Recorder | null>(null);
@@ -566,6 +576,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
           device={device}
           isActive={focused&&foreground}
           outputs={outputs}
+          constraints={constraints}
           onStarted={() => setCameraStarted(true)}
           onStopped={() => setCameraStarted(false)}
           onError={onCameraError}

@@ -1,5 +1,6 @@
 import { Image } from "react-native";
 import type { PublicStory } from "../api/stories";
+import { serverDate } from "../utils/serverTime";
 
 /**
  * Stories a screen has just loaded (a profile's ring), kept for a moment so the Story viewer opens
@@ -29,8 +30,11 @@ export function takeWarmStories(username: string, now = Date.now()): PublicStory
   const entry = warm.get(username);
   warm.delete(username);
   if (!entry || now - entry.at > WARM_MS) return null;
-  const expiry = entry.stories.map((s) => s.media?.urlsExpireAt).filter((v): v is string => !!v).map((v) => Date.parse(v));
   // Links that expire within a minute are fetched fresh instead.
-  if (expiry.some((t) => Number.isFinite(t) && t - now < 60_000)) return null;
+  const expiring = entry.stories.some((s) => {
+    const at = serverDate(s.media?.urlsExpireAt)?.getTime();
+    return at !== undefined && at - now < 60_000;
+  });
+  if (expiring) return null;
   return entry.stories;
 }

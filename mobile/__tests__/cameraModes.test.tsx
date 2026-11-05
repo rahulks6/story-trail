@@ -165,3 +165,21 @@ describe("while the camera list loads", () => {
     expect(navigation.goBack).toHaveBeenCalled();
   });
 });
+
+describe("steadier video", () => {
+  const cam = () => tree.root.find((n: ReactTestInstance) => (n.type as unknown) === "Camera");
+  const original = g.__camera.device as object;
+  afterEach(() => { g.__camera.device = original; });
+
+  it("asks for stabilisation only where the camera has it", async () => {
+    g.__camera.device = { ...original, supportsVideoStabilizationMode: (mode: string) => mode === "standard" };
+    await render();
+    expect(cam().props.constraints).toEqual([{ videoStabilizationMode: "standard" }]);
+  });
+
+  it("asks for nothing on a camera without it, so it records exactly as before", async () => {
+    g.__camera.device = { ...original, supportsVideoStabilizationMode: () => false };
+    await render();
+    expect(cam().props.constraints).toEqual([]);
+  });
+});
