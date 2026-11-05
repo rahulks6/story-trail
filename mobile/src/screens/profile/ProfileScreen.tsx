@@ -17,6 +17,7 @@ import { profileShareLink } from "../../navigation/profileLinks";
 import type { RootStackParamList } from "../../navigation/types";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
 import { onStoryPublished } from "../../state/storyChanges";
+import { warmStories } from "../../state/warmStories";
 import { t } from "../../i18n";
 
 /**
@@ -56,6 +57,8 @@ export function ProfileScreen(): React.JSX.Element {
     try {
       const { stories } = await getMyActiveStories(accessToken);
       setHasActiveStory(stories.length > 0);
+      // Tapping your photo opens on these at once, first frame already loading.
+      warmStories(user.username, stories);
     } catch {
       setHasActiveStory(false);
     }

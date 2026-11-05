@@ -12,6 +12,7 @@ import { acceptFollowRequest, blockUser, declineFollowRequest, followUser, getPr
 import { track } from "../../analytics/analytics";
 import { ApiError } from "../../api/client";
 import { getUserActiveStories } from "../../api/stories";
+import { warmStories } from "../../state/warmStories";
 import { openConversation } from "../../api/conversations";
 import { HighlightsRow } from "../../components/HighlightsRow";
 import { ReportSheet } from "../../components/ReportSheet";
@@ -87,6 +88,8 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
       try {
         const { stories } = await getUserActiveStories(fetched.username, accessToken);
         setHasActiveStory(stories.length > 0);
+        // Tapping the ring opens on these at once, first frame already loading.
+        warmStories(fetched.username, stories);
       } catch {
         setHasActiveStory(false);
       }

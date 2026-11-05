@@ -8,6 +8,7 @@ import { useIsFocused } from "@react-navigation/native";
 import Video, {type VideoRef} from "react-native-video";
 import { mediaColors as colors, radii, spacing, mediaTypography as typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
+import { takeWarmStories } from "../../state/warmStories";
 import { getMyActiveStories, getUserActiveStories, getViewCount, mediaFileUrl, recordStoryView, type PublicStory } from "../../api/stories";
 import { getMedia, mediaSource } from "../../api/media";
 import { getStoryDetail, likeStory, unlikeStory, type StoryDetail } from "../../api/engagement";
@@ -280,9 +281,13 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
     (async () => {
       try {
         const isSelf = authUser?.username === currentUsername;
-        const { stories } = isSelf
-          ? await getMyActiveStories(accessToken)
-          : await getUserActiveStories(currentUsername, accessToken);
+        // Just loaded by the profile the ring was tapped on: no second fetch, no wait.
+        const warm = takeWarmStories(currentUsername);
+        const { stories } = warm
+          ? { stories: warm }
+          : isSelf
+            ? await getMyActiveStories(accessToken)
+            : await getUserActiveStories(currentUsername, accessToken);
         if (cancelled) return;
         const opening = !initialHandledRef.current && creatorIndex === startIndex && !!initialStoryId;
         if (opening) initialHandledRef.current = true;
