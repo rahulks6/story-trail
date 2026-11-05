@@ -1,7 +1,7 @@
 import { Icon } from "../../components/Icon";
 import { StorySkeleton } from "../../components/Skeleton";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Animated, AppState, Dimensions, Image, Linking, PanResponder, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { ActivityIndicator, Alert, Animated, AppState, Dimensions, Easing, Image, Linking, PanResponder, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { Pressable } from "../../components/Pressable";
 import { isLongCaption, StoryBottomScrim, StoryCaption } from "../../components/StoryCaption";
 import { useIsFocused } from "@react-navigation/native";
@@ -174,6 +174,14 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   const { height: windowHeight, fontScale } = useWindowDimensions();
   // The Story follows a finger swiping up or down to the next creator.
   const dragY = useRef(new Animated.Value(0)).current;
+  /** The next person's Stories glide in from where the finger sent the last ones (not a hard cut). */
+  const slideIn = useCallback((from: number) => {
+    if (reducedMotion) return;
+    dragY.setValue(from);
+    Animated.timing(dragY, { toValue: 0, duration: 220, easing: Easing.out(Easing.cubic), useNativeDriver: true }).start();
+  }, [dragY, reducedMotion]);
+  const slideInRef = useRef(slideIn);
+  slideInRef.current = slideIn;
   const [shareOpen, setShareOpen] = useState(false);
   /** "Share to other apps" is preparing the picture or video: the Story holds still meanwhile. */
   const [sharingOut, setSharingOut] = useState(false);
@@ -477,11 +485,13 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
     if (currentStoryIndex >= currentStories.length - 1) {
       if (currentStory) emit("creator_sequence_completed", { creatorId: currentStory.ownerId });
       goNextCreator(); // spec section 4: a right tap past the last Story moves to the next creator
+      // On to the next person in this feed: their Stories glide up into place, as after a swipe.
+      if (creatorIndex < creators.length - 1) slideIn(Dimensions.get("window").height * 0.3);
       return;
     }
     if (currentStory) emit("creator_sequence_continued", { creatorId: currentStory.ownerId });
     setStoryIndexByCreator((prev) => ({ ...prev, [currentUsername]: currentStoryIndex + 1 }));
-  }, [currentUsername, currentStories, currentStoryIndex, currentStory, goNextCreator, emit]);
+  }, [currentUsername, currentStories, currentStoryIndex, currentStory, goNextCreator, emit, creatorIndex, creators.length, slideIn]);
 
   const goPreviousStory = useCallback(() => {
     if (!currentUsername) return;
@@ -617,9 +627,9 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
             then();
             return;
           }
-          Animated.timing(dragY, { toValue: to, duration: 160, useNativeDriver: true }).start(() => {
+          Animated.timing(dragY, { toValue: to, duration: 160, easing: Easing.in(Easing.quad), useNativeDriver: true }).start(() => {
             then();
-            dragY.setValue(0);
+            slideInRef.current(-to * 0.3);
           });
         };
 
