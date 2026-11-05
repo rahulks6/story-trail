@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<testsuites>
-  <testsuite name="Test Suite" device="test" tests="1" failures="1" time="2.674" timestamp="2026-11-05T04:23:34">
-    <testcase id="tour" name="tour" classname="tour" file="/home/runner/work/story-trail/story-trail/mobile/.maestro/tour.yaml" time="2.578" timestamp="2026-11-05T04:23:34" status="ERROR">
-      <failure>Unknown error</failure>
-    </testcase>
-  </testsuite>
-</testsuites>
