@@ -18,5 +18,6 @@
   "databaseInstanceType": "t4g.small",
   "databaseMultiAz": "false",
   "natGateways": "1",
-  "apiMinTasks": "1"
+  "apiMinTasks": "1",
+  "migrationImageTag": "r44"
 }
