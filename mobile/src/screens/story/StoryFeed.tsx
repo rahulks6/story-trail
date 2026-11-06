@@ -841,10 +841,16 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
     }
     setLoadError(message);
   };
-  // The action column fits between the name at the top and the comment bar on short screens and with large text.
-  const railButtons = 4 + (isOwnStory ? 0 : 1) + ((mediaKind === "video" && !creatorMuted) || currentStory.music ? 1 : 0);
-  const railRoom = windowHeight - (insets.top + spacing.lg + 40 + (currentStory.music ? 34 : 0)) - (BOTTOM_BAR_HEIGHT + spacing.xl * 2 + insets.bottom);
-  const railContent = railButtons * 34 + (isOwnStory ? 2 : 3) * 20 * Math.min(fontScale, 1.3);
+  // Someone else's Story has no bar along the bottom: Comment and Message are in the column on the
+  // right (as on Reels), so the caption has the bottom of the screen to itself. Your own keeps its
+  // Views and Highlight buttons there.
+  const commentsAllowed = currentStory.allowComments !== "disabled";
+  const bottomBarRoom = isOwnStory ? BOTTOM_BAR_HEIGHT + spacing.md : 0;
+  const railBottom = isOwnStory ? BOTTOM_BAR_HEIGHT + spacing.xl * 2 + insets.bottom : spacing.xl + insets.bottom;
+  // The action column fits between the name at the top and the bottom on short screens and with large text.
+  const railButtons = 4 + (isOwnStory ? 0 : commentsAllowed ? 1 : 0) + ((mediaKind === "video" && !creatorMuted) || currentStory.music ? 1 : 0);
+  const railRoom = windowHeight - (insets.top + spacing.lg + 40 + (currentStory.music ? 34 : 0)) - railBottom;
+  const railContent = railButtons * 34 + 2 * 20 * Math.min(fontScale, 1.3);
   const railGap = Math.max(spacing.xs, Math.min(spacing.lg + 2, Math.floor((railRoom - railContent) / Math.max(1, railButtons - 1))));
   const longCaption = isLongCaption(currentStory.caption);
   // Holding to pause shows just the Story, like Instagram.
@@ -1003,7 +1009,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         ))}
       </View>
 
-      <View style={[styles.actionRail, chrome, { bottom: BOTTOM_BAR_HEIGHT + spacing.xl * 2 + insets.bottom, gap: railGap, maxHeight: Math.max(0, railRoom) }]} pointerEvents={paused ? "none" : "auto"}>
+      <View style={[styles.actionRail, chrome, { bottom: railBottom, gap: railGap, maxHeight: Math.max(0, railRoom) }]} pointerEvents={paused ? "none" : "auto"}>
         {(mediaKind === "video" && !creatorMuted) || currentStory.music ? (
           <Pressable
             onPress={() => {
@@ -1023,20 +1029,27 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           {/* A count only once there is one, as Instagram does: no "0" or dash on a fresh Story. */}
           {detail?.likeCount ? <Text style={styles.actionCount} maxFontSizeMultiplier={1.3}>{detail.likeCount}</Text> : null}
         </Pressable>
-        {/* Someone else's Story: "Add a comment…" below is the way in. Your own: its comments, here. */}
-        {isOwnStory ? (
+        {/* Comments: on your own Story, to read them; on someone else's, to read and write one. */}
+        {isOwnStory || commentsAllowed ? (
           <Pressable
             onPress={() => {
               emit("comment_open", { storyId: currentStory.id, creatorId: currentStory.ownerId });
+              if (!isOwnStory) setCommentFocus(true);
               setCommentsOpen(true);
             }}
             hitSlop={10}
             style={styles.actionButton}
             accessibilityRole="button"
-            accessibilityLabel={t("common.comments")}
+            accessibilityLabel={isOwnStory ? t("common.comments") : t("storyFeed.addAComment")}
           >
             <Icon style={styles.actionIcon} name={ICONS.comment} />
             {detail?.commentCount ? <Text style={styles.actionCount} maxFontSizeMultiplier={1.3}>{detail.commentCount}</Text> : null}
+          </Pressable>
+        ) : null}
+        {/* A private reply goes to their messages (comments are public). */}
+        {!isOwnStory ? (
+          <Pressable onPress={() => setReplyOpen(true)} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel={commentsAllowed ? t("storyFeed.messageCurrentusernamePrivately", { currentUsername: currentUsername ?? "" }) : t("storyFeed.sendAMessageToCurrentusername", { currentUsername: currentUsername ?? "" })}>
+            <Icon style={styles.actionIcon} name={ICONS.dm} />
           </Pressable>
         ) : null}
         {/* View counts are the owner's (the Activity button at the bottom), as on Instagram: a quieter rail. */}
@@ -1111,7 +1124,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       ) : null}
 
       {currentStory.caption || currentStory.audience === "close_friends" ? (
-        <View style={[styles.footer, chrome, { bottom: BOTTOM_BAR_HEIGHT + spacing.md + insets.bottom }]} pointerEvents={longCaption && !paused ? "box-none" : "none"}>
+        <View style={[styles.footer, chrome, { bottom: bottomBarRoom + spacing.lg + insets.bottom }]} pointerEvents={longCaption && !paused ? "box-none" : "none"}>
           {currentStory.audience === "close_friends" ? (
             <View style={styles.closeFriendsBadge} accessible accessibilityLabel={t("storyFeed.sharedWithCloseFriends")}>
               <Icon name={ICONS.starFilled} size={11} color={colors.onAccent} />
@@ -1124,45 +1137,20 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         </View>
       ) : null}
 
-      {/* Like Instagram: write a comment under someone's Story; your own shows who has seen it. */}
-      <View style={[styles.bottomBar, chrome, { bottom: spacing.md + insets.bottom }]} pointerEvents={paused ? "none" : "auto"}>
-        {isOwnStory ? (
+      {/* Your own Story: who has seen it, and keeping it in a Highlight. */}
+      {isOwnStory ? (
+        <View style={[styles.bottomBar, chrome, { bottom: spacing.md + insets.bottom }]} pointerEvents={paused ? "none" : "auto"}>
           <Pressable onPress={() => setInsightsOpen(true)} style={styles.activityButton} accessibilityRole="button" accessibilityLabel={t("storyFeed.activityViewcountViewsOpenViewers", { viewCount: viewCount ?? 0 })}>
             <Icon name={ICONS.viewers} size={22} color={colors.textPrimary} />
             <Text style={styles.activityLabel}>{viewCount === null ? t("common.activity") : t("storyFeed.views", { count: viewCount })}</Text>
           </Pressable>
-        ) : currentStory.allowComments === "disabled" ? (
-          <Pressable onPress={() => setReplyOpen(true)} style={styles.commentBar} accessibilityRole="button" accessibilityLabel={t("storyFeed.sendAMessageToCurrentusername", { currentUsername: currentUsername ?? "" })}>
-            <Text style={styles.commentPlaceholder}>{t("storyFeed.sendAMessage")}</Text>
-          </Pressable>
-        ) : (
-          <Pressable
-            onPress={() => {
-              emit("comment_open", { storyId: currentStory.id, creatorId: currentStory.ownerId });
-              setCommentFocus(true);
-              setCommentsOpen(true);
-            }}
-            style={styles.commentBar}
-            accessibilityRole="button"
-            accessibilityLabel={t("storyFeed.addAComment")}
-          >
-            <Text style={styles.commentPlaceholder}>{t("common.addAComment")}</Text>
-          </Pressable>
-        )}
-        {!isOwnStory && currentStory.allowComments !== "disabled" ? (
-          // A private reply goes to their messages (comments are public).
-          <Pressable onPress={() => setReplyOpen(true)} hitSlop={8} style={styles.replyButton} accessibilityRole="button" accessibilityLabel={t("storyFeed.messageCurrentusernamePrivately", { currentUsername: currentUsername ?? "" })}>
-            <Icon name={ICONS.dm} size={26} color={colors.textPrimary} />
-          </Pressable>
-        ) : null}
-        {isOwnStory ? (
-          // Keep it after the 24 hours: add it to one of your Highlights, or start a new one.
+          {/* Keep it after the 24 hours: add it to one of your Highlights, or start a new one. */}
           <Pressable onPress={() => setHighlightOpen(true)} style={[styles.activityButton, styles.highlightButton]} accessibilityRole="button" accessibilityLabel={t("storyFeed.addThisStoryToA")}>
             <Icon name={ICONS.add} size={20} color={colors.textPrimary} />
             <Text style={styles.activityLabel}>{highlightAdded ? t("storyFeed.added") : t("common.highlight")}</Text>
           </Pressable>
-        ) : null}
-      </View>
+        </View>
+      ) : null}
 
       {onClose ? (
         <Pressable style={[styles.closeButton, { top: insets.top + spacing.lg }]} onPress={onClose} hitSlop={12} accessibilityRole="button" accessibilityLabel={t("common.close")}>
@@ -1349,17 +1337,6 @@ const styles = StyleSheet.create({
   },
   progressFill: { height: "100%", width: "100%", backgroundColor: colors.textPrimary, transformOrigin: "left" },
   bottomBar: { position: "absolute", left: spacing.md, right: spacing.md, height: BOTTOM_BAR_HEIGHT, flexDirection: "row", alignItems: "center" },
-  commentBar: {
-    flex: 1,
-    height: BOTTOM_BAR_HEIGHT,
-    justifyContent: "center",
-    paddingHorizontal: spacing.md,
-    borderRadius: radii.pill,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.55)",
-    backgroundColor: "rgba(0,0,0,0.25)",
-  },
-  commentPlaceholder: { color: "rgba(255,255,255,0.85)", fontSize: 15 },
   activityButton: { flexDirection: "row", alignItems: "center", gap: spacing.sm, height: BOTTOM_BAR_HEIGHT, paddingHorizontal: spacing.md, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.4)" },
   activityLabel: { color: colors.textPrimary, fontSize: 15, fontWeight: "700" },
   highlightButton: { marginLeft: "auto" },
@@ -1375,7 +1352,6 @@ const styles = StyleSheet.create({
   actionIconLiked: { color: colors.like },
   // Readable over any photo.
   actionCount: { color: colors.textPrimary, fontSize: 14, fontWeight: "700", textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 3, textShadowOffset: { width: 0, height: 1 } },
-  replyButton: { width: BOTTOM_BAR_HEIGHT, height: BOTTOM_BAR_HEIGHT, marginLeft: spacing.sm, alignItems: "center", justifyContent: "center" },
   footer: {
     position: "absolute",
     bottom: spacing.xl,

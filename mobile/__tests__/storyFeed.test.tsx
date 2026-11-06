@@ -102,11 +102,11 @@ async function gesture(from: [number, number], to: [number, number], holdMs = 0)
 }
 const sequence = () => tree.root.findAll((n) => typeof n.type === "string" && n.props.accessibilityRole === "progressbar").map((n) => n.props.accessibilityLabel as string)[0];
 
-test("the right rail is Like, Share, More; view counts are the owner's alone", async () => {
+test("the right rail is Like, Comment, Message, Share, More; view counts are the owner's alone", async () => {
   await renderFeed();
-  const rail = tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && n.props.accessibilityRole === "button" && ["Like", "Unlike", "Comments", "Share", "More"].includes(n.props.accessibilityLabel));
-  // Comments open from "Add a comment…" under the Story (the rail carries them on your own Story only).
-  expect(rail.map((n) => n.props.accessibilityLabel)).toEqual(["Like", "Share", "More"]);
+  const rail = tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && n.props.accessibilityRole === "button" && ["Like", "Unlike", "Add a comment", "Message @alice privately", "Share", "More"].includes(n.props.accessibilityLabel));
+  // Comment and Message are on the right, as on Reels, so nothing along the bottom covers the caption.
+  expect(rail.map((n) => n.props.accessibilityLabel)).toEqual(["Like", "Add a comment", "Message @alice privately", "Share", "More"]);
   expect(texts()).not.toContain("12"); // someone else's Story: no view count (as on Instagram)
   expect(tree.root.findAll((n) => typeof n.props.accessibilityLabel === "string" && /views/.test(n.props.accessibilityLabel))).toHaveLength(0);
   expect(tree.root.findAll((n) => n.props.accessibilityLabel === "12 views. Open viewers and Insights")).toHaveLength(0);
@@ -116,10 +116,10 @@ test("the right rail is Like, Share, More; view counts are the owner's alone", a
   expect(storiesApi.getMyActiveStories).toHaveBeenCalled();
 });
 
-test("under someone's Story: a comment bar; the name opens their profile; your own Story shows its views", async () => {
+test("on someone's Story: Comment on the right opens the comments to write; the name opens their profile; your own Story shows its views", async () => {
   await renderFeed();
   const byLabel = (label: string) => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === label);
-  expect(texts()).toContain("Add a comment…");
+  expect(texts()).not.toContain("Add a comment…");
   await act(async () => byLabel("Add a comment").props.onPress());
   // The comments open with the keyboard up, ready to write.
   expect(tree.root.findByType("CommentsSheet" as never).props).toMatchObject({ visible: true, autoFocus: true });
