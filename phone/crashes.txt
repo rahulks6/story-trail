@@ -1,99 +1,97 @@
-11-05 20:01:12.378 D/AndroidRuntime( 3774): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-11-05 20:01:12.382 I/AiAiEcho( 1453): EchoSearch: WidgetFetcherImpl is initialized with [33] widgets [reason=package added for userId: 0]
-11-05 20:01:12.388 I/ebvk$a  ( 1589): Unable to retrieve flag snapshot for com.google.android.gms.adid#com.google.android.gms, using defaults.
-11-05 20:01:12.389 I/AndroidRuntime( 3774): Using default boot image
-11-05 20:01:12.389 I/AndroidRuntime( 3774): Leaving lock profiling enabled
-11-05 20:01:12.390 W/.gms.persistent( 1215): Long monitor contention with owner highpool[1] (1780) at android.database.sqlite.SQLiteDatabase czub.k()(:com.google.android.gms@242335041@24.23.35 (190800-646585959):362) waiters=0 in android.database.sqlite.SQLiteDatabase czub.k() for 120ms
-11-05 20:01:12.390 I/dfmd    ( 3717): SslGuard completed installation.
-11-05 20:01:12.392 E/CellBroadcastUtils( 1087): getDefaultCellBroadcastReceiverPackageName: no package found
-11-05 20:01:12.396 W/AppOpService(  554): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_SMS, mode = allow, callingUid = 1001, oldMode = allow
-11-05 20:01:12.397 W/AppOpService(  554): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_SMS, mode = allow, callingUid = 1001, oldMode = allow
-11-05 20:01:12.398 W/AppOpService(  554): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_WAP_PUSH, mode = allow, callingUid = 1001, oldMode = allow
-11-05 20:01:12.399 W/AppOpService(  554): Ignored setUidMode call for runtime permission app op: uid = 1001, code = SEND_SMS, mode = allow, callingUid = 1001, oldMode = allow
-11-05 20:01:12.405 I/app_process( 3774): Core platform API reporting enabled, enforcing=false
-11-05 20:01:12.407 I/app_process( 3774): Using CollectorTypeCMC GC.
-11-05 20:01:12.407 W/GetConfigSnapshotOp( 1215): Succeeded but not registered: com.google.android.apps.search.transcription.device#com.google.android.tts [CONTEXT service_id=51 ]
-11-05 20:01:12.409 W/AppOpService(  554): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
-11-05 20:01:12.423 D/ImsResolver( 1087): maybeAddedImsService, packageName: dev.mobile.maestro.test
-11-05 20:01:12.431 V/AdvertisingIdSettings( 1589): The feature flag is not enabled. Not updating Adservices Ad ID.
-11-05 20:01:12.442 I/Bugle   ( 3717): BugleApplicationBase: Bugle version: messages.android_20240528_00_rc01_alldpi.x86_64.phone , Bugle version code: 235003880
-11-05 20:01:12.489 V/MmsProvider( 1087): accessRestricted=false
-11-05 20:01:12.494 W/Looper  ( 1215): Handler (angj) {4bf5fc4} sendMessageAtTime() called with no mQueue
-11-05 20:01:12.494 W/Looper  ( 1215): java.lang.RuntimeException: Handler (angj) {4bf5fc4} sendMessageAtTime() called with no mQueue
-11-05 20:01:12.494 W/Looper  ( 1215): 	at angj.sendMessageAtTime(:com.google.android.gms@242335041@24.23.35 (190800-646585959):21)
-11-05 20:01:12.494 W/Looper  ( 1215): 	at android.os.Handler.sendMessageDelayed(Handler.java:706)
-11-05 20:01:12.494 W/Looper  ( 1215): 	at android.os.Handler.post(Handler.java:436)
-11-05 20:01:12.494 W/Looper  ( 1215): 	at android.app.LoadedApk$ReceiverDispatcher.performReceive(LoadedApk.java:1905)
-11-05 20:01:12.494 W/Looper  ( 1215): 	at android.app.LoadedApk$ReceiverDispatcher$InnerReceiver.performReceive(LoadedApk.java:1721)
-11-05 20:01:12.494 W/Looper  ( 1215): 	at android.app.ActivityThread$ApplicationThread.scheduleRegisteredReceiver(ActivityThread.java:1470)
-11-05 20:01:12.494 W/Looper  ( 1215): 	at android.app.IApplicationThread$Stub.onTransact(IApplicationThread.java:743)
-11-05 20:01:12.494 W/Looper  ( 1215): 	at android.os.Binder.execTransactInternal(Binder.java:1505)
-11-05 20:01:12.494 W/Looper  ( 1215): 	at android.os.Binder.execTransact(Binder.java:1444)
-11-05 20:01:12.503 D/ControlsListingControllerImpl(  909): ServiceConfig reloaded, count: 0
-11-05 20:01:12.508 I/Phlogger( 3717): Unable to retrieve flag snapshot for com.google.android.libraries.performance.primes#com.google.android.apps.messaging, using defaults.
-11-05 20:01:12.509 W/GetConfigSnapshotOp( 1215): Succeeded but not registered: googledata.experiments.mobile.assistant.client_packages.component.assistant_suw.user#com.google.android.googlequicksearchbox [CONTEXT service_id=51 ]
-11-05 20:01:12.509 D/ControlsListingControllerImpl(  909): ServiceConfig reloaded, count: 0
+11-06 07:11:56.796 D/AndroidRuntime( 3819): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-06 07:11:56.799 I/AndroidRuntime( 3819): Using default boot image
+11-06 07:11:56.800 I/AndroidRuntime( 3819): Leaving lock profiling enabled
+11-06 07:11:56.804 D/SessionCommitReceiver( 1150): Removing PromiseIcon for package: dev.mobile.maestro.test, install reason: 0, alreadyAddedPromiseIcon: false
+11-06 07:11:56.805 I/app_process( 3819): Core platform API reporting enabled, enforcing=false
+11-06 07:11:56.805 I/app_process( 3819): Using CollectorTypeCMC GC.
+11-06 07:11:56.836 W/SearchServiceCore( 1573): Abort, client detached.
+11-06 07:11:56.892 I/Fitness ( 1218): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-06 07:11:56.907 I/Fitness ( 1218): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+11-06 07:11:56.912 D/nativeloader( 3819): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+11-06 07:11:56.915 I/RoleService(  551): Granting default roles...
+11-06 07:11:56.927 I/RescueParty(  551): Starting to observe: [android, com.android.settings, com.android.systemui], updated namespace: wifi
+11-06 07:11:56.929 I/Fitness ( 1218): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-06 07:11:56.935 D/nativeloader( 3819): Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+11-06 07:11:56.935 D/app_process( 3819): u_setTimeZoneFilesDirectory("/apex/com.android.tzdata/etc/tz/versioned/8/icu") succeeded. 
+11-06 07:11:56.935 D/app_process( 3819): I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt75l.dat
+11-06 07:11:56.935 W/ModuleInitIntentOp( 1372): Dropping unexpected action com.google.android.gms.phenotype.COMMITTED
+11-06 07:11:56.937 W/ModuleInitIntentOp( 1372): Dropping unexpected action com.google.android.gms.phenotype.COMMITTED
+11-06 07:11:56.938 W/ModuleInitIntentOp( 1372): Dropping unexpected action com.google.android.gms.phenotype.COMMITTED
+11-06 07:11:56.939 D/nativeloader( 3819): Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+11-06 07:11:56.939 W/Role    (  551): Default holder doesn't have required signing certificate: com.google.android.retaildemo:6547c73dee150c103980bfdffe55cc9a011d785dd694a5f99afd8205bcaf1f80
+11-06 07:11:56.940 E/RoleControllerServiceImpl(  551): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION
+11-06 07:11:56.941 D/nativeloader( 3819): Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+11-06 07:11:56.942 I/SyncIntentOperation( 1372): Handling the intent: Intent { act=com.google.android.gms.phenotype.COMMITTED flg=0x10 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.GmsIntentOperationService (has extras) }. [CONTEXT service_id=80 ]
+11-06 07:11:56.942 W/app_process( 3819): Unexpected CPU variant for x86: x86_64.
+11-06 07:11:56.942 W/app_process( 3819): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
+11-06 07:11:56.947 W/Role    (  551): Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58
+11-06 07:11:56.952 I/MdiSyncModule( 1372): flag handling is skipping irrelevant intent.
+11-06 07:11:56.956 E/RoleControllerServiceImpl(  551): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.WALLET
+11-06 07:11:56.957 W/ModuleInitIntentOp( 1372): Dropping unexpected action com.google.android.gms.phenotype.COMMITTED
+11-06 07:11:56.958 W/PeoplePU( 1372): getServiceInfo failed.
+11-06 07:11:56.958 W/PeoplePU( 1372): android.content.pm.PackageManager$NameNotFoundException: ComponentInfo{com.google.android.gms/com.google.android.gms.people.sync.focus.ContactsSyncAdapterService}
+11-06 07:11:56.958 W/PeoplePU( 1372): 	at android.app.ApplicationPackageManager.getServiceInfo(ApplicationPackageManager.java:633)
 --
-11-05 20:01:12.839 D/AndroidRuntime( 3774): Calling main entry com.android.commands.am.Am
-11-05 20:01:12.840 I/CheckinUtil( 1589): Classify the device as Phone. [CONTEXT service_id=130 ]
-11-05 20:01:12.847 D/UiAutomationConnection( 3774): Created on user UserHandle{0}
-11-05 20:01:12.848 W/GetConfigSnapshotOp( 1215): Succeeded but not registered: com.google.android.apps.search.assistant.platform.ondevice.fulfillment.server.pop.user#com.google.android.googlequicksearchbox [CONTEXT service_id=51 ]
-11-05 20:01:12.851 W/GetConfigSnapshotOp( 1215): Succeeded but not registered: com.google.android.apps.search.lens.user#com.google.android.googlequicksearchbox [CONTEXT service_id=51 ]
-11-05 20:01:12.852 I/ActivityManager(  554): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-11-05 20:01:12.858 W/GetConfigSnapshotOp( 1215): Succeeded but not registered: com.google.android.apps.search.omnient#com.google.android.googlequicksearchbox [CONTEXT service_id=51 ]
-11-05 20:01:12.859 W/SharedPreferencesSimSta( 3329): SharedPreferencesSimStateStore: No sim subscription info found for RCS provisioning id
-11-05 20:01:12.859 W/System  ( 1087): A resource failed to call AbstractCursor.close. 
-11-05 20:01:12.859 W/System  ( 1087): A resource failed to call AbstractCursor.close. 
-11-05 20:01:12.859 W/System  ( 1087): A resource failed to call AbstractCursor.close. 
-11-05 20:01:12.859 W/System  ( 1087): A resource failed to call AbstractCursor.close. 
-11-05 20:01:12.859 W/System  ( 1087): A resource failed to call AbstractCursor.close. 
-11-05 20:01:12.859 W/System  ( 1087): A resource failed to call AbstractCursor.close. 
-11-05 20:01:12.861 W/GetConfigSnapshotOp( 1215): Succeeded but not registered: com.google.android.libraries.search.googleapp.user#com.google.android.googlequicksearchbox [CONTEXT service_id=51 ]
-11-05 20:01:12.862 I/CarrierServices( 3717): Skipping writing to Msisdn because this is not main bugle process. [CONTEXT log_prefix="(Sim)" thread_id=56 ]
-11-05 20:01:12.867 W/GetConfigSnapshotOp( 1215): Succeeded but not registered: com.google.android.apps.gsa.pcp.user#com.google.android.googlequicksearchbox [CONTEXT service_id=51 ]
-11-05 20:01:12.869 I/RcsAvailabilityUpdaterL( 3329): updateAvailabilityForRcsProvisioningId. SimId: redacted-pii:sim_id[chars:20,last3:897], currentAvailability: 1, newAvailability: 9, hint: SIM_SWAP
-11-05 20:01:12.870 W/GCM     ( 1215): Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package: flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
-11-05 20:01:12.870 W/GetConfigSnapshotOp( 1215): Succeeded but not registered: com.google.android.apps.search.assistant.user#com.google.android.googlequicksearchbox [CONTEXT service_id=51 ]
-11-05 20:01:12.873 W/NetworkScheduler( 1215): Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package: flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
-11-05 20:01:12.874 W/GetConfigSnapshotOp( 1215): Succeeded but not registered: com.google.android.apps.podcasts_android.user#com.google.android.googlequicksearchbox [CONTEXT service_id=51 ]
-11-05 20:01:12.874 W/GetConfigSnapshotOp( 1215): Succeeded but not registered: com.google.android.apps.search.pronunciationlearning#com.google.android.googlequicksearchbox [CONTEXT service_id=51 ]
-11-05 20:01:12.877 I/CarrierServices( 3717): Updated SIM info: currentSimId: redacted-pii:sim_id[chars:20,last3:897]; imsi: redacted-pii:imsi[chars:15]; rawMsisdn: redacted-pii:phone_number[chars:12,last2:67]; formattedMsisdn: redacted-pii:phone_number[chars:0,last2:]; mccmnc: redacted-pii:sim_operator[chars:6]; gid1: redacted-pii:sim_gid[chars:0]; isFiDevice: false; subId: 1; slotIndex: 0 [CONTEXT log_prefix="(Sim)" thread_id=56 ]
-11-05 20:01:12.877 I/CarrierServices( 3717): First update of the SIM info. [CONTEXT log_prefix="(Sim)" thread_id=56 ]
-11-05 20:01:12.878 W/SharedPreferencesSimSta( 3329): SharedPreferencesSimStateStore: No sim subscription info found for RCS provisioning id
-11-05 20:01:12.881 W/GetConfigSnapshotOp( 1215): Succeeded but not registered: com.google.android.libraries.search.searchbox.user#com.google.android.googlequicksearchbox [CONTEXT service_id=51 ]
-11-05 20:01:12.885 W/GetConfigSnapshotOp( 1215): Succeeded but not registered: com.google.ar.sceneviewer.android.user#com.google.android.googlequicksearchbox [CONTEXT service_id=51 ]
-11-05 20:01:12.887 V/MmsProvider( 1087): accessRestricted=false
-11-05 20:01:12.890 W/GetConfigSnapshotOp( 1215): Succeeded but not registered: com.google.android.apps.search.soundsearch.user#com.google.android.googlequicksearchbox [CONTEXT service_id=51 ]
-11-05 20:01:12.891 I/netd    (  356): tetherGetStats() -> {[]} <0.49ms>
+11-06 07:11:56.998 D/AndroidRuntime( 3819): Calling main entry com.android.commands.am.Am
+11-06 07:11:57.001 D/UiAutomationConnection( 3819): Created on user UserHandle{0}
+11-06 07:11:57.004 I/Blockstore( 1372): [DataStoreImpl] Clearing Blockstore Data for package dev.mobile.maestro [CONTEXT service_id=258 ]
+11-06 07:11:57.004 I/Blockstore( 1372): [DataStoreImpl] Keyless data not found or its IsLastInstallationData = false. [CONTEXT service_id=258 ]
+11-06 07:11:57.005 D/ShortcutService(  551): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=null
+11-06 07:11:57.009 I/BuglePhenotype( 3220): onReceive for bugle package [CONTEXT package_name="com.google.android.apps.messaging#com.google.android.apps.messaging" ]
+11-06 07:11:57.013 I/Bugle   ( 3220): BroadcastReceiverAsyncWorkTracker: Acknowledging broadcast of com.google.android.apps.messaging.shared.experiments.receiver.BuglePhenotypeBroadcastReceiver@1884a2b
+11-06 07:11:57.015 W/PackageManager(  551): Failed registering loading progress callback. Package is fully loaded.
+11-06 07:11:57.015 D/PackageUpdatedTask( 1150): Package updated: mOp=ADD packages=[dev.mobile.maestro.test]
+11-06 07:11:57.016 I/PackageWatchdog(  551): Syncing state, reason: observing new packages
+11-06 07:11:57.016 D/PackageWatchdog(  551): rescue-party-observer added the following packages to monitor [android]
+11-06 07:11:57.016 I/PackageWatchdog(  551): Syncing state, reason: updated observers
+11-06 07:11:57.016 I/PackageWatchdog(  551): Not pruning observers, elapsed time: 0ms
+11-06 07:11:57.017 I/FsaEntryPointSwitcher( 1372): Setting component enabled succeeds.
+11-06 07:11:57.017 W/PeoplePU( 1372): getComponentEnabledSetting failed.
+11-06 07:11:57.017 W/PeoplePU( 1372): java.lang.IllegalArgumentException: Unknown component: ComponentInfo{com.google.android.syncadapters.contacts/com.google.android.syncadapters.contacts.ContactsSyncAdapterService}
+11-06 07:11:57.017 W/PeoplePU( 1372): 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3246)
+11-06 07:11:57.017 W/PeoplePU( 1372): 	at android.os.Parcel.createException(Parcel.java:3226)
+11-06 07:11:57.017 W/PeoplePU( 1372): 	at android.os.Parcel.readException(Parcel.java:3209)
+11-06 07:11:57.017 W/PeoplePU( 1372): 	at android.os.Parcel.readException(Parcel.java:3151)
+11-06 07:11:57.017 W/PeoplePU( 1372): 	at android.content.pm.IPackageManager$Stub$Proxy.getComponentEnabledSetting(IPackageManager.java:6361)
+11-06 07:11:57.017 W/PeoplePU( 1372): 	at android.app.ApplicationPackageManager.getComponentEnabledSetting(ApplicationPackageManager.java:3191)
+11-06 07:11:57.017 W/PeoplePU( 1372): 	at cywf.a(:com.google.android.gms@242335041@24.23.35 (190800-646585959):4)
+11-06 07:11:57.017 W/PeoplePU( 1372): 	at cyoi.a(:com.google.android.gms@242335041@24.23.35 (190800-646585959):208)
+11-06 07:11:57.017 W/PeoplePU( 1372): 	at com.google.android.gms.people.service.SettingsChangedBroadcastIntentOperation.onHandleIntent(:com.google.android.gms@242335041@24.23.35 (190800-646585959):339)
+11-06 07:11:57.017 W/PeoplePU( 1372): 	at com.google.android.chimera.IntentOperation.onHandleIntent(:com.google.android.gms@242335041@24.23.35 (190800-646585959):2)
+11-06 07:11:57.017 W/PeoplePU( 1372): 	at ajom.onHandleIntent(:com.google.android.gms@242335041@24.23.35 (190800-646585959):8)
+11-06 07:11:57.017 W/PeoplePU( 1372): 	at pkf.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):70)
+11-06 07:11:57.017 W/PeoplePU( 1372): 	at pke.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):152)
+11-06 07:11:57.017 W/PeoplePU( 1372): 	at emsz.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):21)
+11-06 07:11:57.017 W/PeoplePU( 1372): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
 --
-11-05 20:05:16.221 I/AndroidRuntime( 3774): VM exiting with result code 0.
-11-05 20:05:16.223 D/InetDiagMessage(  554): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
-11-05 20:05:16.224 D/InetDiagMessage(  554): Destroyed live tcp sockets for uids={20210} in 6ms
-11-05 20:05:16.228 I/netd    (  356): tetherGetStats() -> {[]} <0.62ms>
-11-05 20:05:16.366 I/servicemanager(    0): Caller(pid=554,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
-11-05 20:05:16.377 I/init    (    0): starting service 'artd'...
-11-05 20:05:16.390 I/binder  (    0): undelivered transaction 476984, process died.
-11-05 20:05:16.253 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-11-05 20:05:16.255 W/MagnificationConnectionManager(  554): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-11-05 20:05:16.398 I/init    (    0): ... started service 'artd' has pid 6231
-11-05 20:05:16.399 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 143 (/system/bin/servicemanager)
-11-05 20:05:16.259 V/UiAutomationManager(  554): UiAutomation service owner died
-11-05 20:05:16.260 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-11-05 20:05:16.260 I/AiAiEcho( 1453): Settings changed for uri: content://settings/secure/accessibility_enabled
-11-05 20:05:16.260 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-11-05 20:05:16.260 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-11-05 20:05:16.260 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-11-05 20:05:16.260 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-11-05 20:05:16.260 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-11-05 20:05:16.260 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-11-05 20:05:16.260 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-11-05 20:05:16.261 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-11-05 20:05:16.261 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-11-05 20:05:16.261 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-11-05 20:05:16.261 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-11-05 20:05:16.261 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-11-05 20:05:16.261 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-11-05 20:05:16.261 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-11-05 20:05:16.261 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-11-05 20:05:16.261 W/IPCThreadState(  554): Sending oneway calls to frozen process.
-11-05 20:05:16.261 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 07:15:11.095 I/AndroidRuntime( 3819): VM exiting with result code 0.
+11-06 07:15:11.225 I/init    (    0): starting service 'artd'...
+11-06 07:15:11.100 D/InetDiagMessage(  551): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+11-06 07:15:11.100 D/InetDiagMessage(  551): Destroyed live tcp sockets for uids={20210} in 20ms
+11-06 07:15:11.101 I/netd    (  356): tetherGetStats() -> {[]} <0.28ms>
+11-06 07:15:11.246 I/binder_alloc(    0): 3852: binder_alloc_buf, no vma
+11-06 07:15:11.247 I/binder  (    0): cannot allocate buffer: vma cleared, target dead or dying
+11-06 07:15:11.247 I/binder  (    0): 551:1769 transaction async to 3852:0 failed 509734/29189/-3, size 192-0 line 3544
+11-06 07:15:11.117 I/Zygote  (  357): Process 3852 exited due to signal 9 (Killed)
+11-06 07:15:11.253 I/init    (    0): ... started service 'artd' has pid 6414
+11-06 07:15:11.257 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 144 (/system/bin/servicemanager)
+11-06 07:15:11.259 I/init    (    0): Untracked pid 3819 exited with status 0
+11-06 07:15:11.126 V/ActivityManager(  551): Got obituary of 3852:dev.mobile.maestro
+11-06 07:15:11.261 I/binder  (    0): 586:551 cannot find target node
+11-06 07:15:11.263 I/init    (    0): Untracked pid 3819 did not have an associated service entry and will not be reaped
+11-06 07:15:11.130 I/adbd    (  436): Remote process closed the socket (on MSG_PEEK)
+11-06 07:15:11.132 E/IPCThreadState(  551): Binder transaction failure. id: 509741, BR_*: 29189, error: -22 (Invalid argument)
+11-06 07:15:11.132 W/ActivityManager(  551): pid 551 system sent binder code 18 with flags 1 to frozen apps and got error -32
+11-06 07:15:11.132 W/ActivityManager(  551): Error shutting down UiAutomationConnection
+11-06 07:15:11.133 I/libprocessgroup(  551): Removed cgroup /sys/fs/cgroup/uid_10210/pid_3852
+11-06 07:15:11.133 E/IPCThreadState(  551): Binder transaction failure. id: 509734, BR_*: 29189, error: -3 (No such process)
+11-06 07:15:11.133 W/ActivityManager(  551): pid 551 system sent binder code 1 with flags 1 to frozen apps and got error -32
+11-06 07:15:11.133 D/ActivityManager(  551): Too many transaction errors, throttling freezer binder callback.
+11-06 07:15:11.265 I/binder  (    0): 551:586 transaction async to 0:0 failed 509741/29189/-22, size 88-0 line 3344
+11-06 07:15:11.134 W/MagnificationConnectionManager(  551): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-06 07:15:11.134 V/UiAutomationManager(  551): UiAutomation service owner died
+11-06 07:15:11.134 W/MagnificationConnectionManager(  551): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-06 07:15:11.138 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-06 07:15:11.138 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-06 07:15:11.138 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-06 07:15:11.138 W/IPCThreadState(  551): Sending oneway calls to frozen process.
