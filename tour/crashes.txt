@@ -1,0 +1,98 @@
+11-06 07:45:09.730 D/AndroidRuntime( 3923): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-06 07:45:09.735 I/AppWidgetServiceImpl(  553): getInstalledProvidersForProfiles() 0
+11-06 07:45:09.740 I/AndroidRuntime( 3923): Using default boot image
+11-06 07:45:09.740 I/AndroidRuntime( 3923): Leaving lock profiling enabled
+11-06 07:45:09.741 W/MagnificationConnectionManager(  553): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-06 07:45:09.741 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:45:09.747 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:45:09.749 I/app_process( 3923): Core platform API reporting enabled, enforcing=false
+11-06 07:45:09.749 I/app_process( 3923): Using CollectorTypeCMC GC.
+11-06 07:45:09.753 W/ParceledListSlice(  553): Element #25 is 19764 bytes.
+11-06 07:45:09.755 W/ParceledListSlice(  553): Element #26 is 19800 bytes.
+11-06 07:45:09.758 E/RoleControllerServiceImpl(  553): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.WALLET
+11-06 07:45:09.759 W/ParceledListSlice(  553): Element #27 is 19644 bytes.
+11-06 07:45:09.761 I/ChimeraSrvcProxy( 1219): NullBinder for android.net.action.RECOMMEND_NETWORKS triggering remote TransactionTooLargeException due to Service without Chimera impl
+11-06 07:45:09.762 W/ParceledListSlice(  553): Element #28 is 19552 bytes.
+11-06 07:45:09.763 W/ParceledListSlice(  553): Element #29 is 19664 bytes.
+11-06 07:45:09.764 E/RoleControllerServiceImpl(  553): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.devicelockcontroller, role: android.app.role.SYSTEM_FINANCED_DEVICE_CONTROLLER
+11-06 07:45:09.766 W/PackageManager( 1418): Failure retrieving text 0x7f130786 in package com.android.systemui
+11-06 07:45:09.766 W/PackageManager( 1418): android.content.res.Resources$NotFoundException: String resource ID #0x7f130786
+11-06 07:45:09.766 W/PackageManager( 1418): 	at android.content.res.Resources.getText(Resources.java:466)
+11-06 07:45:09.766 W/PackageManager( 1418): 	at android.app.ApplicationPackageManager.getText(ApplicationPackageManager.java:2405)
+11-06 07:45:09.766 W/PackageManager( 1418): 	at android.appwidget.AppWidgetProviderInfo.loadDescription(AppWidgetProviderInfo.java:484)
+11-06 07:45:09.766 W/PackageManager( 1418): 	at kml.a(PG:341)
+11-06 07:45:09.766 W/PackageManager( 1418): 	at kmg.b(PG:39)
+11-06 07:45:09.766 W/PackageManager( 1418): 	at aaer.g(PG:13)
+11-06 07:45:09.766 W/PackageManager( 1418): 	at kotlinx.coroutines.DispatchedTask.run(PG:114)
+11-06 07:45:09.766 W/PackageManager( 1418): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
+11-06 07:45:09.766 W/PackageManager( 1418): 	at wqm.a(PG:3)
+11-06 07:45:09.766 W/PackageManager( 1418): 	at wpo.run(PG:21)
+11-06 07:45:09.766 W/PackageManager( 1418): 	at wqn.run(PG:5)
+11-06 07:45:09.766 W/PackageManager( 1418): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
+11-06 07:45:09.766 W/PackageManager( 1418): 	at java.util.concurrent.FutureTask.run(FutureTask.java:264)
+11-06 07:45:09.766 W/PackageManager( 1418): 	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:307)
+11-06 07:45:09.766 W/PackageManager( 1418): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+--
+11-06 07:45:10.144 D/AndroidRuntime( 3923): Calling main entry com.android.commands.am.Am
+11-06 07:45:10.145 I/Blockstore( 1602): [DataStoreImpl] Clearing Blockstore Data for package dev.mobile.maestro.test [CONTEXT service_id=258 ]
+11-06 07:45:10.147 I/Blockstore( 1602): [DataStoreImpl] Keyless data not found or its IsLastInstallationData = false. [CONTEXT service_id=258 ]
+11-06 07:45:10.149 D/ImsResolver( 1079): maybeAddedImsService, packageName: com.google.android.gms
+11-06 07:45:10.149 D/UiAutomationConnection( 3923): Created on user UserHandle{0}
+11-06 07:45:10.155 E/czvx    ( 1219): Phenotype API error. Event: # fozr@cf074697, EventCode: COMMIT_CONFIG [CONTEXT service_id=51 ]
+11-06 07:45:10.155 E/czvx    ( 1219): czue: 29501: Stale snapshot for com.google.android.googlequicksearchbox(change count changed - expected 2  but was 1)
+11-06 07:45:10.155 E/czvx    ( 1219): 	at czwc.b(:com.google.android.gms@242335041@24.23.35 (190800-646585959):507)
+11-06 07:45:10.155 E/czvx    ( 1219): 	at czwb.i(:com.google.android.gms@242335041@24.23.35 (190800-646585959):3)
+11-06 07:45:10.155 E/czvx    ( 1219): 	at czvx.h(:com.google.android.gms@242335041@24.23.35 (190800-646585959):18)
+11-06 07:45:10.155 E/czvx    ( 1219): 	at czvx.f(:com.google.android.gms@242335041@24.23.35 (190800-646585959):11)
+11-06 07:45:10.155 E/czvx    ( 1219): 	at boey.hj(:com.google.android.gms@242335041@24.23.35 (190800-646585959):1)
+11-06 07:45:10.155 E/czvx    ( 1219): 	at bofh.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):97)
+11-06 07:45:10.155 E/czvx    ( 1219): 	at emsz.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):21)
+11-06 07:45:10.155 E/czvx    ( 1219): 	at angs.c(:com.google.android.gms@242335041@24.23.35 (190800-646585959):50)
+11-06 07:45:10.155 E/czvx    ( 1219): 	at angs.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):97)
+11-06 07:45:10.155 E/czvx    ( 1219): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-06 07:45:10.155 E/czvx    ( 1219): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-06 07:45:10.155 E/czvx    ( 1219): 	at anmg.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):8)
+11-06 07:45:10.155 E/czvx    ( 1219): 	at java.lang.Thread.run(Thread.java:1012)
+11-06 07:45:10.156 W/AsyncOperation( 1219): operation=CommitToConfigurationOperationCall, opStatusCode=29501 [CONTEXT service_id=51 ]
+11-06 07:45:10.156 W/AsyncOperation( 1219): OperationException[Status{statusCode=Stale snapshot for com.google.android.googlequicksearchbox(change count changed - expected 2  but was 1), resolution=null}]
+11-06 07:45:10.156 W/AsyncOperation( 1219): 	at czvx.h(:com.google.android.gms@242335041@24.23.35 (190800-646585959):48)
+11-06 07:45:10.156 W/AsyncOperation( 1219): 	at czvx.f(:com.google.android.gms@242335041@24.23.35 (190800-646585959):11)
+11-06 07:45:10.156 W/AsyncOperation( 1219): 	at boey.hj(:com.google.android.gms@242335041@24.23.35 (190800-646585959):1)
+11-06 07:45:10.156 W/AsyncOperation( 1219): 	at bofh.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):97)
+11-06 07:45:10.156 W/AsyncOperation( 1219): 	at emsz.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):21)
+11-06 07:45:10.156 W/AsyncOperation( 1219): 	at angs.c(:com.google.android.gms@242335041@24.23.35 (190800-646585959):50)
+11-06 07:45:10.156 W/AsyncOperation( 1219): 	at angs.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):97)
+11-06 07:45:10.156 W/AsyncOperation( 1219): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-06 07:45:10.156 W/AsyncOperation( 1219): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+--
+11-06 07:54:08.585 I/AndroidRuntime( 3923): VM exiting with result code 0.
+11-06 07:54:08.591 I/netd    (  356): tetherGetStats() -> {[]} <0.33ms>
+11-06 07:54:08.600 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.601 W/MagnificationConnectionManager(  553): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-06 07:54:08.601 V/UiAutomationManager(  553): UiAutomation service owner died
+11-06 07:54:08.602 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.602 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.602 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.603 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.603 I/AiAiEcho( 1418): Settings changed for uri: content://settings/secure/accessibility_enabled
+11-06 07:54:08.606 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.606 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.606 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.606 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.607 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.607 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.607 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.607 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.607 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.607 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.607 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.607 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.777 I/init    (    0): ... started service 'artd' has pid 6469
+11-06 07:54:08.778 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 143 (/system/bin/servicemanager)
+11-06 07:54:08.609 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.609 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.609 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.609 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-06 07:54:08.609 I/AiAiEcho( 1418): Predicting[0]:  [CONTEXT sampling_count=5 ]
+11-06 07:54:08.609 I/AiAiEcho( 1418): EchoTargets: 
+11-06 07:54:08.609 I/AiAiEcho( 1418): Filtered by AiAi flag check: 
