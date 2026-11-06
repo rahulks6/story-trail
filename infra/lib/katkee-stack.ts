@@ -82,6 +82,8 @@ export interface KatkeeSettings {
     safeBrowsing: boolean;
     /** Story understanding with Claude (backend stories/story-ai.ts): the worker alone gets the key. */
     storyAi: boolean;
+    /** Which Claude model reads Stories; unset keeps the backend's default. */
+    storyAiModel?: string | undefined;
     /** Google sign-in: the OAuth client IDs whose tokens the API accepts. Empty turns it off. */
     googleClientIds: string[];
     /** Sign in with Apple: the client IDs (the iOS bundle ID) whose identity tokens the API accepts. */
@@ -454,7 +456,7 @@ export class KatkeeStack extends Stack {
       image: ecs.ContainerImage.fromEcrRepository(workerRepo, s.imageTag),
       environment: {
         ...appEnvironment, ADMIN_CONSOLE_ENABLED: "false", WORKER_HEARTBEAT_FILE: "/tmp/katkee-worker-heartbeat",
-        ...(s.providers.storyAi ? { STORY_AI_ENABLED: "true" } : {}),
+        ...(s.providers.storyAi ? { STORY_AI_ENABLED: "true", ...(s.providers.storyAiModel ? { STORY_AI_MODEL: s.providers.storyAiModel } : {}) } : {}),
       },
       // The Anthropic key goes to the worker only: the API never calls Claude.
       secrets: { ...appSecrets, ...(s.providers.storyAi ? { ANTHROPIC_API_KEY: fromSecret("ANTHROPIC_API_KEY") } : {}) },

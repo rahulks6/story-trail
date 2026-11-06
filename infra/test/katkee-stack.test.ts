@@ -257,6 +257,8 @@ describe("least privilege", () => {
     const plain = synth(settings());
     assert.ok(!secretNames(container(plain.template, "worker")).includes("ANTHROPIC_API_KEY"));
     assert.equal(envOf(container(plain.template, "worker")).STORY_AI_ENABLED, undefined);
+    const chosen = synth(settings({ providers: { ...settings().providers, storyAi: true, storyAiModel: "claude-haiku-5-5" } }));
+    assert.equal(envOf(container(chosen.template, "worker")).STORY_AI_MODEL, "claude-haiku-5-5");
   });
 
   it("the services connect as the runtime role; only migrations use the owner", () => {

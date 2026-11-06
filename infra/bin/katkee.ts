@@ -51,6 +51,7 @@ const settings: KatkeeSettings = {
     phone: providers.has("phone") ? { verifyServiceSid: need("twilioVerifyServiceSid"), countries: list("phoneAuthCountries").length ? list("phoneAuthCountries") : ["IN"] } : undefined,
     safeBrowsing: providers.has("safeBrowsing"),
     storyAi: providers.has("storyAi"),
+    storyAiModel: get("storyAiModel"),
     googleClientIds: list("googleClientIds"),
     apple: providers.has("apple") ? { clientIds: list("appleClientIds").length ? list("appleClientIds") : ["com.katkee.app"] } : undefined,
   },
