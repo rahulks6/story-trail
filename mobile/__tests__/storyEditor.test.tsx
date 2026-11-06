@@ -119,24 +119,14 @@ describe("sharing from the editor, like Instagram", () => {
     expect(enqueue.mock.calls[0]![4]).toMatchObject({ audience: "close_friends" });
   });
 
-  it("gives this Story one topic from Story settings, shows it in the summary, and doesn't carry it to the next Story", async () => {
+  it("asks for no topic: Story settings has none, and the Story goes without one (the server works it out)", async () => {
     const enqueue = jest.spyOn(uploadQueue, "enqueueUpload").mockResolvedValue({} as never);
     jest.spyOn(usersApi, "listCloseFriends").mockResolvedValue({ closeFriends: [], limit: 1, offset: 0 });
     await open();
     await press("Story settings: Everyone · Comments on");
-    const chips = () => tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && n.props.accessibilityRole === "radio" && n.props.accessibilityState && ["No topic", "Food", "Travel"].includes(n.props.accessibilityLabel));
-    expect(chips().filter((c) => c.props.accessibilityState.checked).map((c) => c.props.accessibilityLabel)).toEqual(["No topic"]);
-    await press("Travel");
-    await press("Food");
-    expect(chips().filter((c) => c.props.accessibilityState.checked).map((c) => c.props.accessibilityLabel)).toEqual(["Food"]);
-    expect(tree.root.findAll((n: ReactTestInstance) => n.props.accessibilityLabel === "Story settings: Everyone · Comments on · Food").length).toBeGreaterThan(0);
+    expect(tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && ["No topic", "Food", "Travel"].includes(n.props.accessibilityLabel))).toHaveLength(0);
     await press("Share to Your story, everyone");
-    expect(enqueue.mock.calls[0]![4]).toMatchObject({ audience: "public", topic: "Food" });
-    await act(async () => tree.unmount());
-    enqueue.mockClear();
-    await open();
-    await press("Story settings: Everyone · Comments on");
-    await press("Share to Your story, everyone");
+    expect(enqueue.mock.calls[0]![4]).toMatchObject({ audience: "public" });
     expect(enqueue.mock.calls[0]![4]).not.toHaveProperty("topic");
   });
 

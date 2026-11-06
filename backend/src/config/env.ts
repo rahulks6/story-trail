@@ -254,6 +254,17 @@ export const config = {
     // see test/env.ts. Spec section 29's 24h lifetime is the production default.
     ttlSeconds: optionalInt("STORY_TTL_SECONDS", 60 * 60 * 24),
   },
+  storyAi: {
+    // Understands each new Story with Claude (src/modules/stories/story-ai.ts): its topic, a
+    // picture description and a safety reading. On only when the deploy turns it on
+    // (STORY_AI_ENABLED, the "storyAi" provider) AND a real Anthropic key is in the secret: the
+    // secret starts as a placeholder, so deploying first and adding the key later is safe.
+    enabled: process.env.STORY_AI_ENABLED === "true",
+    apiKey: process.env.ANTHROPIC_API_KEY ?? "",
+    model: process.env.STORY_AI_MODEL || "claude-opus-5-5",
+    pollSeconds: optionalInt("STORY_AI_POLL_SECONDS", 10),
+    batchSize: optionalInt("STORY_AI_BATCH_SIZE", 4),
+  },
   scheduledStories: {
     // Publishes scheduled Stories when they are due (src/modules/stories/scheduled.ts). Each
     // round is one indexed query, so checking often keeps "on time" to within these seconds.

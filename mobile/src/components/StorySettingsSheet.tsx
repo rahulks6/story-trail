@@ -1,13 +1,11 @@
 import React from "react";
-import { Modal, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Modal, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Toggle } from "./Toggle";
 import { Pressable } from "./Pressable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { colors, radii, spacing, typography, ICONS } from "../theme";
 import { Icon } from "./Icon";
-import { KeyboardAvoider } from "./KeyboardAvoider";
-import { TOPICS } from "../models/topics";
 import { t } from "../i18n";
 import { topicLabel } from "../i18n/names";
 
@@ -52,20 +50,6 @@ export function storySettingsSummary(s: StorySettings, festivalName?: string | n
   return [s.visibility === "public" ? t("common.everyone") : t("storySettingsSheet.followersOnly"), comments, ...(festivalName ? [festivalName] : []), ...(topic ? [topicLabel(topic)] : [])].join(" · ");
 }
 
-function TopicChip({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }): React.JSX.Element {
-  return (
-    <Pressable
-      style={[styles.chip, selected && styles.chipSelected]}
-      onPress={onPress}
-      accessibilityRole="radio"
-      accessibilityState={{ checked: selected }}
-      accessibilityLabel={label === t("storySettingsSheet.none") ? t("storySettingsSheet.noTopic") : label}
-    >
-      <Text style={[styles.chipLabel, selected && styles.chipLabelSelected]}>{label}</Text>
-    </Pressable>
-  );
-}
-
 function Choice({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }): React.JSX.Element {
   return (
     <Pressable style={styles.row} onPress={onPress} accessibilityRole="radio" accessibilityState={{ checked: selected }} accessibilityLabel={label}>
@@ -77,9 +61,9 @@ function Choice({ label, selected, onPress }: { label: string; selected: boolean
 
 /**
  * Story settings, behind one line in the editor so the canvas stays clear: who can see it,
- * who can comment, whether others can share it, (on a festival day) its festival ring, and its
- * topic, which helps it reach people into that topic. The topic is chosen for each Story; the
- * other settings are remembered for the next one.
+ * who can comment, whether others can share it and (on a festival day) its festival ring. They
+ * are remembered for the next Story. Nothing here needs filling in: a Story's topic and picture
+ * description are worked out by the server (backend stories/story-ai.ts).
  */
 export function StorySettingsSheet({
   visible,
@@ -89,10 +73,6 @@ export function StorySettingsSheet({
   festival,
   joinFestival,
   onJoinFestival,
-  topic = null,
-  onTopicChange,
-  altText,
-  onAltTextChange,
 }: {
   visible: boolean;
   settings: StorySettings;
@@ -101,11 +81,6 @@ export function StorySettingsSheet({
   festival?: { name: string } | null;
   joinFestival?: boolean;
   onJoinFestival?: (join: boolean) => void;
-  topic?: string | null;
-  onTopicChange?: (topic: string | null) => void;
-  /** A description of the picture for screen readers (sent as the Story's altText). */
-  altText?: string;
-  onAltTextChange?: (text: string) => void;
 }): React.JSX.Element {
   const { bottom } = useSafeAreaInsets();
   const set = (patch: Partial<StorySettings>) => onChange({ ...settings, ...patch });
@@ -113,8 +88,7 @@ export function StorySettingsSheet({
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.fill}>
         <Pressable pressEffect="none" style={styles.backdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel={t("common.close")} />
-        {/* Lifted above the keyboard while the picture description is typed. */}
-        <KeyboardAvoider style={[styles.sheet, { paddingBottom: spacing.md + bottom }]} behavior="padding">
+        <View style={[styles.sheet, { paddingBottom: spacing.md + bottom }]}>
           <View style={styles.handle} />
           <Text style={styles.title} accessibilityRole="header">{t("storySettingsSheet.storySettings")}</Text>
           <ScrollView>
@@ -147,40 +121,11 @@ export function StorySettingsSheet({
                 </View>
               ) : null}
             </View>
-            {onTopicChange ? (
-              <>
-                <Text style={styles.section}>{t("storySettingsSheet.topic")}</Text>
-                {/* Every topic in view at once, wrapping onto lines (a sideways strip hid most of them, and the chosen one). */}
-                <View style={styles.chips} accessibilityRole="radiogroup" accessibilityLabel={t("storySettingsSheet.topic")}>
-                  <TopicChip label={t("storySettingsSheet.none")} selected={topic === null} onPress={() => onTopicChange(null)} />
-                  {TOPICS.map((option) => (
-                    <TopicChip key={option} label={topicLabel(option)} selected={topic === option} onPress={() => onTopicChange(option)} />
-                  ))}
-                </View>
-                <Text style={[styles.hint, styles.topicHint]}>{t("storySettingsSheet.helpsPeopleWhoLikeThis")}</Text>
-              </>
-            ) : null}
-            {onAltTextChange ? (
-              <>
-                <Text style={styles.section}>{t("storySettingsSheet.pictureDescription")}</Text>
-                <TextInput
-                  value={altText ?? ""}
-                  onChangeText={onAltTextChange}
-                  maxLength={MAX_ALT_TEXT_LENGTH}
-                  multiline
-                  placeholder={t("storySettingsSheet.pictureDescriptionPlaceholder")}
-                  placeholderTextColor={colors.textSecondary}
-                  style={styles.altInput}
-                  accessibilityLabel={t("storySettingsSheet.pictureDescription")}
-                />
-                <Text style={[styles.hint, styles.topicHint]}>{t("storySettingsSheet.pictureDescriptionHint")}</Text>
-              </>
-            ) : null}
           </ScrollView>
           <Pressable style={styles.done} onPress={onClose} accessibilityRole="button">
             <Text style={styles.doneText}>{t("common.done")}</Text>
           </Pressable>
-        </KeyboardAvoider>
+        </View>
       </View>
     </Modal>
   );
@@ -200,13 +145,6 @@ const styles = StyleSheet.create({
   hint: { ...typography.caption, color: colors.textSecondary },
   radio: { width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: colors.border, alignItems: "center", justifyContent: "center" },
   radioOn: { backgroundColor: colors.accent, borderColor: colors.accent },
-  chips: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xs + 2, paddingVertical: spacing.xs },
-  chip: { minHeight: 32, paddingHorizontal: spacing.sm + 4, justifyContent: "center", borderRadius: radii.pill, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surfaceElevated },
-  chipSelected: { backgroundColor: colors.accent, borderColor: colors.accent },
-  chipLabel: { fontSize: 14, color: colors.textPrimary, fontWeight: "600" },
-  chipLabelSelected: { color: colors.onAccent },
-  topicHint: { marginTop: spacing.xs },
-  altInput: { ...typography.body, color: colors.textPrimary, backgroundColor: colors.surfaceElevated, borderRadius: radii.md, padding: spacing.md, minHeight: 72, textAlignVertical: "top" },
   done: { marginTop: spacing.md, minHeight: 48, borderRadius: radii.md, alignItems: "center", justifyContent: "center", backgroundColor: colors.accent },
   doneText: { color: colors.onAccent, fontSize: 16, fontWeight: "700" },
 });

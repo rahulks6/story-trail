@@ -249,6 +249,16 @@ describe("least privilege", () => {
     assert.ok(!secretNames(container(plain.template, "api")).includes("PHONE_IDENTITY_SECRET"));
   });
 
+  it("the Anthropic key goes to the worker alone, and only with story understanding on", () => {
+    assert.ok(secretNames(container(template, "worker")).includes("ANTHROPIC_API_KEY"));
+    assert.equal(envOf(container(template, "worker")).STORY_AI_ENABLED, "true");
+    assert.ok(!secretNames(container(template, "api")).includes("ANTHROPIC_API_KEY"), "the API never calls Claude");
+    assert.equal(envOf(container(template, "api")).STORY_AI_ENABLED, undefined);
+    const plain = synth(settings());
+    assert.ok(!secretNames(container(plain.template, "worker")).includes("ANTHROPIC_API_KEY"));
+    assert.equal(envOf(container(plain.template, "worker")).STORY_AI_ENABLED, undefined);
+  });
+
   it("the services connect as the runtime role; only migrations use the owner", () => {
     const valueFrom = (name: string, key: string) => JSON.stringify(container(template, name).Secrets!.find((s) => s.Name === key)!.ValueFrom);
     for (const name of ["api", "worker"]) assert.match(valueFrom(name, "PGPASSWORD"), /DatabaseRuntimeSecret/);
@@ -387,9 +397,9 @@ describe("modes and settings", () => {
       [{ adminAllowedCidrs: ["admin-office"] }, /is not an IPv4 range/],
       [{ imageTag: "latest tag" }, /latest tag is not a Docker image tag/],
       [{ migrationImageTag: "v2;rm" }, /v2;rm is not a Docker image tag/],
-      [{ providers: { fcm: false, safeBrowsing: false, googleClientIds: [], phone: { verifyServiceSid: "service", countries: ["IN"] } } }, /Twilio Verify service SID/],
-      [{ providers: { fcm: false, safeBrowsing: false, googleClientIds: [], phone: { verifyServiceSid: "VA0123456789abcdef0123456789abcdef", countries: ["India"] } } }, /ISO country codes/],
-      [{ providers: { fcm: false, safeBrowsing: false, googleClientIds: [], apple: { clientIds: [] } } }, /appleClientIds must be the iOS bundle ID/],
+      [{ providers: { fcm: false, safeBrowsing: false, storyAi: false, googleClientIds: [], phone: { verifyServiceSid: "service", countries: ["IN"] } } }, /Twilio Verify service SID/],
+      [{ providers: { fcm: false, safeBrowsing: false, storyAi: false, googleClientIds: [], phone: { verifyServiceSid: "VA0123456789abcdef0123456789abcdef", countries: ["India"] } } }, /ISO country codes/],
+      [{ providers: { fcm: false, safeBrowsing: false, storyAi: false, googleClientIds: [], apple: { clientIds: [] } } }, /appleClientIds must be the iOS bundle ID/],
       [{ monthlyBudgetUsd: Number.NaN }, /monthlyBudgetUsd/],
       [{ databaseHost: "db.example.com" }, /databaseHost must be an RDS endpoint in ap-south-1/],
       [{ websiteDomainName: "https://katkee.example" }, /websiteDomainName must be a host name/],

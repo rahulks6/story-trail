@@ -23,6 +23,7 @@ import { ReachWorker } from "./modules/recommendations/reach-worker";
 import { ReturnReasonsWorker } from "./modules/reminders/return-reasons";
 import { reachSettings } from "./modules/recommendations/reach";
 import { ScheduledStoriesWorker } from "./modules/stories/scheduled";
+import { ClaudeStoryAi, StoryAiWorker, storyAiActive } from "./modules/stories/story-ai";
 import { CallTimeoutWorker } from "./modules/calls/call-timeouts";
 
 export function createReachWorker(): ReachWorker {
@@ -47,6 +48,18 @@ export function createScheduledStoriesWorker(): ScheduledStoriesWorker {
   return new ScheduledStoriesWorker({
     everyMs: config.scheduledStories.pollSeconds * 1000,
     batchSize: config.scheduledStories.batchSize,
+    log: (event) => console.log(JSON.stringify({ ts: new Date().toISOString(), ...event })),
+  });
+}
+
+/** Story understanding (stories/story-ai.ts); null while it's off or the key is still the placeholder. */
+export function createStoryAiWorker(): StoryAiWorker | null {
+  if (!storyAiActive()) return null;
+  return new StoryAiWorker({
+    ai: new ClaudeStoryAi(config.storyAi.apiKey, config.storyAi.model),
+    store: mediaStorage,
+    everyMs: config.storyAi.pollSeconds * 1000,
+    batchSize: config.storyAi.batchSize,
     log: (event) => console.log(JSON.stringify({ ts: new Date().toISOString(), ...event })),
   });
 }
@@ -87,10 +100,12 @@ if (require.main === module) {
     ? new CallTimeoutWorker({ everyMs: 5000, log: (event) => console.log(JSON.stringify({ ts: new Date().toISOString(), ...event })) })
     : null;
   const scheduled = config.scheduledStories.enabled ? createScheduledStoriesWorker() : null;
-  Promise.all([worker.start(), push.start(), reach?.start(), reasons?.start(), calls?.start(), scheduled?.start()])
+  const storyAi = createStoryAiWorker();
+  Promise.all([worker.start(), push.start(), reach?.start(), reasons?.start(), calls?.start(), scheduled?.start(), storyAi?.start()])
     .then(() => console.log(JSON.stringify({
       ts: new Date().toISOString(), event: "worker_started", store: mediaStorage.kind, queue: config.media.queue.driver,
       pushProviders: [...providersFromConfig().keys()],
+      storyAi: storyAi ? config.storyAi.model : config.storyAi.enabled ? "waiting for ANTHROPIC_API_KEY" : "off",
     })))
     .catch((error) => {
       console.error("Worker failed to start:", error);
@@ -98,7 +113,7 @@ if (require.main === module) {
     });
   const shutdown = () => {
     // Finishes the job in hand; an interrupted job is retried after its lease expires.
-    void Promise.all([worker.stop(), push.stop(), reach?.stop(), reasons?.stop(), calls?.stop(), scheduled?.stop()]).then(closeDatabase).finally(() => process.exit(0));
+    void Promise.all([worker.stop(), push.stop(), reach?.stop(), reasons?.stop(), calls?.stop(), scheduled?.stop(), storyAi?.stop()]).then(closeDatabase).finally(() => process.exit(0));
   };
   process.on("SIGTERM", shutdown);
   process.on("SIGINT", shutdown);

@@ -1,6 +1,6 @@
 # Katkee Privacy Policy
 
-**Last updated:** 2 November 2026
+**Last updated:** 6 November 2026
 
 This policy explains what Katkee collects, how we use it, who can see it, how long we keep it
 and the choices you have. It covers the Katkee apps for iPhone and Android, the website at
@@ -45,8 +45,24 @@ shares, and the direct messages you send (including photos and videos, and
 Stories you share into a conversation). A photo or video you send in a message
 can be opened only by you and the person you sent it to.
 
-If you give a Story a topic (such as Food or Cricket) in its settings, we
-store it with the Story and use it to order Home.
+### How Katkee understands your Stories
+So that you don't have to tag your Stories, Katkee works out what each one is
+about. When you post a Story, our servers send its picture (for a video, its
+cover frame), its caption, the words written on it and the name of its song
+to Anthropic's Claude, an AI service. Claude gives back:
+
+- its **topic**, from the same list of topics as Your interests (such as Food
+  or Cricket), which we store with the Story and use to show it to people who
+  enjoy that topic;
+- a **description of the picture** for people who use a screen reader, which
+  we keep with the Story unless you wrote your own;
+- whether it may show content that breaks our rules, which we keep with the
+  Story so our team can review it.
+
+Anthropic processes your Story only to give us this answer, under terms that
+don't allow it to train its AI models on it. Nothing else about you is sent:
+not your name, username, account or who you are. If an older version of the
+app let you choose a topic yourself, your choice is kept.
 
 If you add a song to a Story, we record which song from Katkee's music
 library and which part of it plays. The songs are openly licensed and credited
@@ -303,10 +319,14 @@ message is kept as evidence for the moderator.
   network addresses of the two phones, never what's said or shown.
 - **Google**: Google sign-in, if you use it, and Safe Browsing checks of
   links posted in Katkee.
+- **Anthropic**: its AI service, Claude, works out each Story's topic and
+  writes a description of its picture (see "How Katkee understands your
+  Stories" above).
 
 They process data only to provide these services to us. Our servers,
 database and files are in India (Amazon Web Services, Mumbai); Twilio,
-Google and Apple may process the data they handle for us outside India.
+Google, Apple and Anthropic may process the data they handle for us outside
+India.
 
 **Wherever you use Katkee from, your data is stored and processed in India.**
 If you live in the European Economic Area, the UK or Switzerland, you give it

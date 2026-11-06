@@ -13,8 +13,8 @@ const flush = async () => { for (let i = 0; i < 6; i++) await act(async () => { 
 const press = (label: string) => act(async () => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === label).props.onPress());
 afterEach(async () => { await act(async () => tree?.unmount()); jest.restoreAllMocks(); });
 
-test("a picture description from Story settings goes with the Story, trimmed", async () => {
-  const enqueue = jest.spyOn(uploadQueue, "enqueueUpload").mockResolvedValue({} as never);
+test("Story settings asks for no picture description: the server writes one", async () => {
+  jest.spyOn(uploadQueue, "enqueueUpload").mockResolvedValue({} as never);
   await act(async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     tree = create(<StoryEditorScreen navigation={{ goBack: jest.fn(), replace: jest.fn(), reset: jest.fn() } as any} route={{ key: "e", name: "StoryEditor", params: { mediaUri: "file:///p.jpg", kind: "photo", mimeType: "image/jpeg", width: 1080, height: 1920 } } as any} />);
@@ -23,10 +23,7 @@ test("a picture description from Story settings goes with the Story, trimmed", a
   await act(async () => media.props.onLayout({ nativeEvent: { layout: { x: 0, y: 0, width: 400, height: 800 } } }));
   await flush();
   await press("Story settings: Everyone · Comments on");
-  const field = tree.root.find((n: ReactTestInstance) => n.type === TextInput && n.props.accessibilityLabel === "Picture description");
-  await act(async () => field.props.onChangeText("  Chai on a rainy window sill  "));
-  await press("Share to Your story, everyone");
-  expect(enqueue.mock.calls[0]![4]).toMatchObject({ altText: "Chai on a rainy window sill" });
+  expect(tree.root.findAll((n: ReactTestInstance) => n.type === TextInput && n.props.accessibilityLabel === "Picture description")).toHaveLength(0);
 });
 
 test("no description sends none", async () => {

@@ -148,10 +148,8 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   const [collaborator, setCollaborator] = useState<CollabPerson | null>(null);
   const [collabOpen, setCollabOpen] = useState(false);
   const [captionFocused, setCaptionFocused] = useState(false);
-  // This Story's topic (Story settings sheet): chosen for each Story, never remembered for the next.
-  const [topic, setTopic] = useState<string | null>(null);
-  // A description of the picture for screen readers (Story settings), sent with the Story.
-  const [altText, setAltText] = useState("");
+  // A Story's topic and picture description aren't asked for: the server works them out from
+  // the Story itself (backend stories/story-ai.ts), so posting stays one tap.
   useEffect(() => {
     void loadStorySettings().then((saved) => {
       setSettings(saved);
@@ -315,7 +313,6 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         nextZIndex.current = Math.max(nextZIndex.current, ...saved.draft.overlays.map((o) => o.zIndex + 1));
         setAudience(saved.audience);
         if (saved.audience !== "close_friends") setSettings((current) => ({ ...current, visibility: saved.audience as StoryVisibility }));
-        setTopic(saved.topic ?? null);
       }
       setRestored(true);
     });
@@ -329,13 +326,13 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
     if (!restored || !user) return;
     const timer = setTimeout(() => {
       if (hasMeaningfulEdits(draft)) {
-        void savePendingDraft(user.id, mediaUri, { draft, audience, mimeType, savedAt: new Date().toISOString(), ...(topic ? { topic } : {}) });
+        void savePendingDraft(user.id, mediaUri, { draft, audience, mimeType, savedAt: new Date().toISOString() });
       } else {
         void clearPendingDraft(user.id, mediaUri);
       }
     }, 800);
     return () => clearTimeout(timer);
-  }, [restored, draft, audience, topic, mediaUri, mimeType, user?.id]);
+  }, [restored, draft, audience, mediaUri, mimeType, user?.id]);
 
   const onContainerLayout = (e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
@@ -680,8 +677,6 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           ...(music ? { music: { trackId: music.track.id, startMs: music.startMs, durationMs: music.durationMs } } : {}),
           // Public festival Stories join the festival's ring on Home.
           ...(festival && joinFestival && target === "public" ? { festival: festival.slug } : {}),
-          ...(topic ? { topic } : {}),
-          ...(altText.trim() ? { altText: altText.trim() } : {}),
           ...(publishAt ? { publishAt: publishAt.toISOString() } : {}),
           ...(collaborator && target !== "close_friends" ? { collaboratorId: collaborator.id } : {}),
         },
@@ -1030,9 +1025,9 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               hitSlop={8}
               style={[styles.visibility, styles.visibilityShrink]}
               accessibilityRole="button"
-              accessibilityLabel={t("storyEditor.storySettingsSummary", { summary: storySettingsSummary({ ...settings, visibility: storyAudience }, festival && joinFestival && storyAudience === "public" ? festival.name : null, topic) })}
+              accessibilityLabel={t("storyEditor.storySettingsSummary", { summary: storySettingsSummary({ ...settings, visibility: storyAudience }, festival && joinFestival && storyAudience === "public" ? festival.name : null) })}
             >
-              <Text style={styles.visibilityLabel} numberOfLines={1}>{storySettingsSummary({ ...settings, visibility: storyAudience }, festival && joinFestival && storyAudience === "public" ? festival.name : null, topic)}</Text>
+              <Text style={styles.visibilityLabel} numberOfLines={1}>{storySettingsSummary({ ...settings, visibility: storyAudience }, festival && joinFestival && storyAudience === "public" ? festival.name : null)}</Text>
               <Icon name={ICONS.chevron} size={14} color={colors.textPrimary} />
             </Pressable>
             <Pressable
@@ -1149,10 +1144,6 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         festival={festival}
         joinFestival={joinFestival}
         onJoinFestival={setJoinFestival}
-        topic={topic}
-        onTopicChange={setTopic}
-        altText={altText}
-        onAltTextChange={setAltText}
       />
       <TextToolModal
         // Starts fresh each time it opens: new text, or the text being edited.

@@ -168,7 +168,7 @@ under 18, the Families policy doesn't apply.
 **Data safety**. These answers match `legal/PRIVACY_POLICY.md` and the iOS privacy manifest.
 - Data is **encrypted in transit**: Yes.
 - People **can request deletion**: Yes.
-- **Shared** with third parties: none (AWS, Firebase, Twilio and Google Safe Browsing process
+- **Shared** with third parties: none (AWS, Firebase, Twilio, Google Safe Browsing and Anthropic process
   data on Katkee's behalf, which Google doesn't count as sharing).
 
 | Data type (Google's names) | Collected | Required or optional | Purposes |

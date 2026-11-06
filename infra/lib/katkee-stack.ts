@@ -80,6 +80,8 @@ export interface KatkeeSettings {
     apns?: { bundleId: string } | undefined;
     phone?: { verifyServiceSid: string; countries: string[] } | undefined;
     safeBrowsing: boolean;
+    /** Story understanding with Claude (backend stories/story-ai.ts): the worker alone gets the key. */
+    storyAi: boolean;
     /** Google sign-in: the OAuth client IDs whose tokens the API accepts. Empty turns it off. */
     googleClientIds: string[];
     /** Sign in with Apple: the client IDs (the iOS bundle ID) whose identity tokens the API accepts. */
@@ -110,6 +112,9 @@ export const PROVIDER_CREDENTIALS = {
   // The Sign in with Apple key (.p8): signs the client secret for Apple's token and revoke endpoints.
   apple: ["APPLE_TEAM_ID", "APPLE_KEY_ID", "APPLE_PRIVATE_KEY"],
   safeBrowsing: ["SAFE_BROWSING_API_KEY"],
+  // An Anthropic API key (sk-ant-...). Only the worker reads it; until it's replaced the worker
+  // leaves Stories un-understood (the backend checks the sk-ant- prefix).
+  storyAi: ["ANTHROPIC_API_KEY"],
 } as const;
 
 const API_PORT = 4000;
@@ -447,8 +452,12 @@ export class KatkeeStack extends Stack {
     const workerTask = new ecs.FargateTaskDefinition(this, "WorkerTask", { cpu: 1024, memoryLimitMiB: 2048, ephemeralStorageGiB: 50, runtimePlatform });
     const workerContainer = workerTask.addContainer("worker", {
       image: ecs.ContainerImage.fromEcrRepository(workerRepo, s.imageTag),
-      environment: { ...appEnvironment, ADMIN_CONSOLE_ENABLED: "false", WORKER_HEARTBEAT_FILE: "/tmp/katkee-worker-heartbeat" },
-      secrets: appSecrets,
+      environment: {
+        ...appEnvironment, ADMIN_CONSOLE_ENABLED: "false", WORKER_HEARTBEAT_FILE: "/tmp/katkee-worker-heartbeat",
+        ...(s.providers.storyAi ? { STORY_AI_ENABLED: "true" } : {}),
+      },
+      // The Anthropic key goes to the worker only: the API never calls Claude.
+      secrets: { ...appSecrets, ...(s.providers.storyAi ? { ANTHROPIC_API_KEY: fromSecret("ANTHROPIC_API_KEY") } : {}) },
       readonlyRootFilesystem: true,
       stopTimeout: Duration.seconds(120), // finish the job in hand; an interrupted one is retried after its lease
       healthCheck: {
