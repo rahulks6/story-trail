@@ -1,6 +1,6 @@
 {
   "providers": "fcm,storyAi",
-  "imageTag": "r42",
+  "imageTag": "r43",
   "apiDomainName": "api.katkee.com",
   "apiCertificateArn": "arn:aws:acm:ap-south-1:249101171547:certificate/34b3ab43-8595-40f0-9ff4-7c6c3bebcebb",
   "websiteDomainName": "katkee.com",
@@ -18,6 +18,5 @@
   "databaseInstanceType": "t4g.small",
   "databaseMultiAz": "false",
   "natGateways": "1",
-  "apiMinTasks": "1",
-  "migrationImageTag": "r43"
+  "apiMinTasks": "1"
 }
