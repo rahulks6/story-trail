@@ -1,0 +1,101 @@
+11-06 07:42:09.237 D/AndroidRuntime( 3704): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-06 07:42:09.239 W/AppOpService(  556): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_WAP_PUSH, mode = allow, callingUid = 1001, oldMode = allow
+11-06 07:42:09.240 W/AppOpService(  556): Ignored setUidMode call for runtime permission app op: uid = 1001, code = SEND_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-06 07:42:09.240 W/AppOpService(  556): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+11-06 07:42:09.240 W/TimedProcessReaper( 1554): Scheduling killing of process to refresh configuration
+11-06 07:42:09.245 I/AndroidRuntime( 3704): Using default boot image
+11-06 07:42:09.245 I/AndroidRuntime( 3704): Leaving lock profiling enabled
+11-06 07:42:09.250 W/TimedProcessReaper( 1554): Scheduling killing of process to refresh configuration
+11-06 07:42:09.250 I/AppsFilter(  556): interaction: PackageSetting{2ff0200 com.android.microdroid.empty_payload/10187} -> PackageSetting{5300a39 dev.mobile.maestro.test/10211} BLOCKED
+11-06 07:42:09.252 W/TimedProcessReaper( 1554): Scheduling killing of process to refresh configuration
+11-06 07:42:09.254 I/HeterodyneSyncScheduler( 1229): Scheduling Phenotype for a PhenotypeSyncImmediately(6, com.google.android.gms.checkin.binary) one off with window [1, 2] in seconds [CONTEXT service_id=51 ]
+11-06 07:42:09.256 I/app_process( 3704): Core platform API reporting enabled, enforcing=false
+11-06 07:42:09.256 I/app_process( 3704): Using CollectorTypeCMC GC.
+11-06 07:42:09.258 W/GetConfigSnapshotOp( 1229): Succeeded but not registered: com.google.android.libraries.performance.primes#com.google.android.apps.messaging [CONTEXT service_id=51 ]
+11-06 07:42:09.260 W/GetConfigSnapshotOp( 1229): Succeeded but not registered: com.google.android.libraries.notifications.platform#com.google.android.apps.messaging [CONTEXT service_id=51 ]
+11-06 07:42:09.261 W/GetConfigSnapshotOp( 1229): Succeeded but not registered: com.google.android.apps.messaging.auto#com.google.android.apps.messaging [CONTEXT service_id=51 ]
+11-06 07:42:09.265 W/GetConfigSnapshotOp( 1229): Succeeded but not registered: com.google.android.apps.messaging.auto#com.google.android.apps.messaging [CONTEXT service_id=51 ]
+11-06 07:42:09.266 D/CompatChangeReporter( 3417): Compat change id reported: 263076149; UID 10129; state: ENABLED
+11-06 07:42:09.269 D/ShortcutService(  556): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=com.google.android.apps.messaging
+11-06 07:42:09.269 D/ShortcutService(  556): Getting shortcuts for launcher= com.android.systemuiuser=0 pkg=com.google.android.apps.messaging
+11-06 07:42:09.279 I/AppWidgetServiceImpl(  556): getInstalledProvidersForProfiles() 0
+11-06 07:42:09.287 W/ParceledListSlice(  556): Element #25 is 19764 bytes.
+11-06 07:42:09.287 W/ParceledListSlice(  556): Element #26 is 19800 bytes.
+11-06 07:42:09.288 W/ParceledListSlice(  556): Element #27 is 19644 bytes.
+11-06 07:42:09.288 W/ParceledListSlice(  556): Element #28 is 19552 bytes.
+11-06 07:42:09.288 W/ParceledListSlice(  556): Element #29 is 19664 bytes.
+11-06 07:42:09.289 W/PackageManager( 1463): Failure retrieving text 0x7f130786 in package com.android.systemui
+11-06 07:42:09.289 W/PackageManager( 1463): android.content.res.Resources$NotFoundException: String resource ID #0x7f130786
+11-06 07:42:09.289 W/PackageManager( 1463): 	at android.content.res.Resources.getText(Resources.java:466)
+11-06 07:42:09.289 W/PackageManager( 1463): 	at android.app.ApplicationPackageManager.getText(ApplicationPackageManager.java:2405)
+11-06 07:42:09.289 W/PackageManager( 1463): 	at android.appwidget.AppWidgetProviderInfo.loadDescription(AppWidgetProviderInfo.java:484)
+11-06 07:42:09.289 W/PackageManager( 1463): 	at kml.a(PG:341)
+11-06 07:42:09.289 W/PackageManager( 1463): 	at kmg.b(PG:39)
+11-06 07:42:09.289 W/PackageManager( 1463): 	at aaer.g(PG:13)
+11-06 07:42:09.289 W/PackageManager( 1463): 	at kotlinx.coroutines.DispatchedTask.run(PG:114)
+11-06 07:42:09.289 W/PackageManager( 1463): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
+11-06 07:42:09.289 W/PackageManager( 1463): 	at wqm.a(PG:3)
+--
+11-06 07:42:09.757 D/AndroidRuntime( 3704): Calling main entry com.android.commands.am.Am
+11-06 07:42:09.767 D/UiAutomationConnection( 3704): Created on user UserHandle{0}
+11-06 07:42:09.768 I/ActivityManager(  556): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+11-06 07:42:09.769 D/ConnectivityService(  556): NetReassign [102 : null → 100] [c 0] [a 0] [i 1]
+11-06 07:42:09.769 D/OemPaidWifiNetworkFactory(  556): got request NetworkRequest [ REQUEST id=102, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10129 RequestorUid: 10129 RequestorPkg: com.google.android.apps.safetyhub UnderlyingNetworks: Null] ]
+11-06 07:42:09.769 D/MultiInternetWifiNetworkFactory(  556): got request NetworkRequest [ REQUEST id=102, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10129 RequestorUid: 10129 RequestorPkg: com.google.android.apps.safetyhub UnderlyingNetworks: Null] ]
+11-06 07:42:09.769 D/WifiNetworkFactory(  556): got request NetworkRequest [ REQUEST id=102, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10129 RequestorUid: 10129 RequestorPkg: com.google.android.apps.safetyhub UnderlyingNetworks: Null] ]
+11-06 07:42:09.769 D/UntrustedWifiNetworkFactory(  556): got request NetworkRequest [ REQUEST id=102, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10129 RequestorUid: 10129 RequestorPkg: com.google.android.apps.safetyhub UnderlyingNetworks: Null] ]
+11-06 07:42:09.770 I/AiAiEcho( 1463): AppIndexer Package:[dev.mobile.maestro.test] UserProfile:[0] Enabled:[true].
+11-06 07:42:09.770 I/AiAiEcho( 1463): AppFetcherImplV2 updateApps package:[dev.mobile.maestro.test], userId:[0], reason:[package is updated.].
+11-06 07:42:09.772 W/AllAppsList( 1186): updatePromiseInstallInfo: no Activities matched updated package, removing all apps from package=dev.mobile.maestro.test
+11-06 07:42:09.781 W/GetConfigSnapshotOp( 1229): Succeeded but not registered: com.google.android.libraries.notifications.platform#com.google.android.apps.safetyhub [CONTEXT service_id=51 ]
+11-06 07:42:09.781 W/GetConfigSnapshotOp( 1229): Succeeded but not registered: com.google.android.libraries.performance.primes#com.google.android.apps.safetyhub [CONTEXT service_id=51 ]
+11-06 07:42:09.782 W/GetConfigSnapshotOp( 1229): Succeeded but not registered: com.google.android.apps.safetyhub#com.google.android.apps.safetyhub [CONTEXT service_id=51 ]
+11-06 07:42:09.787 D/EGL_emulation(  909): app_time_stats: avg=4150.27ms min=4150.27ms max=4150.27ms count=1
+11-06 07:42:09.790 I/AstreaHttpConnection( 1463): DOWNLOAD COMPLETE: Downloaded unknown number of bytes from https://storage.googleapis.com/captions/aiai-en-US-v3003.zip.
+11-06 07:42:09.791 W/GetConfigSnapshotOp( 1229): Succeeded but not registered: com.google.android.libraries.mdi.sync#com.google.android.apps.safetyhub [CONTEXT service_id=51 ]
+11-06 07:42:09.794 I/.apps.messaging( 3358): Background concurrent mark compact GC freed 3597KB AllocSpace bytes, 10(520KB) LOS objects, 49% free, 8159KB/15MB, paused 162.885ms,43.365ms total 528.220ms
+11-06 07:42:09.804 I/HeterodyneSyncScheduler( 1229): Scheduling Phenotype for a PhenotypeSyncImmediately(6, com.google.android.libraries.consentverifier#com.google.android.apps.messaging) one off with window [1, 2] in seconds [CONTEXT service_id=51 ]
+11-06 07:42:09.821 W/TimedProcessReaper( 3358): Scheduling killing of process to refresh configuration
+11-06 07:42:09.877 W/TimedProcessReaper( 3417): Scheduling killing of process to refresh configuration
+11-06 07:42:09.879 W/TimedProcessReaper( 3417): Scheduling killing of process to refresh configuration
+11-06 07:42:09.880 W/TimedProcessReaper( 3417): Scheduling killing of process to refresh configuration
+11-06 07:42:09.883 W/TimedProcessReaper( 3417): Scheduling killing of process to refresh configuration
+11-06 07:42:09.889 V/GrammaticalInflectionUtils(  556): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@d425f66, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+11-06 07:42:09.893 I/PhenotypeBackgroundRecv( 1554): Successfully updated snapshot for com.google.android.libraries.consentverifier#com.google.android.googlequicksearchbox
+11-06 07:42:09.894 E/SmsApplication( 1071): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
+11-06 07:42:09.895 W/AppOpService(  556): Ignored setUidMode call for runtime permission app op: uid = 10134, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+11-06 07:42:09.898 I/AppsFilter(  556): interaction: PackageSetting{2ff0200 com.android.microdroid.empty_payload/10187} -> PackageSetting{f096c07 dev.mobile.maestro/10210} BLOCKED
+11-06 07:42:09.901 E/CellBroadcastUtils( 1071): getDefaultCellBroadcastReceiverPackageName: no package found
+11-06 07:42:09.902 W/AppOpService(  556): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_SMS, mode = allow, callingUid = 1001, oldMode = allow
+--
+11-06 07:45:47.135 I/AndroidRuntime( 3704): VM exiting with result code 0.
+11-06 07:45:47.274 I/init    (    0): starting service 'artd'...
+11-06 07:45:47.146 V/ActivityManager(  556): Got obituary of 3736:dev.mobile.maestro
+11-06 07:45:47.147 W/ActivityManager(  556): pid 556 system sent binder code 1 with flags 1 to frozen apps and got error -32
+11-06 07:45:47.148 W/MagnificationConnectionManager(  556): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-06 07:45:47.149 W/MagnificationConnectionManager(  556): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-06 07:45:47.149 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.149 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.149 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.150 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.150 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.150 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.152 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.152 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.152 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.152 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.152 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.153 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.153 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.153 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.153 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.154 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.154 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.154 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.154 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.154 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.154 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.154 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.155 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.155 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:45:47.155 W/IPCThreadState(  556): Sending oneway calls to frozen process.
