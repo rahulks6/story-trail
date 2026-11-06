@@ -1,97 +1,98 @@
-11-05 20:01:26.860 D/AndroidRuntime( 3834): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-11-05 20:01:26.866 I/AndroidRuntime( 3834): Using default boot image
-11-05 20:01:26.866 I/AndroidRuntime( 3834): Leaving lock profiling enabled
-11-05 20:01:26.868 I/app_process( 3834): Core platform API reporting enabled, enforcing=false
-11-05 20:01:26.868 I/netd    (  354): bandwidthRemoveInterfaceQuota(eth0) <5.86ms>
-11-05 20:01:26.870 I/app_process( 3834): Using CollectorTypeCMC GC.
-11-05 20:01:26.879 I/Fitness ( 1235): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
-11-05 20:01:26.917 W/Looper  (  556): Slow dispatch took 108ms android.fg h=android.os.Handler c=com.android.server.om.OverlayManagerService$$ExternalSyntheticLambda1@fdfd353 m=0
-11-05 20:01:26.918 I/RemoteProvisionSysSvc(  556): Fetching key 10143 for client 165835920
-11-05 20:01:26.918 I/RegistrationProxy(  556): getKeyAsync operation started with callback 206549385
-11-05 20:01:26.919 I/netd    (  354): bandwidthSetInterfaceQuota(eth0, 9223372036854775807) <0.47ms>
-11-05 20:01:26.920 I/AppsFilter(  556): interaction: PackageSetting{1a249bc com.android.microdroid.empty_payload/10193} -> PackageSetting{7f8dd45 dev.mobile.maestro.test/10211} BLOCKED
-11-05 20:01:26.934 W/Role    (  556): Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58
-11-05 20:01:26.936 D/EGL_emulation(  925): app_time_stats: avg=24155.77ms min=24155.77ms max=24155.77ms count=1
-11-05 20:01:26.940 I/PermissionControllerServiceImpl(  929): Updating user sensitive for uid 10211
-11-05 20:01:26.942 D/ShortcutService(  556): Package com.google.android.gms has 0 manifest shortcut(s), and 1 share target(s)
-11-05 20:01:26.943 D/ShortcutService(  556): Package com.google.android.gms updated, version 242335041 -> 242335041
-11-05 20:01:26.948 D/ShortcutService(  556): Package com.google.android.gms: publishing manifest shortcuts
-11-05 20:01:26.949 D/ShortcutService(  556): received package broadcast intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x45000010 (has extras) }
-11-05 20:01:26.952 D/ShortcutService(  556): changing package: com.android.settings userId0
-11-05 20:01:26.955 D/ShortcutService(  556): handlePackageChanged: com.android.settings user=0
-11-05 20:01:26.955 D/ShortcutService(  556): rescanPackageIfNeeded 0@com.android.settings, forceRescan=true , isNewApp=false
-11-05 20:01:26.968 W/CursorConverter( 3386): Cannot get icon, pkg/id :com.android.settings/2131231165
-11-05 20:01:26.991 W/CursorConverter( 3386): Cannot get icon, pkg/id :com.android.settings/2131231265
-11-05 20:01:27.002 I/Auth    ( 1442): [SupervisedAccountIntentOperation] onHandleIntent(): android.intent.action.PACKAGE_ADDED
-11-05 20:01:27.002 I/Auth    ( 1442): [SupervisedAccountIntentOperation] This operation is disabled
-11-05 20:01:27.003 W/CursorConverter( 3386): Cannot get icon, pkg/id :com.android.settings/2131231508
-11-05 20:01:27.003 W/CursorConverter( 3386): Cannot get icon, pkg/id :com.android.settings/2131231508
-11-05 20:01:27.006 I/AppWidgetServiceImpl(  556): Received broadcast: android.intent.action.PACKAGE_CHANGED on user 0
-11-05 20:01:27.011 I/Blockstore( 1442): [DataStoreImpl] Clearing Blockstore Data for package dev.mobile.maestro [CONTEXT service_id=258 ]
-11-05 20:01:27.021 I/Blockstore( 1442): [DataStoreImpl] Keyless data not found or its IsLastInstallationData = false. [CONTEXT service_id=258 ]
-11-05 20:01:27.023 I/RkpdRegistrationBinder( 2729): Key requested for : android.hardware.security.keymint.IRemotelyProvisionedComponent/default, clientUid: 1017, keyId: 10143, callback: 258198927
-11-05 20:01:27.034 W/CursorConverter( 3386): Cannot get icon, pkg/id :com.android.settings/2131231156
+11-06 07:12:18.798 D/AndroidRuntime( 3926): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-06 07:12:18.802 D/FaceSettings( 1093): FaceManager is not null. Hardware detected: true
+11-06 07:12:18.805 I/AndroidRuntime( 3926): Using default boot image
+11-06 07:12:18.805 I/AndroidRuntime( 3926): Leaving lock profiling enabled
+11-06 07:12:18.807 I/app_process( 3926): Core platform API reporting enabled, enforcing=false
+11-06 07:12:18.807 D/FaceSettings( 1093): FaceManager is not null. Hardware detected: true
+11-06 07:12:18.807 I/app_process( 3926): Using CollectorTypeCMC GC.
+11-06 07:12:18.807 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.android.settings.biometrics.face.FaceUnlockCategoryPreferenceController
+11-06 07:12:18.807 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.android.settings.biometrics.face.FaceSettingsLockscreenBypassPreferenceController
+11-06 07:12:18.807 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.android.settings.biometrics.face.BiometricLockscreenBypassPreferenceController
+11-06 07:12:18.807 W/PrefCtrlListHelper( 1093): security_settings_face_keyguard already has a controller
+11-06 07:12:18.807 W/PrefCtrlListHelper( 1093): security_settings_face_app already has a controller
+11-06 07:12:18.807 W/PrefCtrlListHelper( 1093): security_settings_face_require_attention already has a controller
+11-06 07:12:18.807 W/PrefCtrlListHelper( 1093): security_settings_face_require_confirmation already has a controller
+11-06 07:12:18.807 W/PrefCtrlListHelper( 1093): security_face_footer already has a controller
+11-06 07:12:18.812 I/PhenotypeBackgroundRecv( 3291): Successfully updated snapshot for com.google.android.libraries.onegoogle#com.google.android.apps.messaging
+11-06 07:12:18.813 D/FaceSettings( 1093): FaceManager is not null. Hardware detected: true
+11-06 07:12:18.813 D/FaceSettings( 1093): Get non indexable keys. isFaceHardwareDetected: true, size:12
+11-06 07:12:18.818 I/RoleService(  564): Granting default roles...
+11-06 07:12:18.827 W/PrimesLoggerHolder( 3900): Primes not initialized, returning default (no-op) Primes instance which will ignore all calls. Please call Primes.initialize(...) before using any Primes API.
+11-06 07:12:18.828 V/SettingsSearchProvider( 1093): com.android.settings.biometrics.face.FaceSettings$1@79c3219 tried to add an empty non-indexable key
+11-06 07:12:18.829 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.android.settings.accessibility.DaltonizerPreferenceController
+11-06 07:12:18.829 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.android.settings.accessibility.ColorInversionPreferenceController
+11-06 07:12:18.829 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.android.settings.display.DarkUIPreferenceController
+11-06 07:12:18.829 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.android.settings.accessibility.ToggleForceInvertPreferenceController
+11-06 07:12:18.829 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.android.settings.accessibility.DisableAnimationsPreferenceController
+11-06 07:12:18.829 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.android.settings.accessibility.LargePointerIconPreferenceController
+11-06 07:12:18.834 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.android.settings.bluetooth.BluetoothAutoOnPreferenceController
+11-06 07:12:18.835 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.android.settings.bluetooth.BluetoothDeviceRenamePreferenceController
+11-06 07:12:18.845 W/Role    (  564): Default holder doesn't have required signing certificate: com.google.android.retaildemo:6547c73dee150c103980bfdffe55cc9a011d785dd694a5f99afd8205bcaf1f80
+11-06 07:12:18.845 E/RoleControllerServiceImpl(  564): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION
+11-06 07:12:18.847 W/Role    (  564): Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58
+11-06 07:12:18.857 I/Bugle   ( 3291): BroadcastReceiverAsyncWorkTracker: Acknowledging broadcast of com.google.android.apps.messaging.shared.experiments.receiver.BuglePhenotypeBroadcastReceiver@81fdc6c
+11-06 07:12:18.860 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.android.settings.connecteddevice.AddDevicePreferenceController
 --
-11-05 20:01:27.279 D/AndroidRuntime( 3834): Calling main entry com.android.commands.am.Am
-11-05 20:01:27.288 D/UiAutomationConnection( 3834): Created on user UserHandle{0}
-11-05 20:01:27.289 D/ControlsListingControllerImpl(  925): ServiceConfig reloaded, count: 0
-11-05 20:01:27.305 W/CursorConverter( 3386): Cannot get icon, pkg/id :com.android.settings/2131231416
-11-05 20:01:27.306 D/ControlsListingControllerImpl(  925): ServiceConfig reloaded, count: 0
-11-05 20:01:27.330 D/CarrierSvcBindHelper( 1105): onPackageModified: com.google.android.apps.messaging
-11-05 20:01:27.330 D/CarrierSvcBindHelper( 1105): No carrier app for: 0
-11-05 20:01:27.347 D/SharedPreferencesImpl( 1442): Time required to fsync /data/user/0/com.google.android.gms/shared_prefs/proxy-apps-corpus.xml: [<1: 0, <2: 0, <4: 0, <8: 1, <16: 1, <32: 0, <64: 0, <128: 1, <256: 1, <512: 1, <1024: 1, <2048: 0, <4096: 0, <8192: 0, <16384: 0, >=16384: 0]
-11-05 20:01:27.351 W/earchbox:search( 1571): Suspending all threads took: 526.884ms
-11-05 20:01:27.357 I/Icing   ( 1442): Indexing com.google.android.gms-apps from com.google.android.gms
-11-05 20:01:27.363 I/.gms.persistent( 1235): Background concurrent mark compact GC freed 11MB AllocSpace bytes, 23(2600KB) LOS objects, 49% free, 18MB/37MB, paused 592us,796us total 1.098s
-11-05 20:01:27.380 E/system_server(  556): No package ID 7f found for resource ID 0x7f08037b.
-11-05 20:01:27.391 W/libc    ( 2226): Access denied finding property "persist.adb.tls_server.enable"
-11-05 20:01:27.400 W/libc    ( 2226): Access denied finding property "service.adb.tls.port"
-11-05 20:01:27.388 W/binder:2226_5( 2226): type=1400 audit(0.0:36): avc:  denied  { read } for  name="u:object_r:system_adbd_prop:s0" dev="tmpfs" ino=318 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:system_adbd_prop:s0 tclass=file permissive=0 app=com.google.android.gms
-11-05 20:01:27.396 W/binder:2226_5( 2226): type=1400 audit(0.0:37): avc:  denied  { read } for  name="u:object_r:adbd_prop:s0" dev="tmpfs" ino=63 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:adbd_prop:s0 tclass=file permissive=0 app=com.google.android.gms
-11-05 20:01:27.419 E/SmsApplication( 1105): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
-11-05 20:01:27.437 W/GmsUrlRequestImpl( 1235): Content-Type header is overwritten.
-11-05 20:01:27.438 E/system_server(  556): No package ID 7f found for resource ID 0x7f1419d5.
-11-05 20:01:27.440 I/ActivityManager(  556): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-11-05 20:01:27.441 W/AppOpService(  556): Ignored setUidMode call for runtime permission app op: uid = 10135, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
-11-05 20:01:27.464 E/system_server(  556): No package ID 7f found for resource ID 0x7f08037a.
-11-05 20:01:27.464 E/system_server(  556): No package ID 7f found for resource ID 0x7f05005f.
-11-05 20:01:27.464 E/system_server(  556): No package ID 7f found for resource ID 0x7f140822.
-11-05 20:01:27.465 E/ShortcutService(  556): Ignoring excessive intent tag.
-11-05 20:01:27.465 E/system_server(  556): No package ID 7f found for resource ID 0x7f080379.
-11-05 20:01:27.465 E/system_server(  556): No package ID 7f found for resource ID 0x7f1410f0.
-11-05 20:01:27.465 D/ShortcutService(  556): Package com.android.settings has 3 manifest shortcut(s), and 0 share target(s)
-11-05 20:01:27.465 D/ShortcutService(  556): Package com.android.settings updated, version 35 -> 35
-11-05 20:01:27.466 D/ShortcutService(  556): Package com.android.settings: publishing manifest shortcuts
-11-05 20:01:27.467 W/MagnificationConnectionManager(  556): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-06 07:12:19.159 D/AndroidRuntime( 3926): Calling main entry com.android.commands.am.Am
+11-06 07:12:19.166 D/UiAutomationConnection( 3926): Created on user UserHandle{0}
+11-06 07:12:19.167 I/ActivityManager(  564): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+11-06 07:12:19.168 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.android.settings.display.TwilightLocationPreferenceController
+11-06 07:12:19.168 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.android.settings.display.darkmode.DarkModeScheduleSelectorController
+11-06 07:12:19.168 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.android.settings.display.darkmode.DarkModeCustomBedtimePreferenceController
+11-06 07:12:19.175 W/FuseDaemon( 1517): Long monitor contention with owner AsyncTask #1 (2015) at boolean android.os.MessageQueue.enqueueMessage(android.os.Message, long)(MessageQueue.java:695) waiters=0 in android.os.Message android.os.MessageQueue.next() for 111ms
+11-06 07:12:19.179 W/SettingsPrefController( 1093): Skipping updateNonIndexableKeys, key already in list. com.android.settings.display.darkmode.DarkModeCustomBedtimePreferenceController@ea066ab
+11-06 07:12:19.188 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.android.settings.development.AdbDeviceNamePreferenceController
+11-06 07:12:19.188 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.android.settings.development.AdbQrCodePreferenceController
+11-06 07:12:19.190 V/GrammaticalInflectionUtils(  564): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@934a9b4, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+11-06 07:12:19.197 V/SettingsSearchProvider( 1093): com.android.settings.development.WirelessDebuggingFragment$2@b2ca425 tried to add an empty non-indexable key
+11-06 07:12:19.198 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.android.settings.fuelgauge.batterysaver.BatterySaverButtonPreferenceController
+11-06 07:12:19.198 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.google.android.settings.fuelgauge.batterysaver.BatterySaverModePreferenceController
+11-06 07:12:19.198 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.google.android.settings.fuelgauge.batterysaver.AdaptiveBatteryExpandController
+11-06 07:12:19.198 D/PrefCtrlListHelper( 1093): Could not find Context-only controller for pref: com.google.android.settings.fuelgauge.batterysaver.BatterySaverFooterPreferenceController
+11-06 07:12:19.201 I/AppsFilter(  564): interaction: PackageSetting{c4ba637 com.android.microdroid.empty_payload/10193} -> PackageSetting{dcb6da9 dev.mobile.maestro/10210} BLOCKED
+11-06 07:12:19.209 D/PrefControllerMixin( 1093): shouldHidePreference():false
+11-06 07:12:19.210 V/WifiManager( 1093): registerSoftApCallback: callback=com.android.settings.wifi.tether.WifiTetherSecurityPreferenceController@afb15dd, executor=android.os.HandlerExecutor@598bc61
+11-06 07:12:19.211 D/WifiTetherMaximizeCompatibilityPref( 1093): mShouldHidePreference:false
+11-06 07:12:19.212 D/WifiTetherMaximizeCompatibilityPref( 1093): getBand:1
+11-06 07:12:19.215 V/WifiManager( 1093): SoftApCallbackProxy on mode 1, send InfoChanged, newInfo: SoftApInfo{bandwidth= 0, frequency= 0, wifiStandard= 0, mApInstanceIdentifier= null, mIdleShutdownTimeoutMillis= 0, mVendorData= []}
+11-06 07:12:19.215 V/WifiManager( 1093): SoftApCallbackProxy on mode 1, send InfoChanged, changedInfoList: []
+11-06 07:12:19.215 V/WifiManager( 1093): SoftApCallbackProxy on mode 1, send onConnectedClientsChanged(clients): []
+11-06 07:12:19.215 D/Zygote  (  365): Forked child process 3945
+11-06 07:12:19.217 I/ActivityManager(  564): Start proc 3945:dev.mobile.maestro/u0a210 for added application dev.mobile.maestro
+11-06 07:12:19.217 I/wifi_tether_security( 1093): WPA3 SAE is not supported on this device
+11-06 07:12:19.217 V/WifiManager( 1093): unregisterSoftApCallback: callback=com.android.settings.wifi.tether.WifiTetherSecurityPreferenceController@afb15dd
+11-06 07:12:19.221 W/MagnificationConnectionManager(  564): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-06 07:12:19.222 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:12:19.222 W/IPCThreadState(  564): Sending oneway calls to frozen process.
 --
-11-05 20:06:15.823 I/AndroidRuntime( 3834): VM exiting with result code 0.
-11-05 20:06:15.823 D/InetDiagMessage(  556): Destroyed live tcp sockets for uids={10210} in 1ms
-11-05 20:06:15.826 D/InetDiagMessage(  556): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
-11-05 20:06:15.826 D/InetDiagMessage(  556): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
-11-05 20:06:15.826 D/InetDiagMessage(  556): Destroyed live tcp sockets for uids={20210} in 3ms
-11-05 20:06:15.832 I/netd    (  354): tetherGetStats() -> {[]} <1.58ms>
-11-05 20:06:15.834 I/netd    (  354): bandwidthSetGlobalAlert(2097152) <0.11ms>
-11-05 20:06:15.837 I/netd    (  354): bandwidthRemoveInterfaceQuota(eth0) <0.50ms>
-11-05 20:06:15.840 I/netd    (  354): bandwidthSetInterfaceQuota(eth0, 9223372036854775807) <2.49ms>
-11-05 20:06:16.041 I/init    (    0): ... started service 'artd' has pid 6245
-11-05 20:06:16.042 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 139 (/system/bin/servicemanager)
-11-05 20:06:15.841 I/netd    (  354): tetherGetStats() -> {[]} <0.26ms>
-11-05 20:06:15.858 V/ActivityManager(  556): Got obituary of 3856:dev.mobile.maestro
-11-05 20:06:15.860 W/ActivityManager(  556): pid 556 system sent binder code 1 with flags 1 to frozen apps and got error -32
-11-05 20:06:15.861 W/MagnificationConnectionManager(  556): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-11-05 20:06:15.862 W/MagnificationConnectionManager(  556): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-11-05 20:06:15.862 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-11-05 20:06:15.862 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-11-05 20:06:15.863 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-11-05 20:06:15.863 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-11-05 20:06:15.863 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-11-05 20:06:15.863 I/adbd    (  435): Remote process closed the socket (on MSG_PEEK)
-11-05 20:06:15.864 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-11-05 20:06:15.864 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-11-05 20:06:15.865 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-11-05 20:06:15.865 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-11-05 20:06:15.865 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-11-05 20:06:15.865 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-11-05 20:06:15.865 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-11-05 20:06:15.866 W/IPCThreadState(  556): Sending oneway calls to frozen process.
-11-05 20:06:15.866 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:16:24.314 I/AndroidRuntime( 3926): VM exiting with result code 0.
+11-06 07:16:24.473 I/init    (    0): starting service 'artd'...
+11-06 07:16:24.324 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.325 W/MagnificationConnectionManager(  564): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-06 07:16:24.325 V/UiAutomationManager(  564): UiAutomation service owner died
+11-06 07:16:24.325 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.325 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.325 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.325 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.325 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.325 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.325 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.326 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.326 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.326 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.326 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.326 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.326 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.326 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.326 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.326 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.326 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.326 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.326 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.326 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.330 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.330 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.330 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.330 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.330 W/IPCThreadState(  564): Sending oneway calls to frozen process.
+11-06 07:16:24.330 W/IPCThreadState(  564): Sending oneway calls to frozen process.
