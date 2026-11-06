@@ -1,96 +1,98 @@
-11-06 07:41:57.282 D/AndroidRuntime( 3700): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-11-06 07:41:57.285 I/AndroidRuntime( 3700): Using default boot image
-11-06 07:41:57.285 I/AndroidRuntime( 3700): Leaving lock profiling enabled
-11-06 07:41:57.288 I/app_process( 3700): Core platform API reporting enabled, enforcing=false
-11-06 07:41:57.288 I/app_process( 3700): Using CollectorTypeCMC GC.
-11-06 07:41:57.293 I/PermissionControllerServiceImpl(  935): Updating user sensitive for uid 10211
-11-06 07:41:57.307 I/PermissionControllerServiceImpl(  935): Updating user sensitive for uid 10211
-11-06 07:41:57.322 I/netd    (  361): tetherGetStats() -> {[]} <0.38ms>
-11-06 07:41:57.325 I/RoleService(  563): Granting default roles...
-11-06 07:41:57.326 D/CarrierSvcBindHelper( 1096): onPackageModified: dev.mobile.maestro.test
-11-06 07:41:57.327 D/CarrierSvcBindHelper( 1096): No carrier app for: 0
-11-06 07:41:57.328 E/SmsApplication( 1096): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
-11-06 07:41:57.332 W/AppOpService(  563): Ignored setUidMode call for runtime permission app op: uid = 10136, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
-11-06 07:41:57.335 E/CellBroadcastUtils( 1096): getDefaultCellBroadcastReceiverPackageName: no package found
-11-06 07:41:57.335 W/AppOpService(  563): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_SMS, mode = allow, callingUid = 1001, oldMode = allow
-11-06 07:41:57.335 W/AppOpService(  563): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_SMS, mode = allow, callingUid = 1001, oldMode = allow
-11-06 07:41:57.336 W/AppOpService(  563): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_WAP_PUSH, mode = allow, callingUid = 1001, oldMode = allow
-11-06 07:41:57.336 W/AppOpService(  563): Ignored setUidMode call for runtime permission app op: uid = 1001, code = SEND_SMS, mode = allow, callingUid = 1001, oldMode = allow
-11-06 07:41:57.339 W/AppOpService(  563): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
-11-06 07:41:57.341 D/ImsResolver( 1096): maybeAddedImsService, packageName: dev.mobile.maestro.test
-11-06 07:41:57.354 W/Role    (  563): Default holder doesn't have required signing certificate: com.google.android.retaildemo:6547c73dee150c103980bfdffe55cc9a011d785dd694a5f99afd8205bcaf1f80
-11-06 07:41:57.379 E/RoleControllerServiceImpl(  563): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION
-11-06 07:41:57.391 D/nativeloader( 3700): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
-11-06 07:41:57.381 W/Role    (  563): Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58
-11-06 07:41:57.403 D/nativeloader( 3700): Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
-11-06 07:41:57.403 D/app_process( 3700): u_setTimeZoneFilesDirectory("/apex/com.android.tzdata/etc/tz/versioned/8/icu") succeeded. 
-11-06 07:41:57.404 D/app_process( 3700): I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt75l.dat
-11-06 07:41:57.404 D/nativeloader( 3700): Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
-11-06 07:41:57.406 D/nativeloader( 3700): Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
-11-06 07:41:57.408 W/app_process( 3700): Unexpected CPU variant for x86: x86_64.
-11-06 07:41:57.408 W/app_process( 3700): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
-11-06 07:41:57.423 I/netd    (  361): tetherGetStats() -> {[]} <0.35ms>
-11-06 07:41:57.448 D/nativeloader( 3700): Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
-11-06 07:41:57.450 D/AndroidRuntime( 3700): Calling main entry com.android.commands.am.Am
-11-06 07:41:57.457 D/UiAutomationConnection( 3700): Created on user UserHandle{0}
-11-06 07:41:57.464 I/WebViewFactory( 1528): Loading com.google.android.webview version 124.0.6367.219 (code 636771938)
-11-06 07:41:57.506 I/ActivityManager(  563): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-11-06 07:41:57.508 V/MmsProvider( 1096): accessRestricted=false
-11-06 07:41:57.516 W/ogle.android.as( 1461): Long monitor contention with owner aiai-min-shared-0 (1810) at java.lang.Object ibk.b()(PG:48) waiters=0 in java.lang.Object ibk.b() for 480ms
-11-06 07:41:57.519 W/AiAiAutofill( 1461): Failed to set whitelist for augmented autofill service.
-11-06 07:41:57.519 W/AiAiAutofill( 1461): java.lang.SecurityException: caller is not user's Augmented Autofill Service
-11-06 07:41:57.519 W/AiAiAutofill( 1461): 	at android.view.autofill.AutofillManager.setAugmentedAutofillWhitelist(AutofillManager.java:2858)
-11-06 07:41:57.519 W/AiAiAutofill( 1461): 	at ema.c(PG:66)
-11-06 07:41:57.519 W/AiAiAutofill( 1461): 	at emw.h(PG:81)
-11-06 07:41:57.519 W/AiAiAutofill( 1461): 	at emw.j(PG:4)
-11-06 07:41:57.519 W/AiAiAutofill( 1461): 	at emw.i(PG:35)
-11-06 07:41:57.519 W/AiAiAutofill( 1461): 	at emy.a(PG:3)
-11-06 07:41:57.519 W/AiAiAutofill( 1461): 	at icx.run(PG:61)
-11-06 07:41:57.519 W/AiAiAutofill( 1461): 	at hqv.run(PG:11)
-11-06 07:41:57.519 W/AiAiAutofill( 1461): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
-11-06 07:41:57.519 W/AiAiAutofill( 1461): 	at wqm.a(PG:3)
-11-06 07:41:57.519 W/AiAiAutofill( 1461): 	at wpo.run(PG:21)
-11-06 07:41:57.519 W/AiAiAutofill( 1461): 	at wqn.run(PG:5)
-11-06 07:41:57.519 W/AiAiAutofill( 1461): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
-11-06 07:41:57.519 W/AiAiAutofill( 1461): 	at java.util.concurrent.FutureTask.run(FutureTask.java:264)
-11-06 07:41:57.519 W/AiAiAutofill( 1461): 	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:307)
-11-06 07:41:57.519 W/AiAiAutofill( 1461): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
-11-06 07:41:57.519 W/AiAiAutofill( 1461): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
-11-06 07:41:57.519 W/AiAiAutofill( 1461): 	at hqv.run(PG:221)
-11-06 07:41:57.519 W/AiAiAutofill( 1461): 	at java.lang.Thread.run(Thread.java:1012)
-11-06 07:41:57.521 I/netd    (  361): bandwidthSetGlobalAlert(2097152) <0.09ms>
-11-06 07:41:57.524 D/ShortcutService(  563): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=com.google.android.apps.messaging
-11-06 07:41:57.526 D/ShortcutService(  563): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=com.google.android.gms
-11-06 07:41:57.526 D/CompatChangeReporter( 1514): Compat change id reported: 263076149; UID 10143; state: ENABLED
+11-06 10:28:35.001 D/AndroidRuntime( 3753): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-06 10:28:35.003 I/PermissionControllerServiceImpl(  924): Updating user sensitive for uid 10211
+11-06 10:28:35.005 I/AndroidRuntime( 3753): Using default boot image
+11-06 10:28:35.005 I/AndroidRuntime( 3753): Leaving lock profiling enabled
+11-06 10:28:35.009 I/app_process( 3753): Core platform API reporting enabled, enforcing=false
+11-06 10:28:35.010 I/app_process( 3753): Using CollectorTypeCMC GC.
+11-06 10:28:35.018 I/AiAiEcho( 1521): AppFetcherImplV2 updateApps package:[dev.mobile.maestro.test], userId:[0], reason:[package is added.].
+11-06 10:28:35.020 D/EGL_emulation( 1196): app_time_stats: avg=967.38ms min=933.44ms max=1001.32ms count=2
+11-06 10:28:35.022 D/PackageUpdatedTask( 1196): Package updated: mOp=ADD packages=[dev.mobile.maestro.test]
+11-06 10:28:35.046 D/ImsResolver( 1080): maybeAddedImsService, packageName: com.google.android.apps.messaging
+11-06 10:28:35.132 D/SlicesIndexer( 1087): Slices already indexed - returning.
+11-06 10:28:35.135 D/VolumeSliceHelper( 1087): Registering uri for broadcast relay: content://com.android.settings.slices/action/notification_volume
+11-06 10:28:35.136 D/ShortcutService(  562): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=null
+11-06 10:28:35.137 D/SettingsSliceProvider( 1087): Built slice (content://com.android.settings.slices/action/notification_volume) in: 5
+11-06 10:28:35.141 D/nativeloader( 3753): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+11-06 10:28:35.146 W/gle.android.gms( 1495): Suspending all threads took: 236.828ms
+11-06 10:28:35.150 D/InetDiagMessage(  562): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+11-06 10:28:35.152 D/SlicesIndexer( 1087): Slices already indexed - returning.
+11-06 10:28:35.153 D/VolumeSliceHelper( 1087): Registering uri for broadcast relay: content://com.android.settings.slices/action/alarm_volume
+11-06 10:28:35.155 D/nativeloader( 3753): Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+11-06 10:28:35.155 D/app_process( 3753): u_setTimeZoneFilesDirectory("/apex/com.android.tzdata/etc/tz/versioned/8/icu") succeeded. 
+11-06 10:28:35.155 D/app_process( 3753): I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt75l.dat
+11-06 10:28:35.155 D/nativeloader( 3753): Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+11-06 10:28:35.156 D/nativeloader( 3753): Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+11-06 10:28:35.158 W/app_process( 3753): Unexpected CPU variant for x86: x86_64.
+11-06 10:28:35.158 W/app_process( 3753): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
+11-06 10:28:35.161 D/SettingsSliceProvider( 1087): Built slice (content://com.android.settings.slices/action/alarm_volume) in: 9
+11-06 10:28:35.162 D/InetDiagMessage(  562): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+11-06 10:28:35.164 D/SlicesIndexer( 1087): Slices already indexed - returning.
+11-06 10:28:35.164 D/SettingsSliceProvider( 1087): Built slice (content://com.android.settings.slices/action/gesture_double_tap_power) in: 0
+11-06 10:28:35.166 D/InetDiagMessage(  562): Destroyed live tcp sockets for uids={10147} in 16ms
+11-06 10:28:35.166 D/InetDiagMessage(  562): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+11-06 10:28:35.166 D/InetDiagMessage(  562): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+11-06 10:28:35.166 D/InetDiagMessage(  562): Destroyed live tcp sockets for uids={20147} in 0ms
 --
-11-06 07:46:10.792 I/AndroidRuntime( 3700): VM exiting with result code 0.
-11-06 07:46:10.793 W/ProcessStats(  563): Tracking association SourceState{df0de44 system/1000 BFgs #6499} whose proc state 4 is better than process ProcessState{5e7e392 com.google.android.ext.services/10207 pkg=com.google.android.ext.services} proc state 14 (195 skipped)
-11-06 07:46:10.794 D/InetDiagMessage(  563): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
-11-06 07:46:10.800 D/InetDiagMessage(  563): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
-11-06 07:46:10.800 D/InetDiagMessage(  563): Destroyed live tcp sockets for uids={10210} in 11ms
-11-06 07:46:10.800 D/InetDiagMessage(  563): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
-11-06 07:46:10.801 D/InetDiagMessage(  563): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
-11-06 07:46:10.801 D/InetDiagMessage(  563): Destroyed live tcp sockets for uids={20210} in 1ms
-11-06 07:46:10.957 I/servicemanager(    0): Caller(pid=563,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
-11-06 07:46:10.965 I/init    (    0): starting service 'artd'...
-11-06 07:46:10.810 I/netd    (  361): tetherGetStats() -> {[]} <0.83ms>
-11-06 07:46:10.976 I/binder  (    0): undelivered transaction 452064, process died.
-11-06 07:46:10.815 W/IPCThreadState(  563): Sending oneway calls to frozen process.
-11-06 07:46:10.818 W/MagnificationConnectionManager(  563): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-11-06 07:46:10.818 V/UiAutomationManager(  563): UiAutomation service owner died
-11-06 07:46:10.818 W/IPCThreadState(  563): Sending oneway calls to frozen process.
-11-06 07:46:10.819 W/IPCThreadState(  563): Sending oneway calls to frozen process.
-11-06 07:46:10.819 W/IPCThreadState(  563): Sending oneway calls to frozen process.
-11-06 07:46:10.819 W/IPCThreadState(  563): Sending oneway calls to frozen process.
-11-06 07:46:10.819 W/IPCThreadState(  563): Sending oneway calls to frozen process.
-11-06 07:46:10.819 W/IPCThreadState(  563): Sending oneway calls to frozen process.
-11-06 07:46:10.819 W/IPCThreadState(  563): Sending oneway calls to frozen process.
-11-06 07:46:10.820 W/IPCThreadState(  563): Sending oneway calls to frozen process.
-11-06 07:46:10.820 W/IPCThreadState(  563): Sending oneway calls to frozen process.
-11-06 07:46:10.820 W/IPCThreadState(  563): Sending oneway calls to frozen process.
-11-06 07:46:10.820 W/IPCThreadState(  563): Sending oneway calls to frozen process.
-11-06 07:46:10.820 W/IPCThreadState(  563): Sending oneway calls to frozen process.
-11-06 07:46:10.820 W/IPCThreadState(  563): Sending oneway calls to frozen process.
-11-06 07:46:10.820 W/IPCThreadState(  563): Sending oneway calls to frozen process.
-11-06 07:46:10.820 W/IPCThreadState(  563): Sending oneway calls to frozen process.
-11-06 07:46:10.820 W/IPCThreadState(  563): Sending oneway calls to frozen process.
+11-06 10:28:35.184 D/AndroidRuntime( 3753): Calling main entry com.android.commands.am.Am
+11-06 10:28:35.189 D/UiAutomationConnection( 3753): Created on user UserHandle{0}
+11-06 10:28:35.191 I/ActivityManager(  562): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+11-06 10:28:35.215 D/CarrierSvcBindHelper( 1080): onPackageModified: com.google.android.apps.safetyhub
+11-06 10:28:35.216 D/CarrierSvcBindHelper( 1080): No carrier app for: 0
+11-06 10:28:35.230 V/GrammaticalInflectionUtils(  562): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@b5509a6, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+11-06 10:28:35.236 E/SmsApplication( 1080): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
+11-06 10:28:35.236 W/AppOpService(  562): Ignored setUidMode call for runtime permission app op: uid = 10133, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+11-06 10:28:35.240 I/AppsFilter(  562): interaction: PackageSetting{60f6d96 com.android.microdroid.empty_payload/10187} -> PackageSetting{159a114 dev.mobile.maestro/10210} BLOCKED
+11-06 10:28:35.252 E/CellBroadcastUtils( 1080): getDefaultCellBroadcastReceiverPackageName: no package found
+11-06 10:28:35.253 W/AppOpService(  562): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-06 10:28:35.258 W/AppOpService(  562): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-06 10:28:35.266 W/AppOpService(  562): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_WAP_PUSH, mode = allow, callingUid = 1001, oldMode = allow
+11-06 10:28:35.268 D/SlicesIndexer( 1087): Slices already indexed - returning.
+11-06 10:28:35.269 W/SliceData( 1087): Highlight menu key res is empty: com.android.settings.deviceinfo.firmwareversion.FirmwareVersionDetailPreferenceController
+11-06 10:28:35.269 D/Zygote  (  363): Forked child process 3769
+11-06 10:28:35.271 W/AppOpService(  562): Ignored setUidMode call for runtime permission app op: uid = 1001, code = SEND_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-06 10:28:35.274 W/AppOpService(  562): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+11-06 10:28:35.284 I/AppWidgetServiceImpl(  562): Received broadcast: android.intent.action.PACKAGE_UNSTOPPED on user 0
+11-06 10:28:35.286 I/AppWidgetServiceImpl(  562): Updating package stopped masked state for uid 10210 package dev.mobile.maestro isStopped false
+11-06 10:28:35.287 D/SettingsSliceProvider( 1087): Built slice (content://com.android.settings.slices/action/os_firmware_version) in: 19
+11-06 10:28:35.290 I/ActivityManager(  562): Start proc 3769:dev.mobile.maestro/u0a210 for added application dev.mobile.maestro
+11-06 10:28:35.296 D/SlicesIndexer( 1087): Slices already indexed - returning.
+11-06 10:28:35.297 W/SliceData( 1087): Highlight menu key res is empty: com.android.settings.deviceinfo.hardwareinfo.DeviceModelPreferenceController
+11-06 10:28:35.298 D/CarrierSvcBindHelper( 1080): onPackageModified: com.google.android.gms
+11-06 10:28:35.301 D/ImsResolver( 1080): maybeAddedImsService, packageName: com.google.android.apps.safetyhub
+11-06 10:28:35.302 I/.mobile.maestro( 3769): Late-enabling -Xcheck:jni
+11-06 10:28:35.304 D/SettingsSliceProvider( 1087): Built slice (content://com.android.settings.slices/action/hardware_info_device_model) in: 8
+11-06 10:28:35.312 I/resolv  (  362): GetAddrInfoHandler::run: {101 101 101 983141 10153 0}
+11-06 10:28:35.312 I/resolv  (  362): res_nmkquery: (QUERY, IN, AAAA)
+11-06 10:28:35.312 I/resolv  (  362): res_nmkquery: (QUERY, IN, A)
+--
+11-06 10:33:20.837 I/AndroidRuntime( 3753): VM exiting with result code 0.
+11-06 10:33:21.022 I/servicemanager(    0): Caller(pid=562,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+11-06 10:33:21.033 I/init    (    0): starting service 'artd'...
+11-06 10:33:20.842 D/InetDiagMessage(  562): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+11-06 10:33:20.843 D/InetDiagMessage(  562): Destroyed live tcp sockets for uids={10210} in 8ms
+11-06 10:33:20.844 D/InetDiagMessage(  562): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+11-06 10:33:20.844 D/InetDiagMessage(  562): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+11-06 10:33:20.844 D/InetDiagMessage(  562): Destroyed live tcp sockets for uids={20210} in 0ms
+11-06 10:33:20.847 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-06 10:33:20.849 W/MagnificationConnectionManager(  562): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-06 10:33:20.849 V/UiAutomationManager(  562): UiAutomation service owner died
+11-06 10:33:20.849 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-06 10:33:21.041 I/binder  (    0): undelivered transaction 470366, process died.
+11-06 10:33:21.043 I/init    (    0): ... started service 'artd' has pid 6107
+11-06 10:33:21.044 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 147 (/system/bin/servicemanager)
+11-06 10:33:21.047 I/init    (    0): Untracked pid 3753 exited with status 0
+11-06 10:33:20.853 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-06 10:33:20.853 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-06 10:33:20.853 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-06 10:33:20.853 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-06 10:33:20.853 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-06 10:33:20.853 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-06 10:33:20.853 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-06 10:33:20.853 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-06 10:33:20.853 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-06 10:33:20.853 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-06 10:33:20.853 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-06 10:33:20.853 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-06 10:33:20.853 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-06 10:33:20.853 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-06 10:33:20.855 W/IPCThreadState(  562): Sending oneway calls to frozen process.
