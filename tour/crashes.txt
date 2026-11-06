@@ -1,0 +1,99 @@
+11-06 07:17:45.472 D/AndroidRuntime( 3753): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-06 07:17:45.609 I/servicemanager(    0): Caller(pid=171,uid=1017,sid=u:r:keystore:s0) Found android.hardware.security.keymint.IRemotelyProvisionedComponent/default in device VINTF manifest.
+11-06 07:17:45.475 I/RemoteProvisionSysSvc(  556): getRegistration(android.hardware.security.keymint.IRemotelyProvisionedComponent/default)
+11-06 07:17:45.477 I/AndroidRuntime( 3753): Using default boot image
+11-06 07:17:45.477 I/AndroidRuntime( 3753): Leaving lock profiling enabled
+11-06 07:17:45.484 I/app_process( 3753): Core platform API reporting enabled, enforcing=false
+11-06 07:17:45.485 I/app_process( 3753): Using CollectorTypeCMC GC.
+11-06 07:17:45.496 I/SemanticLocation( 1470): [Scheduler] Periodic Task com.google.android.gms.semanticlocation.mdd.MddDownloadScheduleService.schedule_mdd_task is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+11-06 07:17:45.500 I/SemanticLocation( 1470): [Scheduler] Periodic Task com.google.android.gms.semanticlocation.service.SemanticLocationCleanupJob.SemanticLocationRemovedAccountsCleanup is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+11-06 07:17:45.509 I/RegistrationProxy(  556): onServiceConnected: com.android.rkpdapp.service.RemoteProvisioningService
+11-06 07:17:45.516 I/RegistrationProxy(  556): IGetRegistrationCallback.onSuccess
+11-06 07:17:45.517 I/Auth    ( 1470): [SupervisedAccountIntentOperation] onHandleIntent(): android.intent.action.PACKAGE_ADDED
+11-06 07:17:45.517 I/Blockstore( 1470): [DataStoreImpl] Clearing Blockstore Data for package dev.mobile.maestro [CONTEXT service_id=258 ]
+11-06 07:17:45.651 I/servicemanager(    0): Caller(pid=2978,uid=10203,sid=u:r:rkpdapp:s0:c203,c256,c512,c768) Found android.hardware.security.keymint.IRemotelyProvisionedComponent/default in device VINTF manifest.
+11-06 07:17:45.522 I/Blockstore( 1470): [DataStoreImpl] Keyless data not found or its IsLastInstallationData = false. [CONTEXT service_id=258 ]
+11-06 07:17:45.524 I/RemoteProvisionSysSvc(  556): Fetching key 10143 for client 225367422
+11-06 07:17:45.524 I/RegistrationProxy(  556): getKeyAsync operation started with callback 179403487
+11-06 07:17:45.524 I/RkpdRegistrationBinder( 2978): Key requested for : android.hardware.security.keymint.IRemotelyProvisionedComponent/default, clientUid: 1017, keyId: 10143, callback: 166555787
+11-06 07:17:45.525 I/RkpdRegistrationBinder( 2978): Key successfully assigned to client
+11-06 07:17:45.526 E/SmsApplication( 1080): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
+11-06 07:17:45.526 W/AppOpService(  556): Ignored setUidMode call for runtime permission app op: uid = 10136, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+11-06 07:17:45.526 I/RemoteProvisionSysSvc(  556): Successfully fetched key for client 225367422
+11-06 07:17:45.537 V/Backup  ( 1470): [PhotosPackagedAddedIO] Flag is disabled.
+11-06 07:17:45.537 I/Auth    ( 1470): [SupervisedAccountIntentOperation] This operation is disabled
+11-06 07:17:45.539 D/SoftKeymaster(  175): system/keymaster/km_openssl/certificate_utils.cpp, Line 148: Using TAG_CERTIFICATE_NOT_BEFORE: 0
+11-06 07:17:45.539 D/SoftKeymaster(  175): system/keymaster/km_openssl/certificate_utils.cpp, Line 154: Using TAG_CERTIFICATE_NOT_AFTER: 2461449600000
+11-06 07:17:45.539 D/SoftKeymaster(  175): system/keymaster/km_openssl/certificate_utils.cpp, Line 159: Got certificate date params:  NotBefore = 0, NotAfter = 2461449600000
+11-06 07:17:45.539 D/SoftKeymaster(  175): system/keymaster/km_openssl/certificate_utils.cpp, Line 273: Setting notBefore to 0
+11-06 07:17:45.540 D/SoftKeymaster(  175): system/keymaster/km_openssl/certificate_utils.cpp, Line 282: Setting notAfter to 2461449600
+11-06 07:17:45.672 I/servicemanager(    0): Caller(pid=171,uid=1017,sid=u:r:keystore:s0) Found android.hardware.security.keymint.IRemotelyProvisionedComponent/default in device VINTF manifest.
+11-06 07:17:45.546 E/CellBroadcastUtils( 1080): getDefaultCellBroadcastReceiverPackageName: no package found
+11-06 07:17:45.546 W/AppOpService(  556): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-06 07:17:45.546 W/AppOpService(  556): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-06 07:17:45.546 W/AppOpService(  556): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_WAP_PUSH, mode = allow, callingUid = 1001, oldMode = allow
+11-06 07:17:45.547 W/AppOpService(  556): Ignored setUidMode call for runtime permission app op: uid = 1001, code = SEND_SMS, mode = allow, callingUid = 1001, oldMode = allow
+--
+11-06 07:17:45.732 D/AndroidRuntime( 3753): Calling main entry com.android.commands.am.Am
+11-06 07:17:45.734 I/SemanticLocation( 1470): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFirstPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+11-06 07:17:45.734 I/SemanticLocation( 1470): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceSecondPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+11-06 07:17:45.735 I/SemanticLocation( 1470): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceThirdPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+11-06 07:17:45.735 I/SemanticLocation( 1470): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFourthPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+11-06 07:17:45.736 I/SemanticLocation( 1470): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.BrellaInvocationService.BrellaInvocationServiceFifthPopulation is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+11-06 07:17:45.737 D/UiAutomationConnection( 3753): Created on user UserHandle{0}
+11-06 07:17:45.738 I/SemanticLocation( 1470): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.regionfetcher.RegionMddMaintenanceService.RegionMddMaintenanceTask is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+11-06 07:17:45.738 I/SemanticLocation( 1470): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.federated.regionfetcher.RegionMddDownloadScheduleService.RegionMddRefreshDownloadTask is scheduled to run EVERY_6_HOURS [CONTEXT service_id=173 ]
+11-06 07:17:45.738 I/SemanticLocation( 1470): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.db.backup.OdlhBackupService.OdlhBackup is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+11-06 07:17:45.738 I/SemanticLocation( 1470): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.edit.EditUploadJob.EditUploadJob is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+11-06 07:17:45.742 D/ControlsListingControllerImpl(  907): ServiceConfig reloaded, count: 0
+11-06 07:17:45.755 I/GsaVoiceInteractionSrv( 1487): (REDACTED) O received %s
+11-06 07:17:45.757 D/ControlsListingControllerImpl(  907): ServiceConfig reloaded, count: 0
+11-06 07:17:45.757 D/PackageManager(  556): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+11-06 07:17:45.759 D/PackageManager(  556): Clear ephemeral installer activity
+11-06 07:17:45.767 W/A       ( 1548): (REDACTED) Exception while fetching versionCode for package[%s].
+11-06 07:17:45.767 W/A       ( 1548): android.content.pm.PackageManager$NameNotFoundException: com.google.android.apps.tv.dreamx
+11-06 07:17:45.767 W/A       ( 1548): 	at android.app.ApplicationPackageManager.getPackageInfoAsUser(ApplicationPackageManager.java:273)
+11-06 07:17:45.767 W/A       ( 1548): 	at android.app.ApplicationPackageManager.getPackageInfo(ApplicationPackageManager.java:233)
+11-06 07:17:45.767 W/A       ( 1548): 	at android.app.ApplicationPackageManager.getPackageInfo(ApplicationPackageManager.java:227)
+11-06 07:17:45.767 W/A       ( 1548): 	at com.google.android.apps.gsa.staticplugins.t.c.a(PG:1276)
+11-06 07:17:45.767 W/A       ( 1548): 	at com.google.android.apps.gsa.staticplugins.t.i.a(PG:11)
+11-06 07:17:45.767 W/A       ( 1548): 	at com.google.android.libraries.gsa.h.a.f.a(PG:9)
+11-06 07:17:45.767 W/A       ( 1548): 	at com.google.common.util.concurrent.ds.a(PG:3)
+11-06 07:17:45.767 W/A       ( 1548): 	at com.google.common.util.concurrent.cu.run(PG:21)
+11-06 07:17:45.767 W/A       ( 1548): 	at com.google.common.util.concurrent.du.run(PG:5)
+11-06 07:17:45.767 W/A       ( 1548): 	at com.google.android.libraries.k.x.run(PG:3)
+11-06 07:17:45.767 W/A       ( 1548): 	at com.google.common.n.c.c.run(PG:50)
+11-06 07:17:45.767 W/A       ( 1548): 	at com.google.android.libraries.k.e.run(PG:8)
+11-06 07:17:45.767 W/A       ( 1548): 	at java.lang.Thread.run(Thread.java:1012)
+--
+11-06 07:23:00.764 I/AndroidRuntime( 3753): VM exiting with result code 0.
+11-06 07:23:00.902 I/init    (    0): starting service 'artd'...
+11-06 07:23:00.774 I/netd    (  358): tetherGetStats() -> {[]} <3.93ms>
+11-06 07:23:00.784 V/ActivityManager(  556): Got obituary of 3781:dev.mobile.maestro
+11-06 07:23:00.785 W/ActivityManager(  556): pid 556 system sent binder code 1 with flags 1 to frozen apps and got error -32
+11-06 07:23:00.786 W/MagnificationConnectionManager(  556): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-06 07:23:00.786 W/MagnificationConnectionManager(  556): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-06 07:23:00.787 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.787 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.787 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.787 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.787 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.787 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.787 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.787 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.787 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.787 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.787 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.787 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.787 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.787 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.787 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.787 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.787 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.788 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.788 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.788 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.788 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.788 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.788 W/IPCThreadState(  556): Sending oneway calls to frozen process.
+11-06 07:23:00.788 W/IPCThreadState(  556): Sending oneway calls to frozen process.
