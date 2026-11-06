@@ -1592,6 +1592,7 @@ export const en = {
   "uploadQueue.theSavedMediaChangedRemove": "The saved media changed. Remove this upload and choose the photo or video again.",
   "uploadQueue.uploadCouldNotBeCompleted": "Upload could not be completed. Try again.",
   "uploadQueue.thisMediaIsEmptyOr": "This media is empty or exceeds the upload limit.",
+  "uploadQueue.preparingTookTooLong": "Your Story took too long to get ready on this phone. Try again.",
   "uploadQueue.finishOrRemoveAPending": "Finish or remove a pending upload before adding another.",
   "uploadQueue.uploadCancelled": "Upload cancelled.",
 
@@ -1613,6 +1614,7 @@ export const en = {
   "uploadStatusPill.openArchiveThenScheduledAnd": "Open Archive, then Scheduled, and cancel it there.",
   "uploadStatusPill.itWontBePostedYour": "It won't be posted. Your photo or video stays on your phone.",
   "uploadStatusPill.sharing": "Sharing…",
+  "storyEditor.sharing": "Sharing…",
   "uploadStatusPill.finishingUp": "Finishing up…",
   "uploadStatusPill.pausedTapToContinue": "Paused · Tap to continue",
   "uploadStatusPill.sharingValue": "Sharing… {value}%",

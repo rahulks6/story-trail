@@ -652,7 +652,15 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   );
 
   const onShare = async (target: Audience = audience) => {
-    if (!accessToken||!user||submittingUpload.current) return;
+    // A second tap while the first is being handled does nothing more.
+    if (submittingUpload.current) return;
+    // Never a tap that silently does nothing: without a session (it is being renewed, or has
+    // ended) say so, and the Story stays here to share in a moment.
+    if (!accessToken || !user) {
+      setUploadState("error");
+      setUploadError(t("common.checkYourConnectionAndTry"));
+      return;
+    }
     // The chosen time can pass while the Story is being edited: choose again rather than surprise.
     if (publishAt && scheduleProblem(publishAt)) {
       Alert.alert(t("storyEditor.chooseANewTime"), scheduleProblem(publishAt) ?? undefined, [{ text: "OK", onPress: () => setScheduleOpen(true) }]);

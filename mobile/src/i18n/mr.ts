@@ -1482,6 +1482,7 @@ export const mr: Catalogue = {
   "uploadQueue.theSavedMediaChangedRemove": "सेव्ह केलेला मीडिया बदलला. हे अपलोड काढा आणि फोटो किंवा व्हिडिओ पुन्हा निवडा.",
   "uploadQueue.uploadCouldNotBeCompleted": "अपलोड पूर्ण करता आले नाही. पुन्हा प्रयत्न करा.",
   "uploadQueue.thisMediaIsEmptyOr": "हा मीडिया रिकामा आहे किंवा अपलोडच्या मर्यादेपेक्षा मोठा आहे.",
+  "uploadQueue.preparingTookTooLong": "या फोनवर तुमची स्टोरी तयार होण्यास खूप वेळ लागला. पुन्हा प्रयत्न करा.",
   "uploadQueue.finishOrRemoveAPending": "दुसरे जोडण्यापूर्वी बाकी अपलोड पूर्ण करा किंवा काढा.",
   "uploadQueue.uploadCancelled": "अपलोड रद्द झाले.",
   // uploadStatusPill
@@ -1502,6 +1503,7 @@ export const mr: Catalogue = {
   "uploadStatusPill.openArchiveThenScheduledAnd": "आर्काइव्ह उघडा, मग \"शेड्यूल केलेली\", आणि तिथे ती रद्द करा.",
   "uploadStatusPill.itWontBePostedYour": "ती पोस्ट होणार नाही. तुमचा फोटो किंवा व्हिडिओ तुमच्या फोनवर राहील.",
   "uploadStatusPill.sharing": "शेअर होत आहे…",
+  "storyEditor.sharing": "शेअर होत आहे…",
   "uploadStatusPill.finishingUp": "पूर्ण होत आहे…",
   "uploadStatusPill.pausedTapToContinue": "थांबले आहे · पुढे सुरू करण्यासाठी टॅप करा",
   "uploadStatusPill.sharingValue": "शेअर होत आहे… {value}%",

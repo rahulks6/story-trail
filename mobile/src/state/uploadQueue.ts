@@ -7,6 +7,7 @@ import {base64ToBytes} from '../utils/base64';
 import {storyPublished} from './storyChanges';
 import {noteStoryPosted} from '../utils/reviewPrompt';
 import {track} from '../analytics/analytics';
+import {reportHandledError} from '../crashReporting';
 import { t } from "../i18n";
 
 /**
@@ -72,20 +73,68 @@ export async function listUploads(ownerId:string):Promise<UploadJob[]>{
  const rows=Object.values(await AsyncStorage.getMany(keys));
  return rows.flatMap(raw=>{try{const job=JSON.parse(raw||'null') as UploadJob;if(!job||job.ownerId!==ownerId)return [];validate(ownerId,job.id);return [job];}catch{return [];}}).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
 }
-export function enqueueUpload(ownerId:string,uri:string,kind:UploadJob['kind'],mimeType:string,payload:UploadJob['payload'],effect?:'boomerang',trim?:{startMs:number;endMs:number}|null):Promise<UploadJob>{return serial(async()=>{
- const existing=await listUploads(ownerId);if(existing.filter(j=>!isDone(j)).length>=10)throw Error(t("uploadQueue.finishOrRemoveAPending"));
- // This is an idempotency key, not an authentication secret. It is scoped by authenticated owner server-side.
- const id='story_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2)+'_'+Math.random().toString(36).slice(2);
- const target=file(ownerId,id);
- await RNFS.mkdir(ROOT,{NSURLIsExcludedFromBackupKey:true});
- try{
-  await RNFS.copyFile(uri.startsWith('file://')?decodeURI(uri.slice(7)):uri,target);
-  const stat=await RNFS.stat(target);const size=Number(stat.size);
-  if(size<=0||size>(kind==='photo'?25:200)*1024*1024)throw Error(t("uploadQueue.thisMediaIsEmptyOr"));
-  const job:UploadJob={id,ownerId,kind,mimeType,payload:JSON.parse(JSON.stringify(payload)),status:'queued',createdAt:new Date().toISOString(),uploadVersion:2,byteSize:size,...(effect==='boomerang'&&kind==='video'?{effect}:{}),...(trim&&kind==='video'&&effect!=='boomerang'?{trim:{startMs:Math.round(trim.startMs),endMs:Math.round(trim.endMs)}}:{})};
-  await save(job);return job;
- }catch(e){await RNFS.unlink(target).catch(()=>undefined);throw e;}
-});}
+/** A step of getting a Story ready that took longer than it may: the share stops with a clear message. */
+export class PrepareTimeoutError extends Error{constructor(readonly step:string){super(t("uploadQueue.preparingTookTooLong"));}}
+/** How long each step of getting a Story ready may take before it's given up (the copy also gets time for its size). */
+export const PREPARE_STEP_MS=15_000;
+/** The copy is given this much more time per byte: 4 MB a second, slower than any phone's storage. */
+const COPY_MS_PER_BYTE=1/4_000;
+/** A step slower than this is reported (with its timing, never the file or its name). */
+const SLOW_STEP_MS=4_000;
+function withinTime<T>(work:Promise<T>,ms:number,step:string):Promise<T>{
+ return new Promise<T>((resolve,reject)=>{
+  const timer=setTimeout(()=>reject(new PrepareTimeoutError(step)),ms);
+  work.then(v=>{clearTimeout(timer);resolve(v);},e=>{clearTimeout(timer);reject(e);});
+ });
+}
+/**
+ * Copies the Story into the outbox and records it. Each step has a time limit, so a step that
+ * hangs (a slow or stuck storage call on some phones) ends the share with a message and Retry
+ * instead of a button that never answers, and the outbox's queue moves on (it would otherwise
+ * wait on that step forever). An abandoned share is never saved later behind the person's back.
+ * Slow or failed steps are reported to Katkee's crash reports, with timings only.
+ */
+export function enqueueUpload(ownerId:string,uri:string,kind:UploadJob['kind'],mimeType:string,payload:UploadJob['payload'],effect?:'boomerang',trim?:{startMs:number;endMs:number}|null):Promise<UploadJob>{
+ let abandoned=false;
+ const timings:Record<string,number>={};
+ const source=uri.startsWith('file://')?decodeURI(uri.slice(7)):uri;
+ const scheme=uri.split(':')[0]||'path';
+ let bytes=0;
+ const step=async<T,>(name:string,work:()=>Promise<T>,ms=PREPARE_STEP_MS):Promise<T>=>{
+  const started=Date.now();
+  try{return await withinTime(work(),ms,name);}
+  finally{timings[name]=Date.now()-started;}
+ };
+ const report=(outcome:string,error?:unknown)=>{
+  const detail=`share_prepare ${outcome} kind=${kind} scheme=${scheme} bytes=${bytes} `+Object.entries(timings).map(([k,v])=>`${k}=${v}ms`).join(' ')+(error instanceof Error&&!(error instanceof PrepareTimeoutError)?` error=${error.message.slice(0,120)}`:'');
+  reportHandledError(new Error(detail));
+ };
+ const work=serial(async()=>{
+  const existing=await step('list',()=>listUploads(ownerId));if(existing.filter(j=>!isDone(j)).length>=10)throw Error(t("uploadQueue.finishOrRemoveAPending"));
+  // This is an idempotency key, not an authentication secret. It is scoped by authenticated owner server-side.
+  const id='story_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2)+'_'+Math.random().toString(36).slice(2);
+  const target=file(ownerId,id);
+  await step('mkdir',()=>RNFS.mkdir(ROOT,{NSURLIsExcludedFromBackupKey:true}));
+  try{
+   bytes=await step('size',()=>RNFS.stat(source).then(s=>Number(s.size)).catch(()=>0));
+   await step('copy',()=>RNFS.copyFile(source,target),PREPARE_STEP_MS+bytes*COPY_MS_PER_BYTE);
+   const stat=await step('stat',()=>RNFS.stat(target));const size=Number(stat.size);bytes=size;
+   if(size<=0||size>(kind==='photo'?25:200)*1024*1024)throw Error(t("uploadQueue.thisMediaIsEmptyOr"));
+   const job:UploadJob={id,ownerId,kind,mimeType,payload:JSON.parse(JSON.stringify(payload)),status:'queued',createdAt:new Date().toISOString(),uploadVersion:2,byteSize:size,...(effect==='boomerang'&&kind==='video'?{effect}:{}),...(trim&&kind==='video'&&effect!=='boomerang'?{trim:{startMs:Math.round(trim.startMs),endMs:Math.round(trim.endMs)}}:{})};
+   if(abandoned)throw new PrepareTimeoutError('abandoned');
+   await step('save',()=>save(job));return job;
+  }catch(e){await RNFS.unlink(target).catch(()=>undefined);throw e;}
+ });
+ // The whole preparation, too, has a limit: the queue's earlier work counts against it.
+ return withinTime(work,2*PREPARE_STEP_MS+5*PREPARE_STEP_MS+(200*1024*1024)*COPY_MS_PER_BYTE,'total').then(job=>{
+  if(Object.values(timings).some(ms=>ms>=SLOW_STEP_MS))report('slow');
+  return job;
+ },error=>{
+  abandoned=true;
+  if(error instanceof PrepareTimeoutError||!(error instanceof Error&&(error.message===t("uploadQueue.finishOrRemoveAPending")||error.message===t("uploadQueue.thisMediaIsEmptyOr"))))report(error instanceof PrepareTimeoutError?`timeout step=${error.step}`:'failed',error);
+  throw error;
+ });
+}
 
 /** Sends every part the server doesn't have yet, then completes the upload. */
 async function sendBytes(job:UploadJob,path:string,storageKey:string,token:()=>string,persist:(next:UploadJob)=>Promise<UploadJob>):Promise<UploadJob>{
