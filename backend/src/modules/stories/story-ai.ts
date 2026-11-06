@@ -91,6 +91,11 @@ export function parseUnderstanding(text: string): StoryUnderstanding | null {
   return { topic: canonicalTopic(topic), altText: description || null, safety: safety as Safety };
 }
 
+/** Models that can hand a declined request to another model on Anthropic's side; Haiku can't. */
+export function supportsServerFallback(model: string): boolean {
+  return !/haiku/i.test(model);
+}
+
 /** Claude through Anthropic's SDK. */
 export class ClaudeStoryAi implements StoryAiClient {
   private readonly client: Anthropic;
@@ -109,9 +114,9 @@ export class ClaudeStoryAi implements StoryAiClient {
     const response = await this.client.beta.messages.create({
       model: this.model,
       max_tokens: 4000,
-      // A request a safety classifier declines is retried on a model that can take it.
-      betas: ["server-side-fallback-2026-07-01"],
-      fallbacks: "default",
+      // A request a safety classifier declines is retried on a model that can take it. Haiku has
+      // no server-side fallback (Anthropic's guidance: don't send the parameter), so it's left off.
+      ...(supportsServerFallback(this.model) ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" as const } : {}),
       // A short classification: little thinking needed.
       output_config: { effort: "low", format: { type: "json_schema", schema: SCHEMA } },
       system: SYSTEM,

@@ -261,7 +261,8 @@ export const config = {
     // secret starts as a placeholder, so deploying first and adding the key later is safe.
     enabled: process.env.STORY_AI_ENABLED === "true",
     apiKey: process.env.ANTHROPIC_API_KEY ?? "",
-    model: process.env.STORY_AI_MODEL || "claude-opus-5-5",
+    // Haiku: quick and inexpensive for a short classification (the owner's choice, 6 Nov 2026).
+    model: process.env.STORY_AI_MODEL || "claude-haiku-5-5",
     pollSeconds: optionalInt("STORY_AI_POLL_SECONDS", 10),
     batchSize: optionalInt("STORY_AI_BATCH_SIZE", 4),
   },

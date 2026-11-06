@@ -11,7 +11,7 @@ import { config } from "../src/config/env";
 import { queryOne } from "../src/db/psql";
 import { mediaStorage } from "../src/modules/media/instance";
 import {
-  ClaudeStoryAi, MAX_AI_ALT_TEXT, StoryAiWorker, claimStories, parseUnderstanding, storyAiActive, storyWords, understandStory,
+  ClaudeStoryAi, MAX_AI_ALT_TEXT, StoryAiWorker, claimStories, parseUnderstanding, storyAiActive, storyWords, supportsServerFallback, understandStory,
   type StoryAiClient, type StoryForAi, type StoryUnderstanding,
 } from "../src/modules/stories/story-ai";
 import { buildTestPng } from "./fixtures";
@@ -191,6 +191,42 @@ describe("the request to Claude", () => {
       assert.match(text.text, /Song: Bright Wish by Kevin MacLeod/);
       // Words are data, not instructions.
       assert.match(body.system, /not instructions/);
+    } finally {
+      await new Promise<void>((resolve) => api.close(() => resolve()));
+    }
+  });
+});
+
+describe("the request to Haiku", () => {
+  it("is the default model, and is sent without the fallback setting it doesn't support", async () => {
+    assert.equal(config.storyAi.model, "claude-haiku-5-5");
+    assert.equal(supportsServerFallback("claude-haiku-5-5"), false);
+    assert.equal(supportsServerFallback("claude-opus-5-5"), true);
+    let body: Record<string, any> = {};
+    let headers: http.IncomingHttpHeaders = {};
+    const api = http.createServer((req, res) => {
+      headers = req.headers;
+      let raw = "";
+      req.on("data", (chunk) => { raw += chunk; });
+      req.on("end", () => {
+        body = JSON.parse(raw);
+        res.writeHead(200, { "content-type": "application/json" });
+        res.end(JSON.stringify({
+          id: "msg_2", type: "message", role: "assistant", model: "claude-haiku-5-5", stop_reason: "end_turn", stop_sequence: null,
+          content: [{ type: "text", text: JSON.stringify({ topic: "Food", alt_text: "A plate of poha.", safety: "ok" }) }],
+          usage: { input_tokens: 900, output_tokens: 40 },
+        }));
+      });
+    });
+    await new Promise<void>((resolve) => api.listen(0, resolve));
+    try {
+      const claude = new ClaudeStoryAi("sk-ant-test", "claude-haiku-5-5", { baseURL: `http://127.0.0.1:${(api.address() as AddressInfo).port}`, maxRetries: 0 });
+      const result = await claude.understand({ image: { data: "AAAA", mediaType: "image/jpeg" }, caption: "", words: [], song: null, festival: null });
+      assert.deepEqual(result, { topic: "Food", altText: "A plate of poha.", safety: "ok" });
+      assert.equal(body.model, "claude-haiku-5-5");
+      assert.equal("fallbacks" in body, false);
+      assert.doesNotMatch(String(headers["anthropic-beta"] ?? ""), /server-side-fallback/);
+      assert.equal(body.output_config.effort, "low");
     } finally {
       await new Promise<void>((resolve) => api.close(() => resolve()));
     }
