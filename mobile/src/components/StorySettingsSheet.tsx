@@ -150,12 +150,13 @@ export function StorySettingsSheet({
             {onTopicChange ? (
               <>
                 <Text style={styles.section}>{t("storySettingsSheet.topic")}</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips} accessibilityRole="radiogroup" accessibilityLabel={t("storySettingsSheet.topic")}>
+                {/* Every topic in view at once, wrapping onto lines (a sideways strip hid most of them, and the chosen one). */}
+                <View style={styles.chips} accessibilityRole="radiogroup" accessibilityLabel={t("storySettingsSheet.topic")}>
                   <TopicChip label={t("storySettingsSheet.none")} selected={topic === null} onPress={() => onTopicChange(null)} />
                   {TOPICS.map((option) => (
                     <TopicChip key={option} label={topicLabel(option)} selected={topic === option} onPress={() => onTopicChange(option)} />
                   ))}
-                </ScrollView>
+                </View>
                 <Text style={[styles.hint, styles.topicHint]}>{t("storySettingsSheet.helpsPeopleWhoLikeThis")}</Text>
               </>
             ) : null}
@@ -199,10 +200,10 @@ const styles = StyleSheet.create({
   hint: { ...typography.caption, color: colors.textSecondary },
   radio: { width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: colors.border, alignItems: "center", justifyContent: "center" },
   radioOn: { backgroundColor: colors.accent, borderColor: colors.accent },
-  chips: { gap: spacing.sm, paddingVertical: spacing.xs },
-  chip: { minHeight: 36, paddingHorizontal: spacing.md, justifyContent: "center", borderRadius: radii.pill, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surfaceElevated },
+  chips: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xs + 2, paddingVertical: spacing.xs },
+  chip: { minHeight: 32, paddingHorizontal: spacing.sm + 4, justifyContent: "center", borderRadius: radii.pill, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surfaceElevated },
   chipSelected: { backgroundColor: colors.accent, borderColor: colors.accent },
-  chipLabel: { ...typography.body, color: colors.textPrimary, fontWeight: "600" },
+  chipLabel: { fontSize: 14, color: colors.textPrimary, fontWeight: "600" },
   chipLabelSelected: { color: colors.onAccent },
   topicHint: { marginTop: spacing.xs },
   altInput: { ...typography.body, color: colors.textPrimary, backgroundColor: colors.surfaceElevated, borderRadius: radii.md, padding: spacing.md, minHeight: 72, textAlignVertical: "top" },
