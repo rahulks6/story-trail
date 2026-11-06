@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { Pressable } from "./Pressable";
 import { FadeInImage } from "./FadeInImage";
@@ -18,14 +18,18 @@ const GAP = 2;
  * the rest of the grid, in order.
  */
 export function ExploreGrid({ tiles, accessToken, onOpen }: { tiles: ExploreTile[]; accessToken: string | null; onOpen: (index: number) => void }): React.JSX.Element | null {
-  const { width } = useWindowDimensions();
+  // Three to a row across the space it's given (Search has side margins, so not the screen's width).
+  // Search's side margins are the first guess; the grid's own measurement settles it.
+  const screen = useWindowDimensions().width;
+  const [measured, setWidth] = useState(0);
+  const width = measured || screen - spacing.md * 2;
   if (!tiles.length) return null;
   const tileWidth = Math.floor((width - GAP * (COLUMNS - 1)) / COLUMNS);
-  const tileHeight = Math.round((tileWidth * 16) / 9 * 0.75);
+  const tileHeight = Math.round((tileWidth * 4) / 3);
   return (
     <View>
       <Text style={[typography.label, styles.title]} accessibilityRole="header">{t("explore.title")}</Text>
-      <View style={styles.grid}>
+      <View style={styles.grid} onLayout={(e) => setWidth(e.nativeEvent.layout.width)}>
         {tiles.map((tile, index) => {
           const url = tile.story.thumbnailUrl ?? tile.story.imageUrl;
           return (
@@ -52,10 +56,10 @@ export function ExploreGrid({ tiles, accessToken, onOpen }: { tiles: ExploreTile
 }
 
 const styles = StyleSheet.create({
-  title: { marginTop: spacing.md, marginBottom: spacing.sm, marginHorizontal: spacing.lg },
-  grid: { flexDirection: "row", flexWrap: "wrap", gap: GAP },
-  tile: { backgroundColor: colors.surfaceElevated, overflow: "hidden", borderRadius: 2 },
+  title: { marginTop: spacing.md, marginBottom: spacing.sm },
+  grid: { flexDirection: "row", flexWrap: "wrap", gap: GAP, borderRadius: 10, overflow: "hidden" },
+  tile: { backgroundColor: colors.surfaceElevated, overflow: "hidden" },
   videoBadge: { position: "absolute", top: 6, right: 6, textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 3 },
-  owner: { position: "absolute", left: 0, right: 0, bottom: 0, flexDirection: "row", alignItems: "center", gap: 4, padding: 6, backgroundColor: "rgba(0,0,0,0.35)" },
+  owner: { position: "absolute", left: 0, right: 0, bottom: 0, flexDirection: "row", alignItems: "center", gap: 4, padding: 6, paddingTop: 14, backgroundColor: "rgba(0,0,0,0.3)" },
   name: { color: mediaColors.textPrimary, fontSize: 11, fontWeight: "700", flexShrink: 1 },
 });

@@ -5,8 +5,10 @@ import { Pressable } from "../components/Pressable";
 import { BottomTabBarHeightCallbackContext, type BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { colors, radii, spacing, typography, ICONS } from "../theme";
+import { colors, mediaColors, radii, spacing, ICONS } from "../theme";
 import { useDM } from "../state/DMContext";
+import { useAuth } from "../state/AuthContext";
+import { Avatar } from "../components/Avatar";
 import { tapFeedback } from "../utils/haptics";
 import { t } from "../i18n";
 
@@ -26,9 +28,10 @@ const TAB_ICONS: Record<string, import("../theme/icons").IconName> = {
 };
 
 /**
- * Custom bottom tab bar: HOME | SEARCH | + | DM | PROFILE, with the centre Create button raised
- * in Katkee amber so it reads as the primary action. Hidden where the screen needs all of it,
- * like Instagram: the camera and Story editor, and an open chat.
+ * Custom bottom tab bar: HOME | SEARCH | + | DM | PROFILE, as Instagram draws it: icons only (each
+ * tab still has its name for screen readers), the current one solid, Create a + in a rounded
+ * square, and Profile your own photo. Black on Home, where Stories fill the screen behind it.
+ * Hidden where the screen needs all of it: the camera and Story editor, and an open chat.
  */
 export function tabBarHidden(state: BottomTabBarProps["state"]): boolean {
   const route = state.routes[state.index];
@@ -50,10 +53,12 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
     if (hidden) reportHeight?.(0);
   }, [hidden, reportHeight]);
   if (hidden) return <View />;
+  const onMedia = state.routes[state.index]?.name === "Home";
+  const ink = onMedia ? mediaColors.textPrimary : colors.textPrimary;
 
   return (
     <View
-      style={[styles.container, { paddingBottom: Math.max(bottom, spacing.sm) }]}
+      style={[styles.container, onMedia && styles.containerOnMedia, { paddingBottom: Math.max(bottom, spacing.xs) }]}
       onLayout={(e) => reportHeight?.(e.nativeEvent.layout.height)}
       accessibilityRole="tablist"
     >
@@ -81,11 +86,9 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
               accessibilityState={{ selected: isFocused }}
               accessibilityLabel={t("bottomTabBar.createAStory")}
               onPress={onPress}
-              style={styles.createButtonWrapper}
+              style={styles.tabItem}
             >
-              <View style={styles.createButton}>
-                <Icon style={styles.createButtonGlyph} name={ICONS.create} />
-              </View>
+              <Icon name={ICONS.create} framed size={26} color={ink} />
             </Pressable>
           );
         }
@@ -107,14 +110,17 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
             style={styles.tabItem}
           >
             <View style={styles.tabContent}>
-              <TabIcon focused={isFocused} name={TAB_ICONS[route.name] ?? "home"} />
+              {route.name === "Profile" ? (
+                <ProfileTab focused={isFocused} ring={ink} />
+              ) : (
+                <TabIcon focused={isFocused} name={TAB_ICONS[route.name] ?? "home"} color={ink} />
+              )}
               {showUnreadBadge ? (
-                <View style={styles.unreadBadge}>
+                <View style={[styles.unreadBadge, { borderColor: onMedia ? mediaColors.background : colors.background }]}>
                   <Text style={styles.unreadBadgeText} maxFontSizeMultiplier={1.2}>{badgeCount > 99 ? "99+" : badgeCount}</Text>
                 </View>
               ) : null}
             </View>
-            <Text style={[typography.caption, styles.tabLabel, isFocused && styles.labelFocused]}>{label}</Text>
           </Pressable>
         );
       })}
@@ -123,7 +129,7 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
 }
 
 /** The tab's icon gives a small bounce when its tab becomes the current one. */
-function TabIcon({ focused, name }: { focused: boolean; name: import("../theme/icons").IconName }): React.JSX.Element {
+function TabIcon({ focused, name, color }: { focused: boolean; name: import("../theme/icons").IconName; color: string }): React.JSX.Element {
   const scale = useRef(new Animated.Value(1)).current;
   const first = useRef(true);
   useEffect(() => {
@@ -137,8 +143,19 @@ function TabIcon({ focused, name }: { focused: boolean; name: import("../theme/i
   }, [focused, scale]);
   return (
     <Animated.View style={{ transform: [{ scale }] }}>
-      <Icon style={[styles.tabIcon, focused && styles.labelFocused]} name={name} selected={focused} />
+      <Icon size={26} color={color} name={name} selected={focused} />
     </Animated.View>
+  );
+}
+
+/** Profile is your own photo (or initial), ringed while it's the current tab. */
+function ProfileTab({ focused, ring }: { focused: boolean; ring: string }): React.JSX.Element {
+  const { user } = useAuth();
+  if (!user) return <Icon size={26} color={ring} name={ICONS.profile} selected={focused} />;
+  return (
+    <View style={[styles.profileRing, focused && { borderColor: ring }]}>
+      <Avatar username={user.username} displayName={user.displayName} avatarMediaId={user.avatarMediaId} size={24} />
+    </View>
   );
 }
 
@@ -146,66 +163,36 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.surface,
+    backgroundColor: colors.background,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: colors.border,
     paddingTop: spacing.xs,
   },
+  containerOnMedia: { backgroundColor: mediaColors.background, borderTopColor: "rgba(255,255,255,0.08)" },
   tabItem: {
-    minHeight:48,
+    minHeight: 50,
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    gap: 2,
-    paddingVertical: spacing.xs,
   },
   tabContent: { alignItems: "center", justifyContent: "center" },
-  tabIcon: { fontSize: 22, color: colors.textSecondary },
-  tabLabel: { color: colors.textSecondary, fontSize: 11 },
-  labelFocused: {
-    color: colors.accentText,
-    fontWeight: "700",
-  },
+  profileRing: { width: 30, height: 30, borderRadius: 15, borderWidth: 1.5, borderColor: "transparent", alignItems: "center", justifyContent: "center" },
   unreadBadge: {
     position: "absolute",
-    top: -6,
-    right: -14,
-    minWidth: 16,
-    height: 16,
+    top: -5,
+    right: -10,
+    minWidth: 18,
+    height: 18,
     borderRadius: radii.pill,
-    backgroundColor: colors.accent,
+    borderWidth: 2,
+    backgroundColor: colors.like,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 3,
   },
   unreadBadgeText: {
-    color: colors.onAccent,
+    color: "#FFFFFF",
     fontSize: 10,
     fontWeight: "700",
-  },
-  createButtonWrapper: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: -spacing.lg,
-  },
-  createButton: {
-    width: 56,
-    height: 56,
-    borderRadius: radii.pill,
-    backgroundColor: colors.accent,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: colors.accentText,
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 6,
-  },
-  createButtonGlyph: {
-    fontSize: 30,
-    fontWeight: "700",
-    color: colors.onAccent,
-    lineHeight: 32,
   },
 });

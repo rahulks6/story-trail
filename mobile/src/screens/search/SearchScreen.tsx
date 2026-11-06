@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
   filterChipActive: { backgroundColor: colors.accent, borderColor: colors.accent },
   filterChipLabel: { ...typography.caption, fontWeight: "600", color: colors.textSecondary },
   filterChipLabelActive: { color: colors.onAccent },
-  sectionTitle: { marginTop: spacing.xs, marginBottom: spacing.xs },
+  sectionTitle: { marginTop: spacing.lg, marginBottom: spacing.xs },
   fill: { flex: 1 },
   findFriends: {
     flexDirection: "row",
@@ -427,13 +427,12 @@ const styles = StyleSheet.create({
   },
   spinner: { marginTop: spacing.md },
   error: { color: colors.danger, marginTop: spacing.sm },
+  // No rule between people: spacing alone separates them, as on Instagram.
   row: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.sm,
+    gap: spacing.md,
     paddingVertical: spacing.sm,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.border,
   },
   rowMain: { flex: 1, flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 44 },
   rowText: { flex: 1, gap: 2 },
@@ -441,7 +440,7 @@ const styles = StyleSheet.create({
   // area is larger than it looks (hitSlop).
   followButton: {
     minHeight: 32,
-    minWidth: 88,
+    minWidth: 84,
     paddingHorizontal: spacing.md,
     borderRadius: 8,
     alignItems: "center",

@@ -1020,7 +1020,8 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         ) : null}
         <Pressable onPress={toggleLike} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel={detail?.viewerHasLiked ? t("storyFeed.unlike") : t("storyFeed.like")}>
           <Icon style={[styles.actionIcon, detail?.viewerHasLiked && styles.actionIconLiked]} name={detail?.viewerHasLiked ? ICONS.liked : ICONS.like} />
-          <Text style={styles.actionCount} maxFontSizeMultiplier={1.3}>{detail?.likeCount ?? "—"}</Text>
+          {/* A count only once there is one, as Instagram does: no "0" or dash on a fresh Story. */}
+          {detail?.likeCount ? <Text style={styles.actionCount} maxFontSizeMultiplier={1.3}>{detail.likeCount}</Text> : null}
         </Pressable>
         {/* Someone else's Story: "Add a comment…" below is the way in. Your own: its comments, here. */}
         {isOwnStory ? (
@@ -1035,7 +1036,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
             accessibilityLabel={t("common.comments")}
           >
             <Icon style={styles.actionIcon} name={ICONS.comment} />
-            <Text style={styles.actionCount} maxFontSizeMultiplier={1.3}>{detail?.commentCount ?? "—"}</Text>
+            {detail?.commentCount ? <Text style={styles.actionCount} maxFontSizeMultiplier={1.3}>{detail.commentCount}</Text> : null}
           </Pressable>
         ) : null}
         {/* View counts are the owner's (the Activity button at the bottom), as on Instagram: a quieter rail. */}
@@ -1383,7 +1384,8 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
     alignItems: "flex-start",
   },
-  header: { position: "absolute", left: spacing.md, right: 72, flexDirection: "row", alignItems: "center", gap: spacing.sm },
+  // Clears the round buttons at the top right: Close in the viewer; Activity and a festival on Home.
+  header: { position: "absolute", left: spacing.md, right: 104, flexDirection: "row", alignItems: "center", gap: spacing.sm },
   headerWho: { flexDirection: "row", alignItems: "center", gap: spacing.sm, flexShrink: 1 },
   postedAgo: { color: "rgba(255,255,255,0.8)", fontSize: 13, textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 3 },
   followButton: { borderWidth: 1, borderColor: colors.textPrimary, borderRadius: radii.pill, paddingHorizontal: spacing.md, paddingVertical: 4 },

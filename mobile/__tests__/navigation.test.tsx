@@ -13,6 +13,8 @@ jest.mock("../src/navigation/DMStack", () => ({ DMStack: () => null }));
 jest.mock("../src/screens/profile/ProfileScreen", () => ({ ProfileScreen: () => null }));
 jest.mock("../src/state/NotificationsContext", () => ({ useNotifications: () => ({ unreadCount: 3 }) }));
 jest.mock("../src/state/DMContext", () => ({ useDM: () => ({ unreadCount: 120 }) }));
+// The Profile tab is your own photo; with no photo, your initial.
+jest.mock("../src/state/AuthContext", () => ({ useAuth: () => ({ user: { id: "u1", username: "asha", displayName: "Asha", avatarMediaId: null }, accessToken: "t" }) }));
 
 async function renderTabs(): Promise<ReactTestRenderer> {
   let tree!: ReactTestRenderer;

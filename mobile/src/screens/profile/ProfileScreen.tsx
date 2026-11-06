@@ -121,7 +121,7 @@ export function ProfileScreen(): React.JSX.Element {
           {/* Tap your username for your accounts on this phone (AccountSwitcherSheet), as on Instagram. */}
           <Pressable onPress={() => setSwitcherOpen(true)} hitSlop={8} style={styles.usernameButton} accessibilityRole="button" accessibilityLabel={t("accounts.openSwitcher")} accessibilityHint={user.username}>
             <Text style={styles.topBarUsername} numberOfLines={1} accessibilityRole="header">{user.username}</Text>
-            <Icon name={ICONS.down} size={16} color={colors.textPrimary} />
+            <Icon name={ICONS.expand} size={18} color={colors.textPrimary} />
           </Pressable>
         </View>
         <View style={styles.topBarActions}>
@@ -159,7 +159,8 @@ export function ProfileScreen(): React.JSX.Element {
           username={user.username}
           displayName={user.displayName}
           bio={user.bio}
-          interests={user.interests ?? []}
+          // Your interests shape what you're shown; they aren't listed on your own page.
+          interests={[]}
           avatarMediaId={user.avatarMediaId}
           // Your account's copy changes the moment you save in Edit profile.
           coverMediaId={user.coverMediaId !== undefined ? user.coverMediaId : fetchedCover}

@@ -710,6 +710,8 @@ export const hi: Catalogue = {
   "highlightsRow.titleHighlight": "{title}, हाइलाइट",
   "highlightsRow.reorder": "क्रम बदलें",
   "highlightsRow.highlights": "हाइलाइट्स",
+  "highlightsRow.emptyTitle": "अपनी सबसे अच्छी स्टोरीज़ सँभालकर रखें",
+  "highlightsRow.emptyBody": "स्टोरीज़ खत्म होने के बाद भी हाइलाइट्स आपकी प्रोफ़ाइल पर रहती हैं।",
   "highlightsRow.checkYourConnectionAndTry": "अपना कनेक्शन देखें और फिर से कोशिश करें।",
   "highlightsRow.theStoriesInItStay": "इसकी स्टोरीज़ आपके आर्काइव में रहेंगी।",
   "highlightsRow.deleteTitle": "\"{title}\" डिलीट करें?",

@@ -142,16 +142,17 @@ test("with no active Stories, Home can be pulled to refresh, and offers Find peo
 const diwali = { slug: "diwali-2026", name: "Diwali", emoji: "🪔", greeting: "Happy Diwali", startsOn: "2026-11-06", endsOn: "2026-11-11" };
 const pressByLabel = (label: string) => tree.root.find((n) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === label);
 
-test("on a festival day, Home shows its Stories from everyone, top left", async () => {
+test("on a festival day, Home shows its Stories from everyone, top right beside Activity", async () => {
   mockNavigation.navigate.mockClear();
   stories.getRankedHomeFeed.mockResolvedValueOnce({ feed: [feedEntry("asha")], nextCursor: null } as never);
   festivals.getCurrentFestival.mockResolvedValueOnce({ festival: diwali, next: null, creators: ["asha", "dev"], storyCount: 5 });
   await act(async () => { tree = create(<HomeScreen />); });
   await flush();
-  // While Stories play, it sits below the Story's name and avatar, not on them.
+  // A round button at the top right, left of Activity: the top left is the Story's own name and music.
   const { StyleSheet } = jest.requireActual("react-native");
-  const top = (label: string) => StyleSheet.flatten(tree.root.find((n) => n.props.accessibilityLabel === label && n.props.style).props.style).top;
-  expect(top("Diwali Stories, 5")).toBeGreaterThan(40);
+  const style = (label: string) => StyleSheet.flatten(tree.root.find((n) => n.props.accessibilityLabel === label && n.props.style).props.style);
+  expect(style("Diwali Stories, 5").right).toBeGreaterThan(style("Activity").right);
+  expect(style("Diwali Stories, 5").top).toBe(style("Activity").top);
   await act(async () => pressByLabel("Diwali Stories, 5").props.onPress());
   expect(mockNavigation.navigate).toHaveBeenCalledWith("StoryViewer", { creators: ["asha", "dev"], startIndex: 0 });
   await act(async () => tree.unmount());

@@ -762,6 +762,8 @@ export const en = {
   "highlightsRow.titleHighlight": "{title}, Highlight",
   "highlightsRow.reorder": "Reorder",
   "highlightsRow.highlights": "Highlights",
+  "highlightsRow.emptyTitle": "Keep your best Stories",
+  "highlightsRow.emptyBody": "Highlights stay on your profile after your Stories end.",
   "highlightsRow.checkYourConnectionAndTry": "Check your connection and try again.",
   "highlightsRow.theStoriesInItStay": "The Stories in it stay in your Archive.",
   "highlightsRow.deleteTitle": "Delete \"{title}\"?",

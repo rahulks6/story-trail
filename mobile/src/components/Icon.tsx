@@ -7,11 +7,16 @@ import type {IconName} from '../theme/icons';
 /** Reconstructed from the approved board (master spec p2), in a 24-unit grid.
  * Decorative by default: the owning control supplies its accessible label/state.
  */
-export function Icon({name,size,color,selected=false,style}: {name:IconName;size?:number;color?:string;selected?:boolean;style?:StyleProp<TextStyle>}): React.JSX.Element {
+export function Icon({name,size,color,selected=false,framed=false,style}: {name:IconName;size?:number;color?:string;selected?:boolean;
+ /** Draw it inside a rounded square: the tab bar's Create, as Instagram draws its +. */
+ framed?:boolean;style?:StyleProp<TextStyle>}): React.JSX.Element {
  const flat=StyleSheet.flatten(style)||{};
  const length=size??flat.fontSize??24;
- const ink=color??(selected?colors.accentText:flat.color)??colors.textPrimary;
- const filled=name==='liked'||name==='starFilled'||name==='verified'||(name==='home'&&selected);
+ const ink=color??flat.color??(selected?colors.accentText:colors.textPrimary);
+ // The current tab's icon is drawn solid (home, messages, profile) or heavier (search, create).
+ const solidWhenSelected=name==='home'||name==='dm'||name==='profile';
+ const filled=name==='liked'||name==='starFilled'||name==='verified'||(selected&&solidWhenSelected);
+ const weight=selected&&!solidWhenSelected?2.5:1.8;
  const paths:Partial<Record<IconName,string>>={
   home:'M4 10.5 12 3l8 7.5V21h-5v-7H9v7H4Z',
   search:'M16 16 21 21',
@@ -73,14 +78,14 @@ export function Icon({name,size,color,selected=false,style}: {name:IconName;size
   endCall:'M2 14.5c5.5-5 14.5-5 20 0l-2.5 3-4-1.5v-3a12 12 0 0 0-7 0v3l-4 1.5Z',
   micOff:'M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3ZM5 11a7 7 0 0 0 14 0M12 18v3M3 3l18 18',
   videoOff:'M3 7h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Zm13 4 6-4v10l-6-4M2 3l20 18',
-  chevron:'M9 5l7 7-7 7',minus:'M5 12h14',up:'M12 21V3m-7 7 7-7 7 7',down:'M12 3v18m-7-7 7 7 7-7',left:'M21 12H3m7-7-7 7 7 7',right:'M3 12h18m-7-7 7 7-7 7',
+  chevron:'M9 5l7 7-7 7',expand:'M6 9l6 6 6-6',minus:'M5 12h14',up:'M12 21V3m-7 7 7-7 7 7',down:'M12 3v18m-7-7 7 7 7-7',left:'M21 12H3m7-7-7 7 7 7',right:'M3 12h18m-7-7 7 7-7 7',
  };
  const alias:Partial<Record<IconName,IconName>>={activity:'like',liked:'like',clear:'close',send:'share',changeCover:'gallery',starFilled:'star'};
  const key=alias[name]??name;
  return <View pointerEvents="none" accessible={false} style={{margin:flat.margin,marginTop:flat.marginTop,marginBottom:flat.marginBottom,marginLeft:flat.marginLeft,marginRight:flat.marginRight}}>
   <Svg width={length} height={length} viewBox="0 0 24 24" accessible={false}>
-   <G stroke={ink} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" fill={filled?ink:'none'}>
-    {paths[key]&&<Path d={paths[key]}/>}
+   <G stroke={ink} strokeWidth={weight} strokeLinecap="round" strokeLinejoin="round" fill={filled?ink:'none'}>
+    {framed?<><Rect x={2.5} y={2.5} width={19} height={19} rx={5.5}/><Path d="M12 7.5v9M7.5 12h9"/></>:paths[key]&&<Path d={paths[key]}/>}
     {key==='search'&&<Circle cx={10.5} cy={10.5} r={7.5}/>}
     {key==='gallery'&&<><Rect x={2} y={3} width={20} height={18} rx={2}/><Circle cx={7} cy={7} r={1}/></>}
     {key==='capture'&&<><Circle cx={12} cy={12} r={11}/><Circle cx={12} cy={12} r={8.5} fill={ink}/></>}

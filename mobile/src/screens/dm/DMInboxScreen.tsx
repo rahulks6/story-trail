@@ -222,9 +222,12 @@ export function DMInboxScreen(): React.JSX.Element {
     return (
       <EmptyState icon="dm" title={t("dMInbox.noMessagesYet")} message={t("dMInbox.conversationsWithPeopleYouMessage")}>
         <View style={styles.emptyAction}>
+          {/* One button; the other ways in are quiet links under it. */}
           <Button label={t("common.newMessage")} onPress={() => navigation.navigate("NewChat")} />
-          <Button label={t("common.newGroup")} variant="text" onPress={() => navigation.navigate("NewGroup", {})} />
-          <Button label={t("common.inviteFriends")} variant="secondary" onPress={() => void shareInvite("messages", accessToken, user?.id)} />
+          <View style={styles.emptyLinks}>
+            <Button label={t("common.newGroup")} variant="text" onPress={() => navigation.navigate("NewGroup", {})} />
+            <Button label={t("common.inviteFriends")} variant="text" onPress={() => void shareInvite("messages", accessToken, user?.id)} />
+          </View>
         </View>
       </EmptyState>
     );
@@ -296,6 +299,7 @@ const styles = StyleSheet.create({
   emptyAction: { marginTop: spacing.md, minWidth: 200, gap: spacing.xs },
   container: { flex: 1, backgroundColor: colors.background },
   searchRow: { paddingHorizontal: spacing.md, paddingTop: spacing.sm, paddingBottom: spacing.xs, gap: spacing.sm },
+  emptyLinks: { flexDirection: "row", justifyContent: "center", gap: spacing.md },
   newGroup: { flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 44 },
   newGroupIcon: { width: 32, height: 32, borderRadius: 16, backgroundColor: colors.accent, alignItems: "center", justifyContent: "center" },
   newGroupText: { color: colors.textPrimary, fontSize: 15, fontWeight: "600" },

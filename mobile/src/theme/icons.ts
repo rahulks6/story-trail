@@ -59,6 +59,7 @@ export const ICONS = {minus:"minus",up:"up",down:"down",left:"left",right:"right
   "mention": "mention",
   "filter": "filter",
   "chevron": "chevron",
+  "expand": "expand",
   "alignLeft": "alignLeft",
   "alignCenter": "alignCenter",
   "alignRight": "alignRight",

@@ -277,7 +277,9 @@ describe("your own page", () => {
     api.getProfile.mockResolvedValue({ profile: profile({ username: "me_now", isSelf: true, followerCount: 2, followingCount: 1 }) });
     const share = jest.spyOn(Share, "share").mockResolvedValue({ action: "sharedAction" } as never);
     await render(<ProfileScreen />);
-    expect(texts()).toEqual(expect.arrayContaining(["me_now", "Me Now", "Chai and cricket.", "Cricket", "2", "Followers", "1", "Following", "27", "Stories"]));
+    expect(texts()).toEqual(expect.arrayContaining(["me_now", "Me Now", "Chai and cricket.", "2", "Followers", "1", "Following", "27", "Stories"]));
+    // Your interests shape your feed; they aren't listed on your own page.
+    expect(texts()).not.toContain("Cricket");
     // The username is the title at the top, not repeated under the name.
     expect(texts()).not.toContain("@me_now");
     // Insights is a small icon button beside Edit and Share profile, not a card.

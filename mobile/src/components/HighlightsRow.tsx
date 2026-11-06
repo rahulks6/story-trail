@@ -140,6 +140,22 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
   if (highlights === null) return null;
   if (highlights.length === 0 && !isOwner) return null;
 
+  // Your page before your first Highlight: an invitation, not a lone grey tile.
+  if (highlights.length === 0) {
+    return (
+      <View style={[styles.wrapper, styles.empty]}>
+        <View style={styles.emptyIcon}>
+          <Icon name={ICONS.star} size={28} color={colors.textPrimary} />
+        </View>
+        <Text style={styles.emptyTitle} accessibilityRole="header">{t("highlightsRow.emptyTitle")}</Text>
+        <Text style={styles.emptyBody}>{t("highlightsRow.emptyBody")}</Text>
+        <Pressable onPress={() => navigation.navigate("HighlightEditor", {})} hitSlop={8} accessibilityRole="button" style={styles.emptyLink}>
+          <Text style={styles.emptyLinkLabel}>{t("common.newHighlight")}</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
   const authHeaders = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
   const columns = Math.max(COLUMNS, Math.ceil((screenWidth - CONTAINER_PADDING * 2 + GAP) / (MAX_CARD_WIDTH + GAP)));
   const cardWidth = (screenWidth - CONTAINER_PADDING * 2 - GAP * (columns - 1)) / columns;
@@ -234,6 +250,12 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
 
 const styles = StyleSheet.create({
   wrapper: { width: "100%", marginTop: spacing.md },
+  empty: { alignItems: "center", paddingTop: spacing.xl, paddingBottom: spacing.lg, gap: spacing.sm },
+  emptyIcon: { width: 72, height: 72, borderRadius: 36, borderWidth: 1.5, borderColor: colors.textPrimary, alignItems: "center", justifyContent: "center", marginBottom: spacing.xs },
+  emptyTitle: { ...typography.title, textAlign: "center" },
+  emptyBody: { ...typography.caption, fontSize: 14, textAlign: "center", maxWidth: 280 },
+  emptyLink: { paddingVertical: spacing.xs },
+  emptyLinkLabel: { color: colors.accentText, fontWeight: "700", fontSize: 15 },
   headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.sm },
   sectionTitle: { ...typography.bodyStrong, fontSize: 16 },
   reorderToggle: { paddingVertical: spacing.xs },
