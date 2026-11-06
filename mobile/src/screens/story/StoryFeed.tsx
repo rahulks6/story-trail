@@ -1348,7 +1348,7 @@ const styles = StyleSheet.create({
     gap: spacing.lg + 2,
   },
   actionButton: { alignItems: "center", gap: 3, minWidth: 44 },
-  actionIcon: { color: colors.textPrimary, fontSize: 32 },
+  actionIcon: { color: colors.textPrimary, fontSize: 28 },
   actionIconLiked: { color: colors.like },
   // Readable over any photo.
   actionCount: { color: colors.textPrimary, fontSize: 14, fontWeight: "700", textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 3, textShadowOffset: { width: 0, height: 1 } },

@@ -1,7 +1,7 @@
 // Every path in Katkee's icon family must be well-formed SVG: each drawing command carries a
 // whole number of argument sets. A malformed path draws only up to the error, so the icon is
 // cut off on some renderers (the Like heart's last curve had 4 numbers instead of 6, found by
-// rendering the profile in a browser). Checks the paths map and every inline d="..." in Icon.tsx.
+// rendering the profile in a browser). Checks every path in iconPaths.ts and every inline d="..." in Icon.tsx.
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const ARITY={M:2,L:2,H:1,V:1,C:6,S:4,Q:4,T:2,A:7,Z:0};
 
@@ -29,9 +29,16 @@ function iconPaths(code){
  return out;
 }
 
+/** Every path in the generated Lucide set (iconPaths.ts): each quoted string in an icon's list. */
+function generatedPaths(code){
+ const out=[];
+ for(const m of code.matchAll(/^\s+(\w+): \[(.*)\],$/gm))for(const d of m[2].matchAll(/'([^']+)'/g))out.push([m[1],d[1]]);
+ return out;
+}
+
 test('every icon path is well-formed',()=>{
- const code=fs.readFileSync(path.join(__dirname,'../mobile/src/components/Icon.tsx'),'utf8');
- const paths=iconPaths(code);
+ const dir=path.join(__dirname,'../mobile/src/components');
+ const paths=[...iconPaths(fs.readFileSync(path.join(dir,'Icon.tsx'),'utf8')),...generatedPaths(fs.readFileSync(path.join(dir,'iconPaths.ts'),'utf8'))];
  assert.ok(paths.length>=40,`found ${paths.length} paths`);
  assert.deepEqual(paths.flatMap(([name,d])=>pathProblems(d).map(p=>`${name}: ${p}`)),[]);
 });
