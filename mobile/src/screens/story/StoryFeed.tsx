@@ -1141,13 +1141,15 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
       {isOwnStory ? (
         <View style={[styles.bottomBar, chrome, { bottom: spacing.md + insets.bottom }]} pointerEvents={paused ? "none" : "auto"}>
           <Pressable onPress={() => setInsightsOpen(true)} style={styles.activityButton} accessibilityRole="button" accessibilityLabel={t("storyFeed.activityViewcountViewsOpenViewers", { viewCount: viewCount ?? 0 })}>
-            <Icon name={ICONS.viewers} size={22} color={colors.textPrimary} />
+            <Icon name={ICONS.viewers} size={18} color={colors.textPrimary} />
             <Text style={styles.activityLabel}>{viewCount === null ? t("common.activity") : t("storyFeed.views", { count: viewCount })}</Text>
           </Pressable>
           {/* Keep it after the 24 hours: add it to one of your Highlights, or start a new one. */}
-          <Pressable onPress={() => setHighlightOpen(true)} style={[styles.activityButton, styles.highlightButton]} accessibilityRole="button" accessibilityLabel={t("storyFeed.addThisStoryToA")}>
-            <Icon name={ICONS.add} size={20} color={colors.textPrimary} />
-            <Text style={styles.activityLabel}>{highlightAdded ? t("storyFeed.added") : t("common.highlight")}</Text>
+          <Pressable onPress={() => setHighlightOpen(true)} hitSlop={8} style={styles.highlightButton} accessibilityRole="button" accessibilityLabel={t("storyFeed.addThisStoryToA")}>
+            <View style={styles.highlightCircle}>
+              <Icon name={highlightAdded ? ICONS.check : ICONS.add} size={16} color={colors.textPrimary} />
+            </View>
+            <Text style={styles.highlightLabel}>{highlightAdded ? t("storyFeed.added") : t("common.highlight")}</Text>
           </Pressable>
         </View>
       ) : null}
@@ -1337,9 +1339,12 @@ const styles = StyleSheet.create({
   },
   progressFill: { height: "100%", width: "100%", backgroundColor: colors.textPrimary, transformOrigin: "left" },
   bottomBar: { position: "absolute", left: spacing.md, right: spacing.md, height: BOTTOM_BAR_HEIGHT, flexDirection: "row", alignItems: "center" },
-  activityButton: { flexDirection: "row", alignItems: "center", gap: spacing.sm, height: BOTTOM_BAR_HEIGHT, paddingHorizontal: spacing.md, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.4)" },
-  activityLabel: { color: colors.textPrimary, fontSize: 15, fontWeight: "700" },
-  highlightButton: { marginLeft: "auto" },
+  // Your own Story's controls, small and light as on Instagram: no pills over the picture.
+  activityButton: { flexDirection: "row", alignItems: "center", gap: 6, height: BOTTOM_BAR_HEIGHT, paddingRight: spacing.md },
+  activityLabel: { color: colors.textPrimary, fontSize: 13, fontWeight: "600", textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 3 },
+  highlightButton: { marginLeft: "auto", alignItems: "center", gap: 3 },
+  highlightCircle: { width: 30, height: 30, borderRadius: 15, borderWidth: 1.5, borderColor: colors.textPrimary, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0,0,0,0.2)" },
+  highlightLabel: { color: colors.textPrimary, fontSize: 11, fontWeight: "600", textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 3 },
   actionRail: {
     position: "absolute",
     right: spacing.md,
