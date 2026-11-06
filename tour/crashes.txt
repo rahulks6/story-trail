@@ -1,0 +1,97 @@
+11-06 10:26:32.528 D/AndroidRuntime( 3905): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-06 10:26:32.539 I/AndroidRuntime( 3905): Using default boot image
+11-06 10:26:32.540 I/AndroidRuntime( 3905): Leaving lock profiling enabled
+11-06 10:26:32.544 W/libc    ( 2255): Access denied finding property "persist.adb.tls_server.enable"
+11-06 10:26:32.549 W/libc    ( 2255): Access denied finding property "service.adb.tls.port"
+11-06 10:26:32.544 W/binder:2255_5( 2255): type=1400 audit(0.0:46): avc:  denied  { read } for  name="u:object_r:adbd_prop:s0" dev="tmpfs" ino=63 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:adbd_prop:s0 tclass=file permissive=0 app=com.google.android.gms
+11-06 10:26:32.550 I/system_server(  566): IncrementDisableThreadFlip blocked for 41.179ms
+11-06 10:26:32.558 I/app_process( 3905): Core platform API reporting enabled, enforcing=false
+11-06 10:26:32.559 I/app_process( 3905): Using CollectorTypeCMC GC.
+11-06 10:26:32.565 W/Pay     ( 1451): Active account was null, notification task will be cancelled. [CONTEXT service_id=198 ]
+11-06 10:26:32.566 I/Pay     ( 1451): Failed to get account info [CONTEXT service_id=198 ]
+11-06 10:26:32.570 D/PackageManager(  566): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+11-06 10:26:32.577 I/A       ( 1590): (REDACTED) updateConfig: Hotword present: %b, LP directory: %s
+11-06 10:26:32.578 D/PackageManager(  566): Clear ephemeral installer activity
+11-06 10:26:32.581 I/system_server(  566): IncrementDisableThreadFlip blocked for 65.631ms
+11-06 10:26:32.589 I/MicroDataManager( 1590): (REDACTED) MicroDataManager InitializationTask. googleHotwordData is null: true, hotwordModel is null: %b , sourceLocationOfCurrentHotwordModel %s
+11-06 10:26:32.593 I/A       ( 1590): getLocaleToModelSpecsMap
+11-06 10:26:32.594 I/A       ( 1590): Fetching latest config from MDD...
+11-06 10:26:32.594 I/A       ( 1590): (REDACTED) Found map of size: %d
+11-06 10:26:32.595 I/native  ( 1590): I0000 00:00:1793960792.595421    1994 enrollment_manager_impl.cc:444] UpdateConfigRequest with timeout: 0
+11-06 10:26:32.612 W/MagnificationConnectionManager(  566): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-06 10:26:32.615 D/PackageUpdatedTask( 1168): Package updated: mOp=UPDATE packages=[dev.mobile.maestro]
+11-06 10:26:32.615 I/AiAiEcho( 1483): AppFetcherImpl onPackageChanged dev.mobile.maestro.
+11-06 10:26:32.617 I/AiAiEcho( 1483): AppIndexer Package:[dev.mobile.maestro] UserProfile:[0] Enabled:[true].
+11-06 10:26:32.618 I/AiAiEcho( 1483): AppFetcherImplV2 updateApps package:[dev.mobile.maestro], userId:[0], reason:[package is updated.].
+11-06 10:26:32.622 W/AllAppsList( 1168): updatePromiseInstallInfo: no Activities matched updated package, removing all apps from package=dev.mobile.maestro
+11-06 10:26:32.625 I/MicroDetectionState( 1590): (REDACTED) #takeChangeMicroDetectorMode [mIsBargeInEnabled: %b, mCurrentDetectionMode: %s]
+11-06 10:26:32.625 I/MicroDetectionState( 1590): (REDACTED) Should stop hotword detection immediately - %b
+11-06 10:26:32.626 W/IPCThreadState(  566): Sending oneway calls to frozen process.
+11-06 10:26:32.631 D/PackageManager(  566): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+11-06 10:26:32.632 D/PackageManager(  566): Clear ephemeral installer activity
+11-06 10:26:32.645 I/tflite  ( 1590): Initialized TensorFlow Lite runtime.
+11-06 10:26:32.648 W/system_server(  566): Long monitor contention with owner binder:566_2 (583) at android.content.ComponentName com.android.server.am.ActivityManagerService.startService(android.app.IApplicationThread, android.content.Intent, java.lang.String, boolean, java.lang.String, java.lang.String, int, boolean, int, java.lang.String, java.lang.String)(ActivityManagerService.java:14006) waiters=0 in int com.android.server.am.ActivityManagerService.broadcastIntentWithFeature(android.app.IApplicationThread, java.lang.String, android.content.Intent, java.lang.String, android.content.IIntentReceiver, int, java.lang.String, android.os.Bundle, java.lang.String[], java.lang.String[], java.lang.String[], int, android.os.Bundle, boolean, boolean, int) for 105ms
+--
+11-06 10:26:32.933 D/AndroidRuntime( 3905): Calling main entry com.android.commands.am.Am
+11-06 10:26:33.071 I/servicemanager(    0): Caller(pid=179,uid=1017,sid=u:r:keystore:s0) Found android.hardware.security.keymint.IRemotelyProvisionedComponent/default in device VINTF manifest.
+11-06 10:26:32.936 I/RemoteProvisionSysSvc(  566): getRegistration(android.hardware.security.keymint.IRemotelyProvisionedComponent/default)
+11-06 10:26:32.938 W/Pay     ( 1451): Active account was null, notification task will be cancelled. [CONTEXT service_id=198 ]
+11-06 10:26:32.938 W/Pay     ( 1451): [eMoney txn sync] exiting without init: active tapandpay account not found! [CONTEXT service_id=198 ]
+11-06 10:26:32.939 D/UiAutomationConnection( 3905): Created on user UserHandle{0}
+11-06 10:26:32.938 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/LatinIMEGooglePrebuilt/LatinIMEGooglePrebuilt.apk' with 1 weak references
+11-06 10:26:32.942 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/GoogleTTS/GoogleTTS.apk' with 1 weak references
+11-06 10:26:32.945 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~H6XFMcI0ifu9wtKs0kuBRw==/dev.mobile.maestro-nwtY-vNVtkYFTes_F5wkmA==/base.apk' with 2 weak references
+11-06 10:26:32.945 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/InputDevices/InputDevices.apk' with 1 weak references
+11-06 10:26:32.945 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '<empty> and /system_ext/app/AccessibilityMenu/AccessibilityMenu.apk' with 1 weak references
+11-06 10:26:32.945 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '/product/overlay/AccessibilityMenu__sdk_gphone64_x86_64__auto_generated_rro_product.apk' with 1 weak references
+11-06 10:26:32.947 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/talkback/talkback.apk' with 1 weak references
+11-06 10:26:32.949 I/ChimeraConfigurator( 1451): Detected pending changes for urgent request: [tflite_dynamite]. Pending module sets: container:2423359190800,tflite_dynamite:2640104055100800+tflite_dynamite
+11-06 10:26:32.950 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '/vendor/overlay/EmulatorTalkBackOverlay/EmulatorTalkBackOverlay.apk' with 1 weak references
+11-06 10:26:32.953 I/Pay     ( 1451): Requested immediate check to see whether to show pay module downloading complete notification. [CONTEXT service_id=198 ]
+11-06 10:26:32.954 I/ActivityManager(  566): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+11-06 10:26:32.966 V/GrammaticalInflectionUtils(  566): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@33c2181, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+11-06 10:26:32.971 I/AppsFilter(  566): interaction: PackageSetting{8ec5eb1 com.android.microdroid.empty_payload/10187} -> PackageSetting{f646f96 dev.mobile.maestro/10210} BLOCKED
+11-06 10:26:32.973 I/SemanticLocation( 1451): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.geller.GellerCleanupService.GellerCleanup is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+11-06 10:26:32.974 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk' with 1 weak references
+11-06 10:26:32.978 I/RegistrationProxy(  566): onServiceConnected: com.android.rkpdapp.service.RemoteProvisioningService
+11-06 10:26:32.983 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/Velvet/Velvet.apk' with 1 weak references
+11-06 10:26:32.985 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/PrebuiltGmail/PrebuiltGmail.apk' with 1 weak references
+11-06 10:26:32.986 I/RegistrationProxy(  566): IGetRegistrationCallback.onSuccess
+11-06 10:26:32.987 I/SemanticLocation( 1451): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.settings.LocationHistoryActiveProcessingService.LocationHistoryActiveProcessing is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+11-06 10:26:32.988 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/Drive/Drive.apk' with 1 weak references
+11-06 10:26:33.119 I/servicemanager(    0): Caller(pid=2713,uid=10199,sid=u:r:rkpdapp:s0:c199,c256,c512,c768) Found android.hardware.security.keymint.IRemotelyProvisionedComponent/default in device VINTF manifest.
+11-06 10:26:32.989 W/system_server(  566): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/CalendarGooglePrebuilt/CalendarGooglePrebuilt.apk' with 1 weak references
+11-06 10:26:32.996 I/SemanticLocation( 1451): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.settings.SettingsSyncService.OdlhSettingsSyncTask is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+11-06 10:26:32.997 I/SemanticLocation( 1451): [Scheduler] Periodic Task com.google.android.gms.semanticlocationhistory.settings.OdlhTombstonesCleanupJob.OdlhTombstonesCleanupJob is scheduled to run EVERY_DAY [CONTEXT service_id=173 ]
+--
+11-06 10:35:44.073 I/AndroidRuntime( 3905): VM exiting with result code 0.
+11-06 10:35:44.087 V/ActivityManager(  566): Got obituary of 3931:dev.mobile.maestro
+11-06 10:35:44.088 W/ActivityManager(  566): pid 566 system sent binder code 1 with flags 1 to frozen apps and got error -32
+11-06 10:35:44.090 I/adbd    (  447): Remote process closed the socket (on MSG_PEEK)
+11-06 10:35:44.092 W/MagnificationConnectionManager(  566): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-06 10:35:44.092 W/MagnificationConnectionManager(  566): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-06 10:35:44.092 I/AiAiEcho( 1483): Settings changed for uri: content://settings/secure/accessibility_enabled
+11-06 10:35:44.093 I/AiAiEcho( 1483): Settings changed for uri: content://settings/secure/accessibility_enabled
+11-06 10:35:44.232 I/init    (    0): ... started service 'artd' has pid 6328
+11-06 10:35:44.235 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 154 (/system/bin/servicemanager)
+11-06 10:35:44.099 W/IPCThreadState(  566): Sending oneway calls to frozen process.
+11-06 10:35:44.099 W/IPCThreadState(  566): Sending oneway calls to frozen process.
+11-06 10:35:44.099 W/IPCThreadState(  566): Sending oneway calls to frozen process.
+11-06 10:35:44.099 W/IPCThreadState(  566): Sending oneway calls to frozen process.
+11-06 10:35:44.099 W/IPCThreadState(  566): Sending oneway calls to frozen process.
+11-06 10:35:44.101 W/IPCThreadState(  566): Sending oneway calls to frozen process.
+11-06 10:35:44.102 I/AiAiEcho( 1483): Predicting[0]:  [CONTEXT sampling_count=5 ]
+11-06 10:35:44.103 W/IPCThreadState(  566): Sending oneway calls to frozen process.
+11-06 10:35:44.103 I/AiAiEcho( 1483): EchoTargets: 
+11-06 10:35:44.103 I/AiAiEcho( 1483): Filtered by AiAi flag check: 
+11-06 10:35:44.103 I/AiAiEcho( 1483): [CONTEXT ratelimit_period="10 SECONDS" ]
+11-06 10:35:44.103 I/AiAiEcho( 1483): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+11-06 10:35:44.105 W/IPCThreadState(  566): Sending oneway calls to frozen process.
+11-06 10:35:44.105 I/AiAiEcho( 1483): #remoteViewsTwiddler: feature disabled.
+11-06 10:35:44.105 W/IPCThreadState(  566): Sending oneway calls to frozen process.
+11-06 10:35:44.105 W/IPCThreadState(  566): Sending oneway calls to frozen process.
+11-06 10:35:44.105 W/IPCThreadState(  566): Sending oneway calls to frozen process.
+11-06 10:35:44.105 W/IPCThreadState(  566): Sending oneway calls to frozen process.
+11-06 10:35:44.111 W/IPCThreadState(  566): Sending oneway calls to frozen process.
+11-06 10:35:44.111 W/IPCThreadState(  566): Sending oneway calls to frozen process.
+11-06 10:35:44.112 W/Looper  (  915): Drained
