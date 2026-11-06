@@ -1,0 +1,97 @@
+11-06 10:39:34.682 D/AndroidRuntime( 3990): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-06 10:39:34.692 I/AndroidRuntime( 3990): Using default boot image
+11-06 10:39:34.694 I/AndroidRuntime( 3990): Leaving lock profiling enabled
+11-06 10:39:34.707 I/app_process( 3990): Core platform API reporting enabled, enforcing=false
+11-06 10:39:34.707 I/app_process( 3990): Using CollectorTypeCMC GC.
+11-06 10:39:34.741 D/ControlsListingControllerImpl(  908): ServiceConfig reloaded, count: 0
+11-06 10:39:34.742 D/ControlsListingControllerImpl(  908): ServiceConfig reloaded, count: 0
+11-06 10:39:34.750 I/GsaVoiceInteractionSrv( 1502): (REDACTED) O received %s
+11-06 10:39:34.777 D/ImsResolver( 1086): maybeAddedImsService, packageName: dev.mobile.maestro.test
+11-06 10:39:34.863 I/Icing   ( 1345): IndexChimeraService.getServiceInterface callingPackage=com.google.android.googlequicksearchbox componentName=agsa_icing_connection serviceId=32
+11-06 10:39:34.875 I/Icing   ( 1345): IndexChimeraService.getServiceInterface callingPackage=com.google.android.googlequicksearchbox componentName=agsa_icing_connection serviceId=33
+11-06 10:39:34.879 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:39:34.879 I/PackageWatchdog(  554): Syncing state, reason: observing new packages
+11-06 10:39:34.879 D/PackageWatchdog(  554): rescue-party-observer added the following packages to monitor [com.google.android.apps.nexuslauncher, com.android.settings]
+11-06 10:39:34.879 I/PackageWatchdog(  554): Syncing state, reason: updated observers
+11-06 10:39:34.879 I/PackageWatchdog(  554): Not pruning observers, elapsed time: 0ms
+11-06 10:39:34.888 W/JobScheduler(  554): Job didn't exist in JobStore: 1cba3ec #u0a144/-43 com.google.android.googlequicksearchbox/com.google.android.apps.gsa.tasks.BackgroundTasksJobService
+11-06 10:39:34.893 I/PackageWatchdog(  554): Syncing health check requests for packages: {}
+11-06 10:39:34.893 I/ExplicitHealthCheckController(  554): Service not ready to get health check supported packages. Binding...
+11-06 10:39:34.897 W/PackageManager(  554): Failed registering loading progress callback. Package is fully loaded.
+11-06 10:39:34.899 D/PackageUpdatedTask( 1175): Package updated: mOp=ADD packages=[dev.mobile.maestro.test]
+11-06 10:39:34.903 I/AiAiEcho( 1518): AppFetcherImplV2 updateApps package:[dev.mobile.maestro.test], userId:[0], reason:[package is added.].
+11-06 10:39:34.914 W/MagnificationConnectionManager(  554): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-06 10:39:34.915 I/AppWidgetServiceImpl(  554): getInstalledProvidersForProfiles() 0
+11-06 10:39:34.917 D/BaseIconCache( 1175): Default icon returned for dev.mobile.maestro.test
+11-06 10:39:34.919 W/MagnificationConnectionManager(  554): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-06 10:39:34.922 I/ExplicitHealthCheckController(  554): Explicit health check service is bound
+11-06 10:39:34.928 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:39:34.928 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:39:34.966 D/PackageUpdatedTask( 1175): Package updated: mOp=UPDATE packages=[dev.mobile.maestro.test]
+11-06 10:39:34.976 W/AllAppsList( 1175): updatePromiseInstallInfo: no Activities matched updated package, removing all apps from package=dev.mobile.maestro.test
+11-06 10:39:35.002 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:39:35.002 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+--
+11-06 10:39:35.321 D/AndroidRuntime( 3990): Calling main entry com.android.commands.am.Am
+11-06 10:39:35.334 D/UiAutomationConnection( 3990): Created on user UserHandle{0}
+11-06 10:39:35.351 I/earchbox:search( 1594): Background concurrent mark compact GC freed 15MB AllocSpace bytes, 21(1020KB) LOS objects, 49% free, 18MB/37MB, paused 569us,9.981ms total 901.515ms
+11-06 10:39:35.367 I/ActivityManager(  554): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+11-06 10:39:35.396 I/Icing   ( 1345): Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
+11-06 10:39:35.400 V/GrammaticalInflectionUtils(  554): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@7c60249, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+11-06 10:39:35.405 I/Fitness ( 1181): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+11-06 10:39:35.407 I/Icing   ( 1345): Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
+11-06 10:39:35.416 I/AppsFilter(  554): interaction: PackageSetting{a28245a com.android.microdroid.empty_payload/10198} -> PackageSetting{a2a2388 dev.mobile.maestro/10210} BLOCKED
+11-06 10:39:35.438 I/AppWidgetServiceImpl(  554): Received broadcast: android.intent.action.PACKAGE_UNSTOPPED on user 0
+11-06 10:39:35.439 I/AppWidgetServiceImpl(  554): Updating package stopped masked state for uid 10210 package dev.mobile.maestro isStopped false
+11-06 10:39:35.442 W/zygote64(  359): Waiting for a thread to finish unregistering
+11-06 10:39:35.443 I/Zygote  (  359): Entering forkRepeatedly native zygote loop
+11-06 10:39:35.465 D/Zygote  (  359): Forked child process 4003
+11-06 10:39:35.467 W/ActivityManager(  554): Slow operation: 51ms so far, now at startProcess: returned from zygote!
+11-06 10:39:35.475 W/ActivityManager(  554): Slow operation: 58ms so far, now at startProcess: done updating battery stats
+11-06 10:39:35.476 W/ActivityManager(  554): Slow operation: 59ms so far, now at startProcess: building log message
+11-06 10:39:35.476 I/ActivityManager(  554): Start proc 4003:dev.mobile.maestro/u0a210 for added application dev.mobile.maestro
+11-06 10:39:35.476 W/ActivityManager(  554): Slow operation: 59ms so far, now at startProcess: starting to update pids map
+11-06 10:39:35.476 W/ActivityManager(  554): Slow operation: 59ms so far, now at startProcess: done updating pids map
+11-06 10:39:35.477 I/.gms.persistent( 1181): Background concurrent mark compact GC freed 22MB AllocSpace bytes, 25(3856KB) LOS objects, 46% free, 27MB/51MB, paused 781us,70.011ms total 951.372ms
+11-06 10:39:35.483 I/RescueParty(  554): Starting to observe: [android], updated namespace: configuration
+11-06 10:39:35.492 I/netd    (  355): tetherGetStats() -> {[]} <0.65ms>
+11-06 10:39:35.516 I/DataFileManager( 1329): DataFileManager.addDataWithoutNotify():185 adding data en-840 mdd
+11-06 10:39:35.516 I/ForegroundDownloadTaskWorker( 1329): ForegroundDownloadTaskWorker$1.onSuccess():68 onSuccess
+11-06 10:39:35.520 I/WM-WorkerWrapper( 1329): Worker result SUCCESS for Work [ id=d841af59-9e87-490f-ae92-a87722071210, tags={ com.google.android.libraries.inputmethod.mdd.ForegroundDownloadTaskWorker } ]
+11-06 10:39:35.516 I/.mobile.maestro( 4003): Late-enabling -Xcheck:jni
+11-06 10:39:35.524 I/DelightKLPDownloader( 1329): DelightKLPDownloader$2.onSuccess():207 klp en_840 downloaded with version 2024070900
+11-06 10:39:35.535 I/Auth    ( 1345): [SupervisedAccountIntentOperation] onHandleIntent(): android.intent.action.PACKAGE_ADDED
+11-06 10:39:35.536 I/Auth    ( 1345): [SupervisedAccountIntentOperation] This operation is disabled
+11-06 10:39:35.539 I/PackageWatchdog(  554): Syncing state, reason: observing new packages
+--
+11-06 10:43:03.485 I/AndroidRuntime( 3990): VM exiting with result code 0.
+11-06 10:43:03.625 I/init    (    0): ... started service 'artd' has pid 6267
+11-06 10:43:03.631 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 142 (/system/bin/servicemanager)
+11-06 10:43:03.636 I/binder  (    0): undelivered transaction 543592, process died.
+11-06 10:43:03.638 I/binder_alloc(    0): 4003: binder_alloc_buf, no vma
+11-06 10:43:03.639 I/binder  (    0): cannot allocate buffer: vma cleared, target dead or dying
+11-06 10:43:03.639 I/binder  (    0): 554:1827 transaction async to 4003:0 failed 543599/29189/-3, size 192-0 line 3544
+11-06 10:43:03.643 I/init    (    0): Untracked pid 3990 exited with status 0
+11-06 10:43:03.644 I/init    (    0): Untracked pid 3990 did not have an associated service entry and will not be reaped
+11-06 10:43:03.517 E/IPCThreadState(  554): Binder transaction failure. id: 543599, BR_*: 29189, error: -3 (No such process)
+11-06 10:43:03.517 W/ActivityManager(  554): pid 554 system sent binder code 1 with flags 1 to frozen apps and got error -32
+11-06 10:43:03.518 W/MagnificationConnectionManager(  554): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-06 10:43:03.518 V/UiAutomationManager(  554): UiAutomation service owner died
+11-06 10:43:03.519 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:43:03.519 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:43:03.519 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:43:03.519 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:43:03.519 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:43:03.519 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:43:03.519 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:43:03.519 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:43:03.519 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:43:03.519 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:43:03.519 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:43:03.519 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:43:03.519 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:43:03.519 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:43:03.520 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:43:03.520 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:43:03.520 W/IPCThreadState(  554): Sending oneway calls to frozen process.
+11-06 10:43:03.520 W/IPCThreadState(  554): Sending oneway calls to frozen process.
