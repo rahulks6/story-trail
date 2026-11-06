@@ -6,9 +6,11 @@ import type {IconName} from '../theme/icons';
 import {ICON_PATHS} from './iconPaths';
 
 /** Names drawn as another icon: the filled heart is the heart drawn solid, and so on. */
-const ALIAS:Partial<Record<IconName,string>>={liked:'like',clear:'close',send:'share',changeCover:'gallery',starFilled:'star',
+const ALIAS:Partial<Record<IconName,string>>={liked:'like',clear:'close',changeCover:'gallery',starFilled:'star',
  // Each platform's own back: an arrow on Android (as its headers draw it), a chevron on iPhone.
- back:Platform.OS==='android'?'backAndroid':'backIos'};
+ back:Platform.OS==='android'?'backAndroid':'backIos',
+ // Share is each platform's own share symbol; Send (a message, a reply) is the paper plane.
+ share:Platform.OS==='android'?'shareAndroid':'shareIos'};
 
 /** The verified badge: a rosette (eight scallops) with the tick cut out of it in the background's contrast colour. */
 const ROSETTE='M12 1.8L15.2 4.2L19.2 4.8L19.8 8.8L22.2 12L19.8 15.2L19.2 19.2L15.2 19.8L12 22.2L8.8 19.8L4.8 19.2L4.2 15.2L1.8 12L4.2 8.8L4.8 4.8L8.8 4.2Z';

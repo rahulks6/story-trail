@@ -133,7 +133,7 @@ appId: com.katkee.app
     timeout: 5000
 - takeScreenshot: 06-search
 
-- tapOn: "Messages"
+- tapOn: "Messages.*"  # the tab: "Messages", or "Messages, 2 unread"
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: 07-messages
@@ -186,7 +186,7 @@ appId: com.katkee.app
       - waitForAnimationToEnd:
           timeout: 5000
       - takeScreenshot: 15-profile-light
-      - tapOn: "Messages"
+      - tapOn: "Messages.*"  # the tab: "Messages", or "Messages, 2 unread"
       - waitForAnimationToEnd:
           timeout: 5000
       - takeScreenshot: 16-messages-light

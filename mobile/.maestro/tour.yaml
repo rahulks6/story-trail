@@ -232,7 +232,7 @@ appId: com.katkee.app
 
 # Messages: a real chat (the second account writes first)
 - runScript: partner-dm.js
-- tapOn: "Messages"
+- tapOn: "Messages.*"  # the tab: "Messages", or "Messages, 2 unread"
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: t28-inbox

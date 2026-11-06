@@ -1049,7 +1049,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         {/* A private reply goes to their messages (comments are public). */}
         {!isOwnStory ? (
           <Pressable onPress={() => setReplyOpen(true)} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel={commentsAllowed ? t("storyFeed.messageCurrentusernamePrivately", { currentUsername: currentUsername ?? "" }) : t("storyFeed.sendAMessageToCurrentusername", { currentUsername: currentUsername ?? "" })}>
-            <Icon style={styles.actionIcon} name={ICONS.dm} />
+            <Icon style={styles.actionIcon} name={ICONS.send} />
           </Pressable>
         ) : null}
         {/* View counts are the owner's (the Activity button at the bottom), as on Instagram: a quieter rail. */}

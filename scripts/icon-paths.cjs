@@ -15,7 +15,7 @@ const LUCIDE_VERSION = "0.460.0";
 /** Katkee icon name -> Lucide icon. */
 const MAP = {
   home: "house", search: "search", create: "plus", add: "plus", activity: "heart", like: "heart",
-  comment: "message-circle", share: "send", dm: "message-square", profile: "user", more: "ellipsis",
+  comment: "message-circle", send: "send", shareAndroid: "share-2", shareIos: "share", dm: "message-square", profile: "user", more: "ellipsis",
   close: "x", flash: "zap", timer: "timer", gallery: "image", flip: "switch-camera", text: "type",
   sticker: "sticker", emoji: "smile", draw: "brush", audioOn: "volume-2", audioMuted: "volume-x",
   crop: "crop", trim: "scissors", appearance: "sun-moon", language: "languages", viewers: "eye",
