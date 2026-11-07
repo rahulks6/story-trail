@@ -44,6 +44,8 @@ const ALLOWED={
  'components/ScheduleSheet.tsx':1,
  'components/charts/ActiveHoursChart.tsx':1,
  'components/charts/FollowerGrowthChart.tsx':1,
+ // A chat's day lines: midnight of a day on the phone's clock (server times go through serverDate).
+ 'utils/chatTime.ts':1,
 };
 test('no screen parses a server timestamp with Date directly',()=>{
  const found={};
