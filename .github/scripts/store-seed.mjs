@@ -3,7 +3,7 @@
 // looking the way it does in use, for the Google Play screenshots. Every account is a throwaway
 // support+e2e-… account (verified with the run's GitHub OIDC token) and the workflow deletes them
 // all at the end. The photos are Unsplash-licensed (free to use commercially, no people's faces),
-// downloaded by the walk-through into PHOTOS, plus Katkee's own street photo (brand/store/photos).
+// downloaded by the walk-through into PHOTOS, plus Katkee's own photos from Pexels (brand/store/photos, see SOURCES.md there).
 //
 // Usage: node store-seed.mjs <photos dir> <accounts file> <main password>
 import { readFileSync, appendFileSync } from "node:fs";
@@ -118,7 +118,7 @@ const mayaLake = await story("maya", "story-lake", "Clearest water I've ever see
 await call("POST", "/api/v1/highlights", PEOPLE.maya.token, { title: "Travel", storyIds: [mayaStreet, mayaLake] });
 await call("POST", "/api/v1/highlights", PEOPLE.maya.token, { title: "Skies", storyIds: [mayaSunset] });
 
-await story("kenji", "story-city", "New York, never slowing down 🗽");
+await story("kenji", "story-city", "City lights from up here ✨");
 await story("zara", "story-coffee", "Slow morning, first sketch of the day");
 await story("leo", "story-beach", "Found my happy place 🌊", music ? { music } : {});
 await story("sofia", "story-food", "Sunday pizza night, recipe in my Highlights 🍕");

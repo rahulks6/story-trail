@@ -62,6 +62,7 @@ if [ "$FLOW" = store ]; then
   get() { # name, Unsplash photo id, width, height
     curl -sfL -m 30 -o "$PHOTOS/$1.jpg" "https://images.unsplash.com/photo-$2?w=$3&h=$4&fit=crop&crop=entropy&fm=jpg&q=82" || true
   }
+  get story-city 1477959858617-67f85cf4f1df 1080 1920
   get story-coffee 1495474472287-4d71bcdd2085 1080 1920
   get story-food 1565299624946-b28f40a0ca4b 1080 1920
   get cover-maya 1501785888041-af3ef285b470 1080 600
