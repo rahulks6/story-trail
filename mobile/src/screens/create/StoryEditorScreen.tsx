@@ -2,7 +2,7 @@ import { useMediaStatusBar } from "../../hooks/useMediaStatusBar";
 import { Icon } from "../../components/Icon";
 import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Alert, BackHandler, Dimensions, Image, Keyboard, PanResponder, PixelRatio, StyleSheet, Text, TextInput, View, useWindowDimensions, type GestureResponderEvent, type LayoutChangeEvent } from "react-native";
+import { ActivityIndicator, Alert, Animated, BackHandler, Dimensions, Image, Keyboard, PanResponder, PixelRatio, StyleSheet, Text, TextInput, View, useWindowDimensions, type GestureResponderEvent, type LayoutChangeEvent } from "react-native";
 import { Pressable } from "../../components/Pressable";
 import Video, { type VideoRef } from "react-native-video";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -18,9 +18,12 @@ import { FILTER_PREVIEWS, type FilterKey } from "../../models/filterPreviews";
 import { tapFeedback } from "../../utils/haptics";
 import { filteredPhotoUri, forgetFilteredPhoto } from "../../utils/filterPhoto";
 import { filterSwipeStep, pinchPlacement, TAP_SLOP, type Placement, type Touch } from "../../models/canvasGestures";
+import { framePhoto, isFramed, UNFRAMED, type PhotoFrame } from "../../models/photoFrame";
+import { captureRef } from "react-native-view-shot";
 import {
   clampOverlayPosition,
   createEmptyDraft,
+  DEFAULT_CROP,
   type StoryDraft,
   hasMeaningfulEdits,
   filterKey,
@@ -65,6 +68,12 @@ type Props = NativeStackScreenProps<CreateStackParamList, "StoryEditor">;
 type Audience = "public" | "followers" | "close_friends";
 
 const TRASH_ZONE_SIZE = 80;
+/** Two fingers on a photo act on an object only this soon after it was touched; otherwise on the photo. */
+const OBJECT_PINCH_MS = 1500;
+/** A moved or turned photo is saved this wide (and as tall as the editor's frame is, in proportion). */
+const FRAMED_PHOTO_WIDTH = 1080;
+/** The Reset button sits under the editor's top bar and the song chip. */
+const RESET_FRAME_TOP = 108;
 /** The server's caption limit. */
 const CAPTION_MAX = 280;
 /**
@@ -164,6 +173,26 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
 
   const [draft, setDraft] = useState<StoryDraft>(() => ({ ...createEmptyDraft({ uri: mediaUri, kind, width: route.params.width, height: route.params.height }), trim: route.params.initialTrim ?? null }));
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+  // A photo moved, resized or turned with two fingers (models/photoFrame.ts). It's shown live
+  // through Animated values while the fingers move, and saved as it looks when shared (onShare).
+  const [photoFrame, setPhotoFrame] = useState<PhotoFrame>(UNFRAMED);
+  const photoShot = useRef<React.ComponentRef<typeof View>>(null);
+  const frameAnim = useRef({ x: new Animated.Value(0), y: new Animated.Value(0), scale: new Animated.Value(1), rotation: new Animated.Value(0) }).current;
+  const showFrame = useCallback((f: PhotoFrame, w: number, h: number) => {
+    frameAnim.x.setValue((f.x - 0.5) * w);
+    frameAnim.y.setValue((f.y - 0.5) * h);
+    frameAnim.scale.setValue(f.scale);
+    frameAnim.rotation.setValue(f.rotation);
+  }, [frameAnim]);
+  useEffect(() => showFrame(photoFrame, containerSize.width, containerSize.height), [photoFrame, containerSize.width, containerSize.height, showFrame]);
+  const frameTransform = useMemo(() => ({
+    transform: [
+      { translateX: frameAnim.x },
+      { translateY: frameAnim.y },
+      { rotate: frameAnim.rotation.interpolate({ inputRange: [-360, 360], outputRange: ["-360deg", "360deg"] }) },
+      { scale: frameAnim.scale },
+    ],
+  }), [frameAnim]);
   const [textModalVisible, setTextModalVisible] = useState(false);
   const [stickerSheetVisible, setStickerSheetVisible] = useState(false);
   const [stickerTab, setStickerTab] = useState<StickerTab | undefined>(undefined);
@@ -216,6 +245,8 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   const storyAudience: Audience = audience === "followers" ? "followers" : "public";
   // The object two fingers on the photo resize and rotate: the last one touched or added.
   const activeOverlayId = useRef<string | null>(null);
+  // When an object was last touched: two fingers on a photo act on that object only just after.
+  const lastObjectTouch = useRef(0);
   const [uploadState, setUploadState] = useState<"idle" | "uploading" | "done" | "error">("idle");
   // Schedule (models/schedule.ts): when set, sharing uploads now and the Story posts at this time.
   const [publishAt, setPublishAt] = useState<Date | null>(null);
@@ -473,6 +504,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   /** Touching an object brings it to the front and makes it the one two fingers on the photo act on. */
   const raiseOverlay = useCallback((id: string) => {
     activeOverlayId.current = id;
+    lastObjectTouch.current = Date.now();
     setDraft((d) => {
       const top = Math.max(0, ...d.overlays.map((o) => o.zIndex));
       const target = d.overlays.find((o) => o.id === id);
@@ -524,12 +556,14 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   // tap to add text, and pinch with two fingers to resize and turn the last object touched. Objects
   // sit above this layer and take their own touches first. It must stay a real native view
   // (`collapsable={false}`): an empty view is dropped on Android and touches fall through.
-  const canvasLatest = useRef({ cycleFilter, draft, containerSize });
-  canvasLatest.current = { cycleFilter, draft, containerSize };
+  const canvasLatest = useRef({ cycleFilter, draft, containerSize, kind, photoFrame, showFrame });
+  canvasLatest.current = { cycleFilter, draft, containerSize, kind, photoFrame, showFrame };
   const canvasGesture = useMemo(() => {
     let steps = 0;
     let moved = false;
     let pinch: { id: string; start: Placement; from: [Touch, Touch]; now?: Placement } | null = null;
+    // On a photo, two fingers move the photo itself (like Instagram), unless an object was just touched.
+    let photoPinch: { start: PhotoFrame; from: [Touch, Touch]; now?: PhotoFrame } | null = null;
     let pinched = false;
     let swipeStart = { x: 0, y: 0 };
     const touchesOf = (evt: GestureResponderEvent): Touch[] => evt.nativeEvent.touches.map((touch) => ({ pageX: touch.pageX, pageY: touch.pageY }));
@@ -540,6 +574,8 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         liveOverlays.current.get(pinch.id)?.(null);
       }
       pinch = null;
+      if (photoPinch?.now) setPhotoFrame(photoPinch.now);
+      photoPinch = null;
     };
     const fingerUp = () => {
       fingerDown.current = false;
@@ -548,9 +584,16 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
       pending?.();
     };
     const startPinch = (touches: Touch[]) => {
+      const latest = canvasLatest.current;
       const id = activeOverlayId.current;
-      const o = canvasLatest.current.draft.overlays.find((x) => x.id === id);
-      pinch = o ? { id: o.id, start: { x: o.x, y: o.y, scale: o.scale, rotation: o.rotation }, from: [touches[0]!, touches[1]!] } : null;
+      const o = latest.draft.overlays.find((x) => x.id === id);
+      const objectJustTouched = !!o && Date.now() - lastObjectTouch.current < OBJECT_PINCH_MS;
+      if (latest.kind === "photo" && !objectJustTouched) {
+        photoPinch = { start: latest.photoFrame, from: [touches[0]!, touches[1]!] };
+        pinch = null;
+      } else {
+        pinch = o ? { id: o.id, start: { x: o.x, y: o.y, scale: o.scale, rotation: o.rotation }, from: [touches[0]!, touches[1]!] } : null;
+      }
       pinched = true;
     };
     return PanResponder.create({
@@ -562,6 +605,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         moved = false;
         pinched = false;
         pinch = null;
+        photoPinch = null;
         fingerDown.current = true;
         swipeStart = { x: evt.nativeEvent.pageX, y: evt.nativeEvent.pageY };
         const touches = touchesOf(evt);
@@ -570,7 +614,13 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
       onPanResponderMove: (evt) => {
         const touches = touchesOf(evt);
         if (touches.length >= 2) {
-          if (!pinch) startPinch(touches);
+          if (!pinch && !photoPinch) startPinch(touches);
+          if (photoPinch) {
+            const { width, height } = canvasLatest.current.containerSize;
+            photoPinch.now = framePhoto(photoPinch.start, photoPinch.from, [touches[0]!, touches[1]!], width, height);
+            canvasLatest.current.showFrame(photoPinch.now, width, height);
+            return;
+          }
           if (!pinch) return;
           const { width, height } = canvasLatest.current.containerSize;
           const next = pinchPlacement(pinch.start, pinch.from, [touches[0]!, touches[1]!], width, height);
@@ -671,7 +721,20 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
     setUploadState("uploading");
     setUploadError(null);
     try {
-      await enqueueUpload(user.id,mediaUri,kind,mimeType,
+      // A photo moved, resized or turned is saved exactly as it looks (crop included), so every
+      // viewer, the website and older apps show the same picture.
+      let sendUri = mediaUri, sendMime = mimeType, sendCrop = draft.crop;
+      if (kind === "photo" && isFramed(photoFrame) && containerSize.width > 0) {
+        try {
+          const shot = await captureRef(photoShot, { format: "jpg", quality: 0.92, width: FRAMED_PHOTO_WIDTH, height: Math.round((FRAMED_PHOTO_WIDTH * containerSize.height) / containerSize.width), result: "tmpfile" });
+          sendUri = shot.startsWith("file://") ? shot : `file://${shot}`;
+          sendMime = "image/jpeg";
+          sendCrop = DEFAULT_CROP;
+        } catch {
+          throw new Error(t("storyEditor.couldntPreparePhoto"));
+        }
+      }
+      await enqueueUpload(user.id,sendUri,kind,sendMime,
         {
           caption: draft.caption,
           audience: target,
@@ -681,7 +744,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           drawing: draft.drawing,
           filter: filterKey(draft.filter),
           audioMuted: draft.audioMuted,
-          crop: draft.crop,
+          crop: sendCrop,
           ...(music ? { music: { trackId: music.track.id, startMs: music.startMs, durationMs: music.durationMs } } : {}),
           // Public festival Stories join the festival's ring on Home.
           ...(festival && joinFestival && target === "public" ? { festival: festival.slug } : {}),
@@ -716,24 +779,32 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
       <View style={styles.mediaContainer} onLayout={onContainerLayout}>
         {kind === "photo" ? (
           <>
-            <Image
-              source={{ uri: mediaUri }}
-              style={[StyleSheet.absoluteFill, mediaTransformStyle(draft.crop, containerSize.width, containerSize.height)]}
-              resizeMode="cover"
-            />
+            {/* The photo as it will be shared (photoShot is what's saved when it was moved or turned),
+                without the filter preview, which the server applies to the saved photo. */}
+            <View ref={photoShot} collapsable={false} style={[StyleSheet.absoluteFill, styles.photoShot]}>
+              <Animated.View style={[StyleSheet.absoluteFill, frameTransform]}>
+                <Image
+                  source={{ uri: mediaUri }}
+                  style={[StyleSheet.absoluteFill, mediaTransformStyle(draft.crop, containerSize.width, containerSize.height)]}
+                  resizeMode="cover"
+                />
+              </Animated.View>
+            </View>
             {processedPhoto && processedPhoto.filter === draft.filter ? (
-              <Image
-                key={processedPhoto.uri}
-                source={{ uri: processedPhoto.uri }}
-                onLoad={() => setShownProcessedFilter(processedPhoto.filter)}
-                fadeDuration={0}
-                style={[
-                  StyleSheet.absoluteFill,
-                  mediaTransformStyle(draft.crop, containerSize.width, containerSize.height),
-                  shownProcessedFilter === processedPhoto.filter ? null : styles.hidden,
-                ]}
-                resizeMode="cover"
-              />
+              <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, frameTransform]}>
+                <Image
+                  key={processedPhoto.uri}
+                  source={{ uri: processedPhoto.uri }}
+                  onLoad={() => setShownProcessedFilter(processedPhoto.filter)}
+                  fadeDuration={0}
+                  style={[
+                    StyleSheet.absoluteFill,
+                    mediaTransformStyle(draft.crop, containerSize.width, containerSize.height),
+                    shownProcessedFilter === processedPhoto.filter ? null : styles.hidden,
+                  ]}
+                  resizeMode="cover"
+                />
+              </Animated.View>
             ) : null}
           </>
         ) : (
@@ -775,6 +846,20 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             accessibilityElementsHidden
             importantForAccessibility="no-hide-descendants"
           />
+        ) : null}
+
+        {kind === "photo" && isFramed(photoFrame) && !drawMode && !cropMode ? (
+          // Back to the photo as it came: full size, straight and centred.
+          <Pressable
+            onPress={() => { tapFeedback("select"); setPhotoFrame(UNFRAMED); }}
+            hitSlop={8}
+            style={[styles.resetFrame, { top: insets.top + RESET_FRAME_TOP }]}
+            accessibilityRole="button"
+            accessibilityLabel={t("storyEditor.resetPhoto")}
+          >
+            <Icon name={ICONS.undo} size={15} color={colors.textPrimary} />
+            <Text style={styles.resetFrameLabel}>{t("storyEditor.reset")}</Text>
+          </Pressable>
         ) : null}
 
         {boomerang ? (
@@ -1200,6 +1285,9 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#000" },
   mediaContainer: { flex: 1 },
+  photoShot: { backgroundColor: "#000000", overflow: "hidden" },
+  resetFrame: { position: "absolute", left: spacing.md, flexDirection: "row", alignItems: "center", gap: 6, height: 32, paddingHorizontal: spacing.md, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.45)" },
+  resetFrameLabel: { color: colors.textPrimary, fontSize: 13, fontWeight: "600" },
   topBar: {
     position: "absolute",
     top: spacing.xl,
