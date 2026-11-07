@@ -1,0 +1,209 @@
+# The Google Play screenshots, run on an Android emulator by .github/workflows/android-e2e.yml with
+# flow=store. .github/scripts/store-seed.mjs has already made the demo accounts (Maya and her
+# friends) with Stories, chats, likes and comments; this signs in as Maya and captures the real
+# app: Home, the Story editor with text and music, a Layout, chats, her profile and Activity.
+# Every step past signing in is optional, so one surprise doesn't lose the other screenshots.
+appId: com.katkee.app
+---
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- tapOn:
+    text: "Wait"
+    optional: true
+- extendedWaitUntil:
+    visible: "Log in"
+    timeout: 60000
+- tapOn: "Email"
+- inputText: ${EMAIL}
+- runFlow: close-keyboard.yaml
+- tapOn: "Password"
+- inputText: ${PASSWORD}
+- runFlow: close-keyboard.yaml
+- tapOn: "Log in"
+
+# Onboarding: a few interests, then into the app.
+- extendedWaitUntil:
+    visible: "(What are you into\\?|Home)"
+    timeout: 45000
+- tapOn:
+    text: "Travel"
+    optional: true
+- tapOn:
+    text: "Food"
+    optional: true
+- tapOn:
+    text: "Photography"
+    optional: true
+- tapOn:
+    text: "Next.*"
+    optional: true
+- extendedWaitUntil:
+    visible: "People to follow"
+    timeout: 20000
+    optional: true
+- tapOn:
+    text: "(Next|Skip)"
+    optional: true
+- extendedWaitUntil:
+    visible: "Start using Katkee"
+    timeout: 20000
+    optional: true
+- tapOn:
+    text: "Start using Katkee"
+    optional: true
+- extendedWaitUntil:
+    visible: "Not now"
+    timeout: 15000
+    optional: true
+- tapOn:
+    text: "Not now"
+    optional: true
+
+# 1. Home: friends' Stories. A photo Story moves on after a few seconds, so capture at once.
+- extendedWaitUntil:
+    visible: ".*(Arjun|Sofia|Leo|Zara|Kenji).*"
+    timeout: 30000
+    optional: true
+- takeScreenshot: s01-home
+- tapOn:
+    text: "Like"
+    optional: true
+    waitToSettleTimeoutMs: 300
+- takeScreenshot: s01b-home-liked
+- swipe:
+    direction: LEFT
+    duration: 300
+    optional: true
+- takeScreenshot: s01c-home-next
+
+# 2. Chats: the inbox, then Sofia's chat.
+- tapOn: "Messages.*"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: s02-inbox
+- tapOn:
+    text: "Sofia Alvarez"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: s03-chat
+- runFlow: back-to-tabs.yaml
+- tapOn:
+    text: "Weekend trip.*"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: s03b-group
+- runFlow: back-to-tabs.yaml
+
+# 3. Profile, with Highlights and a cover photo.
+- tapOn: "Profile"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: s04-profile
+
+# 4. Activity: likes, comments and follows.
+- tapOn: "Home"
+- tapOn:
+    text: "Activity.*"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: s05-activity
+- runFlow: back-to-tabs.yaml
+
+# 5. The Story editor: a photo from the gallery, text and a song.
+- tapOn: "Create a Story"
+- waitForAnimationToEnd:
+    timeout: 5000
+- tapOn: "Choose from gallery"
+- waitForAnimationToEnd:
+    timeout: 5000
+- tapOn:
+    id: ".*icon_thumbnail"
+    index: 0
+    optional: true
+- extendedWaitUntil:
+    visible: "Your story"
+    timeout: 20000
+    optional: true
+- takeScreenshot: s06-editor
+- tapOn:
+    text: "Add text"
+    optional: true
+- inputText: "Golden hour"
+- tapOn:
+    text: "Done"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- tapOn:
+    text: "Add music"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: s07-music
+- tapOn:
+    text: ".* by .*"
+    index: 0
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- tapOn:
+    text: "Add to Story"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: s08-editor-done
+- tapOn:
+    text: "Story settings.*"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: s09-story-settings
+- pressKey: Back
+- pressKey: Back
+- tapOn:
+    text: "Discard"
+    optional: true
+- runFlow: back-to-tabs.yaml
+
+# 6. Layout: several photos in one Story.
+- tapOn: "Create a Story"
+- waitForAnimationToEnd:
+    timeout: 5000
+- tapOn:
+    text: "Layout"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- tapOn:
+    text: "Add photos"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- tapOn:
+    id: ".*icon_thumbnail"
+    index: 0
+    optional: true
+- tapOn:
+    id: ".*icon_thumbnail"
+    index: 1
+    optional: true
+- tapOn:
+    id: ".*icon_thumbnail"
+    index: 2
+    optional: true
+- tapOn:
+    id: ".*icon_thumbnail"
+    index: 3
+    optional: true
+- takeScreenshot: s10-layout-picker
+- tapOn:
+    text: "(Add|Done|Select)"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 8000
+- takeScreenshot: s11-layout

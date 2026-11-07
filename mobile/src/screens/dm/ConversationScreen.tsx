@@ -336,13 +336,15 @@ function HeartPop({ trigger }: { trigger: number }): React.JSX.Element | null {
 /** One message in the thread. Memoized: typing, recording or a poll that changed nothing doesn't re-render it. */
 const MessageRow = memo(function MessageRow(props: RowProps): React.JSX.Element {
   const { row, actions, dayLabel } = props;
+  // One View, not a fragment: an inverted list lays a cell's own children out in reverse, which
+  // put the day's line under its first message instead of above it.
   return (
-    <>
+    <View>
       {dayLabel ? <Text style={styles.dayLabel} accessibilityRole="header">{dayLabel}</Text> : null}
       <SwipeToReply enabled={row.kind === "sent" && !row.event} onReply={() => { if (row.kind === "sent") actions.onReply(row); }}>
         <MessageContent {...props} />
       </SwipeToReply>
-    </>
+    </View>
   );
 });
 

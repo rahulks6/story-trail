@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       flow:
-        description: "smoke (every main screen, phone + tablet), tour (every feature, phone) or videotext (a video Story with text, phone)"
+        description: "smoke (every main screen, phone + tablet), tour (every feature, phone), videotext (a video Story with text, phone) or store (Play Store screenshots, phone + tablet)"
         required: false
         default: smoke
 
@@ -78,6 +78,8 @@ jobs:
     timeout-minutes: 60
     strategy:
       fail-fast: false
+      # store: one device at a time, as both use the same demo usernames (deleted after each).
+      max-parallel: ${{ inputs.flow == 'store' && 1 || 2 }}
       matrix:
         size: ${{ (inputs.flow == 'tour' || inputs.flow == 'videotext') && fromJSON('["phone"]') || fromJSON('["phone", "tablet"]') }}
     steps:
@@ -144,8 +146,8 @@ jobs:
           git clone -q --depth 1 -b ci/android-e2e-results \
             "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" "$R" 2>/dev/null \
             || { mkdir -p "$R" && git -C "$R" init -q -b ci/android-e2e-results; }
-          rm -rf "$R/${{ matrix.size }}" "$R/tour"
-          (cd android-e2e && find . -type f \( -name '*.png' -o -name '*.txt' -o -name '*.xml' -o -name '*.json' -o -name '*.log' \) -size -20M -exec rsync -R {} "$R/" \;)
+          rm -rf "$R/${{ matrix.size }}" "$R/tour" "$R/store-${{ matrix.size }}"
+          (cd android-e2e && find . -type f \( -name '*.png' -o -name '*.jpg' -o -name '*.txt' -o -name '*.xml' -o -name '*.json' -o -name '*.log' \) -size -20M -exec rsync -R {} "$R/" \;)
           cd "$R"
           echo "Run ${{ github.run_id }} on ${{ github.sha }}" > "RUN-${{ matrix.size }}.txt"
           git config user.name "github-actions"
