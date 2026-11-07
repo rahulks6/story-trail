@@ -38,11 +38,11 @@ async function oidc() {
 // The cast: the account the screenshots are taken from, and the friends who post and chat.
 const PEOPLE = {
   maya: { displayName: "Maya Kapoor", username: "maya.kapoor", bio: "Chasing sunsets and good coffee ☀️", avatar: "avatar-maya", cover: "cover-maya" },
-  arjun: { displayName: "Arjun Mehta", username: "arjun.outdoors", bio: "Mountains > everything", avatar: "avatar-arjun" },
+  arjun: { displayName: "Arjun Mehta", username: "arjun.islands", bio: "Beaches, boats and long walks", avatar: "avatar-arjun" },
   sofia: { displayName: "Sofia Alvarez", username: "sofia.eats", bio: "Cooking my way around the world", avatar: "avatar-sofia" },
   leo: { displayName: "Leo Bennett", username: "leo.bennett", bio: "Surf, sun, repeat", avatar: "avatar-leo" },
   zara: { displayName: "Zara Ahmed", username: "zara.sketches", bio: "Coffee, sketchbooks and slow mornings", avatar: "avatar-zara" },
-  kenji: { displayName: "Kenji Sato", username: "kenji.nights", bio: "City lights photographer", avatar: "avatar-kenji" },
+  kenji: { displayName: "Kenji Sato", username: "kenji.streets", bio: "Street photographer, always walking", avatar: "avatar-kenji" },
 };
 
 async function makeAccount(key) {
@@ -113,16 +113,16 @@ const music = tracks?.[0] ? { trackId: tracks[0].id, startMs: 0, durationMs: 150
 
 // Maya's own Stories first (her profile, Highlights and Activity), then her friends'.
 const mayaStreet = await story("maya", "story-street", "Lost in the little streets of Alsace 🌸");
-const mayaSunset = await story("maya", "story-sunset", "Golden hour never gets old");
-const mayaLake = await story("maya", "story-lake", "Weekend reset 🌲");
+const mayaSunset = await story("maya", "story-sunset", "That sky tonight 🔥");
+const mayaLake = await story("maya", "story-lake", "Clearest water I've ever seen 💙");
 await call("POST", "/api/v1/highlights", PEOPLE.maya.token, { title: "Travel", storyIds: [mayaStreet, mayaLake] });
-await call("POST", "/api/v1/highlights", PEOPLE.maya.token, { title: "Sunsets", storyIds: [mayaSunset] });
+await call("POST", "/api/v1/highlights", PEOPLE.maya.token, { title: "Skies", storyIds: [mayaSunset] });
 
-await story("kenji", "story-city", "Tokyo after dark ✨");
+await story("kenji", "story-city", "New York, never slowing down 🗽");
 await story("zara", "story-coffee", "Slow morning, first sketch of the day");
 await story("leo", "story-beach", "Found my happy place 🌊", music ? { music } : {});
 await story("sofia", "story-food", "Sunday pizza night, recipe in my Highlights 🍕");
-await story("arjun", "story-mountain", "Made it to the top 🏔️ worth every step");
+await story("arjun", "story-palms", "Island time 🌴 no signal, no problem");
 
 // Likes and comments on Maya's Stories, for her Activity.
 for (const key of ["sofia", "arjun", "zara", "leo", "kenji"]) await call("POST", `/api/v1/stories/${mayaStreet}/like`, PEOPLE[key].token, {});
