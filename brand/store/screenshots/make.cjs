@@ -16,7 +16,7 @@ const PHONE = [
   { raw: "phone-editor", title: "Make every Story<br><em>yours</em>", sub: "Text, music, stickers and filters" },
   { raw: "phone-chat", title: "Chat with<br><em>your people</em>", sub: "Messages, voice notes and video calls" },
   { raw: "phone-profile", title: "Keep the best as<br><em>Highlights</em>", sub: "Your favourite Stories, on your profile" },
-  { raw: "phone-layout", title: "Six photos,<br><em>one Story</em>", sub: "Layouts that fit your moments" },
+  { raw: "phone-layout", title: "Your photos,<br><em>one Story</em>", sub: "Up to six photos in one Layout" },
   { raw: "phone-activity", title: "See who<br><em>loved it</em>", sub: "Likes, comments and new followers" },
   { raw: "phone-group", title: "Plans with<br><em>your crew</em>", sub: "Group chats with up to 32 friends" },
   { raw: "phone-settings", title: "You choose<br><em>who sees it</em>", sub: "Everyone, followers or Close Friends" },
