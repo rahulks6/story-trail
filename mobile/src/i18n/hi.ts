@@ -498,6 +498,7 @@ export const hi: Catalogue = {
   "conversation.ownerusernameSStory": "@{ownerUsername} की स्टोरी",
   "conversation.react": "रिएक्ट करें",
   "conversation.forwarded": "फ़ॉरवर्ड किया गया",
+  "conversation.yesterday": "कल",
   "conversation.them": "वे",
   "conversation.showsThatMessage": "वह मैसेज दिखाता है",
   "conversation.delivered": "पहुँच गया",

@@ -524,6 +524,7 @@ export const en = {
   "conversation.ownerusernameSStory": "@{ownerUsername}'s Story",
   "conversation.react": "React",
   "conversation.forwarded": "Forwarded",
+  "conversation.yesterday": "Yesterday",
   "conversation.them": "Them",
   "conversation.showsThatMessage": "Shows that message",
   "conversation.delivered": "Delivered",

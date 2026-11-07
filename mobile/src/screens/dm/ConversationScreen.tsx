@@ -84,6 +84,7 @@ import { GroupAvatar } from "../../components/GroupAvatar";
 import { callLineText, isMissedCall } from "../../models/callLines";
 import { useCallsIfAvailable } from "../../calls/CallContext";
 import { t } from "../../i18n";
+import { chatDayLabel, messageClock, messageDayKey } from "../../utils/chatTime";
 
 type Props = NativeStackScreenProps<DMStackParamList, "Conversation">;
 
@@ -216,6 +217,8 @@ interface RowProps {
   senderLabel?: string;
   accessToken: string | null | undefined;
   showStatus: boolean;
+  /** The first message of its day carries the day's line above it ("Today", "Yesterday", "6 Nov"). */
+  dayLabel?: string;
   playing: boolean;
   maxMediaSide: number;
   actions: RowActions;
@@ -332,11 +335,14 @@ function HeartPop({ trigger }: { trigger: number }): React.JSX.Element | null {
 
 /** One message in the thread. Memoized: typing, recording or a poll that changed nothing doesn't re-render it. */
 const MessageRow = memo(function MessageRow(props: RowProps): React.JSX.Element {
-  const { row, actions } = props;
+  const { row, actions, dayLabel } = props;
   return (
-    <SwipeToReply enabled={row.kind === "sent" && !row.event} onReply={() => { if (row.kind === "sent") actions.onReply(row); }}>
-      <MessageContent {...props} />
-    </SwipeToReply>
+    <>
+      {dayLabel ? <Text style={styles.dayLabel} accessibilityRole="header">{dayLabel}</Text> : null}
+      <SwipeToReply enabled={row.kind === "sent" && !row.event} onReply={() => { if (row.kind === "sent") actions.onReply(row); }}>
+        <MessageContent {...props} />
+      </SwipeToReply>
+    </>
   );
 });
 
@@ -368,6 +374,7 @@ function MessageContent({ row, userId, nameOf, labelOf, senderLabel, accessToken
     const mine = row.senderId === userId;
     const text = callLineText(row.event, mine);
     const missed = isMissedCall(row.event, mine);
+    const callClock = messageClock(row.createdAt);
     const media = row.event.media;
     return (
       <Pressable
@@ -378,7 +385,7 @@ function MessageContent({ row, userId, nameOf, labelOf, senderLabel, accessToken
         accessibilityHint={media === "video" ? t("conversation.startsAVideoCall") : t("conversation.startsAVoiceCall")}
       >
         <Icon name={media === "video" ? ICONS.video : ICONS.call} size={14} color={missed ? colors.danger : colors.textSecondary} />
-        <Text style={[styles.callLineText, missed && styles.callLineMissed]}>{text}</Text>
+        <Text style={[styles.callLineText, missed && styles.callLineMissed]}>{callClock ? `${text} · ${callClock}` : text}</Text>
       </Pressable>
     );
   }
@@ -387,6 +394,8 @@ function MessageContent({ row, userId, nameOf, labelOf, senderLabel, accessToken
     const text = groupEventText(row.event, actorName(row.senderId, userId, nameOf(row.senderId)), (id) => (id === userId ? "you" : nameOf(id) ? `@${nameOf(id)}` : "someone"));
     return <Text style={styles.eventLine} accessibilityRole="text">{text}</Text>;
   }
+  // When it was sent, small and quiet, as WhatsApp and Instagram show it.
+  const clock = messageClock(row.createdAt);
   const quote = row.replyTo ? (
     <Quote quote={row.replyTo} userId={userId} labelOf={labelOf} mine={row.kind !== "sent" || row.senderId === userId} onPress={actions.onQuotePress} />
   ) : null;
@@ -422,6 +431,7 @@ function MessageContent({ row, userId, nameOf, labelOf, senderLabel, accessToken
               label={who}
               onLongPress={() => (row.kind === "media" ? actions.onPendingMediaPress(row) : actions.onLongPress(row))}
             />
+            {clock ? <Text style={[styles.statusCaption, mineMedia && styles.clockMineOutside]}>{clock}</Text> : null}
             {row.kind === "sent" ? <ReactionPills reactions={row.reactions} userId={userId} nameOf={nameOf} mine={mineMedia} onPress={() => actions.onReactionsPress(row)} /> : null}
             {showStatus || failedMedia ? <Text style={styles.statusCaption}>{statusLabel(row, nameOf)}</Text> : null}
           </View>
@@ -460,11 +470,13 @@ function MessageContent({ row, userId, nameOf, labelOf, senderLabel, accessToken
             {row.kind === "media" && row.status === "sending" ? (
               <View style={styles.mediaSending} pointerEvents="none"><ActivityIndicator color="#FFFFFF" /></View>
             ) : null}
+            {clock && !(row.kind === "sent" && row.body) ? <Text style={styles.mediaClock} pointerEvents="none">{clock}</Text> : null}
             <HeartPop trigger={heartPop} />
           </Pressable>
           {row.kind === "sent" && row.body ? (
             <View style={[styles.bubble, mineMedia ? styles.bubbleMine : styles.bubbleTheirs, styles.mediaCaption]}>
               <Text style={mineMedia ? styles.bubbleTextMine : styles.bubbleTextTheirs}>{row.body}</Text>
+              {clock ? <Text style={[styles.bubbleClock, mineMedia ? styles.bubbleClockMine : styles.bubbleClockTheirs]}>{clock}</Text> : null}
             </View>
           ) : null}
           {row.kind === "sent" ? <ReactionPills reactions={row.reactions} userId={userId} nameOf={nameOf} mine={mineMedia} onPress={() => actions.onReactionsPress(row)} /> : null}
@@ -539,6 +551,7 @@ function MessageContent({ row, userId, nameOf, labelOf, senderLabel, accessToken
           {row.body ? (
             <Text style={[mine ? styles.bubbleTextMine : styles.bubbleTextTheirs, reply?.kind === "reaction" && styles.reactionGlyph]}>{row.body}</Text>
           ) : null}
+          {clock ? <Text style={[styles.bubbleClock, mine ? styles.bubbleClockMine : styles.bubbleClockTheirs]}>{clock}</Text> : null}
           <HeartPop trigger={heartPop} />
         </Pressable>
         {row.kind === "sent" ? <ReactionPills reactions={row.reactions} userId={userId} nameOf={nameOf} mine={mine} onPress={() => actions.onReactionsPress(row)} /> : null}
@@ -1434,6 +1447,10 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
 
   const renderItem = useCallback<ListRenderItem<ListRow>>(({ item, index }) => {
     const key = rowKey(item);
+    // The list runs newest first: a message starts its day when the one before it (older) is from another day.
+    const day = messageDayKey(item.createdAt);
+    const olderRow = rows[index + 1];
+    const dayLabel = day && (!olderRow || messageDayKey(olderRow.createdAt) !== day) ? chatDayLabel(item.createdAt) : undefined;
     // In a group, the sender's name above the first (oldest) of their messages in a run.
     let senderLabel: string | undefined;
     if (isGroup && item.kind === "sent" && item.senderId !== userId && !item.event) {
@@ -1452,6 +1469,7 @@ export function ConversationScreen({ route }: Props): React.JSX.Element {
         senderLabel={senderLabel}
         accessToken={accessToken}
         showStatus={key === statusRowKey}
+        dayLabel={dayLabel}
         playing={playingKey === key}
         maxMediaSide={maxMediaSide}
         actions={actions}
@@ -1831,6 +1849,14 @@ const styles = StyleSheet.create({
   bubbleTextMine: { color: colors.onAccent, fontSize: 15 },
   bubbleTextTheirs: { color: colors.textPrimary, fontSize: 15 },
   statusCaption: { color: colors.textDisabled, fontSize: 11, marginTop: 2 },
+  // A message's time, inside its bubble at the bottom right.
+  bubbleClock: { fontSize: 11, alignSelf: "flex-end", marginTop: 1 },
+  bubbleClockMine: { color: colors.onAccent, opacity: 0.6 },
+  bubbleClockTheirs: { color: colors.textSecondary },
+  clockMineOutside: { alignSelf: "flex-end" },
+  // On a photo or video without words, the time sits on the picture.
+  mediaClock: { position: "absolute", right: 8, bottom: 6, color: "#FFFFFF", fontSize: 11, fontWeight: "600", textShadowColor: "rgba(0,0,0,0.7)", textShadowRadius: 3, textShadowOffset: { width: 0, height: 1 } },
+  dayLabel: { alignSelf: "center", marginVertical: spacing.md, paddingHorizontal: spacing.sm + 2, paddingVertical: 3, borderRadius: radii.pill, overflow: "hidden", backgroundColor: colors.surfaceElevated, color: colors.textSecondary, fontSize: 12, fontWeight: "600" },
   footerSpinner: { marginVertical: spacing.md },
   emptyState: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, alignItems: "center", justifyContent: "center" },
   composerRow: {

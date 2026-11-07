@@ -498,6 +498,7 @@ export const mr: Catalogue = {
   "conversation.ownerusernameSStory": "@{ownerUsername} ची स्टोरी",
   "conversation.react": "रिॲक्ट करा",
   "conversation.forwarded": "फॉरवर्ड केलेला",
+  "conversation.yesterday": "काल",
   "conversation.them": "ते",
   "conversation.showsThatMessage": "तो मेसेज दाखवते",
   "conversation.delivered": "पोहोचला",

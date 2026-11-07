@@ -603,3 +603,25 @@ test("a voice note on its way stays at the bottom saying 'Sending…' while the 
   expect(tree.root.findAll((n) => n.props.children === "Sending…")).not.toHaveLength(0);
   api.listMessages.mockImplementation(original);
 });
+
+test("each message shows when it was sent, and the thread is split by day", async () => {
+  const conversations = jest.requireMock("../src/api/conversations") as { listMessages: jest.Mock };
+  const at = (daysAgo: number, h: number, m: number) => { const d = new Date(); d.setDate(d.getDate() - daysAgo); d.setHours(h, m, 0, 0); return d.toISOString(); };
+  conversations.listMessages.mockResolvedValueOnce({
+    hasMore: false,
+    messages: [
+      { id: "d3", conversationId: "c1", senderId: "u-alice", body: "see you", sharedStoryId: null, createdAt: at(0, 10, 15) },
+      { id: "d2", conversationId: "c1", senderId: "u-me", body: "ok", sharedStoryId: null, createdAt: at(1, 21, 30), status: "read" },
+      { id: "d1", conversationId: "c1", senderId: "u-alice", body: "dinner?", sharedStoryId: null, createdAt: at(1, 21, 10) },
+    ],
+  });
+  await render();
+  const texts = tree.root.findAll((n) => typeof n.type === "string" && typeof n.props.children === "string").map((n) => n.props.children as string);
+  // A line for each day, once: yesterday's two messages share one.
+  expect(texts.filter((s) => s === "Today")).toHaveLength(1);
+  expect(texts.filter((s) => s === "Yesterday")).toHaveLength(1);
+  // Each bubble carries its time.
+  expect(texts.some((s) => /10:15/.test(s))).toBe(true);
+  expect(texts.some((s) => /9:30|21:30/.test(s))).toBe(true);
+  expect(texts.some((s) => /9:10|21:10/.test(s))).toBe(true);
+});
