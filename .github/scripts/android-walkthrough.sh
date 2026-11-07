@@ -61,7 +61,6 @@ if [ "$FLOW" = store ]; then
   get() { # name, Unsplash photo id, width, height
     curl -sfL -m 30 -o "$PHOTOS/$1.jpg" "https://images.unsplash.com/photo-$2?w=$3&h=$4&fit=crop&crop=entropy&fm=jpg&q=82" || true
   }
-  get story-paris 1502602898657-3e91760cbb34 1080 1920
   get story-sunset 1469474968028-56623f02e42e 1080 1920
   get story-lake 1506744038136-46273834b3fb 1080 1920
   get story-city 1540959733332-eab4deabeeaf 1080 1920
@@ -80,13 +79,15 @@ if [ "$FLOW" = store ]; then
   get gallery-2 1441974231531-c6227db76b6e 1080 1920
   get gallery-3 1476514525535-07fb3b4ae5f1 1080 1920
   get gallery-4 1500530855697-b586d89ba3ee 1080 1920
+  # Katkee's own photo (brand/store/photos): the Story editor's photo and one of Maya's Stories.
+  cp "$GITHUB_WORKSPACE/brand/store/photos/street.jpg" "$PHOTOS/story-street.jpg"
   # A photo id that no longer exists: use one that downloaded, so the run still goes on.
   SPARE=$(find "$PHOTOS" -name '*.jpg' -size +20k | head -1)
-  for f in story-paris story-sunset story-lake story-city story-coffee story-beach story-food story-mountain cover-maya avatar-maya avatar-arjun avatar-sofia avatar-leo avatar-zara avatar-kenji gallery-1 gallery-2 gallery-3 gallery-4; do
+  for f in story-street story-sunset story-lake story-city story-coffee story-beach story-food story-mountain cover-maya avatar-maya avatar-arjun avatar-sofia avatar-leo avatar-zara avatar-kenji gallery-1 gallery-2 gallery-3 gallery-4; do
     if [ ! -s "$PHOTOS/$f.jpg" ] || [ "$(stat -c %s "$PHOTOS/$f.jpg")" -lt 20000 ]; then echo "photo missing: $f"; cp "$SPARE" "$PHOTOS/$f.jpg"; fi
   done
   # The gallery the Story editor and Layout pick from, newest last pushed.
-  for f in gallery-4 gallery-3 gallery-2 story-sunset gallery-1; do
+  for f in gallery-4 gallery-3 gallery-2 gallery-1 story-street; do
     adb push "$PHOTOS/$f.jpg" "/sdcard/Pictures/$f.jpg" > /dev/null
     adb shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d "file:///sdcard/Pictures/$f.jpg" > /dev/null
     sleep 1

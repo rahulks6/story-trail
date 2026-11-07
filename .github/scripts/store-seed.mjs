@@ -3,7 +3,7 @@
 // looking the way it does in use, for the Google Play screenshots. Every account is a throwaway
 // support+e2e-… account (verified with the run's GitHub OIDC token) and the workflow deletes them
 // all at the end. The photos are Unsplash-licensed (free to use commercially, no people's faces),
-// downloaded by the walk-through into PHOTOS.
+// downloaded by the walk-through into PHOTOS, plus Katkee's own street photo (brand/store/photos).
 //
 // Usage: node store-seed.mjs <photos dir> <accounts file> <main password>
 import { readFileSync, appendFileSync } from "node:fs";
@@ -112,10 +112,10 @@ const { tracks } = await call("GET", "/api/v1/music?limit=10", PEOPLE.leo.token)
 const music = tracks?.[0] ? { trackId: tracks[0].id, startMs: 0, durationMs: 15000 } : undefined;
 
 // Maya's own Stories first (her profile, Highlights and Activity), then her friends'.
-const mayaParis = await story("maya", "story-paris", "Paris, you were a dream 🥐");
+const mayaStreet = await story("maya", "story-street", "Lost in the little streets of Alsace 🌸");
 const mayaSunset = await story("maya", "story-sunset", "Golden hour never gets old");
 const mayaLake = await story("maya", "story-lake", "Weekend reset 🌲");
-await call("POST", "/api/v1/highlights", PEOPLE.maya.token, { title: "Travel", storyIds: [mayaParis, mayaLake] });
+await call("POST", "/api/v1/highlights", PEOPLE.maya.token, { title: "Travel", storyIds: [mayaStreet, mayaLake] });
 await call("POST", "/api/v1/highlights", PEOPLE.maya.token, { title: "Sunsets", storyIds: [mayaSunset] });
 
 await story("kenji", "story-city", "Tokyo after dark ✨");
@@ -125,9 +125,9 @@ await story("sofia", "story-food", "Sunday pizza night, recipe in my Highlights 
 await story("arjun", "story-mountain", "Made it to the top 🏔️ worth every step");
 
 // Likes and comments on Maya's Stories, for her Activity.
-for (const key of ["sofia", "arjun", "zara", "leo", "kenji"]) await call("POST", `/api/v1/stories/${mayaParis}/like`, PEOPLE[key].token, {});
+for (const key of ["sofia", "arjun", "zara", "leo", "kenji"]) await call("POST", `/api/v1/stories/${mayaStreet}/like`, PEOPLE[key].token, {});
 for (const key of ["arjun", "leo"]) await call("POST", `/api/v1/stories/${mayaSunset}/like`, PEOPLE[key].token, {});
-await call("POST", `/api/v1/stories/${mayaParis}/comments`, PEOPLE.sofia.token, { body: "Take me with you next time 😍" });
+await call("POST", `/api/v1/stories/${mayaStreet}/comments`, PEOPLE.sofia.token, { body: "Take me with you next time 😍" });
 await call("POST", `/api/v1/stories/${mayaSunset}/comments`, PEOPLE.arjun.token, { body: "That light is unreal" });
 
 // Chats, oldest first; Sofia's is the newest so it tops Maya's inbox.
@@ -147,8 +147,8 @@ await say("zara", zara, "Coffee tomorrow? ☕");
 await say("maya", zara, "Always. 10 at our usual place?");
 
 const sofia = await chat("sofia", "maya");
-await say("sofia", sofia, "Your Paris Story 😍 when did you go?");
-const mayaReply = await say("maya", sofia, "Last week! The croissants alone were worth it 🥐");
+await say("sofia", sofia, "Your Alsace Story 😍 when did you go?");
+const mayaReply = await say("maya", sofia, "Last week! Every street looks like a postcard 📸");
 await call("PUT", `/api/v1/conversations/${sofia}/messages/${mayaReply}/reaction`, PEOPLE.sofia.token, { emoji: "❤️" });
 await say("sofia", sofia, "Okay, we're planning a trip together");
 await say("maya", sofia, "Deal ✈️ spring?");
