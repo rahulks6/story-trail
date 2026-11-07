@@ -1,87 +1,97 @@
-11-07 09:06:42.290 D/AndroidRuntime( 4415): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-11-07 09:06:42.291 I/AiAiTextClassifier( 1413): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
-11-07 09:06:42.293 I/AiAiTextClassifier( 1413): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
-11-07 09:06:42.294 I/AiAiTextClassifier( 1413): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
-11-07 09:06:42.296 I/AiAiTextClassifier( 1413): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
-11-07 09:06:42.297 I/AiAiTextClassifier( 1413): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
-11-07 09:06:42.298 I/AndroidRuntime( 4415): Using default boot image
-11-07 09:06:42.298 I/AndroidRuntime( 4415): Leaving lock profiling enabled
-11-07 09:06:42.298 I/AiAiTextClassifier( 1413): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
-11-07 09:06:42.303 I/app_process( 4415): Core platform API reporting enabled, enforcing=false
-11-07 09:06:42.303 I/app_process( 4415): Using CollectorTypeCMC GC.
-11-07 09:06:42.361 I/ActivityManager(  558): Background started FGS: Allowed [callingPackage: com.google.android.apps.wellbeing; callingUid: 10142; uidState: BTOP; uidBFSL: [BFSL]; intent: Intent { cmp=com.google.android.apps.wellbeing/com.google.apps.tiktok.concurrent.InternalForegroundService (has extras) }; code:BACKGROUND_ACTIVITY_PERMISSION; tempAllowListReason:<null>; targetSdkVersion:34; callerTargetSdkVersion:34; startForegroundCount:0; bindFromPackage:null: isBindService:false]
-11-07 09:06:42.366 W/ForegroundServiceTypeLoggerModule(  558): Foreground service start for UID: 10142 does not have any types
-11-07 09:06:42.372 W/ForegroundServiceTypeLoggerModule(  558): FGS stop call for: 10142 has no types!
-11-07 09:06:42.377 I/netd    (  357): tetherGetStats() -> {[]} <0.24ms>
-11-07 09:06:42.416 D/nativeloader( 4415): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
-11-07 09:06:42.438 D/nativeloader( 4415): Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
-11-07 09:06:42.438 D/app_process( 4415): u_setTimeZoneFilesDirectory("/apex/com.android.tzdata/etc/tz/versioned/8/icu") succeeded. 
-11-07 09:06:42.438 D/app_process( 4415): I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt75l.dat
-11-07 09:06:42.439 D/nativeloader( 4415): Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
-11-07 09:06:42.440 D/nativeloader( 4415): Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
-11-07 09:06:42.442 W/app_process( 4415): Unexpected CPU variant for x86: x86_64.
-11-07 09:06:42.442 W/app_process( 4415): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
-11-07 09:06:42.459 D/nativeloader( 4415): Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
-11-07 09:06:42.459 D/AndroidRuntime( 4415): Calling main entry com.android.commands.am.Am
-11-07 09:06:42.461 D/UiAutomationConnection( 4415): Created on user UserHandle{0}
-11-07 09:06:42.461 I/ActivityManager(  558): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-11-07 09:06:42.463 V/GrammaticalInflectionUtils(  558): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@9fabb4c, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
-11-07 09:06:42.465 I/AppsFilter(  558): interaction: PackageSetting{e9405b5 com.android.microdroid.empty_payload/10185} -> PackageSetting{41ec5ad dev.mobile.maestro/10210} BLOCKED
-11-07 09:06:42.466 I/AppWidgetServiceImpl(  558): Received broadcast: android.intent.action.PACKAGE_UNSTOPPED on user 0
-11-07 09:06:42.466 I/AppWidgetServiceImpl(  558): Updating package stopped masked state for uid 10210 package dev.mobile.maestro isStopped false
-11-07 09:06:42.466 W/zygote64(  358): Waiting for a thread to finish unregistering
-11-07 09:06:42.466 I/Zygote  (  358): Entering forkRepeatedly native zygote loop
-11-07 09:06:42.473 D/Zygote  (  358): Forked child process 4462
-11-07 09:06:42.474 I/ActivityManager(  558): Start proc 4462:dev.mobile.maestro/u0a210 for added application dev.mobile.maestro
-11-07 09:06:42.492 I/.mobile.maestro( 4462): Late-enabling -Xcheck:jni
-11-07 09:06:42.494 I/RoleService(  558): Granting default roles...
-11-07 09:06:42.496 W/Role    (  558): Default holder doesn't have required signing certificate: com.google.android.retaildemo:6547c73dee150c103980bfdffe55cc9a011d785dd694a5f99afd8205bcaf1f80
-11-07 09:06:42.496 E/RoleControllerServiceImpl(  558): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION
-11-07 09:06:42.497 W/Role    (  558): Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58
-11-07 09:06:42.506 I/.mobile.maestro( 4462): Using CollectorTypeCMC GC.
-11-07 09:06:42.507 W/.mobile.maestro( 4462): Unexpected CPU variant for x86: x86_64.
-11-07 09:06:42.507 W/.mobile.maestro( 4462): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
-11-07 09:06:42.510 E/RoleControllerServiceImpl(  558): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.WALLET
-11-07 09:06:42.510 I/adbd    (  436): jdwp connection from 4462
-11-07 09:06:42.513 E/RoleControllerServiceImpl(  558): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.devicelockcontroller, role: android.app.role.SYSTEM_FINANCED_DEVICE_CONTROLLER
-11-07 09:06:42.516 D/nativeloader( 4462): Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
-11-07 09:06:42.533 W/.mobile.maestro( 4462): ClassLoaderContext shared library size mismatch. Expected=2, found=0 (PCL[]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]} | PCL[])
-11-07 09:06:42.535 W/.mobile.maestro( 4462): ClassLoaderContext classpath size mismatch. expected=0, found=1 (PCL[] | PCL[/system/framework/android.test.runner.jar*2496447986])
-11-07 09:06:42.536 W/.mobile.maestro( 4462): ClassLoaderContext classpath size mismatch. expected=0, found=2 (PCL[] | PCL[/system/framework/android.test.runner.jar*2496447986:/system/framework/android.test.mock.jar*1452759902])
-11-07 09:06:42.537 W/ziparchive( 4462): Unable to open '/data/app/~~iVSzti6r7ffRv3XzKSHMzQ==/dev.mobile.maestro.test-9SLN4SxfdBMorm37zmC3cg==/base.dm': No such file or directory
-11-07 09:06:42.537 W/ziparchive( 4462): Unable to open '/data/app/~~iVSzti6r7ffRv3XzKSHMzQ==/dev.mobile.maestro.test-9SLN4SxfdBMorm37zmC3cg==/base.dm': No such file or directory
-11-07 09:06:42.550 W/ziparchive( 4462): Unable to open '/data/app/~~u4qZNor19ynTaJcRMx-f1g==/dev.mobile.maestro-dLp-1TCTbDq-hdjYNnMFvQ==/base.dm': No such file or directory
-11-07 09:06:42.550 W/ziparchive( 4462): Unable to open '/data/app/~~u4qZNor19ynTaJcRMx-f1g==/dev.mobile.maestro-dLp-1TCTbDq-hdjYNnMFvQ==/base.dm': No such file or directory
-11-07 09:06:42.574 I/NotificationService(  558): Cannot find enqueued record for key: 0|com.google.android.apps.wellbeing|174344743|null|10142
+11-07 09:36:23.345 D/AndroidRuntime( 4466): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-07 09:36:23.350 I/AndroidRuntime( 4466): Using default boot image
+11-07 09:36:23.350 I/AndroidRuntime( 4466): Leaving lock profiling enabled
+11-07 09:36:23.361 I/Fitness ( 1234): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-07 09:36:23.361 I/app_process( 4466): Core platform API reporting enabled, enforcing=false
+11-07 09:36:23.362 I/app_process( 4466): Using CollectorTypeCMC GC.
+11-07 09:36:23.369 W/GCM     ( 1234): Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package: flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
+11-07 09:36:23.374 I/ProximityAuth( 1234): [RecentAppsMediator] Package added: (user=UserHandle{0}) dev.mobile.maestro
+11-07 09:36:23.376 W/NetworkScheduler( 1234): Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package: flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
+11-07 09:36:23.389 I/Fitness ( 1234): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-07 09:36:23.392 I/Fitness ( 1234): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+11-07 09:36:23.397 I/Fitness ( 1234): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+11-07 09:36:23.399 I/Auth    ( 1557): [SupervisedAccountIntentOperation] onHandleIntent(): android.intent.action.PACKAGE_ADDED
+11-07 09:36:23.400 V/Backup  ( 1557): [PhotosPackagedAddedIO] Flag is disabled.
+11-07 09:36:23.400 I/Dck     ( 1557): disableDckSupport: false [CONTEXT service_id=289 ]
+11-07 09:36:23.400 I/Dck     ( 1557): doesDeviceHaveSupportedWirelessCapabilities: wccSysProp:0, wccMendel:3, deviceWccOverride:false [CONTEXT service_id=289 ]
+11-07 09:36:23.400 I/Dck     ( 1557): Dck module condition - hasWccSupport: false [CONTEXT service_id=289 ]
+11-07 09:36:23.400 I/Dck     ( 1557): Dck module condition - downloadAllowed: false [CONTEXT service_id=289 ]
+11-07 09:36:23.401 W/Dck     ( 1557): Dck module not eligible for asynchronous downloading [CONTEXT service_id=289 ]
+11-07 09:36:23.403 I/Blockstore( 1557): [DataStoreImpl] Clearing Blockstore Data for package dev.mobile.maestro.test [CONTEXT service_id=258 ]
+11-07 09:36:23.403 I/Blockstore( 1557): [DataStoreImpl] Keyless data not found or its IsLastInstallationData = false. [CONTEXT service_id=258 ]
+11-07 09:36:23.405 I/ProximityAuth( 1234): [RecentAppsMediator] Package added: (user=UserHandle{0}) dev.mobile.maestro.test
+11-07 09:36:23.409 W/GCM     ( 1234): Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package: flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
+11-07 09:36:23.410 W/NetworkScheduler( 1234): Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package: flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
+11-07 09:36:23.432 I/Fitness ( 1234): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-07 09:36:23.441 I/Fitness ( 1234): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+11-07 09:36:23.474 D/nativeloader( 4466): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+11-07 09:36:23.483 D/nativeloader( 4466): Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+11-07 09:36:23.483 D/app_process( 4466): u_setTimeZoneFilesDirectory("/apex/com.android.tzdata/etc/tz/versioned/8/icu") succeeded. 
+11-07 09:36:23.483 D/app_process( 4466): I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt75l.dat
+11-07 09:36:23.484 D/nativeloader( 4466): Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+11-07 09:36:23.484 D/nativeloader( 4466): Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+11-07 09:36:23.485 W/app_process( 4466): Unexpected CPU variant for x86: x86_64.
 --
-11-07 09:10:30.443 I/AndroidRuntime( 4415): VM exiting with result code 0.
-11-07 09:10:30.444 I/ActivityManager(  558): Force stopping dev.mobile.maestro appid=10210 user=0: finished inst
-11-07 09:10:30.458 I/netd    (  357): tetherGetStats() -> {[]} <6.21ms>
-11-07 09:10:30.596 I/servicemanager(    0): Caller(pid=558,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
-11-07 09:10:30.612 I/binder  (    0): undelivered transaction 556530, process died.
-11-07 09:10:30.612 I/init    (    0): starting service 'artd'...
-11-07 09:10:30.465 W/IPCThreadState(  558): Sending oneway calls to frozen process.
-11-07 09:10:30.466 W/MagnificationConnectionManager(  558): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-11-07 09:10:30.466 V/UiAutomationManager(  558): UiAutomation service owner died
-11-07 09:10:30.467 W/IPCThreadState(  558): Sending oneway calls to frozen process.
-11-07 09:10:30.467 W/IPCThreadState(  558): Sending oneway calls to frozen process.
-11-07 09:10:30.467 W/IPCThreadState(  558): Sending oneway calls to frozen process.
-11-07 09:10:30.467 W/IPCThreadState(  558): Sending oneway calls to frozen process.
-11-07 09:10:30.467 W/IPCThreadState(  558): Sending oneway calls to frozen process.
-11-07 09:10:30.467 I/AiAiEcho( 1413): Settings changed for uri: content://settings/secure/accessibility_enabled
-11-07 09:10:30.468 I/AiAiEcho( 1413): Predicting[0]:  [CONTEXT sampling_count=5 ]
-11-07 09:10:30.468 I/AiAiEcho( 1413): EchoTargets: 
-11-07 09:10:30.468 I/AiAiEcho( 1413): Filtered by AiAi flag check: 
-11-07 09:10:30.468 I/AiAiEcho( 1413): [CONTEXT ratelimit_period="10 SECONDS" ]
-11-07 09:10:30.468 W/IPCThreadState(  558): Sending oneway calls to frozen process.
-11-07 09:10:30.468 W/IPCThreadState(  558): Sending oneway calls to frozen process.
-11-07 09:10:30.468 W/IPCThreadState(  558): Sending oneway calls to frozen process.
-11-07 09:10:30.468 W/IPCThreadState(  558): Sending oneway calls to frozen process.
-11-07 09:10:30.468 I/AiAiEcho( 1413): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
-11-07 09:10:30.468 I/AiAiEcho( 1413): #remoteViewsTwiddler: feature disabled.
-11-07 09:10:30.469 I/AiAiEcho( 1413): Predicting[0]:  [CONTEXT sampling_count=5 ]
-11-07 09:10:30.469 I/AiAiEcho( 1413): EchoTargets: 
-11-07 09:10:30.469 I/AiAiEcho( 1413): Filtered by AiAi flag check: 
-11-07 09:10:30.469 I/AiAiEcho( 1413): [CONTEXT ratelimit_period="10 SECONDS" ]
-11-07 09:10:30.469 I/AiAiEcho( 1413): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
-11-07 09:10:30.469 I/AiAiEcho( 1413): #remoteViewsTwiddler: feature disabled.
+11-07 09:36:23.509 D/AndroidRuntime( 4466): Calling main entry com.android.commands.am.Am
+11-07 09:36:23.511 D/UiAutomationConnection( 4466): Created on user UserHandle{0}
+11-07 09:36:23.514 I/ActivityManager(  557): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+11-07 09:36:23.516 V/GrammaticalInflectionUtils(  557): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@bb4d28f, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+11-07 09:36:23.517 I/AppsFilter(  557): interaction: PackageSetting{db8c0f4 com.android.microdroid.empty_payload/10208} -> PackageSetting{d052d93 dev.mobile.maestro/10210} BLOCKED
+11-07 09:36:23.522 I/AppWidgetServiceImpl(  557): Received broadcast: android.intent.action.PACKAGE_UNSTOPPED on user 0
+11-07 09:36:23.522 I/AppWidgetServiceImpl(  557): Updating package stopped masked state for uid 10210 package dev.mobile.maestro isStopped false
+11-07 09:36:23.524 I/Zygote  (  357): Entering forkRepeatedly native zygote loop
+11-07 09:36:23.528 I/gle.android.gms( 1557): Background concurrent mark compact GC freed 18MB AllocSpace bytes, 34(1128KB) LOS objects, 49% free, 16MB/33MB, paused 1.665ms,4.137ms total 111.192ms
+11-07 09:36:23.536 D/Zygote  (  357): Forked child process 4503
+11-07 09:36:23.537 I/ActivityManager(  557): Start proc 4503:dev.mobile.maestro/u0a210 for added application dev.mobile.maestro
+11-07 09:36:23.537 I/netd    (  356): tetherGetStats() -> {[]} <0.45ms>
+11-07 09:36:23.544 I/AiAiTextClassifier( 1407): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
+11-07 09:36:23.548 I/AiAiTextClassifier( 1407): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
+11-07 09:36:23.549 I/AiAiTextClassifier( 1407): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
+11-07 09:36:23.551 I/AiAiTextClassifier( 1407): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
+11-07 09:36:23.552 I/AiAiTextClassifier( 1407): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
+11-07 09:36:23.553 I/AiAiTextClassifier( 1407): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
+11-07 09:36:23.554 I/.mobile.maestro( 4503): Late-enabling -Xcheck:jni
+11-07 09:36:23.565 I/.mobile.maestro( 4503): Using CollectorTypeCMC GC.
+11-07 09:36:23.565 W/.mobile.maestro( 4503): Unexpected CPU variant for x86: x86_64.
+11-07 09:36:23.565 W/.mobile.maestro( 4503): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
+11-07 09:36:23.569 D/nativeloader( 4503): Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+11-07 09:36:23.570 I/adbd    (  437): jdwp connection from 4503
+11-07 09:36:23.591 W/.mobile.maestro( 4503): ClassLoaderContext shared library size mismatch. Expected=2, found=0 (PCL[]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]} | PCL[])
+11-07 09:36:23.594 W/.mobile.maestro( 4503): ClassLoaderContext classpath size mismatch. expected=0, found=1 (PCL[] | PCL[/system/framework/android.test.runner.jar*2496447986])
+11-07 09:36:23.594 I/ActivityManager(  557): Background started FGS: Allowed [callingPackage: com.google.android.apps.wellbeing; callingUid: 10142; uidState: BTOP; uidBFSL: [BFSL]; intent: Intent { cmp=com.google.android.apps.wellbeing/com.google.apps.tiktok.concurrent.InternalForegroundService (has extras) }; code:BACKGROUND_ACTIVITY_PERMISSION; tempAllowListReason:<null>; targetSdkVersion:34; callerTargetSdkVersion:34; startForegroundCount:0; bindFromPackage:null: isBindService:false]
+11-07 09:36:23.595 W/.mobile.maestro( 4503): ClassLoaderContext classpath size mismatch. expected=0, found=2 (PCL[] | PCL[/system/framework/android.test.runner.jar*2496447986:/system/framework/android.test.mock.jar*1452759902])
+11-07 09:36:23.598 W/ziparchive( 4503): Unable to open '/data/app/~~w_lYer6jbcADiRrAyO7s8A==/dev.mobile.maestro.test-4DXxxbvrrshG2sYOfseb2Q==/base.dm': No such file or directory
+11-07 09:36:23.599 W/ForegroundServiceTypeLoggerModule(  557): Foreground service start for UID: 10142 does not have any types
+11-07 09:36:23.602 W/ziparchive( 4503): Unable to open '/data/app/~~w_lYer6jbcADiRrAyO7s8A==/dev.mobile.maestro.test-4DXxxbvrrshG2sYOfseb2Q==/base.dm': No such file or directory
+--
+11-07 09:41:11.827 I/AndroidRuntime( 4466): VM exiting with result code 0.
+11-07 09:41:11.828 D/InetDiagMessage(  557): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+11-07 09:41:11.829 D/InetDiagMessage(  557): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+11-07 09:41:11.829 D/InetDiagMessage(  557): Destroyed live tcp sockets for uids={10210} in 1ms
+11-07 09:41:12.013 I/servicemanager(    0): Caller(pid=557,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+11-07 09:41:11.833 D/InetDiagMessage(  557): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+11-07 09:41:11.834 D/InetDiagMessage(  557): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+11-07 09:41:11.834 D/InetDiagMessage(  557): Destroyed live tcp sockets for uids={20210} in 5ms
+11-07 09:41:12.026 I/init    (    0): starting service 'artd'...
+11-07 09:41:11.843 I/netd    (  356): tetherGetStats() -> {[]} <0.32ms>
+11-07 09:41:11.847 E/IPCThreadState(  557): Binder transaction failure. id: 563896, BR_*: 29189, error: -3 (No such process)
+11-07 09:41:12.040 W/binder_debug(    0): 19 callbacks suppressed
+11-07 09:41:12.040 I/binder  (    0): undelivered transaction 563885, process died.
+11-07 09:41:12.043 I/binder_alloc(    0): 4503: binder_alloc_buf, no vma
+11-07 09:41:12.043 I/binder  (    0): cannot allocate buffer: vma cleared, target dead or dying
+11-07 09:41:12.043 I/binder  (    0): 557:1896 transaction async to 4503:0 failed 563896/29189/-3, size 192-0 line 3544
+11-07 09:41:11.848 W/ActivityManager(  557): pid 557 system sent binder code 1 with flags 1 to frozen apps and got error -32
+11-07 09:41:11.851 W/MagnificationConnectionManager(  557): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-07 09:41:11.851 V/UiAutomationManager(  557): UiAutomation service owner died
+11-07 09:41:11.852 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-07 09:41:11.852 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-07 09:41:11.852 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-07 09:41:11.852 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-07 09:41:11.852 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-07 09:41:11.852 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-07 09:41:11.852 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-07 09:41:11.852 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-07 09:41:11.853 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-07 09:41:11.853 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-07 09:41:11.853 W/IPCThreadState(  557): Sending oneway calls to frozen process.
+11-07 09:41:11.853 W/IPCThreadState(  557): Sending oneway calls to frozen process.
