@@ -53,12 +53,14 @@ function phoneHtml(s, img) {
 }
 
 function tabletHtml(s, img) {
+  // The text is one column, so a headline of any length pushes its line down instead of covering it.
   return `<div class="slide" style="width:1920px;height:1080px">
-    <div class="brand" style="position:absolute;left:110px;top:110px;font-size:40px">${MARK.replace("<svg", '<svg height="48"')}<div>Kat<span>kee</span></div></div>
-    <h1 style="position:absolute;left:110px;width:600px;top:330px;font-size:96px">${s.title}</h1>
-    <div class="sub" style="position:absolute;left:110px;width:560px;top:580px;font-size:36px;line-height:1.35">${s.sub}</div>
-    <div class="device" style="left:780px;top:150px;width:1240px;height:800px;border-radius:44px;padding:18px">
-      <div class="screen" style="border-radius:28px"><img src="${img}" style="object-position:left top"></div></div>
+    <div class="brand" style="position:absolute;left:100px;top:96px;font-size:38px">${MARK.replace("<svg", '<svg height="46"')}<div>Kat<span>kee</span></div></div>
+    <div style="position:absolute;left:100px;width:560px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;gap:28px">
+      <h1 style="font-size:84px">${s.title}</h1>
+      <div class="sub" style="font-size:34px;line-height:1.35">${s.sub}</div></div>
+    <div class="device" style="left:700px;top:170px;width:1140px;height:740px;border-radius:40px;padding:16px">
+      <div class="screen" style="border-radius:26px"><img src="${img}" style="object-position:left top"></div></div>
   </div>`;
 }
 

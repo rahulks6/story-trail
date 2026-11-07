@@ -201,15 +201,18 @@ Katkee 18 वर्षे आणि त्याहून अधिक वया
 प्रश्न किंवा कल्पना? support@katkee.com वर लिहा किंवा katkee.com/support ला भेट द्या.
 <!-- /field -->
 
-## Graphics (Play's requirements)
+## Graphics (ready to upload)
 
 | Asset | Size | File |
 | --- | --- | --- |
-| App icon | 512 x 512 PNG, 32-bit, under 1 MB | `brand/store/google-play-icon-512.png` |
-| Feature graphic | 1024 x 500, PNG or JPG, no transparency | `brand/store/google-play-feature-graphic-1024x500.png` |
-| Phone screenshots | 2 to 8, portrait 9:16, 1080 x 1920 | `brand/store/screenshots/phone/` |
-| Tablet screenshots (7" and 10") | up to 8 each, 16:9 or 9:16, each side 1080 to 7680 | `brand/store/screenshots/tablet/` |
+| App icon | 512 x 512 PNG | `brand/store/google-play-icon-512.png` |
+| Feature graphic | 1024 x 500 PNG | `brand/store/google-play-feature-graphic-1024x500.png` |
+| Phone screenshots (8) | 1080 x 1920 PNG | `brand/store/screenshots/phone/01-home.png` … `08-settings.png` |
+| 7-inch and 10-inch tablet screenshots (8) | 1920 x 1080 PNG | `brand/store/screenshots/tablet/01-home.png` … `08-settings.png` |
 
-Screenshots show the real app (Play rejects mock-ups that don't match it), each with one short
-headline above it. At least four phone screenshots of 1080 px or more make the listing eligible
-for Play's promotions.
+Upload them in their numbered order: Play shows the first three without scrolling. They are the
+real app (Android emulator, flow=store on the emulator workflow, with demo accounts and photos;
+see `brand/store/photos/SOURCES.md`), framed by `brand/store/screenshots/make.cjs`; the feature
+graphic by `brand/store/make-feature-graphic.cjs`. To make them again after a design change:
+run the workflow with flow=store, copy the screens into `brand/store/screenshots/raw/`, then
+run both scripts.
