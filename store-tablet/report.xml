@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites>
+  <testsuite name="Test Suite" device="test" tests="1" failures="0" time="356.777" timestamp="2026-11-07T08:29:45">
+    <testcase id="store" name="store" classname="store" file="/home/runner/work/story-trail/story-trail/mobile/.maestro/store.yaml" time="356.742" timestamp="2026-11-07T08:29:45" status="SUCCESS"/>
+  </testsuite>
+</testsuites>
