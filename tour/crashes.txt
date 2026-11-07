@@ -1,0 +1,98 @@
+11-07 05:08:02.317 D/AndroidRuntime( 3595): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-07 05:08:02.324 I/AndroidRuntime( 3595): Using default boot image
+11-07 05:08:02.325 D/SettingsSliceProvider( 1090): content://com.android.settings.slices/action/alarm_volume loaded from cache
+11-07 05:08:02.328 I/AndroidRuntime( 3595): Leaving lock profiling enabled
+11-07 05:08:02.336 I/app_process( 3595): Core platform API reporting enabled, enforcing=false
+11-07 05:08:02.337 I/app_process( 3595): Using CollectorTypeCMC GC.
+11-07 05:08:02.351 W/ElapsedTimeUtils( 1090): getElapsedTime: sSuwFinishedTimeStamp is null
+11-07 05:08:02.361 D/SlicesIndexer( 1090): Slices already indexed - returning.
+11-07 05:08:02.362 W/SliceData( 1090): Highlight menu key res is empty: com.android.settings.deviceinfo.hardwareinfo.DeviceModelPreferenceController
+11-07 05:08:02.365 D/SettingsSliceProvider( 1090): Built slice (content://com.android.settings.slices/action/hardware_info_device_model) in: 4
+11-07 05:08:02.367 I/BugleDataModel( 3304): ExecuteActionRunnable: running action FillPartSizeAction
+11-07 05:08:02.370 D/SliceBuilder( 1090): Creating slice for: com.android.settings.deviceinfo.hardwareinfo.DeviceModelPreferenceController
+11-07 05:08:02.400 E/RoleControllerServiceImpl(  553): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.WALLET
+11-07 05:08:02.407 D/ControlsListingControllerImpl(  910): ServiceConfig reloaded, count: 0
+11-07 05:08:02.416 D/ControlsListingControllerImpl(  910): ServiceConfig reloaded, count: 0
+11-07 05:08:02.452 I/GsaVoiceInteractionSrv( 1474): (REDACTED) O received %s
+11-07 05:08:02.456 I/netd    (  355): tetherGetStats() -> {[]} <0.42ms>
+11-07 05:08:02.485 W/MagnificationConnectionManager(  553): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-07 05:08:02.486 W/PackageManager(  553): Failed registering loading progress callback. Package is fully loaded.
+11-07 05:08:02.486 D/PackageUpdatedTask( 1208): Package updated: mOp=ADD packages=[dev.mobile.maestro.test]
+11-07 05:08:02.486 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-07 05:08:02.491 W/MagnificationConnectionManager(  553): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-07 05:08:02.491 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-07 05:08:02.493 I/AppWidgetServiceImpl(  553): getInstalledProvidersForProfiles() 0
+11-07 05:08:02.495 D/BaseIconCache( 1208): Default icon returned for dev.mobile.maestro.test
+11-07 05:08:02.509 W/GetConfigSnapshotOp( 1166): Succeeded but not registered: com.google.android.libraries.performance.primes#com.google.android.apps.safetyhub [CONTEXT service_id=51 ]
+11-07 05:08:02.513 W/TimedProcessReaper( 3319): Scheduling killing of process to refresh configuration
+11-07 05:08:02.524 D/PackageUpdatedTask( 1208): Package updated: mOp=UPDATE packages=[dev.mobile.maestro.test]
+11-07 05:08:02.525 I/Fitness ( 1166): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-07 05:08:02.531 I/BugleDataModel( 3304): ActionExecutorImpl: ACTION_BACKGROUND_QUEUED_FillPartSizeAction
+11-07 05:08:02.532 I/WM-WorkerWrapper( 3304): Worker result SUCCESS for Work [ id=707e57cf-7e6a-43ee-931e-e37fb43546fb, tags={ com.google.android.apps.messaging.shared.datamodel.workqueue.WorkQueueWorkerShim,forward_sync_batch- } ]
+11-07 05:08:02.537 E/RoleControllerServiceImpl(  553): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.devicelockcontroller, role: android.app.role.SYSTEM_FINANCED_DEVICE_CONTROLLER
+11-07 05:08:02.539 W/AllAppsList( 1208): updatePromiseInstallInfo: no Activities matched updated package, removing all apps from package=dev.mobile.maestro.test
+11-07 05:08:02.567 I/BugleDataModel( 3304): ActionExecutorImpl: ACTION_RESPONSE_QUEUED_FillPartSizeAction
+--
+11-07 05:08:02.790 D/AndroidRuntime( 3595): Calling main entry com.android.commands.am.Am
+11-07 05:08:02.794 D/UiAutomationConnection( 3595): Created on user UserHandle{0}
+11-07 05:08:02.795 W/system_server(  553): Long monitor contention with owner binder:553_13 (1640) at void com.android.server.power.PowerManagerService.acquireWakeLockInternal(android.os.IBinder, int, int, java.lang.String, java.lang.String, android.os.WorkSource, java.lang.String, int, int, android.os.IWakeLockCallback)(PowerManagerService.java:1681) waiters=2 in void com.android.server.power.PowerManagerService.releaseWakeLockInternal(android.os.IBinder, int) for 148ms
+11-07 05:08:02.803 I/AiAiEcho( 1439): AppFetcherImplV2 updateApps package:[dev.mobile.maestro.test], userId:[0], reason:[package is added.].
+11-07 05:08:02.810 I/NetworkScheduler.Stats( 1166): Task com.google.android.gms/com.google.android.gms.gass.chimera.SchedulePeriodicTasksService finished executing. cause:5 result: 1 elapsed_millis: 3518 uptime_millis: 3518 exec_start_elapsed_seconds: 84 [CONTEXT service_id=218 ]
+11-07 05:08:02.815 I/BugleRcsProvisioning( 3304): RcsProvisioningTrigger: onBootComplete
+11-07 05:08:02.815 I/AiAiEcho( 1439): AppFetcherImpl onPackageChanged dev.mobile.maestro.test.
+11-07 05:08:02.818 D/PackageManager(  553): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+11-07 05:08:02.824 I/BugleContacts( 3304): ContactsSyncFeature is not enabled.
+11-07 05:08:02.824 I/BugleDataModel( 3304): ActionExecutorImpl: Stopping ActionService
+11-07 05:08:02.825 W/Conscrypt( 1355): 	at com.google.android.gms.org.conscrypt.Platform.setSocketWriteTimeout(:com.google.android.gms@242335041@24.23.35 (190800-646585959):204)
+11-07 05:08:02.825 W/Conscrypt( 1355): 	at com.google.android.gms.org.conscrypt.ConscryptFileDescriptorSocket.setSoWriteTimeout(:com.google.android.gms@242335041@24.23.35 (190800-646585959):4)
+11-07 05:08:02.830 D/PackageManager(  553): Clear ephemeral installer activity
+11-07 05:08:02.835 I/AiAiEcho( 1439): AppIndexer Package:[dev.mobile.maestro.test] UserProfile:[0] Enabled:[true].
+11-07 05:08:02.835 I/AiAiEcho( 1439): AppFetcherImplV2 updateApps package:[dev.mobile.maestro.test], userId:[0], reason:[package is updated.].
+11-07 05:08:02.845 W/BroadcastLoopers(  553): Found previously unknown looper Thread[SliceManagerService,5,main]
+11-07 05:08:02.847 I/ActivityManager(  553): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+11-07 05:08:02.850 V/GrammaticalInflectionUtils(  553): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@57965ce, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+11-07 05:08:02.852 I/AppsFilter(  553): interaction: PackageSetting{5d0af09 com.android.microdroid.empty_payload/10188} -> PackageSetting{ab91d1d dev.mobile.maestro/10210} BLOCKED
+11-07 05:08:02.855 I/system_server(  553): Background concurrent mark compact GC freed 9791KB AllocSpace bytes, 30(592KB) LOS objects, 46% free, 27MB/51MB, paused 25.283ms,83.412ms total 991.141ms
+11-07 05:08:02.863 D/Zygote  (  361): Forked child process 3616
+11-07 05:08:02.873 W/GCM     ( 1166): Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package: flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
+11-07 05:08:02.874 W/NetworkScheduler( 1166): Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package: flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
+11-07 05:08:02.883 I/ActivityManager(  553): Start proc 3616:dev.mobile.maestro/u0a210 for added application dev.mobile.maestro
+11-07 05:08:02.889 I/AppWidgetServiceImpl(  553): Received broadcast: android.intent.action.PACKAGE_UNSTOPPED on user 0
+11-07 05:08:02.889 I/AppWidgetServiceImpl(  553): Updating package stopped masked state for uid 10210 package dev.mobile.maestro isStopped false
+11-07 05:08:02.891 I/BugleRcsEngine( 3304): SystemBinding enabled: true [CONTEXT log_prefix="SystemBindingManager" thread_id=48 ]
+11-07 05:08:02.900 D/ShortcutService(  553): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=null
+11-07 05:08:02.908 I/.mobile.maestro( 3616): Late-enabling -Xcheck:jni
+11-07 05:08:02.910 W/ElapsedTimeUtils( 1090): getElapsedTime: sSuwFinishedTimeStamp is null
+11-07 05:08:02.910 D/SliceBroadcastRelay( 1090): Registering Uri for broadcast relay: content://com.android.settings.slices/action/mobile_data
+--
+11-07 05:17:32.759 I/AndroidRuntime( 3595): VM exiting with result code 0.
+11-07 05:17:32.765 E/MDD     ( 6162): DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.apps.messaging/files/datadownload/shared/public/datadownloadfile_1794028618240
+11-07 05:17:32.769 E/MDD     ( 6162): DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.apps.messaging/files/datadownload/shared/public/datadownloadfile_1794028618241
+11-07 05:17:32.784 D/dasx    ( 6162): Starting download: https://fonts.gstatic.com/s/e/notoemoji/16.0/1f44d_1f3ff/lottie.json
+11-07 05:17:32.784 V/dasx    ( 6162): Is http uri, downloading (uri: https://fonts.gstatic.com/s/e/notoemoji/16.0/1f44d_1f3ff/lottie.json)
+11-07 05:17:32.785 D/dasx    ( 6162): Starting download: https://fonts.gstatic.com/s/e/notoemoji/16.0/1f44e/lottie.json
+11-07 05:17:32.785 V/dasx    ( 6162): Is http uri, downloading (uri: https://fonts.gstatic.com/s/e/notoemoji/16.0/1f44e/lottie.json)
+11-07 05:17:32.888 I/init    (    0): ... started service 'artd' has pid 6369
+11-07 05:17:32.889 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 143 (/system/bin/servicemanager)
+11-07 05:17:32.786 I/adbd    (  435): Remote process closed the socket (on MSG_PEEK)
+11-07 05:17:32.787 V/ActivityManager(  553): Got obituary of 3616:dev.mobile.maestro
+11-07 05:17:32.801 D/DisplayManagerService(  553): Drop pending events for gone uid 10131
+11-07 05:17:32.906 W/binder_debug(    0): 85 callbacks suppressed
+11-07 05:17:32.906 I/binder  (    0): undelivered transaction 383260, process died.
+11-07 05:17:32.910 I/binder  (    0): undelivered transaction 384229, process died.
+11-07 05:17:32.913 I/init    (    0): Untracked pid 3595 exited with status 0
+11-07 05:17:32.914 I/init    (    0): Untracked pid 3595 did not have an associated service entry and will not be reaped
+11-07 05:17:32.805 W/ActivityManager(  553): pid 553 system sent binder code 1 with flags 1 to frozen apps and got error -32
+11-07 05:17:32.806 I/Zygote  (  361): Process 1661 exited due to signal 9 (Killed)
+11-07 05:17:32.806 W/MagnificationConnectionManager(  553): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-07 05:17:32.808 W/MagnificationConnectionManager(  553): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-07 05:17:32.920 I/binder  (    0): undelivered transaction 375068, process died.
+11-07 05:17:32.924 I/binder  (    0): undelivered transaction 831495, process died.
+11-07 05:17:32.815 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-07 05:17:32.815 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-07 05:17:32.815 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-07 05:17:32.816 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-07 05:17:32.816 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-07 05:17:32.816 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-07 05:17:32.816 W/IPCThreadState(  553): Sending oneway calls to frozen process.
+11-07 05:17:32.816 W/IPCThreadState(  553): Sending oneway calls to frozen process.
