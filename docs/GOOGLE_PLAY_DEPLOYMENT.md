@@ -202,59 +202,10 @@ is deleted when.
 
 ## 7. Store listing
 
-Under **Grow users**, **Store presence**, **Main store listing**:
-
-| Field | Katkee |
-|---|---|
-| App name (30 characters) | Katkee |
-| Short description (80) | See `docs/STORE_LISTING_ASO.md` (written for search) |
-| App icon (512 x 512, 32-bit PNG) | `brand/store/google-play-icon-512.png` |
-| Feature graphic (1024 x 500) | `brand/store/google-play-feature-graphic-1024x500.png` |
-| Phone screenshots (2 to 8) | From the release build on a phone: Home, a creator page, Create, Messages, Activity. Real screens only |
-| Category | Social |
-| Contact email | support@katkee.com |
-| Website | https://katkee.com |
-
-Full description (up to 4,000 characters): use the newer, search-friendly text in
-`docs/STORE_LISTING_ASO.md`, which covers chats, voice notes, festivals and interests. The text
-below is the original.
-
-```
-Katkee is Stories, and nothing else.
-
-Share your day as Stories that disappear after 24 hours, and keep the moments that matter as
-Highlights on your profile.
-
-Home
-• Stories from people you follow, with new creators near you mixed in
-• Tap right for the next Story, tap left to go back
-• Swipe up or down to move between people
-• Hold to pause, double-tap to like
-
-Create
-• A full-screen camera for photos and video
-• Flash, timer, front and back camera
-• Add photos and videos from your gallery
-• Text, drawing, stickers and music from a free library of songs
-
-Search, Activity and Messages
-• Find people by username or name, and follow them from your results
-• Likes, comments, mentions, new followers and follow requests in one place
-• Private one-to-one messages that arrive as they're sent
-
-Your profile
-• A ring around your photo when you have a Story
-• Highlights, three to a row
-• Insights for your own Stories. Who viewed them is visible only to you
-
-Safety and privacy
-• Make your account private and approve who follows you
-• Block, mute and report from any profile, Story, comment or message
-• Nearby Stories is optional, and uses a city-sized area, never your exact location
-• We don't sell your data
-
-Katkee is for people 18 and older.
-```
+Under **Grow users**, **Store presence**, **Main store listing**: the text (English, Hindi and
+Marathi), the store settings and every graphic are in `docs/PLAY_STORE_LISTING.md`, written for
+search and checked against Play's limits (`node scripts/check-store-listing.cjs`). The
+screenshots are real app screens from the emulator's store run, in `brand/store/screenshots/`.
 
 **Countries and regions** (Test and release, Production, Countries / regions): choose
 **Add countries / regions**, tick **all**, and keep "New countries and regions" on so Katkee
