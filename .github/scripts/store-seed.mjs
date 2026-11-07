@@ -79,7 +79,16 @@ async function profile(key) {
 async function story(key, photo, caption, extra = {}) {
   const p = PEOPLE[key];
   const mediaId = await upload(p, photo);
-  let r = await call("POST", "/api/v1/stories", p.token, { mediaId, caption, audience: "public", allowComments: "everyone", ...extra });
+  // A request id lets the server publish once the photo has been processed (as the app does);
+  // without one, or if it still says the photo isn't ready, try again for up to a minute.
+  const body = { mediaId, caption, audience: "public", allowComments: "everyone", requestId: randomBytes(12).toString("hex"), ...extra };
+  let r;
+  for (let attempt = 1; ; attempt++) {
+    try { r = await call("POST", "/api/v1/stories", p.token, body); break; } catch (e) {
+      if (!String(e.message).includes(": 409 ") || attempt >= 20) throw e;
+      await sleep(3000);
+    }
+  }
   for (let i = 0; !r.story && i < 30; i++) {
     await sleep(2000);
     const { publish } = await call("GET", `/api/v1/stories/publish-requests/${r.publish.requestId}`, p.token);
