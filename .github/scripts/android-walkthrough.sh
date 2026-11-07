@@ -15,6 +15,8 @@ if [ "$SIZE" = tablet ]; then
   adb shell settings put system accelerometer_rotation 0
   # A Pixel Tablet's natural position is already landscape (rotation 0).
   adb shell settings put system user_rotation 0
+  # Store screenshots: a full-colour 2560x1600 capture is over the 4 MB Maestro can carry.
+  [ "$FLOW" = store ] && adb shell wm size 1920x1200
   echo "landscape" >> "$OUT/device.txt"
 fi
 # A just-booted emulator's own launcher can stall ("isn't responding"); let it settle and close
