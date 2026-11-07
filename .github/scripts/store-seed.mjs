@@ -37,10 +37,10 @@ async function oidc() {
 
 // The cast: the account the screenshots are taken from, and the friends who post and chat.
 const PEOPLE = {
-  maya: { displayName: "Maya Kapoor", username: "maya.kapoor", bio: "Chasing sunsets and good coffee ☀️", avatar: "avatar-maya", cover: "cover-maya" },
-  arjun: { displayName: "Arjun Mehta", username: "arjun.islands", bio: "Beaches, boats and long walks", avatar: "avatar-arjun" },
-  sofia: { displayName: "Sofia Alvarez", username: "sofia.eats", bio: "Cooking my way around the world", avatar: "avatar-sofia" },
-  leo: { displayName: "Leo Bennett", username: "leo.bennett", bio: "Surf, sun, repeat", avatar: "avatar-leo" },
+  maya: { displayName: "Maya Kapoor", username: "maya.wanders", bio: "Chasing sunsets and good coffee ☀️", avatar: "avatar-maya", cover: "cover-maya" },
+  arjun: { displayName: "Arjun Mehta", username: "arjun.beaches", bio: "Beaches, boats and long walks", avatar: "avatar-arjun" },
+  sofia: { displayName: "Sofia Alvarez", username: "sofia.cooks", bio: "Cooking my way around the world", avatar: "avatar-sofia" },
+  leo: { displayName: "Leo Bennett", username: "leo.waves", bio: "Surf, sun, repeat", avatar: "avatar-leo" },
   zara: { displayName: "Zara Ahmed", username: "zara.sketches", bio: "Coffee, sketchbooks and slow mornings", avatar: "avatar-zara" },
   kenji: { displayName: "Kenji Sato", username: "kenji.streets", bio: "Street photographer, always walking", avatar: "avatar-kenji" },
 };
@@ -49,11 +49,13 @@ async function makeAccount(key) {
   const p = PEOPLE[key];
   p.email = `support+e2e-store-${RUN}-${key}@katkee.com`;
   p.password = key === "maya" ? MAIN_PASSWORD : `E2e-${randomBytes(8).toString("hex")}`;
-  await call("POST", "/api/v1/auth/signup", null, { displayName: p.displayName, username: p.username, email: p.email, birthDate: "1995-04-12", password: p.password });
-  appendFileSync(ACCOUNTS, `${p.username} ${p.email} ${p.password}\n`);
-  p.token = (await call("POST", "/api/v1/auth/login", null, { email: p.email, password: p.password })).tokens.accessToken;
+  // Signing up signs in too. Sign-up and log-in share one small budget per network address
+  // (10 per 15 minutes), so no extra log-ins: the app's own log-in as Maya needs one more.
+  const signup = await call("POST", "/api/v1/auth/signup", null, { displayName: p.displayName, username: p.username, email: p.email, birthDate: "1995-04-12", password: p.password });
+  p.token = signup.tokens.accessToken;
+  // The token too, so the workflow can delete the account without logging in again.
+  appendFileSync(ACCOUNTS, `${p.username} ${p.email} ${p.password} ${p.token}\n`);
   await call("POST", "/api/v1/auth/email/ci-verify", p.token, { token: await oidc() });
-  p.token = (await call("POST", "/api/v1/auth/login", null, { email: p.email, password: p.password })).tokens.accessToken;
   console.log(`account ${p.username}`);
 }
 
@@ -121,7 +123,7 @@ await call("POST", "/api/v1/highlights", PEOPLE.maya.token, { title: "Skies", st
 await story("kenji", "story-city", "City lights from up here ✨");
 await story("zara", "story-coffee", "Slow morning, first sketch of the day");
 await story("leo", "story-beach", "Found my happy place 🌊", music ? { music } : {});
-await story("sofia", "story-food", "Sunday pizza night, recipe in my Highlights 🍕");
+await story("sofia", "story-food", "Dinner I'm proud of tonight 🌶️ recipe in my Highlights");
 await story("arjun", "story-palms", "Island time 🌴 no signal, no problem");
 
 // Likes and comments on Maya's Stories, for her Activity.
