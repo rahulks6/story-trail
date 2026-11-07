@@ -37,6 +37,8 @@ words people really used, and the plan should follow that.
 | --- | --- | --- |
 | stories, share stories | Katkee's core; the words people search for Story apps | Title, short, full (opening line and 8 more times) |
 | chat, messages | The second reason to open the app every day | Title, short, full |
+| status | In India people search "status" for 24-hour photo and video posts; a generic word, used plainly | Title, full ("like a status") |
+| story maker, photo collage, add music to story | Creation searches with clear intent | Full |
 | video call, voice notes | Strong intent, less crowded than "stories" | Title (Calls), short, full |
 | friends, private, close friends | What sets Katkee apart from public feeds | Short, full |
 | music, stickers, filters, photo, video | Story-making searches | Full |
@@ -53,9 +55,9 @@ at least 7 days, and keep a winner only when Play marks it as better with confid
 
 1. **First screenshot**: Home (palm beach Story) against the editor (street photo with
    "Golden hour"). The first screenshot decides most installs.
-2. **Short description**: the current one against "The calm Stories app: share your day, chat and
-   video call close friends."
-3. **App name**: "Katkee: Stories, Chat & Calls" against "Katkee: Share Stories & Chat".
+2. **Short description**: the current one against "Share your day in Stories. Chat, send voice notes and
+   video call your friends."
+3. **App name**: "Katkee: Stories, Status & Chat" against "Katkee: Stories, Chat & Calls".
 4. **Feature graphic**: the current one against one with the editor screen in front.
 
 ## Custom store listing for India
@@ -77,60 +79,62 @@ friends." Worth doing for Diwali, Holi and other big festivals, when people sear
 
 ### App name (30 characters max)
 <!-- field:title:en -->
-Katkee: Stories, Chat & Calls
+Katkee: Stories, Status & Chat
 <!-- /field -->
 
 ### Short description (80 characters max)
 <!-- field:short:en -->
-Share your day in Stories. Chat, send voice notes and video call your friends.
+Post photo & video Stories with music. Chat and video call friends, privately.
 <!-- /field -->
 
 ### Full description (4,000 characters max)
 <!-- field:full:en -->
-Katkee is the Stories app for sharing your day with the people who matter. Post photos and videos as Stories, add music, text and stickers, then chat, send voice notes and video call your friends, all in one calm, private place.
+Katkee is a Stories app and a private chat app in one. Share your day as photo and video Stories that stay up for 24 hours, like a status, with music, text and stickers. Then chat, send voice notes and video call your friends. No endless feed of strangers: just the people who matter.
 
-No endless feed. No chasing likes. Just real moments, shared.
+Why people choose Katkee
+• Stories first: Home shows your friends' Stories, not an endless feed
+• Private by design: you choose who sees every Story
+• Free to use, with no ad tracking, and we never sell your data
 
-STORIES THAT LOOK GREAT
-• Share photos and videos as Stories that last 24 hours
-• Add text in beautiful styles, stickers, emoji, drawings and filters
-• Pick a song from Katkee's music library to play with your Story
-• Pinch to zoom, turn and move your photo until it's just right
-• Trim videos, and make Layouts with up to six photos in one Story
+Create beautiful Stories
+• Post photo and video Stories that last 24 hours, like a status update
+• Story maker tools: text styles, stickers, emoji, drawing and filters
+• Add music to your Story from Katkee's song library
+• Photo editing built in: pinch to zoom, rotate and move your photo
+• Video Stories: trim any video from your gallery
+• Layouts: a photo collage of up to six photos in one Story
 • Polls, quizzes, questions, countdowns and links make Stories interactive
-• Close Friends: share some Stories only with the people closest to you
-• Keep your favourite Stories on your profile as Highlights, forever
+• Close Friends: share some Stories only with your inner circle
+• Highlights keep your best Stories on your profile, forever
 
-SEE STORIES YOU'LL LOVE
-• Katkee understands what each Story is about, so no tagging is needed
-• Your Home fills with Stories from friends and topics you enjoy
+Chat and video call
+• Private messages and group chats with up to 32 friends
+• Voice notes, photos and videos in every chat
+• Voice calls and video calls with friends
+• Reply to a Story, react with an emoji, or double tap to like
+• See when your messages are sent, delivered and seen
+
+Discover Stories you'll love
+• Katkee understands what each Story is about, so no hashtags or tagging needed
+• Your Home fills with Stories from friends and the topics you enjoy
 • Explore popular Stories and find new people to follow
-• Celebrate festivals together with festival Stories from everyone
+• Festival Stories: celebrate every festival together
 
-CHAT AND CALL YOUR FRIENDS
-• Private messages and group chats with up to 32 people
-• Voice notes, photos and videos in your chats
-• Voice and video calls
-• Reply to a Story privately, react with an emoji, or double tap to like
-• See when messages are sent, delivered and seen
-
-PRIVATE AND SAFE BY DESIGN
-• We never sell your data, and there is no ad tracking
-• Choose who sees each Story: everyone, followers only or Close Friends
-• Make your account private, and approve who follows you
+Safe and private social app
+• Private account: approve who follows you
+• Choose who sees each Story: everyone, followers or Close Friends
 • Two-step login protects your account
-• Block, mute and report anyone, at any time
-• Download a copy of your data, or delete your account, whenever you like
+• Block, mute and report anyone, any time
+• Download a copy of your data, or delete your account whenever you like
 
-MADE FOR EVERYONE
-• Available worldwide, in English, Hindi and Marathi
+Made for everyone
+• In English, Hindi and Marathi
 • Light and dark mode
-• Picture descriptions so people who use a screen reader can enjoy every Story
 • Several accounts on one phone, switch in one tap
+• Picture descriptions for people who use a screen reader
 
 Katkee is for people aged 18 and over.
-
-Questions or ideas? Write to support@katkee.com or visit katkee.com/support.
+Questions or ideas? support@katkee.com · katkee.com/support
 Privacy Policy: katkee.com/privacy · Terms: katkee.com/terms
 <!-- /field -->
 
@@ -482,3 +486,9 @@ see `brand/store/photos/SOURCES.md`), framed by `brand/store/screenshots/make.cj
 graphic by `brand/store/make-feature-graphic.cjs`. To make them again after a design change:
 run the workflow with flow=store, copy the screens into `brand/store/screenshots/raw/`, then
 run both scripts.
+
+## Listing rules kept (Google's metadata policy)
+
+No competitors' names, no "best", "#1" or "free download", no ratings or awards claims, no
+headings in capitals, no emoji in the text, no keyword lists, and every feature named is in
+the app. Breaking these gets a listing demoted or rejected.
