@@ -7,8 +7,8 @@ lines of the full description, where Play weighs them most, and are repeated nat
 stuffed: Google demotes keyword lists). Everything described is in the app today.
 `scripts/check-store-listing.cjs` checks each field against Play's limits.
 
-Katkee is available worldwide. English is the default listing; Hindi and Marathi are added as
-translations (Store presence > Main store listing > Manage translations), so people whose phones
+Katkee is available worldwide. English is the default listing; Hindi, Marathi, Spanish, Portuguese,
+Indonesian, French, German and Arabic are added as translations (Store presence > Main store listing > Manage translations), so people whose phones
 use those languages see the listing in theirs.
 
 ## Store settings
@@ -23,6 +23,55 @@ use those languages see the listing in theirs.
 | Countries | All countries and regions |
 | Ads | No (Sponsored Stories are off) |
 | Target audience | 18 and over |
+
+## Keyword plan
+
+Play reads the app name, short description and full description for search; there is no
+keyword field. Weight goes title > short description > first lines of the full description >
+the rest, and repeating a word naturally 3 to 5 times in the full description helps; lists of
+keywords get the listing demoted. Search volumes below are judgement, not Play data: after
+launch, Play Console, Grow users, Store performance, Store analysis ("Search terms") shows the
+words people really used, and the plan should follow that.
+
+| Keyword | Why | Where it is |
+| --- | --- | --- |
+| stories, share stories | Katkee's core; the words people search for Story apps | Title, short, full (opening line and 8 more times) |
+| chat, messages | The second reason to open the app every day | Title, short, full |
+| video call, voice notes | Strong intent, less crowded than "stories" | Title (Calls), short, full |
+| friends, private, close friends | What sets Katkee apart from public feeds | Short, full |
+| music, stickers, filters, photo, video | Story-making searches | Full |
+| Hindi / Marathi: स्टोरी, चैट, वीडियो कॉल | Many Indian users search in their own script | The hi and mr listings |
+
+Brand searches ("katkee") match the title; the website and social posts should always say
+"Katkee on Google Play" with the Play link once the app is live.
+
+## Experiments after launch (Store listing experiments)
+
+Play can show two versions of the listing to different visitors and report which gets more
+installs (Grow users, Store presence, Store listing experiments). Run one at a time, 50/50, for
+at least 7 days, and keep a winner only when Play marks it as better with confidence.
+
+1. **First screenshot**: Home (palm beach Story) against the editor (street photo with
+   "Golden hour"). The first screenshot decides most installs.
+2. **Short description**: the current one against "The calm Stories app: share your day, chat and
+   video call close friends."
+3. **App name**: "Katkee: Stories, Chat & Calls" against "Katkee: Share Stories & Chat".
+4. **Feature graphic**: the current one against one with the editor screen in front.
+
+## Custom store listing for India
+
+Play can show a separate listing per country (Grow users, Store presence, Custom store
+listings). For India, lead with festivals: a first screenshot of a festival Story ring and a
+short description such as "Share your day and every festival in Stories. Chat and video call
+friends." Worth doing for Diwali, Holi and other big festivals, when people search for them.
+
+## Ratings and reviews
+
+- The app asks for a rating the stores' own way, after someone's third Story
+  (`mobile/src/utils/reviewPrompt.ts`): never at launch, at most every 120 days.
+- Reply to every review in the first weeks, within a day (Play Console, Quality, Ratings and
+  reviews). Replies show on the listing and raised ratings count again.
+- Fix what one-star reviews name first: rating is the strongest signal Play uses after installs.
 
 ## English (en-US), the default
 
@@ -201,14 +250,231 @@ Katkee 18 वर्षे आणि त्याहून अधिक वया
 प्रश्न किंवा कल्पना? support@katkee.com वर लिहा किंवा katkee.com/support ला भेट द्या.
 <!-- /field -->
 
+## More languages (worldwide)
+
+Play shows people the listing in their phone's language when there is one, and search matches
+the words of that language. These six cover most of Android's largest markets outside India.
+The app itself is in English, Hindi and Marathi; each description says so, so nobody expects
+the app in their language.
+
+### Spanish, Latin America (es-419)
+<!-- field:title:es -->
+Katkee: Historias y Chat
+<!-- /field -->
+<!-- field:short:es -->
+Comparte tu día en Historias. Chatea, envía notas de voz y haz videollamadas.
+<!-- /field -->
+<!-- field:full:es -->
+Katkee es la app de Historias para compartir tu día con las personas que importan. Publica fotos y videos como Historias con música, texto y stickers, y luego chatea, envía notas de voz y haz videollamadas con tus amigos, todo en un lugar tranquilo y privado.
+
+Sin feed infinito. Sin perseguir likes. Solo momentos reales.
+
+HISTORIAS QUE SE VEN INCREÍBLES
+• Historias de fotos y videos que duran 24 horas
+• Texto, stickers, emojis, dibujos, filtros y música
+• Acerca, gira y mueve tu foto hasta que quede perfecta
+• Recorta videos y crea Layouts con hasta seis fotos
+• Encuestas, preguntas, cuentas regresivas y enlaces
+• Mejores amigos: comparte algunas Historias solo con tu círculo cercano
+• Guarda tus favoritas como Destacadas en tu perfil
+
+CHATEA Y LLAMA
+• Mensajes privados y chats grupales de hasta 32 personas
+• Notas de voz, fotos y videos
+• Llamadas de voz y videollamadas
+
+PRIVADA Y SEGURA
+• Nunca vendemos tus datos, sin rastreo publicitario
+• Tú eliges quién ve cada Historia
+• Cuenta privada, inicio de sesión en dos pasos, bloquear y reportar
+
+La app está en inglés, hindi y maratí. Para mayores de 18 años.
+Ayuda: support@katkee.com · Privacidad: katkee.com/privacy
+<!-- /field -->
+
+### Portuguese, Brazil (pt-BR)
+<!-- field:title:pt -->
+Katkee: Stories, Chat e Vídeo
+<!-- /field -->
+<!-- field:short:pt -->
+Compartilhe seu dia em Stories. Converse, mande áudios e faça chamadas de vídeo.
+<!-- /field -->
+<!-- field:full:pt -->
+Katkee é o app de Stories para compartilhar seu dia com quem importa. Publique fotos e vídeos como Stories com música, texto e figurinhas, depois converse, mande áudios e faça chamadas de vídeo com seus amigos, tudo em um lugar tranquilo e privado.
+
+Sem feed infinito. Sem correr atrás de curtidas. Só momentos reais.
+
+STORIES LINDOS
+• Stories de fotos e vídeos que duram 24 horas
+• Texto, figurinhas, emojis, desenhos, filtros e música
+• Aproxime, gire e mova sua foto até ficar perfeita
+• Corte vídeos e crie Layouts com até seis fotos
+• Enquetes, perguntas, contagens regressivas e links
+• Melhores Amigos: alguns Stories só para quem é mais próximo
+• Guarde os favoritos como Destaques no seu perfil
+
+CONVERSE E LIGUE
+• Mensagens privadas e grupos de até 32 pessoas
+• Áudios, fotos e vídeos
+• Chamadas de voz e de vídeo
+
+PRIVADO E SEGURO
+• Nunca vendemos seus dados, sem rastreamento de anúncios
+• Você escolhe quem vê cada Story
+• Conta privada, login em duas etapas, bloquear e denunciar
+
+O app está em inglês, hindi e marati. Para maiores de 18 anos.
+Ajuda: support@katkee.com · Privacidade: katkee.com/privacy
+<!-- /field -->
+
+### Indonesian (id)
+<!-- field:title:id -->
+Katkee: Stories & Chat Teman
+<!-- /field -->
+<!-- field:short:id -->
+Bagikan harimu lewat Stories. Chat, kirim pesan suara, dan video call teman.
+<!-- /field -->
+<!-- field:full:id -->
+Katkee adalah aplikasi Stories untuk berbagi harimu dengan orang-orang terdekat. Unggah foto dan video sebagai Stories dengan musik, teks, dan stiker, lalu chat, kirim pesan suara, dan video call dengan teman, semua di tempat yang tenang dan privat.
+
+Tanpa feed tanpa akhir. Tanpa mengejar like. Hanya momen nyata.
+
+STORIES YANG MEMUKAU
+• Stories foto dan video yang bertahan 24 jam
+• Teks, stiker, emoji, gambar, filter, dan musik
+• Perbesar, putar, dan geser foto sampai pas
+• Potong video dan buat Layout hingga enam foto
+• Polling, pertanyaan, hitung mundur, dan tautan
+• Teman Dekat: bagikan Stories tertentu hanya untuk orang terdekat
+• Simpan favoritmu sebagai Sorotan di profil
+
+CHAT DAN TELEPON
+• Pesan pribadi dan grup chat hingga 32 orang
+• Pesan suara, foto, dan video
+• Telepon suara dan video call
+
+PRIVAT DAN AMAN
+• Kami tidak pernah menjual datamu, tanpa pelacakan iklan
+• Kamu pilih siapa yang melihat setiap Story
+• Akun privat, login dua langkah, blokir dan laporkan
+
+Aplikasi tersedia dalam bahasa Inggris, Hindi, dan Marathi. Untuk usia 18 tahun ke atas.
+Bantuan: support@katkee.com · Privasi: katkee.com/privacy
+<!-- /field -->
+
+### French (fr-FR)
+<!-- field:title:fr -->
+Katkee: Stories, Chat, Appels
+<!-- /field -->
+<!-- field:short:fr -->
+Partagez votre journée en Stories. Discutez, vocaux et appels vidéo entre amis.
+<!-- /field -->
+<!-- field:full:fr -->
+Katkee est l'app de Stories pour partager votre journée avec ceux qui comptent. Publiez photos et vidéos en Stories avec musique, texte et stickers, puis discutez, envoyez des messages vocaux et passez des appels vidéo, dans un espace calme et privé.
+
+Pas de fil sans fin. Pas de course aux likes. Juste de vrais moments.
+
+DES STORIES QUI EN JETTENT
+• Stories photo et vidéo qui durent 24 heures
+• Texte, stickers, emojis, dessins, filtres et musique
+• Zoomez, tournez et déplacez votre photo
+• Coupez vos vidéos et créez des Layouts jusqu'à six photos
+• Sondages, questions, comptes à rebours et liens
+• Amis proches : certaines Stories pour vos proches seulement
+• Gardez vos préférées à la une sur votre profil
+
+DISCUTER ET APPELER
+• Messages privés et groupes jusqu'à 32 personnes
+• Vocaux, photos et vidéos
+• Appels audio et vidéo
+
+PRIVÉE ET SÛRE
+• Nous ne vendons jamais vos données, aucun pistage publicitaire
+• Vous choisissez qui voit chaque Story
+• Compte privé, connexion en deux étapes, bloquer et signaler
+
+L'app est en anglais, hindi et marathi. Réservée aux plus de 18 ans.
+Aide : support@katkee.com · Confidentialité : katkee.com/privacy
+<!-- /field -->
+
+### German (de-DE)
+<!-- field:title:de -->
+Katkee: Stories, Chat & Anrufe
+<!-- /field -->
+<!-- field:short:de -->
+Teile deinen Tag in Stories. Chatte, sende Sprachnachrichten, mach Videoanrufe.
+<!-- /field -->
+<!-- field:full:de -->
+Katkee ist die Stories-App, um deinen Tag mit den Menschen zu teilen, die dir wichtig sind. Poste Fotos und Videos als Stories mit Musik, Text und Stickern, dann chatte, sende Sprachnachrichten und führe Videoanrufe, alles an einem ruhigen, privaten Ort.
+
+Kein endloser Feed. Keine Jagd nach Likes. Nur echte Momente.
+
+STORIES, DIE BEGEISTERN
+• Foto- und Video-Stories, die 24 Stunden bleiben
+• Text, Sticker, Emojis, Zeichnungen, Filter und Musik
+• Zoomen, drehen und verschieben, bis dein Foto passt
+• Videos kürzen und Layouts mit bis zu sechs Fotos
+• Umfragen, Fragen, Countdowns und Links
+• Enge Freunde: manche Stories nur für die Liebsten
+• Lieblings-Stories als Highlights im Profil
+
+CHATTEN UND ANRUFEN
+• Private Nachrichten und Gruppenchats mit bis zu 32 Personen
+• Sprachnachrichten, Fotos und Videos
+• Sprach- und Videoanrufe
+
+PRIVAT UND SICHER
+• Wir verkaufen nie deine Daten, kein Werbe-Tracking
+• Du entscheidest, wer jede Story sieht
+• Privates Konto, Anmeldung in zwei Schritten, blockieren und melden
+
+Die App ist auf Englisch, Hindi und Marathi. Ab 18 Jahren.
+Hilfe: support@katkee.com · Datenschutz: katkee.com/privacy
+<!-- /field -->
+
+### Arabic (ar)
+<!-- field:title:ar -->
+Katkee: قصص ودردشة ومكالمات
+<!-- /field -->
+<!-- field:short:ar -->
+شارك يومك في القصص. دردش، أرسل رسائل صوتية، واتصل بأصدقائك بالفيديو.
+<!-- /field -->
+<!-- field:full:ar -->
+Katkee هو تطبيق القصص لمشاركة يومك مع الأشخاص المهمين لك. انشر الصور والفيديوهات كقصص مع الموسيقى والنص والملصقات، ثم دردش وأرسل رسائل صوتية واتصل بأصدقائك بالفيديو، في مكان هادئ وخاص.
+
+بلا خلاصة لا تنتهي. بلا سباق على الإعجابات. لحظات حقيقية فقط.
+
+قصص رائعة
+• قصص صور وفيديو تبقى 24 ساعة
+• نص وملصقات ورموز تعبيرية ورسم وفلاتر وموسيقى
+• كبّر صورتك وأدرها وحرّكها حتى تصبح مثالية
+• قصّ الفيديو وأنشئ تنسيقات تضم حتى ست صور
+• استطلاعات وأسئلة وعدّ تنازلي وروابط
+• الأصدقاء المقربون: شارك بعض القصص مع المقربين فقط
+• احتفظ بقصصك المفضلة كأبرز اللحظات في ملفك
+
+دردشة ومكالمات
+• رسائل خاصة ومجموعات حتى 32 شخصًا
+• رسائل صوتية وصور وفيديو
+• مكالمات صوتية ومرئية
+
+خاص وآمن
+• لا نبيع بياناتك أبدًا، ولا تتبع إعلاني
+• أنت تختار من يرى كل قصة
+• حساب خاص، تسجيل دخول بخطوتين، الحظر والإبلاغ
+
+التطبيق متاح بالإنجليزية والهندية والماراثية. لمن هم في سن 18 عامًا فأكثر.
+المساعدة: support@katkee.com · الخصوصية: katkee.com/privacy
+<!-- /field -->
+
 ## Graphics (ready to upload)
 
 | Asset | Size | File |
 | --- | --- | --- |
 | App icon | 512 x 512 PNG | `brand/store/google-play-icon-512.png` |
 | Feature graphic | 1024 x 500 PNG | `brand/store/google-play-feature-graphic-1024x500.png` |
-| Phone screenshots (8) | 1080 x 1920 PNG | `brand/store/screenshots/phone/01-home.png` … `08-settings.png` |
-| 7-inch and 10-inch tablet screenshots (8) | 1920 x 1080 PNG | `brand/store/screenshots/tablet/01-home.png` … `08-settings.png` |
+| Phone screenshots (8) | 1080 x 1920 PNG | `brand/store/screenshots/phone/01-home.png` … `08-settings.png` (English and the six other languages); `phone-hi/`, `phone-mr/` for Hindi and Marathi |
+| 7-inch and 10-inch tablet screenshots (8) | 1920 x 1080 PNG | `brand/store/screenshots/tablet/…`; `tablet-hi/`, `tablet-mr/` |
 
 Upload them in their numbered order: Play shows the first three without scrolling. They are the
 real app (Android emulator, flow=store on the emulator workflow, with demo accounts and photos;

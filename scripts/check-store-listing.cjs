@@ -16,5 +16,5 @@ for (const [, kind, lang, value] of fields) {
   if (!ok) failed = true;
   console.log(`${ok ? "ok  " : "FAIL"} ${lang} ${kind.padEnd(5)} ${String(length).padStart(4)} / ${limit}`);
 }
-if (fields.length !== 9) { console.log(`expected 9 fields (3 languages x 3), found ${fields.length}`); failed = true; }
+if (fields.length % 3 !== 0 || fields.length < 9) { console.log(`expected 3 fields per language, found ${fields.length}`); failed = true; }
 process.exit(failed ? 1 : 0);
