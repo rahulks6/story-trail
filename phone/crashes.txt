@@ -1,0 +1,83 @@
+11-07 05:38:24.154 D/AndroidRuntime( 4045): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-07 05:38:24.157 I/netd    (  367): tetherGetStats() -> {[]} <0.59ms>
+11-07 05:38:24.162 I/AndroidRuntime( 4045): Using default boot image
+11-07 05:38:24.162 I/AndroidRuntime( 4045): Leaving lock profiling enabled
+11-07 05:38:24.165 I/netd    (  367): bandwidthSetGlobalAlert(2097152) <0.16ms>
+11-07 05:38:24.174 I/NetworkScheduler.Stats( 1206): Task com.google.android.gms/com.google.android.gms.ipa.base.IpaGcmTaskService started execution. cause:5 exec_start_elapsed_seconds: 105 [CONTEXT service_id=218 ]
+11-07 05:38:24.179 I/app_process( 4045): Core platform API reporting enabled, enforcing=false
+11-07 05:38:24.180 I/app_process( 4045): Using CollectorTypeCMC GC.
+11-07 05:38:24.227 I/NetworkScheduler.Stats( 1206): Task com.google.android.gms/com.google.android.gms.ipa.base.IpaGcmTaskService finished executing. cause:5 result: 1 elapsed_millis: 104 uptime_millis: 104 exec_start_elapsed_seconds: 105 [CONTEXT service_id=218 ]
+11-07 05:38:24.301 D/FileUtils(  568): Rounded bytes from 2593198080 to 4000000000
+11-07 05:38:24.345 D/nativeloader( 4045): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+11-07 05:38:24.378 D/nativeloader( 4045): Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+11-07 05:38:24.378 D/app_process( 4045): u_setTimeZoneFilesDirectory("/apex/com.android.tzdata/etc/tz/versioned/8/icu") succeeded. 
+11-07 05:38:24.378 D/app_process( 4045): I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt75l.dat
+11-07 05:38:24.387 D/nativeloader( 4045): Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+11-07 05:38:24.389 D/nativeloader( 4045): Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+11-07 05:38:24.390 W/app_process( 4045): Unexpected CPU variant for x86: x86_64.
+11-07 05:38:24.390 W/app_process( 4045): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
+11-07 05:38:24.417 I/NetworkScheduler.Stats( 1206): Task com.google.android.gms/com.google.android.gms.pay.gcmtask.PayGcmTaskService started execution. cause:5 exec_start_elapsed_seconds: 106 [CONTEXT service_id=218 ]
+11-07 05:38:24.425 D/nativeloader( 4045): Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+11-07 05:38:24.425 D/AndroidRuntime( 4045): Calling main entry com.android.commands.am.Am
+11-07 05:38:24.432 W/libc    ( 2323): Access denied finding property "persist.adb.tls_server.enable"
+11-07 05:38:24.433 W/libc    ( 2323): Access denied finding property "service.adb.tls.port"
+11-07 05:38:24.436 I/NetworkScheduler.Stats( 1206): Task com.google.android.gms/com.google.android.gms.pay.gcmtask.PayGcmTaskService finished executing. cause:5 result: 1 elapsed_millis: 48 uptime_millis: 48 exec_start_elapsed_seconds: 106 [CONTEXT service_id=218 ]
+11-07 05:38:24.437 D/UiAutomationConnection( 4045): Created on user UserHandle{0}
+11-07 05:38:24.439 I/ActivityManager(  568): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+11-07 05:38:24.442 V/GrammaticalInflectionUtils(  568): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@a06d35a, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+11-07 05:38:24.447 I/AppsFilter(  568): interaction: PackageSetting{cf95a52 com.android.microdroid.empty_payload/10194} -> PackageSetting{d1ca123 dev.mobile.maestro/10210} BLOCKED
+11-07 05:38:24.471 I/netd    (  367): tetherGetStats() -> {[]} <1.75ms>
+11-07 05:38:24.420 W/binder:2323_1( 2323): type=1400 audit(0.0:50): avc:  denied  { read } for  name="u:object_r:system_adbd_prop:s0" dev="tmpfs" ino=318 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:system_adbd_prop:s0 tclass=file permissive=0 app=com.google.android.gms
+11-07 05:38:24.480 D/Zygote  (  368): Forked child process 4056
+11-07 05:38:24.432 W/binder:2323_1( 2323): type=1400 audit(0.0:51): avc:  denied  { read } for  name="u:object_r:adbd_prop:s0" dev="tmpfs" ino=63 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:adbd_prop:s0 tclass=file permissive=0 app=com.google.android.gms
+11-07 05:38:24.499 W/ActivityManager(  568): Slow operation: 52ms so far, now at startProcess: returned from zygote!
+11-07 05:38:24.501 W/ActivityManager(  568): Slow operation: 54ms so far, now at startProcess: done updating battery stats
+11-07 05:38:24.501 W/ActivityManager(  568): Slow operation: 55ms so far, now at startProcess: building log message
+11-07 05:38:24.501 I/ActivityManager(  568): Start proc 4056:dev.mobile.maestro/u0a210 for added application dev.mobile.maestro
+11-07 05:38:24.501 W/ActivityManager(  568): Slow operation: 55ms so far, now at startProcess: starting to update pids map
+11-07 05:38:24.501 W/ActivityManager(  568): Slow operation: 55ms so far, now at startProcess: done updating pids map
+11-07 05:38:24.513 D/InetDiagMessage(  568): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+11-07 05:38:24.513 D/InetDiagMessage(  568): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+11-07 05:38:24.513 D/InetDiagMessage(  568): Destroyed live tcp sockets for uids={10176} in 0ms
+11-07 05:38:24.513 D/InetDiagMessage(  568): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+11-07 05:38:24.514 D/InetDiagMessage(  568): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+11-07 05:38:24.514 D/InetDiagMessage(  568): Destroyed live tcp sockets for uids={20176} in 1ms
+11-07 05:38:24.526 I/.mobile.maestro( 4056): Late-enabling -Xcheck:jni
+11-07 05:38:24.544 I/.mobile.maestro( 4056): Using CollectorTypeCMC GC.
+11-07 05:38:24.544 W/.mobile.maestro( 4056): Unexpected CPU variant for x86: x86_64.
+11-07 05:38:24.544 W/.mobile.maestro( 4056): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
+11-07 05:38:24.549 I/adbd    (  448): jdwp connection from 4056
+11-07 05:38:24.551 D/nativeloader( 4056): Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+11-07 05:38:24.624 D/ActivityManager(  568): freezing 1833 android.process.media
+--
+11-07 05:42:21.861 I/AndroidRuntime( 4045): VM exiting with result code 0.
+11-07 05:42:21.865 W/ProcessStats(  568): Tracking association SourceState{55c0bb9 system/1000 BFgs #6818} whose proc state 4 is better than process ProcessState{7e50c9d com.google.android.ext.services/10195 pkg=com.google.android.ext.services} proc state 14 (162 skipped)
+11-07 05:42:21.867 I/netd    (  367): tetherGetStats() -> {[]} <0.57ms>
+11-07 05:42:22.029 I/servicemanager(    0): Caller(pid=568,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+11-07 05:42:22.044 I/init    (    0): starting service 'artd'...
+11-07 05:42:21.887 V/ActivityManager(  568): Got obituary of 4056:dev.mobile.maestro
+11-07 05:42:22.057 I/binder  (    0): undelivered transaction 491575, process died.
+11-07 05:42:22.059 I/binder_alloc(    0): 4056: binder_alloc_buf, no vma
+11-07 05:42:22.062 I/binder  (    0): cannot allocate buffer: vma cleared, target dead or dying
+11-07 05:42:22.062 I/binder  (    0): 568:655 transaction async to 4056:0 failed 491580/29189/-3, size 192-0 line 3544
+11-07 05:42:22.067 I/init    (    0): ... started service 'artd' has pid 6418
+11-07 05:42:22.069 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 152 (/system/bin/servicemanager)
+11-07 05:42:21.896 I/Zygote  (  368): Process 4056 exited due to signal 9 (Killed)
+11-07 05:42:21.897 E/IPCThreadState(  568): Binder transaction failure. id: 491580, BR_*: 29189, error: -3 (No such process)
+11-07 05:42:21.897 W/ActivityManager(  568): pid 568 system sent binder code 1 with flags 1 to frozen apps and got error -32
+11-07 05:42:21.898 W/MagnificationConnectionManager(  568): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-07 05:42:21.898 V/UiAutomationManager(  568): UiAutomation service owner died
+11-07 05:42:21.898 W/MagnificationConnectionManager(  568): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-07 05:42:22.073 I/init    (    0): Untracked pid 4045 exited with status 0
+11-07 05:42:21.900 W/IPCThreadState(  568): Sending oneway calls to frozen process.
+11-07 05:42:21.904 W/IPCThreadState(  568): Sending oneway calls to frozen process.
+11-07 05:42:21.904 W/IPCThreadState(  568): Sending oneway calls to frozen process.
+11-07 05:42:22.075 I/init    (    0): Untracked pid 4045 did not have an associated service entry and will not be reaped
+11-07 05:42:21.904 W/IPCThreadState(  568): Sending oneway calls to frozen process.
+11-07 05:42:21.904 W/IPCThreadState(  568): Sending oneway calls to frozen process.
+11-07 05:42:21.904 W/IPCThreadState(  568): Sending oneway calls to frozen process.
+11-07 05:42:21.904 W/IPCThreadState(  568): Sending oneway calls to frozen process.
+11-07 05:42:21.904 W/IPCThreadState(  568): Sending oneway calls to frozen process.
+11-07 05:42:21.905 W/IPCThreadState(  568): Sending oneway calls to frozen process.
+11-07 05:42:21.905 W/IPCThreadState(  568): Sending oneway calls to frozen process.
+11-07 05:42:21.905 W/IPCThreadState(  568): Sending oneway calls to frozen process.
