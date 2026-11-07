@@ -49,7 +49,8 @@ the checklist of what each store asks for, and where Katkee stands.
 ### From the real app (needs native builds and phones)
 - [ ] Screenshots: iPhone 6.9-inch (3 to 10), Android phone (2 to 8). Real screens only: Home, a
       creator page, Create, Messages, Activity. Both stores reject mock-ups that don't match the
-      app.
+      app. Android: captured by the emulator workflow with flow=store (demo accounts, real
+      screens), framed in `brand/store/screenshots/`.
 - [ ] Every flow tested on an iPhone and an Android phone (the checklists in the two guides).
 
 ### Forms
@@ -57,8 +58,9 @@ the checklist of what each store asks for, and where Katkee stands.
       not who may sign up: with user-generated content and open messages, expect a teen rating
       from both. Answer for what the app allows; Katkee's own 18+ rule applies regardless.
 - [ ] Google: target audience 18 and over only; Ads: Yes if Sponsored Stories are on; app
-      access with the demo account; countries: India only.
-- [ ] Apple: availability India only; if App Store Connect allows a rating above the calculated
+      access with the demo account; countries: all countries and regions. The listing text, in
+      English, Hindi and Marathi, is in `docs/PLAY_STORE_LISTING.md`.
+- [ ] Apple: availability all countries and regions; if App Store Connect allows a rating above the calculated
       one, choose 18+.
 - [ ] Apple: export compliance is already answered in the app.
 
