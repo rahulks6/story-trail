@@ -57,16 +57,19 @@ appId: com.katkee.app
     visible: "Not now"
     timeout: 15000
     optional: true
+# Home plays Stories at once, and a playing Story never "settles": without a short settle time
+# this tap waited ~50 seconds while every Story played through to "You're all caught up".
 - tapOn:
     text: "Not now"
     optional: true
+    waitToSettleTimeoutMs: 300
 
 # 1. Home: friends' Stories. A photo Story moves on after a few seconds, so capture at once.
 # The Story's header shows the username (arjun.beaches): match those, so the screenshot is taken
 # as soon as the first Story shows, not after every Story has played.
 - extendedWaitUntil:
     visible: ".*(arjun|sofia|leo|zara|kenji)\\..*"
-    timeout: 30000
+    timeout: 10000
     optional: true
 - takeScreenshot: s01-home
 - tapOn:
@@ -78,7 +81,14 @@ appId: com.katkee.app
     direction: LEFT
     duration: 300
     optional: true
+    waitToSettleTimeoutMs: 300
 - takeScreenshot: s01c-home-next
+- swipe:
+    direction: LEFT
+    duration: 300
+    optional: true
+    waitToSettleTimeoutMs: 300
+- takeScreenshot: s01d-home-next
 
 # 2. Chats: the inbox, then Sofia's chat.
 - tapOn: "Messages.*"
