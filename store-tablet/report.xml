@@ -1,6 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <testsuites>
-  <testsuite name="Test Suite" device="test" tests="1" failures="0" time="356.777" timestamp="2026-11-07T08:29:45">
-    <testcase id="store" name="store" classname="store" file="/home/runner/work/story-trail/story-trail/mobile/.maestro/store.yaml" time="356.742" timestamp="2026-11-07T08:29:45" status="SUCCESS"/>
+  <testsuite name="Test Suite" device="test" tests="1" failures="1" time="227.067" timestamp="2026-11-07T09:06:43">
+    <testcase id="store" name="store" classname="store" file="/home/runner/work/story-trail/story-trail/mobile/.maestro/store.yaml" time="227.026" timestamp="2026-11-07T09:06:43" status="ERROR">
+      <failure>Unknown error</failure>
+    </testcase>
   </testsuite>
 </testsuites>
