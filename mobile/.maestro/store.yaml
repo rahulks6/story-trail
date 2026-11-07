@@ -62,8 +62,10 @@ appId: com.katkee.app
     optional: true
 
 # 1. Home: friends' Stories. A photo Story moves on after a few seconds, so capture at once.
+# The Story's header shows the username (arjun.beaches): match those, so the screenshot is taken
+# as soon as the first Story shows, not after every Story has played.
 - extendedWaitUntil:
-    visible: ".*(Arjun|Sofia|Leo|Zara|Kenji).*"
+    visible: ".*(arjun|sofia|leo|zara|kenji)\\..*"
     timeout: 30000
     optional: true
 - takeScreenshot: s01-home
@@ -121,8 +123,9 @@ appId: com.katkee.app
 - tapOn: "Choose from gallery"
 - waitForAnimationToEnd:
     timeout: 5000
+# Android's photo picker: the newest photo, the street (the walk-through dated it last).
 - tapOn:
-    id: ".*icon_thumbnail"
+    text: "Photo taken.*"
     index: 0
     optional: true
 - extendedWaitUntil:
@@ -202,7 +205,7 @@ appId: com.katkee.app
     optional: true
 - takeScreenshot: s10-layout-picker
 - tapOn:
-    text: "(Add|Done|Select)"
+    text: "Add.*"
     optional: true
 - waitForAnimationToEnd:
     timeout: 8000

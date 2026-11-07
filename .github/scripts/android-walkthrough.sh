@@ -24,8 +24,9 @@ adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS > /dev/null
 adb logcat -c
 adb logcat -v time > "$OUT/logcat.txt" &
 LOGCAT=$!
-adb shell screenrecord --time-limit 180 /sdcard/walkthrough.mp4 &
-REC=$!
+# Not for the store screenshots: the recording would land in the gallery the editor picks from.
+REC=""
+[ "$FLOW" = store ] || { adb shell screenrecord --time-limit 180 /sdcard/walkthrough.mp4 & REC=$!; }
 
 RUN="${GITHUB_RUN_ID: -6}"
 PASSWORD="E2e-$(openssl rand -hex 8)"
@@ -81,9 +82,12 @@ if [ "$FLOW" = store ]; then
   for f in story-street story-sunset story-lake story-city story-coffee story-beach story-food story-palms cover-maya avatar-maya avatar-arjun avatar-sofia avatar-leo avatar-zara avatar-kenji gallery-1 gallery-2; do
     if [ ! -s "$PHOTOS/$f.jpg" ] || [ "$(stat -c %s "$PHOTOS/$f.jpg")" -lt 20000 ]; then echo "photo missing: $f"; cp "$SPARE" "$PHOTOS/$f.jpg"; fi
   done
-  # The gallery the Story editor and Layout pick from, newest last pushed.
+  # The gallery the Story editor and Layout pick from: the street photo newest, so first.
   for f in gallery-2 gallery-1 story-beach story-lake story-palms story-street; do
+    sleep 2
     adb push "$PHOTOS/$f.jpg" "/sdcard/Pictures/$f.jpg" > /dev/null
+    # adb keeps the file's own date; date each now, in order, so the picker lists the last first.
+    adb shell touch "/sdcard/Pictures/$f.jpg"
     adb shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d "file:///sdcard/Pictures/$f.jpg" > /dev/null
     sleep 1
   done
@@ -95,7 +99,7 @@ if [ "$FLOW" = store ]; then
   adb shell am broadcast -a com.android.systemui.demo -e command clock -e hhmm 0941 > /dev/null
   adb shell am broadcast -a com.android.systemui.demo -e command battery -e level 100 -e plugged false > /dev/null
   adb shell am broadcast -a com.android.systemui.demo -e command network -e wifi show -e level 4 > /dev/null
-  adb shell am broadcast -a com.android.systemui.demo -e command network -e mobile show -e datatype none -e level 4 > /dev/null
+  adb shell am broadcast -a com.android.systemui.demo -e command network -e mobile hide > /dev/null
   adb shell am broadcast -a com.android.systemui.demo -e command notifications -e visible false > /dev/null
 fi
 status=0
@@ -104,7 +108,7 @@ status=0
     -e OIDC_URL="$ACTIONS_ID_TOKEN_REQUEST_URL" -e OIDC_TOKEN="$ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
     --format junit --output "$OUT/report.xml" --test-output-dir "$OUT/maestro" ) || status=1
 
-kill -INT "$REC" 2>/dev/null; sleep 3
+[ -n "$REC" ] && kill -INT "$REC" 2>/dev/null; sleep 3
 adb pull /sdcard/walkthrough.mp4 "$OUT/walkthrough.mp4" > /dev/null 2>&1 || true
 kill "$LOGCAT" 2>/dev/null
 # Crashes (including a class R8 removed) show up as FATAL EXCEPTION in the log.
