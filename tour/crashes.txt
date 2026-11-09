@@ -1,0 +1,99 @@
+11-09 05:00:00.047 D/AndroidRuntime( 4069): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-09 05:00:00.054 I/SP      ( 1372): Scheduling: download registered, 1 started, 0 paused, 0 scheduled, 3 pending: dynamic_art:b1f6f47a53f7820be91b9fe247728980 @ {m:b:u:l, bg}, dynamic_art:305f81355a729e382ea9f374dd286d9f @ {m:b:u:l, bg}, transformer_concept:2023011913_en @ * {m:b:u:l, bg}
+11-09 05:00:00.064 I/AndroidRuntime( 4069): Using default boot image
+11-09 05:00:00.066 W/Role    (  574): Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58
+11-09 05:00:00.067 I/AndroidRuntime( 4069): Leaving lock profiling enabled
+11-09 05:00:00.088 I/app_process( 4069): Core platform API reporting enabled, enforcing=false
+11-09 05:00:00.091 I/BugleRcsEngine( 3644): RCS Configuration storage in Bugle is disabled by p/h flag, using ProvisioningEngineStateCacheUtil.getProvisioningConfigurationForGivenSimIfExist() [CONTEXT log_prefix="ProvisioningEngineDataRetriever" thread_id=68 ]
+11-09 05:00:00.092 I/app_process( 4069): Using CollectorTypeCMC GC.
+11-09 05:00:00.095 I/SP      ( 1372): Requesting download of URL https://www.gstatic.com/android/keyboard/modelpack/transformer_concept/2023011913/en.zip to 2023011913_en.zip.fetched (constraints: m:b:u:l)
+11-09 05:00:00.106 I/SP      ( 1372): Download stopped: dynamic_art:b1f6f47a53f7820be91b9fe247728980, succeeded, size: 557904
+11-09 05:00:00.108 I/GsaVoiceInteractionSrv( 1480): (REDACTED) O received %s
+11-09 05:00:00.127 D/ShortcutService(  574): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=com.google.android.apps.messaging
+11-09 05:00:00.159 E/CellBroadcastUtils( 1109): getDefaultCellBroadcastReceiverPackageName: no package found
+11-09 05:00:00.163 W/AppOpService(  574): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:00:00.169 W/JobService( 1372): onNetworkChanged() not implemented in com.google.android.apps.inputmethod.libs.dataservice.superpacks.SuperpacksBackgroundJobService. Must override in a subclass.
+11-09 05:00:00.212 W/AppOpService(  574): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:00:00.222 W/AppOpService(  574): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_WAP_PUSH, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:00:00.229 W/AppOpService(  574): Ignored setUidMode call for runtime permission app op: uid = 1001, code = SEND_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:00:00.239 I/SP      ( 1372): Scheduling: download stopped, 0 started, 0 paused, 0 scheduled, 2 pending: dynamic_art:305f81355a729e382ea9f374dd286d9f @ {m:b:u:l, bg}, transformer_concept:2023011913_en @ {m:b:u:l, bg}
+11-09 05:00:00.240 I/SP      ( 1372): Download stopped: dynamic_art:305f81355a729e382ea9f374dd286d9f, succeeded, size: 30514
+11-09 05:00:00.240 W/AppOpService(  574): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:00:00.249 D/ActivityManager(  574): freezing 3895 com.google.android.ext.services
+11-09 05:00:00.257 D/ActivityManager(  574): sync unfroze 3093 com.android.dynsystem:dynsystem for 10
+11-09 05:00:00.257 D/ActivityManager(  574): sync unfroze 3060 com.android.dynsystem for 10
+11-09 05:00:00.259 D/ActivityManager(  574): sync unfroze 1654 com.android.keychain for 10
+11-09 05:00:00.288 I/Fitness ( 1283): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-09 05:00:00.300 I/BugleRcsEngine( 3644): Connected state: [1], networkType: [WIFI] [CONTEXT thread_id=62 ]
+11-09 05:00:00.300 I/BugleRcsEngine( 3644): handleMessage processing message:[NOTIFY_UPTIME_IGNORE_STATE_CHANGED] with [non-null]:RcsEngineImpl reference [CONTEXT log_prefix="RcsEngineImpl[DUAL_REG]:[57d96aca-1819]>Handler" thread_id=68 ]
+11-09 05:00:00.305 D/PeriodicJobReceiver( 1111): refresh periodic job from action=com.android.settings.battery.action.PERIODIC_JOB_UPDATE
+11-09 05:00:00.308 D/ImsResolver( 1109): maybeAddedImsService, packageName: dev.mobile.maestro.test
+11-09 05:00:00.314 D/BatteryUsageDataLoader( 1111): loadUsageDataSafely() in the AsyncTask
+11-09 05:00:00.330 D/InetDiagMessage(  574): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+11-09 05:00:00.335 D/InetDiagMessage(  574): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+11-09 05:00:00.335 I/netd    (  373): tetherGetStats() -> {[]} <0.25ms>
+11-09 05:00:00.335 D/InetDiagMessage(  574): Destroyed live tcp sockets for uids={10206} in 13ms
+--
+11-09 05:00:00.793 D/AndroidRuntime( 4069): Calling main entry com.android.commands.am.Am
+11-09 05:00:00.804 D/UiAutomationConnection( 4069): Created on user UserHandle{0}
+11-09 05:00:00.807 W/AppOpService(  574): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_WAP_PUSH, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:00:00.810 I/netd    (  373): bandwidthSetGlobalAlert(2097152) <1.29ms>
+11-09 05:00:00.813 W/AppOpService(  574): Ignored setUidMode call for runtime permission app op: uid = 1001, code = SEND_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:00:00.816 W/AppOpService(  574): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:00:00.833 I/PhenotypeBackgroundRecv( 3308): Successfully updated snapshot for com.google.android.libraries.surveys#com.google.android.apps.messaging
+11-09 05:00:00.837 W/TimedProcessReaper( 3644): Scheduling killing of process to refresh configuration
+11-09 05:00:00.850 W/PowerProfile( 1111): ambient.on is deprecated! Use ambient.on.display0 instead.
+11-09 05:00:00.853 W/PowerProfile( 1111): screen.on is deprecated! Use screen.on.display0 instead.
+11-09 05:00:00.853 W/PowerProfile( 1111): screen.full is deprecated! Use screen.full.display0 instead.
+11-09 05:00:00.854 W/ModemPowerProfile( 1111): getAverageBatteryDrainMaH called with unexpected key: 0x0, drain:SLEEP,RAT:DEFAULT
+11-09 05:00:00.854 W/ModemPowerProfile( 1111): getAverageBatteryDrainMaH called with unexpected key: 0x10000000, drain:IDLE,RAT:DEFAULT
+11-09 05:00:00.854 W/ModemPowerProfile( 1111): getAverageBatteryDrainMaH called with unexpected key: 0x20000000, drain:RX,RAT:DEFAULT
+11-09 05:00:00.854 W/ModemPowerProfile( 1111): getAverageBatteryDrainMaH called with unexpected key: 0x30000000, drain:TX,level:0,RAT:DEFAULT
+11-09 05:00:00.854 W/ModemPowerProfile( 1111): getAverageBatteryDrainMaH called with unexpected key: 0x31000000, drain:TX,level:1,RAT:DEFAULT
+11-09 05:00:00.854 W/ModemPowerProfile( 1111): getAverageBatteryDrainMaH called with unexpected key: 0x32000000, drain:TX,level:2,RAT:DEFAULT
+11-09 05:00:00.854 W/ModemPowerProfile( 1111): getAverageBatteryDrainMaH called with unexpected key: 0x33000000, drain:TX,level:3,RAT:DEFAULT
+11-09 05:00:00.854 W/ModemPowerProfile( 1111): getAverageBatteryDrainMaH called with unexpected key: 0x34000000, drain:TX,level:4,RAT:DEFAULT
+11-09 05:00:00.854 W/DataProcessor( 1111): shouldShowBatteryAttributionList(): 0.1
+11-09 05:00:00.854 W/BatteryUsageDataLoader( 1111): getBatteryEntryList() returns null or empty content
+11-09 05:00:00.854 D/BatteryUsageDataLoader( 1111): getBatteryUsageStats() in 540/ms
+11-09 05:00:00.871 I/ActivityManager(  574): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+11-09 05:00:00.917 D/DatabaseUtils( 1111): insert() data into database with isFullChargeStart:false
+11-09 05:00:00.921 W/TimedProcessReaper( 3644): Scheduling killing of process to refresh configuration
+11-09 05:00:00.923 I/DownloadManager( 1372): DownloadManager$3.onProgress():503 Downloading __KLP_delight__en-840 with size 2973696
+11-09 05:00:00.935 W/MagnificationConnectionManager(  574): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-09 05:00:00.935 D/PackageUpdatedTask( 1175): Package updated: mOp=ADD packages=[dev.mobile.maestro.test]
+11-09 05:00:00.936 I/RescueParty(  574): Starting to observe: [com.google.android.ext.services, com.google.android.providers.media.module, android], updated namespace: storage_native_boot
+11-09 05:00:00.936 W/PackageManager(  574): Failed registering loading progress callback. Package is fully loaded.
+11-09 05:00:00.946 I/AiAiEcho( 1467): AppFetcherImplV2 updateApps package:[dev.mobile.maestro.test], userId:[0], reason:[package is added.].
+--
+11-09 05:09:14.414 I/AndroidRuntime( 4069): VM exiting with result code 0.
+11-09 05:09:14.419 I/netd    (  373): tetherGetStats() -> {[]} <1.60ms>
+11-09 05:09:14.602 W/binder_debug(    0): 243 callbacks suppressed
+11-09 05:09:14.602 I/binder  (    0): undelivered transaction 810897, process died.
+11-09 05:09:14.436 V/ActivityManager(  574): Got obituary of 4097:dev.mobile.maestro
+11-09 05:09:14.436 I/adbd    (  453): Remote process closed the socket (on MSG_PEEK)
+11-09 05:09:14.437 I/Zygote  (  374): Process 4097 exited due to signal 9 (Killed)
+11-09 05:09:14.606 I/binder_alloc(    0): 4097: binder_alloc_buf, no vma
+11-09 05:09:14.608 I/binder  (    0): cannot allocate buffer: vma cleared, target dead or dying
+11-09 05:09:14.608 I/binder  (    0): 574:1881 transaction async to 4097:0 failed 810911/29189/-3, size 192-0 line 3544
+11-09 05:09:14.448 E/IPCThreadState(  574): Binder transaction failure. id: 810911, BR_*: 29189, error: -3 (No such process)
+11-09 05:09:14.448 W/ActivityManager(  574): pid 574 system sent binder code 1 with flags 1 to frozen apps and got error -32
+11-09 05:09:14.616 I/init    (    0): ... started service 'artd' has pid 6402
+11-09 05:09:14.619 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 161 (/system/bin/servicemanager)
+11-09 05:09:14.627 I/init    (    0): Untracked pid 4069 exited with status 0
+11-09 05:09:14.629 I/init    (    0): Untracked pid 4069 did not have an associated service entry and will not be reaped
+11-09 05:09:14.458 W/MagnificationConnectionManager(  574): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-09 05:09:14.458 V/UiAutomationManager(  574): UiAutomation service owner died
+11-09 05:09:14.459 I/AiAiEcho( 1467): Settings changed for uri: content://settings/secure/accessibility_enabled
+11-09 05:09:14.460 I/AiAiEcho( 1467): Predicting[0]:  [CONTEXT sampling_count=5 ]
+11-09 05:09:14.460 I/AiAiEcho( 1467): EchoTargets: 
+11-09 05:09:14.460 I/AiAiEcho( 1467): Filtered by AiAi flag check: 
+11-09 05:09:14.460 I/AiAiEcho( 1467): [CONTEXT ratelimit_period="10 SECONDS" ]
+11-09 05:09:14.460 I/AiAiEcho( 1467): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+11-09 05:09:14.460 I/AiAiEcho( 1467): #remoteViewsTwiddler: feature disabled.
+11-09 05:09:14.460 I/AiAiEcho( 1467): #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+11-09 05:09:14.461 I/AiAiEcho( 1467): Predicting[0]:  [CONTEXT sampling_count=5 ]
+11-09 05:09:14.461 I/AiAiEcho( 1467): EchoTargets: 
+11-09 05:09:14.461 I/AiAiEcho( 1467): Filtered by AiAi flag check: 
+11-09 05:09:14.461 I/AiAiEcho( 1467): [CONTEXT ratelimit_period="10 SECONDS" ]
+11-09 05:09:14.461 I/AiAiEcho( 1467): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
