@@ -1,7 +1,7 @@
 import { Icon } from "../../components/Icon";
 import { StorySkeleton } from "../../components/Skeleton";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Animated, AppState, Dimensions, Easing, Image, Linking, PanResponder, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { ActivityIndicator, Alert, Animated, AppState, Dimensions, Easing, Image, Linking, PanResponder, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { Pressable } from "../../components/Pressable";
 import { isLongCaption, StoryBottomScrim, StoryCaption } from "../../components/StoryCaption";
 import { useIsFocused } from "@react-navigation/native";
@@ -75,6 +75,8 @@ export interface StoryFeedProps {
   onFindPeople?: () => void;
   /** Home's end of the feed: share your invite link, so friends' Stories fill it next time. */
   onInvite?: () => void;
+  /** Shown under "You're all caught up" (Home: people to follow and popular Stories). */
+  discover?: React.ReactNode;
   sponsored?: SponsoredPlacement[];
   /**
    * Present only when this feed was pushed on top of something to return
@@ -121,7 +123,7 @@ let viewerMuted = false;
 /** The comment box (or your Story's Activity button) along the bottom. */
 const BOTTOM_BAR_HEIGHT = 46;
 
-export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpenDM, onOpenProfile, onOpenArchived, onRefresh, onNeedMore, onCreate, onFindPeople, onInvite, onOpenCreate, onOpenStory, sponsored = [], following, verified }: StoryFeedProps): React.JSX.Element {
+export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpenDM, onOpenProfile, onOpenArchived, onRefresh, onNeedMore, onCreate, onFindPeople, onInvite, discover, onOpenCreate, onOpenStory, sponsored = [], following, verified }: StoryFeedProps): React.JSX.Element {
   // Overlays clear the status bar / notch; the bottom ones also the home indicator when no tab bar is below.
   const insets = useScreenInsets();
   const { user: authUser, accessToken } = useAuth();
@@ -697,16 +699,23 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
     onHide={(id) => hiddenAds.current.add(id)} onOpenProfile={onOpenProfile} />;
 
   if (caughtUp) {
-    return <View style={styles.centered}>
-      <EmptyState variant="media" icon="check" title={t("storyFeed.youreAllCaughtUp")} message={t("storyFeed.youveSeenEveryNewStory")}>
+    const end = <EmptyState variant="media" icon="check" title={t("storyFeed.youreAllCaughtUp")} message={t("storyFeed.youveSeenEveryNewStory")}>
         <View style={styles.endActions}>
           {onCreate ? <Pressable onPress={onCreate} style={[styles.endButton, styles.endButtonPrimary]} accessibilityRole="button"><Text style={[styles.endButtonLabel, styles.endButtonPrimaryLabel]}>{t("storyFeed.postAStory")}</Text></Pressable> : null}
           {onFindPeople ? <Pressable onPress={onFindPeople} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>{t("common.findPeople")}</Text></Pressable> : null}
           {onInvite ? <Pressable onPress={onInvite} style={styles.endButton} accessibilityRole="button"><Text style={styles.endButtonLabel}>{t("common.inviteFriends")}</Text></Pressable> : null}
         </View>
         {onRefresh ? <Pressable onPress={onRefresh} hitSlop={8} style={styles.endLink} accessibilityRole="button"><Text style={styles.endLinkLabel}>{t("storyFeed.checkForNewStories")}</Text></Pressable> : null}
-      </EmptyState>
-    </View>;
+      </EmptyState>;
+    // With something to discover (Home), the end of the feed scrolls on into people to follow and
+    // popular Stories instead of stopping at a blank screen.
+    if (discover) {
+      return <ScrollView style={styles.discoverScroll} contentContainerStyle={styles.discoverContent}>
+        <View style={styles.discoverEnd}>{end}</View>
+        {discover}
+      </ScrollView>;
+    }
+    return <View style={styles.centered}>{end}</View>;
   }
   if (loadError) {
     return <View style={styles.centered}>
@@ -1312,6 +1321,9 @@ const styles = StyleSheet.create({
   loadingSpinner: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, alignItems: "center", justifyContent: "center" },
   container: { flex: 1, backgroundColor: "#000" },
   centered: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background },
+  discoverScroll: { flex: 1, backgroundColor: colors.background },
+  discoverContent: { paddingTop: spacing.xxl * 3, paddingBottom: spacing.xxl * 2 },
+  discoverEnd: { alignItems: "center", marginBottom: spacing.lg },
   // The end-of-feed and error actions: outlined pills, as on Home's empty screen.
   endActions: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: spacing.md },
   endButton: { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, minHeight: 44, justifyContent: "center", borderRadius: 22, borderWidth: 1, borderColor: colors.textPrimary },

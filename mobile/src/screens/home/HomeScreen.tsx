@@ -80,6 +80,8 @@ export function HomeScreen():React.JSX.Element {
  // Over the Story: closing "Send to" comes back to the same Story.
  const openDM=useCallback(({storyId,ownerUsername}:{storyId:string;ownerUsername:string})=>navigation.navigate('SendStory',{storyId,ownerUsername}),[navigation]);
  const openProfile=useCallback((username:string)=>navigation.navigate('Search',{screen:'UserProfile',initial:false,params:{username}}),[navigation]);
+ const discover=<HomeDiscover accessToken={accessToken} onFollowed={reloadQuietly} onOpenProfile={openProfile}
+  onOpenStories={(tiles,index)=>navigation.navigate('StoryViewer',{creators:tiles.map(tile=>tile.owner.username),startIndex:index,initialStoryId:tiles[index]?.story.id,verifiedCreators:tiles.filter(tile=>tile.owner.verified).map(tile=>tile.owner.username)})}/>;
  if(feed===null&&!error)return <View style={styles.root}><StorySkeleton/>{festivalButton}{activityButton}{uploads}</View>;
  if(feed===null)return <View style={styles.empty}><EmptyState variant="media" title={t("home.couldntLoadStories")} message={t("home.checkYourConnectionAndTry")}>
   <Pressable onPress={refresh} style={styles.emptyButton} accessibilityRole="button"><Text style={styles.emptyButtonLabel}>{t("common.tryAgain")}</Text></Pressable>
@@ -97,8 +99,7 @@ export function HomeScreen():React.JSX.Element {
    <Text style={styles.welcomeTitle}>{t("homeDiscover.welcomeTitle")}</Text>
    <Text style={styles.welcomeText}>{t("homeDiscover.welcomeText")}</Text>
   </View>
-  <HomeDiscover accessToken={accessToken} onFollowed={reloadQuietly} onOpenProfile={openProfile}
-   onOpenStories={(tiles,index)=>navigation.navigate('StoryViewer',{creators:tiles.map(tile=>tile.owner.username),startIndex:index,initialStoryId:tiles[index]?.story.id,verifiedCreators:tiles.filter(tile=>tile.owner.verified).map(tile=>tile.owner.username)})}/>
+  {discover}
   <View style={styles.emptyActions}>
    <Pressable onPress={()=>navigation.navigate('Create')} style={[styles.emptyButton,styles.emptyButtonStrong]} accessibilityRole="button"><Text style={[styles.emptyButtonLabel,styles.emptyButtonLabelStrong]}>{t("homeDiscover.postFirstStory")}</Text></Pressable>
    <Pressable onPress={()=>navigation.navigate('Search',{screen:'SearchHome'})} style={styles.emptyButton} accessibilityRole="button"><Text style={styles.emptyButtonLabel}>{t("common.findPeople")}</Text></Pressable>
@@ -107,7 +108,7 @@ export function HomeScreen():React.JSX.Element {
   </View>
  </ScrollView>{festivalButton}{activityButton}{uploads}</View>;
  return <View style={styles.root}><StoryFeed key={`${user?.id}:${retry}:${version}`} creators={creators} following={following} verified={verified} startIndex={0} sponsored={sponsored} onNeedMore={more} onRefresh={refresh}
-  onCreate={()=>navigation.navigate('Create')} onFindPeople={()=>navigation.navigate('Search',{screen:'SearchHome'})} onInvite={invite}
+  onCreate={()=>navigation.navigate('Create')} onFindPeople={()=>navigation.navigate('Search',{screen:'SearchHome'})} onInvite={invite} discover={discover}
   onOpenDM={openDM} onOpenProfile={openProfile}
   onOpenCreate={()=>navigation.navigate('Create')} onOpenStory={(username,storyId)=>navigation.navigate('StoryViewer',{creators:[username],startIndex:0,initialStoryId:storyId})}/>
   {!!error&&<View style={[styles.error,{top:insets.top+spacing.xl+40}]}><Text style={typography.caption}>{error}</Text><Pressable onPress={more} accessibilityRole="button"><Text style={typography.body}>{t("common.retry")}</Text></Pressable><Pressable onPress={refresh} accessibilityRole="button"><Text style={typography.body}>{t("common.refresh")}</Text></Pressable></View>}
