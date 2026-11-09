@@ -186,7 +186,7 @@ const CLIPS = {
         html:
           text("Add a song", { y: 300, size: 130, scale: pop(t, 0.3) }) +
           text(`to every <span style="color:${C.amber}">Story</span>`, { y: 460, size: 104, scale: pop(t, 0.8) }) +
-          text("Only on Katkee", { y: 640, size: 60, weight: 700, color: "#C9D1DE", scale: pop(t, 2.0) }),
+          text("Free on Katkee", { y: 640, size: 60, weight: 700, color: "#C9D1DE", scale: pop(t, 2.0) }),
       };
     },
   },
