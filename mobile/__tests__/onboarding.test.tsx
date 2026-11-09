@@ -3,10 +3,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { act, create, type ReactTestInstance, type ReactTestRenderer } from "react-test-renderer";
 import { Text } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { MAX_INTERESTS, OnboardingScreen } from "../src/screens/onboarding/OnboardingScreen";
+import { OnboardingScreen } from "../src/screens/onboarding/OnboardingScreen";
 import { needsOnboarding, OnboardingProvider } from "../src/state/onboarding";
 import * as usersApi from "../src/api/users";
-import { ApiError } from "../src/api/client";
 
 const me = { id: "u-new", username: "newbie", email: "n@example.com", displayName: "New", bio: "", avatarMediaId: null, interests: [] as string[], isPrivate: false };
 const mockAuth = { user: me, accessToken: "token", applyProfile: jest.fn() };
@@ -40,6 +39,9 @@ const settle = async () => { for (let i = 0; i < 4; i++) await act(async () => {
 beforeEach(async () => {
   jest.clearAllMocks();
   await AsyncStorage.clear();
+  api.getSuggestions.mockResolvedValue({ suggestions: [] });
+});
+const mount = async () => {
   await act(async () => {
     tree = create(
       <SafeAreaProvider initialMetrics={{ frame: { x: 0, y: 0, width: 390, height: 844 }, insets: { top: 0, left: 0, right: 0, bottom: 0 } }}>
@@ -49,22 +51,17 @@ beforeEach(async () => {
       </SafeAreaProvider>,
     );
   });
-});
-afterEach(async () => { await act(async () => tree.unmount()); });
-
-test("picks up to five interests, saves them, then suggests people to follow", async () => {
-  expect(texts()).toContain("What are you into?");
-  for (const i of ["Travel", "Food", "Music", "Cricket", "Tech", "Books"]) await press(i);
-  expect(texts()).toContain(`Pick up to ${MAX_INTERESTS}.`);
-  expect(pressable("Books").props.accessibilityState).toEqual({ checked: false });
-
-  api.updateMyProfile.mockResolvedValueOnce({ user: { ...me, interests: ["Travel", "Food", "Music", "Cricket", "Tech"] } } as never);
-  api.getSuggestions.mockResolvedValueOnce({ suggestions: [person("asha", { kind: "shared_interest", interest: "Travel" }), person("dev", { kind: "new" })] });
-  await press("Next (5)");
   await settle();
-  expect(api.updateMyProfile).toHaveBeenCalledWith({ interests: ["Travel", "Food", "Music", "Cricket", "Tech"] }, "token");
-  expect(mockAuth.applyProfile).toHaveBeenCalled();
-  expect(texts()).toEqual(expect.arrayContaining(["People to follow", "Also into Travel", "New to Katkee"]));
+};
+afterEach(async () => { if (tree) await act(async () => tree.unmount()); });
+
+test("starts with people to follow (no interests question), then contacts", async () => {
+  api.getSuggestions.mockResolvedValueOnce({ suggestions: [person("asha", { kind: "shared_interest", interest: "Travel" }), person("dev", { kind: "new" })] });
+  await mount();
+  // Katkee learns interests from what people watch; onboarding no longer asks.
+  expect(texts()).not.toContain("What are you into?");
+  expect(texts()).toEqual(expect.arrayContaining(["Step 1 of 2", "People to follow", "Also into Travel", "New to Katkee"]));
+  expect(api.updateMyProfile).not.toHaveBeenCalled();
 
   api.followUser.mockResolvedValueOnce({ status: "following" });
   await press("Follow @asha");
@@ -74,7 +71,7 @@ test("picks up to five interests, saves them, then suggests people to follow", a
 
   await press("Next");
   expect(finish).not.toHaveBeenCalled();
-  expect(texts()).toEqual(expect.arrayContaining(["Step 3 of 3", "Find friends from your contacts"]));
+  expect(texts()).toEqual(expect.arrayContaining(["Step 2 of 2", "Find friends from your contacts"]));
   await press("Start using Katkee");
   expect(finish).toHaveBeenCalled();
   expect(await needsOnboarding(me)).toBe(false);
@@ -82,9 +79,7 @@ test("picks up to five interests, saves them, then suggests people to follow", a
 
 test("every step can be skipped, and with nobody to suggest it offers an invite", async () => {
   api.getSuggestions.mockResolvedValueOnce({ suggestions: [] });
-  await press("Skip");
-  await settle();
-  expect(api.updateMyProfile).not.toHaveBeenCalled();
+  await mount();
   expect(texts()).toEqual(expect.arrayContaining(["You're one of the first here"]));
   expect(pressable("Invite friends")).toBeTruthy();
   const { shareInvite } = jest.requireMock("../src/state/invites") as { shareInvite: jest.Mock };
@@ -93,15 +88,6 @@ test("every step can be skipped, and with nobody to suggest it offers an invite"
   await press("Skip");
   await press("Start using Katkee");
   expect(finish).toHaveBeenCalled();
-});
-
-test("a failed save keeps you on the interests step with the reason", async () => {
-  await press("Travel");
-  api.updateMyProfile.mockRejectedValueOnce(new ApiError(422, "Choose up to 5 interests, each 1-30 characters."));
-  await press("Next (1)");
-  await settle();
-  expect(texts()).toContain("Choose up to 5 interests, each 1-30 characters.");
-  expect(texts()).toContain("What are you into?");
 });
 
 test("shown once, and never to someone who already has interests", async () => {

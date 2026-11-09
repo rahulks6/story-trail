@@ -861,15 +861,10 @@ export const mr: Catalogue = {
   "onboarding.findingPeople": "लोक शोधत आहे",
   "onboarding.theirStoriesWillShowOn": "त्यांच्या स्टोरीज तुमच्या होमवर दिसतील.",
   "onboarding.peopleToFollow": "फॉलो करण्यासाठी लोक",
-  "onboarding.step2Of3": "पायरी 2/3",
+  "onboarding.step1Of2": "पायरी 1/2",
   "onboarding.startUsingKatkee": "Katkee वापरायला सुरुवात करा",
-  "onboarding.step3Of3": "पायरी 3/3",
+  "onboarding.step2Of2": "पायरी 2/2",
   "onboarding.skip": "वगळा",
-  "onboarding.pickUpToMaxInterests": "जास्तीत जास्त {MAX_INTERESTS} निवडा. तुम्हाला आवडतील असे लोक आणि स्टोरीज आम्ही सुचवू.",
-  "onboarding.whatAreYouInto": "तुम्हाला काय आवडते?",
-  "onboarding.step1Of3": "पायरी 1/3",
-  "onboarding.couldntSaveCheckYourConnection": "सेव्ह करता आले नाही. तुमचे कनेक्शन तपासा आणि पुन्हा प्रयत्न करा.",
-  "onboarding.pickUpToMaxInterests2": "जास्तीत जास्त {MAX_INTERESTS} निवडा.",
   // overlayAdjustSheet
   "overlayAdjustSheet.doneAdjusting": "ॲडजस्ट झाले",
   "overlayAdjustSheet.editSticker": "स्टिकर एडिट करा",
@@ -1876,7 +1871,6 @@ export const mr: Catalogue = {
   "newGroup.createGroup": "ग्रुप तयार करा",
   // onboarding
   "onboarding.next": "पुढे",
-  "onboarding.nextLength": "पुढे ({length})",
   // overlayAdjustSheet
   "overlayAdjustSheet.editDateOrTime": "तारीख किंवा वेळ एडिट करा",
   // professionalAccount

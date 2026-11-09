@@ -34,6 +34,23 @@ export function StoryBottomScrim({ height, deep = false, style }: { height: numb
   );
 }
 
+/** A soft fade behind the progress bars and name, so they read on a bright photo (sky, snow, white walls). */
+export function StoryTopScrim({ height, style }: { height: number; style?: StyleProp<ViewStyle> }): React.JSX.Element {
+  return (
+    <View style={[styles.topScrim, { height }, style]} pointerEvents="none" accessible={false} importantForAccessibility="no-hide-descendants">
+      <Svg width="100%" height="100%">
+        <Defs>
+          <LinearGradient id="storyTopScrim" x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0" stopColor="#000" stopOpacity={0.45} />
+            <Stop offset="1" stopColor="#000" stopOpacity={0} />
+          </LinearGradient>
+        </Defs>
+        <Rect x="0" y="0" width="100%" height="100%" fill="url(#storyTopScrim)" />
+      </Svg>
+    </View>
+  );
+}
+
 interface Props {
   text: string;
   /** Long captions fold; the parent knows (it lets taps through to the Story otherwise). */
@@ -81,6 +98,7 @@ const shadow = { textShadowColor: "rgba(0,0,0,0.55)", textShadowOffset: { width:
 
 const styles = StyleSheet.create({
   scrim: { position: "absolute", left: 0, right: 0, bottom: 0 },
+  topScrim: { position: "absolute", left: 0, right: 0, top: 0 },
   text: { color: "#FFFFFF", fontSize: 15, lineHeight: 22, fontWeight: "500", letterSpacing: 0.1, ...shadow },
   more: { color: "rgba(255,255,255,0.72)", fontSize: 14, fontWeight: "600", marginTop: spacing.xs / 2, ...shadow },
 });

@@ -929,15 +929,10 @@ export const en = {
   "onboarding.findingPeople": "Finding people",
   "onboarding.theirStoriesWillShowOn": "Their Stories will show on your Home.",
   "onboarding.peopleToFollow": "People to follow",
-  "onboarding.step2Of3": "Step 2 of 3",
+  "onboarding.step1Of2": "Step 1 of 2",
   "onboarding.startUsingKatkee": "Start using Katkee",
-  "onboarding.step3Of3": "Step 3 of 3",
+  "onboarding.step2Of2": "Step 2 of 2",
   "onboarding.skip": "Skip",
-  "onboarding.pickUpToMaxInterests": "Pick up to {MAX_INTERESTS}. We'll suggest people and Stories you'll like.",
-  "onboarding.whatAreYouInto": "What are you into?",
-  "onboarding.step1Of3": "Step 1 of 3",
-  "onboarding.couldntSaveCheckYourConnection": "Couldn't save. Check your connection and try again.",
-  "onboarding.pickUpToMaxInterests2": "Pick up to {MAX_INTERESTS}.",
 
   // components/OverlayAdjustSheet.tsx
   "overlayAdjustSheet.doneAdjusting": "Done adjusting",
@@ -1968,7 +1963,6 @@ export const en = {
   "newGroup.createGroup": "Create group",
 
   "onboarding.next": "Next",
-  "onboarding.nextLength": "Next ({length})",
 
   "overlayAdjustSheet.editDateOrTime": "Edit date or time",
 

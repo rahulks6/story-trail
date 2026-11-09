@@ -1,43 +1,42 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "../../components/Pressable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing, typography, FORM_MAX_WIDTH } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { markOnboardingDone, useOnboarding } from "../../state/onboarding";
-import { followUser, getSuggestions, unfollowUser, updateMyProfile, type SuggestedPerson } from "../../api/users";
-import { ApiError } from "../../api/client";
+import { followUser, getSuggestions, unfollowUser, type SuggestedPerson } from "../../api/users";
 import { Avatar } from "../../components/Avatar";
 import { VerifiedName } from "../../components/VerifiedBadge";
-import { Banner, Button } from "../../components/Form";
+import { Button } from "../../components/Form";
 import { suggestionReasonText } from "../search/SearchScreen";
 import { tapFeedback } from "../../utils/haptics";
 import { TOPICS } from "../../models/topics";
 import { ContactsFinder } from "../../components/ContactsFinder";
 import { shareInvite } from "../../state/invites";
 import { t } from "../../i18n";
-import { topicLabel } from "../../i18n/names";
 
-/** What people can pick from; the same words appear on profiles, in "Also into …" and as Story topics. */
+/**
+ * What people can pick from in Edit profile; the same words appear on profiles, in "Also into …"
+ * and as Story topics. Onboarding no longer asks: Katkee learns what people like from the Stories
+ * they watch, like and comment on (the AI topic on every Story), which is better than a guess on day one.
+ */
 export const INTEREST_CHOICES = TOPICS;
 export const MAX_INTERESTS = 5;
 
 type FollowState = "none" | "following" | "requested" | "busy";
 
 /**
- * First run, after the email is verified: pick what you're into, follow a few people, then
- * (optionally) find friends from your contacts, so Home has Stories from day one. Every step can
+ * First run, after the email is verified: follow a few people, then (optionally) find friends
+ * from your contacts, so Home has Stories from day one. Every step can
  * be skipped; it's shown once (state/onboarding). Contacts are read only if the person taps
  * Continue on that step's explainer.
  */
 export function OnboardingScreen(): React.JSX.Element {
-  const { user, accessToken, applyProfile } = useAuth();
+  const { user, accessToken } = useAuth();
   const { finish } = useOnboarding();
   const insets = useSafeAreaInsets();
-  const [step, setStep] = useState<"interests" | "people" | "contacts">("interests");
-  const [chosen, setChosen] = useState<string[]>([]);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [step, setStep] = useState<"people" | "contacts">("people");
   const [people, setPeople] = useState<SuggestedPerson[] | null>(null);
   const [follows, setFollows] = useState<Record<string, FollowState>>({});
 
@@ -46,39 +45,6 @@ export function OnboardingScreen(): React.JSX.Element {
     finish();
   }, [user, finish]);
 
-  const toggle = (interest: string) => {
-    setError(null);
-    setChosen((current) => {
-      if (current.includes(interest)) return current.filter((i) => i !== interest);
-      if (current.length >= MAX_INTERESTS) {
-        setError(t("onboarding.pickUpToMaxInterests2", { MAX_INTERESTS }));
-        return current;
-      }
-      tapFeedback("select");
-      return [...current, interest];
-    });
-  };
-
-  const saveInterests = async () => {
-    if (!accessToken || saving) return;
-    if (chosen.length === 0) {
-      setStep("people");
-      return;
-    }
-    setSaving(true);
-    setError(null);
-    try {
-      const { user: updated } = await updateMyProfile({ interests: chosen }, accessToken);
-      applyProfile(updated);
-      setStep("people");
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : t("onboarding.couldntSaveCheckYourConnection"));
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  // Suggestions are fetched after interests are saved, so "Also into …" can use them.
   useEffect(() => {
     if (step !== "people" || !accessToken) return;
     const controller = new AbortController();
@@ -111,46 +77,12 @@ export function OnboardingScreen(): React.JSX.Element {
 
   const pad = { paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.lg };
 
-  if (step === "interests") {
-    return (
-      <View style={styles.root}>
-        <ScrollView contentContainerStyle={[styles.content, pad]}>
-          <Text style={styles.stepLabel}>{t("onboarding.step1Of3")}</Text>
-          <Text style={typography.displayLarge} accessibilityRole="header">{t("onboarding.whatAreYouInto")}</Text>
-          <Text style={styles.body}>{t("onboarding.pickUpToMaxInterests", { MAX_INTERESTS })}</Text>
-          {error ? <Banner text={error} /> : null}
-          <View style={styles.chips}>
-            {INTEREST_CHOICES.map((interest) => {
-              const selected = chosen.includes(interest);
-              return (
-                <Pressable
-                  key={interest}
-                  onPress={() => toggle(interest)}
-                  style={[styles.chip, selected && styles.chipSelected]}
-                  accessibilityRole="checkbox"
-                  accessibilityState={{ checked: selected }}
-                  accessibilityLabel={topicLabel(interest)}
-                >
-                  <Text style={[styles.chipLabel, selected && styles.chipLabelSelected]}>{topicLabel(interest)}</Text>
-                </Pressable>
-              );
-            })}
-          </View>
-        </ScrollView>
-        <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.md }]}>
-          <Button label={chosen.length ? t("onboarding.nextLength", { length: chosen.length }) : t("onboarding.next")} onPress={() => void saveInterests()} busy={saving} disabled={chosen.length === 0} />
-          <Button label={t("onboarding.skip")} variant="secondary" onPress={() => setStep("people")} />
-        </View>
-      </View>
-    );
-  }
-
   if (step === "contacts") {
     return (
       <View style={[styles.root, { paddingTop: insets.top }]}>
         <ContactsFinder
           source="onboarding"
-          header={<Text style={styles.stepLabel}>{t("onboarding.step3Of3")}</Text>}
+          header={<Text style={styles.stepLabel}>{t("onboarding.step2Of2")}</Text>}
           footer={
             <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.md }]}>
               <Button label={t("onboarding.startUsingKatkee")} variant="secondary" onPress={done} />
@@ -170,7 +102,7 @@ export function OnboardingScreen(): React.JSX.Element {
         contentContainerStyle={[styles.content, pad]}
         ListHeaderComponent={
           <View style={styles.header}>
-            <Text style={styles.stepLabel}>{t("onboarding.step2Of3")}</Text>
+            <Text style={styles.stepLabel}>{t("onboarding.step1Of2")}</Text>
             <Text style={typography.displayLarge} accessibilityRole="header">{t("onboarding.peopleToFollow")}</Text>
             <Text style={styles.body}>{t("onboarding.theirStoriesWillShowOn")}</Text>
           </View>
@@ -223,11 +155,6 @@ const styles = StyleSheet.create({
   header: { gap: spacing.md, marginBottom: spacing.sm },
   stepLabel: { ...typography.caption, color: colors.accentText, fontWeight: "700" },
   body: { ...typography.body, color: colors.textSecondary },
-  chips: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.sm },
-  chip: { minHeight: 44, paddingHorizontal: spacing.lg, justifyContent: "center", borderRadius: radii.pill, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface },
-  chipSelected: { backgroundColor: colors.accent, borderColor: colors.accent },
-  chipLabel: { ...typography.body, color: colors.textPrimary, fontWeight: "600" },
-  chipLabelSelected: { color: colors.onAccent },
   footer: { paddingHorizontal: spacing.xl, paddingTop: spacing.md, gap: spacing.sm, width: "100%", maxWidth: FORM_MAX_WIDTH, alignSelf: "center" },
   loading: { marginTop: spacing.xl },
   empty: { gap: spacing.md, marginTop: spacing.lg },

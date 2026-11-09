@@ -3,7 +3,7 @@ import { StorySkeleton } from "../../components/Skeleton";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Alert, Animated, AppState, Dimensions, Easing, Image, Linking, PanResponder, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { Pressable } from "../../components/Pressable";
-import { isLongCaption, StoryBottomScrim, StoryCaption } from "../../components/StoryCaption";
+import { isLongCaption, StoryBottomScrim, StoryCaption, StoryTopScrim } from "../../components/StoryCaption";
 import { useIsFocused } from "@react-navigation/native";
 import Video, {type VideoRef} from "react-native-video";
 import { mediaColors as colors, radii, spacing, mediaTypography as typography, ICONS } from "../../theme";
@@ -209,6 +209,10 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   const currentStories = currentUsername ? storiesByCreator[currentUsername] : undefined;
   const currentStoryIndex = currentUsername ? (storyIndexByCreator[currentUsername] ?? 0) : 0;
   const listedStory = currentStories?.[currentStoryIndex] ?? null;
+  // "2/3" beside the name when someone has more than one Story (the bars alone are easy to miss).
+  const storyCounter = currentStories && currentStories.length > 1
+    ? <Text style={styles.storyCounter} accessible={false}>{`${currentStoryIndex + 1}/${currentStories.length}`}</Text>
+    : null;
   // When each creator's list was last fetched again for expired links.
   const expiryRefetchAt = useRef<Record<string, number>>({});
   // A Story whose signed links have expired isn't tried (it would fail): its creator's list is fetched
@@ -999,6 +1003,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         <Icon style={styles.heartBurstIcon} name={ICONS.liked} />
       </Animated.View>
 
+      <StoryTopScrim height={insets.top + 120} style={chrome} />
       <View
         style={[styles.progressRow, chrome, { top: insets.top + spacing.sm }]}
         accessible
@@ -1087,6 +1092,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
               <VerifiedName name={liveCollab.collaborator.username} verified={liveCollab.collaborator.verified} style={styles.username} />
             </Pressable>
             <Text style={styles.postedAgo}>{timeAgo(currentStory.createdAt, Date.now(), "short")}</Text>
+            {storyCounter}
           </View>
         ) : (
           <Pressable onPress={() => currentUsername && onOpenProfile(currentUsername)} hitSlop={8} style={styles.headerWho} accessibilityRole="button" accessibilityLabel={t("storyFeed.openCurrentusernameSProfile", { currentUsername: currentUsername ?? "" })}>
@@ -1096,6 +1102,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
             </View>
             <VerifiedName name={currentUsername ?? ""} verified={!!currentUsername && !!verified?.[currentUsername]} style={styles.username} containerStyle={styles.usernameRow} />
             <Text style={styles.postedAgo}>{timeAgo(currentStory.createdAt, Date.now(), "short")}</Text>
+            {storyCounter}
           </Pressable>
         )}
         {showFollow ? (
@@ -1344,9 +1351,9 @@ const styles = StyleSheet.create({
   },
   progressTrack: {
     flex: 1,
-    height: 3,
+    height: 4,
     borderRadius: radii.pill,
-    backgroundColor: "rgba(255,255,255,0.3)",
+    backgroundColor: "rgba(255,255,255,0.38)",
     overflow: "hidden",
   },
   progressFill: { height: "100%", width: "100%", backgroundColor: colors.textPrimary, transformOrigin: "left" },
@@ -1381,6 +1388,8 @@ const styles = StyleSheet.create({
   header: { position: "absolute", left: spacing.md, right: 104, flexDirection: "row", alignItems: "center", gap: spacing.sm },
   headerWho: { flexDirection: "row", alignItems: "center", gap: spacing.sm, flexShrink: 1 },
   postedAgo: { color: "rgba(255,255,255,0.8)", fontSize: 13, textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 3 },
+  // "2/3" beside the time when someone has posted more than one Story, so it's clear there's more.
+  storyCounter: { color: "#fff", fontSize: 12, fontWeight: "700", paddingHorizontal: 7, paddingVertical: 2, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.35)", overflow: "hidden" },
   followButton: { borderWidth: 1, borderColor: colors.textPrimary, borderRadius: radii.pill, paddingHorizontal: spacing.md, paddingVertical: 4 },
   followingButton: { borderColor: "rgba(255,255,255,0.5)" },
   followLabel: { color: colors.textPrimary, fontWeight: "700", fontSize: 13 },
