@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import {Platform, StyleSheet, View, type StyleProp, type TextStyle} from 'react-native';
+import {I18nManager, Platform, StyleSheet, View, type StyleProp, type TextStyle} from 'react-native';
 import Svg, {Path, Circle, Rect, G} from 'react-native-svg';
 import {colors} from '../theme/colors';
 import type {IconName} from '../theme/icons';
@@ -13,6 +13,10 @@ const ALIAS:Partial<Record<IconName,string>>={liked:'like',clear:'close',changeC
  share:Platform.OS==='android'?'shareAndroid':'shareIos'};
 
 /** The verified badge: a rosette (eight scallops) with the tick cut out of it in the background's contrast colour. */
+/** Icons that point along the reading direction: mirrored in a right-to-left language (Arabic). */
+const DIRECTIONAL=new Set<string>(['back','chevron','forward']);
+
+const MIRRORED={transform:[{scaleX:-1}]};
 const ROSETTE='M12 1.8L15.2 4.2L19.2 4.8L19.8 8.8L22.2 12L19.8 15.2L19.2 19.2L15.2 19.8L12 22.2L8.8 19.8L4.8 19.2L4.2 15.2L1.8 12L4.2 8.8L4.8 4.8L8.8 4.2Z';
 
 /**
@@ -34,7 +38,7 @@ export function Icon({name,size,color,selected=false,framed=false,style}: {name:
  const key=ALIAS[name]??name;
  const margins={margin:flat.margin,marginTop:flat.marginTop,marginBottom:flat.marginBottom,marginLeft:flat.marginLeft,marginRight:flat.marginRight};
  return <View pointerEvents="none" accessible={false} style={margins}>
-  <Svg width={length} height={length} viewBox="0 0 24 24" accessible={false}>
+  <Svg width={length} height={length} viewBox="0 0 24 24" accessible={false} style={I18nManager.isRTL&&DIRECTIONAL.has(name)?MIRRORED:undefined}>
    <G stroke={ink} strokeWidth={weight} strokeLinecap="round" strokeLinejoin="round" fill={filled?ink:'none'}>
     {framed?<><Rect x={3} y={3} width={18} height={18} rx={5}/><Path d="M12 8v8M8 12h8"/></>
      :key==='capture'?<><Circle cx={12} cy={12} r={11}/><Circle cx={12} cy={12} r={8.5} fill={ink}/></>

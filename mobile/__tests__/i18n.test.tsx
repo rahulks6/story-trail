@@ -11,7 +11,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { en } from "../src/i18n/en";
 import { hi } from "../src/i18n/hi";
 import { mr } from "../src/i18n/mr";
-import { deviceLanguage, formatNumber, getLanguage, initLanguage, pluralCategory, setLanguageForTests, t, useT } from "../src/i18n";
+import { deviceLanguage, formatNumber, getLanguage, initLanguage, LANGUAGES, pluralCategory, READY_LANGUAGES, setLanguageForTests, t, useT } from "../src/i18n";
 import { topicLabel } from "../src/i18n/names";
 import { richText } from "../src/i18n/rich";
 import { formatCount } from "../src/utils/formatCount";
@@ -80,6 +80,24 @@ describe("catalogues", () => {
         if (forms(source).some((f) => f.includes("Katkee"))) expect([key, forms(catalogues[lang]![key]!).every((f) => f.includes("Katkee"))]).toEqual([key, true]);
       }
     }
+  });
+});
+
+describe("world languages", () => {
+  test("a language appears in Settings only once every phrase is translated; en, hi and mr always do", () => {
+    expect(READY_LANGUAGES).toEqual(expect.arrayContaining(["en", "hi", "mr"]));
+    for (const language of LANGUAGES) {
+      const catalogue = require(`../src/i18n/${language}`)[language] as object;
+      const complete = Object.keys(catalogue).length >= Object.keys(en).length;
+      expect(READY_LANGUAGES.includes(language)).toBe(complete);
+    }
+  });
+
+  test("Arabic has six plural forms, Indonesian one, French counts 0 as one", () => {
+    expect([0, 1, 2, 3, 11, 100].map((n) => pluralCategory(n, "ar"))).toEqual(["zero", "one", "two", "few", "many", "other"]);
+    expect(pluralCategory(1, "id")).toBe("other");
+    expect(pluralCategory(0, "fr")).toBe("one");
+    expect(formatNumber(1234567, "ar")).toMatch(/^[\d.,٬\s]+$/);
   });
 });
 

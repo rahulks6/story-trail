@@ -113,7 +113,7 @@ function write(lang, english, done) {
     " */",
     'import type { Catalogue } from "./types";',
     "",
-    `export const ${lang}: Catalogue = {`,
+    `export const ${lang}: Partial<Catalogue> = {`,
   ];
   for (const key of Object.keys(english)) {
     if (!(key in done)) continue;

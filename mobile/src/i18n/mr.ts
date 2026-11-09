@@ -2152,6 +2152,8 @@ export const mr: Catalogue = {
   "verifyEmail.weSentACodeTo": "आम्ही <email>{email}</email> वर 6 अंकी कोड पाठवला आहे.",
   // settings
   "settings.language": "भाषा",
+  "settings.restartForLanguageTitle": "Katkee पुन्हा उघडा",
+  "settings.restartForLanguageMessage": "भाषा पूर्ण बदलण्यासाठी Katkee बंद करून पुन्हा उघडा. अरबी उजवीकडून डावीकडे वाचली जाते, म्हणून लेआउटची दिशा बदलते.",
   // Whole sentences (were pieces)
   "resetPassword.weEmailedACodeTo": "आम्ही {email} वर 6 अंकी कोड ईमेल केला आहे. तो 15 मिनिटांत एक्सपायर होईल.",
   "resetPassword.weEmailedACode": "आम्ही 6 अंकी कोड ईमेल केला आहे. तो 15 मिनिटांत एक्सपायर होईल.",

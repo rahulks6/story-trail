@@ -1,3 +1,4 @@
+import type { Language } from "../i18n";
 /**
  * Typed HTTP client for the KATKEE backend. Response shapes here are kept in
  * lockstep with backend/src/modules/auth/auth.routes.ts and
@@ -33,7 +34,7 @@ export interface PublicUser {
   professionalCategory?: string | null;
   professionalCategoryShown?: boolean;
   /** The app's language as last sent from a phone: pushes and emails use it (absent from older servers). */
-  locale?: "en" | "hi" | "mr";
+  locale?: Language;
   /** False until the email is confirmed with a code (absent from older servers and caches). */
   emailVerified?: boolean;
   /** A new account whose email isn't verified yet: only the code screen is shown until it is. */

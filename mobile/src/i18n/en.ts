@@ -2211,6 +2211,8 @@ export const en = {
 
   // Settings > Language
   "settings.language": "Language",
+  "settings.restartForLanguageTitle": "Restart Katkee",
+  "settings.restartForLanguageMessage": "Close Katkee and open it again to finish switching. Arabic reads right to left, so the layout changes direction.",
   // Whole sentences (were pieces)
   "resetPassword.weEmailedACodeTo": "We emailed a 6-digit code to {email}. It expires in 15 minutes.",
   "resetPassword.weEmailedACode": "We emailed a 6-digit code. It expires in 15 minutes.",

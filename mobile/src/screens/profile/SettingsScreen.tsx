@@ -14,7 +14,7 @@ import { appearanceChoice, setAppearance, type AppearanceChoice } from "../../th
 import { nearbyChoice, turnNearbyOff, turnNearbyOn } from "../../state/nearby";
 import { professionalCategoryLabel } from "../../api/professional";
 import { shareInvite } from "../../state/invites";
-import { LANGUAGES, LANGUAGE_NAMES, setLanguage, t, useLanguage } from "../../i18n";
+import { READY_LANGUAGES, LANGUAGE_NAMES, needsRestartForDirection, setLanguage, t, useLanguage } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Settings">;
 
@@ -202,7 +202,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
       <ActionSheet
         visible={languageOpen}
         title={t("settings.language")}
-        groups={[LANGUAGES.map((option) => ({
+        groups={[READY_LANGUAGES.map((option) => ({
           // Each language in its own script, so anyone can find theirs.
           label: LANGUAGE_NAMES[option],
           selected: option === language,
@@ -210,7 +210,10 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
             setLanguageOpen(false);
             // The app switches at once (the screens remount on this one); the server hears it
             // from useLocaleSync, for pushes and emails.
-            if (option !== language) void setLanguage(option);
+            // To or from Arabic, the layout's direction changes when the app next opens.
+            if (option !== language) void setLanguage(option).then(() => {
+              if (needsRestartForDirection(option)) Alert.alert(t("settings.restartForLanguageTitle"), t("settings.restartForLanguageMessage"));
+            });
           },
         }))]}
         onClose={() => setLanguageOpen(false)}
