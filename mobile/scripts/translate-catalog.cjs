@@ -154,7 +154,55 @@ async function translate(lang, apiKey) {
   return missing.length;
 }
 
+/**
+ * Without the API: --export writes the English as numbered lines (number, tab, JSON value) for a
+ * person to translate; --import reads lines in the same shape (number, tab, JSON translation),
+ * checks each like the API's, and adds the good ones to <lang>.ts.
+ *   node scripts/translate-catalog.cjs --export <dir>
+ *   node scripts/translate-catalog.cjs --import es <file>...
+ */
+function exportLines(dir) {
+  const english = loadCatalogue(path.join(I18N, "en.ts"), "en");
+  fs.mkdirSync(dir, { recursive: true });
+  const keys = Object.keys(english);
+  fs.writeFileSync(path.join(dir, "keys.json"), JSON.stringify(keys));
+  fs.writeFileSync(path.join(dir, "en.txt"), keys.map((k, i) => `${i}\t${JSON.stringify(english[k])}`).join("\n") + "\n");
+  console.log(`${keys.length} lines in ${dir}/en.txt`);
+}
+
+function importLines(lang, files) {
+  const english = loadCatalogue(path.join(I18N, "en.ts"), "en");
+  const keys = Object.keys(english);
+  const done = loadCatalogue(path.join(I18N, `${lang}.ts`), lang);
+  let added = 0;
+  const bad = [];
+  for (const file of files) {
+    for (const line of fs.readFileSync(file, "utf8").split("\n")) {
+      if (!line.trim()) continue;
+      // "12<tab>json" or "12|json".
+      const match = /^(\d+)[\t|](.*)$/.exec(line);
+      if (!match) { bad.push(`${line.slice(0, 20)}: not a numbered line`); continue; }
+      const index = Number(match[1]);
+      const tab = match[1].length;
+      const key = keys[index];
+      let value;
+      try { value = JSON.parse(line.slice(tab + 1)); } catch { bad.push(`${index}: not JSON`); continue; }
+      if (!key) { bad.push(`${index}: no such line`); continue; }
+      const why = problem(english[key], value, lang);
+      if (why) { bad.push(`${index} ${key}: ${why}`); continue; }
+      if (!(key in done)) added++;
+      done[key] = value;
+    }
+  }
+  write(lang, english, done);
+  console.log(`${lang}: +${added}, ${Object.keys(done).length} of ${keys.length} done`);
+  for (const b of bad) console.log(`  rejected ${b}`);
+  return bad.length;
+}
+
 (async () => {
+  if (process.argv[2] === "--export") return exportLines(process.argv[3]);
+  if (process.argv[2] === "--import") { process.exit(importLines(process.argv[3], process.argv.slice(4)) ? 1 : 0); }
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) throw new Error("Set ANTHROPIC_API_KEY.");
   const langs = process.argv.slice(2);
