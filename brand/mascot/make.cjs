@@ -190,7 +190,121 @@ const CLIPS = {
       };
     },
   },
+
+  // The launch film (16 s): wake up → selfie Story → music → chat → finale with the app icon.
+  launch: {
+    seconds: 16,
+    bg: "dark",
+    frame(t) {
+      const ground = GROUND;
+      const dark = "#0B0F17";
+      const bgs = {
+        dark: `<defs><radialGradient id="ld" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#1B2433"/><stop offset="1" stop-color="#080C14"/></radialGradient></defs><rect width="${W}" height="${H}" fill="url(#ld)"/>`,
+        amber: `<defs><radialGradient id="la" cx="50%" cy="38%" r="80%"><stop offset="0" stop-color="#FFD84D"/><stop offset="1" stop-color="#FFB300"/></radialGradient></defs><rect width="${W}" height="${H}" fill="url(#la)"/>`,
+        navy: `<rect width="${W}" height="${H}" fill="#141B27"/><circle cx="${W / 2}" cy="1150" r="520" fill="${C.red}" opacity="0.07"/>`,
+      };
+      const scenes = [
+        { at: 0, bg: "dark" },
+        { at: 3, bg: "amber" },
+        { at: 6, bg: "dark" },
+        { at: 9, bg: "navy" },
+        { at: 12, bg: "dark" },
+      ];
+      let i = scenes.length - 1;
+      while (scenes[i].at > t) i--;
+      const s = scenes[i];
+      const lt = t - s.at; // time inside this scene
+      // Circle wipe: the new scene's colour grows from Kee's spark over the old one.
+      let bg = bgs[s.bg];
+      if (i > 0 && lt < 0.4) {
+        const r = easeOut(lt / 0.4) * 2300;
+        bg = `${bgs[scenes[i - 1].bg]}<clipPath id="wipe${i}"><circle cx="${W / 2}" cy="900" r="${r}"/></clipPath><g clip-path="url(#wipe${i})">${bgs[s.bg]}</g>`;
+      }
+
+      let scene = "";
+      let html = "";
+      let opts;
+      let lift = 0;
+      let k;
+
+      if (i === 0) {
+        // Wake up: the spark glows alone, Kee drops in under it and opens its eyes.
+        if (t < 0.9) {
+          const g = pop(t, 0.15, 0.5);
+          scene = `<circle cx="${W / 2}" cy="900" r="${90 * g}" fill="${C.amber}" opacity="0.18"/>
+                   <circle cx="${W / 2}" cy="900" r="${42 * g}" fill="${C.amberDeep}" stroke="${dark}" stroke-width="8"/>`;
+        } else {
+          lift = t < 1.3 ? lerp(1300, 0, easeOut((t - 0.9) / 0.4) ** 2) : 0;
+          const squash = t >= 1.3 && t < 1.5 ? 0.88 : 1;
+          const awake = t > 1.75;
+          opts = { eyes: awake ? (t > 2.3 ? "happy" : "open") : "closed", mouth: awake ? "grin" : "o", armL: awake ? 150 : 20, armR: awake ? 150 : 20, squash, glow: 1, t };
+          scene = shadow(W / 2, ground, SCALE, lift) + placeKee(opts, W / 2, ground - lift, SCALE);
+        }
+        html = text("Big news!", { y: 320, size: 120, scale: pop(t, 1.6) }) +
+          text(`<span style="color:${C.amber}">Katkee</span> is here`, { y: 470, size: 110, scale: pop(t, 2.1) });
+      } else if (i === 1) {
+        // Selfie Story: Kee poses, the camera flashes, Kee winks.
+        const flashed = lt > 1.1;
+        opts = { eyes: flashed ? "wink" : "open", mouth: flashed ? "smirk" : "grin", phone: "R", armR: 150, armL: 25 + 10 * Math.sin(lt * 6), look: [6, -4], tilt: -4 + 3 * Math.sin(lt * 4), spark: "dot", glow: 0.8, t };
+        scene = shadow(W / 2, ground, SCALE, 0) + placeKee(opts, W / 2, ground, SCALE);
+        const f = lt > 1.0 && lt < 1.35 ? 1 - (lt - 1.0) / 0.35 : 0;
+        if (f > 0) scene += `<rect width="${W}" height="${H}" fill="#fff" opacity="${f * 0.85}"/>`;
+        html = text("Snap a Story", { y: 330, size: 130, color: dark, scale: pop(lt, 0.3) }) +
+          text("Photos, videos, Boomerang", { y: 500, size: 60, weight: 700, color: dark, scale: pop(lt, 0.8) });
+      } else if (i === 2) {
+        // Music: Kee dances, notes float up.
+        const beat = Math.sin(lt * Math.PI * 2 * 1.6);
+        opts = { eyes: "closed", mouth: "smile", spark: "note", tilt: beat * 10, armL: 120 + beat * 30, armR: 120 - beat * 30, bob: -Math.abs(beat) * 30, legs: beat > 0 ? "walkA" : "walkB", glow: 0.5 + 0.5 * Math.abs(beat), t };
+        for (let n = 0; n < 6; n++) {
+          const tt = (lt + n * 0.6) % 3.6;
+          const x = 140 + ((n * 173) % 800) + Math.sin(tt * 3 + n) * 30;
+          scene += `<text x="${x}" y="${1300 - tt * 190}" font-size="90" fill="${n % 2 ? C.amber : "#fff"}" opacity="${clamp(1 - tt / 3.6)}" font-family="DejaVu Sans">&#9835;</text>`;
+        }
+        scene += shadow(W / 2, ground, SCALE, 0) + placeKee(opts, W / 2, ground, SCALE);
+        html = text("Add the perfect", { y: 330, size: 110, scale: pop(lt, 0.3) }) +
+          text(`<span style="color:${C.amber}">song</span>`, { y: 460, size: 150, scale: pop(lt, 0.7) });
+      } else if (i === 3) {
+        // Chat: bubbles pop up around Kee, hearts float.
+        opts = { eyes: "heart", mouth: "smile", spark: "heart", armL: 60 + 8 * Math.sin(lt * 5), armR: 60 - 8 * Math.sin(lt * 5), bob: -Math.abs(Math.sin(lt * 3)) * 14, glow: 1, t };
+        for (let n = 0; n < 5; n++) {
+          const tt = (lt + n * 0.55) % 2.8;
+          const x = 260 + n * 140 + Math.sin(tt * 4 + n) * 20;
+          scene += `<path d="M${x},${1250 - tt * 220 + 14} c-26,-20 -18,-40 0,-28 c18,-12 26,8 0,28z" fill="${C.red}" opacity="${clamp(1 - tt / 2.8)}" transform="scale(1.6) translate(${-x * 0.375},${-(1250 - tt * 220) * 0.375})"/>`;
+        }
+        scene += shadow(W / 2, ground, SCALE, 0) + placeKee(opts, W / 2, ground, SCALE);
+        const bubble = (x, y, w, label, mine, t0) => {
+          const sc = pop(lt, t0);
+          if (!sc) return "";
+          return `<div style="position:absolute;${mine ? `right:${x}px` : `left:${x}px`};top:${y}px;white-space:nowrap;padding:26px 36px;border-radius:44px;${mine ? "border-bottom-right-radius:12px" : "border-bottom-left-radius:12px"};
+                    background:${mine ? C.amber : "#E4E8F0"};color:${dark};font:800 50px ${FONT};transform:scale(${sc});transform-origin:${mine ? "100% 100%" : "0 100%"}">${label}</div>`;
+        };
+        html = text("Chat &amp; video call", { y: 300, size: 100, scale: pop(lt, 0.3) }) +
+          text("your people", { y: 420, size: 100, color: C.amber, scale: pop(lt, 0.6) }) +
+          bubble(70, 560, 0, "Loved your Story!", false, 1.0) +
+          bubble(70, 670, 0, "Video call now?", true, 1.7);
+      } else {
+        // Finale: confetti, the real app icon, Kee celebrates then points to the bio.
+        const pointing = lt > 2.2;
+        k = (lt % 0.7) / 0.7;
+        lift = pointing ? 0 : Math.sin(k * Math.PI) * 110;
+        const air = lift > 20;
+        opts = pointing
+          ? { eyes: "open", mouth: "grin", armR: 178 - 6 * Math.sin(t * 10), armL: 30, look: [3, -7], spark: "star", glow: 1, t }
+          : { eyes: "happy", mouth: "grin", legs: air ? "jump" : "stand", armL: air ? 165 : 120, armR: air ? 165 : 120, spark: "star", squash: air ? 1.04 : 0.92, glow: 1, t };
+        scene = confetti(lt) + shadow(W / 2, ground, SCALE, lift) + placeKee(opts, W / 2, ground - lift, SCALE);
+        const ic = pop(lt, 0.2, 0.45);
+        html = (ic ? `<img src="${ICON}" style="position:absolute;left:${W / 2 - 110}px;top:150px;width:220px;height:220px;border-radius:50px;box-shadow:0 20px 60px rgba(0,0,0,.5);transform:scale(${ic})">` : "") +
+          text("Katkee", { y: 400, size: 150, color: C.amber, scale: pop(lt, 0.5) }) +
+          (pointing
+            ? text(`Free. <span style="color:${C.amber}">Link in bio</span>`, { y: 580, size: 84, scale: pop(lt, 2.25) })
+            : text("Now on Google Play", { y: 580, size: 76, weight: 800, scale: pop(lt, 1.0) }));
+      }
+      return { svg: bg + scene, html };
+    },
+  },
 };
+
+const ICON = `data:image/png;base64,${fs.readFileSync(path.join(HERE, "..", "katkee-app-icon-1024.png")).toString("base64")}`;
 
 // ---------- rendering ----------
 async function renderPoses(page) {
