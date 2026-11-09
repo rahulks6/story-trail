@@ -1,0 +1,66 @@
+11-09 05:00:09.389 D/AndroidRuntime( 3879): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-09 05:00:09.392 W/AppOpService(  555): Ignored setUidMode call for runtime permission app op: uid = 1001, code = SEND_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:00:09.398 I/AndroidRuntime( 3879): Using default boot image
+11-09 05:00:09.399 I/AndroidRuntime( 3879): Leaving lock profiling enabled
+11-09 05:00:09.400 I/AppWidgetServiceImpl(  555): getInstalledProvidersForProfiles() 0
+11-09 05:00:09.404 D/BaseIconCache( 1165): Default icon returned for dev.mobile.maestro.test
+11-09 05:00:09.405 I/AppWidgetServiceImpl(  555): Received broadcast: android.intent.action.PACKAGE_CHANGED on user 0
+11-09 05:00:09.411 W/AppOpService(  555): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:00:09.415 I/app_process( 3879): Core platform API reporting enabled, enforcing=false
+11-09 05:00:09.416 I/app_process( 3879): Using CollectorTypeCMC GC.
+11-09 05:00:09.443 I/PermissionControllerServiceImpl(  928): Updating user sensitive for uid 10143
+11-09 05:00:09.445 D/ActivityManager(  555): freezing 2896 com.google.android.ondevicepersonalization.services
+11-09 05:00:09.451 D/InetDiagMessage(  555): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+11-09 05:00:09.451 D/ShortcutService(  555): received package broadcast intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 (has extras) }
+11-09 05:00:09.451 D/ShortcutService(  555): changing package: dev.mobile.maestro.test userId0
+11-09 05:00:09.451 D/ShortcutService(  555): handlePackageChanged: dev.mobile.maestro.test user=0
+11-09 05:00:09.451 D/ShortcutService(  555): rescanPackageIfNeeded 0@dev.mobile.maestro.test, forceRescan=true , isNewApp=true
+11-09 05:00:09.452 D/ShortcutService(  555): Package dev.mobile.maestro.test has 0 manifest shortcut(s), and 0 share target(s)
+11-09 05:00:09.452 D/ShortcutService(  555): received package broadcast intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x45000010 (has extras) }
+11-09 05:00:09.452 D/ShortcutService(  555): changing package: com.google.android.gms userId0
+11-09 05:00:09.452 D/ShortcutService(  555): handlePackageChanged: com.google.android.gms user=0
+11-09 05:00:09.452 D/ShortcutService(  555): rescanPackageIfNeeded 0@com.google.android.gms, forceRescan=true , isNewApp=false
+11-09 05:00:09.460 D/ImsResolver( 1090): maybeAddedImsService, packageName: dev.mobile.maestro.test
+11-09 05:00:09.464 D/InetDiagMessage(  555): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+11-09 05:00:09.464 D/InetDiagMessage(  555): Destroyed live tcp sockets for uids={10203} in 14ms
+11-09 05:00:09.472 D/ShortcutService(  555): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=null
+11-09 05:00:09.542 D/CarrierSvcBindHelper( 1090): onPackageModified: dev.mobile.maestro.test
+11-09 05:00:09.553 D/CarrierSvcBindHelper( 1090): No carrier app for: 0
+11-09 05:00:09.559 E/SmsApplication( 1090): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
+11-09 05:00:09.559 W/AppOpService(  555): Ignored setUidMode call for runtime permission app op: uid = 10136, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:00:09.584 E/CellBroadcastUtils( 1090): getDefaultCellBroadcastReceiverPackageName: no package found
+11-09 05:00:09.612 D/nativeloader( 3879): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+11-09 05:00:09.614 W/.gms.persistent( 1250): Long monitor contention with owner lowpool[6] (2647) at void dbyt.n(dbus, dbus, int)(:com.google.android.gms@242335041@24.23.35 (190800-646585959):49) waiters=0 in int dbyt.l(dbyf, bcsk) for 449ms
+11-09 05:00:09.625 W/system_server(  555): Suspending all threads took: 37.915ms
+--
+11-09 05:00:09.726 D/AndroidRuntime( 3879): Calling main entry com.android.commands.am.Am
+11-09 05:00:09.734 D/ShortcutService(  555): Package com.google.android.gms updated, version 242335041 -> 242335041
+11-09 05:00:09.734 D/ShortcutService(  555): Package com.google.android.gms: publishing manifest shortcuts
+11-09 05:00:09.734 D/UiAutomationConnection( 3879): Created on user UserHandle{0}
+11-09 05:00:09.743 D/ControlsListingControllerImpl(  915): ServiceConfig reloaded, count: 0
+11-09 05:00:09.745 D/ControlsListingControllerImpl(  915): ServiceConfig reloaded, count: 0
+11-09 05:00:09.748 D/ControlsListingControllerImpl(  915): ServiceConfig reloaded, count: 0
+11-09 05:00:09.751 I/resolv  (  358): res_nsend: used send_dg 272 terrno: 0
+11-09 05:00:09.751 I/resolv  (  358): doQuery: rcode=0, ancount=8, return value=272
+11-09 05:00:09.754 D/CompatChangeReporter(  555): Compat change id reported: 297989574; UID 10143; state: ENABLED
+11-09 05:00:09.755 I/resolv  (  358): res_nsend: used send_dg 176 terrno: 0
+11-09 05:00:09.755 I/resolv  (  358): doQuery: rcode=0, ancount=8, return value=176
+11-09 05:00:09.765 E/SmsApplication( 1090): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
+11-09 05:00:09.768 I/ActivityManager(  555): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+11-09 05:00:09.770 W/AppOpService(  555): Ignored setUidMode call for runtime permission app op: uid = 10136, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:00:09.777 E/CellBroadcastUtils( 1090): getDefaultCellBroadcastReceiverPackageName: no package found
+11-09 05:00:09.778 W/AppOpService(  555): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:00:09.779 W/AppOpService(  555): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:00:09.779 W/AppOpService(  555): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_WAP_PUSH, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:00:09.779 W/AppOpService(  555): Ignored setUidMode call for runtime permission app op: uid = 1001, code = SEND_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:00:09.780 W/AppOpService(  555): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:00:09.782 I/BugleNetwork( 3241): Creating gRPC Managed channel with Cronet: instantmessaging-pa.googleapis.com:443
+11-09 05:00:09.784 I/CheckinUtil( 1465): Classify the device as Phone. [CONTEXT service_id=130 ]
+11-09 05:00:09.786 I/resolv  (  358): GetAddrInfoHandler::run: {100 786532 100 983140 10136 0}
+11-09 05:00:09.786 I/resolv  (  358): res_nmkquery: (QUERY, IN, AAAA)
+11-09 05:00:09.786 I/resolv  (  358): res_nmkquery: (QUERY, IN, A)
+11-09 05:00:09.802 V/GrammaticalInflectionUtils(  555): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@f3c60e1, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+11-09 05:00:09.802 W/gs.intelligence( 3090): Missing inline cache for void dkc.B(qh, bgy)
+11-09 05:00:09.806 D/ImsResolver( 1090): maybeAddedImsService, packageName: com.google.android.gms
+11-09 05:00:09.808 I/gle.android.gms( 1465): Background concurrent mark compact GC freed 11MB AllocSpace bytes, 66(3316KB) LOS objects, 49% free, 16MB/32MB, paused 752us,5.566ms total 195.371ms
+11-09 05:00:09.810 W/gle.android.gms( 1465): ApkAssets: Deleting an ApkAssets object '<empty> and /system_ext/priv-app/GoogleServicesFramework/GoogleServicesFramework.apk' with 1 weak references

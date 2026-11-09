@@ -1,0 +1,282 @@
+--------- beginning of main
+11-09 05:00:12.781 I/NetworkScheduler.Stats( 1250): Task com.google.android.gms/com.google.android.gms.pay.gcmtask.PayGcmTaskService started execution. cause:5 exec_start_elapsed_seconds: 95 [CONTEXT service_id=218 ]
+11-09 05:00:12.788 I/NetworkScheduler.Stats( 1250): Task com.google.android.gms/com.google.android.gms.pay.gcmtask.PayGcmTaskService finished executing. cause:5 result: 1 elapsed_millis: 33 uptime_millis: 33 exec_start_elapsed_seconds: 95 [CONTEXT service_id=218 ]
+11-09 05:00:12.812 I/NetworkScheduler.Stats( 1250): Task com.google.android.gms/com.google.android.gms.pay.gcmtask.PayGcmTaskService started execution. cause:5 exec_start_elapsed_seconds: 95 [CONTEXT service_id=218 ]
+11-09 05:00:12.813 I/TapAndPay( 1250): Disabling TapAndPay HCE service [CONTEXT service_id=79 ]
+11-09 05:00:12.814 W/Pay     ( 1465): Active account was null, notification task will be cancelled. [CONTEXT service_id=198 ]
+11-09 05:00:12.815 W/Pay     ( 1465): No account found on the task or the device. Notification task will not be rescheduled. [CONTEXT service_id=198 ]
+11-09 05:00:12.818 I/NetworkScheduler.Stats( 1250): Task com.google.android.gms/com.google.android.gms.pay.gcmtask.PayGcmTaskService finished executing. cause:5 result: 2 elapsed_millis: 12 uptime_millis: 12 exec_start_elapsed_seconds: 95 [CONTEXT service_id=218 ]
+11-09 05:00:12.824 D/TrafficStats( 1250): tagSocket(191) with statsTag=0x1203, statsUid=10143
+11-09 05:00:12.841 W/JobInfo ( 2028): Job 'com.google.android.partnersetup/.PhenotypeJobService#2' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+11-09 05:00:12.841 W/JobInfo (  555): Job 'com.google.android.partnersetup/.PhenotypeJobService#2' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+11-09 05:00:12.843 I/PhenotypeBackgroundRecv( 2028): Skipping com.google.android.partnersetup#com.google.android.partnersetup which doesn't use ProcessStable flags.
+11-09 05:00:12.857 I/netd    (  358): tetherGetStats() -> {[]} <0.37ms>
+--------- beginning of system
+11-09 05:00:12.861 D/OomAdjuster(  555): Not killing cached processes
+11-09 05:00:12.879 I/NetworkScheduler.Stats( 1250): Task com.google.android.gms/com.google.android.gms.pay.gcmtask.PayGcmTaskService started execution. cause:5 exec_start_elapsed_seconds: 95 [CONTEXT service_id=218 ]
+11-09 05:00:12.901 I/PhenotypeBackgroundRecv( 1532): Successfully updated snapshot for com.google.android.libraries.consentverifier#com.google.android.googlequicksearchbox
+11-09 05:00:12.904 I/PhenotypeBackgroundRecv( 1532): Skipping com.google.android.libraries.search.googleapp.device#com.google.android.googlequicksearchbox which doesn't use ProcessStable flags.
+11-09 05:00:12.919 E/czvx    ( 1250): Phenotype API error. Event: # fozr@eda4195, EventCode: COMMIT_CONFIG [CONTEXT service_id=51 ]
+11-09 05:00:12.919 E/czvx    ( 1250): czue: 29501: Stale snapshot for com.google.android.libraries.search.device#com.google.android.tts(change count changed - expected 2  but was 1)
+11-09 05:00:12.919 E/czvx    ( 1250): 	at czwc.b(:com.google.android.gms@242335041@24.23.35 (190800-646585959):507)
+11-09 05:00:12.919 E/czvx    ( 1250): 	at czwb.i(:com.google.android.gms@242335041@24.23.35 (190800-646585959):3)
+11-09 05:00:12.919 E/czvx    ( 1250): 	at czvx.h(:com.google.android.gms@242335041@24.23.35 (190800-646585959):18)
+11-09 05:00:12.919 E/czvx    ( 1250): 	at czvx.f(:com.google.android.gms@242335041@24.23.35 (190800-646585959):11)
+11-09 05:00:12.919 E/czvx    ( 1250): 	at boey.hj(:com.google.android.gms@242335041@24.23.35 (190800-646585959):1)
+11-09 05:00:12.919 E/czvx    ( 1250): 	at bofh.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):97)
+11-09 05:00:12.919 E/czvx    ( 1250): 	at emsz.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):21)
+11-09 05:00:12.919 E/czvx    ( 1250): 	at angs.c(:com.google.android.gms@242335041@24.23.35 (190800-646585959):50)
+11-09 05:00:12.919 E/czvx    ( 1250): 	at angs.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):97)
+11-09 05:00:12.919 E/czvx    ( 1250): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-09 05:00:12.919 E/czvx    ( 1250): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-09 05:00:12.919 E/czvx    ( 1250): 	at anmg.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):8)
+11-09 05:00:12.919 E/czvx    ( 1250): 	at java.lang.Thread.run(Thread.java:1012)
+11-09 05:00:12.919 W/AsyncOperation( 1250): operation=CommitToConfigurationOperationCall, opStatusCode=29501 [CONTEXT service_id=51 ]
+11-09 05:00:12.919 W/AsyncOperation( 1250): OperationException[Status{statusCode=Stale snapshot for com.google.android.libraries.search.device#com.google.android.tts(change count changed - expected 2  but was 1), resolution=null}]
+11-09 05:00:12.919 W/AsyncOperation( 1250): 	at czvx.h(:com.google.android.gms@242335041@24.23.35 (190800-646585959):48)
+11-09 05:00:12.919 W/AsyncOperation( 1250): 	at czvx.f(:com.google.android.gms@242335041@24.23.35 (190800-646585959):11)
+11-09 05:00:12.919 W/AsyncOperation( 1250): 	at boey.hj(:com.google.android.gms@242335041@24.23.35 (190800-646585959):1)
+11-09 05:00:12.919 W/AsyncOperation( 1250): 	at bofh.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):97)
+11-09 05:00:12.919 W/AsyncOperation( 1250): 	at emsz.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):21)
+11-09 05:00:12.919 W/AsyncOperation( 1250): 	at angs.c(:com.google.android.gms@242335041@24.23.35 (190800-646585959):50)
+11-09 05:00:12.919 W/AsyncOperation( 1250): 	at angs.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):97)
+11-09 05:00:12.919 W/AsyncOperation( 1250): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-09 05:00:12.919 W/AsyncOperation( 1250): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-09 05:00:12.919 W/AsyncOperation( 1250): 	at anmg.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):8)
+11-09 05:00:12.919 W/AsyncOperation( 1250): 	at java.lang.Thread.run(Thread.java:1012)
+11-09 05:00:12.921 E/czvx    ( 1250): Phenotype API error. Event: # fozr@1ff436bf, EventCode: COMMIT_CONFIG [CONTEXT service_id=51 ]
+11-09 05:00:12.921 E/czvx    ( 1250): czue: 29501: Stale snapshot for com.google.android.apps.messaging#com.google.android.apps.messaging(change count changed - expected 1  but was 0)
+11-09 05:00:12.921 E/czvx    ( 1250): 	at czwc.b(:com.google.android.gms@242335041@24.23.35 (190800-646585959):507)
+11-09 05:00:12.921 E/czvx    ( 1250): 	at czwb.i(:com.google.android.gms@242335041@24.23.35 (190800-646585959):3)
+11-09 05:00:12.921 E/czvx    ( 1250): 	at czvx.h(:com.google.android.gms@242335041@24.23.35 (190800-646585959):18)
+11-09 05:00:12.921 E/czvx    ( 1250): 	at czvx.f(:com.google.android.gms@242335041@24.23.35 (190800-646585959):11)
+11-09 05:00:12.921 E/czvx    ( 1250): 	at boey.hj(:com.google.android.gms@242335041@24.23.35 (190800-646585959):1)
+11-09 05:00:12.921 E/czvx    ( 1250): 	at bofh.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):97)
+11-09 05:00:12.921 E/czvx    ( 1250): 	at emsz.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):21)
+11-09 05:00:12.921 E/czvx    ( 1250): 	at angs.c(:com.google.android.gms@242335041@24.23.35 (190800-646585959):50)
+11-09 05:00:12.921 E/czvx    ( 1250): 	at angs.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):97)
+11-09 05:00:12.921 E/czvx    ( 1250): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-09 05:00:12.921 E/czvx    ( 1250): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-09 05:00:12.921 E/czvx    ( 1250): 	at anmg.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):8)
+11-09 05:00:12.921 E/czvx    ( 1250): 	at java.lang.Thread.run(Thread.java:1012)
+11-09 05:00:12.921 W/AsyncOperation( 1250): operation=CommitToConfigurationOperationCall, opStatusCode=29501 [CONTEXT service_id=51 ]
+11-09 05:00:12.921 W/AsyncOperation( 1250): OperationException[Status{statusCode=Stale snapshot for com.google.android.apps.messaging#com.google.android.apps.messaging(change count changed - expected 1  but was 0), resolution=null}]
+11-09 05:00:12.921 W/AsyncOperation( 1250): 	at czvx.h(:com.google.android.gms@242335041@24.23.35 (190800-646585959):48)
+11-09 05:00:12.921 W/AsyncOperation( 1250): 	at czvx.f(:com.google.android.gms@242335041@24.23.35 (190800-646585959):11)
+11-09 05:00:12.921 W/AsyncOperation( 1250): 	at boey.hj(:com.google.android.gms@242335041@24.23.35 (190800-646585959):1)
+11-09 05:00:12.921 W/AsyncOperation( 1250): 	at bofh.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):97)
+11-09 05:00:12.921 W/AsyncOperation( 1250): 	at emsz.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):21)
+11-09 05:00:12.921 W/AsyncOperation( 1250): 	at angs.c(:com.google.android.gms@242335041@24.23.35 (190800-646585959):50)
+11-09 05:00:12.921 W/AsyncOperation( 1250): 	at angs.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):97)
+11-09 05:00:12.921 W/AsyncOperation( 1250): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-09 05:00:12.921 W/AsyncOperation( 1250): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-09 05:00:12.921 W/AsyncOperation( 1250): 	at anmg.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):8)
+11-09 05:00:12.921 W/AsyncOperation( 1250): 	at java.lang.Thread.run(Thread.java:1012)
+11-09 05:00:12.923 W/PhenotypeFlagCommitter( 3241): Committing snapshot for com.google.android.apps.messaging#com.google.android.apps.messaging failed, retrying
+11-09 05:00:12.924 I/NetworkScheduler.Stats( 1250): Task com.google.android.gms/com.google.android.gms.pay.gcmtask.PayGcmTaskService finished executing. cause:5 result: 1 elapsed_millis: 79 uptime_millis: 79 exec_start_elapsed_seconds: 95 [CONTEXT service_id=218 ]
+11-09 05:00:12.940 I/PhenotypeBackgroundRecv( 2202): Successfully updated snapshot for com.google.android.libraries.consentverifier#com.google.android.tts
+11-09 05:00:12.966 I/BroadcastQueue(  555): BOOT_COMPLETED_BROADCAST_COMPLETION_LATENCY_REPORTED action:android.intent.action.BOOT_COMPLETED dispatchLatency:1439 completeLatency:44563 dispatchRealLatency:1439 completeRealLatency:44563 receiversSize:89 userId:0 userType:android.os.usertype.full.SYSTEM
+11-09 05:00:12.967 I/PhenotypeBackgroundRecv( 2202): Skipping com.google.android.libraries.search.audio.device#com.google.android.tts which doesn't use ProcessStable flags.
+11-09 05:00:12.967 I/ActivityManager(  555): Finished processing BOOT_COMPLETED for u0
+11-09 05:00:12.980 I/ActivityManager(  555): Force stopping com.katkee.app appid=10209 user=0: clear data
+11-09 05:00:12.984 I/ActivityManager(  555): Force stopping com.katkee.app appid=10209 user=-1: clearApplicationUserData
+11-09 05:00:13.003 I/keystore2(  171): system/security/keystore2/src/maintenance.rs:341 - clearNamespace(r#APP, nspace=10209)
+11-09 05:00:13.013 I/Pay     ( 1465): Device does not support HCE. [CONTEXT service_id=198 ]
+11-09 05:00:13.013 I/NetworkScheduler.Stats( 1250): Task com.google.android.gms/com.google.android.gms.pay.gcmtask.PayGcmTaskService started execution. cause:5 exec_start_elapsed_seconds: 95 [CONTEXT service_id=218 ]
+11-09 05:00:13.013 I/AppsFilter(  555): interaction: PackageSetting{efd0c13 com.android.microdroid.empty_payload/10197} -> PackageSetting{88be337 com.katkee.app/10209} BLOCKED
+11-09 05:00:13.014 I/AppsFilter(  555): interaction: PackageSetting{efd0c13 com.android.microdroid.empty_payload/10197} -> PackageSetting{88be337 com.katkee.app/10209} BLOCKED
+11-09 05:00:13.069 I/NetworkScheduler.Stats( 1250): Task com.google.android.gms/com.google.android.gms.pay.gcmtask.PayGcmTaskService finished executing. cause:5 result: 2 elapsed_millis: 104 uptime_millis: 104 exec_start_elapsed_seconds: 95 [CONTEXT service_id=218 ]
+11-09 05:00:13.089 W/TimedProcessReaper( 1368): Scheduling killing of process to refresh configuration
+11-09 05:00:13.089 I/HeterodyneSyncScheduler( 1250): Scheduling Phenotype for a PhenotypeSyncImmediately(6, com.google.android.gms.lockbox) one off with window [1, 2] in seconds [CONTEXT service_id=51 ]
+11-09 05:00:13.096 I/HeterodyneSyncScheduler( 1250): Scheduling Phenotype for a PhenotypeSyncImmediately(16, com.google.android.gms.icing.mdd) one off with window [1, 2] in seconds [CONTEXT service_id=51 ]
+11-09 05:00:13.105 W/TimedProcessReaper( 3241): Scheduling killing of process to refresh configuration
+11-09 05:00:13.113 W/BugleRcsEngine( 3241): Unable to send RCS extension log [CONTEXT thread_id=47 ]
+11-09 05:00:13.113 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.113 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.113 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.113 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.114 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.114 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.114 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.114 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.114 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.114 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.114 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.114 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.114 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.114 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.114 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.114 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.114 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.114 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.114 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.114 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.114 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.114 W/A       ( 1532): (REDACTED) Can't format flag %s to integer.
+11-09 05:00:13.127 W/.gms.persistent( 1250): Suspending all threads took: 18.298ms
+11-09 05:00:13.127 I/adbd    (  438): host-17: connection terminated: write failed
+11-09 05:00:13.127 I/adbd    (  438): host-17: offline
+11-09 05:00:13.127 I/adbd    (  438): destroying transport host-17
+11-09 05:00:13.127 I/adbd    (  438): BlockingConnectionAdapter(host-17): stopping
+11-09 05:00:13.127 I/adbd    (  438): host-17: read failed: Success
+11-09 05:00:13.128 I/adbd    (  438): BlockingConnectionAdapter(host-17): stopped
+11-09 05:00:13.128 I/adbd    (  438): BlockingConnectionAdapter(host-17): destructing
+11-09 05:00:13.128 I/adbd    (  438): BlockingConnectionAdapter(host-17): already stopped
+11-09 05:00:13.138 W/BpBinder( 1250): Large outgoing transaction of 407932 bytes, interface descriptor , code 4
+11-09 05:00:13.195 I/PhenotypeBackgroundRecv( 1368): Skipping com.google.android.apps.wellbeing.device#com.google.android.apps.wellbeing which doesn't use ProcessStable flags.
+11-09 05:00:13.265 I/.gms.persistent( 1250): Background concurrent mark compact GC freed 19MB AllocSpace bytes, 19(848KB) LOS objects, 49% free, 17MB/35MB, paused 24.734ms,1.439ms total 312.184ms
+11-09 05:00:13.266 W/.gms.persistent( 1250): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/YouTubeMusicPrebuilt/YouTubeMusicPrebuilt.apk' with 1 weak references
+11-09 05:00:13.266 W/.gms.persistent( 1250): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/LatinIMEGooglePrebuilt/LatinIMEGooglePrebuilt.apk' with 1 weak references
+11-09 05:00:13.267 W/.gms.persistent( 1250): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/GoogleRestorePrebuilt-v526684/GoogleRestorePrebuilt-v526684.apk' with 1 weak references
+11-09 05:00:13.346 I/MPEG4Writer( 3448): setStartTimestampUs: 78094078
+11-09 05:00:13.346 I/MPEG4Writer( 3448): setStartTimestampUs: 78094078
+11-09 05:00:13.346 D/MPEG4Writer( 3448): reset()
+11-09 05:00:13.346 D/MPEG4Writer( 3448): Video track stopping. Stop source
+11-09 05:00:13.346 D/MPEG4Writer( 3448): Video track source stopping
+11-09 05:00:13.346 V/MediaWriter( 3448): Track event err/info msg:101, trackId:2, type:1000,val:-1011
+11-09 05:00:13.346 D/MPEG4Writer( 3448): Video track source stopped
+11-09 05:00:13.346 W/MPEG4Writer( 3448): 0-duration samples found: 1
+11-09 05:00:13.347 I/MPEG4Writer( 3448): Received total/0-length (1/0) buffers and encoded 1 frames. - Metadata
+11-09 05:00:13.347 V/MediaWriter( 3448): Track event err/info msg:101, trackId:3, type:1000,val:-1011
+11-09 05:00:13.347 W/MPEG4Writer( 3448): 0-duration samples found: 1
+11-09 05:00:13.347 I/MPEG4Writer( 3448): Received total/0-length (1/0) buffers and encoded 1 frames. - Metadata
+11-09 05:00:13.347 V/MediaWriter( 3448): Track event err/info msg:101, trackId:1, type:1000,val:-1011
+11-09 05:00:13.347 I/MPEG4Writer( 3448): Received total/0-length (27/0) buffers and encoded 27 frames. - Video
+11-09 05:00:13.347 D/MPEG4Writer( 3448): Video track stopped. Status:0. Stop source
+11-09 05:00:13.375 I/HeterodyneSyncScheduler( 1250): Scheduling Phenotype for a PhenotypeSyncImmediately(16, com.google.android.gms.nnapi.drivermanager) one off with window [1, 2] in seconds [CONTEXT service_id=51 ]
+11-09 05:00:13.383 I/A       ( 1532): (REDACTED) Refusing EXCLUSIVE task %s, it is already pending. Try again in %d seconds.
+11-09 05:00:13.387 I/Ma      ( 1532): #handleFlagUpdate()
+11-09 05:00:13.400 I/OpaEligibilityChecker( 1532): send OpaEligibilityChange broadcast to CommonBroadcastReceiver
+11-09 05:00:13.408 I/HeterodyneSyncScheduler( 1250): Scheduling Phenotype for a PhenotypeSyncImmediately(6, com.google.android.gms.people) one off with window [1, 2] in seconds [CONTEXT service_id=51 ]
+11-09 05:00:13.428 I/A       ( 1467): (REDACTED) #handleFlagsUpdate: changed %s
+11-09 05:00:13.428 I/A       ( 1467): #handleFlagsUpdate: listeners notified
+11-09 05:00:13.468 I/SettingsDataLayer.AE( 1532): Set Assistant eligibility status
+11-09 05:00:13.470 I/A       ( 1532): NGA disabled since it's running Panthera and at least one a11y feature is on.
+11-09 05:00:13.494 I/SettingsDataLayer.AE( 1532): Set isHotwordOpaEligible
+11-09 05:00:13.548 D/MPEG4Writer( 3448): Metadata track stopping. Stop source
+11-09 05:00:13.548 D/MPEG4Writer( 3448): Metadata track source stopping
+11-09 05:00:13.548 D/MPEG4Writer( 3448): Metadata track source stopped
+11-09 05:00:13.548 D/MPEG4Writer( 3448): Metadata track stopped. Status:0. Stop source
+11-09 05:00:13.548 D/MPEG4Writer( 3448): Metadata track stopping. Stop source
+11-09 05:00:13.548 D/MPEG4Writer( 3448): Metadata track source stopping
+11-09 05:00:13.548 D/MPEG4Writer( 3448): Metadata track source stopped
+11-09 05:00:13.548 D/MPEG4Writer( 3448): Metadata track stopped. Status:0. Stop source
+11-09 05:00:13.548 D/MPEG4Writer( 3448): Duration from tracks range is [0, 16430796] us
+11-09 05:00:13.548 D/MPEG4Writer( 3448): 0 chunks are written in the last batch
+11-09 05:00:13.548 D/MPEG4Writer( 3448): WriterThread stopped. Status:0
+11-09 05:00:13.549 I/MPEG4Writer( 3448): Adjust the moov start time from 78094078 us -> 78094078 us
+11-09 05:00:13.549 I/MPEG4Writer( 3448): MOOV atom was written to the file
+11-09 05:00:13.549 D/MPEG4Writer( 3448): release()
+11-09 05:00:13.549 D/MPEG4Writer( 3448): ftruncate mPreAllocateFileEndOffset:666562 mOffset:2095 mMdatEndOffset:663082 diff:3480
+11-09 05:00:13.563 D/MPEG4Writer( 3448): final fsync() takes 12 ms, file size 663082
+11-09 05:00:13.564 D/MPEG4Writer( 3448): MP4WtrCtrlHlpLooper stopped
+11-09 05:00:13.564 D/MPEG4Writer( 3448): Top 5 write durations(microseconds): #1:17 #2:22 #3:27 #4:877 #5:200972
+11-09 05:00:13.571 I/BpBinder( 3448): onLastStrongRef automatically unlinking death recipients: 
+11-09 05:00:13.575 I/hw-BpHwBinder( 3448): onLastStrongRef automatically unlinking death recipients
+11-09 05:00:13.576 I/hw-BpHwBinder(  499): onLastStrongRef automatically unlinking death recipients
+11-09 05:00:13.576 I/hw-BpHwBinder(  499): onLastStrongRef automatically unlinking death recipients
+11-09 05:00:13.597 I/HeterodyneSyncScheduler( 1250): Scheduling Phenotype for a PhenotypeSyncImmediately(7, com.google.lighter.android#com.google.android.gms) one off with window [1, 2] in seconds [CONTEXT service_id=51 ]
+11-09 05:00:13.610 D/BoundBrokerSvc( 1250): onUnbind: Intent { act=com.google.android.gms.common.telemetry.service.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentApiService }
+11-09 05:00:13.636 I/LT_PhenotypeApiImplV12( 1465): Phenotype registration succeeded
+11-09 05:00:13.652 I/Icing   ( 1465): IndexChimeraService.getServiceInterface callingPackage=com.google.android.googlequicksearchbox componentName=agsa_icing_connection serviceId=33
+11-09 05:00:13.680 D/InetDiagMessage(  555): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+11-09 05:00:13.682 D/InetDiagMessage(  555): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+11-09 05:00:13.682 D/InetDiagMessage(  555): Destroyed live tcp sockets for uids={10145} in 2ms
+11-09 05:00:13.682 D/InetDiagMessage(  555): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+11-09 05:00:13.682 D/InetDiagMessage(  555): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+11-09 05:00:13.682 D/InetDiagMessage(  555): Destroyed live tcp sockets for uids={20145} in 1ms
+11-09 05:00:13.683 I/ActivityManager(  555): Broadcasting: Intent { act=android.intent.action.MEDIA_SCANNER_SCAN_FILE dat=file:///... flg=0x400000 }
+11-09 05:00:13.685 I/HeterodyneSyncScheduler( 1250): Scheduling Phenotype for a PhenotypeSyncImmediately(6, com.google.android.westworld) one off with window [1, 2] in seconds [CONTEXT service_id=51 ]
+11-09 05:00:13.694 I/Icing   ( 1465): IndexChimeraService.getServiceInterface callingPackage=com.google.android.googlequicksearchbox componentName=agsa_icing_connection serviceId=32
+11-09 05:00:13.696 I/ActivityManager(  555): Enqueued broadcast Intent { act=android.intent.action.MEDIA_SCANNER_SCAN_FILE dat=file:///... flg=0x400000 }: 0
+11-09 05:00:13.701 I/Icing   ( 1465): Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
+11-09 05:00:13.714 E/czvx    ( 1250): Phenotype API error. Event: # fozr@178cf3dd, EventCode: COMMIT_CONFIG [CONTEXT service_id=51 ]
+11-09 05:00:13.714 E/czvx    ( 1250): czue: 29501: Stale snapshot for com.google.android.location(change count changed - expected 1  but was 0)
+11-09 05:00:13.714 E/czvx    ( 1250): 	at czwc.b(:com.google.android.gms@242335041@24.23.35 (190800-646585959):507)
+11-09 05:00:13.714 E/czvx    ( 1250): 	at czwb.i(:com.google.android.gms@242335041@24.23.35 (190800-646585959):3)
+11-09 05:00:13.714 E/czvx    ( 1250): 	at czvx.h(:com.google.android.gms@242335041@24.23.35 (190800-646585959):18)
+11-09 05:00:13.714 E/czvx    ( 1250): 	at czvx.f(:com.google.android.gms@242335041@24.23.35 (190800-646585959):11)
+11-09 05:00:13.714 E/czvx    ( 1250): 	at boey.hj(:com.google.android.gms@242335041@24.23.35 (190800-646585959):1)
+11-09 05:00:13.714 E/czvx    ( 1250): 	at bofh.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):97)
+11-09 05:00:13.714 E/czvx    ( 1250): 	at emsz.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):21)
+11-09 05:00:13.714 E/czvx    ( 1250): 	at angs.c(:com.google.android.gms@242335041@24.23.35 (190800-646585959):50)
+11-09 05:00:13.714 E/czvx    ( 1250): 	at angs.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):97)
+11-09 05:00:13.714 E/czvx    ( 1250): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-09 05:00:13.714 E/czvx    ( 1250): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-09 05:00:13.714 E/czvx    ( 1250): 	at anmg.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):8)
+11-09 05:00:13.714 E/czvx    ( 1250): 	at java.lang.Thread.run(Thread.java:1012)
+11-09 05:00:13.715 I/adbd    (  438): host-18: write thread spawning
+11-09 05:00:13.715 I/adbd    (  438): host-18: read thread spawning
+11-09 05:00:13.716 I/adbd    (  438): host-18: already offline
+11-09 05:00:13.716 I/adbd    (  438): authentication not required
+11-09 05:00:13.716 I/Icing   ( 1465): Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
+11-09 05:00:13.719 W/AsyncOperation( 1250): operation=CommitToConfigurationOperationCall, opStatusCode=29501 [CONTEXT service_id=51 ]
+11-09 05:00:13.719 W/AsyncOperation( 1250): OperationException[Status{statusCode=Stale snapshot for com.google.android.location(change count changed - expected 1  but was 0), resolution=null}]
+11-09 05:00:13.719 W/AsyncOperation( 1250): 	at czvx.h(:com.google.android.gms@242335041@24.23.35 (190800-646585959):48)
+11-09 05:00:13.719 W/AsyncOperation( 1250): 	at czvx.f(:com.google.android.gms@242335041@24.23.35 (190800-646585959):11)
+11-09 05:00:13.719 W/AsyncOperation( 1250): 	at boey.hj(:com.google.android.gms@242335041@24.23.35 (190800-646585959):1)
+11-09 05:00:13.719 W/AsyncOperation( 1250): 	at bofh.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):97)
+11-09 05:00:13.719 W/AsyncOperation( 1250): 	at emsz.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):21)
+11-09 05:00:13.719 W/AsyncOperation( 1250): 	at angs.c(:com.google.android.gms@242335041@24.23.35 (190800-646585959):50)
+11-09 05:00:13.719 W/AsyncOperation( 1250): 	at angs.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):97)
+11-09 05:00:13.719 W/AsyncOperation( 1250): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-09 05:00:13.719 W/AsyncOperation( 1250): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-09 05:00:13.719 W/AsyncOperation( 1250): 	at anmg.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):8)
+11-09 05:00:13.719 W/AsyncOperation( 1250): 	at java.lang.Thread.run(Thread.java:1012)
+11-09 05:00:13.719 W/CCTFlatFileLogStore( 1250): Excessive logging: 512 events, 290753 bytes from log source PHENOTYPE last 37s
+11-09 05:00:13.742 W/MobStoreFlagStore( 1465): Failed to commit due to stale snapshot for com.google.android.location. Experiments may be delayed til next app start. Error code: 29501. Triggering flag update.
+11-09 05:00:13.868 I/A       ( 1532): (REDACTED) disposing SearchServiceClient after timeout %s
+11-09 05:00:13.906 D/ShortcutService(  555): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=com.google.android.gms
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=null, duration=1000, is_ringtone=0, album_artist=null, resolution=null, orientation=null, artist=Unknown, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1737651906, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=1, bitrate=80000, cd_track_number=null, xmp=[], year=null, _data=/product/media/audio/notifications/Arcturus.ogg, _size=7933, album=notifications, genre=Unknown, is_alarm=0, title=Arcturus, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at android.database.sqlite.SQLiteConnection.nativeExecuteForLastInsertedRowId(Native Method)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at android.database.sqlite.SQLiteConnection.executeForLastInsertedRowId(SQLiteConnection.java:974)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at android.database.sqlite.SQLiteSession.executeForLastInsertedRowId(SQLiteSession.java:814)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at android.database.sqlite.SQLiteStatement.executeInsert(SQLiteStatement.java:89)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.util.DatabaseUtils.executeInsert(DatabaseUtils.java:488)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.util.SQLiteQueryBuilder.insert(SQLiteQueryBuilder.java:640)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.util.SQLiteQueryBuilder.lambda$insert$1(SQLiteQueryBuilder.java:604)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.util.SQLiteQueryBuilder.$r8$lambda$1_sr46pjM8wwFdSQpMjCTR4_wfk(SQLiteQueryBuilder.java:0)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.util.SQLiteQueryBuilder$$ExternalSyntheticLambda4.apply(R8$$SyntheticClass:0)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.DatabaseHelper.runWithTransaction(DatabaseHelper.java:891)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.util.SQLiteQueryBuilder.insert(SQLiteQueryBuilder.java:603)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.MediaProvider.lambda$insertAllowingUpsert$22(MediaProvider.java:5196)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.MediaProvider.$r8$lambda$mZGNBB-NL1wGl2XhivazUsuTbqM(MediaProvider.java:0)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.MediaProvider$$ExternalSyntheticLambda46.apply(R8$$SyntheticClass:0)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.DatabaseHelper.runWithTransaction(DatabaseHelper.java:891)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.MediaProvider.insertAllowingUpsert(MediaProvider.java:5186)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.MediaProvider.insertFile(MediaProvider.java:5168)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.MediaProvider.insertInternal(MediaProvider.java:5637)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.MediaProvider.insert(MediaProvider.java:5330)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at android.content.ContentProviderOperation.applyInternal(ContentProviderOperation.java:375)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at android.content.ContentProviderOperation.apply(ContentProviderOperation.java:347)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at android.content.ContentProvider.applyBatch(ContentProvider.java:2678)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.MediaProvider.applyBatch(MediaProvider.java:5689)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at android.content.ContentProvider.applyBatch(ContentProvider.java:2669)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at android.content.ContentResolver.applyBatch(ContentResolver.java:2246)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.scan.ModernMediaScanner$Scan.applyPending(ModernMediaScanner.java:973)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.scan.ModernMediaScanner$Scan.maybeApplyPending(ModernMediaScanner.java:963)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.scan.ModernMediaScanner$Scan.visitFile(ModernMediaScanner.java:868)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.scan.ModernMediaScanner$Scan.visitFile(ModernMediaScanner.java:351)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at java.nio.file.Files.walkFileTree(Files.java:2670)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at java.nio.file.Files.walkFileTree(Files.java:2742)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.scan.ModernMediaScanner$Scan.walkFileTree(ModernMediaScanner.java:467)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.scan.ModernMediaScanner$Scan.runInternal(ModernMediaScanner.java:430)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.scan.ModernMediaScanner$Scan.run(ModernMediaScanner.java:419)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.scan.ModernMediaScanner.scanDirectory(ModernMediaScanner.java:265)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.MediaProvider.scanDirectory(MediaProvider.java:2150)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.MediaService.onScanVolume(MediaService.java:204)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.MediaService.onScanVolume(MediaService.java:172)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at com.android.providers.media.MediaService.onHandleWork(MediaService.java:95)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at androidx.core.app.JobIntentService$CommandProcessor.doInBackground(JobIntentService.java:396)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at androidx.core.app.JobIntentService$CommandProcessor.doInBackground(JobIntentService.java:387)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at android.os.AsyncTask$3.call(AsyncTask.java:394)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at java.util.concurrent.FutureTask.run(FutureTask.java:264)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-09 05:00:13.965 W/ModernMediaScanner( 1429): 	at java.lang.Thread.run(Thread.java:1012)
+11-09 05:00:14.191 I/ChimeraSrvcProxy( 1250): NullBinder for android.net.action.RECOMMEND_NETWORKS triggering remote TransactionTooLargeException due to Service without Chimera impl
+11-09 05:00:14.191 W/.gms.persistent( 1250): Large reply transaction of 1056768 bytes, interface descriptor , code 1
+11-09 05:00:14.199 I/BugleRcsEngine( 3469): handleMessage processing message:[NOTIFY_UPTIME_IGNORE_STATE_CHANGED] with [non-null]:RcsEngineImpl reference [CONTEXT log_prefix="RcsEngineImpl[DUAL_REG]:[7f26d3b5-0109]>Handler" thread_id=63 ]
+11-09 05:00:14.199 I/BugleRcsEngine( 3469): Connected state: [1], networkType: [WIFI] [CONTEXT thread_id=55 ]
+11-09 05:00:14.202 I/BugleRcsEngine( 3469): RCS Configuration storage in Bugle is disabled by p/h flag, using ProvisioningEngineStateCacheUtil.getProvisioningConfigurationForGivenSimIfExist() [CONTEXT log_prefix="ProvisioningEngineDataRetriever" thread_id=63 ]
