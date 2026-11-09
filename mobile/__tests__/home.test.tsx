@@ -18,6 +18,16 @@ jest.mock("../src/screens/story/StoryFeed", () => ({ StoryFeed: (props: object) 
 jest.mock("../src/api/ads", () => ({ getAdPlacements: jest.fn(async () => ({ placements: [] })) }));
 jest.mock("../src/api/stories", () => ({
   getRankedHomeFeed: jest.fn(async () => ({ feed: [{ owner: { id: "u-me", username: "me" }, isFollowing: false, stories: [], score: 1 }], nextCursor: null })),
+  getExplore: jest.fn(async () => ({ explore: [] })),
+}));
+// An empty Home suggests people to follow (HomeDiscover).
+jest.mock("../src/api/users", () => ({
+  ...jest.requireActual("../src/api/users"),
+  getSuggestions: jest.fn(async () => ({ suggestions: [
+    { id: "u-sofia", username: "sofia.cooks", displayName: "Sofia Alvarez", avatarMediaId: null, isPrivate: false, reason: "popular", viewer: { isFollowing: false, isFollowedBy: false, hasPendingRequestFromViewer: false } },
+  ] })),
+  followUser: jest.fn(async () => ({ state: "following" })),
+  unfollowUser: jest.fn(async () => undefined),
 }));
 
 jest.mock("../src/api/festivals", () => ({
@@ -168,6 +178,22 @@ test("with no festival Stories yet, the festival button invites you to post one;
   expect(texts).toEqual(expect.arrayContaining(["Happy Diwali!", "Post your Diwali Story"]));
   await act(async () => pressByLabel("Post your Diwali Story").props.onPress());
   expect(mockNavigation.navigate).toHaveBeenCalledWith("Create");
+  await act(async () => tree.unmount());
+});
+
+test("an empty Home is never blank: people to follow, and following one loads their Stories", async () => {
+  const users = jest.requireMock("../src/api/users");
+  stories.getRankedHomeFeed.mockClear();
+  stories.getRankedHomeFeed.mockResolvedValue({ feed: [], nextCursor: null } as never);
+  await act(async () => { tree = create(<HomeScreen />); });
+  await flush();
+  const texts = tree.root.findAllByType(Text).map((t) => [t.props.children].flat().join(""));
+  expect(texts).toEqual(expect.arrayContaining(["Welcome to Katkee", "People to follow", "Sofia Alvarez", "Post your first Story"]));
+  await act(async () => pressByLabel("Follow @sofia.cooks").props.onPress());
+  await flush();
+  expect(users.followUser).toHaveBeenCalledWith("sofia.cooks", "token");
+  expect(stories.getRankedHomeFeed).toHaveBeenCalledTimes(2);
+  expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Following @sofia.cooks").length).toBeGreaterThan(0);
   await act(async () => tree.unmount());
 });
 

@@ -26,7 +26,7 @@ type PropertyRule =
 const MEDIA_KIND: PropertyRule = { kind: "enum", values: ["photo", "video"] };
 const ATTEMPTS: PropertyRule = { kind: "int", min: 1, max: 100 };
 /** Where Invite friends was tapped (mobile/src/state/invites.ts). */
-const INVITE_SOURCES = ["settings", "home", "search", "messages", "onboarding", "contacts"] as const;
+const INVITE_SOURCES = ["settings", "home", "search", "messages", "onboarding", "contacts", "after_story"] as const;
 
 /**
  * The only properties ever stored: booleans, bounded numbers and fixed choices. No ids of

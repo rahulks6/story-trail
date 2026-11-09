@@ -17,7 +17,7 @@ import { t } from "../i18n";
  */
 
 /** Where Invite friends was tapped: the server's allowed values for invite_shared. */
-export type InviteSource = "settings" | "home" | "search" | "messages" | "onboarding" | "contacts";
+export type InviteSource = "settings" | "home" | "search" | "messages" | "onboarding" | "contacts" | "after_story";
 
 const PENDING_KEY = "katkee.invite.pending.v1";
 /** An invite opened and never followed by a sign-up is forgotten after this long. */

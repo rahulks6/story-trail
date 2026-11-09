@@ -24,6 +24,8 @@ interface PushText {
   verification: Record<VerificationOutcome, string>;
   groupMessage: (actor: string, group: string | null) => string;
   reaction: (actor: string, emoji: string) => string;
+  /** Someone's very first Story: worth a hello, so it says so. */
+  firstStory: (actor: string) => string;
 }
 
 const en: PushText = {
@@ -41,6 +43,7 @@ const en: PushText = {
     collab_invite: (a) => `@${a} invited you to a collab Story`,
     collab_accepted: (a) => `@${a} accepted your collab Story`,
   },
+  firstStory: (a) => `@${a} posted their first Story on Katkee 👋 Say hi`,
   someone: "someone",
   call: (a, video) => (video ? `@${a} is video calling you` : `@${a} is calling you`),
   missedCall: (a, video) => `Missed ${video ? "video" : "voice"} call from @${a}`,
@@ -76,6 +79,7 @@ const hi: PushText = {
     collab_invite: (a) => `@${a} ने आपको कोलैब स्टोरी के लिए इनवाइट किया`,
     collab_accepted: (a) => `@${a} ने आपकी कोलैब स्टोरी स्वीकार की`,
   },
+  firstStory: (a) => `@${a} ने Katkee पर अपनी पहली स्टोरी पोस्ट की 👋 हाय कहें`,
   someone: "कोई",
   call: (a, video) => (video ? `@${a} आपको वीडियो कॉल कर रहे हैं` : `@${a} आपको कॉल कर रहे हैं`),
   missedCall: (a, video) => `@${a} की मिस्ड ${video ? "वीडियो" : "वॉइस"} कॉल`,
@@ -111,6 +115,7 @@ const mr: PushText = {
     collab_invite: (a) => `@${a} यांनी तुम्हाला कोलॅब स्टोरीसाठी आमंत्रित केले`,
     collab_accepted: (a) => `@${a} यांनी तुमची कोलॅब स्टोरी स्वीकारली`,
   },
+  firstStory: (a) => `@${a} यांनी Katkee वर पहिली स्टोरी पोस्ट केली 👋 हाय म्हणा`,
   someone: "कोणीतरी",
   call: (a, video) => (video ? `@${a} तुम्हाला व्हिडिओ कॉल करत आहेत` : `@${a} तुम्हाला कॉल करत आहेत`),
   missedCall: (a, video) => `@${a} यांचा मिस्ड ${video ? "व्हिडिओ" : "व्हॉइस"} कॉल`,
@@ -169,6 +174,8 @@ export function pushOnlyText(kind: string, params: Params | null, locale: Locale
     }
     case "message":
       return actor ? t.groupMessage(actor, str(params.group)) : null;
+    case "new_story":
+      return actor && params.first === true ? t.firstStory(actor) : null;
     case "message_reaction": {
       const emoji = str(params.emoji);
       return actor && emoji ? t.reaction(actor, emoji) : null;

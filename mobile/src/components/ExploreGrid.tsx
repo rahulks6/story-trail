@@ -17,7 +17,7 @@ const GAP = 2;
  * the person's photo and name over the bottom. A tap opens their Stories; swiping on goes through
  * the rest of the grid, in order.
  */
-export function ExploreGrid({ tiles, accessToken, onOpen }: { tiles: ExploreTile[]; accessToken: string | null; onOpen: (index: number) => void }): React.JSX.Element | null {
+export function ExploreGrid({ tiles, accessToken, onOpen, title, titleColor }: { tiles: ExploreTile[]; accessToken: string | null; onOpen: (index: number) => void; title?: string; titleColor?: string }): React.JSX.Element | null {
   // Three to a row across the space it's given (Search has side margins, so not the screen's width).
   // Search's side margins are the first guess; the grid's own measurement settles it.
   const screen = useWindowDimensions().width;
@@ -28,7 +28,7 @@ export function ExploreGrid({ tiles, accessToken, onOpen }: { tiles: ExploreTile
   const tileHeight = Math.round((tileWidth * 4) / 3);
   return (
     <View>
-      <Text style={[typography.label, styles.title]} accessibilityRole="header">{t("explore.title")}</Text>
+      <Text style={[typography.label, styles.title, titleColor ? { color: titleColor } : null]} accessibilityRole="header">{title ?? t("explore.title")}</Text>
       <View style={styles.grid} onLayout={(e) => setWidth(e.nativeEvent.layout.width)}>
         {tiles.map((tile, index) => {
           const url = tile.story.thumbnailUrl ?? tile.story.imageUrl;

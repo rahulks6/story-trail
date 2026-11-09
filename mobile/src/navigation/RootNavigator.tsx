@@ -13,6 +13,7 @@ import { usePushRegistration } from "../push/usePushRegistration";
 import { useLocaleSync } from "../state/localeSync";
 import { useAreaSync } from "../state/nearby";
 import { NearbyPrompt } from "../components/NearbyPrompt";
+import { InviteAfterStory } from "../components/InviteAfterStory";
 import { useAnalytics } from "../analytics/useAnalytics";
 import { StoryLinkScreen } from "../screens/story/StoryLinkScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -467,6 +468,7 @@ export function RootNavigator(): React.JSX.Element {
         >
           <SignedInNavigator onboarding={!!onboarding && !user?.emailVerificationRequired} />
           {inApp ? <NearbyPrompt /> : null}
+          {inApp ? <InviteAfterStory /> : null}
           {inApp ? (
             <InAppNotificationBanner
               currentRoute={() => (navigationRef.isReady() ? navigationRef.getCurrentRoute() : undefined)}

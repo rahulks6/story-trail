@@ -19,12 +19,18 @@ export const NEW_STORY_DAILY_CAP = 5;
 export const VIEW_MILESTONES = [10, 25, 50, 100, 250, 500, 1000];
 const BATCH = 2000;
 
-/** Queues "@owner posted a new Story" for the followers who can see it. Called after every publish. */
+/**
+ * Queues "@owner posted a new Story" for the followers who can see it. Called after every publish.
+ * Someone's very first Story says so ("posted their first Story… Say hi") and isn't held back by
+ * the daily cap: a first hello from friends is the best reason a new person has to come back.
+ */
 export async function queueNewStoryPushes(storyId: string): Promise<number> {
   const rows = await query(
     `WITH s AS (
-       SELECT id, owner_id, audience FROM stories
-       WHERE id = :'story' AND deleted_at IS NULL AND moderation_removed_at IS NULL AND expires_at > now()),
+       SELECT st.id, st.owner_id, st.audience,
+              NOT EXISTS (SELECT 1 FROM stories o WHERE o.owner_id = st.owner_id AND o.id <> st.id AND o.created_at < st.created_at) AS first
+       FROM stories st
+       WHERE st.id = :'story' AND st.deleted_at IS NULL AND st.moderation_removed_at IS NULL AND st.expires_at > now()),
      recipients AS (
        SELECT f.follower_id AS uid
        FROM s JOIN follows f ON f.followee_id = s.owner_id
@@ -33,14 +39,18 @@ export async function queueNewStoryPushes(storyId: string): Promise<number> {
        WHERE coalesce(p.push_enabled, true) AND coalesce(p.stories_enabled, true)
          AND (s.audience <> 'close_friends' OR EXISTS (SELECT 1 FROM close_friends c WHERE c.owner_id = s.owner_id AND c.friend_id = f.follower_id))
          AND NOT EXISTS (SELECT 1 FROM blocks b WHERE (b.blocker_id = f.follower_id AND b.blocked_id = s.owner_id) OR (b.blocker_id = s.owner_id AND b.blocked_id = f.follower_id))
-         AND (SELECT count(*) FROM push_sent ps WHERE ps.user_id = f.follower_id AND ps.kind = 'new_story' AND ps.sent_at > now() - interval '1 day') < :'cap'
+         AND (s.first OR (SELECT count(*) FROM push_sent ps WHERE ps.user_id = f.follower_id AND ps.kind = 'new_story' AND ps.sent_at > now() - interval '1 day') < :'cap')
        LIMIT 5000),
      sent AS (
        INSERT INTO push_sent (user_id, kind, ref_key)
        SELECT r.uid, 'new_story', s.owner_id::text || ':' || to_char(${DAY}, 'YYYY-MM-DD') FROM recipients r, s
        ON CONFLICT DO NOTHING RETURNING user_id)
-     INSERT INTO push_outbox (user_id, kind, actor_id, ref_id)
-     SELECT sent.user_id, 'new_story', s.owner_id, s.id FROM sent, s
+     INSERT INTO push_outbox (user_id, kind, actor_id, ref_id, body, params, link)
+     SELECT sent.user_id, 'new_story', s.owner_id, s.id,
+            CASE WHEN s.first THEN '@' || (SELECT username FROM users WHERE id = s.owner_id) || ' posted their first Story on Katkee 👋 Say hi' END,
+            CASE WHEN s.first THEN '{"first": true}'::jsonb END,
+            CASE WHEN s.first THEN 'katkee://story/' || s.id END
+     FROM sent, s
      RETURNING id`,
     { story: storyId, cap: NEW_STORY_DAILY_CAP },
   );

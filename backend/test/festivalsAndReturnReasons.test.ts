@@ -140,6 +140,7 @@ describe("reasons to come back", () => {
     const fan = await signup();
     for (let i = 0; i < NEW_STORY_DAILY_CAP + 2; i++) {
       const poster = await signup();
+      await publish(poster); // their first Story, before the fan follows (a first Story isn't capped)
       await follow(fan, poster);
       await publish(poster);
     }
@@ -154,6 +155,32 @@ describe("reasons to come back", () => {
     await publish(owner, { audience: "close_friends" });
     assert.equal((await outbox(friend, "new_story")).length, 1);
     assert.equal((await outbox(other, "new_story")).length, 0);
+  });
+
+  it("someone's first Story says so, links to it, and gets past the daily cap", async () => {
+    const fan = await signup();
+    for (let i = 0; i < NEW_STORY_DAILY_CAP; i++) {
+      const poster = await signup();
+      await publish(poster);
+      await follow(fan, poster);
+      await publish(poster);
+    }
+    assert.equal((await outbox(fan, "new_story")).length, NEW_STORY_DAILY_CAP);
+    const newcomer = await signup();
+    await follow(fan, newcomer);
+    const story = await publish(newcomer);
+    const sent = (await outbox(fan, "new_story")).filter((row) => row.ref_id === story);
+    assert.equal(sent.length, 1, "the first Story reaches the fan even after the cap");
+    assert.equal(sent[0]!.body, `@${newcomer.username} posted their first Story on Katkee 👋 Say hi`);
+    assert.equal(sent[0]!.link, `katkee://story/${story}`);
+    const rendered = await renderPush({ id: "x", userId: fan.id, kind: "new_story", actorId: newcomer.id, refId: story, attempts: 1, body: sent[0]!.body, link: sent[0]!.link, params: { first: true } });
+    assert.ok("message" in rendered && rendered.message.body.includes("first Story"));
+    // A second Story is an ordinary one.
+    await query(`DELETE FROM push_sent WHERE user_id = :'u'`, { u: fan.id });
+    const second = await publish(newcomer);
+    const plain = (await outbox(fan, "new_story")).filter((row) => row.ref_id === second);
+    assert.equal(plain.length, 1);
+    assert.ok(!plain[0]!.body, "no first-Story text");
   });
 
   it("celebrates view milestones once each", async () => {
