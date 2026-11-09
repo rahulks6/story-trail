@@ -1,0 +1,65 @@
+11-09 05:26:21.070 D/AndroidRuntime( 3810): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-09 05:26:21.074 I/AndroidRuntime( 3810): Using default boot image
+11-09 05:26:21.074 I/AndroidRuntime( 3810): Leaving lock profiling enabled
+11-09 05:26:21.079 I/app_process( 3810): Core platform API reporting enabled, enforcing=false
+11-09 05:26:21.080 I/app_process( 3810): Using CollectorTypeCMC GC.
+11-09 05:26:21.096 I/Checkin ( 1392): [ScheduledCheckinGmsTaskService] onRunTask
+11-09 05:26:21.105 D/ImsResolver( 1083): maybeAddedImsService, packageName: dev.mobile.maestro.test
+11-09 05:26:21.120 D/CarrierSvcBindHelper( 1083): onPackageModified: dev.mobile.maestro.test
+11-09 05:26:21.124 D/CarrierSvcBindHelper( 1083): No carrier app for: 0
+11-09 05:26:21.130 D/ControlsListingControllerImpl(  912): ServiceConfig reloaded, count: 0
+11-09 05:26:21.134 I/Checkin ( 1392): [CheckinIntentOperation] onHandleIntent, Intent { act=com.google.android.gms.checkin.CHECKIN_START_ACTION cat=[targeted_intent_op_prefix:.checkin.CheckinIntentOperation] cmp=com.google.android.gms/.chimera.GmsIntentOperationService (has extras) }
+11-09 05:26:21.138 D/BoundBrokerSvc( 1229): onUnbind: Intent { act=com.google.android.gms.clearcut.bootcount.service.START pkg=com.google.android.gms }
+11-09 05:26:21.140 D/ControlsListingControllerImpl(  912): ServiceConfig reloaded, count: 0
+11-09 05:26:21.157 I/HeterodyneSyncScheduler( 1229): Scheduling Phenotype for a PhenotypeSyncImmediately(6, com.google.android.gms.checkin.binary) one off with window [1, 2] in seconds [CONTEXT service_id=51 ]
+11-09 05:26:21.163 I/Fitness ( 1229): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-09 05:26:21.168 E/SmsApplication( 1083): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
+11-09 05:26:21.170 W/AppOpService(  560): Ignored setUidMode call for runtime permission app op: uid = 10133, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:26:21.177 I/WakefulBroadcastRcvr( 1392): Processing wakeful broadcast: com.google.android.gms.checkin.CHECKIN_START_ACTION
+11-09 05:26:21.178 E/CellBroadcastUtils( 1083): getDefaultCellBroadcastReceiverPackageName: no package found
+11-09 05:26:21.178 W/AppOpService(  560): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:26:21.178 W/AppOpService(  560): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:26:21.179 W/AppOpService(  560): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_WAP_PUSH, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:26:21.179 W/AppOpService(  560): Ignored setUidMode call for runtime permission app op: uid = 1001, code = SEND_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:26:21.180 W/AppOpService(  560): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:26:21.183 D/ImsResolver( 1083): maybeAddedImsService, packageName: dev.mobile.maestro.test
+11-09 05:26:21.207 W/GmsTaskScheduler( 1392): ScheduledCheckinGmsTaskService is not available. This may cause the task to be lost.
+11-09 05:26:21.226 D/nativeloader( 3810): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+11-09 05:26:21.260 D/nativeloader( 3810): Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+11-09 05:26:21.260 D/app_process( 3810): u_setTimeZoneFilesDirectory("/apex/com.android.tzdata/etc/tz/versioned/8/icu") succeeded. 
+11-09 05:26:21.261 W/TimedProcessReaper( 1354): Scheduling killing of process to refresh configuration
+11-09 05:26:21.262 D/app_process( 3810): I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt75l.dat
+11-09 05:26:21.272 D/nativeloader( 3810): Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+11-09 05:26:21.275 D/nativeloader( 3810): Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+--
+11-09 05:26:21.346 D/AndroidRuntime( 3810): Calling main entry com.android.commands.am.Am
+11-09 05:26:21.350 I/Fitness ( 1229): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+11-09 05:26:21.350 D/UiAutomationConnection( 3810): Created on user UserHandle{0}
+11-09 05:26:21.356 I/gle.android.gms( 1392): Background concurrent mark compact GC freed 7639KB AllocSpace bytes, 80(8316KB) LOS objects, 49% free, 13MB/26MB, paused 262us,654us total 265.197ms
+11-09 05:26:21.358 I/NetworkScheduler.Stats( 1229): Task com.google.android.gms/com.google.android.gms.checkin.internal.scheduler.ScheduledCheckinGmsTaskService finished executing. cause:5 result: 1 elapsed_millis: 874 uptime_millis: 874 exec_start_elapsed_seconds: 82 [CONTEXT service_id=218 ]
+11-09 05:26:21.364 D/BoundBrokerSvc( 1392): onUnbind: Intent { act=com.google.android.gms.checkin.internal.scheduler.ScheduledCheckinGmsTaskService.ACTION_TASK_READY dat=chimera-action:/... cmp=com.google.android.gms/.chimera.GmsInternalBoundBrokerService }
+11-09 05:26:21.367 I/ActivityManager(  560): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+11-09 05:26:21.373 W/ogle.android.as( 1454): Long monitor contention with owner aiai-min-shared-0 (1724) at java.lang.Object ibk.b()(PG:48) waiters=0 in java.lang.Object ibk.b() for 354ms
+11-09 05:26:21.374 W/AiAiAutofill( 1454): Failed to set whitelist for augmented autofill service.
+11-09 05:26:21.374 W/AiAiAutofill( 1454): java.lang.SecurityException: caller is not user's Augmented Autofill Service
+11-09 05:26:21.374 W/AiAiAutofill( 1454): 	at android.view.autofill.AutofillManager.setAugmentedAutofillWhitelist(AutofillManager.java:2858)
+11-09 05:26:21.374 W/AiAiAutofill( 1454): 	at ema.c(PG:66)
+11-09 05:26:21.374 W/AiAiAutofill( 1454): 	at emw.h(PG:81)
+11-09 05:26:21.374 W/AiAiAutofill( 1454): 	at emw.j(PG:4)
+11-09 05:26:21.374 W/AiAiAutofill( 1454): 	at emw.i(PG:35)
+11-09 05:26:21.374 W/AiAiAutofill( 1454): 	at emy.a(PG:3)
+11-09 05:26:21.374 W/AiAiAutofill( 1454): 	at icx.run(PG:61)
+11-09 05:26:21.374 W/AiAiAutofill( 1454): 	at hqv.run(PG:11)
+11-09 05:26:21.374 W/AiAiAutofill( 1454): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
+11-09 05:26:21.374 W/AiAiAutofill( 1454): 	at wqm.a(PG:3)
+11-09 05:26:21.374 W/AiAiAutofill( 1454): 	at wpo.run(PG:21)
+11-09 05:26:21.374 W/AiAiAutofill( 1454): 	at wqn.run(PG:5)
+11-09 05:26:21.374 W/AiAiAutofill( 1454): 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)
+11-09 05:26:21.374 W/AiAiAutofill( 1454): 	at java.util.concurrent.FutureTask.run(FutureTask.java:264)
+11-09 05:26:21.374 W/AiAiAutofill( 1454): 	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:307)
+11-09 05:26:21.374 W/AiAiAutofill( 1454): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-09 05:26:21.374 W/AiAiAutofill( 1454): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-09 05:26:21.374 W/AiAiAutofill( 1454): 	at hqv.run(PG:221)
+11-09 05:26:21.374 W/AiAiAutofill( 1454): 	at java.lang.Thread.run(Thread.java:1012)
+11-09 05:26:21.381 I/ChimeraSrvcProxy( 1229): NullBinder for android.net.action.RECOMMEND_NETWORKS triggering remote TransactionTooLargeException due to Service without Chimera impl
+11-09 05:26:21.392 W/.gms.persistent( 1229): Large reply transaction of 1056768 bytes, interface descriptor , code 1

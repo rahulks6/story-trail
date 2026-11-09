@@ -1,0 +1,601 @@
+--------- beginning of main
+11-09 05:26:25.293 D/SlicesIndexer( 1086): Slices already indexed - returning.
+11-09 05:26:25.297 I/Dck     ( 1392): doesDeviceHaveSupportedWirelessCapabilities: wccSysProp:0, wccMendel:3, deviceWccOverride:false [CONTEXT service_id=289 ]
+11-09 05:26:25.297 I/Dck     ( 1392): Dck module condition - hasWccSupport: false [CONTEXT service_id=289 ]
+11-09 05:26:25.297 I/Dck     ( 1392): Dck module condition - downloadAllowed: false [CONTEXT service_id=289 ]
+11-09 05:26:25.297 W/Dck     ( 1392): Dck module not eligible for asynchronous downloading [CONTEXT service_id=289 ]
+11-09 05:26:25.299 D/SliceBuilder( 1086): Creating slice for: com.android.settings.notification.NotificationVolumePreferenceController
+11-09 05:26:25.305 D/BoundBrokerSvc( 1392): onBind: Intent { act=com.google.android.gms.credential.manager.service.zeroparty.checkup.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.GmsApiService }
+11-09 05:26:25.305 D/BoundBrokerSvc( 1392): Loading bound service for intent: Intent { act=com.google.android.gms.credential.manager.service.zeroparty.checkup.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.GmsApiService }
+11-09 05:26:25.307 D/VolumeSliceHelper( 1086): Registering uri for broadcast relay: content://com.android.settings.slices/action/separate_ring_volume
+11-09 05:26:25.312 D/SettingsSliceProvider( 1086): Built slice (content://com.android.settings.slices/action/separate_ring_volume) in: 19
+11-09 05:26:25.317 I/PTCommittedOperation( 1229): Receive new configuration for com.google.android.gms
+11-09 05:26:25.317 I/PTCommittedOperation( 1229): Running Fixer Framework for com.google.android.gms
+11-09 05:26:25.328 I/NearbySharing( 1392): SharingTileService destroyed [CONTEXT service_id=194 ]
+11-09 05:26:25.333 W/ElapsedTimeUtils( 1086): getElapsedTime: sSuwFinishedTimeStamp is null
+11-09 05:26:25.346 D/TrafficStats( 2321): tagSocket(132) with statsTag=0x1803, statsUid=10133
+11-09 05:26:25.348 D/SettingsSliceProvider( 1086): content://com.android.settings.slices/action/notification_volume loaded from cache
+11-09 05:26:25.351 W/PlatformConfigurator( 1229): Update for unknown DeviceConfig package com.google.android.gms [CONTEXT service_id=204 ]
+11-09 05:26:25.351 W/PlatformConfigurator( 1229): daaf: No package exists for config package: com.google.android.gms
+11-09 05:26:25.351 W/PlatformConfigurator( 1229): 	at com.google.android.gms.platformconfigurator.PhenotypeConfigurationUpdateListener.b(:com.google.android.gms@242335041@24.23.35 (190800-646585959):233)
+11-09 05:26:25.351 W/PlatformConfigurator( 1229): 	at com.google.android.gms.platformconfigurator.PhenotypeConfigurationUpdateListener.a(:com.google.android.gms@242335041@24.23.35 (190800-646585959):29)
+11-09 05:26:25.351 W/PlatformConfigurator( 1229): 	at com.google.android.gms.platformconfigurator.PhenotypeConfigurationUpdateListener.onHandleIntent(:com.google.android.gms@242335041@24.23.35 (190800-646585959):207)
+11-09 05:26:25.351 W/PlatformConfigurator( 1229): 	at com.google.android.chimera.IntentOperation.onHandleIntent(:com.google.android.gms@242335041@24.23.35 (190800-646585959):2)
+11-09 05:26:25.351 W/PlatformConfigurator( 1229): 	at ajom.onHandleIntent(:com.google.android.gms@242335041@24.23.35 (190800-646585959):8)
+11-09 05:26:25.351 W/PlatformConfigurator( 1229): 	at pkf.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):70)
+11-09 05:26:25.351 W/PlatformConfigurator( 1229): 	at pke.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):152)
+11-09 05:26:25.351 W/PlatformConfigurator( 1229): 	at emsz.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):21)
+11-09 05:26:25.351 W/PlatformConfigurator( 1229): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-09 05:26:25.351 W/PlatformConfigurator( 1229): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-09 05:26:25.351 W/PlatformConfigurator( 1229): 	at java.lang.Thread.run(Thread.java:1012)
+11-09 05:26:25.356 D/SliceBuilder( 1086): Creating slice for: com.android.settings.notification.AlarmVolumePreferenceController
+11-09 05:26:25.361 W/ElapsedTimeUtils( 1086): getElapsedTime: sSuwFinishedTimeStamp is null
+11-09 05:26:25.365 D/SettingsSliceProvider( 1086): content://com.android.settings.slices/action/gesture_double_tap_power loaded from cache
+11-09 05:26:25.371 D/VolumeSliceHelper( 1086): Unregistering uri broadcast relay: content://com.android.settings.slices/action/notification_volume
+11-09 05:26:25.374 W/ElapsedTimeUtils( 1086): getElapsedTime: sSuwFinishedTimeStamp is null
+11-09 05:26:25.384 D/SliceBuilder( 1086): Creating slice for: com.android.settings.notification.AlarmVolumePreferenceController
+11-09 05:26:25.386 D/SlicesIndexer( 1086): Slices already indexed - returning.
+11-09 05:26:25.391 W/ElapsedTimeUtils( 1086): getElapsedTime: sSuwFinishedTimeStamp is null
+11-09 05:26:25.395 D/VolumeSliceHelper( 1086): Registering uri for broadcast relay: content://com.android.settings.slices/action/notification_volume
+11-09 05:26:25.397 D/SettingsSliceProvider( 1086): Built slice (content://com.android.settings.slices/action/notification_volume) in: 11
+11-09 05:26:25.402 D/SettingsSliceProvider( 1086): content://com.android.settings.slices/action/alarm_volume loaded from cache
+11-09 05:26:25.402 W/SystemServiceRegistry( 2321): No service published for: persistent_data_block
+11-09 05:26:25.409 D/VolumeSliceHelper( 1086): Unregistering uri broadcast relay: content://com.android.settings.slices/action/alarm_volume
+11-09 05:26:25.411 W/ElapsedTimeUtils( 1086): getElapsedTime: sSuwFinishedTimeStamp is null
+11-09 05:26:25.413 D/SliceBuilder( 1086): Creating slice for: com.android.settings.fuelgauge.batterysaver.BatterySaverButtonPreferenceController
+11-09 05:26:25.415 D/SlicesIndexer( 1086): Slices already indexed - returning.
+11-09 05:26:25.416 D/VolumeSliceHelper( 1086): Registering uri for broadcast relay: content://com.android.settings.slices/action/alarm_volume
+11-09 05:26:25.417 D/SettingsSliceProvider( 1086): Built slice (content://com.android.settings.slices/action/alarm_volume) in: 3
+11-09 05:26:25.425 W/ElapsedTimeUtils( 1086): getElapsedTime: sSuwFinishedTimeStamp is null
+11-09 05:26:25.438 I/PhenotypeBackgroundRecv( 2264): Skipping com.google.android.libraries.search.device#com.google.android.tts which doesn't use ProcessStable flags.
+11-09 05:26:25.442 D/SettingsSliceProvider( 1086): content://android.settings.slices/action/battery_saver loaded from cache
+11-09 05:26:25.452 I/resolv  (  358): GetAddrInfoHandler::run: {100 786532 100 983140 10143 0}
+11-09 05:26:25.452 I/resolv  (  358): res_nmkquery: (QUERY, IN, AAAA)
+11-09 05:26:25.452 I/resolv  (  358): resolv_cache_lookup: FOUND IN CACHE entry=0x71349fb5f7c0
+11-09 05:26:25.452 I/resolv  (  358): doQuery: rcode=0, ancount=8, return value=377
+11-09 05:26:25.452 I/resolv  (  358): res_nmkquery: (QUERY, IN, A)
+11-09 05:26:25.452 I/resolv  (  358): resolv_cache_lookup: FOUND IN CACHE entry=0x71347fb577d0
+11-09 05:26:25.452 I/resolv  (  358): doQuery: rcode=0, ancount=8, return value=281
+11-09 05:26:25.465 D/SliceBuilder( 1086): Creating slice for: com.android.settings.network.AirplaneModePreferenceController
+11-09 05:26:25.484 D/InetDiagMessage(  560): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+11-09 05:26:25.485 D/InetDiagMessage(  560): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+11-09 05:26:25.485 D/InetDiagMessage(  560): Destroyed live tcp sockets for uids={10137} in 1ms
+11-09 05:26:25.486 D/InetDiagMessage(  560): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+11-09 05:26:25.486 D/InetDiagMessage(  560): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+11-09 05:26:25.486 D/InetDiagMessage(  560): Destroyed live tcp sockets for uids={20137} in 1ms
+11-09 05:26:25.489 D/FileUtils(  560): Rounded bytes from 2593193984 to 4000000000
+11-09 05:26:25.491 D/TrafficStats( 1392): tagSocket(210) with statsTag=0x4800, statsUid=-1
+11-09 05:26:25.492 D/InetDiagMessage(  560): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+11-09 05:26:25.493 D/InetDiagMessage(  560): Destroyed 3 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+11-09 05:26:25.493 D/InetDiagMessage(  560): Destroyed live tcp sockets for uids={10151} in 3ms
+11-09 05:26:25.494 D/InetDiagMessage(  560): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+11-09 05:26:25.494 D/InetDiagMessage(  560): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+11-09 05:26:25.494 D/InetDiagMessage(  560): Destroyed live tcp sockets for uids={20151} in 0ms
+11-09 05:26:25.549 W/ElapsedTimeUtils( 1086): getElapsedTime: sSuwFinishedTimeStamp is null
+11-09 05:26:25.551 D/TrafficStats( 1392): tagSocket(209) with statsTag=0x4800, statsUid=-1
+11-09 05:26:25.551 D/SettingsSliceProvider( 1086): content://android.settings.slices/action/airplane_mode loaded from cache
+11-09 05:26:25.554 D/TrafficStats( 1392): tagSocket(209) with statsTag=0x4800, statsUid=-1
+11-09 05:26:25.557 D/TrafficStats( 1392): tagSocket(209) with statsTag=0x4800, statsUid=-1
+11-09 05:26:25.561 D/TrafficStats( 1392): tagSocket(209) with statsTag=0x4800, statsUid=-1
+11-09 05:26:25.566 D/TrafficStats( 1392): tagSocket(209) with statsTag=0x4800, statsUid=-1
+11-09 05:26:25.568 D/TrafficStats( 1392): tagSocket(209) with statsTag=0x4800, statsUid=-1
+11-09 05:26:25.571 D/TrafficStats( 1392): tagSocket(209) with statsTag=0x4800, statsUid=-1
+11-09 05:26:25.572 D/TrafficStats( 1392): tagSocket(209) with statsTag=0x4800, statsUid=-1
+--------- beginning of system
+11-09 05:26:25.574 I/ActivityManager(  560): Force stopping com.katkee.app appid=10209 user=0: clear data
+11-09 05:26:25.575 D/TrafficStats( 1392): tagSocket(209) with statsTag=0x4800, statsUid=-1
+11-09 05:26:25.583 D/BoundBrokerSvc( 1229): onUnbind: Intent { act=com.google.android.gms.instantapps.START pkg=com.google.android.gms }
+11-09 05:26:25.586 I/ActivityManager(  560): Force stopping com.katkee.app appid=10209 user=-1: clearApplicationUserData
+11-09 05:26:25.593 W/ElapsedTimeUtils( 1086): getElapsedTime: sSuwFinishedTimeStamp is null
+11-09 05:26:25.601 D/BoundBrokerSvc( 1229): onUnbind: Intent { act=com.google.android.gms.tapandpay.service.BIND dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentApiService }
+11-09 05:26:25.604 I/PhenotypeResourceReader( 1229): unable to find any Phenotype resource metadata for com.google.android.modulemetadata
+11-09 05:26:25.606 D/SlicesIndexer( 1086): Slices already indexed - returning.
+11-09 05:26:25.611 D/SettingsSliceProvider( 1086): Built slice (content://android.settings.slices/action/battery_saver) in: 6
+11-09 05:26:25.613 I/keystore2(  171): system/security/keystore2/src/maintenance.rs:341 - clearNamespace(r#APP, nspace=10209)
+11-09 05:26:25.616 W/GetConfigSnapshotOp( 1229): Succeeded but not registered: com.google.android.libraries.mobileconfiguration#com.google.android.apps.messaging [CONTEXT service_id=51 ]
+11-09 05:26:25.618 I/AppsFilter(  560): interaction: PackageSetting{abfd42c com.android.microdroid.empty_payload/10208} -> PackageSetting{f95af78 com.katkee.app/10209} BLOCKED
+11-09 05:26:25.620 V/ClearcutMetricXmitter( 3613): Transmission is done.
+11-09 05:26:25.629 I/AppsFilter(  560): interaction: PackageSetting{abfd42c com.android.microdroid.empty_payload/10208} -> PackageSetting{f95af78 com.katkee.app/10209} BLOCKED
+11-09 05:26:25.629 I/netd    (  358): tetherGetStats() -> {[]} <0.55ms>
+11-09 05:26:25.633 W/TimedProcessReaper( 3247): Scheduling killing of process to refresh configuration
+11-09 05:26:25.638 D/SettingsSliceProvider( 1086): content://android.settings.slices/action/battery_saver loaded from cache
+11-09 05:26:25.645 I/AppWidgetServiceImpl(  560): Received broadcast: android.intent.action.PACKAGE_DATA_CLEARED on user 0
+11-09 05:26:25.654 D/ActivityManager(  560): sync unfroze 2605 com.google.android.documentsui for 3
+11-09 05:26:25.656 D/ShortcutService(  560): received package broadcast intent: Intent { act=android.intent.action.PACKAGE_DATA_CLEARED dat=package: flg=0x5000010 (has extras) }
+11-09 05:26:25.656 D/ShortcutService(  560): clearing data for package: com.katkee.app userId0
+11-09 05:26:25.656 D/ShortcutService(  560): handlePackageDataCleared: com.katkee.app user=0
+11-09 05:26:25.657 D/ShortcutService(  560): rescanPackageIfNeeded 0@com.katkee.app, forceRescan=true , isNewApp=true
+11-09 05:26:25.657 D/ShortcutService(  560): Package com.katkee.app has 0 manifest shortcut(s), and 0 share target(s)
+11-09 05:26:25.664 W/BugleRcsEngine( 3247): Unable to send RCS extension log [CONTEXT thread_id=44 ]
+11-09 05:26:25.696 I/AppWidgetServiceImpl(  560): Received broadcast: android.intent.action.PACKAGE_RESTARTED on user 0
+11-09 05:26:25.696 I/AppWidgetServiceImpl(  560): Updating package stopped masked state for uid 10209 package com.katkee.app isStopped true
+11-09 05:26:25.699 D/CarrierSvcBindHelper( 1083): onHandleForceStop: [com.katkee.app]
+11-09 05:26:25.700 D/CarrierSvcBindHelper( 1083): No carrier app for: 0
+11-09 05:26:25.704 D/SlicesIndexer( 1086): Slices already indexed - returning.
+11-09 05:26:25.717 W/.gms.persistent( 1229): Suspending all threads took: 23.532ms
+11-09 05:26:25.718 W/ElapsedTimeUtils( 1086): getElapsedTime: sSuwFinishedTimeStamp is null
+11-09 05:26:25.723 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.724 W/A       ( 1596): (REDACTED) Can't format flag %s to integer.
+11-09 05:26:25.734 D/SettingsSliceProvider( 1086): Built slice (content://android.settings.slices/action/airplane_mode) in: 30
+11-09 05:26:25.738 W/gs.intelligence( 3163): Cleared Reference was only reachable from finalizer (only reported once)
+11-09 05:26:25.758 I/A       ( 1596): (REDACTED) Refusing EXCLUSIVE task %s, it is already pending. Try again in %d seconds.
+11-09 05:26:25.759 D/ShortcutService(  560): Saving package item com.google.android.as to /data/system_ce/0/shortcut_service/launchers/com.google.android.as0.xml
+11-09 05:26:25.763 D/SettingsSliceProvider( 1086): content://android.settings.slices/action/airplane_mode loaded from cache
+11-09 05:26:25.769 W/TimedProcessReaper( 3265): Scheduling killing of process to refresh configuration
+11-09 05:26:25.769 I/ModelDownloadTrigger( 1596): Schedule model download
+11-09 05:26:25.772 W/JobInfo ( 1596): Job 'com.google.android.googlequicksearchbox/com.google.android.apps.gsa.tasks.BackgroundTasksJobService#-183' has a deadline with functional constraints and an extremely short time window of 0 ms (delay=0, deadline=0). The functional constraints are not likely to be satisfied when the job runs.
+11-09 05:26:25.772 D/ShortcutService(  560): Saving package item com.google.android.apps.nexuslauncher to /data/system_ce/0/shortcut_service/launchers/com.google.android.apps.nexuslauncher0.xml
+11-09 05:26:25.785 D/CompatChangeReporter(  560): Compat change id reported: 271850009; UID 10144; state: ENABLED
+11-09 05:26:25.786 W/JobInfo (  560): Job 'com.google.android.googlequicksearchbox/com.google.android.apps.gsa.tasks.BackgroundTasksJobService#-183' has a deadline with functional constraints and an extremely short time window of 0 ms (delay=0, deadline=0). The functional constraints are not likely to be satisfied when the job runs.
+11-09 05:26:25.792 W/JobInfo (  560): Job 'com.google.android.googlequicksearchbox/com.google.android.apps.gsa.tasks.BackgroundTasksJobService#-183' has a deadline with functional constraints and an extremely short time window of 0 ms (delay=0, deadline=0). The functional constraints are not likely to be satisfied when the job runs.
+11-09 05:26:25.818 W/TimedProcessReaper( 1596): Scheduling killing of process to refresh configuration
+11-09 05:26:25.822 W/TimedProcessReaper( 1354): Scheduling killing of process to refresh configuration
+11-09 05:26:25.835 W/gs.intelligence( 3163): Missing inline cache for void dkc.B(qh, bgy)
+11-09 05:26:25.848 D/ShortcutService(  560): Saving package item com.android.systemui to /data/system_ce/0/shortcut_service/launchers/com.android.systemui0.xml
+11-09 05:26:25.886 I/OpaEligibilityChecker( 1596): send OpaEligibilityChange broadcast to CommonBroadcastReceiver
+11-09 05:26:25.892 D/PackageManager(  560): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+11-09 05:26:25.915 D/PackageManager(  560): Clear ephemeral installer activity
+11-09 05:26:25.917 I/gs.intelligence( 3163): Background concurrent mark compact GC freed 2781KB AllocSpace bytes, 0(0B) LOS objects, 49% free, 5785KB/11MB, paused 5.372ms,2.176ms total 306.983ms
+11-09 05:26:25.936 W/gs.intelligence( 3163): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/Velvet/Velvet.apk' with 1 weak references
+11-09 05:26:25.936 W/gs.intelligence( 3163): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/WellbeingPrebuilt/WellbeingPrebuilt.apk' with 1 weak references
+11-09 05:26:25.936 I/.gms.persistent( 1229): Background concurrent mark compact GC freed 13MB AllocSpace bytes, 24(684KB) LOS objects, 49% free, 16MB/33MB, paused 26.913ms,25.696ms total 294.437ms
+11-09 05:26:25.942 W/.gms.persistent( 1229): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/PrebuiltDeskClockGoogle/PrebuiltDeskClockGoogle.apk' with 1 weak references
+11-09 05:26:25.942 W/.gms.persistent( 1229): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/DevicePersonalizationPrebuiltPixel2021-aiai_20240329.00_RC16/DevicePersonalizationPrebuiltPixel2021-aiai_20240329.00_RC16.apk' with 1 weak references
+11-09 05:26:25.942 W/.gms.persistent( 1229): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/PrebuiltGmail/PrebuiltGmail.apk' with 1 weak references
+11-09 05:26:25.943 W/.gms.persistent( 1229): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/PrebuiltBugle/PrebuiltBugle.apk' with 1 weak references
+11-09 05:26:25.944 W/.gms.persistent( 1229): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/SafetyHubPrebuilt/SafetyHubPrebuilt.apk' with 1 weak references
+11-09 05:26:25.947 W/.gms.persistent( 1229): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/WellbeingPrebuilt/WellbeingPrebuilt.apk' with 1 weak references
+11-09 05:26:25.947 W/.gms.persistent( 1229): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/GoogleDialer/GoogleDialer.apk' with 1 weak references
+11-09 05:26:25.948 W/.gms.persistent( 1229): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/Velvet/Velvet.apk' with 1 weak references
+11-09 05:26:25.950 W/.gms.persistent( 1229): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/Drive/Drive.apk' with 1 weak references
+11-09 05:26:25.950 W/.gms.persistent( 1229): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/Maps/Maps.apk' with 1 weak references
+11-09 05:26:25.952 I/BgTaskExecutorImpl( 1596): (REDACTED) Starting %s background task %s.
+11-09 05:26:25.965 W/JobInfo (  560): Job 'com.google.android.providers.media.module/com.android.providers.media.MediaService#-300' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+--------- beginning of kernel
+11-09 05:26:26.129 I/servicemanager(    0): Caller(pid=171,uid=1017,sid=u:r:keystore:s0) Found android.hardware.security.keymint.IRemotelyProvisionedComponent/default in device VINTF manifest.
+11-09 05:26:25.978 I/RemoteProvisionSysSvc(  560): getRegistration(android.hardware.security.keymint.IRemotelyProvisionedComponent/default)
+11-09 05:26:25.980 W/gs.intelligence( 3163): ApkAssets: Deleting an ApkAssets object '<empty> and /system_ext/priv-app/SettingsGoogle/SettingsGoogle.apk' with 1 weak references
+11-09 05:26:25.983 W/gs.intelligence( 3163): ApkAssets: Deleting an ApkAssets object '/product/overlay/SettingsGoogle__sdk_gphone64_x86_64__auto_generated_rro_product.apk' with 1 weak references
+11-09 05:26:25.984 W/gs.intelligence( 3163): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/LatinIMEGooglePrebuilt/LatinIMEGooglePrebuilt.apk' with 1 weak references
+11-09 05:26:25.999 D/PackageManager(  560): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+11-09 05:26:26.006 I/Ma      ( 1596): #handleFlagUpdate()
+11-09 05:26:26.015 D/PackageManager(  560): Clear ephemeral installer activity
+11-09 05:26:26.022 I/RecoverableKeyStoreGms( 1392): [EnrollmentManager] Successfully downloaded certificates. [CONTEXT service_id=172 ]
+11-09 05:26:26.061 I/RegistrationProxy(  560): onServiceConnected: com.android.rkpdapp.service.RemoteProvisioningService
+11-09 05:26:26.071 W/FenceManagerImpl( 1354): <DWB> Register all active fences - start 4 registration.
+11-09 05:26:26.248 I/servicemanager(    0): Caller(pid=2766,uid=10204,sid=u:r:rkpdapp:s0:c204,c256,c512,c768) Found android.hardware.security.keymint.IRemotelyProvisionedComponent/default in device VINTF manifest.
+11-09 05:26:26.099 I/RegistrationProxy(  560): IGetRegistrationCallback.onSuccess
+11-09 05:26:26.103 D/ColorDisplayService(  560): Setting saturation level: 100
+11-09 05:26:26.120 D/ColorDisplayService(  560): GlobalSaturationTintController Animation cancelled: false to matrix: 
+11-09 05:26:26.120 D/ColorDisplayService(  560):        1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 min matrix coefficients: 
+11-09 05:26:26.120 D/ColorDisplayService(  560):        1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 max matrix coefficients: 
+11-09 05:26:26.120 D/ColorDisplayService(  560):        1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000
+11-09 05:26:26.167 I/RemoteProvisionSysSvc(  560): Fetching key 10143 for client 129939378
+11-09 05:26:26.167 I/RegistrationProxy(  560): getKeyAsync operation started with callback 232301315
+11-09 05:26:26.176 I/MicroDetectionState( 1596): (REDACTED) #takeChangeMicroDetectorMode [mIsBargeInEnabled: %b, mCurrentDetectionMode: %s]
+11-09 05:26:26.178 I/MicroDetectionState( 1596): (REDACTED) Should stop hotword detection immediately - %b
+11-09 05:26:26.181 W/SearchServiceCore( 1596): Abort, client detached.
+11-09 05:26:26.181 W/SearchServiceCore( 1596): Abort, client detached.
+11-09 05:26:26.181 W/SearchServiceCore( 1596): Abort, client detached.
+11-09 05:26:26.181 W/SearchServiceCore( 1596): Abort, client detached.
+11-09 05:26:26.181 W/SearchServiceCore( 1596): Abort, client detached.
+11-09 05:26:26.196 I/Icing   ( 1392): doRemovePackageData com.katkee.app
+11-09 05:26:26.196 I/RkpdRegistrationBinder( 2766): Key requested for : android.hardware.security.keymint.IRemotelyProvisionedComponent/default, clientUid: 1017, keyId: 10143, callback: 5337071
+11-09 05:26:26.197 I/RkpdRegistrationBinder( 2766): Key successfully assigned to client
+11-09 05:26:26.198 I/ModelDownloadController( 1596): refreshHotwordConfigCache
+11-09 05:26:26.199 I/HotwordModelConfigFetcher( 1596): #refreshHotwordConfigCache
+11-09 05:26:26.224 I/ModelDownloadController( 1596): (REDACTED) requestHotwordModelUpdate modelType-%s modelLocale-%s
+11-09 05:26:26.225 I/RemoteProvisionSysSvc(  560): Successfully fetched key for client 129939378
+11-09 05:26:26.225 I/A       ( 1596): getLocaleToModelSpecsMap
+11-09 05:26:26.225 I/A       ( 1596): Fetching latest config from MDD...
+11-09 05:26:26.232 I/GmsModuleFndr( 1392): Beginning GMS chimera module scan
+11-09 05:26:26.243 W/JobInfo ( 1596): Job 'com.google.android.googlequicksearchbox/com.google.android.apps.gsa.tasks.BackgroundTasksJobService#-107' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+11-09 05:26:26.245 I/A       ( 1596): NGA disabled since it's running Panthera and at least one a11y feature is on.
+11-09 05:26:26.245 I/A       ( 1596): (REDACTED) Nga state changed to %s
+11-09 05:26:26.246 I/A       ( 1596): (REDACTED) isTngActive=%s
+11-09 05:26:26.246 I/A       ( 1596): NGA disabled since it's running Panthera and at least one a11y feature is on.
+11-09 05:26:26.248 W/.gms.persistent( 1229): Missing inline cache for epbl ecbh.b(android.content.pm.PackageInfo)
+11-09 05:26:26.249 W/JobInfo (  560): Job 'com.google.android.googlequicksearchbox/com.google.android.apps.gsa.tasks.BackgroundTasksJobService#-107' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+11-09 05:26:26.249 E/A       ( 1596): (REDACTED) Missing client file group %s
+11-09 05:26:26.249 I/HotwordModelConfigFetcher( 1596): MDD failed to return a model config.
+11-09 05:26:26.253 E/HotwordModelConfigFetcher( 1596): Hotword model config fetched from protodatastore is empty!
+11-09 05:26:26.253 I/HotwordModelConfigFetcher( 1596): #refreshHotwordConfigCache
+11-09 05:26:26.253 E/A       ( 1596): Failed to receive valid config from MDD.
+11-09 05:26:26.253 I/A       ( 1596): Proto config empty. Exit merge.
+11-09 05:26:26.253 I/ModelDownloadController( 1596): (REDACTED) #maybeDownloadHotwordModelWithMDD with locale: %s, modelType: %s.
+11-09 05:26:26.254 E/A       ( 1596): (REDACTED) Missing client file group %s
+11-09 05:26:26.254 I/HotwordModelConfigFetcher( 1596): MDD failed to return a model config.
+11-09 05:26:26.405 I/servicemanager(    0): Caller(pid=171,uid=1017,sid=u:r:keystore:s0) Found android.hardware.security.keymint.IRemotelyProvisionedComponent/default in device VINTF manifest.
+11-09 05:26:26.261 D/SoftKeymaster(  175): system/keymaster/km_openssl/certificate_utils.cpp, Line 148: Using TAG_CERTIFICATE_NOT_BEFORE: 0
+11-09 05:26:26.261 D/SoftKeymaster(  175): system/keymaster/km_openssl/certificate_utils.cpp, Line 154: Using TAG_CERTIFICATE_NOT_AFTER: 2461449600000
+11-09 05:26:26.261 D/SoftKeymaster(  175): system/keymaster/km_openssl/certificate_utils.cpp, Line 159: Got certificate date params:  NotBefore = 0, NotAfter = 2461449600000
+11-09 05:26:26.261 D/SoftKeymaster(  175): system/keymaster/km_openssl/certificate_utils.cpp, Line 273: Setting notBefore to 0
+11-09 05:26:26.261 D/SoftKeymaster(  175): system/keymaster/km_openssl/certificate_utils.cpp, Line 282: Setting notAfter to 2461449600
+11-09 05:26:26.262 I/A       ( 1596): getLocaleToModelSpecsMap
+11-09 05:26:26.262 I/A       ( 1596): Fetching latest config from MDD...
+11-09 05:26:26.262 E/HotwordModelConfigFetcher( 1596): Hotword model config fetched from protodatastore is empty!
+11-09 05:26:26.262 I/HotwordModelConfigFetcher( 1596): #refreshHotwordConfigCache
+11-09 05:26:26.263 E/A       ( 1596): Failed to receive valid config from MDD.
+11-09 05:26:26.263 I/A       ( 1596): Proto config empty. Exit merge.
+11-09 05:26:26.265 I/HotwordModelPopulator( 1596): (REDACTED) #updateHotwordFileGroup group name: %s, raw locale: %s, locale: %s
+11-09 05:26:26.267 I/A       ( 1596): getLocaleToModelSpecsMap
+11-09 05:26:26.267 I/A       ( 1596): Fetching latest config from MDD...
+11-09 05:26:26.267 E/HotwordModelConfigFetcher( 1596): Hotword model config fetched from protodatastore is empty!
+11-09 05:26:26.267 I/HotwordModelConfigFetcher( 1596): #refreshHotwordConfigCache
+11-09 05:26:26.267 E/A       ( 1596): Failed to receive valid config from MDD.
+11-09 05:26:26.267 I/A       ( 1596): Proto config empty. Exit merge.
+11-09 05:26:26.267 I/HotwordModelPopulator( 1596): (REDACTED) #updateHotwordFileGroup group name: %s, raw locale: %s, locale: %s
+11-09 05:26:26.285 W/oid.documentsui( 2605): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/ExternalStorageProvider/ExternalStorageProvider.apk' with 1 weak references
+11-09 05:26:26.285 W/oid.documentsui( 2605): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.mediaprovider/priv-app/MediaProviderGoogle@350820300/MediaProviderGoogle.apk' with 1 weak references
+11-09 05:26:26.286 W/oid.documentsui( 2605): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/DownloadProvider/DownloadProvider.apk' with 1 weak references
+11-09 05:26:26.286 W/oid.documentsui( 2605): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/MtpService/MtpService.apk' with 1 weak references
+11-09 05:26:26.288 I/A       ( 1489): (REDACTED) #handleFlagsUpdate: changed %s
+11-09 05:26:26.299 D/SafetySourceDataValidat(  560): No cert check requested for package com.google.android.permissioncontroller
+11-09 05:26:26.315 I/resolv  (  358): GetAddrInfoHandler::run: {100 786532 100 983140 10143 0}
+11-09 05:26:26.316 D/TrafficStats( 2321): tagSocket(124) with statsTag=0x1809, statsUid=-1
+11-09 05:26:26.317 I/AppsFilter(  560): interaction: PackageSetting{abfd42c com.android.microdroid.empty_payload/10208} -> PackageSetting{707162 com.google.android.googlequicksearchbox/10144} BLOCKED
+11-09 05:26:26.317 I/AppsFilter(  560): interaction: PackageSetting{abfd42c com.android.microdroid.empty_payload/10208} -> PackageSetting{63852f3 com.google.android.apps.messaging/10133} BLOCKED
+11-09 05:26:26.317 I/AppsFilter(  560): interaction: PackageSetting{abfd42c com.android.microdroid.empty_payload/10208} -> PackageSetting{a338bb0 com.google.android.as/10136} BLOCKED
+11-09 05:26:26.318 D/TrafficStats( 2321): tagSocket(124) with statsTag=0x1809, statsUid=-1
+11-09 05:26:26.320 D/TrafficStats( 2321): tagSocket(124) with statsTag=0x1809, statsUid=-1
+11-09 05:26:26.323 W/libc    ( 2321): Access denied finding property "persist.adb.tls_server.enable"
+11-09 05:26:26.323 W/libc    ( 2321): Access denied finding property "service.adb.tls.port"
+11-09 05:26:26.336 W/ContentProviderHelper(  560): Slow operation: 95ms so far, now at getContentProviderImpl: after updateOomAdj
+11-09 05:26:26.336 W/ContentProviderHelper(  560): Slow operation: 95ms so far, now at getContentProviderImpl: done!
+11-09 05:26:26.337 I/A       ( 1489): #handleFlagsUpdate: listeners notified
+11-09 05:26:26.316 W/binder:2321_3( 2321): type=1400 audit(0.0:43): avc:  denied  { read } for  name="u:object_r:system_adbd_prop:s0" dev="tmpfs" ino=318 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:system_adbd_prop:s0 tclass=file permissive=0 app=com.google.android.gms
+11-09 05:26:26.316 W/binder:2321_3( 2321): type=1400 audit(0.0:44): avc:  denied  { read } for  name="u:object_r:adbd_prop:s0" dev="tmpfs" ino=63 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:adbd_prop:s0 tclass=file permissive=0 app=com.google.android.gms
+11-09 05:26:26.374 I/PhenotypeResourceReader( 1229): unable to find any Phenotype resource metadata for com.google.android.gsf
+11-09 05:26:26.374 I/PhenotypeResourceReader( 1229): unable to find any Phenotype resource metadata for com.google.android.tag
+11-09 05:26:26.384 I/ModuleSetResolution( 1392): Computing pending module set with APKs: [[AdsFdrDynamite.integ:241199801100000], [Cronetdynamite:242335190800], [Dynamiteloader:242335190000], [Dynamitemodulesa:242335190000], [Dynamitemodulesc:242335190000], [Googlecertificates:242335190000], [Mapsdynamite:242335190000], [Measurementdynamite:242335190000]]
+11-09 05:26:26.387 I/ModuleSetMgr( 1392): Download of container feature ambient_context is disabled.
+11-09 05:26:26.387 I/ModuleSetMgr( 1392): Download of container feature antifingerprinting is disabled.
+11-09 05:26:26.387 I/ModuleSetMgr( 1392): Download of container feature appsearch_dynamite_impl is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature brella_dynamite is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature callstreaming is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature dck_management is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature easyunlock is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature enterprise_zt_mp_complete is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature fast_pair is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature game_platform is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature games is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature growth_upgradeparty is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature home is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature homegraph is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature tflite_dynamite is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature kids_dashboard is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature kids_get_parent_verification_intent is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature kids_resource_filtering is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature kids_screentime_restriction_callback is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature kids_transparency is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature maps_core is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature mdocstore is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature mlkit.docscan.crop is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature mlkit.docscan.enhance is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature mlkit.docscan.shadow is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature mlkit.segmentation.subject is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature multipackage_debug is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature permissions_debug is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature play_cloud_search is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature semanticlocation_debug is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature tensorgps_metrics is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature tflite_delegate_edgetpu is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature tflite_delegate_test is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature tflite_gpu_dynamite is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature usonia_iam is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature vision.face is disabled.
+11-09 05:26:26.388 I/ModuleSetMgr( 1392): Download of container feature vision.ica is disabled.
+11-09 05:26:26.389 I/ModuleSetResolution( 1392): Pending container module APKs: []
+11-09 05:26:26.389 I/ModuleSetResolution( 1392): Pending non-container module APKs: []
+11-09 05:26:26.402 I/adbd    (  439): host-17: connection terminated: write failed
+11-09 05:26:26.402 I/adbd    (  439): host-17: offline
+11-09 05:26:26.406 I/adbd    (  439): destroying transport host-17
+11-09 05:26:26.406 I/adbd    (  439): BlockingConnectionAdapter(host-17): stopping
+11-09 05:26:26.406 I/adbd    (  439): host-17: read failed: Success
+11-09 05:26:26.409 I/adbd    (  439): BlockingConnectionAdapter(host-17): stopped
+11-09 05:26:26.409 I/adbd    (  439): BlockingConnectionAdapter(host-17): destructing
+11-09 05:26:26.409 I/adbd    (  439): BlockingConnectionAdapter(host-17): already stopped
+11-09 05:26:26.417 D/CarrierSvcBindHelper( 1083): onPackageModified: com.google.android.googlequicksearchbox
+11-09 05:26:26.429 I/AppWidgetServiceImpl(  560): Received broadcast: android.intent.action.PACKAGE_CHANGED on user 0
+11-09 05:26:26.429 D/AppWidgetServiceImpl(  560): Trying to notify widget providers changed
+11-09 05:26:26.431 I/AppWidgetServiceImpl(  560): getInstalledProvidersForProfiles() 0
+11-09 05:26:26.444 I/PermissionControllerServiceImpl(  915): Updating user sensitive for uid 10144
+11-09 05:26:26.448 D/CarrierSvcBindHelper( 1083): No carrier app for: 0
+11-09 05:26:26.453 D/ShortcutService(  560): received package broadcast intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x45000010 (has extras) }
+11-09 05:26:26.453 D/ShortcutService(  560): changing package: com.google.android.googlequicksearchbox userId0
+11-09 05:26:26.454 D/ShortcutService(  560): handlePackageChanged: com.google.android.googlequicksearchbox user=0
+11-09 05:26:26.454 D/ShortcutService(  560): rescanPackageIfNeeded 0@com.google.android.googlequicksearchbox, forceRescan=true , isNewApp=false
+11-09 05:26:26.508 I/lowmemorykiller(  141): Kill 'com.android.printspooler' (1536), uid 10127, oom_score_adj 999 to free 76792kB rss, 28800kB swap; reason: low watermark is breached
+11-09 05:26:26.536 I/MPEG4Writer( 3234): setStartTimestampUs: 67302215
+11-09 05:26:26.540 E/lowmemorykiller(  141): process_mrelease 1536 failed: No such process
+11-09 05:26:26.541 D/PersistedStoragePackageUninstalledReceiver(  915): Received android.intent.action.PACKAGE_DATA_CLEARED for com.katkee.app for u0
+11-09 05:26:26.579 I/Zygote  (  359): Process 1536 exited due to signal 9 (Killed)
+11-09 05:26:26.579 I/MPEG4Writer( 3234): setStartTimestampUs: 67302215
+11-09 05:26:26.582 I/ActivityManager(  560): Process com.android.printspooler (pid 1536) has died: cch+99 CEM 
+11-09 05:26:26.584 V/MediaWriter( 3234): Track event err/info msg:101, trackId:3, type:1000,val:-1011
+11-09 05:26:26.584 W/MPEG4Writer( 3234): 0-duration samples found: 1
+11-09 05:26:26.584 I/MPEG4Writer( 3234): Received total/0-length (1/0) buffers and encoded 1 frames. - Metadata
+11-09 05:26:26.584 D/MPEG4Writer( 3234): reset()
+11-09 05:26:26.584 D/MPEG4Writer( 3234): Video track stopping. Stop source
+11-09 05:26:26.584 D/MPEG4Writer( 3234): Video track source stopping
+11-09 05:26:26.584 D/MPEG4Writer( 3234): Video track source stopped
+11-09 05:26:26.585 D/DisplayManagerService(  560): Drop pending events for gone uid 10127
+11-09 05:26:26.587 V/MediaWriter( 3234): Track event err/info msg:101, trackId:2, type:1000,val:-1011
+11-09 05:26:26.587 W/MPEG4Writer( 3234): 0-duration samples found: 1
+11-09 05:26:26.587 I/MPEG4Writer( 3234): Received total/0-length (1/0) buffers and encoded 1 frames. - Metadata
+11-09 05:26:26.591 V/MediaWriter( 3234): Track event err/info msg:101, trackId:1, type:1000,val:-1011
+11-09 05:26:26.591 I/MPEG4Writer( 3234): Received total/0-length (13/0) buffers and encoded 13 frames. - Video
+11-09 05:26:26.591 D/MPEG4Writer( 3234): Video track stopped. Status:0. Stop source
+11-09 05:26:26.591 D/MPEG4Writer( 3234): Metadata track stopping. Stop source
+11-09 05:26:26.591 D/MPEG4Writer( 3234): Metadata track source stopping
+11-09 05:26:26.591 D/MPEG4Writer( 3234): Metadata track source stopped
+11-09 05:26:26.591 D/MPEG4Writer( 3234): Metadata track stopped. Status:0. Stop source
+11-09 05:26:26.591 D/MPEG4Writer( 3234): Metadata track stopping. Stop source
+11-09 05:26:26.591 D/MPEG4Writer( 3234): Metadata track source stopping
+11-09 05:26:26.591 D/MPEG4Writer( 3234): Metadata track source stopped
+11-09 05:26:26.591 D/MPEG4Writer( 3234): Metadata track stopped. Status:0. Stop source
+11-09 05:26:26.591 D/MPEG4Writer( 3234): Duration from tracks range is [0, 18108830] us
+11-09 05:26:26.591 D/MPEG4Writer( 3234): 0 chunks are written in the last batch
+11-09 05:26:26.591 D/MPEG4Writer( 3234): WriterThread stopped. Status:0
+11-09 05:26:26.596 I/PermissionControllerServiceImpl(  915): Updating user sensitive for uid 10133
+11-09 05:26:26.600 I/AppWidgetServiceImpl(  560): Received broadcast: android.intent.action.PACKAGE_CHANGED on user 0
+11-09 05:26:26.648 V/NotificationManagerService$NotificationListeners(  560): enabling notification listener for 0: ComponentInfo{com.google.android.apps.nexuslauncher/com.android.launcher3.notification.NotificationListener}
+11-09 05:26:26.649 V/NotificationManagerService$NotificationListeners(  560): Not registering ComponentInfo{com.google.android.apps.nexuslauncher/com.android.launcher3.notification.NotificationListener} is already bound
+11-09 05:26:26.650 I/MPEG4Writer( 3234): Adjust the moov start time from 67302215 us -> 67302215 us
+11-09 05:26:26.650 I/MPEG4Writer( 3234): MOOV atom was written to the file
+11-09 05:26:26.650 D/MPEG4Writer( 3234): release()
+11-09 05:26:26.650 D/MPEG4Writer( 3234): ftruncate mPreAllocateFileEndOffset:317183 mOffset:1855 mMdatEndOffset:313939 diff:3244
+11-09 05:26:26.654 E/SmsApplication( 1083): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
+11-09 05:26:26.655 W/AppOpService(  560): Ignored setUidMode call for runtime permission app op: uid = 10133, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:26:26.669 D/MPEG4Writer( 3234): final fsync() takes 18 ms, file size 313939
+11-09 05:26:26.656 I/libprocessgroup(  560): Removed cgroup /sys/fs/cgroup/uid_10127/pid_1536
+11-09 05:26:26.676 W/system_server(  560): Long monitor contention with owner shortcut (873) at void android.app.ResourcesManager.registerAllResourcesReference(android.content.res.Resources)(ResourcesManager.java:1965) waiters=0 in android.content.res.Resources android.app.ResourcesManager.createResources(android.content.res.ResourcesKey, java.lang.ClassLoader, android.app.ResourcesManager$ApkAssetsSupplier) for 145ms
+11-09 05:26:26.678 I/lowmemorykiller(  141): Kill 'com.android.bluetooth' (1134), uid 1002, oom_score_adj 999 to free 77620kB rss, 28800kB swap; reason: low watermark is breached
+11-09 05:26:26.699 E/lowmemorykiller(  141): process_mrelease 1134 failed: No such process
+11-09 05:26:26.706 D/EGL_emulation( 1162): app_time_stats: avg=1192.64ms min=102.24ms max=3081.46ms count=3
+11-09 05:26:26.715 I/ActivityManager(  560): Process com.android.bluetooth (pid 1134) has died: cch+99 CEM 
+11-09 05:26:26.584 D/ControlsListingControllerImpl(  912): ServiceConfig reloaded, count: 0
+11-09 05:26:26.716 D/ControlsListingControllerImpl(  912): ServiceConfig reloaded, count: 0
+11-09 05:26:26.716 D/ControlsListingControllerImpl(  912): ServiceConfig reloaded, count: 0
+11-09 05:26:26.717 I/Zygote  (  359): Process 1134 exited due to signal 9 (Killed)
+11-09 05:26:26.717 V/NotificationManagerService$NotificationListeners(  560): enabling notification listener for 0: ComponentInfo{com.google.android.as/com.google.android.apps.miphone.aiai.common.notification.service.AiAiNotificationListenerService}
+11-09 05:26:26.717 V/NotificationManagerService$NotificationListeners(  560): Not registering ComponentInfo{com.google.android.as/com.google.android.apps.miphone.aiai.common.notification.service.AiAiNotificationListenerService} is already bound
+11-09 05:26:26.717 V/NotificationManagerService$NotificationAssistants(  560): enabling notification assistant for 0: ComponentInfo{com.google.android.as/com.google.android.apps.miphone.aiai.common.notification.service.AiAiNotificationAssistantService}
+11-09 05:26:26.717 V/NotificationManagerService$NotificationAssistants(  560): Not registering ComponentInfo{com.google.android.as/com.google.android.apps.miphone.aiai.common.notification.service.AiAiNotificationAssistantService} is already bound
+11-09 05:26:26.727 I/netd    (  358): tetherGetStats() -> {[]} <3.36ms>
+11-09 05:26:26.730 D/ControlsListingControllerImpl(  912): ServiceConfig reloaded, count: 0
+11-09 05:26:26.761 I/adbd    (  439): host-18: read thread spawning
+11-09 05:26:26.761 I/adbd    (  439): host-18: already offline
+11-09 05:26:26.761 I/adbd    (  439): authentication not required
+11-09 05:26:26.761 I/adbd    (  439): host-18: write thread spawning
+11-09 05:26:26.729 D/RecoverableKeyStoreMgr(  560): Root of trust for recovery agent + 10143 is assigned for the first time to GoogleCloudKeyVaultServiceV1
+11-09 05:26:26.826 D/ActivityTaskManager(  560): Remove task fragment: deleteTaskFragment
+11-09 05:26:26.832 W/system_server(  560): Long monitor contention with owner shortcut (873) at void android.app.ResourcesManager.registerAllResourcesReference(android.content.res.Resources)(ResourcesManager.java:1965) waiters=1 in android.content.res.Resources android.app.ResourcesManager.createResources(android.content.res.ResourcesKey, java.lang.ClassLoader, android.app.ResourcesManager$ApkAssetsSupplier) for 319ms
+11-09 05:26:26.834 D/MPEG4Writer( 3234): MP4WtrCtrlHlpLooper stopped
+11-09 05:26:26.834 D/MPEG4Writer( 3234): Top 5 write durations(microseconds): #1:12 #2:13 #3:21 #4:24 #5:58497
+11-09 05:26:26.850 I/Fitness ( 1229): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_DATA_CLEARED [CONTEXT service_id=17 ]
+11-09 05:26:26.860 I/PermissionControllerServiceImpl(  915): Updating user sensitive for uid 10136
+11-09 05:26:26.860 W/Looper  (  560): Slow delivery took 203ms main h=com.android.server.alarm.AlarmManagerService$AlarmHandler c=android.app.ActivityManager$1$$ExternalSyntheticLambda0@91df9cd m=0
+11-09 05:26:26.869 I/libprocessgroup(  560): Removed cgroup /sys/fs/cgroup/uid_1002/pid_1134
+11-09 05:26:26.875 W/GraphicBufferSource( 3234): released unpopulated slots: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63]
+11-09 05:26:26.882 D/CompatChangeReporter(  560): Compat change id reported: 262645982; UID 10144; state: ENABLED
+11-09 05:26:26.885 I/AppWidgetServiceImpl(  560): Received broadcast: android.intent.action.PACKAGE_CHANGED on user 0
+11-09 05:26:26.887 W/ParceledListSlice(  560): Element #25 is 19764 bytes.
+11-09 05:26:26.887 W/ParceledListSlice(  560): Element #26 is 19800 bytes.
+11-09 05:26:26.888 E/system_server(  560): No package ID 7f found for resource ID 0x7f080bdc.
+11-09 05:26:26.888 E/system_server(  560): No package ID 7f found for resource ID 0x7f152158.
+11-09 05:26:26.888 E/system_server(  560): No package ID 7f found for resource ID 0x7f080bed.
+11-09 05:26:26.888 E/system_server(  560): No package ID 7f found for resource ID 0x7f152159.
+11-09 05:26:26.888 D/ShortcutService(  560): Package com.google.android.googlequicksearchbox has 2 manifest shortcut(s), and 0 share target(s)
+11-09 05:26:26.888 D/ShortcutService(  560): Package com.google.android.googlequicksearchbox updated, version 301351415 -> 301351415
+11-09 05:26:26.888 D/ShortcutService(  560): Package com.google.android.googlequicksearchbox: publishing manifest shortcuts
+11-09 05:26:26.891 W/ParceledListSlice(  560): Element #27 is 19644 bytes.
+11-09 05:26:26.892 W/ParceledListSlice(  560): Element #28 is 19552 bytes.
+11-09 05:26:26.892 W/ParceledListSlice(  560): Element #29 is 19664 bytes.
+11-09 05:26:26.893 D/ShortcutService(  560): received package broadcast intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x45000010 (has extras) }
+11-09 05:26:26.893 D/ShortcutService(  560): changing package: com.google.android.apps.messaging userId0
+11-09 05:26:26.893 D/ShortcutService(  560): handlePackageChanged: com.google.android.apps.messaging user=0
+11-09 05:26:26.894 D/ShortcutService(  560): rescanPackageIfNeeded 0@com.google.android.apps.messaging, forceRescan=true , isNewApp=false
+11-09 05:26:26.895 E/system_server(  560): No package ID 7f found for resource ID 0x7f0803ff.
+11-09 05:26:26.895 E/system_server(  560): No package ID 7f found for resource ID 0x7f1510ad.
+11-09 05:26:26.895 E/system_server(  560): No package ID 7f found for resource ID 0x7f1510ad.
+11-09 05:26:26.895 E/system_server(  560): No package ID 7f found for resource ID 0x7f1510ac.
+11-09 05:26:26.895 D/ShortcutService(  560): Package com.google.android.apps.messaging has 1 manifest shortcut(s), and 2 share target(s)
+11-09 05:26:26.895 D/ShortcutService(  560): Package com.google.android.apps.messaging updated, version 235003880 -> 235003880
+11-09 05:26:26.910 W/PackageManager( 1162): Failure retrieving text 0x7f130786 in package com.android.systemui
+11-09 05:26:26.910 W/PackageManager( 1162): android.content.res.Resources$NotFoundException: String resource ID #0x7f130786
+11-09 05:26:26.910 W/PackageManager( 1162): 	at android.content.res.Resources.getText(Resources.java:466)
+11-09 05:26:26.910 W/PackageManager( 1162): 	at android.app.ApplicationPackageManager.getText(ApplicationPackageManager.java:2405)
+11-09 05:26:26.910 W/PackageManager( 1162): 	at android.appwidget.AppWidgetProviderInfo.loadDescription(AppWidgetProviderInfo.java:484)
+11-09 05:26:26.910 W/PackageManager( 1162): 	at com.android.launcher3.model.WidgetItem.<init>(go/retraceme 31f9979659277bb965985aff1272c33e3c3c9e755b77166d20a2465454178f2c:4)
+11-09 05:26:26.910 W/PackageManager( 1162): 	at com.android.launcher3.model.WidgetsModel.update(go/retraceme 31f9979659277bb965985aff1272c33e3c3c9e755b77166d20a2465454178f2c:72)
+11-09 05:26:26.910 W/PackageManager( 1162): 	at com.android.launcher3.p0.execute(go/retraceme 31f9979659277bb965985aff1272c33e3c3c9e755b77166d20a2465454178f2c:16)
+11-09 05:26:26.910 W/PackageManager( 1162): 	at com.android.launcher3.LauncherModel.a(go/retraceme 31f9979659277bb965985aff1272c33e3c3c9e755b77166d20a2465454178f2c:27)
+11-09 05:26:26.910 W/PackageManager( 1162): 	at com.android.launcher3.t0.run(go/retraceme 31f9979659277bb965985aff1272c33e3c3c9e755b77166d20a2465454178f2c:12)
+11-09 05:26:26.910 W/PackageManager( 1162): 	at android.os.Handler.handleCallback(Handler.java:959)
+11-09 05:26:26.910 W/PackageManager( 1162): 	at android.os.Handler.dispatchMessage(Handler.java:100)
+11-09 05:26:26.910 W/PackageManager( 1162): 	at android.os.Looper.loopOnce(Looper.java:232)
+11-09 05:26:26.910 W/PackageManager( 1162): 	at android.os.Looper.loop(Looper.java:317)
+11-09 05:26:26.910 W/PackageManager( 1162): 	at android.os.HandlerThread.run(HandlerThread.java:85)
+11-09 05:26:26.924 I/SettingsDataLayer.AE( 1596): Set Assistant eligibility status
+11-09 05:26:26.930 D/TrafficStats( 2321): tagSocket(133) with statsTag=0x1809, statsUid=-1
+11-09 05:26:26.931 W/FenceManagerImpl( 1354): <DWB> Register all active fences - Successfully registered 4.
+11-09 05:26:26.932 E/PhenotypeFlagCommitter( 1392): Retrieving snapshot for com.google.android.gms.playlog.uploader failed
+11-09 05:26:26.932 E/PhenotypeFlagCommitter( 1392): java.util.concurrent.TimeoutException: Timed out waiting for Task
+11-09 05:26:26.932 E/PhenotypeFlagCommitter( 1392): 	at dkkh.n(:com.google.android.gms@242335041@24.23.35 (190800-646585959):53)
+11-09 05:26:26.932 E/PhenotypeFlagCommitter( 1392): 	at czsy.f(:com.google.android.gms@242335041@24.23.35 (190800-646585959):11)
+11-09 05:26:26.932 E/PhenotypeFlagCommitter( 1392): 	at czsy.j(:com.google.android.gms@242335041@24.23.35 (190800-646585959):42)
+11-09 05:26:26.932 E/PhenotypeFlagCommitter( 1392): 	at czsy.h(:com.google.android.gms@242335041@24.23.35 (190800-646585959):4)
+11-09 05:26:26.932 E/PhenotypeFlagCommitter( 1392): 	at com.google.android.gms.clearcut.init.ClearcutInitChimeraIntentService.b(:com.google.android.gms@242335041@24.23.35 (190800-646585959):45)
+11-09 05:26:26.932 E/PhenotypeFlagCommitter( 1392): 	at ajjh.onHandleIntent(:com.google.android.gms@242335041@24.23.35 (190800-646585959):136)
+11-09 05:26:26.932 E/PhenotypeFlagCommitter( 1392): 	at com.google.android.gms.clearcut.init.DefaultPriorityClearcutInitChimeraIntentService.onHandleIntent(:com.google.android.gms@242335041@24.23.35 (190800-646585959):12)
+11-09 05:26:26.932 E/PhenotypeFlagCommitter( 1392): 	at com.google.android.chimera.IntentOperation.onHandleIntent(:com.google.android.gms@242335041@24.23.35 (190800-646585959):2)
+11-09 05:26:26.932 E/PhenotypeFlagCommitter( 1392): 	at ajom.onHandleIntent(:com.google.android.gms@242335041@24.23.35 (190800-646585959):8)
+11-09 05:26:26.932 E/PhenotypeFlagCommitter( 1392): 	at pkf.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):70)
+11-09 05:26:26.932 E/PhenotypeFlagCommitter( 1392): 	at pke.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):152)
+11-09 05:26:26.932 E/PhenotypeFlagCommitter( 1392): 	at emsz.run(:com.google.android.gms@242335041@24.23.35 (190800-646585959):21)
+11-09 05:26:26.932 E/PhenotypeFlagCommitter( 1392): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-09 05:26:26.932 E/PhenotypeFlagCommitter( 1392): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-09 05:26:26.932 E/PhenotypeFlagCommitter( 1392): 	at java.lang.Thread.run(Thread.java:1012)
+11-09 05:26:26.976 D/TrafficStats( 2321): tagSocket(133) with statsTag=0x1809, statsUid=-1
+11-09 05:26:26.977 W/system_server(  560): Suspending all threads took: 70.685ms
+11-09 05:26:27.012 I/EnterpriseLoader( 1392): [ConditionsChecker] ZT config not present. [CONTEXT service_id=225 ]
+11-09 05:26:27.012 I/EsimModuleInit( 1392): onHandleIntent action: android.intent.action.BOOT_COMPLETED [CONTEXT service_id=333 ]
+11-09 05:26:27.012 I/EsimPhSyncer( 1392): p/h flags sync is already completed. [CONTEXT service_id=333 ]
+11-09 05:26:27.015 D/ShortcutService(  560): Package com.google.android.apps.messaging: publishing manifest shortcuts
+11-09 05:26:27.016 I/AppWidgetServiceImpl(  560): getWidgetPreview() 0
+11-09 05:26:27.017 I/Fido    ( 1392): [FidoInitIntentOperation] Initializing Fido module, InitRuntimeState=2
+11-09 05:26:27.018 D/ShortcutService(  560): received package broadcast intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x45000010 (has extras) }
+11-09 05:26:27.018 D/ShortcutService(  560): changing package: com.google.android.as userId0
+11-09 05:26:27.018 D/ShortcutService(  560): handlePackageChanged: com.google.android.as user=0
+11-09 05:26:27.018 D/ShortcutService(  560): rescanPackageIfNeeded 0@com.google.android.as, forceRescan=true , isNewApp=false
+11-09 05:26:27.018 D/ShortcutService(  560): Package com.google.android.as has 0 manifest shortcut(s), and 0 share target(s)
+11-09 05:26:27.018 D/ShortcutService(  560): Package com.google.android.as updated, version 12692945 -> 12692945
+11-09 05:26:27.019 D/ShortcutService(  560): Package com.google.android.as: publishing manifest shortcuts
+11-09 05:26:27.021 D/PackageManager(  560): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+11-09 05:26:27.021 D/PackageManager(  560): Clear ephemeral installer activity
+11-09 05:26:27.023 I/AppWidgetServiceImpl(  560): getWidgetPreview() 0
+11-09 05:26:27.026 I/ModelDownloadController( 1596): (REDACTED) Hotword models associated with downloaded MDD filegroups: %s, pending groups: %s
+11-09 05:26:27.028 D/TrafficStats( 2321): tagSocket(124) with statsTag=0x1809, statsUid=-1
+11-09 05:26:27.044 W/binder:2321_2( 2321): type=1400 audit(0.0:45): avc:  denied  { read } for  name="u:object_r:system_adbd_prop:s0" dev="tmpfs" ino=318 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:system_adbd_prop:s0 tclass=file permissive=0 app=com.google.android.gms
+11-09 05:26:27.064 I/HotwordModelConfigFetcher( 1596): Fetchng from MDD post asset refresh.
+11-09 05:26:27.064 I/HotwordModelConfigFetcher( 1596): Fetchng from MDD post asset refresh.
+11-09 05:26:27.065 I/SettingsDataLayer.AE( 1596): Set isHotwordOpaEligible
+11-09 05:26:27.068 I/A       ( 1596): (REDACTED) Loading %s from MDD with name=%s version=%d BuildId= %d
+11-09 05:26:27.107 W/libc    ( 2321): Access denied finding property "persist.adb.tls_server.enable"
+11-09 05:26:27.107 W/libc    ( 2321): Access denied finding property "service.adb.tls.port"
+11-09 05:26:27.100 W/binder:2321_2( 2321): type=1400 audit(0.0:46): avc:  denied  { read } for  name="u:object_r:adbd_prop:s0" dev="tmpfs" ino=63 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:adbd_prop:s0 tclass=file permissive=0 app=com.google.android.gms
+11-09 05:26:27.119 W/Looper  (  560): Slow delivery took 450ms android.fg h=android.os.Handler c=com.android.server.am.SameProcessApplicationThread$$ExternalSyntheticLambda1@79e675c m=0
+11-09 05:26:27.129 I/hw-BpHwBinder( 3234): onLastStrongRef automatically unlinking death recipients
+11-09 05:26:27.129 I/hw-BpHwBinder(  504): onLastStrongRef automatically unlinking death recipients
+11-09 05:26:27.129 I/hw-BpHwBinder(  504): onLastStrongRef automatically unlinking death recipients
+11-09 05:26:27.131 I/AppWidgetServiceImpl(  560): Received broadcast: android.intent.action.PACKAGE_CHANGED on user 0
+11-09 05:26:27.133 D/SearchUiPerUserService(  560): Removing callback for session Id=com.google.android.apps.nexuslauncher:149cf44d-16f2-435f-ba3d-332fa6a0d492,0 and callback=android.os.BinderProxy@9758e6e
+11-09 05:26:27.140 D/ShortcutService(  560): Saving package item com.google.android.googlequicksearchbox to /data/system_ce/0/shortcut_service/packages/com.google.android.googlequicksearchbox.xml
+11-09 05:26:27.145 D/SearchUiPerUserService(  560): Removing all callbacks for session Id=com.google.android.apps.nexuslauncher:149cf44d-16f2-435f-ba3d-332fa6a0d492,0 and 0 callbacks.
+11-09 05:26:27.147 D/SearchUiPerUserService(  560): Creating SearchSessionInfo for session Id=com.google.android.apps.nexuslauncher:38dfa2b4-438c-4e90-a12c-9a1a2049fa0d,0
+11-09 05:26:27.155 D/SearchUiPerUserService(  560): Storing callback for session Id=com.google.android.apps.nexuslauncher:38dfa2b4-438c-4e90-a12c-9a1a2049fa0d,0 and callback=android.os.BinderProxy@63b769a
+11-09 05:26:27.156 D/InputMonitorCompat( 1162): Input event receiver for monitor (minus-one-disp0) disposed
+11-09 05:26:27.156 D/InputMonitorCompat( 1162): Input monitor (minus-one-disp0) disposed
+11-09 05:26:27.156 I/RecoverableKeyStoreMgr(  560): Updating the certificate with the new serial number 10020
+11-09 05:26:27.156 D/RecoverableKeyStoreMgr(  560): Getting and validating a random endpoint certificate
+11-09 05:26:27.166 W/system_server(  560): Long monitor contention with owner binder:560_10 (1616) at com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer(boolean)(PackageManagerService.java:1222) waiters=4 in com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer(boolean) for 141ms
+11-09 05:26:27.170 D/RecoverableKeyStoreMgr(  560): Saving the randomly chosen endpoint certificate to database
+11-09 05:26:27.186 W/system_server(  560): Long monitor contention with owner binder:560_4 (651) at void com.android.server.wm.TaskFragmentOrganizerController.applyTransaction(android.window.WindowContainerTransaction, int, boolean, android.window.RemoteTransition)(TaskFragmentOrganizerController.java:625) waiters=0 in void com.android.server.wm.WindowProcessController.setThread(android.app.IApplicationThread) for 470ms
+11-09 05:26:27.195 W/system_server(  560): Long monitor contention with owner binder:560_4 (651) at void com.android.server.wm.TaskFragmentOrganizerController.applyTransaction(android.window.WindowContainerTransaction, int, boolean, android.window.RemoteTransition)(TaskFragmentOrganizerController.java:625) waiters=2 in void com.android.server.wm.WindowAnimator.lambda$new$1(long) for 352ms
+11-09 05:26:27.197 W/system_server(  560): Long monitor contention with owner binder:560_1D (1986) at boolean com.android.server.am.ActivityManagerService.cleanUpApplicationRecordLocked(com.android.server.am.ProcessRecord, int, boolean, boolean, int, boolean, boolean)(ActivityManagerService.java:13783) waiters=0 in boolean com.android.server.am.ActivityManagerService.isAppStartModeDisabled(int, java.lang.String) for 315ms
+11-09 05:26:27.201 D/PackageManager(  560): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+11-09 05:26:27.201 D/PackageManager(  560): Clear ephemeral installer activity
+11-09 05:26:27.201 W/InputManager-JNI(  560): Input channel object '[Gesture Monitor] minus-one (client)' was disposed without first being removed with the input manager!
+11-09 05:26:27.206 D/FileUtils(  560): Rounded bytes from 2593193984 to 4000000000
+11-09 05:26:27.206 W/system_server(  560): Long monitor contention with owner binder:560_1D (1986) at void com.android.server.am.ActivityManagerService$AppDeathRecipient.binderDied()(ActivityManagerService.java:1620) waiters=1 in void com.android.server.am.ContentProviderHelper.removeContentProvider(android.os.IBinder, boolean) for 345ms
+11-09 05:26:27.209 V/WindowManagerShell(  912): Transition requested (#15): android.os.BinderProxy@ffda402 TransitionRequestInfo { type = CLOSE, triggerTask = null, pipTask = null, remoteTransition = RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@283a113, appThread = null, debugName = null }, displayChange = null, flags = 0, debugId = 15 }
+11-09 05:26:27.209 W/system_server(  560): Long monitor contention with owner binder:560_1D (1986) at void com.android.server.am.ActivityManagerService$AppDeathRecipient.binderDied()(ActivityManagerService.java:1620) waiters=2 in void com.android.server.am.BroadcastQueueModernImpl.updateRunningList() for 327ms
+11-09 05:26:27.211 W/Looper  (  560): Slow dispatch took 350ms main h=android.app.ActivityThread$H c=null m=131
+11-09 05:26:27.215 D/InputMonitorCompat( 1162): Input monitor (minus-one-disp0) created
+11-09 05:26:27.217 V/WindowManagerShell(  912): RemoteTransition directly requested for (#15) android.os.BinderProxy@ffda402: RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@283a113, appThread = null, debugName = null }
+11-09 05:26:27.226 V/WindowManager(  560): Queueing transition: TransitionRecord{85b54f0 id=-1 type=CHANGE flags=0x0}
+11-09 05:26:27.228 D/InputMonitorCompat( 1162): Input event receiver for monitor (minus-one-disp0) created
+11-09 05:26:27.231 W/Looper  (  912): Slow dispatch took 41ms wmshell.main h=android.os.Handler c=com.android.wm.shell.transition.Transitions$TransitionPlayerImpl$$ExternalSyntheticLambda1@4d18f50 m=0
+11-09 05:26:27.234 I/BpBinder(  430): onLastStrongRef automatically unlinking death recipients: 
+11-09 05:26:27.236 D/TileServices(  912): Couldn't find tile for ComponentInfo{com.google.android.apps.wellbeing/com.google.android.apps.wellbeing.screen.ui.GrayscaleTileService}(0)
+11-09 05:26:27.276 V/WindowManagerShell(  912): onTransitionReady(transaction=2405181686246)
+11-09 05:26:27.276 V/WindowManagerShell(  912): onTransitionReady (#15) android.os.BinderProxy@ffda402: {id=15 t=CLOSE f=0x0 trk=0 r=[] c=[]}
+11-09 05:26:27.315 E/CellBroadcastUtils( 1083): getDefaultCellBroadcastReceiverPackageName: no package found
+11-09 05:26:27.322 W/AppOpService(  560): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:26:27.331 W/AppOpService(  560): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:26:27.332 W/Looper  (  560): Slow dispatch took 196ms android.fg h=android.os.Handler c=com.android.internal.content.PackageMonitor$$ExternalSyntheticLambda0@225da20 m=0
+11-09 05:26:27.337 W/AppOpService(  560): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_WAP_PUSH, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:26:27.337 W/AppOpService(  560): Ignored setUidMode call for runtime permission app op: uid = 1001, code = SEND_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:26:27.338 W/AppOpService(  560): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+11-09 05:26:27.360 V/WindowManagerShell(  912): No transition roots in (#15) android.os.BinderProxy@ffda402@0 so abort
+11-09 05:26:27.365 I/AiAiEcho( 1454): SearchContextManagerImpl::setSearchContext resultTypes=[141151] extras=[Bundle[{launcher.maxInlineIcons=3, dynamic_ranking_m3_enabled=true, qs_tiles_asi_enabled=true, allowlist_enabled=false, one_search_enabled=true, system_clock=true, version_code=12, gms_play_query_lower_bound=2, gms_play_query_upper_bound=20, recent_search_block_enabled=true, gms_play_feature_supported=true, launcher.gridSize=4, showhiddentargets_enabled=false, ose_info=1}]] sessionId=[com.google.android.apps.nexuslauncher:38dfa2b4-438c-4e90-a12c-9a1a2049fa0d,0]
+11-09 05:26:27.367 I/d.configupdater( 3037): Background concurrent mark compact GC freed 1785KB AllocSpace bytes, 38(1868KB) LOS objects, 49% free, 2117KB/4234KB, paused 86us,14.499ms total 122.040ms
+11-09 05:26:27.374 I/HotwordModelConfigFetcher( 1596): (REDACTED) MDD returned a model config with build ID: %d
+11-09 05:26:27.381 V/WindowManagerShell(  912): Transition animation finished (aborted=true), notifying core (#15) android.os.BinderProxy@ffda402@0
+11-09 05:26:27.382 V/WindowManagerShell(  912): Track 0 became idle
+11-09 05:26:27.382 V/WindowManagerShell(  912): All active transition animations finished
+11-09 05:26:27.382 W/Looper  (  912): Slow dispatch took 105ms wmshell.main h=android.os.Handler c=com.android.wm.shell.transition.Transitions$TransitionPlayerImpl$$ExternalSyntheticLambda0@ea5fe4e m=0
+11-09 05:26:27.386 V/WindowManager(  560): Sent Transition (#15) createdAt=11-09 05:26:26.826 via request=TransitionRequestInfo { type = CLOSE, triggerTask = null, pipTask = null, remoteTransition = RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@7c3059b, appThread = null, debugName = null }, displayChange = null, flags = 0, debugId = 15 }
+11-09 05:26:27.426 V/WindowManager(  560):     startWCT=WindowContainerTransaction { changes = {} hops = [] errorCallbackToken=null taskFragmentOrganizer=null }
+11-09 05:26:27.446 V/WindowManager(  560):     info={id=15 t=CLOSE f=0x0 trk=0 r=[] c=[]}
+11-09 05:26:27.446 V/WindowManager(  560): Finish Transition (#15): created at 11-09 05:26:26.826 collect-started=0.081ms request-sent=359.887ms started=401.067ms ready=405.517ms sent=406.613ms finished=555.458ms
+11-09 05:26:27.455 W/UserManagerService(  560): Requested status bar icon for non-badged user 0
+11-09 05:26:27.460 D/SearchTargetUtil( 1162): query= size=1
+11-09 05:26:27.460 D/SearchTargetUtil( 1162): layoutType=icon_row resultType=4096 packageName= extras=Bundle{aiai_settings_enabled=true,icon_container_enabled=true,zero_state_query_ready=true,zero_state_all_apps_web_suggest_count=3,rank=1.0,toast_settings_toggle_values=16777476,key_ipc_start=89083,hide_subtitle=true,enable_launch_animations=true,zero_state_qsb_web_suggest_count=10,}ParentID: null targetID: SESSION_INFO:0::zero_state_flags
+11-09 05:26:27.464 W/system_server(  560): Long monitor contention with owner binder:560_2 (577) at com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer(boolean)(PackageManagerService.java:1222) waiters=27 in com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer(boolean) for 262ms
+11-09 05:26:27.470 W/system_server(  560): Long monitor contention with owner binder:560_2 (577) at com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer(boolean)(PackageManagerService.java:1222) waiters=30 in com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer(boolean) for 260ms
+11-09 05:26:27.481 D/PackageManager(  560): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+11-09 05:26:27.484 D/ImsResolver( 1083): maybeAddedImsService, packageName: com.google.android.googlequicksearchbox
+11-09 05:26:27.485 D/PackageManager(  560): Clear ephemeral installer activity
+11-09 05:26:27.487 I/ActivityManager(  560): Broadcasting: Intent { act=android.intent.action.MEDIA_SCANNER_SCAN_FILE dat=file:///... flg=0x400000 }
+11-09 05:26:27.493 W/Looper  (  560): Slow dispatch took 281ms main h=android.app.ActivityThread$H c=android.app.LoadedApk$ReceiverDispatcher$Args$$ExternalSyntheticLambda0@46072fe m=0
+11-09 05:26:27.496 D/PackageManager(  560): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+11-09 05:26:27.498 D/PackageManager(  560): Clear ephemeral installer activity
+11-09 05:26:27.498 I/PermissionControllerServiceImpl(  915): Updating user sensitive for uid 10143
+11-09 05:26:27.500 I/RoleService(  560): Granting default roles...
+11-09 05:26:27.512 D/PackageManager(  560): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+11-09 05:26:27.515 D/PackageManager(  560): Clear ephemeral installer activity
+11-09 05:26:27.520 W/JobService( 1596): onNetworkChanged() not implemented in com.google.android.apps.gsa.tasks.BackgroundTasksJobService. Must override in a subclass.
+11-09 05:26:27.525 W/earchbox:search( 1596): Long monitor contention with owner GoogleApiHandler (1770) at android.content.IContentProvider android.app.ActivityThread.acquireProvider(android.content.Context, java.lang.String, int, boolean)(ActivityThread.java:7861) waiters=0 in android.content.IContentProvider android.app.ActivityThread.acquireProvider(android.content.Context, java.lang.String, int, boolean) for 594ms
+11-09 05:26:27.536 D/ActivityManager(  560): freezing 2877 com.google.android.onetimeinitializer
+11-09 05:26:27.537 D/ActivityManager(  560): freezing 2813 com.android.imsserviceentitlement
+11-09 05:26:27.550 I/GmsDebugLogger( 1392): [78] 
+11-09 05:26:27.556 I/system_server(  560): Background concurrent mark compact GC freed 26MB AllocSpace bytes, 100(2560KB) LOS objects, 44% free, 30MB/54MB, paused 107.586ms,92.641ms total 1.436s
+11-09 05:26:27.565 V/WindowManagerShell(  912): Transition requested (#16): android.os.BinderProxy@e7d3b6f TransitionRequestInfo { type = CHANGE, triggerTask = null, pipTask = null, remoteTransition = RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@a48507c, appThread = null, debugName = null }, displayChange = null, flags = 0, debugId = 16 }
+11-09 05:26:27.566 V/WindowManagerShell(  912): RemoteTransition directly requested for (#16) android.os.BinderProxy@e7d3b6f: RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@a48507c, appThread = null, debugName = null }
+11-09 05:26:27.571 I/BpBinder(  430): onLastStrongRef automatically unlinking death recipients: 
+11-09 05:26:27.571 V/WindowManager(  560): Queueing transition: TransitionRecord{d94c94f id=-1 type=CLOSE flags=0x0}
+11-09 05:26:27.581 I/RecoverableKeyStoreMgr(  560): This is a certificate change. Snapshot didn't exist
+11-09 05:26:27.595 V/WindowManagerShell(  912): onTransitionReady(transaction=2405181686260)
+11-09 05:26:27.596 V/WindowManagerShell(  912): onTransitionReady (#16) android.os.BinderProxy@e7d3b6f: {id=16 t=CHANGE f=0x0 trk=1 r=[] c=[]}
+11-09 05:26:27.596 V/WindowManagerShell(  912): No transition roots in (#16) android.os.BinderProxy@e7d3b6f@1 so abort
+11-09 05:26:27.597 V/WindowManager(  560): Sent Transition (#16) createdAt=11-09 05:26:27.206 via request=TransitionRequestInfo { type = CHANGE, triggerTask = null, pipTask = null, remoteTransition = RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@2da9347, appThread = null, debugName = null }, displayChange = null, flags = 0, debugId = 16 }
+11-09 05:26:27.600 V/WindowManagerShell(  912): Transition animation finished (aborted=true), notifying core (#16) android.os.BinderProxy@e7d3b6f@1
+11-09 05:26:27.622 I/PhenotypeResourceReader( 1229): unable to find any Phenotype resource metadata for com.google.android.apps.nexuslauncher
+11-09 05:26:27.786 V/WindowManagerShell(  912): Track 1 became idle
+11-09 05:26:27.786 V/WindowManagerShell(  912): All active transition animations finished
+11-09 05:26:27.786 W/Looper  (  912): Slow dispatch took 190ms wmshell.main h=android.os.Handler c=com.android.wm.shell.transition.Transitions$TransitionPlayerImpl$$ExternalSyntheticLambda0@5383d05 m=0
+11-09 05:26:27.795 I/Bugle   ( 3247): BroadcastReceiverAsyncWorkTracker: Acknowledging broadcast of buoi@65336ce
+11-09 05:26:27.810 I/HotwordModelConfigFetcher( 1596): (REDACTED) Received value from MDD and updated PDS with Build ID: %d
+11-09 05:26:27.812 V/WindowManager(  560):     startWCT=WindowContainerTransaction { changes = {} hops = [] errorCallbackToken=null taskFragmentOrganizer=null }
+11-09 05:26:27.812 V/WindowManager(  560):     info={id=16 t=CHANGE f=0x0 trk=1 r=[] c=[]}
+11-09 05:26:27.812 W/Looper  (  560): Drained
+11-09 05:26:27.812 W/Looper  (  560): Slow dispatch took 215ms android.fg h=android.os.Handler c=com.android.server.wm.TransitionController$Logger@168c8c3 m=0
+11-09 05:26:27.812 V/WindowManager(  560): Finish Transition (#16): created at 11-09 05:26:27.206 collect-started=26.23ms request-sent=353.792ms started=359.783ms ready=384.251ms sent=387.328ms finished=394.985ms
+11-09 05:26:27.812 W/Looper  (  560): Slow delivery took 211ms android.fg h=android.os.Handler c=com.android.server.wm.Transition$$ExternalSyntheticLambda0@9b1540 m=0
+11-09 05:26:27.815 I/RecoverableKeyStoreGms( 1392): [EnrollmentManager] Recovery service is initialized. [CONTEXT service_id=172 ]
+11-09 05:26:27.833 W/ssioncontroller(  915): Long monitor contention with owner pool-2-thread-8 (1042) at boolean android.os.MessageQueue.enqueueMessage(android.os.Message, long)(MessageQueue.java:695) waiters=0 in android.os.Message android.os.MessageQueue.next() for 253ms
+11-09 05:26:27.846 I/ChimeraSrvcProxy( 1229): NullBinder for android.net.action.RECOMMEND_NETWORKS triggering remote TransactionTooLargeException due to Service without Chimera impl
+11-09 05:26:27.853 W/ssioncontroller(  915): Long monitor contention with owner pool-2-thread-8 (1042) at boolean android.os.MessageQueue.enqueueMessage(android.os.Message, long)(MessageQueue.java:695) waiters=1 in boolean android.os.MessageQueue.enqueueMessage(android.os.Message, long) for 268ms
+11-09 05:26:27.869 D/ShortcutService(  560): Saving package item com.google.android.apps.messaging to /data/system_ce/0/shortcut_service/packages/com.google.android.apps.messaging.xml
+11-09 05:26:27.869 I/RoleService(  560): Granting default roles...
+11-09 05:26:27.869 W/Looper  (  560): Slow dispatch took 141ms main h=android.app.ActivityThread$H c=android.app.LoadedApk$ReceiverDispatcher$Args$$ExternalSyntheticLambda0@6b6cfd4 m=0
+11-09 05:26:27.871 W/.gms.persistent( 1229): Large reply transaction of 1056768 bytes, interface descriptor , code 1
+11-09 05:26:27.871 W/Role    (  560): Default holder doesn't have required signing certificate: com.google.android.retaildemo:6547c73dee150c103980bfdffe55cc9a011d785dd694a5f99afd8205bcaf1f80
+11-09 05:26:27.871 W/system_server(  560): Long monitor contention with owner ActivityManager (592) at boolean android.os.MessageQueue.enqueueMessage(android.os.Message, long)(MessageQueue.java:695) waiters=0 in android.os.Message android.os.MessageQueue.next() for 165ms
+11-09 05:26:27.873 I/ActivityManager(  560): Enqueued broadcast Intent { act=android.intent.action.MEDIA_SCANNER_SCAN_FILE dat=file:///... flg=0x400000 }: 0
+11-09 05:26:27.873 D/ActivityManager(  560): freezing 1824 com.android.managedprovisioning
+11-09 05:26:27.873 D/PackageManager(  560): Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+11-09 05:26:27.873 D/PackageManager(  560): Clear ephemeral installer activity
+11-09 05:26:28.044 I/logd    (    0): logdr: UID=2000 GID=2000 PID=3966 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns
