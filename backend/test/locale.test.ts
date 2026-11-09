@@ -47,9 +47,15 @@ describe("the account's language", () => {
     assert.equal(saved.status, 200);
     assert.equal(saved.body.user.locale, "mr");
     // An unknown language is refused, and an unknown one at sign-up just leaves English.
-    assert.equal((await setLocale(hindi, "fr")).status, 422);
-    const french = await signup({ locale: "fr" });
-    assert.equal((await query(`SELECT locale FROM users WHERE id = :'id'`, { id: french.id }))[0]?.locale, "en");
+    assert.equal((await setLocale(hindi, "ja")).status, 422);
+    const japanese = await signup({ locale: "ja" });
+    assert.equal((await query(`SELECT locale FROM users WHERE id = :'id'`, { id: japanese.id }))[0]?.locale, "en");
+    // The world languages: Spanish, Portuguese, Indonesian, French, German and Arabic.
+    for (const locale of ["es", "pt", "id", "fr", "de", "ar"]) {
+      const saved = await setLocale(hindi, locale);
+      assert.equal(saved.status, 200, locale);
+      assert.equal(saved.body.user.locale, locale);
+    }
   });
 
   it("writes the first verification email in the language chosen at sign-up", async () => {
@@ -80,6 +86,30 @@ describe("push text per locale", () => {
     assert.equal(await body(item), `@${actor.username} ने आपकी स्टोरी लाइक की`);
     await setLocale(recipient, "mr");
     assert.equal(await body(item), `@${actor.username} यांनी तुमची स्टोरी लाईक केली`);
+  });
+
+  it("and in the world languages", async () => {
+    const actor = await signup();
+    const recipient = await signup();
+    const item = { id: "l2", userId: recipient.id, kind: "follow", actorId: actor.id, refId: null, attempts: 1 };
+    const expected: Record<string, string> = {
+      es: `@${actor.username} comenzó a seguirte`,
+      pt: `@${actor.username} começou a seguir você`,
+      id: `@${actor.username} mulai mengikuti kamu`,
+      fr: `@${actor.username} a commencé à te suivre`,
+      de: `@${actor.username} folgt dir jetzt`,
+      ar: `بدأ @${actor.username} بمتابعتك`,
+    };
+    for (const [locale, text] of Object.entries(expected)) {
+      await setLocale(recipient, locale);
+      assert.equal(await body(item), text, locale);
+    }
+  });
+
+  it("writes the verification email in German when that's the language at sign-up", async () => {
+    const user = await signup({ locale: "de" });
+    const mail = outbox.find((m) => m.to === user.email && m.kind === "email_verification")!;
+    assert.match(mail.subject, /^\d{6} ist dein Katkee-Bestätigungscode$/);
   });
 
   it("push-only kinds are written from their values at send time", async () => {

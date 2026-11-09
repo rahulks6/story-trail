@@ -4,10 +4,11 @@
  * people wrote stay as they are. The title is always "Katkee".
  */
 import { formatCount, type Locale } from "../../shared/locale";
+import { ar, de, es, fr, id, pt } from "./push-text-world";
 
 export type VerificationOutcome = "approved" | "denied" | "removed" | "restored";
 
-interface PushText {
+export interface PushText {
   /** Someone did something: likes, comments, follows, messages... keyed by outbox kind. */
   actor: Record<string, (actor: string) => string>;
   someone: string;
@@ -137,7 +138,7 @@ const mr: PushText = {
   reaction: (a, emoji) => `@${a} यांनी तुमच्या मेसेजवर ${emoji} रिॲक्ट केले`,
 };
 
-export const PUSH_TEXT: Record<Locale, PushText> = { en, hi, mr };
+export const PUSH_TEXT: Record<Locale, PushText> = { en, hi, mr, es, pt, id, fr, de, ar };
 
 type Params = Record<string, unknown>;
 const str = (v: unknown): string | null => (typeof v === "string" && v ? v : null);
