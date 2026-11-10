@@ -206,6 +206,12 @@ function webOverlay(raw: unknown, mentioned: Map<string, { username: string; ver
       if (!/^https?:\/\/[^\s]+$/i.test(url)) return null;
       return { type: "link", ...place, url, label: text(p.label, 40) };
     }
+    case "song": {
+      // On the web, a song sticker is a link to the song (Spotify / YouTube), labelled with its title.
+      const url = text(p.url, 2048);
+      if (!/^https:\/\/(open\.spotify\.com|music\.youtube\.com|www\.youtube\.com)\/[^\s]+$/i.test(url)) return null;
+      return { type: "link", ...place, url, label: text(`♪ ${text(p.title, 120)}`, 40) };
+    }
     case "poll": case "quiz": return { type: o.type, ...place, question: text(p.question, 80), options: options(p.options) };
     case "question": return { type: "question", ...place, prompt: text(p.prompt, 80) };
     case "countdown": return { type: "countdown", ...place, title: text(p.title, 40), endsAt: text(p.endsAt, 40) };

@@ -11,7 +11,7 @@ import * as stickersApi from "../src/api/stickers";
 // Polls, quizzes, questions, countdowns, links and Add Yours as viewers and creators use them.
 jest.mock("../src/state/AuthContext", () => ({ useAuth: () => ({ accessToken: "token", user: { id: "u-me", username: "me" } }) }));
 jest.mock("../src/hooks/useReducedMotion", () => ({ useReducedMotion: () => true }));
-jest.mock("../src/api/stickers", () => ({ checkStickerLink: jest.fn() }));
+jest.mock("../src/api/stickers", () => ({ checkStickerLink: jest.fn(), lookupSong: jest.fn() }));
 
 const haptics = () => (globalThis as unknown as { __haptics: string[] }).__haptics;
 let tree: ReactTestRenderer;
@@ -131,11 +131,40 @@ test("a link sticker is checked against the link-safety policy before it's added
   expect(onDone).not.toHaveBeenCalled();
 });
 
+const song: Overlay = { id: "s", type: "song", ...at, properties: { provider: "spotify", url: "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT", title: "Kesariya", artist: "Arijit Singh", artworkUrl: "https://i.scdn.co/image/x" } };
+
+test("a song sticker shows the song and opens Spotify on tap", async () => {
+  const actions = interaction();
+  await render(song, actions);
+  expect(texts()).toEqual(expect.arrayContaining(["Kesariya", "Arijit Singh", "Play on Spotify"]));
+  await act(async () => button(/^Kesariya by Arijit Singh\. Opens Spotify$/).props.onPress());
+  expect(actions.onOpenLink).toHaveBeenCalledWith("https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT");
+});
+
+test("the song form looks the link up and adds what the server found; a bad link explains", async () => {
+  const onDone = jest.fn();
+  await act(async () => { tree = create(<InteractiveStickerForm usedTypes={[]} onDone={onDone} />); });
+  await act(async () => button(/^Song\./).props.onPress());
+  const submit = () => tree.root.find((n) => n.props.accessibilityRole === "button" && typeof n.props.onPress === "function" && n.props.accessibilityState?.busy === false);
+  (stickersApi.lookupSong as jest.Mock).mockRejectedValueOnce(new (require("../src/api/client").ApiError)(422, "Paste a song link from Spotify, YouTube Music or YouTube."));
+  await act(async () => tree.root.findAllByType(TextInput)[0]!.props.onChangeText("https://example.com/x"));
+  await act(async () => submit().props.onPress());
+  expect(texts()).toContain("Paste a song link from Spotify, YouTube Music or YouTube.");
+  expect(onDone).not.toHaveBeenCalled();
+  (stickersApi.lookupSong as jest.Mock).mockResolvedValueOnce({ song: song.properties });
+  await act(async () => tree.root.findAllByType(TextInput)[0]!.props.onChangeText(" https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT?si=1 "));
+  await act(async () => submit().props.onPress());
+  expect(stickersApi.lookupSong).toHaveBeenLastCalledWith("https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT?si=1", "token");
+  expect(onDone).toHaveBeenCalledWith("song", song.properties);
+});
+
 test("drafts with interactive stickers restore; broken ones don't", () => {
   const draft = (overlays: unknown[]) => ({ audience: "public", mimeType: "image/jpeg", savedAt: "2026-10-03T00:00:00Z", draft: { sourceMedia: { uri: "file:///p.jpg", kind: "photo", width: null, height: null }, filter: "Original", overlays, drawing: [], caption: "", audioMuted: false, crop: { zoom: 1, offsetX: 0, offsetY: 0 } } });
   expect(isSavedDraft(draft([poll, { ...quiz, properties: { ...quiz.properties, correctIndex: 1 } }, { id: "c", type: "countdown", ...at, properties: { title: "x", endsAt: "2026-12-01T00:00:00Z" } }]), "file:///p.jpg")).toBe(true);
   expect(isSavedDraft(draft([{ ...poll, properties: { question: "", options: ["only one"] } }]), "file:///p.jpg")).toBe(false);
   expect(isSavedDraft(draft([{ id: "l", type: "link", ...at, properties: { url: "javascript:alert(1)", label: null } }]), "file:///p.jpg")).toBe(false);
+  expect(isSavedDraft(draft([song]), "file:///p.jpg")).toBe(true);
+  expect(isSavedDraft(draft([{ ...song, properties: { ...song.properties, provider: "napster" } }]), "file:///p.jpg")).toBe(false);
 });
 
 test("an Add yours seed waits for the next Story only", () => {

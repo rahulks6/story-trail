@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, StyleSheet, Text, View } from "react-native";
+import { Animated, Image, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "./Pressable";
 import { Icon } from "./Icon";
 import { Avatar } from "./Avatar";
@@ -7,11 +7,11 @@ import { mediaColors as colors, radii } from "../theme";
 import { tapFeedback } from "../utils/haptics";
 import { serverTimeMs } from "../utils/serverTime";
 import { useReducedMotion } from "../hooks/useReducedMotion";
-import { linkHost, type Overlay, type VoteResults } from "../models/storyDraft";
+import { linkHost, songProviderName, type Overlay, type VoteResults } from "../models/storyDraft";
 import type { VoteOutcome } from "../api/stickers";
 import { t } from "../i18n";
 
-type InteractiveOverlay = Extract<Overlay, { type: "poll" | "quiz" | "question" | "countdown" | "link" | "addYours" }>;
+type InteractiveOverlay = Extract<Overlay, { type: "poll" | "quiz" | "question" | "countdown" | "link" | "addYours" | "song" }>;
 
 /**
  * What a viewer can do with a Story's stickers. Given (StoryOverlayLayer while watching), the
@@ -250,6 +250,40 @@ function LinkChip({ overlay, u, interaction }: { overlay: Extract<Overlay, { typ
   );
 }
 
+/** A popular song: cover, title and artist, opening Spotify or YouTube on tap. Katkee never plays it. */
+function SongCard({ overlay, u, interaction }: { overlay: Extract<Overlay, { type: "song" }>; u: number; interaction?: StickerInteraction }): React.JSX.Element {
+  const { title, artist, artworkUrl, provider, url } = overlay.properties;
+  const service = songProviderName(provider);
+  const [coverFailed, setCoverFailed] = useState(false);
+  const cover = 56 * u;
+  return (
+    <Pressable
+      onPress={interaction ? () => interaction.onOpenLink(url) : undefined}
+      disabled={!interaction}
+      pressEffect={interaction ? "scale" : "none"}
+      style={[styles.card, styles.song, { width: 280 * u, padding: 10 * u, borderRadius: 18 * u, gap: 10 * u }]}
+      accessibilityRole="link"
+      accessibilityLabel={t("interactiveSticker.songOpensService", { title, artist, service })}
+    >
+      {artworkUrl && !coverFailed ? (
+        <Image source={{ uri: artworkUrl }} onError={() => setCoverFailed(true)} style={{ width: cover, height: cover, borderRadius: 10 * u }} accessible={false} />
+      ) : (
+        <View style={[styles.songCoverEmpty, { width: cover, height: cover, borderRadius: 10 * u }]}>
+          <Icon name="music" size={26 * u} color={colors.onAccent} />
+        </View>
+      )}
+      <View style={styles.songText}>
+        <Text allowFontScaling={false} style={[styles.songTitle, { fontSize: 15 * u }]} numberOfLines={1}>{title}</Text>
+        {artist ? <Text allowFontScaling={false} style={[styles.songArtist, { fontSize: 13 * u }]} numberOfLines={1}>{artist}</Text> : null}
+        <View style={[styles.songPlay, { marginTop: 5 * u, gap: 4 * u, paddingHorizontal: 8 * u, paddingVertical: 3 * u, borderRadius: radii.pill }]}>
+          <Icon name="play" size={11 * u} color={colors.onAccent} />
+          <Text allowFontScaling={false} style={[styles.songPlayText, { fontSize: 11 * u }]} numberOfLines={1}>{t("interactiveSticker.playOnService", { service })}</Text>
+        </View>
+      </View>
+    </Pressable>
+  );
+}
+
 function AddYoursCard({ overlay, u, interaction }: { overlay: Extract<Overlay, { type: "addYours" }>; u: number; interaction?: StickerInteraction }): React.JSX.Element {
   const { prompt, participants, recent, chainId } = overlay.properties;
   const count = participants ?? 0;
@@ -322,6 +356,8 @@ export function InteractiveSticker({ overlay, containerWidth, interaction }: { o
       return <LinkChip overlay={overlay} u={u} interaction={interaction} />;
     case "addYours":
       return <AddYoursCard overlay={overlay} u={u} interaction={interaction} />;
+    case "song":
+      return <SongCard overlay={overlay} u={u} interaction={interaction} />;
   }
 }
 
@@ -362,4 +398,11 @@ const styles = StyleSheet.create({
   face: { borderWidth: 2, borderColor: "#FFFFFF", overflow: "hidden" },
   addYoursButton: { flexDirection: "row", alignItems: "center", justifyContent: "center", backgroundColor: colors.accent },
   addYoursButtonText: { color: colors.onAccent, fontWeight: "800" },
+  song: { flexDirection: "row", alignItems: "center" },
+  songCoverEmpty: { backgroundColor: colors.accent, alignItems: "center", justifyContent: "center" },
+  songText: { flex: 1, minWidth: 0 },
+  songTitle: { color: colors.background, fontWeight: "800" },
+  songArtist: { color: "#5C5F66", fontWeight: "600" },
+  songPlay: { flexDirection: "row", alignItems: "center", alignSelf: "flex-start", backgroundColor: colors.background },
+  songPlayText: { color: colors.onAccent, fontWeight: "800" },
 });

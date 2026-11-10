@@ -8,7 +8,7 @@ import { config } from "../../config/env";
 import { queryOne } from "../../db/psql";
 import { HttpError } from "../../http/errors";
 
-export type ActionKind = "like" | "comment" | "follow" | "message" | "conversation" | "call" | "view" | "vote" | "answer";
+export type ActionKind = "like" | "comment" | "follow" | "message" | "conversation" | "call" | "view" | "vote" | "answer" | "song_lookup";
 
 interface Budget {
   perMinute?: number;
@@ -32,6 +32,8 @@ const DEFAULTS: Record<ActionKind, Budget> = {
   vote: { perMinute: 60, perHour: 600, newAccountPerHour: 150 },
   // Answers to question stickers are private text to the creator, budgeted like comments.
   answer: { perMinute: 10, perHour: 120, newAccountPerHour: 30 },
+  // Song sticker previews: each one asks Spotify or YouTube, so a person can't use Katkee to hammer them.
+  song_lookup: { perMinute: 15, perHour: 120, newAccountPerHour: 60 },
 };
 
 function loadBudgets(): Record<ActionKind, Budget> {
@@ -54,6 +56,7 @@ const MESSAGES: Record<ActionKind, string> = {
   view: "Too many views",
   vote: "You're answering Stories too fast",
   answer: "You're sending answers too fast",
+  song_lookup: "You're looking up songs too fast",
 };
 
 /**

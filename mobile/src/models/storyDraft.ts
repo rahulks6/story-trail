@@ -64,7 +64,7 @@ export interface StickerOverlayProperties {
  * the `?` fields; the optional ones are attached by the server for each viewer on read (results
  * once you've answered, whether you asked to be reminded, the chain's size) and never sent.
  */
-export const INTERACTIVE_TYPES = ["poll", "quiz", "question", "countdown", "link", "addYours"] as const;
+export const INTERACTIVE_TYPES = ["poll", "quiz", "question", "countdown", "link", "addYours", "song"] as const;
 export type InteractiveType = (typeof INTERACTIVE_TYPES)[number];
 export const MIN_OPTIONS = 2;
 export const MAX_OPTIONS = 4;
@@ -113,6 +113,24 @@ export interface LinkOverlayProperties {
   label: string | null;
 }
 
+/**
+ * A popular song as a link to where it's licensed to play (backend stories/song-links.ts):
+ * Katkee shows its title, artist and cover, and a tap opens Spotify or YouTube. Never played here.
+ */
+export type SongProvider = "spotify" | "youtube_music" | "youtube";
+export interface SongOverlayProperties {
+  provider: SongProvider;
+  url: string;
+  title: string;
+  artist: string;
+  artworkUrl: string | null;
+}
+
+/** The service's own name, shown on the sticker's play button. */
+export function songProviderName(provider: SongProvider): string {
+  return provider === "spotify" ? "Spotify" : provider === "youtube_music" ? "YouTube Music" : "YouTube";
+}
+
 export interface AddYoursOverlayProperties {
   prompt: string;
   /** The chain this Story joins (posting from someone's "Add yours"), or, on read, its own chain. */
@@ -158,7 +176,8 @@ export type Overlay =
   | (OverlayBase & { type: "question"; properties: QuestionOverlayProperties })
   | (OverlayBase & { type: "countdown"; properties: CountdownOverlayProperties })
   | (OverlayBase & { type: "link"; properties: LinkOverlayProperties })
-  | (OverlayBase & { type: "addYours"; properties: AddYoursOverlayProperties });
+  | (OverlayBase & { type: "addYours"; properties: AddYoursOverlayProperties })
+  | (OverlayBase & { type: "song"; properties: SongOverlayProperties });
 
 /** The content part of an interactive sticker the editor can change in place. */
 export type InteractiveProperties =
@@ -167,6 +186,7 @@ export type InteractiveProperties =
   | QuestionOverlayProperties
   | CountdownOverlayProperties
   | LinkOverlayProperties
+  | SongOverlayProperties
   | AddYoursOverlayProperties;
 
 export type DrawTool = "pen" | "marker" | "highlighter" | "eraser";

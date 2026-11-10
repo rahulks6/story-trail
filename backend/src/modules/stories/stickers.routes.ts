@@ -5,6 +5,8 @@ import { parsePagination, parseQueryString } from "../../http/pagination";
 import { parseAnswerInput, parseVoteInput } from "./dto";
 import * as stickersService from "./stickers.service";
 import * as collabService from "./collab.service";
+import { lookupSong } from "./song-links";
+import { enforceAction } from "../safety/limits";
 
 /** Interactive stickers, "Add Yours" chains and Collab Stories (stickers.service.ts, collab.service.ts). */
 export function registerStickerRoutes(router: Router): void {
@@ -14,6 +16,14 @@ export function registerStickerRoutes(router: Router): void {
     const body = (typeof req.body === "object" && req.body !== null ? req.body : {}) as Record<string, unknown>;
     const url = await stickersService.checkLink(req.userId as string, body.url);
     sendJson(res, 200, { url });
+  });
+
+  // The song sticker's preview: title, artist and cover for a Spotify / YouTube Music / YouTube link.
+  router.post("/api/v1/stories/song-lookup", async (req, res) => {
+    requireAuth(req);
+    const body = (typeof req.body === "object" && req.body !== null ? req.body : {}) as Record<string, unknown>;
+    await enforceAction(req.userId as string, "song_lookup");
+    sendJson(res, 200, { song: await lookupSong(body.url) });
   });
 
   router.post("/api/v1/stories/:id/stickers/:stickerId/vote", async (req, res) => {

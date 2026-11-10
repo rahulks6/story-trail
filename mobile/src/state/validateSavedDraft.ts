@@ -36,6 +36,7 @@ export function isSavedDraft(value: unknown, mediaUri: string): value is SavedDr
       case "countdown": return text(p.title) && text(p.endsAt) && Number.isFinite(Date.parse(p.endsAt));
       case "link": return text(p.url) && /^https?:\/\//i.test(p.url) && (p.label === null || text(p.label));
       case "addYours": return text(p.prompt) && (p.chainId === undefined || text(p.chainId));
+      case "song": return member(p.provider, ["spotify", "youtube_music", "youtube"]) && text(p.url) && /^https:\/\//i.test(p.url) && text(p.title) && text(p.artist) && (p.artworkUrl === null || text(p.artworkUrl));
       default: return false;
     }
   });

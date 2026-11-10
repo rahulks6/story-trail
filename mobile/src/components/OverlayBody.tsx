@@ -42,7 +42,7 @@ export function OverlayBody({
   containerWidth: number;
   containerHeight: number;
   onMentionPress?: (username: string) => void;
-  /** While watching: polls, quizzes, questions, countdowns, links and Add Yours take taps. */
+  /** While watching: polls, quizzes, questions, countdowns, links, songs and Add Yours take taps. */
   interaction?: StickerInteraction;
 }): React.JSX.Element {
   switch (overlay.type) {
@@ -52,6 +52,7 @@ export function OverlayBody({
     case "countdown":
     case "link":
     case "addYours":
+    case "song":
       return <InteractiveSticker overlay={overlay} containerWidth={containerWidth} interaction={interaction} />;
     case "text": {
       const { properties } = overlay;

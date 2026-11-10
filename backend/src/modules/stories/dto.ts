@@ -2,6 +2,7 @@ import { ValidationError } from "../auth/dto";
 import type { Audience, CommentSetting } from "./stories.repository";
 import type { StoryOverlay, DrawStroke, StoryCrop } from "./overlays";
 import { canonicalTopic, TOPICS, type Topic } from "../../shared/topics";
+import { allowedArtworkUrl, parseSongUrl, songText } from "./song-links";
 import { OVERLAY_TYPES, TEXT_STYLES, STICKER_IDS, DATETIME_MODES, DRAW_TOOLS, FILTER_NAMES, MAX_CROP_ZOOM } from "./overlays";
 import {
   INTERACTIVE_TYPES,
@@ -202,6 +203,16 @@ function parseOverlay(raw: unknown, index: number): StoryOverlay | null {
       if (!url) return null;
       const label = oneLine(properties.label, MAX_LINK_LABEL_LENGTH) || null;
       return { id, type: "link", x, y, scale, rotation, zIndex, properties: { url, label } };
+    }
+    case "song": {
+      // Only a supported service's song link; the cover only from that service's image host.
+      const song = parseSongUrl(properties.url);
+      const title = songText(properties.title);
+      if (!song || !title) return null;
+      return {
+        id, type: "song", x, y, scale, rotation, zIndex,
+        properties: { provider: song.provider, url: song.url, title, artist: songText(properties.artist), artworkUrl: allowedArtworkUrl(properties.artworkUrl) },
+      };
     }
     case "addYours": {
       const prompt = oneLine(properties.prompt, MAX_QUESTION_LENGTH);

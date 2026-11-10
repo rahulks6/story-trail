@@ -4,7 +4,7 @@ import { Pressable } from "./Pressable";
 import { Icon } from "./Icon";
 import { colors, radii, spacing, typography } from "../theme";
 import { useAuth } from "../state/AuthContext";
-import { checkStickerLink } from "../api/stickers";
+import { checkStickerLink, lookupSong } from "../api/stickers";
 import { ApiError } from "../api/client";
 import { serverDate } from "../utils/serverTime";
 import {
@@ -20,14 +20,15 @@ import {
 } from "../models/storyDraft";
 import { localeTag, t } from "../i18n";
 
-/** The six interactive stickers, in the order Instagram's tray puts them. */
-const KINDS: Array<{ type: InteractiveType; label: string; icon: "check" | "help" | "comment" | "timer" | "attach" | "add"; hint: string }> = [
+/** The interactive stickers: Instagram's six, in its order, then the song sticker. */
+const KINDS: Array<{ type: InteractiveType; label: string; icon: "check" | "help" | "comment" | "timer" | "attach" | "add" | "music"; hint: string }> = [
   { type: "poll", get label() { return t("common.poll"); }, icon: "check", get hint() { return t("interactiveStickerForm.askAQuestionWith2"); } },
   { type: "quiz", get label() { return t("common.quiz"); }, icon: "help", get hint() { return t("interactiveStickerForm.aQuestionWithOneRight"); } },
   { type: "question", get label() { return t("interactiveStickerForm.questions"); }, icon: "comment", get hint() { return t("interactiveStickerForm.letPeopleSendYouAnswers"); } },
   { type: "countdown", get label() { return t("interactiveStickerForm.countdown"); }, icon: "timer", get hint() { return t("interactiveStickerForm.countDownToAMoment"); } },
   { type: "link", get label() { return t("interactiveStickerForm.link"); }, icon: "attach", get hint() { return t("interactiveStickerForm.aLinkPeopleCanOpen"); } },
   { type: "addYours", get label() { return t("interactiveStickerForm.addYours"); }, icon: "add", get hint() { return t("interactiveStickerForm.startAPromptOthersPost"); } },
+  { type: "song", get label() { return t("interactiveStickerForm.song"); }, icon: "music", get hint() { return t("interactiveStickerForm.shareAnySongFromSpotify"); } },
 ];
 
 interface Props {
@@ -80,7 +81,7 @@ export function InteractiveStickerForm({ editing, usedTypes, onDone }: Props): R
     : type === "quiz" ? optionsOk && question.trim().length > 0
     : type === "question" || type === "addYours" ? question.trim().length > 0
     : type === "countdown" ? title.trim().length > 0 && endsAt.getTime() > Date.now()
-    : type === "link" ? url.trim().length > 3
+    : type === "link" || type === "song" ? url.trim().length > 3
     : false;
 
   const submit = async () => {
@@ -97,6 +98,20 @@ export function InteractiveStickerForm({ editing, usedTypes, onDone }: Props): R
         return onDone(type, { prompt: question.trim() });
       case "countdown":
         return onDone(type, { title: title.trim(), endsAt: endsAt.toISOString() });
+      case "song": {
+        if (!accessToken) return;
+        setChecking(true);
+        try {
+          // The server reads the song's title, artist and cover from the service.
+          const { song } = await lookupSong(url.trim(), accessToken);
+          onDone(type, song);
+        } catch (e) {
+          setError(e instanceof ApiError ? e.message : t("interactiveStickerForm.couldntFindThatSong"));
+        } finally {
+          setChecking(false);
+        }
+        return;
+      }
       case "link": {
         if (!accessToken) return;
         setChecking(true);
@@ -274,6 +289,24 @@ export function InteractiveStickerForm({ editing, usedTypes, onDone }: Props): R
             accessibilityLabel={t("interactiveStickerForm.stickerText")}
           />
           <Text style={styles.hint}>{t("interactiveStickerForm.peopleSeeWhereTheLink")}</Text>
+        </View>
+      ) : null}
+
+      {type === "song" ? (
+        <View style={styles.options}>
+          <TextInput
+            style={styles.input}
+            value={url}
+            onChangeText={(text) => { setUrl(text); setError(null); }}
+            placeholder={t("interactiveStickerForm.pasteASongLink")}
+            placeholderTextColor={colors.textDisabled}
+            autoCapitalize="none"
+            autoCorrect={false}
+            keyboardType="url"
+            accessibilityLabel={t("interactiveStickerForm.songLink")}
+            autoFocus={!editing}
+          />
+          <Text style={styles.hint}>{t("interactiveStickerForm.songHowTo")}</Text>
         </View>
       ) : null}
 

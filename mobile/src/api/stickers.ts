@@ -1,5 +1,5 @@
 import { apiDelete, apiGet, apiPost, apiPut } from "./client";
-import type { VoteResults } from "../models/storyDraft";
+import type { SongOverlayProperties, VoteResults } from "../models/storyDraft";
 import type { CollabPerson, StoryCollab } from "./stories";
 
 /**
@@ -15,6 +15,11 @@ export interface VoteOutcome {
   /** Quizzes: the right answer, now that you've answered. */
   correctIndex?: number;
   correct?: boolean;
+}
+
+/** A song sticker's title, artist and cover, from a Spotify / YouTube Music / YouTube link. */
+export function lookupSong(url: string, accessToken: string): Promise<{ song: SongOverlayProperties }> {
+  return apiPost("/api/v1/stories/song-lookup", { url }, accessToken);
 }
 
 /** One answer per person per poll or quiz (409 when you've already chosen differently). */

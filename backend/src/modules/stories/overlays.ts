@@ -11,12 +11,12 @@ export const OVERLAY_TYPES = [
   "text", "emoji", "mention", "location", "datetime", "sticker",
   // Interactive stickers (stickers.service.ts): what viewers do with them is stored apart
   // from the Story (migration 0062), and attached for each viewer on every read.
-  "poll", "quiz", "question", "countdown", "link", "addYours",
+  "poll", "quiz", "question", "countdown", "link", "addYours", "song",
 ] as const;
 export type OverlayType = (typeof OVERLAY_TYPES)[number];
 
 /** A Story carries at most one of each: one poll, one quiz, and so on (like Instagram). */
-export const INTERACTIVE_TYPES = ["poll", "quiz", "question", "countdown", "link", "addYours"] as const;
+export const INTERACTIVE_TYPES = ["poll", "quiz", "question", "countdown", "link", "addYours", "song"] as const;
 export type InteractiveType = (typeof INTERACTIVE_TYPES)[number];
 
 export const MIN_OPTIONS = 2;
@@ -162,6 +162,15 @@ export interface AddYoursOverlay extends OverlayBase {
   };
 }
 
+/**
+ * A popular song shown as a link to where it's licensed to play (song-links.ts): the title,
+ * artist and cover, opening Spotify or YouTube on tap. Katkee never plays it.
+ */
+export interface SongOverlay extends OverlayBase {
+  type: "song";
+  properties: { provider: "spotify" | "youtube_music" | "youtube"; url: string; title: string; artist: string; artworkUrl: string | null };
+}
+
 export type StoryOverlay =
   | TextOverlay
   | EmojiOverlay
@@ -174,7 +183,8 @@ export type StoryOverlay =
   | QuestionOverlay
   | CountdownOverlay
   | LinkOverlay
-  | AddYoursOverlay;
+  | AddYoursOverlay
+  | SongOverlay;
 
 export interface DrawStroke {
   id: string;
