@@ -92,12 +92,14 @@ function Space({ index, box, photo, onEmpty, onFilled, onMoved }: {
  * it to replace or remove it; change the layout below. Next saves the collage as one 9:16 photo
  * and opens it in the Story editor, where it's shared like any photo (Your Story / Close Friends).
  */
-export function LayoutScreen({ navigation }: Props): React.JSX.Element {
+export function LayoutScreen({ navigation, route }: Props): React.JSX.Element {
   useMediaStatusBar();
   const insets = useScreenInsets();
   const { width, height } = useWindowDimensions();
-  const [layout, setLayout] = useState<StoryLayout>(LAYOUTS[0]!);
-  const [photos, setPhotos] = useState<(LayoutPhoto | null)[]>([]);
+  // Photos already chosen in the camera's gallery start in a layout that fits them.
+  const given = (route.params?.photos ?? []).slice(0, MAX_LAYOUT_PHOTOS).map((p): LayoutPhoto => ({ uri: p.uri, ...(p.width ? { width: p.width } : {}), ...(p.height ? { height: p.height } : {}), x: 0, y: 0 }));
+  const [layout, setLayout] = useState<StoryLayout>(() => (given.length ? layoutFor(given.length) : LAYOUTS[0]!));
+  const [photos, setPhotos] = useState<(LayoutPhoto | null)[]>(() => (given.length ? given.slice(0, layoutFor(given.length).cells.length) : []));
   const [options, setOptions] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const canvas = useRef<React.ComponentRef<typeof View>>(null);

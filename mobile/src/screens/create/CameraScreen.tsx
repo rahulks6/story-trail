@@ -20,6 +20,8 @@ import {
 import { launchImageLibrary } from "react-native-image-picker";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { CreateStackParamList } from "../../navigation/types";
+import { MAX_CAROUSEL_PHOTOS } from "./CarouselScreen";
+import { MAX_LAYOUT_PHOTOS } from "../../models/layouts";
 import { mediaColors as colors, radii, spacing, ICONS } from "../../theme";
 import { reportHandledError } from "../../crashReporting";
 import { useTapGesture } from "../../hooks/useTapGesture";
@@ -343,9 +345,32 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
     try{
     // "compatible": iOS exports HEIC photos as JPEG and HEVC video as H.264 — the upload
     // pipeline accepts JPEG/PNG/WebP and MP4/MOV, and iPhones store HEIC by default.
-    const result = await launchImageLibrary({ mediaType: "mixed", selectionLimit: 1, assetRepresentationMode: "compatible" });
+    const result = await launchImageLibrary({ mediaType: "mixed", selectionLimit: MAX_CAROUSEL_PHOTOS, assetRepresentationMode: "compatible" });
     if(result.errorCode)throw Error(t("common.galleryUnavailable"));
-    const asset = result.assets?.[0];
+    const chosen = (result.assets ?? []).filter((a) => !!a.uri);
+    // Several at once: photos become a run of Stories (CarouselScreen) or one collage (Layout).
+    if (chosen.length > 1) {
+      const photos = chosen.filter((a) => !a.type?.startsWith("video") && !/^image\/hei[cf]/i.test(a.type ?? "") && !(typeof a.fileSize === "number" && a.fileSize > MAX_PHOTO_BYTES));
+      const left = chosen.length - photos.length;
+      const go = () => {
+        if (photos.length === 0) return;
+        const items = photos.map((a) => ({ uri: a.uri!, mimeType: a.type ?? "image/jpeg", width: a.width ?? null, height: a.height ?? null }));
+        if (items.length === 1) return goToEditor(items[0]!.uri, "photo", items[0]!.width, items[0]!.height, items[0]!.mimeType, "none");
+        const separate = () => navigation.navigate("Carousel", { photos: items });
+        const collage = () => navigation.navigate("Layout", { photos: items.map(({ uri, width, height }) => ({ uri, width, height })) });
+        if (items.length > MAX_LAYOUT_PHOTOS) return separate();
+        Alert.alert(t("carousel.howToPost"), undefined, [
+          { text: t("carousel.separateStories"), onPress: separate },
+          { text: t("carousel.oneCollage"), onPress: collage },
+          { text: t("common.cancel"), style: "cancel" },
+        ]);
+      };
+      // Videos (and photos Katkee can't take) are left out of a multi-photo post: say so first.
+      if (left > 0) Alert.alert(t("carousel.onlyPhotosTitle"), t("carousel.onlyPhotosBody", { count: left }), [{ text: "OK", onPress: go }]);
+      else go();
+      return;
+    }
+    const asset = chosen[0];
     if (!asset?.uri) return;
     const kind = asset.type?.startsWith("video") ? "video" : "photo";
     // Too big to upload: say so now, not after the Story has been edited.

@@ -4,6 +4,7 @@ import type { CreateStackParamList } from "./types";
 import { CameraScreen } from "../screens/create/CameraScreen";
 import { StoryEditorScreen } from "../screens/create/StoryEditorScreen";
 import { LayoutScreen } from "../screens/create/LayoutScreen";
+import { CarouselScreen } from "../screens/create/CarouselScreen";
 
 const Stack = createNativeStackNavigator<CreateStackParamList>();
 
@@ -14,6 +15,7 @@ export function CreateStack(): React.JSX.Element {
       <Stack.Screen name="Camera" component={CameraScreen} />
       <Stack.Screen name="StoryEditor" component={StoryEditorScreen} />
       <Stack.Screen name="Layout" component={LayoutScreen} />
+      <Stack.Screen name="Carousel" component={CarouselScreen} />
     </Stack.Navigator>
   );
 }

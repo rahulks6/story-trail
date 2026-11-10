@@ -40,8 +40,13 @@ export type MainTabParamList = {
 
 export type CreateStackParamList = {
   Camera: undefined;
-  /** Several photos in one Story (LayoutScreen): the collage opens in StoryEditor as a photo. */
-  Layout: undefined;
+  /**
+   * Several photos in one Story (LayoutScreen): the collage opens in StoryEditor as a photo.
+   * `photos`: chosen in the camera's gallery already, so they start in place.
+   */
+  Layout: { photos?: { uri: string; width: number | null; height: number | null }[] } | undefined;
+  /** Several photos shared at once, each its own Story, one after another (CarouselScreen). */
+  Carousel: { photos: { uri: string; mimeType: string; width: number | null; height: number | null }[] };
   StoryEditor: {
     mediaUri: string;
     kind: "photo" | "video";
