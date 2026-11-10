@@ -263,10 +263,11 @@ describe("profile photo", () => {
     expect(tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && !!n.props.source)[0]!.props.source).toEqual({ uri: "file:///tmp/katkee-crop-1.jpg" });
   });
 
-  test("Remove current photo shows your initial and Save clears it; nothing else is sent for the photo otherwise", async () => {
+  test("Remove current photo shows the person placeholder and Save clears it; nothing else is sent for the photo otherwise", async () => {
     await render();
     await choosePhotoAction("Remove current photo");
-    expect(texts()).toEqual(expect.arrayContaining(["M", "Your photo is removed when you save.", "Add photo"]));
+    expect(texts()).toEqual(expect.arrayContaining(["Your photo is removed when you save.", "Add photo"]));
+    expect(tree.root.findAll((n) => n.props.testID === "avatar-placeholder").length).toBeGreaterThan(0);
     await act(async () => saveButton().props.onPress());
     await flush();
     expect(users.updateMyProfile).toHaveBeenCalledWith(expect.objectContaining({ avatarMediaId: null }), "token");

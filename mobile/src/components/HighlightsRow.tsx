@@ -70,6 +70,8 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
   const { width: screenWidth } = useWindowDimensions();
   const [highlights, setHighlights] = useState<HighlightSummary[] | null>(null);
   const [reordering, setReordering] = useState(false);
+  // Covers that couldn't load (a Story's media since removed): their letter shows instead.
+  const [failedCovers, setFailedCovers] = useState<ReadonlySet<string>>(new Set());
   // The Highlight whose options (Edit, Delete) are open: a long press on your own, like Instagram.
   const [options, setOptions] = useState<HighlightSummary | null>(null);
 
@@ -211,17 +213,22 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
         renderItem={(highlight) => (
           <View style={styles.slot}>
             <View style={[styles.card, { height: coverHeight }]}>
-              {highlight.coverMediaId ? (
+              {/* The title's first letter sits under the cover, so a cover still loading (or that
+                  can't load) shows that rather than an empty dark card. */}
+              <View style={styles.coverFallback}>
+                <Text style={styles.coverFallbackInitial}>{firstCharacter(highlight.title).toUpperCase()}</Text>
+              </View>
+              {highlight.coverMediaId && !failedCovers.has(highlight.coverMediaId) ? (
                 <FadeInImage
                   source={{ uri: mediaFileUrl(highlight.coverMediaId, "thumbnail"), headers: authHeaders }}
-                  style={styles.coverImage}
+                  style={[StyleSheet.absoluteFill, styles.coverImage]}
                   resizeMode="cover"
+                  onError={() => {
+                    const id = highlight.coverMediaId!;
+                    setFailedCovers((failed) => new Set(failed).add(id));
+                  }}
                 />
-              ) : (
-                <View style={styles.coverFallback}>
-                  <Text style={styles.coverFallbackInitial}>{firstCharacter(highlight.title).toUpperCase()}</Text>
-                </View>
-              )}
+              ) : null}
             </View>
             <Text style={styles.label} numberOfLines={1}>
               {highlight.title}
