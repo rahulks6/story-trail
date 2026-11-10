@@ -1440,5 +1440,47 @@
     "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
     "attribution": "\"Canon in D for Two Renaissance Harps\" by Kevin MacLeod (incompetech.com) (CC BY 4.0)",
     "sourceUrl": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Canon%20in%20D%20for%20Two%20Renaissance%20Harps.mp3"
+  },
+  {
+    "id": "5b707d34-f4e1-439d-9e16-be63eaa6922a",
+    "title": "Hypnothis",
+    "artist": "Kevin MacLeod (incompetech.com)",
+    "mood": "Romantic",
+    "durationMs": 180035,
+    "storageKey": "m/5b707d34-f4e1-439d-9e16-be63eaa6922a/audio.mp3",
+    "mimeType": "audio/mpeg",
+    "byteSize": 2881036,
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "\"Hypnothis\" by Kevin MacLeod (incompetech.com) (CC BY 4.0)",
+    "sourceUrl": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Hypnothis.mp3"
+  },
+  {
+    "id": "7ef41ce8-1a2e-4db7-9713-2e1b7f9b060a",
+    "title": "Aerosol of my Love",
+    "artist": "Kevin MacLeod (incompetech.com)",
+    "mood": "Romantic",
+    "durationMs": 141844,
+    "storageKey": "m/7ef41ce8-1a2e-4db7-9713-2e1b7f9b060a/audio.mp3",
+    "mimeType": "audio/mpeg",
+    "byteSize": 2269980,
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "\"Aerosol of my Love\" by Kevin MacLeod (incompetech.com) (CC BY 4.0)",
+    "sourceUrl": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Aerosol%20of%20my%20Love.mp3"
+  },
+  {
+    "id": "34d96e93-2bd0-41ee-b9db-8dbcbcd210f2",
+    "title": "Bathed in the Light",
+    "artist": "Kevin MacLeod (incompetech.com)",
+    "mood": "Romantic",
+    "durationMs": 166086,
+    "storageKey": "m/34d96e93-2bd0-41ee-b9db-8dbcbcd210f2/audio.mp3",
+    "mimeType": "audio/mpeg",
+    "byteSize": 2657846,
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "\"Bathed in the Light\" by Kevin MacLeod (incompetech.com) (CC BY 4.0)",
+    "sourceUrl": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Bathed%20in%20the%20Light.mp3"
   }
 ]
