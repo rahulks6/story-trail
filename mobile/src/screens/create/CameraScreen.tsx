@@ -142,7 +142,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   const [foreground,setForeground]=useState(AppState.currentState==='active');
   const activeRef=useRef(false);activeRef.current=focused&&foreground;
   const recordingRef=useRef(false),stoppingRef=useRef(false),capturingRef=useRef(false);
-  const pendingCapture=useRef<{uri:string;kind:'photo'|'video';width:number|null;height:number|null;mimeType?:string;effect:MediaEffect;initialTrim?:TrimRange}|null>(null);
+  const pendingCapture=useRef<{uri:string;kind:'photo'|'video';width:number|null;height:number|null;mimeType?:string;effect:MediaEffect;initialTrim?:TrimRange;fromGallery?:boolean}|null>(null);
   useEffect(()=>{const sub=AppState.addEventListener('change',state=>setForeground(state==='active'));return()=>{activeRef.current=false;sub.remove();};},[]);
   const recordingTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const zoomIndicatorTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -236,8 +236,8 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   );
 
   const goToEditor = useCallback(
-    (mediaUri: string, kind: "photo" | "video", width: number | null, height: number | null, mimeType?: string, effect: MediaEffect = "none", initialTrim?: TrimRange) => {
-      if(!activeRef.current){pendingCapture.current={uri:mediaUri,kind,width,height,mimeType,effect,initialTrim};return;}
+    (mediaUri: string, kind: "photo" | "video", width: number | null, height: number | null, mimeType?: string, effect: MediaEffect = "none", initialTrim?: TrimRange, fromGallery = false) => {
+      if(!activeRef.current){pendingCapture.current={uri:mediaUri,kind,width,height,mimeType,effect,initialTrim,fromGallery};return;}
       navigation.replace("StoryEditor", {
         mediaUri,
         kind,
@@ -246,11 +246,12 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
         mimeType: mimeType ?? guessMimeTypeFromUri(mediaUri, kind),
         ...(effect === "boomerang" ? { effect } : {}),
         ...(initialTrim ? { initialTrim } : {}),
+        ...(fromGallery ? { fromGallery } : {}),
       });
     },
     [navigation],
   );
-  useEffect(()=>{if(focused&&foreground&&pendingCapture.current){const pending=pendingCapture.current;pendingCapture.current=null;goToEditor(pending.uri,pending.kind,pending.width,pending.height,pending.mimeType,pending.effect,pending.initialTrim);}},[focused,foreground,goToEditor]);
+  useEffect(()=>{if(focused&&foreground&&pendingCapture.current){const pending=pendingCapture.current;pendingCapture.current=null;goToEditor(pending.uri,pending.kind,pending.width,pending.height,pending.mimeType,pending.effect,pending.initialTrim,pending.fromGallery);}},[focused,foreground,goToEditor]);
 
   const takePhoto = useCallback(async () => {
     if (!camera.current||capturingRef.current||recordingRef.current||!activeRef.current) return;
@@ -355,7 +356,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
       const go = () => {
         if (photos.length === 0) return;
         const items = photos.map((a) => ({ uri: a.uri!, mimeType: a.type ?? "image/jpeg", width: a.width ?? null, height: a.height ?? null }));
-        if (items.length === 1) return goToEditor(items[0]!.uri, "photo", items[0]!.width, items[0]!.height, items[0]!.mimeType, "none");
+        if (items.length === 1) return goToEditor(items[0]!.uri, "photo", items[0]!.width, items[0]!.height, items[0]!.mimeType, "none", undefined, true);
         const separate = () => navigation.navigate("Carousel", { photos: items });
         const collage = () => navigation.navigate("Layout", { photos: items.map(({ uri, width, height }) => ({ uri, width, height })) });
         if (items.length > MAX_LAYOUT_PHOTOS) return separate();
@@ -397,7 +398,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
       Alert.alert(t("camera.photoFormatNotSupported"), t("camera.heicPhotosArentSupportedYet"));
       return;
     }
-    goToEditor(asset.uri, kind, asset.width ?? null, asset.height ?? null, asset.type, "none", initialTrim);
+    goToEditor(asset.uri, kind, asset.width ?? null, asset.height ?? null, asset.type, "none", initialTrim, true);
     }catch{if(activeRef.current)Alert.alert(t("camera.couldNotOpenGallery"),t("camera.checkPhotoAccessInSettings"));}
   }, [goToEditor]);
 

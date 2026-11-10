@@ -5,7 +5,8 @@ import type { MusicTrack } from "./music.repository";
 
 /** Shortest and longest part of a song a Story plays. */
 export const MIN_CLIP_MS = 5_000;
-export const MAX_CLIP_MS = 30_000;
+/** Up to a minute, like Instagram: a photo Story stays on screen while its song plays. */
+export const MAX_CLIP_MS = 60_000;
 export const DEFAULT_CLIP_MS = 15_000;
 
 /** What a Story stores: which track, and which part of it plays. */

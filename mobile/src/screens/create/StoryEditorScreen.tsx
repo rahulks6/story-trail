@@ -18,7 +18,7 @@ import { FILTER_PREVIEWS, type FilterKey } from "../../models/filterPreviews";
 import { tapFeedback } from "../../utils/haptics";
 import { filteredPhotoUri, forgetFilteredPhoto } from "../../utils/filterPhoto";
 import { filterSwipeStep, pinchPlacement, TAP_SLOP, type Placement, type Touch } from "../../models/canvasGestures";
-import { framePhoto, isFramed, UNFRAMED, type PhotoFrame } from "../../models/photoFrame";
+import { coverBox, framePhoto, initialFrame, isFramed, UNFRAMED, type PhotoFrame } from "../../models/photoFrame";
 import { captureRef } from "react-native-view-shot";
 import {
   clampOverlayPosition,
@@ -177,6 +177,22 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   // through Animated values while the fingers move, and saved as it looks when shared (onShare).
   const [photoFrame, setPhotoFrame] = useState<PhotoFrame>(UNFRAMED);
   const photoShot = useRef<React.ComponentRef<typeof View>>(null);
+  // The photo's own size as the screen decoded it (turned the right way up), so it's drawn whole,
+  // never pre-cut. Taken from the loaded image, not the picker, which may report it sideways.
+  const [photoSize, setPhotoSize] = useState<{ width: number; height: number } | null>(null);
+  const placedOnce = useRef(false);
+  // A wide or square photo starts whole inside the frame (initialFrame), once, before any pinch.
+  useEffect(() => {
+    if (kind !== "photo" || placedOnce.current || !photoSize || containerSize.width <= 0) return;
+    placedOnce.current = true;
+    // Taken with Katkee's camera, a photo fills the Story; from the gallery, it starts whole.
+    if (!route.params.fromGallery) return;
+    setPhotoFrame(initialFrame(containerSize.width, containerSize.height, photoSize.width, photoSize.height));
+  }, [kind, photoSize, containerSize.width, containerSize.height, route.params.fromGallery]);
+  const photoBox = photoSize && containerSize.width > 0 ? coverBox(containerSize.width, containerSize.height, photoSize.width, photoSize.height) : null;
+  const photoStyle = photoBox
+    ? { position: "absolute" as const, left: (containerSize.width - photoBox.width) / 2, top: (containerSize.height - photoBox.height) / 2, width: photoBox.width, height: photoBox.height }
+    : StyleSheet.absoluteFill;
   const frameAnim = useRef({ x: new Animated.Value(0), y: new Animated.Value(0), scale: new Animated.Value(1), rotation: new Animated.Value(0) }).current;
   const showFrame = useCallback((f: PhotoFrame, w: number, h: number) => {
     frameAnim.x.setValue((f.x - 0.5) * w);
@@ -782,10 +798,21 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             {/* The photo as it will be shared (photoShot is what's saved when it was moved or turned),
                 without the filter preview, which the server applies to the saved photo. */}
             <View ref={photoShot} collapsable={false} style={[StyleSheet.absoluteFill, styles.photoShot]}>
+              {/* Around a photo that doesn't fill the frame: a soft blur of itself, not black bars. */}
+              {isFramed(photoFrame) ? (
+                <>
+                  <Image source={{ uri: mediaUri }} blurRadius={40} style={StyleSheet.absoluteFill} resizeMode="cover" accessible={false} />
+                  <View style={[StyleSheet.absoluteFill, styles.blurShade]} />
+                </>
+              ) : null}
               <Animated.View style={[StyleSheet.absoluteFill, frameTransform]}>
                 <Image
                   source={{ uri: mediaUri }}
-                  style={[StyleSheet.absoluteFill, mediaTransformStyle(draft.crop, containerSize.width, containerSize.height)]}
+                  onLoad={(e) => {
+                    const { width, height } = e.nativeEvent.source ?? {};
+                    if (width && height && (!photoSize || photoSize.width !== width || photoSize.height !== height)) setPhotoSize({ width, height });
+                  }}
+                  style={[photoStyle, mediaTransformStyle(draft.crop, containerSize.width, containerSize.height)]}
                   resizeMode="cover"
                 />
               </Animated.View>
@@ -798,7 +825,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
                   onLoad={() => setShownProcessedFilter(processedPhoto.filter)}
                   fadeDuration={0}
                   style={[
-                    StyleSheet.absoluteFill,
+                    photoStyle,
                     mediaTransformStyle(draft.crop, containerSize.width, containerSize.height),
                     shownProcessedFilter === processedPhoto.filter ? null : styles.hidden,
                   ]}
@@ -1286,6 +1313,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#000" },
   mediaContainer: { flex: 1 },
   photoShot: { backgroundColor: "#000000", overflow: "hidden" },
+  blurShade: { backgroundColor: "rgba(0,0,0,0.25)" },
   resetFrame: { position: "absolute", left: spacing.md, flexDirection: "row", alignItems: "center", gap: 6, height: 32, paddingHorizontal: spacing.md, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.45)" },
   resetFrameLabel: { color: colors.textPrimary, fontSize: 13, fontWeight: "600" },
   topBar: {

@@ -27,7 +27,11 @@ const centre = (a: Touch, b: Touch) => ({ x: (a.pageX + b.pageX) / 2, y: (a.page
  * fingers' spread, turns with their angle, and moves with the point between them. `start` is the
  * object and the two touches when the second finger landed; `now` is the two touches now.
  */
-export function pinchPlacement(start: Placement, from: [Touch, Touch], now: [Touch, Touch], width: number, height: number): Placement {
+export function pinchPlacement(
+  start: Placement, from: [Touch, Touch], now: [Touch, Touch], width: number, height: number,
+  /** Size limits: a sticker's by default; a photo has its own (models/photoFrame.ts). */
+  limits: { min: number; max: number } = { min: MIN_OVERLAY_SCALE, max: MAX_OVERLAY_SCALE },
+): Placement {
   const d0 = distance(from[0], from[1]);
   const factor = d0 > 0 ? distance(now[0], now[1]) / d0 : 1;
   let turn = angle(now[0], now[1]) - angle(from[0], from[1]);
@@ -36,7 +40,7 @@ export function pinchPlacement(start: Placement, from: [Touch, Touch], now: [Tou
   const c0 = centre(from[0], from[1]);
   const c1 = centre(now[0], now[1]);
   return {
-    scale: Math.min(MAX_OVERLAY_SCALE, Math.max(MIN_OVERLAY_SCALE, start.scale * factor)),
+    scale: Math.min(limits.max, Math.max(limits.min, start.scale * factor)),
     rotation: start.rotation + turn,
     x: width > 0 ? start.x + (c1.x - c0.x) / width : start.x,
     y: height > 0 ? start.y + (c1.y - c0.y) / height : start.y,

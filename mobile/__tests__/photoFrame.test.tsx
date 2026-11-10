@@ -2,6 +2,7 @@ import React from "react";
 import { act, create, type ReactTestInstance, type ReactTestRenderer } from "react-test-renderer";
 import { captureRef } from "react-native-view-shot";
 import { framePhoto, isFramed, settled, UNFRAMED, MAX_PHOTO_SCALE, MIN_PHOTO_SCALE } from "../src/models/photoFrame";
+import { coverBox, initialFrame } from "../src/models/photoFrame";
 import { StoryEditorScreen } from "../src/screens/create/StoryEditorScreen";
 import * as uploadQueue from "../src/state/uploadQueue";
 
@@ -103,5 +104,32 @@ describe("in the Story editor", () => {
     await flush();
     await act(async () => byLabel("Reset photo")[0]!.props.onPress());
     expect(byLabel("Reset photo")).toHaveLength(0);
+  });
+});
+
+describe("a photo drawn whole, never pre-cut", () => {
+  it("fills the frame at full size and keeps its shape, so its edges are there to show", () => {
+    // A 4:3 landscape photo in a 9:16 frame: as tall as the frame, wider than it.
+    expect(coverBox(360, 640, 4000, 3000).width).toBeCloseTo(640 * (4000 / 3000), 5);
+    expect(coverBox(360, 640, 4000, 3000).height).toBeCloseTo(640, 5);
+    expect(coverBox(360, 640, 1080, 1920)).toEqual({ width: 360, height: 640 });
+  });
+
+  it("starts a wide or square photo whole inside the frame, and a tall one filling it", () => {
+    const landscape = initialFrame(360, 640, 4000, 3000);
+    expect(landscape.scale).toBeCloseTo(360 / (640 * (4000 / 3000)), 5);
+    expect(landscape).toEqual(expect.objectContaining({ x: 0.5, y: 0.5, rotation: 0 }));
+    expect(isFramed(landscape)).toBe(true);
+    expect(initialFrame(360, 640, 1000, 1000).scale).toBeCloseTo(360 / 640, 5);
+    expect(initialFrame(360, 640, 1080, 1920)).toEqual(UNFRAMED);
+    // A 3:4 phone photo is wider than a Story: whole, with the blur above and below.
+    expect(initialFrame(360, 640, 3000, 4000).scale).toBeCloseTo(0.75, 5);
+    // A very wide panorama still fits, down to the smallest size a pinch allows.
+    expect(initialFrame(360, 640, 9000, 1000).scale).toBe(MIN_PHOTO_SCALE);
+    expect(initialFrame(0, 0, 4000, 3000)).toEqual(UNFRAMED);
+  });
+
+  it("can be pinched down to show a whole wide photo", () => {
+    expect(framePhoto(UNFRAMED, [t(0, 0), t(100, 0)], [t(0, 0), t(25, 0)], 400, 800).scale).toBe(0.25);
   });
 });

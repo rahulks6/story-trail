@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Image, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from "react-native";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
@@ -14,6 +14,8 @@ import { enqueueUpload } from "../../state/uploadQueue";
 import { DEFAULT_CROP, filterKey, type FilterName } from "../../models/storyDraft";
 import { FILTER_PREVIEWS, type FilterKey } from "../../models/filterPreviews";
 import { filteredPhotoUri } from "../../utils/filterPhoto";
+import { captureRef } from "react-native-view-shot";
+import { initialFrame, isFramed } from "../../models/photoFrame";
 import type { CreateStackParamList, RootStackParamList } from "../../navigation/types";
 import { tapFeedback } from "../../utils/haptics";
 import { filterLabel } from "../../i18n/names";
@@ -26,26 +28,61 @@ export type CarouselPhoto = CreateStackParamList["Carousel"]["photos"][number];
 export const MAX_CAROUSEL_PHOTOS = 10;
 const CAPTION_MAX = 2200;
 
-/** One photo of the carousel, previewed with the chosen filter (the same colour transform the server applies). */
-function Page({ photo, filter, width, height }: { photo: CarouselPhoto; filter: FilterName; width: number; height: number }): React.JSX.Element {
-  const [uri, setUri] = useState(photo.uri);
-  useEffect(() => {
-    let alive = true;
-    if (filter === "Original") {
-      setUri(photo.uri);
-      return;
-    }
-    filteredPhotoUri(photo.uri, filterKey(filter) as FilterKey, 1080)
-      .then((filtered) => { if (alive) setUri(filtered); })
-      .catch(() => { if (alive) setUri(photo.uri); });
-    return () => { alive = false; };
-  }, [photo.uri, filter]);
+type Size = { width: number; height: number };
+type ViewRef = React.ComponentRef<typeof View>;
+
+/** A photo wider than a Story is shown whole on a blur of itself (nothing cut), like the editor. */
+function fits(size: Size | undefined, frameW: number, frameH: number): boolean {
+  return !!size && isFramed(initialFrame(frameW, frameH, size.width, size.height));
+}
+
+/** The photo as its Story will look: filling the frame, or whole on a blur when it's wider. */
+function Composition({ uri, fit }: { uri: string; fit: boolean }): React.JSX.Element {
+  if (!fit) return <Image source={{ uri }} style={StyleSheet.absoluteFill} resizeMode="cover" accessibilityIgnoresInvertColors />;
   return (
-    <View style={{ width, height, alignItems: "center", justifyContent: "center" }}>
-      <Image source={{ uri }} style={[styles.photo, { width: width - spacing.lg * 2, height }]} resizeMode="cover" accessibilityIgnoresInvertColors />
-    </View>
+    <>
+      <Image source={{ uri }} blurRadius={40} style={StyleSheet.absoluteFill} resizeMode="cover" accessible={false} />
+      <View style={[StyleSheet.absoluteFill, styles.blurShade]} />
+      <Image source={{ uri }} style={StyleSheet.absoluteFill} resizeMode="contain" accessibilityIgnoresInvertColors />
+    </>
   );
 }
+
+/**
+ * One photo of the carousel. The unfiltered composition underneath is what gets saved for a
+ * wide photo (the server applies the filter); the filtered preview (the same colour transform
+ * the server uses) is drawn over it.
+ */
+const Page = forwardRef<ViewRef, { photo: CarouselPhoto; filter: FilterName; width: number; height: number; size: Size | undefined; onSize: (size: Size) => void }>(
+  function Page({ photo, filter, width, height, size, onSize }, shot) {
+    const [uri, setUri] = useState(photo.uri);
+    useEffect(() => {
+      let alive = true;
+      if (filter === "Original") {
+        setUri(photo.uri);
+        return;
+      }
+      filteredPhotoUri(photo.uri, filterKey(filter) as FilterKey, 1080)
+        .then((filtered) => { if (alive) setUri(filtered); })
+        .catch(() => { if (alive) setUri(photo.uri); });
+      return () => { alive = false; };
+    }, [photo.uri, filter]);
+    const frameW = width - spacing.lg * 2;
+    const fit = fits(size, frameW, height);
+    return (
+      <View style={{ width, height, alignItems: "center", justifyContent: "center" }}>
+        <View style={[styles.frame, { width: frameW, height }]}>
+          <View ref={shot} collapsable={false} style={StyleSheet.absoluteFill}>
+            <Composition uri={photo.uri} fit={fit} />
+          </View>
+          {uri !== photo.uri ? <View style={StyleSheet.absoluteFill} pointerEvents="none"><Composition uri={uri} fit={fit} /></View> : null}
+          {/* Measures the photo as decoded (the right way up). */}
+          <Image source={{ uri: photo.uri }} style={styles.measure} onLoad={(e) => { const { width: w, height: h } = e.nativeEvent.source ?? {}; if (w && h && (size?.width !== w || size?.height !== h)) onSize({ width: w, height: h }); }} />
+        </View>
+      </View>
+    );
+  },
+);
 
 /**
  * Several photos shared at once as a run of Stories, one after another (Instagram's "select
@@ -67,6 +104,8 @@ export function CarouselScreen({ navigation, route }: Props): React.JSX.Element 
   const [settings, setSettings] = useState<StorySettings>(DEFAULT_STORY_SETTINGS);
   const [sharing, setSharing] = useState(false);
   const pager = useRef<FlatList<CarouselPhoto>>(null);
+  const shots = useRef<Map<string, ViewRef>>(new Map());
+  const [sizes, setSizes] = useState<Record<string, Size>>({});
 
   useEffect(() => { void loadStorySettings().then(setSettings); }, []);
   // Every photo removed: nothing left to share.
@@ -90,7 +129,15 @@ export function CarouselScreen({ navigation, route }: Props): React.JSX.Element 
     try {
       // In order, so the Stories post one after another as shown (the queue sends oldest first).
       for (const [i, photo] of photos.entries()) {
-        await enqueueUpload(user.id, photo.uri, "photo", photo.mimeType, {
+        // A wide photo is saved whole on its blur, exactly as shown; a tall one goes as it is.
+        let uri = photo.uri, mimeType = photo.mimeType;
+        const shot = shots.current.get(photo.uri);
+        if (fits(sizes[photo.uri], width - spacing.lg * 2, pageHeight) && shot) {
+          const file = await captureRef(shot, { format: "jpg", quality: 0.92, width: 1080, height: Math.round((1080 * pageHeight) / (width - spacing.lg * 2)), result: "tmpfile" });
+          uri = file.startsWith("file://") ? file : `file://${file}`;
+          mimeType = "image/jpeg";
+        }
+        await enqueueUpload(user.id, uri, "photo", mimeType, {
           caption: i === 0 ? caption.trim() : "",
           audience,
           allowComments: settings.allowComments,
@@ -131,7 +178,20 @@ export function CarouselScreen({ navigation, route }: Props): React.JSX.Element 
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={(e) => setIndex(Math.round(e.nativeEvent.contentOffset.x / width))}
-        renderItem={({ item }) => <Page photo={item} filter={filter} width={width} height={pageHeight} />}
+        initialNumToRender={MAX_CAROUSEL_PHOTOS}
+        windowSize={MAX_CAROUSEL_PHOTOS * 2 + 1}
+        removeClippedSubviews={false}
+        renderItem={({ item }) => (
+          <Page
+            ref={(view) => { if (view) shots.current.set(item.uri, view); else shots.current.delete(item.uri); }}
+            photo={item}
+            filter={filter}
+            width={width}
+            height={pageHeight}
+            size={sizes[item.uri]}
+            onSize={(size) => setSizes((current) => ({ ...current, [item.uri]: size }))}
+          />
+        )}
         style={{ flexGrow: 0, height: pageHeight, marginTop: spacing.sm }}
       />
 
@@ -213,7 +273,9 @@ const styles = StyleSheet.create({
   round: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.12)" },
   title: { color: colors.textPrimary, fontSize: 17, fontWeight: "700" },
   counter: { color: colors.textPrimary, fontSize: 15, fontWeight: "700", minWidth: 40, textAlign: "right", fontVariant: ["tabular-nums"] },
-  photo: { borderRadius: radii.md, backgroundColor: "#111111" },
+  frame: { borderRadius: radii.md, overflow: "hidden", backgroundColor: "#111111" },
+  blurShade: { backgroundColor: "rgba(0,0,0,0.25)" },
+  measure: { position: "absolute", width: 1, height: 1, opacity: 0 },
   stripScroll: { flexGrow: 0, marginTop: spacing.sm },
   strip: { gap: spacing.sm, paddingHorizontal: spacing.lg, paddingTop: 6 },
   thumb: { width: 44, height: 64, borderRadius: 8, overflow: "hidden", borderWidth: 2, borderColor: "transparent" },

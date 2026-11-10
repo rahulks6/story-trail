@@ -51,11 +51,13 @@ describe("music", () => {
     const me = await signupUser();
     const list = await client.get("/api/v1/music", authHeader(me.token));
     assert.equal(list.status, 200);
-    const ids = list.body.tracks.map((t: { id: string }) => t.id);
+    // The real catalogue (migrations/music) is there too, a page at a time: find the test songs by name.
+    const ids = (await client.get("/api/v1/music?q=Sunny%20Walk", authHeader(me.token))).body.tracks.map((t: { id: string }) => t.id);
     assert.ok(ids.includes(trackId));
-    assert.ok(!ids.includes(hiddenId), "a track taken out of the catalogue isn't offered");
+    const old = (await client.get("/api/v1/music?q=Old%20Song", authHeader(me.token))).body.tracks.map((t: { id: string }) => t.id);
+    assert.ok(!old.includes(hiddenId), "a track taken out of the catalogue isn't offered");
     assert.ok(list.body.moods.includes("Happy"), "moods come from the catalogue");
-    const track = list.body.tracks.find((t: { id: string }) => t.id === trackId);
+    const track = (await client.get("/api/v1/music?q=Sunny%20Walk", authHeader(me.token))).body.tracks.find((t: { id: string }) => t.id === trackId);
     assert.equal(track.attribution, "Sunny Walk by Test Artist (CC BY 4.0)");
     assert.equal((await client.get("/api/v1/music?q=nothing-like-this", authHeader(me.token))).body.tracks.length, 0);
     const file = await fetch(`${baseUrl}${track.url}`, { headers: authHeader(me.token) });
@@ -69,7 +71,8 @@ describe("music", () => {
     const mediaId = await uploadPhoto(owner.token);
     const res = await client.post("/api/v1/stories", { mediaId, caption: "", audience: "public", music: { trackId, startMs: 58000, durationMs: 90000 } }, authHeader(owner.token));
     assert.equal(res.status, 201, JSON.stringify(res.body));
-    assert.deepEqual([res.body.story.music.startMs, res.body.story.music.durationMs], [30000, 30000]);
+    // At most a minute, and never past the song's end (this one is a minute long).
+    assert.deepEqual([res.body.story.music.startMs, res.body.story.music.durationMs], [0, 60000]);
     const stories = await client.get(`/api/v1/users/${owner.username}/stories`, authHeader(viewer.token));
     assert.equal(stories.body.stories[0].music.title, "Sunny Walk");
     assert.equal(stories.body.stories[0].music.attribution, "Sunny Walk by Test Artist (CC BY 4.0)");

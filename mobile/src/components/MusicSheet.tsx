@@ -25,7 +25,9 @@ interface Props {
   onChoose: (music: ChosenMusic) => void;
 }
 
-const CLIP_LENGTHS = [10_000, 15_000, 30_000];
+const CLIP_LENGTHS = [15_000, 30_000, 60_000];
+/** Songs per request (api/music.ts asks for this many). */
+const PAGE = 50;
 const BAR_WIDTH = 300;
 
 /**
@@ -58,6 +60,7 @@ export function MusicSheet({ visible, current, onClose, onChoose }: Props): Reac
         .then((r) => {
           if (cancelled) return;
           setTracks(r.tracks);
+          setHasMore(r.tracks.length >= PAGE);
           if (r.moods) setMoods(r.moods);
           setError(null);
         })
@@ -68,6 +71,26 @@ export function MusicSheet({ visible, current, onClose, onChoose }: Props): Reac
     if (!query) run();
     return () => { cancelled = true; if (timer) clearTimeout(timer); };
   }, [visible, accessToken, query, mood]);
+
+  // More songs as the list nears its end (the server sends them a page at a time).
+  const [hasMore, setHasMore] = useState(false);
+  const loadingMore = useRef(false);
+  const loadMore = () => {
+    if (!accessToken || !tracks || !hasMore || loadingMore.current) return;
+    loadingMore.current = true;
+    const offset = tracks.length;
+    listMusic(accessToken, { q: query, mood, offset })
+      .then((r) => {
+        setTracks((current) => {
+          if (!current || current.length !== offset) return current;
+          const seen = new Set(current.map((track) => track.id));
+          return [...current, ...r.tracks.filter((track) => !seen.has(track.id))];
+        });
+        setHasMore(r.tracks.length >= PAGE);
+      })
+      .catch(() => undefined)
+      .finally(() => { loadingMore.current = false; });
+  };
 
   const pick = (track: MusicTrack) => {
     tapFeedback("select");
@@ -124,6 +147,8 @@ export function MusicSheet({ visible, current, onClose, onChoose }: Props): Reac
                 keyExtractor={(track) => track.id}
                 style={styles.list}
                 keyboardShouldPersistTaps="handled"
+                onEndReached={loadMore}
+                onEndReachedThreshold={0.5}
                 renderItem={({ item }) => (
                   <Pressable style={styles.row} onPress={() => pick(item)} accessibilityRole="button" accessibilityLabel={t("musicSheet.titleByArtistDurationms", { title: item.title, artist: item.artist, durationMs: formatClock(item.durationMs) })} accessibilityHint={t("musicSheet.addsItToYourStory")}>
                     <View style={styles.cover}><Icon name={ICONS.music} size={20} color={colors.textPrimary} /></View>

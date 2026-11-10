@@ -55,6 +55,8 @@ export type CreateStackParamList = {
     height: number | null;
     /** Recorded in Boomerang mode: the server makes the forward-and-back loop. */
     effect?: "boomerang";
+    /** From the gallery: a photo wider than a Story starts whole (nothing cut), not filling it. */
+    fromGallery?: boolean;
     /** A gallery video longer than a Story: opens trimming, with this part chosen. */
     initialTrim?: { startMs: number; endMs: number };
   };
