@@ -106,6 +106,40 @@ function activeUsersChart(daily, days, today) {
     if (!daily.length) box.append(el('p', 'No days computed yet: use Refresh now.', 'muted'));
     return box;
 }
+/** Real sign-ups per day (test accounts left out), the last 30 days. */
+function signupsChart(byDay) {
+    const box = card('New sign-ups by day');
+    const series = byDay.length ? byDay : [];
+    const max = Math.max(1, ...series.map(d => d.count)), width = 1000, height = 120, step = width / Math.max(1, series.length);
+    const total = series.reduce((sum, d) => sum + d.count, 0);
+    const svg = svgNode('svg', { viewBox: `0 0 ${width} ${height + 20}`, role: 'img', class: 'chart', 'aria-label': `Sign-ups per day, last ${series.length} days: ${total} in all, highest ${max} in a day` });
+    series.forEach((d, i) => {
+        if (!d.count) return;
+        const h = Math.max(2, Math.round((d.count / max) * height));
+        const bar = svgNode('rect', { x: (i * step + step * 0.15).toFixed(1), y: height - h, width: Math.max(1, step * 0.7).toFixed(1), height: h, rx: 2 });
+        const title = svgNode('title', {}); title.textContent = `${d.day}: ${d.count} sign-up${d.count === 1 ? '' : 's'}`; bar.append(title); svg.append(bar);
+    });
+    svg.append(svgNode('line', { x1: 0, x2: width, y1: height + 0.5, y2: height + 0.5, class: 'axis' }));
+    if (series.length) for (const [text, x, anchor] of [[series[0].day, 0, 'start'], [series.at(-1).day, width, 'end']]) { const t = svgNode('text', { x, y: height + 17, 'text-anchor': anchor }); t.textContent = text; svg.append(t); }
+    box.append(svg);
+    return box;
+}
+/** Who uses Katkee: real accounts only (test accounts left out), at the top of Analytics. */
+function peopleSection(people) {
+    const wrap = el('div');
+    wrap.append(el('h2', 'People'), el('p', `Real accounts only: ${count(people.testAccounts)} test accounts (support+e2e-…@katkee.com) are left out. Days run on ${people.timeZone} time.`, 'muted'));
+    const share = n => people.accounts ? ' (' + Math.round((n / people.accounts) * 100) + '%)' : '';
+    const grid = el('div', undefined, 'grid');
+    for (const [label, value] of [['Total users', count(people.accounts)], ['New today', count(people.newToday)], ['New this week', count(people.newLast7Days)],
+        ['New in 30 days', count(people.newLast30Days)], ['Verified email', count(people.verifiedEmail) + share(people.verifiedEmail)], ['With a profile photo', count(people.withProfilePhoto) + share(people.withProfilePhoto)]]) {
+        const box = card(label);
+        box.append(el('p', value, 'metric'));
+        grid.append(box);
+    }
+    wrap.append(grid, signupsChart(people.signupsByDay));
+    wrap.append(el('p', `Deleted accounts: ${count(people.deleted)} · Suspended: ${count(people.suspended)}`, 'muted'));
+    return wrap;
+}
 function table(headings, rows) {
     const wrap = el('div', undefined, 'table-wrap'), t = el('table'), head = el('tr');
     for (const h of headings) { const th = el('th', h); th.scope = 'col'; head.append(th); }
@@ -117,7 +151,7 @@ function table(headings, rows) {
 async function analyticsPage(c) {
     let days = 30;
     try { days = Number(sessionStorage.getItem('katkee.analyticsDays')) || 30; } catch { /* storage unavailable */ }
-    const data = await api('analytics?days=' + days);
+    const [data, people] = await Promise.all([api('analytics?days=' + days), api('analytics/people').catch(() => null)]);
     c.replaceChildren();
     const select = el('select');
     select.setAttribute('aria-label', 'Period');
@@ -127,6 +161,8 @@ async function analyticsPage(c) {
     bar.append(el('p', `Totals only, no individual people. Days run on ${data.timeZone} time. ` + (data.computedAt ? 'Updated ' + new Date(data.computedAt).toLocaleString() + '.' : 'Not computed yet: use Refresh now.'), 'muted'), select,
         button('Refresh now', async () => { await api('analytics/refresh', 'POST', {}); await render(); message('Analytics refreshed.'); }, true));
     c.append(bar);
+    if (people) c.append(peopleSection(people));
+    c.append(el('h2', 'Activity'));
 
     const p = data.period.counts, r = data.period.rates, latest = data.daily.at(-1)?.metrics ?? {}, b = data.backlog;
     const grid = el('div', undefined, 'grid');

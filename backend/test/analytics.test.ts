@@ -297,6 +297,36 @@ describe("product analytics", () => {
     assert.equal((await request("/api/v1/admin/analytics", "GET", undefined, analyst.auth)).status, 401, "consumer tokens never reach Admin data");
   });
 
+  it("counts real people for Admins, leaving test accounts out", async () => {
+    const analyst = await account(["analytics.read"]);
+    const ah = await adminSignIn(base, analyst.input.email, analyst.input.password);
+    const before = await request("/api/v1/admin/analytics/people", "GET", undefined, ah);
+    assert.equal(before.status, 200, JSON.stringify(before.body));
+
+    // One real person with a verified email and a photo, and one test account like the release pipeline's.
+    const person = await account();
+    const media = await photo(person);
+    await query(`UPDATE users SET email_verified_at = now(), avatar_media_id = :'m' WHERE id = :'id'`, { m: media, id: person.id });
+    const tag = randomUUID().slice(0, 8);
+    const test = await request("/api/v1/auth/signup", "POST", { email: `support+e2e-and-${tag}@katkee.com`, username: `e2e_${tag}`, password: "correcthorsebattery", displayName: "E2E", birthDate: "1995-05-15" });
+    assert.equal(test.status, 201, JSON.stringify(test.body));
+
+    const after = (await request("/api/v1/admin/analytics/people", "GET", undefined, ah)).body;
+    assert.equal(after.accounts, before.body.accounts + 1, "the test account isn't counted");
+    assert.equal(after.newToday, before.body.newToday + 1);
+    assert.equal(after.verifiedEmail, before.body.verifiedEmail + 1);
+    assert.equal(after.withProfilePhoto, before.body.withProfilePhoto + 1);
+    assert.equal(after.testAccounts, before.body.testAccounts + 1);
+    assert.equal(after.signupsByDay.length, 30);
+    assert.equal(after.signupsByDay.at(-1).count, before.body.signupsByDay.at(-1).count + 1);
+    for (const v of [person.id, person.username, person.input.email]) assert.ok(!JSON.stringify(after).includes(v), "counts only, never who");
+
+    const moderator = await account(["reports.read"]);
+    const mh = await adminSignIn(base, moderator.input.email, moderator.input.password);
+    assert.equal((await request("/api/v1/admin/analytics/people", "GET", undefined, mh)).status, 403);
+    assert.equal((await request("/api/v1/admin/analytics/people", "GET", undefined, person.auth)).status, 401);
+  });
+
   it("the worker fills in today and purges raw data past retention, keeping the daily totals", async () => {
     const person = await account();
     await appEvent(person.id, "app_session_started", new Date(Date.now() - 100 * 86_400_000).toISOString(), randomUUID());

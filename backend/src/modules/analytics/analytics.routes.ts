@@ -6,6 +6,7 @@ import { parseQueryString } from "../../http/pagination";
 import { requireAdmin } from "../admin/security";
 import { ingestEvents } from "./events";
 import { analyticsOverview, refreshAnalytics } from "./rollup";
+import { peopleSummary } from "./people";
 
 /** The app flushes every few seconds at most; this only stops a runaway client. */
 export const analyticsIngestLimiter = new RateLimiter(60_000, 60);
@@ -24,6 +25,12 @@ export function registerAnalyticsRoutes(router: Router): void {
     await requireAdmin(req, "analytics.read");
     const days = Number(parseQueryString(req.url ?? "").days ?? 30);
     sendJson(res, 200, await analyticsOverview(Number.isInteger(days) ? Math.min(90, Math.max(7, days)) : 30));
+  });
+
+  // Real people (test accounts left out): accounts, new, verified, with a photo, sign-ups per day.
+  router.get("/api/v1/admin/analytics/people", async (req, res) => {
+    await requireAdmin(req, "analytics.read");
+    sendJson(res, 200, await peopleSummary());
   });
 
   router.post("/api/v1/admin/analytics/refresh", async (req, res) => {
