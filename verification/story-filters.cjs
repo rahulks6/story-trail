@@ -23,7 +23,7 @@ function shared(file){
 
 test('the server and the app define the same filters with the same arithmetic',()=>{
  const server=recipes(SERVER),app=recipes(APP);
- assert.equal(Object.keys(server).length,11);
+ assert.equal(Object.keys(server).length,16);
  assert.deepEqual(app,server);
  assert.deepEqual(server.original,{});
  assert.equal(shared(APP),shared(SERVER));

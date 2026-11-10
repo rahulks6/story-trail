@@ -11,7 +11,7 @@ import type { TrimRange } from "./trim";
  * src/api/ and src/models/.
  */
 
-export type FilterName = "Original" | "Warm" | "Cool" | "Bright" | "Cinema" | "Mono" | "Vintage" | "Soft" | "Vivid" | "Night" | "Fade";
+export type FilterName = "Original" | "Warm" | "Cool" | "Bright" | "Cinema" | "Mono" | "Vintage" | "Retro" | "Film" | "Instant" | "Sepia" | "Noir" | "Soft" | "Vivid" | "Night" | "Fade";
 
 /** The backend stores/validates filter names lowercased — see overlays.ts's FILTER_NAMES. */
 export function filterKey(name: FilterName): string {

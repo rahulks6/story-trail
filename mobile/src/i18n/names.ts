@@ -15,7 +15,7 @@ const TOPIC_KEYS: Record<string, MessageKey> = {
 
 const FILTER_KEYS: Record<string, MessageKey> = {
   Original: "filter.original", Warm: "filter.warm", Cool: "filter.cool", Bright: "filter.bright", Cinema: "filter.cinema",
-  Mono: "filter.mono", Vintage: "filter.vintage", Soft: "filter.soft", Vivid: "filter.vivid", Night: "filter.night", Fade: "filter.fade",
+  Mono: "filter.mono", Vintage: "filter.vintage", Retro: "filter.retro", Film: "filter.film", Instant: "filter.instant", Sepia: "filter.sepia", Noir: "filter.noir", Soft: "filter.soft", Vivid: "filter.vivid", Night: "filter.night", Fade: "filter.fade",
 };
 
 const DRAW_TOOL_KEYS: Record<string, MessageKey> = {

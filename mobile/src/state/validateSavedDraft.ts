@@ -17,7 +17,7 @@ export function isSavedDraft(value: unknown, mediaUri: string): value is SavedDr
   if (!record(source) || source.uri !== mediaUri || !member(source.kind, ["photo", "video"])) return false;
   if (![source.width, source.height].every(v => v === null || (number(v) && v > 0))) return false;
   if (!record(crop) || !number(crop.zoom) || crop.zoom < 1 || crop.zoom > 4 || !number(crop.offsetX) || Math.abs(crop.offsetX) > 1 || !number(crop.offsetY) || Math.abs(crop.offsetY) > 1) return false;
-  if (!text(d.caption) || typeof d.audioMuted !== "boolean" || !member(d.filter, ["Original", "Warm", "Cool", "Bright", "Cinema", "Mono", "Vintage", "Soft", "Vivid", "Night", "Fade"])) return false;
+  if (!text(d.caption) || typeof d.audioMuted !== "boolean" || !member(d.filter, ["Original", "Warm", "Cool", "Bright", "Cinema", "Mono", "Vintage", "Retro", "Film", "Instant", "Sepia", "Noir", "Soft", "Vivid", "Night", "Fade"])) return false;
   if (!Array.isArray(d.overlays) || !Array.isArray(d.drawing)) return false;
   if (!d.drawing.every(stroke => record(stroke) && text(stroke.id) && text(stroke.color) && number(stroke.width) && stroke.width > 0 && member(stroke.tool, ["pen", "marker", "highlighter", "eraser"]) && Array.isArray(stroke.points) && stroke.points.every(p => record(p) && number(p.x) && number(p.y)))) return false;
   return d.overlays.every(overlay => {

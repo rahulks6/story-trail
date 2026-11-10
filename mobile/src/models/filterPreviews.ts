@@ -11,7 +11,7 @@ import type { FilterName } from "./storyDraft";
  * the light colour tint below, as before; so is the live preview of a video in the editor.
  */
 
-export type FilterKey = "original" | "warm" | "cool" | "bright" | "cinema" | "mono" | "vintage" | "soft" | "vivid" | "night" | "fade";
+export type FilterKey = "original" | "warm" | "cool" | "bright" | "cinema" | "mono" | "vintage" | "retro" | "film" | "instant" | "sepia" | "noir" | "soft" | "vivid" | "night" | "fade";
 
 export interface FilterRecipe {
   /** Added to every channel, -0.2 to 0.2. */
@@ -36,6 +36,11 @@ export const RECIPES: Record<FilterKey, FilterRecipe> = {
   cinema: { contrast: 1.18, saturation: 0.82, warmth: -0.03, brightness: -0.025 },
   mono: { saturation: 0, contrast: 1.12 },
   vintage: { sepia: 0.4, fade: 0.07, contrast: 0.94, warmth: 0.03 },
+  retro: { warmth: 0.2, fade: 0.12, saturation: 1.25, contrast: 0.95, sepia: 0.22 },
+  film: { contrast: 1.15, fade: 0.11, warmth: 0.07, saturation: 0.78, brightness: -0.015 },
+  instant: { fade: 0.17, warmth: 0.09, brightness: 0.04, contrast: 0.86, saturation: 0.82 },
+  sepia: { sepia: 1, contrast: 1.04 },
+  noir: { saturation: 0, contrast: 1.35, brightness: -0.03 },
   soft: { contrast: 0.9, fade: 0.06, saturation: 0.94, brightness: 0.02 },
   vivid: { saturation: 1.35, contrast: 1.1 },
   night: { brightness: -0.06, contrast: 1.12, warmth: -0.06, saturation: 0.9 },
@@ -150,6 +155,11 @@ export const FILTER_PREVIEWS: FilterPreview[] = [
   { name: "Cinema", overlayColor: "#1A2A3A", overlayOpacity: 0.22 },
   { name: "Mono", overlayColor: "#808080", overlayOpacity: 0.35 },
   { name: "Vintage", overlayColor: "#C9A66B", overlayOpacity: 0.2 },
+  { name: "Retro", overlayColor: "#E8A04A", overlayOpacity: 0.18 },
+  { name: "Film", overlayColor: "#6B8E7A", overlayOpacity: 0.12 },
+  { name: "Instant", overlayColor: "#F3E2C0", overlayOpacity: 0.2 },
+  { name: "Sepia", overlayColor: "#704214", overlayOpacity: 0.3 },
+  { name: "Noir", overlayColor: "#000000", overlayOpacity: 0.35 },
   { name: "Soft", overlayColor: "#FFE8E8", overlayOpacity: 0.15 },
   { name: "Vivid", overlayColor: "#FF3366", overlayOpacity: 0.08 },
   { name: "Night", overlayColor: "#0A1030", overlayOpacity: 0.3 },
