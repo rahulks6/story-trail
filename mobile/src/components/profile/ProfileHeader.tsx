@@ -57,6 +57,8 @@ interface Props {
   onOpenStory?: () => void;
   /** Your own page without an active Story: a "+" on the photo starts one. */
   onAddStory?: () => void;
+  /** Your own page with no profile photo: tapping the photo adds one. */
+  onAddPhoto?: () => void;
   followsYou?: boolean;
   stats: ProfileStat[];
   /** The page's buttons, under the bio. */
@@ -111,7 +113,7 @@ function ProfileCover({ source, bleed, onError }: {
  */
 export function ProfileHeader({
   username, displayName, bio, interests, avatarMediaId, coverMediaId, coverBleed = DEFAULT_BLEED, isPrivate, verified, verifiedCategory,
-  professionalCategory, hasActiveStory, storyLabel, onOpenStory, onAddStory, followsYou, stats, children,
+  professionalCategory, hasActiveStory, storyLabel, onOpenStory, onAddStory, onAddPhoto, followsYou, stats, children,
 }: Props): React.JSX.Element {
   const [badgeSheetOpen, setBadgeSheetOpen] = useState(false);
   const { accessToken } = useAuth();
@@ -135,6 +137,10 @@ export function ProfileHeader({
           <View>
             {hasActiveStory && onOpenStory ? (
               <Pressable onPress={onOpenStory} hitSlop={4} accessibilityRole="button" accessibilityLabel={storyLabel}>
+                {photo}
+              </Pressable>
+            ) : onAddPhoto ? (
+              <Pressable onPress={onAddPhoto} hitSlop={4} accessibilityRole="button" accessibilityLabel={t("profile.addProfilePhoto")}>
                 {photo}
               </Pressable>
             ) : (

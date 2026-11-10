@@ -18,6 +18,16 @@ jest.mock("../src/api/users", () => ({
 }));
 jest.mock("../src/components/Avatar", () => ({ Avatar: () => null }));
 jest.mock("../src/state/invites", () => ({ shareInvite: jest.fn() }));
+jest.mock("../src/api/media", () => ({ uploadPhoto: jest.fn(async () => ({ id: "media-1" })) }));
+jest.mock("react-native-image-picker", () => ({ launchImageLibrary: jest.fn(async () => ({ assets: [{ uri: "file:///me.jpg", width: 800, height: 800 }] })), launchCamera: jest.fn() }));
+// Placing the photo in the circle: done at once here (AvatarCropper has its own tests).
+jest.mock("../src/components/AvatarCropper", () => ({
+  AvatarCropper: ({ photo, onDone }: { photo: { uri: string } | null; onDone: (uri: string) => void }) => {
+    const { useEffect } = require("react");
+    useEffect(() => { if (photo) onDone(photo.uri + "#cropped"); }, [photo, onDone]);
+    return null;
+  },
+}));
 // The contacts step's own behaviour is tested in contacts.test.tsx.
 jest.mock("../src/components/ContactsFinder", () => ({
   ContactsFinder: ({ header, footer }: { header: React.ReactNode; footer: React.ReactNode }) => {
@@ -58,9 +68,13 @@ afterEach(async () => { if (tree) await act(async () => tree.unmount()); });
 test("starts with people to follow (no interests question), then contacts", async () => {
   api.getSuggestions.mockResolvedValueOnce({ suggestions: [person("asha", { kind: "shared_interest", interest: "Travel" }), person("dev", { kind: "new" })] });
   await mount();
+  // First a profile photo, which can wait.
+  expect(texts()).toEqual(expect.arrayContaining(["Step 1 of 3", "Add a profile photo"]));
+  await press("Not now");
+  await settle();
   // Katkee learns interests from what people watch; onboarding no longer asks.
   expect(texts()).not.toContain("What are you into?");
-  expect(texts()).toEqual(expect.arrayContaining(["Step 1 of 2", "People to follow", "Also into Travel", "New to Katkee"]));
+  expect(texts()).toEqual(expect.arrayContaining(["Step 2 of 3", "People to follow", "Also into Travel", "New to Katkee"]));
   expect(api.updateMyProfile).not.toHaveBeenCalled();
 
   api.followUser.mockResolvedValueOnce({ status: "following" });
@@ -71,7 +85,7 @@ test("starts with people to follow (no interests question), then contacts", asyn
 
   await press("Next");
   expect(finish).not.toHaveBeenCalled();
-  expect(texts()).toEqual(expect.arrayContaining(["Step 2 of 2", "Find friends from your contacts"]));
+  expect(texts()).toEqual(expect.arrayContaining(["Step 3 of 3", "Find friends from your contacts"]));
   await press("Start using Katkee");
   expect(finish).toHaveBeenCalled();
   expect(await needsOnboarding(me)).toBe(false);
@@ -80,6 +94,8 @@ test("starts with people to follow (no interests question), then contacts", asyn
 test("every step can be skipped, and with nobody to suggest it offers an invite", async () => {
   api.getSuggestions.mockResolvedValueOnce({ suggestions: [] });
   await mount();
+  await press("Not now");
+  await settle();
   expect(texts()).toEqual(expect.arrayContaining(["You're one of the first here"]));
   expect(pressable("Invite friends")).toBeTruthy();
   const { shareInvite } = jest.requireMock("../src/state/invites") as { shareInvite: jest.Mock };
@@ -88,6 +104,31 @@ test("every step can be skipped, and with nobody to suggest it offers an invite"
   await press("Skip");
   await press("Start using Katkee");
   expect(finish).toHaveBeenCalled();
+});
+
+test("a profile photo chosen in onboarding is saved to the account at once", async () => {
+  api.updateMyProfile.mockResolvedValueOnce({ user: { ...me, avatarMediaId: "media-1" } } as never);
+  await mount();
+  // The big circle and the button both choose a photo.
+  const choose = tree.root.findAll((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === "Choose a photo");
+  expect(choose.length).toBeGreaterThan(0);
+  await act(async () => choose[0]!.props.onPress());
+  await settle();
+  const media = jest.requireMock("../src/api/media") as { uploadPhoto: jest.Mock };
+  expect(media.uploadPhoto).toHaveBeenCalledWith("file:///me.jpg#cropped", "image/jpeg", "token");
+  expect(api.updateMyProfile).toHaveBeenCalledWith({ avatarMediaId: "media-1" }, "token");
+  expect(mockAuth.applyProfile).toHaveBeenCalled();
+  expect(texts()).toContain("People to follow");
+});
+
+test("someone who already has a photo skips that step", async () => {
+  mockAuth.user = { ...me, avatarMediaId: "has-one" } as never;
+  try {
+    await mount();
+    expect(texts()).toEqual(expect.arrayContaining(["Step 1 of 2", "People to follow"]));
+  } finally {
+    mockAuth.user = me as never;
+  }
 });
 
 test("shown once, and never to someone who already has interests", async () => {

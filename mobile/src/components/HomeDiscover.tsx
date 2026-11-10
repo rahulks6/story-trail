@@ -3,6 +3,8 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "./Pressable";
 import { Avatar } from "./Avatar";
 import { ExploreGrid } from "./ExploreGrid";
+import { ProfilePhotoNudge } from "./ProfilePhotoNudge";
+import { useAuth } from "../state/AuthContext";
 import { getExplore, type ExploreTile } from "../api/stories";
 import { followUser, getSuggestions, unfollowUser, type SuggestedPerson } from "../api/users";
 import { mediaColors as colors, spacing, mediaTypography as typography } from "../theme";
@@ -49,9 +51,11 @@ export function HomeDiscover({ accessToken, onFollowed, onOpenStories, onOpenPro
     }
   }, [accessToken, busy, onFollowed]);
 
-  if (!people.length && !tiles.length) return null;
+  const { user } = useAuth();
+  if (!people.length && !tiles.length && user?.avatarMediaId) return null;
   return (
     <View style={styles.root}>
+      <ProfilePhotoNudge />
       {people.length ? (
         <>
           <Text style={styles.heading} accessibilityRole="header">{t("homeDiscover.peopleToFollow")}</Text>

@@ -13,6 +13,7 @@ import { suggestionReasonText } from "../search/SearchScreen";
 import { tapFeedback } from "../../utils/haptics";
 import { TOPICS } from "../../models/topics";
 import { ContactsFinder } from "../../components/ContactsFinder";
+import { useAddProfilePhoto } from "../../components/AddProfilePhoto";
 import { shareInvite } from "../../state/invites";
 import { t } from "../../i18n";
 
@@ -27,8 +28,9 @@ export const MAX_INTERESTS = 5;
 type FollowState = "none" | "following" | "requested" | "busy";
 
 /**
- * First run, after the email is verified: follow a few people, then (optionally) find friends
- * from your contacts, so Home has Stories from day one. Every step can
+ * First run, after the email is verified: a profile photo (skipped when there is one), follow a
+ * few people, then (optionally) find friends from your contacts, so Home has Stories from day
+ * one and friends recognise you. Every step can
  * be skipped; it's shown once (state/onboarding). Contacts are read only if the person taps
  * Continue on that step's explainer.
  */
@@ -36,7 +38,11 @@ export function OnboardingScreen(): React.JSX.Element {
   const { user, accessToken } = useAuth();
   const { finish } = useOnboarding();
   const insets = useSafeAreaInsets();
-  const [step, setStep] = useState<"people" | "contacts">("people");
+  const askPhoto = useState(() => !user?.avatarMediaId)[0];
+  const [step, setStep] = useState<"photo" | "people" | "contacts">(askPhoto ? "photo" : "people");
+  const total = askPhoto ? 3 : 2;
+  const stepLabel = (name: "photo" | "people" | "contacts") => t("onboarding.stepNOfTotal", { n: (askPhoto ? ["photo", "people", "contacts"] : ["people", "contacts"]).indexOf(name) + 1, total });
+  const profilePhoto = useAddProfilePhoto(() => setStep("people"));
   const [people, setPeople] = useState<SuggestedPerson[] | null>(null);
   const [follows, setFollows] = useState<Record<string, FollowState>>({});
 
@@ -77,12 +83,35 @@ export function OnboardingScreen(): React.JSX.Element {
 
   const pad = { paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.lg };
 
+  if (step === "photo") {
+    return (
+      <View style={[styles.root, pad]}>
+        <View style={[styles.content, styles.photoStep]}>
+          <Text style={styles.stepLabel}>{stepLabel("photo")}</Text>
+          <Text style={typography.displayLarge} accessibilityRole="header">{t("onboarding.addAProfilePhoto")}</Text>
+          <Text style={styles.body}>{t("onboarding.profilePhotoWhy")}</Text>
+          <Pressable onPress={() => void profilePhoto.choose("library")} style={styles.photoCircle} accessibilityRole="button" accessibilityLabel={t("onboarding.choosePhoto")}>
+            {profilePhoto.busy ? <ActivityIndicator color={colors.accentText} /> : user ? <Avatar username={user.username} displayName={user.displayName} avatarMediaId={user.avatarMediaId} size={132} /> : null}
+            <View style={styles.photoPlus}><Text style={styles.photoPlusText}>+</Text></View>
+          </Pressable>
+          {profilePhoto.error ? <Text style={styles.photoError}>{profilePhoto.error}</Text> : null}
+        </View>
+        <View style={[styles.footer, { paddingBottom: spacing.md }]}>
+          <Button label={t("onboarding.choosePhoto")} onPress={() => void profilePhoto.choose("library")} busy={profilePhoto.busy} />
+          <Button label={t("onboarding.takeASelfie")} variant="secondary" onPress={() => void profilePhoto.choose("camera")} disabled={profilePhoto.busy} />
+          <Button label={t("common.notNow")} variant="secondary" onPress={() => setStep("people")} disabled={profilePhoto.busy} />
+        </View>
+        {profilePhoto.element}
+      </View>
+    );
+  }
+
   if (step === "contacts") {
     return (
       <View style={[styles.root, { paddingTop: insets.top }]}>
         <ContactsFinder
           source="onboarding"
-          header={<Text style={styles.stepLabel}>{t("onboarding.step2Of2")}</Text>}
+          header={<Text style={styles.stepLabel}>{stepLabel("contacts")}</Text>}
           footer={
             <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.md }]}>
               <Button label={t("onboarding.startUsingKatkee")} variant="secondary" onPress={done} />
@@ -102,7 +131,7 @@ export function OnboardingScreen(): React.JSX.Element {
         contentContainerStyle={[styles.content, pad]}
         ListHeaderComponent={
           <View style={styles.header}>
-            <Text style={styles.stepLabel}>{t("onboarding.step1Of2")}</Text>
+            <Text style={styles.stepLabel}>{stepLabel("people")}</Text>
             <Text style={typography.displayLarge} accessibilityRole="header">{t("onboarding.peopleToFollow")}</Text>
             <Text style={styles.body}>{t("onboarding.theirStoriesWillShowOn")}</Text>
           </View>
@@ -155,6 +184,11 @@ const styles = StyleSheet.create({
   header: { gap: spacing.md, marginBottom: spacing.sm },
   stepLabel: { ...typography.caption, color: colors.accentText, fontWeight: "700" },
   body: { ...typography.body, color: colors.textSecondary },
+  photoStep: { flexGrow: 1, alignItems: "flex-start" },
+  photoCircle: { alignSelf: "center", marginTop: spacing.xl, width: 140, height: 140, borderRadius: 70, alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: colors.accent, borderStyle: "dashed" },
+  photoPlus: { position: "absolute", right: 4, bottom: 4, width: 36, height: 36, borderRadius: 18, backgroundColor: colors.accent, alignItems: "center", justifyContent: "center", borderWidth: 3, borderColor: colors.background },
+  photoPlusText: { color: colors.onAccent, fontSize: 22, fontWeight: "800", lineHeight: 26 },
+  photoError: { ...typography.body, color: colors.danger, alignSelf: "center", textAlign: "center" },
   footer: { paddingHorizontal: spacing.xl, paddingTop: spacing.md, gap: spacing.sm, width: "100%", maxWidth: FORM_MAX_WIDTH, alignSelf: "center" },
   loading: { marginTop: spacing.xl },
   empty: { gap: spacing.md, marginTop: spacing.lg },

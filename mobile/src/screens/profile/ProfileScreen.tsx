@@ -1,6 +1,6 @@
 import { Icon } from "../../components/Icon";
 import React, { useCallback, useEffect, useState } from "react";
-import { RefreshControl, ScrollView, Share, StyleSheet, Text, View } from "react-native";
+import { Alert, RefreshControl, ScrollView, Share, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "../../components/Pressable";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
@@ -19,6 +19,7 @@ import { useScreenInsets } from "../../hooks/useScreenInsets";
 import { onStoryPublished } from "../../state/storyChanges";
 import { AccountSwitcherSheet } from "../../components/AccountSwitcherSheet";
 import { warmStories } from "../../state/warmStories";
+import { useAddProfilePhoto } from "../../components/AddProfilePhoto";
 import { t } from "../../i18n";
 
 /**
@@ -30,6 +31,14 @@ import { t } from "../../i18n";
 export function ProfileScreen(): React.JSX.Element {
   const { user, accessToken } = useAuth();
   const insets = useScreenInsets();
+  // No profile photo yet: the photo itself and a card above it add one in two taps.
+  const profilePhoto = useAddProfilePhoto();
+  const askPhoto = () =>
+    Alert.alert(t("profile.addProfilePhoto"), undefined, [
+      { text: t("onboarding.choosePhoto"), onPress: () => void profilePhoto.choose("library") },
+      { text: t("onboarding.takeASelfie"), onPress: () => void profilePhoto.choose("camera") },
+      { text: t("common.cancel"), style: "cancel" },
+    ]);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [counts, setCounts] = useState<{ followerCount: number; followingCount: number; storyCount: number | null } | null>(null);
   const [, setHighlightCount] = useState<number | null>(null);
@@ -154,6 +163,20 @@ export function ProfileScreen(): React.JSX.Element {
             </View>
             <Text style={styles.verifyAction}>{t("common.verify")}</Text>
           </Pressable>
+        ) : !user.avatarMediaId ? (
+          <Pressable
+            style={({ pressed }) => [styles.verify, pressed && styles.dashboardPressed]}
+            onPress={askPhoto}
+            disabled={profilePhoto.busy}
+            accessibilityRole="button"
+            accessibilityLabel={t("profile.addProfilePhoto")}
+          >
+            <View style={styles.verifyText}>
+              <Text style={styles.verifyTitle}>{t("profile.addProfilePhoto")}</Text>
+              <Text style={styles.verifyBody} numberOfLines={2}>{profilePhoto.error ?? t("profile.friendsRecogniseYouFaster")}</Text>
+            </View>
+            <Text style={styles.verifyAction}>{profilePhoto.busy ? t("profile.saving") : t("profile.addPhoto")}</Text>
+          </Pressable>
         ) : null}
         <ProfileHeader
           username={user.username}
@@ -174,6 +197,7 @@ export function ProfileScreen(): React.JSX.Element {
           storyLabel={t("profile.openYourStory")}
           onOpenStory={() => navigation.navigate("StoryViewer", { creators: [user.username], startIndex: 0, ...(badge?.verified ? { verifiedCreators: [user.username] } : {}) })}
           onAddStory={() => navigation.navigate("Main", { screen: "Create" })}
+          {...(!user.avatarMediaId ? { onAddPhoto: askPhoto } : {})}
           stats={[
             // Everyone sees how many Stories have been posted so far.
             { key: "stories", value: counts?.storyCount ?? null },
@@ -209,6 +233,7 @@ export function ProfileScreen(): React.JSX.Element {
         />
       </ScrollView>
       <AccountSwitcherSheet visible={switcherOpen} onClose={() => setSwitcherOpen(false)} />
+      {profilePhoto.element}
     </View>
   );
 }

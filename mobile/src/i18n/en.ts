@@ -951,9 +951,16 @@ export const en = {
   "onboarding.findingPeople": "Finding people",
   "onboarding.theirStoriesWillShowOn": "Their Stories will show on your Home.",
   "onboarding.peopleToFollow": "People to follow",
-  "onboarding.step1Of2": "Step 1 of 2",
+  "onboarding.stepNOfTotal": "Step {n} of {total}",
+  "onboarding.addAProfilePhoto": "Add a profile photo",
+  "onboarding.profilePhotoWhy": "So friends recognise you in Stories, chats and search.",
+  "onboarding.choosePhoto": "Choose a photo",
+  "onboarding.takeASelfie": "Take a selfie",
+  "profile.addProfilePhoto": "Add a profile photo",
+  "profile.friendsRecogniseYouFaster": "Friends recognise you faster with a photo.",
+  "profile.addPhoto": "Add",
+  "profile.saving": "Saving…",
   "onboarding.startUsingKatkee": "Start using Katkee",
-  "onboarding.step2Of2": "Step 2 of 2",
   "onboarding.skip": "Skip",
 
   // components/OverlayAdjustSheet.tsx
