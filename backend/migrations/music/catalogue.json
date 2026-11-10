@@ -166,5 +166,47 @@
     "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
     "attribution": "\"Night on the Docks - Sax\" by Kevin MacLeod (incompetech.com) (CC BY 4.0)",
     "sourceUrl": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Night%20on%20the%20Docks%20-%20Sax.mp3"
+  },
+  {
+    "id": "3d1e5582-1ea6-4c93-8a13-9aebfb86e5a1",
+    "title": "Vadodora Chill Mix",
+    "artist": "Kevin MacLeod (incompetech.com)",
+    "mood": "Indian",
+    "durationMs": 180035,
+    "storageKey": "m/3d1e5582-1ea6-4c93-8a13-9aebfb86e5a1/audio.mp3",
+    "mimeType": "audio/mpeg",
+    "byteSize": 2881036,
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "\"Vadodora Chill Mix\" by Kevin MacLeod (incompetech.com) (CC BY 4.0)",
+    "sourceUrl": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Vadodora%20Chill%20Mix.mp3"
+  },
+  {
+    "id": "6f41755a-ae87-4fb2-8733-95e52ba4e0b4",
+    "title": "Vadodora",
+    "artist": "Kevin MacLeod (incompetech.com)",
+    "mood": "Indian",
+    "durationMs": 180035,
+    "storageKey": "m/6f41755a-ae87-4fb2-8733-95e52ba4e0b4/audio.mp3",
+    "mimeType": "audio/mpeg",
+    "byteSize": 2881036,
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "\"Vadodora\" by Kevin MacLeod (incompetech.com) (CC BY 4.0)",
+    "sourceUrl": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Vadodora.mp3"
+  },
+  {
+    "id": "5ca3d210-fbad-435b-abf4-ba2c0f44e13a",
+    "title": "Jalandhar",
+    "artist": "Kevin MacLeod (incompetech.com)",
+    "mood": "Indian",
+    "durationMs": 180035,
+    "storageKey": "m/5ca3d210-fbad-435b-abf4-ba2c0f44e13a/audio.mp3",
+    "mimeType": "audio/mpeg",
+    "byteSize": 2881036,
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "\"Jalandhar\" by Kevin MacLeod (incompetech.com) (CC BY 4.0)",
+    "sourceUrl": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Jalandhar.mp3"
   }
 ]
