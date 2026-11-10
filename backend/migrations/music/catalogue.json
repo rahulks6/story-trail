@@ -712,5 +712,33 @@
     "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
     "attribution": "\"Pixelland\" by Kevin MacLeod (incompetech.com) (CC BY 4.0)",
     "sourceUrl": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Pixelland.mp3"
+  },
+  {
+    "id": "271acdf2-fa6e-4461-a592-6f8bfb4c55f1",
+    "title": "Special Spotlight",
+    "artist": "Kevin MacLeod (incompetech.com)",
+    "mood": "Fun",
+    "durationMs": 180035,
+    "storageKey": "m/271acdf2-fa6e-4461-a592-6f8bfb4c55f1/audio.mp3",
+    "mimeType": "audio/mpeg",
+    "byteSize": 2881036,
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "\"Special Spotlight\" by Kevin MacLeod (incompetech.com) (CC BY 4.0)",
+    "sourceUrl": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Special%20Spotlight.mp3"
+  },
+  {
+    "id": "cdba4ea5-001c-47e9-b9e8-d94780c200af",
+    "title": "Doobly Doo",
+    "artist": "Kevin MacLeod (incompetech.com)",
+    "mood": "Fun",
+    "durationMs": 180035,
+    "storageKey": "m/cdba4ea5-001c-47e9-b9e8-d94780c200af/audio.mp3",
+    "mimeType": "audio/mpeg",
+    "byteSize": 2881036,
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "\"Doobly Doo\" by Kevin MacLeod (incompetech.com) (CC BY 4.0)",
+    "sourceUrl": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Doobly%20Doo.mp3"
   }
 ]
