@@ -63,10 +63,23 @@ export interface KatkeeSettings {
    * Cost against resilience while the audience is small (defaults are the resilient setup):
    * a standby database in the second zone, a NAT gateway per zone (1 shares one), and at least
    * this many API tasks. Raising them back is a context change and a deploy.
+   *
+   * natGateways 0 has no NAT gateway at all (about $40 a month saved): the API, worker and one-off
+   * tasks run in the public subnets with their own public address for their outbound calls (push,
+   * email, Secrets Manager, image pulls). Nothing can reach them from outside: their security
+   * groups still let in only the load balancer. The database stays in its isolated subnets.
    */
   databaseMultiAz?: boolean;
   natGateways?: number;
   apiMinTasks?: number;
+  /**
+   * The media worker on Fargate Spot (about 70% cheaper). AWS can take a Spot task back with two
+   * minutes' notice; ECS starts another, and a job it was doing is picked up again when its lease
+   * runs out (media/worker.ts), so an upload is late, never lost.
+   */
+  workerSpot?: boolean;
+  /** CloudWatch Container Insights (per-task metrics, about $19 a month); the alarms don't need it. */
+  containerInsights?: boolean;
   /**
    * Recovery only: the endpoint of a restored instance (docs/BACKUP_AND_RESTORE.md) for the
    * services and migrations to use instead of the stack's own database.
@@ -160,7 +173,7 @@ export function validateSettings(s: KatkeeSettings): void {
   }
   if (s.providers.apple && (!s.providers.apple.clientIds.length || s.providers.apple.clientIds.some((id) => !/^[A-Za-z0-9.-]+$/.test(id)))) problems.push("appleClientIds must be the iOS bundle ID, such as com.katkee.app");
   if (!Number.isFinite(s.monthlyBudgetUsd) || s.monthlyBudgetUsd <= 0) problems.push("monthlyBudgetUsd must be a positive number");
-  if (s.natGateways !== undefined && ![1, 2].includes(s.natGateways)) problems.push("natGateways must be 1 or 2 (the app subnets need a way out)");
+  if (s.natGateways !== undefined && ![0, 1, 2].includes(s.natGateways)) problems.push("natGateways must be 0, 1 or 2");
   if (s.apiMinTasks !== undefined && (!Number.isInteger(s.apiMinTasks) || s.apiMinTasks < 1 || s.apiMinTasks > 10)) problems.push("apiMinTasks must be 1 to 10");
   if (problems.length) throw new Error(`Katkee settings: ${problems.join("; ")}.`);
 }
@@ -187,6 +200,9 @@ export class KatkeeStack extends Stack {
     Tags.of(this).add("environment", "production");
 
     // ---------------------------------------------------------------- network
+    // Without a NAT gateway the tasks go out through the public subnets with their own address.
+    const noNat = s.natGateways === 0;
+    const taskSubnets = { subnetType: noNat ? ec2.SubnetType.PUBLIC : ec2.SubnetType.PRIVATE_WITH_EGRESS };
     const vpc = new ec2.Vpc(this, "Vpc", {
       ipAddresses: ec2.IpAddresses.cidr("10.40.0.0/16"),
       maxAzs: 2,
@@ -194,7 +210,8 @@ export class KatkeeStack extends Stack {
       natGateways: s.natGateways ?? 2,
       subnetConfiguration: [
         { name: "public", subnetType: ec2.SubnetType.PUBLIC, cidrMask: 24 },
-        { name: "app", subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS, cidrMask: 20 },
+        // Kept (unused, no way out) without a NAT gateway, so going back to one is a context change.
+        { name: "app", subnetType: noNat ? ec2.SubnetType.PRIVATE_ISOLATED : ec2.SubnetType.PRIVATE_WITH_EGRESS, cidrMask: 20 },
         { name: "data", subnetType: ec2.SubnetType.PRIVATE_ISOLATED, cidrMask: 24 },
       ],
     });
@@ -255,7 +272,8 @@ export class KatkeeStack extends Stack {
       engine,
       instanceType: new ec2.InstanceType(s.databaseInstanceType),
       vpc,
-      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
+      // Its own subnets by name: the app subnets are isolated too when there is no NAT gateway.
+      vpcSubnets: { subnetGroupName: "data" },
       securityGroups: [dbSg],
       publiclyAccessible: false,
       multiAz: s.databaseMultiAz ?? true,
@@ -357,7 +375,10 @@ export class KatkeeStack extends Stack {
     const apiRepo = repository("ApiRepository", "katkee-api");
     const workerRepo = repository("WorkerRepository", "katkee-worker");
 
-    const cluster = new ecs.Cluster(this, "Cluster", { vpc, containerInsightsV2: ecs.ContainerInsights.ENABLED });
+    const cluster = new ecs.Cluster(this, "Cluster", {
+      vpc, containerInsightsV2: s.containerInsights === false ? ecs.ContainerInsights.DISABLED : ecs.ContainerInsights.ENABLED,
+    });
+    if (s.workerSpot) cluster.enableFargateCapacityProviders();
     const sesIdentityArn = this.formatArn({ service: "ses", resource: "identity", resourceName: s.sesIdentity });
 
     // What every process needs to reach the database: verified TLS against the RDS CA.
@@ -544,9 +565,9 @@ export class KatkeeStack extends Stack {
       minHealthyPercent: 100,
       maxHealthyPercent: 200,
       circuitBreaker: { enable: true, rollback: true },
-      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
+      vpcSubnets: taskSubnets,
       securityGroups: [apiSg],
-      assignPublicIp: false,
+      assignPublicIp: noNat,
       healthCheckGracePeriod: Duration.seconds(60),
     });
     api.attachToApplicationTargetGroup(apiTargets);
@@ -560,9 +581,10 @@ export class KatkeeStack extends Stack {
       minHealthyPercent: 100,
       maxHealthyPercent: 200,
       circuitBreaker: { enable: true, rollback: true },
-      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
+      vpcSubnets: taskSubnets,
       securityGroups: [workerSg],
-      assignPublicIp: false,
+      assignPublicIp: noNat,
+      ...(s.workerSpot ? { capacityProviderStrategies: [{ capacityProvider: "FARGATE_SPOT", weight: 1 }] } : {}),
     });
     worker.autoScaleTaskCount({ minCapacity: s.bootstrap ? 0 : 1, maxCapacity: 4 }).scaleOnMetric("QueueDepth", {
       metric: jobs.metricApproximateNumberOfMessagesVisible({ period: Duration.minutes(1) }),
@@ -694,7 +716,8 @@ export class KatkeeStack extends Stack {
     output("WorkerServiceName", worker.serviceName, "aws ecs describe-services / update-service");
     output("ApiTaskDefinition", apiTask.taskDefinitionArn, "For the first Super Admin (infra/README.md)");
     output("MigrateTaskDefinition", migrateTask.taskDefinitionArn, "aws ecs run-task (infra/README.md)");
-    output("TaskSubnets", vpc.privateSubnets.map((subnet) => subnet.subnetId).join(","), "Subnets for one-off tasks");
+    output("TaskSubnets", (noNat ? vpc.publicSubnets : vpc.privateSubnets).map((subnet) => subnet.subnetId).join(","), "Subnets for one-off tasks");
+    output("TaskPublicIp", noNat ? "ENABLED" : "DISABLED", "assignPublicIp for one-off tasks (ENABLED without a NAT gateway)");
     output("MigrateSecurityGroup", workerSg.securityGroupId, "Security group for the migration task");
     output("ApiSecurityGroup", apiSg.securityGroupId, "Security group for one-off API tasks");
     output("DatabaseEndpoint", db.dbInstanceEndpointAddress, "PostgreSQL (TLS only, private)");

@@ -420,6 +420,26 @@ describe("lean setup while the audience is small", () => {
     assert.equal(resources(lean, "AWS::EC2::NatGateway").length, 1);
     assert.deepEqual(resources(lean, "AWS::ApplicationAutoScaling::ScalableTarget").map(([, t]) => t.Properties.MinCapacity).sort(), [1, 1]);
     assert.equal(resources(template, "AWS::EC2::NatGateway").length, 2);
-    assert.throws(() => synth({ ...everything(), natGateways: 0 }), /natGateways must be 1 or 2/);
+    assert.throws(() => synth({ ...everything(), natGateways: 3 }), /natGateways must be 0, 1 or 2/);
+  });
+
+  it("without a NAT gateway the tasks run in the public subnets with their own address, still closed to the internet", () => {
+    const bare = synth({ ...everything(), databaseMultiAz: false, natGateways: 0, apiMinTasks: 1, workerSpot: true, containerInsights: false }).template;
+    assert.equal(resources(bare, "AWS::EC2::NatGateway").length, 0);
+    const services = resources(bare, "AWS::ECS::Service").map(([, svc]) => svc.Properties);
+    assert.equal(services.length, 2);
+    for (const svc of services) assert.equal(svc.NetworkConfiguration.AwsvpcConfiguration.AssignPublicIp, "ENABLED");
+    // The tasks' security groups still take traffic only from the load balancer (or nothing).
+    for (const [, sg] of resources(bare, "AWS::EC2::SecurityGroup")) {
+      for (const rule of sg.Properties.SecurityGroupIngress ?? []) if (rule.CidrIp === "0.0.0.0/0") assert.ok([443, 80].includes(rule.FromPort), JSON.stringify(rule));
+    }
+    // The worker on Spot, the API on regular Fargate.
+    const spot = services.filter((svc) => svc.CapacityProviderStrategy);
+    assert.deepEqual(spot.map((svc) => svc.CapacityProviderStrategy), [[{ CapacityProvider: "FARGATE_SPOT", Weight: 1 }]]);
+    assert.equal(services.filter((svc) => svc.LaunchType === "FARGATE").length, 1);
+    const cluster = resources(bare, "AWS::ECS::Cluster")[0]![1].Properties;
+    assert.deepEqual(cluster.ClusterSettings, [{ Name: "containerInsights", Value: "disabled" }]);
+    // The database stays private.
+    assert.equal(resources(bare, "AWS::RDS::DBInstance")[0]![1].Properties.PubliclyAccessible, false);
   });
 });

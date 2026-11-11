@@ -43,6 +43,8 @@ const settings: KatkeeSettings = {
   databaseMultiAz: get("databaseMultiAz") === undefined ? undefined : get("databaseMultiAz") === "true",
   natGateways: get("natGateways") === undefined ? undefined : Number(get("natGateways")),
   apiMinTasks: get("apiMinTasks") === undefined ? undefined : Number(get("apiMinTasks")),
+  workerSpot: get("workerSpot") === "true",
+  containerInsights: get("containerInsights") === undefined ? undefined : get("containerInsights") === "true",
   databaseHost: get("databaseHost"),
   analyticsTimeZone: get("analyticsTimeZone") ?? "Asia/Kolkata",
   providers: {

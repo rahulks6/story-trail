@@ -17,6 +17,8 @@
   ],
   "databaseInstanceType": "t4g.small",
   "databaseMultiAz": "false",
-  "natGateways": "1",
-  "apiMinTasks": "1"
+  "natGateways": "0",
+  "apiMinTasks": "1",
+  "workerSpot": "true",
+  "containerInsights": "false"
 }

@@ -48,7 +48,7 @@ deploy(`1. migration task -> ${tag}`);
 console.log("\n== 2. migrations");
 const cluster = output("ClusterName");
 const task = aws("ecs", "run-task", "--cluster", cluster, "--launch-type", "FARGATE", "--task-definition", output("MigrateTaskDefinition"),
-  "--network-configuration", `awsvpcConfiguration={subnets=[${output("TaskSubnets")}],securityGroups=[${output("MigrateSecurityGroup")}],assignPublicIp=DISABLED}`,
+  "--network-configuration", `awsvpcConfiguration={subnets=[${output("TaskSubnets")}],securityGroups=[${output("MigrateSecurityGroup")}],assignPublicIp=${output("TaskPublicIp") || "DISABLED"}}`,
   "--query", "tasks[0].taskArn", "--output", "text");
 aws("ecs", "wait", "tasks-stopped", "--cluster", cluster, "--tasks", task);
 const exit = aws("ecs", "describe-tasks", "--cluster", cluster, "--tasks", task, "--query", "tasks[0].containers[0].exitCode", "--output", "text");
