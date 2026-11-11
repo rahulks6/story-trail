@@ -51,6 +51,8 @@ interface Props {
   verifiedCategory?: string | null;
   /** A professional account's category (api/professional.ts), shown quietly under the name. */
   professionalCategory?: string | null;
+  /** Founding member #n (the first 1,000 people on Katkee): a small gold label under the name. */
+  foundingNumber?: number | null;
   /** An active Story: the amber ring shows, and tapping the photo opens it. */
   hasActiveStory: boolean;
   storyLabel: string;
@@ -113,7 +115,7 @@ function ProfileCover({ source, bleed, onError }: {
  */
 export function ProfileHeader({
   username, displayName, bio, interests, avatarMediaId, coverMediaId, coverBleed = DEFAULT_BLEED, isPrivate, verified, verifiedCategory,
-  professionalCategory, hasActiveStory, storyLabel, onOpenStory, onAddStory, onAddPhoto, followsYou, stats, children,
+  professionalCategory, foundingNumber, hasActiveStory, storyLabel, onOpenStory, onAddStory, onAddPhoto, followsYou, stats, children,
 }: Props): React.JSX.Element {
   const [badgeSheetOpen, setBadgeSheetOpen] = useState(false);
   const { accessToken } = useAuth();
@@ -182,6 +184,12 @@ export function ProfileHeader({
       <View style={styles.identity}>
         <VerifiedName name={displayName} verified={verified} style={styles.displayName} onPressBadge={() => setBadgeSheetOpen(true)} />
         {categoryLabel ? <Text style={styles.category} numberOfLines={1}>{categoryLabel}</Text> : null}
+        {foundingNumber ? (
+          <View style={styles.founding} accessible accessibilityLabel={t("profile.foundingMember", { number: foundingNumber })}>
+            <Icon name={ICONS.starFilled} size={12} color={colors.accentText} />
+            <Text style={styles.foundingLabel} numberOfLines={1}>{t("profile.foundingMember", { number: foundingNumber })}</Text>
+          </View>
+        ) : null}
         {/* The username is the page's title already: not repeated here (as on Instagram). */}
         {isPrivate || followsYou ? <View style={styles.handleRow}>
           {isPrivate ? (
@@ -278,6 +286,8 @@ const styles = StyleSheet.create({
   displayName: { color: colors.textPrimary, fontSize: 16, fontWeight: "700" },
   // Like a byline: there, but quieter than the name.
   category: { color: colors.textSecondary, fontSize: 13, marginTop: -2 },
+  founding: { flexDirection: "row", alignItems: "center", alignSelf: "flex-start", gap: 4, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, borderWidth: StyleSheet.hairlineWidth, borderColor: colors.accentText },
+  foundingLabel: { color: colors.accentText, fontSize: 12, fontWeight: "700" },
   handleRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs, flexWrap: "wrap" },
   handle: { color: colors.textSecondary, fontSize: 14, flexShrink: 1 },
   followsYou: {

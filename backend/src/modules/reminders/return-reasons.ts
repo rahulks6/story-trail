@@ -11,7 +11,8 @@ import { FESTIVAL_TIME_ZONE } from "../festivals/festivals";
  * - your Story reached 10, 25, 50, 100… views: once per milestone;
  * - a festival greeting on its first morning: once per festival;
  * - your posting streak in the evening, if you haven't posted yet today: once a day;
- * - a nudge after 3 quiet days: at most once a week.
+ * - a nudge after 3 quiet days, or the evening after signing up for someone who hasn't posted a
+ *   first Story yet: at most once a week.
  * Each can be switched off (notification preferences); push_sent records what went out.
  */
 const DAY = `(now() AT TIME ZONE '${FESTIVAL_TIME_ZONE}')::date`;
@@ -137,13 +138,18 @@ export async function queueStreakReminders(): Promise<number> {
   return rows.length;
 }
 
-/** Evening: a gentle nudge after 3 quiet days (or 2 days without a first Story), weekly at most. */
+/**
+ * Evening: a gentle nudge after 3 quiet days, weekly at most. Someone who hasn't posted their first
+ * Story hears it the evening after they sign up (at least 18 hours on): the first day decides
+ * whether a new person stays, and a first Story is what brings their friends' replies.
+ */
 export async function queueNudges(): Promise<number> {
   const rows = await query(
     `WITH targets AS (
        SELECT u.id, (SELECT max(created_at) FROM stories s WHERE s.owner_id = u.id) AS last_story
        FROM users u LEFT JOIN notification_preferences p ON p.user_id = u.id
-       WHERE ${REMINDABLE} AND u.created_at < now() - interval '2 days'
+       WHERE ${REMINDABLE}
+         AND u.created_at < now() - CASE WHEN EXISTS (SELECT 1 FROM stories s WHERE s.owner_id = u.id) THEN interval '2 days' ELSE interval '18 hours' END
          AND NOT EXISTS (SELECT 1 FROM push_sent ps WHERE ps.user_id = u.id AND ps.kind IN ('nudge', 'streak') AND ps.sent_at > now() - interval '7 days')
          AND NOT EXISTS (SELECT 1 FROM stories s WHERE s.owner_id = u.id AND s.created_at > now() - interval '3 days')
        LIMIT :'batch'),

@@ -124,6 +124,16 @@ describe("someone else's page", () => {
     expect(tree.root.findAllByType("HighlightsGrid" as never)).toHaveLength(1);
   });
 
+  test("one of the first thousand people shows their Founding member number; others don't", async () => {
+    api.getProfile.mockResolvedValue({ profile: profile({ foundingNumber: 12 }) });
+    await renderOther();
+    expect(texts()).toContain("Founding member #12");
+    expect(labelled("Founding member #12")).toHaveLength(1);
+    api.getProfile.mockResolvedValue({ profile: profile({ foundingNumber: null }) });
+    await renderOther();
+    expect(texts().some((x) => x.startsWith("Founding member"))).toBe(false);
+  });
+
   test("Follow follows at once; unfollowing and cancelling a request ask first", async () => {
     const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
     api.getProfile.mockResolvedValueOnce({ profile: profile() }).mockResolvedValue({ profile: profile({}, { isFollowing: true }) });

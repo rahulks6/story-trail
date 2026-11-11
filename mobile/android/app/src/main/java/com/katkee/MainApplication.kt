@@ -26,6 +26,8 @@ class MainApplication : Application(), ReactApplication {
           add(0, EmojiTextPackage())
           // Reloads the app when its appearance (light or dark) changes.
           add(AppRestartPackage())
+          // Which invite a Google Play install came from (InstallReferrerPackage.kt).
+          add(InstallReferrerPackage())
           // OngoingCallPackage() (OngoingCallService.kt) comes back with calls; see the manifest.
         },
     )

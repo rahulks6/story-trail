@@ -959,6 +959,7 @@ export const en = {
   "profile.addProfilePhoto": "Add a profile photo",
   "profile.friendsRecogniseYouFaster": "Friends recognise you faster with a photo.",
   "profile.addPhoto": "Add",
+  "profile.foundingMember": "Founding member #{number}",
   "profile.saving": "Saving…",
   "onboarding.startUsingKatkee": "Start using Katkee",
   "onboarding.skip": "Skip",

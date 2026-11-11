@@ -137,7 +137,24 @@ function peopleSection(people) {
         grid.append(box);
     }
     wrap.append(grid, signupsChart(people.signupsByDay));
-    wrap.append(el('p', `Deleted accounts: ${count(people.deleted)} · Suspended: ${count(people.suspended)}`, 'muted'));
+    wrap.append(el('p', `Deleted accounts: ${count(people.deleted)} · Suspended: ${count(people.suspended)} · Founding members: ${count(people.foundingMembers ?? 0)} of 1,000 numbers given`, 'muted'));
+    if (people.weeks?.length) {
+        const pct = (n, of) => of ? `${count(n)} (${Math.round((n / of) * 100)}%)` : count(n);
+        wrap.append(el('h3', 'Weekly growth'),
+            el('p', 'New people each week (Monday to Sunday): how many came from an invite link, posted a Story in their first 7 days, and opened the app again 7 to 13 days after signing up. "Came back" shows once people have had two weeks.', 'muted'),
+            table(['Week of', 'Signed up', 'From an invite', 'Posted in week 1', 'Came back in week 2'], [...people.weeks].reverse().map(w => [
+                new Date(w.weekStart + 'T00:00:00').toLocaleDateString(undefined, { day: 'numeric', month: 'short' }),
+                count(w.signups), pct(w.invited, w.signups), pct(w.postedFirstWeek, w.signups),
+                w.cameBackOf ? pct(w.cameBack, w.cameBackOf) + (w.cameBackOf < w.signups ? ` of ${count(w.cameBackOf)}` : '') : 'Too early',
+            ])));
+    }
+    return wrap;
+}
+function inviteSection(leaders) {
+    const wrap = el('div');
+    wrap.append(el('h3', 'Top inviters'), el('p', 'People whose invite link brought others in (for ambassador competitions). Only friends who opened the link, or installed from its Google Play button, are counted.', 'muted'));
+    if (!leaders.length) wrap.append(el('p', 'Nobody has joined from an invite link yet.', 'muted'));
+    else wrap.append(table(['Person', 'Joined', 'Of them posted a Story', 'Joined this week'], leaders.map(l => [`${l.displayName} (@${l.username})`, count(l.joined), count(l.posted), count(l.joinedLast7Days)])));
     return wrap;
 }
 function table(headings, rows) {
@@ -151,7 +168,7 @@ function table(headings, rows) {
 async function analyticsPage(c) {
     let days = 30;
     try { days = Number(sessionStorage.getItem('katkee.analyticsDays')) || 30; } catch { /* storage unavailable */ }
-    const [data, people] = await Promise.all([api('analytics?days=' + days), api('analytics/people').catch(() => null)]);
+    const [data, people, invites] = await Promise.all([api('analytics?days=' + days), api('analytics/people').catch(() => null), api('analytics/invites').catch(() => null)]);
     c.replaceChildren();
     const select = el('select');
     select.setAttribute('aria-label', 'Period');
@@ -162,6 +179,7 @@ async function analyticsPage(c) {
         button('Refresh now', async () => { await api('analytics/refresh', 'POST', {}); await render(); message('Analytics refreshed.'); }, true));
     c.append(bar);
     if (people) c.append(peopleSection(people));
+    if (invites) c.append(inviteSection(invites.leaders));
     c.append(el('h2', 'Activity'));
 
     const p = data.period.counts, r = data.period.rates, latest = data.daily.at(-1)?.metrics ?? {}, b = data.backlog;

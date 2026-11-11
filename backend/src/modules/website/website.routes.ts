@@ -254,8 +254,23 @@ function openPage(open: NonNullable<Website["openInApp"]>, link: { appLink: stri
   return prepare(Buffer.from(html), HTML, SHARED_CACHE, 5);
 }
 
-function invitePage(invite: NonNullable<Website["invite"]>, link: { appLink: string; linkPath: string }, headline: string): WebsiteFile {
-  const html = invite.template
+/**
+ * The Play Store address with the invite code as its install referrer: Google Play hands it to the
+ * app after installing (Install Referrer), so a friend who installs from the invite page is
+ * credited without coming back to tap the link. The code is all it carries.
+ */
+export function playLinkWithInvite(playUrl: string, code: string): string {
+  return `${playUrl}${playUrl.includes("?") ? "&" : "?"}referrer=${encodeURIComponent(`katkee_invite=${code}`)}`;
+}
+
+/** The page's Google Play button(s), as escaped in the built page, pointed at playLinkWithInvite. */
+function withInviteReferrer(html: string, code: string): string {
+  return html.replace(/href="(https:\/\/play\.google\.com\/store\/apps\/details\?id=[a-z0-9_.]+)"/g, (_, url: string) =>
+    `href="${escapeHtml(playLinkWithInvite(url, code))}"`);
+}
+
+function invitePage(invite: NonNullable<Website["invite"]>, link: { code: string; appLink: string; linkPath: string }, headline: string): WebsiteFile {
+  const html = withInviteReferrer(invite.template, link.code)
     .split(invite.markers.appLink).join(escapeHtml(link.appLink))
     .split(invite.markers.linkPath).join(escapeHtml(link.linkPath))
     .split(invite.markers.headline).join(escapeHtml(headline));

@@ -22,6 +22,8 @@ export interface ProfileView {
   verifiedCategory?: string | null;
   /** A professional account's category, shown quietly under the name; null when personal or hidden. */
   professionalCategory?: string | null;
+  /** Founding member #1 to #1000 (the first thousand accounts); null after, missing from older servers. */
+  foundingNumber?: number | null;
   followerCount: number;
   followingCount: number;
   /** Stories posted so far (not deleted, expired included); missing from a server before release r3. */

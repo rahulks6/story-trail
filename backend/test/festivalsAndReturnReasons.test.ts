@@ -252,6 +252,24 @@ describe("reasons to come back", () => {
     assert.equal((await outbox(active, "nudge")).length, 0, "posted recently");
   });
 
+  it("someone without a first Story hears it the evening after signing up, not on the day", async () => {
+    const today = await signup();
+    const yesterday = await signup();
+    const posted = await signup();
+    await phone(today);
+    await phone(yesterday);
+    await phone(posted);
+    await query(`UPDATE users SET created_at = now() - interval '20 hours' WHERE id IN (:'a', :'b')`, { a: yesterday.id, b: posted.id });
+    await publish(posted);
+    await query(`UPDATE stories SET created_at = now() - interval '19 hours' WHERE owner_id = :'u'`, { u: posted.id });
+    await queueNudges();
+    assert.equal((await outbox(today, "nudge")).length, 0, "signed up today");
+    const sent = await outbox(yesterday, "nudge");
+    assert.equal(sent.length, 1);
+    assert.match(sent[0]!.body as string, /first Story/);
+    assert.equal((await outbox(posted, "nudge")).length, 0, "already posted: the 3-quiet-days rule applies");
+  });
+
   it("runs festival greetings by day and reminders only in the evening, India time", async () => {
     assert.equal(hourInIndia(new Date("2026-10-20T03:30:00Z")), 9);
     const night = await runReturnReasons(new Date("2026-10-20T18:00:00Z")); // 23:30 in India

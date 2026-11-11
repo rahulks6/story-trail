@@ -29,6 +29,8 @@ export interface ProfileView {
   verifiedCategory: string | null;
   /** A professional account's category, shown quietly under the name; null for personal accounts or when hidden. */
   professionalCategory: string | null;
+  /** Founding member #n (the first 1,000 accounts), shown as a badge; null for everyone after. */
+  foundingNumber: number | null;
   interests: string[];
   isPrivate: boolean;
   isSelf: boolean;
@@ -89,6 +91,7 @@ async function profileView(target: usersRepo.UserRecord | null, viewerId: string
     verified: target.verified,
     verifiedCategory: target.verifiedCategory,
     professionalCategory: target.professionalCategoryShown ? target.professionalCategory : null,
+    foundingNumber: target.foundingNumber,
     interests: target.interests,
     isPrivate: target.isPrivate,
     isSelf: target.id === viewerId,

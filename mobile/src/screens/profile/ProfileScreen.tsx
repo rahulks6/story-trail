@@ -47,6 +47,7 @@ export function ProfileScreen(): React.JSX.Element {
   const [badge, setBadge] = useState<{ verified: boolean; category: string | null } | null>(null);
   // The professional category as others see it (null when personal or hidden), from the same fetch.
   const [fetchedCategory, setFetchedCategory] = useState<string | null | undefined>(undefined);
+  const [foundingNumber, setFoundingNumber] = useState<number | null>(null);
   // Your cover from the profile fetch, for an account saved before covers (your account's copy has none).
   const [fetchedCover, setFetchedCover] = useState<string | null>(null);
   const [scrollEnabled, setScrollEnabled] = useState(true);
@@ -61,6 +62,7 @@ export function ProfileScreen(): React.JSX.Element {
       setCounts({ followerCount: profile.followerCount, followingCount: profile.followingCount, storyCount: profile.storyCount ?? null });
       setBadge({ verified: !!profile.verified, category: profile.verifiedCategory ?? null });
       setFetchedCategory(profile.professionalCategory ?? null);
+      setFoundingNumber(profile.foundingNumber ?? null);
       setFetchedCover(profile.coverMediaId ?? null);
     } catch {
       // Non-fatal: the counts show dashes and the rest of the page still works.
@@ -192,6 +194,7 @@ export function ProfileScreen(): React.JSX.Element {
           verified={badge ? badge.verified : !!user.verified}
           verifiedCategory={badge ? badge.category : user.verifiedCategory}
           // Your account's copy changes the moment you switch in Settings.
+          foundingNumber={foundingNumber}
           professionalCategory={user.professionalCategory !== undefined ? (user.professionalCategoryShown === false ? null : user.professionalCategory) : fetchedCategory}
           hasActiveStory={hasActiveStory}
           storyLabel={t("profile.openYourStory")}

@@ -4,9 +4,10 @@ import { sendJson } from "../../http/respond";
 import { RateLimiter } from "../../http/rateLimiter";
 import { parseQueryString } from "../../http/pagination";
 import { requireAdmin } from "../admin/security";
+import { authorize } from "../admin/policy";
 import { ingestEvents } from "./events";
 import { analyticsOverview, refreshAnalytics } from "./rollup";
-import { peopleSummary } from "./people";
+import { inviteLeaders, peopleSummary } from "./people";
 
 /** The app flushes every few seconds at most; this only stops a runaway client. */
 export const analyticsIngestLimiter = new RateLimiter(60_000, 60);
@@ -31,6 +32,13 @@ export function registerAnalyticsRoutes(router: Router): void {
   router.get("/api/v1/admin/analytics/people", async (req, res) => {
     await requireAdmin(req, "analytics.read");
     sendJson(res, 200, await peopleSummary());
+  });
+
+  // Who brought the most people in with their invite link: names, so it needs users.view too.
+  router.get("/api/v1/admin/analytics/invites", async (req, res) => {
+    const principal = await requireAdmin(req, "analytics.read");
+    authorize(principal, "users.view");
+    sendJson(res, 200, { leaders: await inviteLeaders() });
   });
 
   router.post("/api/v1/admin/analytics/refresh", async (req, res) => {

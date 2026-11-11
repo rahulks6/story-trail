@@ -823,6 +823,7 @@ export const es: Partial<Catalogue> = {
   "profile.addProfilePhoto": "Añade una foto de perfil",
   "profile.friendsRecogniseYouFaster": "Tus amigos te reconocen antes con una foto.",
   "profile.addPhoto": "Añadir",
+  "profile.foundingMember": "Miembro fundador #{number}",
   "profile.saving": "Guardando…",
   "onboarding.startUsingKatkee": "Empezar a usar Katkee",
   "onboarding.skip": "Omitir",

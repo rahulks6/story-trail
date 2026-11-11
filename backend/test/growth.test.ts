@@ -332,6 +332,8 @@ describe("katkee.com/i/<code>", () => {
     assert.ok(res.html.includes(`<link rel="canonical" href="https://katkee.com/i/${code}">`));
     assert.ok(!res.html.includes(inviter.email), "nothing but the name");
     assert.ok(!/%INVITE_[A-Z_]+%/.test(res.html), "every marker filled in");
+    // Installing from the page's Google Play button credits the friend too (Install Referrer).
+    assert.ok(res.html.includes(`href="https://play.google.com/store/apps/details?id=com.katkee.app&amp;referrer=katkee_invite%3D${code}"`), "Play button carries the code");
   });
 
   it("shows a plain invitation for a link that doesn't work, and 404 for anything that isn't a code", async () => {

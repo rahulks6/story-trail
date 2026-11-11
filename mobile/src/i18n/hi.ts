@@ -891,6 +891,7 @@ export const hi: Catalogue = {
   "profile.addProfilePhoto": "प्रोफ़ाइल फ़ोटो जोड़ें",
   "profile.friendsRecogniseYouFaster": "फ़ोटो से दोस्त आपको जल्दी पहचानते हैं।",
   "profile.addPhoto": "जोड़ें",
+  "profile.foundingMember": "फ़ाउंडिंग मेंबर #{number}",
   "profile.saving": "सेव हो रहा है…",
   "onboarding.startUsingKatkee": "Katkee इस्तेमाल करना शुरू करें",
   "onboarding.skip": "छोड़ें",

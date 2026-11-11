@@ -823,6 +823,7 @@ export const ar: Partial<Catalogue> = {
   "profile.addProfilePhoto": "أضف صورة للملف الشخصي",
   "profile.friendsRecogniseYouFaster": "يتعرّف عليك أصدقاؤك أسرع مع صورة.",
   "profile.addPhoto": "إضافة",
+  "profile.foundingMember": "عضو مؤسس #{number}",
   "profile.saving": "جارٍ الحفظ…",
   "onboarding.startUsingKatkee": "ابدأ استخدام Katkee",
   "onboarding.skip": "تخطٍّ",

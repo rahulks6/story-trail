@@ -327,6 +327,53 @@ describe("product analytics", () => {
     assert.equal((await request("/api/v1/admin/analytics/people", "GET", undefined, person.auth)).status, 401);
   });
 
+  it("numbers the first thousand real accounts as founding members, never a test account", async () => {
+    const top = Number((await queryOne(`SELECT coalesce(max(founding_number), 0) AS n FROM users`))!.n);
+    const person = await account();
+    const tag = randomUUID().slice(0, 8);
+    const test = await request("/api/v1/auth/signup", "POST", { email: `support+e2e-fm-${tag}@katkee.com`, username: `e2e_fm_${tag}`, password: "correcthorsebattery", displayName: "E2E", birthDate: "1995-05-15" });
+    assert.equal(test.status, 201);
+    const rows = await query(`SELECT username, founding_number FROM users WHERE username IN (:'a', :'b')`, { a: person.input.username, b: `e2e_fm_${tag}` });
+    const byName = Object.fromEntries(rows.map((r) => [r.username, r.founding_number]));
+    assert.equal(byName[person.input.username], String(top + 1));
+    assert.equal(byName[`e2e_fm_${tag}`], null);
+    const profile = await request(`/api/v1/users/${person.input.username}`, "GET", undefined, person.auth);
+    assert.equal(profile.body.profile.foundingNumber, top + 1);
+    // Past the thousandth, nobody gets a number.
+    await query(`UPDATE users SET founding_number = 1000 WHERE id = :'id'`, { id: person.id });
+    const late = await account();
+    assert.equal((await queryOne(`SELECT founding_number FROM users WHERE id = :'id'`, { id: late.id }))!.founding_number, null);
+  });
+
+  it("reports each week's new people, and who brought the most in with their invite link", async () => {
+    const analyst = await account(["analytics.read", "users.view"]);
+    const ah = await adminSignIn(base, analyst.input.email, analyst.input.password);
+    const inviter = await account();
+    const fresh = await account();
+    const older = await account();
+    // `older` signed up 15 days ago from inviter's link and opened the app 9 days after.
+    await query(`UPDATE users SET created_at = now() - interval '15 days' WHERE id = :'id'`, { id: older.id });
+    await query(`INSERT INTO analytics_active_days (day, platform, user_id) VALUES ((now() AT TIME ZONE 'UTC')::date - 6, 'android', :'u')`, { u: older.id });
+    await query(`INSERT INTO invite_redemptions (invitee_id, inviter_id) VALUES (:'a', :'i'), (:'b', :'i')`, { a: fresh.id, b: older.id, i: inviter.id });
+
+    const people = (await request("/api/v1/admin/analytics/people", "GET", undefined, ah)).body;
+    assert.equal(people.weeks.length, 6);
+    const thisWeek = people.weeks.at(-1);
+    assert.ok(thisWeek.signups >= 3 && thisWeek.invited >= 1 && thisWeek.cameBackOf === 0, JSON.stringify(thisWeek));
+    const olderWeek = people.weeks.find((w: { cameBackOf: number }) => w.cameBackOf > 0);
+    assert.ok(olderWeek && olderWeek.cameBack >= 1 && olderWeek.invited >= 1, JSON.stringify(people.weeks));
+
+    const board = await request("/api/v1/admin/analytics/invites", "GET", undefined, ah);
+    assert.equal(board.status, 200);
+    const mine = board.body.leaders.find((l: { username: string }) => l.username === inviter.input.username);
+    assert.deepEqual(mine, { username: inviter.input.username, displayName: inviter.input.displayName, joined: 2, posted: 0, joinedLast7Days: 2 });
+
+    // Names need users.view as well as analytics.read.
+    const counter = await account(["analytics.read"]);
+    const ch = await adminSignIn(base, counter.input.email, counter.input.password);
+    assert.equal((await request("/api/v1/admin/analytics/invites", "GET", undefined, ch)).status, 403);
+  });
+
   it("the worker fills in today and purges raw data past retention, keeping the daily totals", async () => {
     const person = await account();
     await appEvent(person.id, "app_session_started", new Date(Date.now() - 100 * 86_400_000).toISOString(), randomUUID());

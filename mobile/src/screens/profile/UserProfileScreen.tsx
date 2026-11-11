@@ -308,6 +308,7 @@ export function UserProfileScreen({ route, navigation }: Props): React.JSX.Eleme
         verified={!!profile.verified}
         verifiedCategory={profile.verifiedCategory}
         professionalCategory={profile.professionalCategory}
+        foundingNumber={profile.foundingNumber ?? null}
         hasActiveStory={hasActiveStory}
         storyLabel={t("userProfile.openNamesStory", { name: profile.displayName })}
         onOpenStory={() => rootNavigation.navigate("StoryViewer", { creators: [profile.username], startIndex: 0, ...(profile.verified ? { verifiedCreators: [profile.username] } : {}) })}
