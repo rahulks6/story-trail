@@ -9,7 +9,7 @@
   "cloudFrontPublicKeyFile": "cloudfront-public.pem",
   "alarmEmail": "ops@katkee.com",
   "adminConsoleEnabled": "true",
-  "monthlyBudgetUsd": "250",
+  "monthlyBudgetUsd": "180",
   "availability-zones:account=249101171547:region=ap-south-1": [
     "ap-south-1a",
     "ap-south-1b",
