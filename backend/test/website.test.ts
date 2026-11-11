@@ -190,7 +190,9 @@ describe("shared links (katkee.com/u/<username>, /s/<story id>)", () => {
     assert.match(html, /<meta name="robots" content="noindex">/);
     assert.match(html, new RegExp(`<a class="button" href="katkee://user/asha_k\\?id=${id}">Open in the app</a>`));
     assert.match(html, new RegExp(`<link rel="canonical" href="https://katkee\\.com/u/asha_k\\?id=${id}">`));
-    assert.match(html, /coming soon to the App Store and Google Play/, "no store links yet");
+    // Katkee is on Google Play; the App Store button appears once there's an iPhone app.
+    assert.match(html, /<a class="store-button" href="https:\/\/play\.google\.com\/store\/apps\/details\?id=com\.katkee\.app">/);
+    assert.doesNotMatch(html, /App Store/);
     assert.doesNotMatch(html, /%[A-Z_]+%|<script/);
     // A missing or malformed id is dropped; the username still finds the profile.
     for (const target of ["/u/asha.k", "/u/asha.k/", "/u/asha.k?id=nope", `/u/asha.k?id=${id}x`, '/u/asha.k?id="><script>alert(1)</script>']) {
