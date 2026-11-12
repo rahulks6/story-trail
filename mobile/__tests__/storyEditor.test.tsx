@@ -199,6 +199,46 @@ describe("music", () => {
   });
 });
 
+describe("music, even on a bad connection or after the app restarts", () => {
+  beforeEach(() => jest.restoreAllMocks());
+  const sunny = { id: "t1", title: "Sunny Walk", artist: "Artist", mood: "", durationMs: 60_000, license: "CC BY 4.0", licenseUrl: "", attribution: "Sunny Walk by Artist", url: "/api/v1/music/t1/file" };
+
+  it("the music button is there even when the song list can't load", async () => {
+    const musicApi = require("../src/api/music");
+    jest.spyOn(musicApi, "listMusic").mockRejectedValue(new Error("offline"));
+    await open();
+    expect(tree.root.findAll((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === "Add music")).toHaveLength(1);
+  });
+
+  it("the autosaved draft keeps the song, and it's back after a restart", async () => {
+    const musicApi = require("../src/api/music");
+    const drafts = require("../src/state/draftStorage");
+    jest.spyOn(musicApi, "listMusic").mockResolvedValue({ tracks: [sunny] });
+    const saved: unknown[] = [];
+    jest.spyOn(drafts, "savePendingDraft").mockImplementation(async (...args: unknown[]) => { saved.push(args[2]); });
+    jest.useFakeTimers({ doNotFake: ["nextTick", "setImmediate", "queueMicrotask"] });
+    try {
+      await open();
+      const press = (label: string) => act(async () => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === label).props.onPress());
+      await press("Add music");
+      await flush();
+      await press("Sunny Walk by Artist, 1:00");
+      await press("Add to Story");
+      await act(async () => { jest.advanceTimersByTime(1000); });
+    } finally {
+      jest.useRealTimers();
+    }
+    const last = saved.at(-1) as { music?: { track: { id: string } } } | undefined;
+    expect(last?.music?.track.id).toBe("t1");
+
+    // The app restarts: the editor opens the same photo and finds the autosave.
+    await act(async () => tree.unmount());
+    jest.spyOn(drafts, "loadPendingDraft").mockResolvedValue(last);
+    await open();
+    expect(tree.root.findAll((n: ReactTestInstance) => n.props.accessibilityLabel === "Remove music" && typeof n.props.onPress === "function")).toHaveLength(1);
+  });
+});
+
 describe("the text tool over the editor", () => {
   it("hides the editor's buttons, caption and share buttons while you type", async () => {
     await open();

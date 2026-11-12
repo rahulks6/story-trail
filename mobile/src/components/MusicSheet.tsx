@@ -52,6 +52,8 @@ export function MusicSheet({ visible, current, onClose, onChoose }: Props): Reac
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
+  // "Try again" after a failed load (a slow or dropped connection) loads the songs again.
+  const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     if (!visible || !accessToken) return;
     let cancelled = false;
@@ -70,7 +72,7 @@ export function MusicSheet({ visible, current, onClose, onChoose }: Props): Reac
     const timer = query ? setTimeout(run, 250) : null;
     if (!query) run();
     return () => { cancelled = true; if (timer) clearTimeout(timer); };
-  }, [visible, accessToken, query, mood]);
+  }, [visible, accessToken, query, mood, attempt]);
 
   // More songs as the list nears its end (the server sends them a page at a time).
   const [hasMore, setHasMore] = useState(false);
@@ -138,7 +140,12 @@ export function MusicSheet({ visible, current, onClose, onChoose }: Props): Reac
             {tracks === null && !error ? (
               <ActivityIndicator color={colors.accentText} style={styles.spinner} />
             ) : error ? (
-              <Text style={styles.empty}>{error}</Text>
+              <View style={styles.errorBox}>
+                <Text style={styles.empty}>{error}</Text>
+                <Pressable onPress={() => { setError(null); setTracks(null); setAttempt((n) => n + 1); }} style={styles.retry} accessibilityRole="button">
+                  <Text style={styles.retryLabel}>{t("common.tryAgain")}</Text>
+                </Pressable>
+              </View>
             ) : tracks!.length === 0 ? (
               <Text style={styles.empty}>{query || mood ? t("musicSheet.noSongsMatch") : t("musicSheet.songsAreOnTheirWay")}</Text>
             ) : (
@@ -258,6 +265,9 @@ function ClipChooser({ music, onChange, onBack, onDone }: { music: ChosenMusic; 
 }
 
 const styles = StyleSheet.create({
+  errorBox: { alignItems: "center", gap: 12 },
+  retry: { paddingHorizontal: 22, paddingVertical: 10, borderRadius: 999, backgroundColor: colors.accent },
+  retryLabel: { color: colors.onAccent, fontWeight: "800", fontSize: 15 },
   backdrop: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
   sheet: { height: "75%", backgroundColor: colors.surface, borderTopLeftRadius: radii.lg, borderTopRightRadius: radii.lg, paddingHorizontal: spacing.md },
   handle: { width: 40, height: 4, borderRadius: 2, backgroundColor: colors.border, alignSelf: "center", marginVertical: spacing.sm },

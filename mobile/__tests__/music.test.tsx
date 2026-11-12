@@ -62,3 +62,14 @@ test("says when the catalogue has nothing yet", async () => {
   const texts = tree.root.findAll((n: ReactTestInstance) => (n.type as unknown) === "Text").map((t) => [t.props.children].flat().join(""));
   expect(texts).toContain("Songs are on their way. Check back soon.");
 });
+
+test("a failed load (slow or dropped connection) offers Try again, which loads the songs", async () => {
+  const list = jest.spyOn(musicApi, "listMusic").mockRejectedValueOnce(new Error("offline")).mockResolvedValue({ tracks: [track("t1", "Sunny Walk")] });
+  await open();
+  const texts = () => tree.root.findAll((n: ReactTestInstance) => (n.type as unknown) === "Text").map((t) => [t.props.children].flat().join(""));
+  expect(texts()).toContain("Try again");
+  await act(async () => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.findAll((c: ReactTestInstance) => c.props.children === "Try again").length > 0).props.onPress());
+  await flush();
+  expect(list).toHaveBeenCalledTimes(2);
+  expect(texts()).toContain("Sunny Walk");
+});

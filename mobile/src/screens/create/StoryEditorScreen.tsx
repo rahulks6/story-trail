@@ -45,7 +45,6 @@ import { TextToolModal } from "../../components/TextToolModal";
 import { StickerSheet, type StickerAddPayload, type StickerTab } from "../../components/StickerSheet";
 import { MusicSheet, type ChosenMusic } from "../../components/MusicSheet";
 import { MusicPlayer } from "../../components/MusicPlayer";
-import { listMusic } from "../../api/music";
 import { DrawingCanvas } from "../../components/DrawingCanvas";
 import { OverlayAdjustSheet } from "../../components/OverlayAdjustSheet";
 import { CropGestureLayer } from "../../components/CropGestureLayer";
@@ -216,16 +215,6 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   const [music, setMusic] = useState<ChosenMusic | null>(null);
   const [musicSheetVisible, setMusicSheetVisible] = useState(false);
   const focused = useIsFocused();
-  // The Music button shows once the library has songs.
-  const [musicAvailable, setMusicAvailable] = useState(false);
-  useEffect(() => {
-    if (!accessToken) return;
-    let cancelled = false;
-    listMusic(accessToken)
-      .then((r) => { if (!cancelled) setMusicAvailable(r.tracks.length > 0); })
-      .catch(() => undefined);
-    return () => { cancelled = true; };
-  }, [accessToken]);
   const [drawMode, setDrawMode] = useState(false);
   const [cropMode, setCropMode] = useState(false);
   // Trimming a video: opens by itself for a gallery video longer than a Story.
@@ -354,8 +343,10 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
     if (!user) return;
     loadPendingDraft(user.id, mediaUri).then((saved) => {
       if (cancelled) return;
-      if (saved && hasMeaningfulEdits(saved.draft)) {
+      if (saved && (hasMeaningfulEdits(saved.draft) || saved.music)) {
         setDraft(saved.draft);
+        // The song comes back too (an autosave from before songs were kept has none).
+        if (saved.music?.track?.id) setMusic(saved.music);
         // New objects go in front of the restored ones (they started at 1, behind them).
         nextZIndex.current = Math.max(nextZIndex.current, ...saved.draft.overlays.map((o) => o.zIndex + 1));
         setAudience(saved.audience);
@@ -372,14 +363,14 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   useEffect(() => {
     if (!restored || !user) return;
     const timer = setTimeout(() => {
-      if (hasMeaningfulEdits(draft)) {
-        void savePendingDraft(user.id, mediaUri, { draft, audience, mimeType, savedAt: new Date().toISOString() });
+      if (hasMeaningfulEdits(draft) || music) {
+        void savePendingDraft(user.id, mediaUri, { draft, audience, mimeType, savedAt: new Date().toISOString(), music });
       } else {
         void clearPendingDraft(user.id, mediaUri);
       }
     }, 800);
     return () => clearTimeout(timer);
-  }, [restored, draft, audience, mediaUri, mimeType, user?.id]);
+  }, [restored, draft, audience, mediaUri, mimeType, user?.id, music]);
 
   const onContainerLayout = (e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
@@ -1057,9 +1048,10 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             <Pressable onPress={() => setDrawMode(true)} hitSlop={8} style={toolButtonStyle} accessibilityRole="button" accessibilityLabel={t("storyEditor.draw")}>
               <Icon style={topIconStyle} name={ICONS.draw} />
             </Pressable>
-            {musicAvailable || music ? <Pressable onPress={() => setMusicSheetVisible(true)} hitSlop={8} style={[toolButtonStyle, music && styles.toolButtonOn]} accessibilityRole="button" accessibilityLabel={music ? t("storyEditor.musicTitleChange", { title: music.track.title }) : t("storyEditor.addMusic")}>
+            {/* Always there: the song list loads when it opens (with Try again on a bad connection). */}
+            <Pressable onPress={() => setMusicSheetVisible(true)} hitSlop={8} style={[toolButtonStyle, music && styles.toolButtonOn]} accessibilityRole="button" accessibilityLabel={music ? t("storyEditor.musicTitleChange", { title: music.track.title }) : t("storyEditor.addMusic")}>
               <Icon style={[topIconStyle, music && styles.topIconOn]} name={ICONS.music} />
-            </Pressable> : null}
+            </Pressable>
             {canTrim ? (
               <Pressable onPress={() => setTrimMode(true)} hitSlop={8} style={[toolButtonStyle, isTrimmed(draft.trim, videoDurationMs) && styles.toolButtonOn]} accessibilityRole="button" accessibilityLabel={t("storyEditor.trimVideo")}>
                 <Icon style={[topIconStyle, isTrimmed(draft.trim, videoDurationMs) && styles.topIconOn]} name={ICONS.trim} />

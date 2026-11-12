@@ -21,6 +21,8 @@ function keyFor(ownerId: string, mediaUri: string): string {
   return `${ownerPrefix(ownerId)}${mediaUri}`;
 }
 
+import type { ChosenMusic } from "../components/MusicSheet";
+
 export interface SavedDraft {
   draft: StoryDraft;
   audience: "public" | "followers" | "close_friends";
@@ -28,6 +30,8 @@ export interface SavedDraft {
   savedAt: string;
   /** The Story's topic (models/topics.ts), when one was picked. */
   topic?: string;
+  /** The song on the Story, with the part that plays; kept so a restored draft still has it. */
+  music?: ChosenMusic | null;
 }
 
 export async function savePendingDraft(ownerId: string, mediaUri: string, saved: SavedDraft): Promise<void> {
