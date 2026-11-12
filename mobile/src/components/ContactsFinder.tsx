@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { ActivityIndicator, FlatList, Linking, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, Linking, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
+import { contactsWatchEnabled, disableContactsWatch, enableContactsWatch } from "../state/contactsWatch";
 import { Pressable } from "./Pressable";
 import { colors, radii, spacing, typography } from "../theme";
 import { useAuth } from "../state/AuthContext";
@@ -45,6 +46,19 @@ export function ContactsFinder({ header, footer, source, onOpenProfile }: Props)
   const [progress, setProgress] = useState<string | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
   const [follows, setFollows] = useState<Record<string, FollowState>>({});
+  // "Tell me when more contacts join" (state/contactsWatch.ts): off until switched on here.
+  const [watching, setWatching] = useState(false);
+  useEffect(() => {
+    if (!user) return;
+    let alive = true;
+    void contactsWatchEnabled(user.id).then((on) => { if (alive) setWatching(on); });
+    return () => { alive = false; };
+  }, [user]);
+  const setWatch = (on: boolean) => {
+    if (!user) return;
+    setWatching(on);
+    void (on ? enableContactsWatch(user.id, people) : disableContactsWatch(user.id));
+  };
 
   const check = async () => {
     if (!accessToken) return;
@@ -89,6 +103,22 @@ export function ContactsFinder({ header, footer, source, onOpenProfile }: Props)
 
   const invite = <Button label={t("common.inviteFriends")} variant="secondary" onPress={() => void shareInvite(source === "onboarding" ? "onboarding" : "contacts", accessToken, user?.id)} />;
 
+  const watchRow = (
+    <View style={styles.watchRow}>
+      <View style={styles.watchText}>
+        <Text style={styles.watchTitle}>{t("contactsFinder.tellMeWhenContactsJoin")}</Text>
+        <Text style={styles.watchBody}>{t("contactsFinder.tellMeWhenContactsJoinBody")}</Text>
+      </View>
+      <Switch
+        value={watching}
+        onValueChange={setWatch}
+        trackColor={{ true: colors.accent, false: colors.border }}
+        thumbColor="#FFFFFF"
+        accessibilityLabel={t("contactsFinder.tellMeWhenContactsJoin")}
+      />
+    </View>
+  );
+
   if (phase !== "results") {
     return (
       <View style={styles.root}>
@@ -97,6 +127,8 @@ export function ContactsFinder({ header, footer, source, onOpenProfile }: Props)
           <View style={styles.badge} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
             <Icon name="following" size={30} color={colors.textPrimary} />
           </View>
+          {/* While it's on, it can be turned off here without checking contacts again. */}
+          {watching && phase === "intro" ? watchRow : null}
           {phase === "intro" || phase === "checking" ? (
             <>
               <Text style={typography.displayLarge} accessibilityRole="header">{t("contactsFinder.findFriendsFromYourContacts")}</Text>
@@ -158,6 +190,7 @@ export function ContactsFinder({ header, footer, source, onOpenProfile }: Props)
             <Text style={styles.body}>
               {people.length === 0 ? t("contactsFinder.noneOfYourContactsAre") : t("contactsFinder.contactsHere", { count: people.length })}
             </Text>
+            {watchRow}
           </View>
         }
         ListEmptyComponent={
@@ -208,6 +241,10 @@ export function ContactsFinder({ header, footer, source, onOpenProfile }: Props)
 }
 
 const styles = StyleSheet.create({
+  watchRow: { flexDirection: "row", alignItems: "center", gap: spacing.md, marginTop: spacing.md, padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.surfaceElevated },
+  watchText: { flex: 1, gap: 2 },
+  watchTitle: { ...typography.body, fontWeight: "700" },
+  watchBody: { ...typography.caption, color: colors.textSecondary },
   root: { flex: 1, backgroundColor: colors.background },
   content: { flexGrow: 1, padding: spacing.xl, gap: spacing.md },
   badge: {

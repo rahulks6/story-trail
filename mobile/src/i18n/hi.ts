@@ -2045,6 +2045,11 @@ export const hi: Catalogue = {
   "contactsFinder.explainerHashed": "कुछ भी भेजने से पहले फ़ोन नंबर और ईमेल आपके फ़ोन पर ही बदले हुए कोड (हैश) में बदल दिए जाते हैं। नाम, फ़ोटो और नोट्स कभी आपके फ़ोन से बाहर नहीं जाते।",
   "contactsFinder.explainerForgotten": "Katkee आपके कॉन्टैक्ट्स नहीं रखता। उन्हें एक बार चेक करके भुला दिया जाता है।",
   "contactsFinder.explainerOptOut": "कोई भी सेटिंग्स > प्राइवेसी में इस तरह ढूँढा जाना बंद कर सकता है।",
+  "contactsJoined.oneJoined": "{name} Katkee पर आ गए!",
+  "contactsJoined.manyJoined": "{name} और {count} और लोग Katkee पर आ गए!",
+  "contactsJoined.fromYourContacts": "आपके कॉन्टैक्ट्स से। फ़ॉलो करके हाय कहें 👋",
+  "contactsFinder.tellMeWhenContactsJoin": "जब और कॉन्टैक्ट्स जुड़ें, मुझे बताएँ",
+  "contactsFinder.tellMeWhenContactsJoinBody": "Katkee खोलने पर यह उसी सुरक्षित तरीके से फिर जाँचता है, दिन में ज़्यादा से ज़्यादा दो बार। आपके कॉन्टैक्ट्स कभी नहीं रखे जाते।",
   // nearbyPrompt
   "nearbyPrompt.factApproximate": "Katkee शहर जितने अनुमानित इलाके का इस्तेमाल करता है, आपकी सटीक लोकेशन का कभी नहीं।",
   "nearbyPrompt.factNeverShown": "आपका इलाका आपकी प्रोफ़ाइल पर या किसी को भी कभी नहीं दिखता।",

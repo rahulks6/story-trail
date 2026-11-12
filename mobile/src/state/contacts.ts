@@ -5,8 +5,9 @@ import { track } from "../analytics/analytics";
 
 /**
  * Contacts on Katkee: reads the address book only when the person taps Continue on the explainer
- * (components/ContactsFinder.tsx), never in the background and never on its own. The system
- * permission prompt comes after that explainer, so nobody meets it cold.
+ * (components/ContactsFinder.tsx), or, if they switched on "Tell me when more contacts join",
+ * when they open Katkee (at most twice a day, state/contactsWatch.ts). Never in the background.
+ * The system permission prompt comes after that explainer, so nobody meets it cold.
  *
  * react-native-contacts (8.0.10, a TurboModule for the new architecture) reads the contacts. It's
  * required here rather than imported so this file only describes the two calls Katkee uses: it

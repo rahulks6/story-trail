@@ -1,6 +1,6 @@
 # Katkee Privacy Policy
 
-**Last updated:** 6 November 2026
+**Last updated:** 12 November 2026
 
 This policy explains what Katkee collects, how we use it, who can see it, how long we keep it
 and the choices you have. It covers the Katkee apps for iPhone and Android, the website at
@@ -115,6 +115,15 @@ The codes are not encryption: someone who had one could work out the
 phone number behind it by trying every number. That is why we don't keep
 them. You can run the check again or never; turning off contacts for
 Katkee in your phone's settings stops it.
+
+**Tell me when more contacts join (optional, off unless you turn it on).**
+If you switch this on after a check, the app runs the same check again
+when you open Katkee, at most twice a day, and shows you anyone from your
+contacts who has joined since. It works exactly as above: codes are made
+on your phone, compared and forgotten, and nothing about your contacts is
+kept on our servers. The list of accounts you've already been shown is
+kept only on your phone. Turn the switch off (Settings, then Contacts on
+Katkee) or turn off contacts for Katkee in your phone's settings to stop it.
 
 Others can find you the same way, from your verified email or phone
 number, unless you turn off **Let people find me from their contacts**

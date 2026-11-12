@@ -2045,6 +2045,11 @@ export const mr: Catalogue = {
   "contactsFinder.explainerHashed": "काहीही पाठवण्यापूर्वी फोन नंबर आणि ईमेल तुमच्या फोनवरच बदललेल्या कोडमध्ये (हॅश) रूपांतरित केले जातात. नावे, फोटो आणि नोट्स कधीच तुमच्या फोनबाहेर जात नाहीत.",
   "contactsFinder.explainerForgotten": "Katkee तुमचे संपर्क ठेवत नाही. ते एकदा तपासले जातात आणि विसरले जातात.",
   "contactsFinder.explainerOptOut": "कोणीही सेटिंग्ज > प्रायव्हसीमध्ये अशा प्रकारे सापडणे बंद करू शकते.",
+  "contactsJoined.oneJoined": "{name} Katkee वर आले!",
+  "contactsJoined.manyJoined": "{name} आणि आणखी {count} जण Katkee वर आले!",
+  "contactsJoined.fromYourContacts": "तुमच्या कॉन्टॅक्ट्समधून. फॉलो करून हाय म्हणा 👋",
+  "contactsFinder.tellMeWhenContactsJoin": "आणखी कॉन्टॅक्ट्स जोडले की मला सांगा",
+  "contactsFinder.tellMeWhenContactsJoinBody": "Katkee उघडल्यावर ते त्याच सुरक्षित पद्धतीने पुन्हा तपासते, दिवसातून जास्तीत जास्त दोनदा. तुमचे कॉन्टॅक्ट्स कधीच ठेवले जात नाहीत.",
   // nearbyPrompt
   "nearbyPrompt.factApproximate": "Katkee शहराएवढा अंदाजे भाग वापरते, तुमचे नेमके लोकेशन कधीच नाही.",
   "nearbyPrompt.factNeverShown": "तुमचा भाग तुमच्या प्रोफाइलवर किंवा कोणालाही कधीच दिसत नाही.",
