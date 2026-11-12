@@ -1,10 +1,11 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import type { Overlay } from "../models/storyDraft";
+import type { Overlay, TextOverlayProperties } from "../models/storyDraft";
 import { contrastOn, neonCore, neonRadius, textStyleLook, tightTextFits } from "./textLook";
 import { mediaColors as colors, radii } from "../theme";
 import { InteractiveSticker, type StickerInteraction } from "./InteractiveSticker";
-import { BorderCopies, labelBox, MarkerLines, markerPad, outlineWidth, textLookOf } from "./TextDecorations";
+import { BorderCopies, labelBox, MarkerLines, markerPad, outlineWidth, SOFT_ALPHA, textLookOf, withAlpha } from "./TextDecorations";
+import { AnimatedTextBox, useTypedText } from "./TextAnimation";
 import { t } from "../i18n";
 
 export /** Text wraps within this fraction of the container's own width (spec: "auto-wrap ... text") rather than growing indefinitely off-canvas. */
@@ -55,45 +56,8 @@ export function OverlayBody({
     case "addYours":
     case "song":
       return <InteractiveSticker overlay={overlay} containerWidth={containerWidth} interaction={interaction} />;
-    case "text": {
-      const { properties } = overlay;
-      const fontSize = properties.fontSize * containerHeight;
-      const look = textLookOf(properties);
-      // Neon (stored as "Highlight") glows only on plain text; on a label, marker or border it's plain.
-      const neon = properties.style === "Highlight" && look === "plain";
-      const glow = neonRadius(fontSize);
-      const textStyle = [
-        styles.text,
-        { color: neon ? neonCore(properties.color) : properties.color, fontSize, textAlign: properties.align, includeFontPadding: !tightTextFits(properties.text) },
-        textStyleLook(properties.style, properties.color, fontSize),
-        // Room for the glow, which Android cuts off at the text's edges.
-        neon && { padding: glow },
-        properties.style === "Highlight" && !neon && { textShadowRadius: 0 },
-        look === "border" && { textShadowRadius: 0 },
-      ];
-      const pad = markerPad(fontSize);
-      const box = look === "label" && properties.backgroundColor !== null
-        ? { backgroundColor: properties.backgroundColor, ...labelBox(fontSize) }
-        // Room for the marker's ends and the border, so they never touch the box's edge.
-        : look === "marker" ? { paddingHorizontal: pad.x, paddingVertical: pad.y }
-        : look === "border" ? { padding: outlineWidth(fontSize) }
-        : null;
-      return (
-        <View style={[{ maxWidth: containerWidth * TEXT_MAX_WIDTH_FRACTION + (neon ? glow * 2 : 0) }, box]}>
-          <View>
-            {look === "border" ? <BorderCopies text={properties.text} textStyle={textStyle} borderColor={contrastOn(properties.color)} fontSize={fontSize} /> : null}
-            {look === "marker" && properties.backgroundColor !== null ? <MarkerLines text={properties.text} textStyle={textStyle} color={properties.backgroundColor} fontSize={fontSize} /> : null}
-            {/* A second, wider glow behind the text, so the colour reads on any photo. */}
-            {neon ? (
-              <Text allowFontScaling={false} style={[...textStyle, styles.outlineCopy, { color: properties.color }]} accessible={false} importantForAccessibility="no">
-                {properties.text}
-              </Text>
-            ) : null}
-            <Text allowFontScaling={false} style={[...textStyle, neon && { textShadowRadius: glow * 0.5 }]}>{properties.text}</Text>
-          </View>
-        </View>
-      );
-    }
+    case "text":
+      return <StoryTextOverlay properties={overlay.properties} containerWidth={containerWidth} containerHeight={containerHeight} />;
     case "emoji":
       return <Text allowFontScaling={false} style={{ fontSize: 0.09 * containerHeight }}>{overlay.properties.emoji}</Text>;
     case "sticker":
@@ -119,6 +83,50 @@ export function OverlayBody({
 
 export { textStyleLook };
 
+
+
+/** Text on a Story: its font, look (label, see-through, marker, border) and animation. */
+function StoryTextOverlay({ properties, containerWidth, containerHeight }: { properties: TextOverlayProperties; containerWidth: number; containerHeight: number }): React.JSX.Element {
+  const fontSize = properties.fontSize * containerHeight;
+  const look = textLookOf(properties);
+  // Typed out letter by letter for the typewriter animation; the whole text otherwise.
+  const shown = useTypedText(properties.text, properties.animation);
+  // Neon (stored as "Highlight") glows only on plain text; on a label, marker or border it's plain.
+  const neon = properties.style === "Highlight" && look === "plain";
+  const glow = neonRadius(fontSize);
+  const textStyle = [
+    styles.text,
+    { color: neon ? neonCore(properties.color) : properties.color, fontSize, textAlign: properties.align, includeFontPadding: !tightTextFits(properties.text) },
+    textStyleLook(properties.style, properties.color, fontSize),
+    // Room for the glow, which Android cuts off at the text's edges.
+    neon && { padding: glow },
+    properties.style === "Highlight" && !neon && { textShadowRadius: 0 },
+    look === "border" && { textShadowRadius: 0 },
+  ];
+  const pad = markerPad(fontSize);
+  const box = (look === "label" || look === "soft") && properties.backgroundColor !== null
+    ? { backgroundColor: look === "soft" ? withAlpha(properties.backgroundColor, SOFT_ALPHA) : properties.backgroundColor, ...labelBox(fontSize) }
+    // Room for the marker's ends and the border, so they never touch the box's edge.
+    : look === "marker" ? { paddingHorizontal: pad.x, paddingVertical: pad.y }
+    : look === "border" ? { padding: outlineWidth(fontSize) }
+    : null;
+  return (
+    <AnimatedTextBox animation={properties.animation} style={[{ maxWidth: containerWidth * TEXT_MAX_WIDTH_FRACTION + (neon ? glow * 2 : 0) }, box]}>
+      <View>
+        {look === "border" && shown ? <BorderCopies text={shown} textStyle={textStyle} borderColor={contrastOn(properties.color)} fontSize={fontSize} /> : null}
+        {look === "marker" && properties.backgroundColor !== null && shown ? <MarkerLines text={shown} textStyle={textStyle} color={properties.backgroundColor} fontSize={fontSize} /> : null}
+        {/* A second, wider glow behind the text, so the colour reads on any photo. */}
+        {neon ? (
+          <Text allowFontScaling={false} style={[...textStyle, styles.outlineCopy, { color: properties.color }]} accessible={false} importantForAccessibility="no">
+            {shown}
+          </Text>
+        ) : null}
+        {/* Screen readers get the whole text at once, not each letter as it's typed. */}
+        <Text allowFontScaling={false} style={[...textStyle, neon && { textShadowRadius: glow * 0.5 }]} accessibilityLabel={properties.text}>{shown}</Text>
+      </View>
+    </AnimatedTextBox>
+  );
+}
 
 const styles = StyleSheet.create({
   text: { fontWeight: "600", color: colors.textPrimary },

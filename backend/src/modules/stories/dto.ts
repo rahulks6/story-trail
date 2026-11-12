@@ -61,6 +61,7 @@ const DEFAULT_CROP: StoryCrop = { zoom: 1, offsetX: 0, offsetY: 0 };
 const MAX_OVERLAYS = 40;
 const MAX_STROKES = 80;
 const MAX_POINTS_PER_STROKE = 500;
+const TEXT_ANIMATIONS = ["typewriter", "pop", "fade", "bounce"] as const;
 const HEX_COLOR = /^#[0-9a-f]{6}$/i;
 const UUID = /^[0-9a-f-]{36}$/i;
 
@@ -139,9 +140,11 @@ function parseOverlay(raw: unknown, index: number): StoryOverlay | null {
       const align = properties.align === "left" || properties.align === "right" ? properties.align : "center";
       const fontSize = isFiniteNumber(properties.fontSize) ? clamp(properties.fontSize, 0.01, 0.2) : 0.045;
       // A marker needs its colour; a border is for text without one. Anything else is dropped.
-      const effect = properties.effect === "marker" && backgroundColor !== null ? "marker" as const
+      const effect = (properties.effect === "marker" || properties.effect === "soft") && backgroundColor !== null ? properties.effect
         : properties.effect === "outline" && backgroundColor === null ? "outline" as const : undefined;
-      return { id, type: "text", x, y, scale, rotation, zIndex, properties: { text, style, color, backgroundColor, align, fontSize, ...(effect ? { effect } : {}) } };
+      const animation = typeof properties.animation === "string" && (TEXT_ANIMATIONS as readonly string[]).includes(properties.animation)
+        ? (properties.animation as (typeof TEXT_ANIMATIONS)[number]) : undefined;
+      return { id, type: "text", x, y, scale, rotation, zIndex, properties: { text, style, color, backgroundColor, align, fontSize, ...(effect ? { effect } : {}), ...(animation ? { animation } : {}) } };
     }
     case "emoji": {
       // One emoji, whole: slicing to 8 units cut families, flags and skin tones in half.

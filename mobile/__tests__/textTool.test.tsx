@@ -44,7 +44,7 @@ describe("the text tool", () => {
     expect(onDone.mock.calls[0]![1].effect).toBeUndefined();
   });
 
-  it("the A button goes plain → label → highlighter → border → plain, each shown while typing", () => {
+  it("the A button goes plain → label → see-through → highlighter → border → plain, each shown while typing", () => {
     const onDone = jest.fn();
     act(() => { tree = create(<TextToolModal visible onCancel={jest.fn()} onDone={onDone} canvasHeight={800} canvasWidth={400} />); });
     act(() => tree.root.findByType(TextInput).props.onChangeText("Good morning"));
@@ -54,6 +54,8 @@ describe("the text tool", () => {
     expect(lookLabel()).toBe("Text look: No background");
     nextLook();
     expect(lookLabel()).toBe("Text look: Label");
+    nextLook();
+    expect(lookLabel()).toBe("Text look: See-through");
     nextLook();
     expect(lookLabel()).toBe("Text look: Highlighter");
     // The highlighter is measured from the text's lines and drawn behind each one.
@@ -80,6 +82,7 @@ describe("the text tool", () => {
     act(() => tree.root.findByType(TextInput).props.onChangeText("Hi"));
     nextLook();
     nextLook();
+    nextLook();
     act(() => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.findAll((c) => c.props.children === "Done").length > 0).props.onPress());
     expect(onDone.mock.calls[0]![1]).toMatchObject({ backgroundColor: "#FFFFFF", color: "#000000", effect: "marker" });
   });
@@ -103,5 +106,55 @@ describe("the text tool", () => {
     act(() => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.findAll((c) => c.props.children === "Done").length > 0).props.onPress());
     expect(onDone).not.toHaveBeenCalled();
     expect(onCancel).toHaveBeenCalled();
+  });
+
+  it("a see-through label keeps its colour, drawn half transparent while typing", () => {
+    const onDone = jest.fn();
+    act(() => { tree = create(<TextToolModal visible onCancel={jest.fn()} onDone={onDone} />); });
+    act(() => tree.root.findByType(TextInput).props.onChangeText("Hi"));
+    press("Show colours");
+    press("Text colour #3E7BFF");
+    nextLook();
+    nextLook();
+    const boxes = tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && StyleSheet.flatten(n.props.style)?.backgroundColor === "rgba(62,123,255,0.55)");
+    expect(boxes.length).toBeGreaterThan(0);
+    act(() => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.findAll((c) => c.props.children === "Done").length > 0).props.onPress());
+    expect(onDone.mock.calls[0]![1]).toMatchObject({ backgroundColor: "#3E7BFF", effect: "soft", color: "#FFFFFF" });
+  });
+
+  it("the animation button cycles typewriter, pop, fade, bounce and off, and saves the choice", () => {
+    const onDone = jest.fn();
+    act(() => { tree = create(<TextToolModal visible onCancel={jest.fn()} onDone={onDone} />); });
+    act(() => tree.root.findByType(TextInput).props.onChangeText("Hi"));
+    const button = () => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && /^Animation: /.test(n.props.accessibilityLabel ?? ""));
+    expect(button().props.accessibilityLabel).toBe("Animation: No animation");
+    const seen: string[] = [];
+    for (let i = 0; i < 5; i++) {
+      act(() => button().props.onPress());
+      seen.push(button().props.accessibilityLabel);
+    }
+    expect(seen).toEqual(["Animation: Typewriter", "Animation: Pop", "Animation: Fade in", "Animation: Bounce", "Animation: No animation"]);
+    act(() => button().props.onPress());
+    act(() => button().props.onPress());
+    act(() => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.findAll((c) => c.props.children === "Done").length > 0).props.onPress());
+    expect(onDone.mock.calls[0]![1]).toMatchObject({ animation: "pop" });
+  });
+
+  it("More colours opens a rainbow: any colour, lighter or darker", () => {
+    const onDone = jest.fn();
+    act(() => { tree = create(<TextToolModal visible onCancel={jest.fn()} onDone={onDone} />); });
+    act(() => tree.root.findByType(TextInput).props.onChangeText("Hi"));
+    press("Show colours");
+    press("More colours");
+    const bar = (label: string) => tree.root.find((n: ReactTestInstance) => n.props.accessibilityLabel === label && typeof n.props.onResponderGrant === "function");
+    act(() => bar("Colour").props.onLayout?.({ nativeEvent: { layout: { width: 360, height: 30, x: 0, y: 0 } } }));
+    act(() => bar("Colour").props.onResponderGrant({ nativeEvent: { locationX: 120, touches: [], changedTouches: [] }, touchHistory: { touchBank: [] } }));
+    act(() => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.findAll((c) => c.props.children === "Done").length > 0).props.onPress());
+    // A third of the way along the rainbow is green.
+    const picked = onDone.mock.calls[0]![1].color as string;
+    expect(picked).toMatch(/^#[0-9A-F]{6}$/);
+    const [r, g, b] = [1, 3, 5].map((i) => parseInt(picked.slice(i, i + 2), 16));
+    expect(g!).toBeGreaterThan(r!);
+    expect(g!).toBeGreaterThan(b!);
   });
 });

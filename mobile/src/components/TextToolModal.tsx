@@ -5,7 +5,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { mediaColors as colors, radii, spacing, ICONS } from "../theme";
 import { Icon } from "./Icon";
 import { contrastOn, neonCore, neonRadius, TEXT_STYLES, textStyleLook, tightTextFits } from "./textLook";
-import { BorderCopies, labelBox, lookProperties, MarkerLines, markerPad, outlineWidth, TEXT_LOOKS, textLookOf, type TextLook } from "./TextDecorations";
+import { BorderCopies, labelBox, lookProperties, MarkerLines, markerPad, outlineWidth, SOFT_ALPHA, TEXT_LOOKS, textLookOf, withAlpha, type TextLook } from "./TextDecorations";
+import { TEXT_ANIMATIONS, type TextAnimation } from "./TextAnimation";
+import { ColorSpectrum } from "./ColorSpectrum";
+import Svg, { Circle, Defs, LinearGradient as SvgGradient, Stop } from "react-native-svg";
 import type { TextOverlayProperties, TextStyle } from "../models/storyDraft";
 import { tapFeedback } from "../utils/haptics";
 import { TEXT_MAX_WIDTH_FRACTION } from "./OverlayBody";
@@ -49,10 +52,13 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
   const [color, setColor] = useState(initialProperties?.backgroundColor ?? initialProperties?.color ?? COLORS[0]!);
   const [look, setLook] = useState<TextLook>(initialProperties ? textLookOf(initialProperties) : "plain");
   // The look's name shows for a moment after the "A" button changes it.
-  const [lookHint, setLookHint] = useState<TextLook | null>(null);
+  const [lookHint, setLookHint] = useState<string | null>(null);
+  const [animation, setAnimation] = useState<TextAnimation | null>(initialProperties?.animation ?? null);
+  // The rainbow picker in place of the colour swatches.
+  const [spectrum, setSpectrum] = useState(false);
   const hintTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => { if (hintTimer.current) clearTimeout(hintTimer.current); }, []);
-  const hasBackground = look === "label" || look === "marker";
+  const hasBackground = look === "label" || look === "soft" || look === "marker";
   const [align, setAlign] = useState<TextOverlayProperties["align"]>(initialProperties?.align ?? "center");
   const [size, setSize] = useState(initialProperties?.fontSize ?? DEFAULT_SIZE);
   const [picking, setPicking] = useState<"styles" | "colors">("styles");
@@ -67,7 +73,7 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
       onCancel();
       return;
     }
-    onDone(text, { text, style, color: textColor, ...lookProperties(look, color), align, fontSize: size });
+    onDone(text, { text, style, color: textColor, ...lookProperties(look, color), align, fontSize: size, ...(animation ? { animation } : {}) });
   };
 
   // The size slider: drag up for bigger, down for smaller.
@@ -91,10 +97,18 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
   const nextLook = () => {
     const next = TEXT_LOOKS[(TEXT_LOOKS.indexOf(look) + 1) % TEXT_LOOKS.length]!;
     setLook(next);
-    setLookHint(next);
+    showHint(lookName(next));
+  };
+  const showHint = (label: string) => {
+    setLookHint(label);
     tapFeedback("select");
     if (hintTimer.current) clearTimeout(hintTimer.current);
     hintTimer.current = setTimeout(() => setLookHint(null), 1400);
+  };
+  const nextAnimation = () => {
+    const next = TEXT_ANIMATIONS[(TEXT_ANIMATIONS.indexOf(animation) + 1) % TEXT_ANIMATIONS.length] ?? null;
+    setAnimation(next);
+    showHint(animationName(next));
   };
   const nextAlign = () => setAlign((a) => ALIGNS[(ALIGNS.indexOf(a) + 1) % ALIGNS.length]!);
   const alignIcon = align === "left" ? ICONS.alignLeft : align === "right" ? ICONS.alignRight : ICONS.alignCenter;
@@ -141,6 +155,16 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
             >
               <LookGlyph look={look} />
             </Pressable>
+            <Pressable
+              onPress={nextAnimation}
+              hitSlop={8}
+              style={[styles.toolButton, animation !== null && styles.toolButtonOn]}
+              accessibilityRole="button"
+              accessibilityLabel={t("textToolModal.animationValue", { animation: animationName(animation) })}
+              accessibilityHint={t("textToolModal.changesHowTheTextAppears")}
+            >
+              <Text style={[styles.animGlyph, animation !== null && { color: colors.background }]}>A<Text style={styles.animGlyphLines}>⫶</Text></Text>
+            </Pressable>
           </View>
           <Pressable accessibilityRole="button" onPress={done} hitSlop={12} style={styles.doneButton}>
             <Text style={styles.doneLabel}>{t("common.done")}</Text>
@@ -160,13 +184,14 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
           </View>
           {lookHint ? (
             <View style={styles.lookHint} pointerEvents="none" accessibilityLiveRegion="polite">
-              <Text style={styles.lookHintLabel}>{lookName(lookHint)}</Text>
+              <Text style={styles.lookHintLabel}>{lookHint}</Text>
             </View>
           ) : null}
           <View style={[
             styles.inputBox,
             wrapWidth !== undefined && { maxWidth: wrapWidth, paddingHorizontal: 0, paddingVertical: 0 },
             look === "label" && { backgroundColor: color, ...labelBox(previewSize) },
+            look === "soft" && { backgroundColor: withAlpha(color, SOFT_ALPHA), ...labelBox(previewSize) },
             look === "marker" && { paddingHorizontal: markerPad(previewSize).x, paddingVertical: markerPad(previewSize).y },
             look === "border" && { padding: outlineWidth(previewSize) },
             { alignSelf: align === "left" ? "flex-start" : align === "right" ? "flex-end" : "center" },
@@ -215,7 +240,21 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
             ))}
           </ScrollView>
         ) : (
+          spectrum ? (
+            <View style={[styles.row, styles.spectrumRow]}>
+              <Pressable onPress={() => setSpectrum(false)} hitSlop={8} style={styles.spectrumBack} accessibilityRole="button" accessibilityLabel={t("textToolModal.showSwatches")}>
+                <View style={[styles.colorDot, { backgroundColor: color }]} />
+              </Pressable>
+              <ColorSpectrum onChange={setColor} />
+            </View>
+          ) : (
           <ScrollView key="colors" horizontal style={styles.row} showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="always" contentContainerStyle={styles.rowContent}>
+            {/* Any colour: a rainbow, then lighter or darker. */}
+            <Pressable onPress={() => { setSpectrum(true); tapFeedback("select"); }} hitSlop={4} style={styles.rainbowSwatch} accessibilityRole="button" accessibilityLabel={t("textToolModal.moreColours")}>
+              <Svg width={30} height={30}><Defs><SvgGradient id="rb" x1="0" y1="0" x2="1" y2="1">
+                {["#FF3B30", "#FF9500", "#FFCC00", "#34C759", "#32ADE6", "#5856D6", "#AF52DE"].map((c, i) => <Stop key={c} offset={i / 6} stopColor={c} />)}
+              </SvgGradient></Defs><Circle cx={15} cy={15} r={14} fill="url(#rb)" /></Svg>
+            </Pressable>
             {COLORS.map((c) => (
               <Pressable
                 key={c}
@@ -228,6 +267,7 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
               />
             ))}
           </ScrollView>
+          )
         )}
       </View>
     </Modal>
@@ -251,14 +291,32 @@ function useKeyboardHeight(): number {
   return height;
 }
 
+function animationName(animation: TextAnimation | null): string {
+  switch (animation) {
+    case "typewriter": return t("textToolModal.animTypewriter");
+    case "pop": return t("textToolModal.animPop");
+    case "fade": return t("textToolModal.animFade");
+    case "bounce": return t("textToolModal.animBounce");
+    default: return t("textToolModal.animNone");
+  }
+}
+
 function lookName(look: TextLook): string {
-  return look === "label" ? t("textToolModal.lookLabel") : look === "marker" ? t("textToolModal.lookHighlighter")
+  return look === "label" ? t("textToolModal.lookLabel") : look === "soft" ? t("textToolModal.lookSeeThrough") : look === "marker" ? t("textToolModal.lookHighlighter")
     : look === "border" ? t("textToolModal.lookBorder") : t("textToolModal.lookPlain");
 }
 
 /** The "A" button shows the look it's on: plain, on a label, highlighted, or with a border. */
 function LookGlyph({ look }: { look: TextLook }): React.JSX.Element {
   if (look === "label") return <Text style={[styles.glyph, { color: colors.background }]}>A</Text>;
+  if (look === "soft") {
+    return (
+      <View>
+        <View style={styles.glyphSoft} />
+        <Text style={styles.glyph}>A</Text>
+      </View>
+    );
+  }
   if (look === "marker") {
     return (
       <View>
@@ -279,6 +337,12 @@ function LookGlyph({ look }: { look: TextLook }): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
+  glyphSoft: { position: "absolute", left: -3, right: -3, top: 1, bottom: 1, borderRadius: 6, backgroundColor: "rgba(255,255,255,0.4)" },
+  animGlyph: { color: colors.textPrimary, fontSize: 20, fontWeight: "900", fontStyle: "italic" },
+  animGlyphLines: { fontSize: 14, fontWeight: "700", fontStyle: "normal" },
+  rainbowSwatch: { width: 34, height: 34, borderRadius: 17, alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: "#FFFFFF" },
+  spectrumRow: { flexDirection: "row", alignItems: "center", gap: spacing.md, paddingHorizontal: spacing.xs },
+  spectrumBack: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0,0,0,0.45)" },
   glyph: { color: colors.textPrimary, fontSize: 20, fontWeight: "900", textAlign: "center", paddingHorizontal: 3 },
   glyphMarker: { position: "absolute", left: -2, right: -2, top: 5, bottom: 4, borderRadius: 4, backgroundColor: "#FFD84D" },
   lookHint: { position: "absolute", top: spacing.sm, alignSelf: "center", paddingHorizontal: spacing.md, paddingVertical: 6, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.6)" },

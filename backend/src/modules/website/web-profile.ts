@@ -191,7 +191,8 @@ function webOverlay(raw: unknown, mentioned: Map<string, { username: string; ver
       return {
         type: "text", ...place, text: text(p.text, 500), style: text(p.style, 20) || "Clean", color: color(p.color, "#FFFFFF"),
         background: color(p.backgroundColor, null), align, fontSize: clamp(finite(p.fontSize, 0.04), 0.01, 0.3),
-        effect: p.effect === "marker" || p.effect === "outline" ? p.effect : null,
+        effect: p.effect === "marker" || p.effect === "outline" || p.effect === "soft" ? p.effect : null,
+        animation: ["typewriter", "pop", "fade", "bounce"].includes(String(p.animation)) ? p.animation : null,
       };
     }
     case "emoji": return { type: "emoji", ...place, emoji: text(p.emoji, 16) };

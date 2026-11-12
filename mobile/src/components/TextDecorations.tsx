@@ -6,16 +6,27 @@ import type { TextOverlayProperties } from "../models/storyDraft";
  * How text on a Story is set off from the photo (the text tool's "A" button cycles through them):
  * - plain: just the text;
  * - label: one rounded box behind the whole text, in the chosen colour (stored as backgroundColor);
+ * - soft: the same box, see-through (backgroundColor + effect "soft"; older apps show a label);
  * - marker: a highlighter behind each line, hugging the words (backgroundColor + effect "marker";
  *   an app from before markers shows it as a label);
  * - border: an outline around every letter, black or white against the text's colour (effect
  *   "outline"; the "Outline" font style draws the same border, as it always has).
  */
-export type TextLook = "plain" | "label" | "marker" | "border";
-export const TEXT_LOOKS: TextLook[] = ["plain", "label", "marker", "border"];
+export type TextLook = "plain" | "label" | "soft" | "marker" | "border";
+export const TEXT_LOOKS: TextLook[] = ["plain", "label", "soft", "marker", "border"];
+
+/** How see-through the soft label is. */
+export const SOFT_ALPHA = 0.55;
+/** `#rrggbb` with an alpha, as rgba(). */
+export function withAlpha(hex: string, alpha: number): string {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex);
+  if (!m) return hex;
+  const n = parseInt(m[1]!, 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alpha})`;
+}
 
 export function textLookOf(p: Pick<TextOverlayProperties, "backgroundColor" | "effect" | "style">): TextLook {
-  if (p.backgroundColor !== null) return p.effect === "marker" ? "marker" : "label";
+  if (p.backgroundColor !== null) return p.effect === "marker" ? "marker" : p.effect === "soft" ? "soft" : "label";
   return p.effect === "outline" || p.style === "Outline" ? "border" : "plain";
 }
 
@@ -23,6 +34,7 @@ export function textLookOf(p: Pick<TextOverlayProperties, "backgroundColor" | "e
 export function lookProperties(look: TextLook, color: string): Pick<TextOverlayProperties, "backgroundColor" | "effect"> {
   switch (look) {
     case "label": return { backgroundColor: color, effect: undefined };
+    case "soft": return { backgroundColor: color, effect: "soft" };
     case "marker": return { backgroundColor: color, effect: "marker" };
     case "border": return { backgroundColor: null, effect: "outline" };
     default: return { backgroundColor: null, effect: undefined };

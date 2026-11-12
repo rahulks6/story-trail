@@ -1594,6 +1594,18 @@ export const en = {
   "textToolModal.lookLabel": "Label",
   "textToolModal.lookHighlighter": "Highlighter",
   "textToolModal.lookBorder": "Border",
+  "textToolModal.lookSeeThrough": "See-through",
+  "textToolModal.animationValue": "Animation: {animation}",
+  "textToolModal.changesHowTheTextAppears": "Changes how the text comes in on your Story",
+  "textToolModal.animNone": "No animation",
+  "textToolModal.animTypewriter": "Typewriter",
+  "textToolModal.animPop": "Pop",
+  "textToolModal.animFade": "Fade in",
+  "textToolModal.animBounce": "Bounce",
+  "textToolModal.moreColours": "More colours",
+  "textToolModal.showSwatches": "Show colour swatches",
+  "textToolModal.colourHue": "Colour",
+  "textToolModal.colourShade": "Lighter or darker",
   "textToolModal.changesTheTextAlignment": "Changes the text alignment",
 
   // screens/create/UploadQueueScreen.tsx

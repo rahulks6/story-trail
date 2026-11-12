@@ -6,13 +6,17 @@ import type { Overlay, TextOverlayProperties } from "../src/models/storyDraft";
 import { textLookOf } from "../src/components/TextDecorations";
 
 let tree: ReactTestRenderer;
-afterEach(() => act(() => tree?.unmount()));
+afterEach(() => act(() => { tree?.unmount(); }));
 
 const text = (p: Partial<TextOverlayProperties>): Overlay => ({
   id: "t1", type: "text", x: 0.5, y: 0.5, scale: 1, rotation: 0, zIndex: 0,
   properties: { text: "Hello", style: "Clean", color: "#FFFFFF", backgroundColor: null, align: "center", fontSize: 0.05, ...p },
 }) as Overlay;
-const render = (overlay: Overlay) => act(() => { tree = create(<OverlayBody overlay={overlay} containerWidth={400} containerHeight={800} />); });
+const render = (overlay: Overlay) => act(() => {
+  // Each render replaces the last, so no animation is left running after the test.
+  tree?.unmount();
+  tree = create(<OverlayBody overlay={overlay} containerWidth={400} containerHeight={800} />);
+});
 const borders = () => tree.root.findAll((n: ReactTestInstance) => n.props.testID === "text-border" && typeof n.type !== "string");
 const markers = () => tree.root.findAll((n: ReactTestInstance) => n.props.testID === "text-marker" && typeof n.type === "string");
 
@@ -55,4 +59,33 @@ test("a label stays one box, and plain text has neither", () => {
   render(text({}));
   expect(markers()).toHaveLength(0);
   expect(borders()).toHaveLength(0);
+});
+
+test("a see-through label is the chosen colour, half transparent", () => {
+  render(text({ color: "#FFFFFF", backgroundColor: "#3E7BFF", effect: "soft" }));
+  expect(tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && StyleSheet.flatten(n.props.style)?.backgroundColor === "rgba(62,123,255,0.55)")).toHaveLength(1);
+});
+
+test("typewriter text appears letter by letter, while screen readers get it all at once", () => {
+  jest.useFakeTimers();
+  try {
+    render(text({ text: "Hello", animation: "typewriter" }));
+    const main = () => tree.root.findAll((n: ReactTestInstance) => n.props.accessibilityLabel === "Hello" && typeof n.type !== "string")[0]!;
+    expect(main().props.children).toBe("");
+    act(() => { jest.advanceTimersByTime(56 * 2); });
+    expect(main().props.children).toBe("He");
+    act(() => { jest.advanceTimersByTime(2000); });
+    expect(main().props.children).toBe("Hello");
+  } finally {
+    jest.useRealTimers();
+  }
+});
+
+test("pop, fade and bounce wrap the text in their animation; still text has none", () => {
+  for (const animation of ["pop", "fade", "bounce"] as const) {
+    render(text({ animation }));
+    expect(tree.root.findAll((n: ReactTestInstance) => n.props.testID === `text-animation-${animation}`).length).toBeGreaterThan(0);
+  }
+  render(text({}));
+  expect(tree.root.findAll((n: ReactTestInstance) => typeof n.props.testID === "string" && n.props.testID.startsWith("text-animation-"))).toHaveLength(0);
 });

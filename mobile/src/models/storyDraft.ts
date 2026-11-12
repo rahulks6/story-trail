@@ -30,7 +30,9 @@ export interface TextOverlayProperties {
    * line in backgroundColor (without it, backgroundColor is one label box); "outline" is a border
    * around the letters. Missing on Stories from before these.
    */
-  effect?: "marker" | "outline";
+  effect?: "marker" | "outline" | "soft";
+  /** How the text comes in on the Story (components/TextAnimation.tsx); missing for still text. */
+  animation?: "typewriter" | "pop" | "fade" | "bounce";
   align: "left" | "center" | "right";
   fontSize: number; // normalized to the media container's height, e.g. 0.045
 }

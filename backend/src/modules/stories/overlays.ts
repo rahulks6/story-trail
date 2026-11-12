@@ -75,7 +75,9 @@ export interface TextOverlay extends OverlayBase {
   properties: {
     text: string; style: TextStyle; color: string; backgroundColor: string | null; align: "left" | "center" | "right"; fontSize: number;
     /** "marker": a highlighter behind each line in backgroundColor (else backgroundColor is one label); "outline": a border round the letters. */
-    effect?: "marker" | "outline";
+    effect?: "marker" | "outline" | "soft";
+    /** How the text comes in on the Story; missing for still text. */
+    animation?: "typewriter" | "pop" | "fade" | "bounce";
   };
 }
 

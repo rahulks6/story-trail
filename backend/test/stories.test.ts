@@ -496,6 +496,26 @@ describe("Camera + Editor: overlays, filter, and drawing survive publish", () =>
     for (const id of ["x1", "x2", "x3"]) assert.equal("effect" in byId[id]!, false, id);
   });
 
+  it("keeps a see-through label and a text animation, and drops ones it doesn't know", async () => {
+    const owner = await signupUser();
+    const mediaId = await uploadPhoto(owner.accessToken);
+    const base = { type: "text", x: 0.5, y: 0.5, scale: 1, rotation: 0, zIndex: 1 };
+    const props = { text: "hi", style: "Clean", color: "#FFFFFF", align: "center", fontSize: 0.05 };
+    const overlays = [
+      { ...base, id: "s", properties: { ...props, backgroundColor: "#3E7BFF", effect: "soft", animation: "typewriter" } },
+      { ...base, id: "p", properties: { ...props, backgroundColor: null, animation: "bounce" } },
+      { ...base, id: "x", properties: { ...props, backgroundColor: null, effect: "soft", animation: "spin<script>" } },
+    ];
+    const res = await publishStory(owner.accessToken, mediaId, { overlays });
+    assert.equal(res.status, 201);
+    const byId = Object.fromEntries((res.body.story.overlays as { id: string; properties: Record<string, unknown> }[]).map((o) => [o.id, o.properties]));
+    assert.equal(byId.s!.effect, "soft");
+    assert.equal(byId.s!.animation, "typewriter");
+    assert.equal(byId.p!.animation, "bounce");
+    assert.equal("effect" in byId.x!, false, "see-through needs a colour");
+    assert.equal("animation" in byId.x!, false);
+  });
+
   it("audioMuted defaults to false — original recorded audio is kept by default", async () => {
     const owner = await signupUser();
     const mediaId = await uploadPhoto(owner.accessToken);

@@ -24,7 +24,7 @@ export function isSavedDraft(value: unknown, mediaUri: string): value is SavedDr
     if (!record(overlay) || !text(overlay.id) || ![overlay.x, overlay.y, overlay.scale, overlay.rotation, overlay.zIndex].every(number) || !record(overlay.properties)) return false;
     const p = overlay.properties;
     switch (overlay.type) {
-      case "text": return text(p.text) && text(p.color) && (p.backgroundColor === null || text(p.backgroundColor)) && (p.effect === undefined || member(p.effect, ["marker", "outline"])) && number(p.fontSize) && p.fontSize > 0 && member(p.align, ["left", "center", "right"]) && member(p.style, ["Clean", "Bold", "Classic", "Modern", "Typewriter", "Outline", "Soft", "Highlight"]);
+      case "text": return text(p.text) && text(p.color) && (p.backgroundColor === null || text(p.backgroundColor)) && (p.effect === undefined || member(p.effect, ["marker", "outline", "soft"])) && (p.animation === undefined || member(p.animation, ["typewriter", "pop", "fade", "bounce"])) && number(p.fontSize) && p.fontSize > 0 && member(p.align, ["left", "center", "right"]) && member(p.style, ["Clean", "Bold", "Classic", "Modern", "Typewriter", "Outline", "Soft", "Highlight"]);
       case "emoji": return text(p.emoji);
       case "mention": return text(p.userId) && (p.username === undefined || text(p.username)) && (p.displayName === undefined || text(p.displayName));
       case "location": return text(p.label);

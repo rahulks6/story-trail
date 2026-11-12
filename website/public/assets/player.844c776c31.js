@@ -352,6 +352,29 @@
     return card;
   }
 
+  /** The see-through label: the colour at 55% (the app's SOFT_ALPHA). */
+  function softColor(hex) {
+    var n = parseInt(String(hex).slice(1), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',0.55)';
+  }
+
+  /** Text that comes in: typed out, popped in, faded up or bouncing (site.css .ov-anim-*). */
+  function animateText(node, textNode, o) {
+    if (!o.animation || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    if (o.animation === 'typewriter') {
+      var chars = Array.from(o.text), shown = 0;
+      var step = Math.max(16, Math.min(55, 1800 / Math.max(1, chars.length)));
+      textNode.textContent = '';
+      var timer = setInterval(function () {
+        shown += 1;
+        textNode.textContent = chars.slice(0, shown).join('');
+        if (shown >= chars.length) clearInterval(timer);
+      }, step);
+      return;
+    }
+    node.classList.add('ov-anim-' + o.animation);
+  }
+
   function overlay(o, w, h, unit) {
     var node;
     switch (o.type) {
@@ -374,7 +397,7 @@
           span.style.webkitBoxDecorationBreak = 'clone';
           node.appendChild(span);
         } else if (o.background) {
-          node.style.backgroundColor = o.background;
+          node.style.backgroundColor = o.effect === 'soft' ? softColor(o.background) : o.background;
           node.style.padding = (size * 0.12) + 'px ' + (size * 0.35) + 'px';
           node.style.borderRadius = (size * 0.3) + 'px';
         }
@@ -385,6 +408,7 @@
           node.style.webkitTextStroke = (Math.max(1.5, size * 0.07) * 2) + 'px ' + contrastOn(o.color);
           node.style.paintOrder = 'stroke fill';
         }
+        animateText(node, marker ? span : node, o);
         break;
       }
       case 'emoji':

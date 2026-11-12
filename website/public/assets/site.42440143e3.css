@@ -335,6 +335,15 @@ details p { margin: 0; padding: 0 20px 18px; color: var(--text-2); }
 .player-overlays { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
 .ov { position: absolute; pointer-events: none; white-space: pre-wrap; line-height: 1.2; }
 .ov-text { font-weight: 700; overflow-wrap: anywhere; }
+/* Text that comes in, as in the app (TextAnimation.tsx). The overlay's own transform places it,
+   so these animate the scale/translate properties, which add to it. */
+.ov-anim-pop { animation: ov-pop .55s cubic-bezier(.34, 1.56, .64, 1) both; }
+.ov-anim-fade { animation: ov-fade .55s ease-out both; }
+.ov-anim-bounce { animation: ov-bounce .84s ease-in-out infinite alternate; }
+@keyframes ov-pop { from { scale: .4; opacity: 0; } 60% { opacity: 1; } to { scale: 1; opacity: 1; } }
+@keyframes ov-fade { from { translate: 0 18px; opacity: 0; } to { translate: 0 0; opacity: 1; } }
+@keyframes ov-bounce { from { translate: 0 0; } to { translate: 0 -10px; } }
+@media (prefers-reduced-motion: reduce) { .ov-anim-pop, .ov-anim-fade, .ov-anim-bounce { animation: none; } }
 .ov-style-bold, .ov-style-outline { font-family: "Arial Black", "Archivo Black", "Avenir Next", system-ui, sans-serif; font-weight: 900; }
 .ov-style-classic { font-family: Georgia, "Playfair Display", "Times New Roman", serif; font-style: italic; }
 .ov-style-modern { font-family: "Bebas Neue", "Avenir Next Condensed", Impact, "Arial Narrow", sans-serif; text-transform: uppercase; letter-spacing: 0.05em; }
