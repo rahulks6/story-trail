@@ -4,6 +4,7 @@ import type { Overlay } from "../models/storyDraft";
 import { contrastOn, neonCore, neonRadius, textStyleLook, tightTextFits } from "./textLook";
 import { mediaColors as colors, radii } from "../theme";
 import { InteractiveSticker, type StickerInteraction } from "./InteractiveSticker";
+import { BorderCopies, labelBox, MarkerLines, markerPad, outlineWidth, textLookOf } from "./TextDecorations";
 import { t } from "../i18n";
 
 export /** Text wraps within this fraction of the container's own width (spec: "auto-wrap ... text") rather than growing indefinitely off-canvas. */
@@ -57,8 +58,9 @@ export function OverlayBody({
     case "text": {
       const { properties } = overlay;
       const fontSize = properties.fontSize * containerHeight;
-      // Neon (stored as "Highlight") glows only without a label; on a label it is plain text.
-      const neon = properties.style === "Highlight" && properties.backgroundColor === null;
+      const look = textLookOf(properties);
+      // Neon (stored as "Highlight") glows only on plain text; on a label, marker or border it's plain.
+      const neon = properties.style === "Highlight" && look === "plain";
       const glow = neonRadius(fontSize);
       const textStyle = [
         styles.text,
@@ -67,31 +69,28 @@ export function OverlayBody({
         // Room for the glow, which Android cuts off at the text's edges.
         neon && { padding: glow },
         properties.style === "Highlight" && !neon && { textShadowRadius: 0 },
+        look === "border" && { textShadowRadius: 0 },
       ];
-      // A background is a solid label in the chosen colour (Instagram's "A" box).
-      const backgroundStyle = properties.backgroundColor !== null
-        ? { backgroundColor: properties.backgroundColor, paddingHorizontal: fontSize * 0.35, paddingVertical: fontSize * 0.12, borderRadius: fontSize * 0.3 }
+      const pad = markerPad(fontSize);
+      const box = look === "label" && properties.backgroundColor !== null
+        ? { backgroundColor: properties.backgroundColor, ...labelBox(fontSize) }
+        // Room for the marker's ends and the border, so they never touch the box's edge.
+        : look === "marker" ? { paddingHorizontal: pad.x, paddingVertical: pad.y }
+        : look === "border" ? { padding: outlineWidth(fontSize) }
         : null;
-      // Android can't stroke text, so Outline is drawn as the text in the outline colour behind
-      // it, nudged in eight directions.
-      const outline = properties.style === "Outline" && properties.backgroundColor === null;
-      const w = Math.max(1.5, fontSize * 0.07);
       return (
-        <View style={[{ maxWidth: containerWidth * TEXT_MAX_WIDTH_FRACTION + (neon ? glow * 2 : 0) }, backgroundStyle]}>
-          {outline
-            ? OUTLINE_OFFSETS.map(([dx, dy], i) => (
-                <Text allowFontScaling={false} key={i} style={[...textStyle, styles.outlineCopy, { color: contrastOn(properties.color), textShadowRadius: 0, transform: [{ translateX: dx * w }, { translateY: dy * w }] }]} accessible={false} importantForAccessibility="no">
-                  {properties.text}
-                </Text>
-              ))
-            : null}
-          {/* A second, wider glow behind the text, so the colour reads on any photo. */}
-          {neon ? (
-            <Text allowFontScaling={false} style={[...textStyle, styles.outlineCopy, { color: properties.color }]} accessible={false} importantForAccessibility="no">
-              {properties.text}
-            </Text>
-          ) : null}
-          <Text allowFontScaling={false} style={[...textStyle, outline && { textShadowRadius: 0 }, neon && { textShadowRadius: glow * 0.5 }]}>{properties.text}</Text>
+        <View style={[{ maxWidth: containerWidth * TEXT_MAX_WIDTH_FRACTION + (neon ? glow * 2 : 0) }, box]}>
+          <View>
+            {look === "border" ? <BorderCopies text={properties.text} textStyle={textStyle} borderColor={contrastOn(properties.color)} fontSize={fontSize} /> : null}
+            {look === "marker" && properties.backgroundColor !== null ? <MarkerLines text={properties.text} textStyle={textStyle} color={properties.backgroundColor} fontSize={fontSize} /> : null}
+            {/* A second, wider glow behind the text, so the colour reads on any photo. */}
+            {neon ? (
+              <Text allowFontScaling={false} style={[...textStyle, styles.outlineCopy, { color: properties.color }]} accessible={false} importantForAccessibility="no">
+                {properties.text}
+              </Text>
+            ) : null}
+            <Text allowFontScaling={false} style={[...textStyle, neon && { textShadowRadius: glow * 0.5 }]}>{properties.text}</Text>
+          </View>
         </View>
       );
     }
@@ -120,7 +119,6 @@ export function OverlayBody({
 
 export { textStyleLook };
 
-const OUTLINE_OFFSETS: Array<[number, number]> = [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]];
 
 const styles = StyleSheet.create({
   text: { fontWeight: "600", color: colors.textPrimary },

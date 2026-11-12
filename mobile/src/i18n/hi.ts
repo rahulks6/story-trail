@@ -1479,7 +1479,12 @@ export const hi: Catalogue = {
   // textToolModal
   "textToolModal.textSize": "टेक्स्ट साइज़",
   "textToolModal.placeTheText": "टेक्स्ट लगाएँ",
-  "textToolModal.textBackground": "टेक्स्ट बैकग्राउंड",
+  "textToolModal.textLookValue": "टेक्स्ट लुक: {look}",
+  "textToolModal.changesHowTheTextStandsOut": "टेक्स्ट फ़ोटो पर कैसे दिखे, यह बदलता है",
+  "textToolModal.lookPlain": "कोई बैकग्राउंड नहीं",
+  "textToolModal.lookLabel": "लेबल",
+  "textToolModal.lookHighlighter": "हाइलाइटर",
+  "textToolModal.lookBorder": "बॉर्डर",
   "textToolModal.changesTheTextAlignment": "टेक्स्ट का अलाइनमेंट बदलता है",
   // uploadQueue
   "uploadQueue.dismiss": "हटाएँ",

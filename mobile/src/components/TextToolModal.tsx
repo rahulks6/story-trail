@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { mediaColors as colors, radii, spacing, ICONS } from "../theme";
 import { Icon } from "./Icon";
 import { contrastOn, neonCore, neonRadius, TEXT_STYLES, textStyleLook, tightTextFits } from "./textLook";
+import { BorderCopies, labelBox, lookProperties, MarkerLines, markerPad, outlineWidth, TEXT_LOOKS, textLookOf, type TextLook } from "./TextDecorations";
 import type { TextOverlayProperties, TextStyle } from "../models/storyDraft";
 import { tapFeedback } from "../utils/haptics";
 import { TEXT_MAX_WIDTH_FRACTION } from "./OverlayBody";
@@ -44,10 +45,14 @@ interface Props {
 export function TextToolModal({ visible, initialText, initialProperties, onCancel, onDone, canvasHeight, canvasWidth }: Props): React.JSX.Element {
   const [text, setText] = useState(initialText ?? "");
   const [style, setStyle] = useState<TextStyle>(initialProperties?.style ?? "Clean");
-  const hadBackground = initialProperties?.backgroundColor != null;
-  // With a label, the chosen colour is the label's; the text is black or white on it.
-  const [color, setColor] = useState(hadBackground ? initialProperties!.backgroundColor! : initialProperties?.color ?? COLORS[0]!);
-  const [hasBackground, setHasBackground] = useState(hadBackground);
+  // With a label or marker, the chosen colour is the background's; the text is black or white on it.
+  const [color, setColor] = useState(initialProperties?.backgroundColor ?? initialProperties?.color ?? COLORS[0]!);
+  const [look, setLook] = useState<TextLook>(initialProperties ? textLookOf(initialProperties) : "plain");
+  // The look's name shows for a moment after the "A" button changes it.
+  const [lookHint, setLookHint] = useState<TextLook | null>(null);
+  const hintTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (hintTimer.current) clearTimeout(hintTimer.current); }, []);
+  const hasBackground = look === "label" || look === "marker";
   const [align, setAlign] = useState<TextOverlayProperties["align"]>(initialProperties?.align ?? "center");
   const [size, setSize] = useState(initialProperties?.fontSize ?? DEFAULT_SIZE);
   const [picking, setPicking] = useState<"styles" | "colors">("styles");
@@ -55,14 +60,14 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
   const insets = useSafeAreaInsets();
 
   const textColor = hasBackground ? contrastOn(color) : color;
-  // Neon glows only without a label; on a label it is plain text, as on the Story.
-  const neon = style === "Highlight" && !hasBackground;
+  // Neon glows only on plain text; with a label, marker or border it is plain text, as on the Story.
+  const neon = style === "Highlight" && look === "plain";
   const done = () => {
     if (!text.trim()) {
       onCancel();
       return;
     }
-    onDone(text, { text, style, color: textColor, backgroundColor: hasBackground ? color : null, align, fontSize: size });
+    onDone(text, { text, style, color: textColor, ...lookProperties(look, color), align, fontSize: size });
   };
 
   // The size slider: drag up for bigger, down for smaller.
@@ -83,12 +88,31 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
   }, []);
   const sliderFraction = (size - MIN_SIZE) / (MAX_SIZE - MIN_SIZE);
 
+  const nextLook = () => {
+    const next = TEXT_LOOKS[(TEXT_LOOKS.indexOf(look) + 1) % TEXT_LOOKS.length]!;
+    setLook(next);
+    setLookHint(next);
+    tapFeedback("select");
+    if (hintTimer.current) clearTimeout(hintTimer.current);
+    hintTimer.current = setTimeout(() => setLookHint(null), 1400);
+  };
   const nextAlign = () => setAlign((a) => ALIGNS[(ALIGNS.indexOf(a) + 1) % ALIGNS.length]!);
   const alignIcon = align === "left" ? ICONS.alignLeft : align === "right" ? ICONS.alignRight : ICONS.alignCenter;
   // The preview is the size it will be on a full-screen Story.
   const previewSize = Math.round(size * (canvasHeight && canvasHeight > 0 ? canvasHeight : 760));
   // The Story wraps text at this width (OverlayBody), label padding and Neon's glow room included.
   const wrapWidth = canvasWidth && canvasWidth > 0 ? canvasWidth * TEXT_MAX_WIDTH_FRACTION + (neon ? neonRadius(previewSize) * 2 : 0) : undefined;
+  // The text's look while typing, shared with the border and marker drawn behind it.
+  const inputTextStyle = [
+    styles.input,
+    { fontSize: previewSize },
+    textStyleLook(style, textColor, previewSize),
+    { color: neon ? neonCore(textColor) : textColor, textAlign: align, includeFontPadding: !tightTextFits(text) },
+    // Room for the glow, which Android cuts off at the text's edges.
+    neon && { padding: neonRadius(previewSize) },
+    style === "Highlight" && !neon && { textShadowRadius: 0 },
+    look === "border" && { textShadowRadius: 0 },
+  ];
 
   return (
     <Modal visible={visible} animationType="fade" transparent statusBarTranslucent navigationBarTranslucent onRequestClose={done}>
@@ -108,14 +132,14 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
               <View style={[styles.colorDot, { backgroundColor: color }]} />
             </Pressable>
             <Pressable
-              onPress={() => setHasBackground((v) => !v)}
+              onPress={nextLook}
               hitSlop={8}
-              style={[styles.toolButton, hasBackground && styles.toolButtonOn]}
-              accessibilityRole="switch"
-              accessibilityLabel={t("textToolModal.textBackground")}
-              accessibilityState={{ checked: hasBackground }}
+              style={[styles.toolButton, look === "label" && styles.toolButtonOn]}
+              accessibilityRole="button"
+              accessibilityLabel={t("textToolModal.textLookValue", { look: lookName(look) })}
+              accessibilityHint={t("textToolModal.changesHowTheTextStandsOut")}
             >
-              <Icon name={ICONS.textBackground} size={24} color={hasBackground ? colors.background : colors.textPrimary} />
+              <LookGlyph look={look} />
             </Pressable>
           </View>
           <Pressable accessibilityRole="button" onPress={done} hitSlop={12} style={styles.doneButton}>
@@ -134,21 +158,29 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
             <View style={styles.sliderTrack} />
             <View style={[styles.sliderThumb, { top: (1 - sliderFraction) * (SLIDER_HEIGHT - 22) }]} />
           </View>
-          <View style={[styles.inputBox, wrapWidth !== undefined && { maxWidth: wrapWidth, paddingHorizontal: 0, paddingVertical: 0 }, hasBackground && { backgroundColor: color, borderRadius: previewSize * 0.3, paddingHorizontal: previewSize * 0.35, paddingVertical: previewSize * 0.12 }, { alignSelf: align === "left" ? "flex-start" : align === "right" ? "flex-end" : "center" }]}>
+          {lookHint ? (
+            <View style={styles.lookHint} pointerEvents="none" accessibilityLiveRegion="polite">
+              <Text style={styles.lookHintLabel}>{lookName(lookHint)}</Text>
+            </View>
+          ) : null}
+          <View style={[
+            styles.inputBox,
+            wrapWidth !== undefined && { maxWidth: wrapWidth, paddingHorizontal: 0, paddingVertical: 0 },
+            look === "label" && { backgroundColor: color, ...labelBox(previewSize) },
+            look === "marker" && { paddingHorizontal: markerPad(previewSize).x, paddingVertical: markerPad(previewSize).y },
+            look === "border" && { padding: outlineWidth(previewSize) },
+            { alignSelf: align === "left" ? "flex-start" : align === "right" ? "flex-end" : "center" },
+          ]}>
+            <View>
+            {/* The border or marker, drawn behind the text exactly as the Story will show it. */}
+            {text && look === "border" ? <BorderCopies text={text} textStyle={inputTextStyle} borderColor={contrastOn(textColor)} fontSize={previewSize} /> : null}
+            {text && look === "marker" ? <MarkerLines text={text} textStyle={inputTextStyle} color={color} fontSize={previewSize} /> : null}
             <TextInput
               allowFontScaling={false}
               autoFocus
               multiline
               // Previews the chosen style, colour and size as it will appear on the Story.
-              style={[
-                styles.input,
-                { fontSize: previewSize },
-                textStyleLook(style, textColor, previewSize),
-                { color: neon ? neonCore(textColor) : textColor, textAlign: align, includeFontPadding: !tightTextFits(text) },
-                // Room for the glow, which Android cuts off at the text's edges.
-                neon && { padding: neonRadius(previewSize) },
-                style === "Highlight" && !neon && { textShadowRadius: 0 },
-              ]}
+              style={inputTextStyle}
               placeholder={t("common.typeSomething")}
               placeholderTextColor="rgba(255,255,255,0.6)"
               value={text}
@@ -160,6 +192,7 @@ export function TextToolModal({ visible, initialText, initialProperties, onCance
               textAlignVertical="center"
               scrollEnabled={false}
             />
+            </View>
           </View>
         </View>
 
@@ -218,7 +251,38 @@ function useKeyboardHeight(): number {
   return height;
 }
 
+function lookName(look: TextLook): string {
+  return look === "label" ? t("textToolModal.lookLabel") : look === "marker" ? t("textToolModal.lookHighlighter")
+    : look === "border" ? t("textToolModal.lookBorder") : t("textToolModal.lookPlain");
+}
+
+/** The "A" button shows the look it's on: plain, on a label, highlighted, or with a border. */
+function LookGlyph({ look }: { look: TextLook }): React.JSX.Element {
+  if (look === "label") return <Text style={[styles.glyph, { color: colors.background }]}>A</Text>;
+  if (look === "marker") {
+    return (
+      <View>
+        <View style={styles.glyphMarker} />
+        <Text style={[styles.glyph, { color: "#000000" }]}>A</Text>
+      </View>
+    );
+  }
+  if (look === "border") {
+    return (
+      <View>
+        <BorderCopies text="A" textStyle={styles.glyph} borderColor="#FFFFFF" fontSize={20} />
+        <Text style={[styles.glyph, { color: "#000000" }]}>A</Text>
+      </View>
+    );
+  }
+  return <Text style={styles.glyph}>A</Text>;
+}
+
 const styles = StyleSheet.create({
+  glyph: { color: colors.textPrimary, fontSize: 20, fontWeight: "900", textAlign: "center", paddingHorizontal: 3 },
+  glyphMarker: { position: "absolute", left: -2, right: -2, top: 5, bottom: 4, borderRadius: 4, backgroundColor: "#FFD84D" },
+  lookHint: { position: "absolute", top: spacing.sm, alignSelf: "center", paddingHorizontal: spacing.md, paddingVertical: 6, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.6)" },
+  lookHintLabel: { color: "#FFFFFF", fontSize: 14, fontWeight: "700" },
   container: { flex: 1, backgroundColor: "rgba(0,0,0,0.6)", paddingHorizontal: spacing.md },
   topBar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", minHeight: 48 },
   topTools: { flexDirection: "row", alignItems: "center", gap: spacing.sm },

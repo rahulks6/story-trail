@@ -138,7 +138,10 @@ function parseOverlay(raw: unknown, index: number): StoryOverlay | null {
           : null;
       const align = properties.align === "left" || properties.align === "right" ? properties.align : "center";
       const fontSize = isFiniteNumber(properties.fontSize) ? clamp(properties.fontSize, 0.01, 0.2) : 0.045;
-      return { id, type: "text", x, y, scale, rotation, zIndex, properties: { text, style, color, backgroundColor, align, fontSize } };
+      // A marker needs its colour; a border is for text without one. Anything else is dropped.
+      const effect = properties.effect === "marker" && backgroundColor !== null ? "marker" as const
+        : properties.effect === "outline" && backgroundColor === null ? "outline" as const : undefined;
+      return { id, type: "text", x, y, scale, rotation, zIndex, properties: { text, style, color, backgroundColor, align, fontSize, ...(effect ? { effect } : {}) } };
     }
     case "emoji": {
       // One emoji, whole: slicing to 8 units cut families, flags and skin tones in half.

@@ -357,19 +357,34 @@
     switch (o.type) {
       case 'text': {
         var size = o.fontSize * h;
-        node = el('div', 'ov ov-text ov-style-' + String(o.style).toLowerCase(), o.text);
+        var marker = o.effect === 'marker' && o.background;
+        var border = !o.background && (o.effect === 'outline' || o.style === 'Outline');
+        node = el('div', 'ov ov-text ov-style-' + String(o.style).toLowerCase(), marker ? '' : o.text);
         node.style.fontSize = size + 'px';
         node.style.textAlign = o.align;
         node.style.maxWidth = (w * 0.8) + 'px';
-        var neon = o.style === 'Highlight' && !o.background;
-        if (o.background) {
+        var neon = o.style === 'Highlight' && !o.background && !border;
+        if (marker) {
+          // A highlighter behind each line: the background on an inline span, repeated per line.
+          var span = el('span', 'ov-marker', o.text);
+          span.style.backgroundColor = o.background;
+          span.style.padding = (size * 0.04) + 'px ' + (size * 0.28) + 'px';
+          span.style.borderRadius = (size * 0.22) + 'px';
+          span.style.boxDecorationBreak = 'clone';
+          span.style.webkitBoxDecorationBreak = 'clone';
+          node.appendChild(span);
+        } else if (o.background) {
           node.style.backgroundColor = o.background;
           node.style.padding = (size * 0.12) + 'px ' + (size * 0.35) + 'px';
           node.style.borderRadius = (size * 0.3) + 'px';
         }
         node.style.color = o.color;
         if (neon) node.style.textShadow = '0 0 ' + Math.max(6, size * 0.4) + 'px ' + o.color + ', 0 0 ' + Math.max(3, size * 0.2) + 'px ' + o.color;
-        if (o.style === 'Outline' && !o.background) node.style.webkitTextStroke = Math.max(1.5, size * 0.07) + 'px ' + contrastOn(o.color);
+        if (border) {
+          // The stroke is drawn behind the letters (paint-order), as the app draws it.
+          node.style.webkitTextStroke = (Math.max(1.5, size * 0.07) * 2) + 'px ' + contrastOn(o.color);
+          node.style.paintOrder = 'stroke fill';
+        }
         break;
       }
       case 'emoji':

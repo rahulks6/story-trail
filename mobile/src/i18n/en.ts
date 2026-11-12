@@ -1588,7 +1588,12 @@ export const en = {
   // components/TextToolModal.tsx
   "textToolModal.textSize": "Text size",
   "textToolModal.placeTheText": "Place the text",
-  "textToolModal.textBackground": "Text background",
+  "textToolModal.textLookValue": "Text look: {look}",
+  "textToolModal.changesHowTheTextStandsOut": "Changes how the text stands out from the photo",
+  "textToolModal.lookPlain": "No background",
+  "textToolModal.lookLabel": "Label",
+  "textToolModal.lookHighlighter": "Highlighter",
+  "textToolModal.lookBorder": "Border",
   "textToolModal.changesTheTextAlignment": "Changes the text alignment",
 
   // screens/create/UploadQueueScreen.tsx

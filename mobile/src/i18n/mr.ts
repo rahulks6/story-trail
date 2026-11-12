@@ -1479,7 +1479,12 @@ export const mr: Catalogue = {
   // textToolModal
   "textToolModal.textSize": "मजकुराचा आकार",
   "textToolModal.placeTheText": "मजकूर ठेवा",
-  "textToolModal.textBackground": "मजकुराची पार्श्वभूमी",
+  "textToolModal.textLookValue": "टेक्स्ट लुक: {look}",
+  "textToolModal.changesHowTheTextStandsOut": "टेक्स्ट फोटोवर कसा दिसेल ते बदलते",
+  "textToolModal.lookPlain": "बॅकग्राउंड नाही",
+  "textToolModal.lookLabel": "लेबल",
+  "textToolModal.lookHighlighter": "हायलायटर",
+  "textToolModal.lookBorder": "बॉर्डर",
   "textToolModal.changesTheTextAlignment": "मजकुराचे अलाइनमेंट बदलते",
   // uploadQueue
   "uploadQueue.dismiss": "काढा",

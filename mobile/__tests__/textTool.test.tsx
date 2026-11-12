@@ -5,6 +5,7 @@ import { TextToolModal } from "../src/components/TextToolModal";
 
 let tree: ReactTestRenderer;
 const press = (label: string) => act(() => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === label).props.onPress());
+const nextLook = () => act(() => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && /^Text look: /.test(n.props.accessibilityLabel ?? "")).props.onPress());
 const inputStyle = () => StyleSheet.flatten(tree.root.findByType(TextInput).props.style);
 
 describe("the text tool", () => {
@@ -37,9 +38,50 @@ describe("the text tool", () => {
     act(() => tree.root.findByType(TextInput).props.onChangeText("Hi"));
     press("Show colours");
     press("Text colour #F5B400");
-    act(() => tree.root.find((n: ReactTestInstance) => n.props.accessibilityLabel === "Text background" && typeof n.props.onPress === "function").props.onPress());
+    nextLook();
     act(() => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.findAll((c) => c.props.children === "Done").length > 0).props.onPress());
     expect(onDone.mock.calls[0]![1]).toMatchObject({ backgroundColor: "#F5B400", color: "#000000" });
+    expect(onDone.mock.calls[0]![1].effect).toBeUndefined();
+  });
+
+  it("the A button goes plain → label → highlighter → border → plain, each shown while typing", () => {
+    const onDone = jest.fn();
+    act(() => { tree = create(<TextToolModal visible onCancel={jest.fn()} onDone={onDone} canvasHeight={800} canvasWidth={400} />); });
+    act(() => tree.root.findByType(TextInput).props.onChangeText("Good morning"));
+    press("Show colours");
+    press("Text colour #F5B400");
+    const lookLabel = () => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && /^Text look: /.test(n.props.accessibilityLabel ?? "")).props.accessibilityLabel;
+    expect(lookLabel()).toBe("Text look: No background");
+    nextLook();
+    expect(lookLabel()).toBe("Text look: Label");
+    nextLook();
+    expect(lookLabel()).toBe("Text look: Highlighter");
+    // The highlighter is measured from the text's lines and drawn behind each one.
+    const measurer = tree.root.findAll((n: ReactTestInstance) => typeof n.props.onTextLayout === "function")[0]!;
+    act(() => measurer.props.onTextLayout({ nativeEvent: { lines: [{ text: "Good ", x: 10, y: 0, width: 80, height: 30 }, { text: "morning", x: 5, y: 30, width: 90, height: 30 }] } }));
+    const blocks = tree.root.findAll((n: ReactTestInstance) => n.props.testID === "text-marker" && typeof n.type === "string");
+    expect(blocks).toHaveLength(2);
+    expect(StyleSheet.flatten(blocks[0]!.props.style).backgroundColor).toBe("#F5B400");
+    expect(inputStyle().color).toBe("#000000");
+    nextLook();
+    expect(lookLabel()).toBe("Text look: Border");
+    // The border is the text in black or white behind it, in every direction.
+    const copies = tree.root.findAll((n: ReactTestInstance) => n.props.testID === "text-border" && n.props.children === "Good morning" && typeof n.type !== "string");
+    expect(copies.length).toBeGreaterThanOrEqual(8);
+    expect(StyleSheet.flatten(copies[0]!.props.style).color).toBe("#000000");
+    act(() => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.findAll((c) => c.props.children === "Done").length > 0).props.onPress());
+    expect(onDone.mock.calls[0]![1]).toMatchObject({ color: "#F5B400", backgroundColor: null, effect: "outline" });
+    nextLook();
+  });
+
+  it("a highlighter is saved as the colour behind the text plus the marker effect", () => {
+    const onDone = jest.fn();
+    act(() => { tree = create(<TextToolModal visible onCancel={jest.fn()} onDone={onDone} />); });
+    act(() => tree.root.findByType(TextInput).props.onChangeText("Hi"));
+    nextLook();
+    nextLook();
+    act(() => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.findAll((c) => c.props.children === "Done").length > 0).props.onPress());
+    expect(onDone.mock.calls[0]![1]).toMatchObject({ backgroundColor: "#FFFFFF", color: "#000000", effect: "marker" });
   });
 
   it("makes Neon a bright core glowing in the chosen colour, with room so the glow isn't cut off", () => {

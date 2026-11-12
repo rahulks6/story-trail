@@ -475,6 +475,27 @@ describe("Camera + Editor: overlays, filter, and drawing survive publish", () =>
     assert.equal(fetched.body.story.audioMuted, true);
   });
 
+  it("keeps a highlighter and a border on text, and drops a look that doesn't fit", async () => {
+    const owner = await signupUser();
+    const mediaId = await uploadPhoto(owner.accessToken);
+    const base = { type: "text", x: 0.5, y: 0.5, scale: 1, rotation: 0, zIndex: 1 };
+    const props = { text: "hi", style: "Clean", color: "#000000", align: "center", fontSize: 0.05 };
+    const overlays = [
+      { ...base, id: "m", properties: { ...props, backgroundColor: "#F5B400", effect: "marker" } },
+      { ...base, id: "o", properties: { ...props, color: "#FFFFFF", backgroundColor: null, effect: "outline" } },
+      // A marker needs a colour, a border is for text without one, and nothing else is kept.
+      { ...base, id: "x1", properties: { ...props, backgroundColor: null, effect: "marker" } },
+      { ...base, id: "x2", properties: { ...props, backgroundColor: "#F5B400", effect: "outline" } },
+      { ...base, id: "x3", properties: { ...props, backgroundColor: null, effect: "<b>" } },
+    ];
+    const res = await publishStory(owner.accessToken, mediaId, { overlays });
+    assert.equal(res.status, 201);
+    const byId = Object.fromEntries((res.body.story.overlays as { id: string; properties: Record<string, unknown> }[]).map((o) => [o.id, o.properties]));
+    assert.equal(byId.m!.effect, "marker");
+    assert.equal(byId.o!.effect, "outline");
+    for (const id of ["x1", "x2", "x3"]) assert.equal("effect" in byId[id]!, false, id);
+  });
+
   it("audioMuted defaults to false — original recorded audio is kept by default", async () => {
     const owner = await signupUser();
     const mediaId = await uploadPhoto(owner.accessToken);

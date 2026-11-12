@@ -25,6 +25,12 @@ export interface TextOverlayProperties {
   style: TextStyle;
   color: string;
   backgroundColor: string | null;
+  /**
+   * How the text is set off (components/TextDecorations.tsx): "marker" is a highlighter behind each
+   * line in backgroundColor (without it, backgroundColor is one label box); "outline" is a border
+   * around the letters. Missing on Stories from before these.
+   */
+  effect?: "marker" | "outline";
   align: "left" | "center" | "right";
   fontSize: number; // normalized to the media container's height, e.g. 0.045
 }

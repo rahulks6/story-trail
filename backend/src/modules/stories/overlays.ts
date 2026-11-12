@@ -72,7 +72,11 @@ interface OverlayBase {
 
 export interface TextOverlay extends OverlayBase {
   type: "text";
-  properties: { text: string; style: TextStyle; color: string; backgroundColor: string | null; align: "left" | "center" | "right"; fontSize: number };
+  properties: {
+    text: string; style: TextStyle; color: string; backgroundColor: string | null; align: "left" | "center" | "right"; fontSize: number;
+    /** "marker": a highlighter behind each line in backgroundColor (else backgroundColor is one label); "outline": a border round the letters. */
+    effect?: "marker" | "outline";
+  };
 }
 
 export interface EmojiOverlay extends OverlayBase {
