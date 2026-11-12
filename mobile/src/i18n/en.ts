@@ -1209,6 +1209,7 @@ export const en = {
   "settings.automatic": "Automatic",
   "settings.accountStatus": "Account status",
   "settings.support": "Support",
+  "settings.rateKatkee": "Rate Katkee",
   "settings.clearSavedDrafts": "Clear saved drafts",
   "settings.uploads": "Uploads",
   "settings.friends": "Friends",

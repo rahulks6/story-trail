@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Linking, ScrollView, StyleSheet, Text, View } from "react-native";
+import { openStoreListing } from "../../state/reviewPrompt";
+import { ActivityIndicator, Alert, Linking, Platform, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Toggle } from "../../components/Toggle";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
@@ -313,6 +314,8 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
       <View style={styles.card}>
         <ListRow label={t("common.help")} icon={ICONS.help} onPress={() => navigation.navigate("Help")} />
         <ListRow label={t("common.sendFeedback")} icon={ICONS.dm} onPress={() => navigation.navigate("Feedback")} />
+        {/* The Play Store page, to rate or review Katkee (Android; the App Store comes with the iPhone app). */}
+        {Platform.OS === "android" ? <ListRow label={t("settings.rateKatkee")} icon={ICONS.star} onPress={() => void openStoreListing()} /> : null}
         <ListRow label={t("settings.downloadYourData")} icon={ICONS.archive} onPress={() => navigation.navigate("DataExport")} />
         <ListRow label={t("settings.accountStatus")} icon={ICONS.report} onPress={() => navigation.navigate("Appeals")} />
         <ListRow label={t("common.about")} icon={ICONS.about} onPress={() => navigation.navigate("About")} />

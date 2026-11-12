@@ -1027,6 +1027,7 @@ export const ar: Partial<Catalogue> = {
   "settings.automatic": "تلقائي",
   "settings.accountStatus": "حالة الحساب",
   "settings.support": "الدعم",
+  "settings.rateKatkee": "قيّم Katkee",
   "settings.clearSavedDrafts": "مسح المسودات المحفوظة",
   "settings.uploads": "عمليات الرفع",
   "settings.friends": "الأصدقاء",

@@ -1118,6 +1118,7 @@ export const mr: Catalogue = {
   "settings.automatic": "आपोआप",
   "settings.accountStatus": "अकाउंट स्टेटस",
   "settings.support": "सपोर्ट",
+  "settings.rateKatkee": "Katkee ला रेट करा",
   "settings.clearSavedDrafts": "सेव्ह केलेले ड्राफ्ट काढा",
   "settings.uploads": "अपलोड",
   "settings.friends": "मित्र",

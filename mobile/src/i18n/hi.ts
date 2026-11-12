@@ -1118,6 +1118,7 @@ export const hi: Catalogue = {
   "settings.automatic": "अपने-आप",
   "settings.accountStatus": "अकाउंट स्टेटस",
   "settings.support": "सपोर्ट",
+  "settings.rateKatkee": "Katkee को रेट करें",
   "settings.clearSavedDrafts": "सेव किए गए ड्राफ़्ट हटाएँ",
   "settings.uploads": "अपलोड",
   "settings.friends": "दोस्त",

@@ -1027,6 +1027,7 @@ export const es: Partial<Catalogue> = {
   "settings.automatic": "Automático",
   "settings.accountStatus": "Estado de la cuenta",
   "settings.support": "Soporte",
+  "settings.rateKatkee": "Valorar Katkee",
   "settings.clearSavedDrafts": "Borrar borradores guardados",
   "settings.uploads": "Subidas",
   "settings.friends": "Amigos",

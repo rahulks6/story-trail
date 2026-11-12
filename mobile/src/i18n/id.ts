@@ -1027,6 +1027,7 @@ export const id: Partial<Catalogue> = {
   "settings.automatic": "Otomatis",
   "settings.accountStatus": "Status akun",
   "settings.support": "Dukungan",
+  "settings.rateKatkee": "Beri rating Katkee",
   "settings.clearSavedDrafts": "Hapus draf tersimpan",
   "settings.uploads": "Unggahan",
   "settings.friends": "Teman",

@@ -28,6 +28,8 @@ class MainApplication : Application(), ReactApplication {
           add(AppRestartPackage())
           // Which invite a Google Play install came from (InstallReferrerPackage.kt).
           add(InstallReferrerPackage())
+          // Google Play's in-app review card (InAppReviewPackage.kt).
+          add(InAppReviewPackage())
           // OngoingCallPackage() (OngoingCallService.kt) comes back with calls; see the manifest.
         },
     )

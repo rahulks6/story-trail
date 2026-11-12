@@ -58,6 +58,7 @@ import { ContactsScreen } from "../screens/profile/ContactsScreen";
 import { InviteLinkScreen } from "../screens/profile/InviteLinkScreen";
 import { savePendingInvite, useInviteRedemption } from "../state/invites";
 import { checkInstallReferrer } from "../state/installReferrer";
+import { useReviewPrompt } from "../state/reviewPrompt";
 import { t, useLanguage } from "../i18n";
 
 /** The screen on view, deepest navigator first (crash reports say where they happened). */
@@ -359,6 +360,8 @@ export function RootNavigator(): React.JSX.Element {
   useInviteRedemption();
   // Or the invite a Google Play install came from (state/installReferrer.ts), read on first launch.
   useEffect(() => { void checkInstallReferrer(); }, []);
+  // Google Play's "Rate Katkee" card, for happy, active people after a Story (state/reviewPrompt.ts).
+  useReviewPrompt();
   const pendingLink = useRef<string | null>(null);
   const navigationRef = useMemo(() => createNavigationContainerRef<RootStackParamList>(), []);
   // A language change remounts the navigation tree, so every screen, header and memoized row reads
