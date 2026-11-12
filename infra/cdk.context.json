@@ -20,5 +20,6 @@
   "natGateways": "0",
   "apiMinTasks": "1",
   "workerSpot": "true",
-  "containerInsights": "false"
+  "containerInsights": "false",
+  "googleClientIds": "256302963021-n1enqd6nbjh9g8fs8a9fi58vpfrv8uoh.apps.googleusercontent.com"
 }
