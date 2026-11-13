@@ -59,6 +59,7 @@ import { InviteLinkScreen } from "../screens/profile/InviteLinkScreen";
 import { savePendingInvite, useInviteRedemption } from "../state/invites";
 import { checkInstallReferrer } from "../state/installReferrer";
 import { useReviewPrompt } from "../state/reviewPrompt";
+import { useAppUpdate } from "../state/appUpdate";
 import { t, useLanguage } from "../i18n";
 
 /** The screen on view, deepest navigator first (crash reports say where they happened). */
@@ -362,6 +363,7 @@ export function RootNavigator(): React.JSX.Element {
   useEffect(() => { void checkInstallReferrer(); }, []);
   // Google Play's "Rate Katkee" card, for happy, active people after a Story (state/reviewPrompt.ts).
   useReviewPrompt();
+  useAppUpdate();
   const pendingLink = useRef<string | null>(null);
   const navigationRef = useMemo(() => createNavigationContainerRef<RootStackParamList>(), []);
   // A language change remounts the navigation tree, so every screen, header and memoized row reads

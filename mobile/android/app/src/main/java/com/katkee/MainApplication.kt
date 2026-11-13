@@ -30,6 +30,8 @@ class MainApplication : Application(), ReactApplication {
           add(InstallReferrerPackage())
           // Google Play's in-app review card (InAppReviewPackage.kt).
           add(InAppReviewPackage())
+          // Google Play's in-app update page (InAppUpdatePackage.kt).
+          add(InAppUpdatePackage())
           // The build number for About, feedback and analytics (AppInfoPackage.kt).
           add(AppInfoPackage())
           // OngoingCallPackage() (OngoingCallService.kt) comes back with calls; see the manifest.

@@ -111,6 +111,8 @@ dependencies {
     implementation("com.android.installreferrer:installreferrer:2.2")
     // Google Play's in-app review: the "Rate Katkee" card without leaving the app (InAppReviewPackage.kt).
     implementation("com.google.android.play:review:2.0.2")
+    // Google Play's in-app update: "Update available" over the app (InAppUpdatePackage.kt).
+    implementation("com.google.android.play:app-update:2.1.0")
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
