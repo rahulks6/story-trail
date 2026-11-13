@@ -5,6 +5,7 @@ import { framePhoto, isFramed, settled, UNFRAMED, MAX_PHOTO_SCALE, MIN_PHOTO_SCA
 import { coverBox, initialFrame } from "../src/models/photoFrame";
 import { StoryEditorScreen } from "../src/screens/create/StoryEditorScreen";
 import * as uploadQueue from "../src/state/uploadQueue";
+import * as filterPhoto from "../src/utils/filterPhoto";
 
 jest.mock("../src/state/AuthContext", () => ({ useAuth: () => ({ accessToken: "token", user: { id: "me", username: "rahul" } }) }));
 jest.mock("@react-navigation/native", () => ({ ...jest.requireActual("@react-navigation/native"), useNavigation: () => ({ reset: jest.fn(), navigate: jest.fn() }), useFocusEffect: (effect: () => () => void) => require("react").useEffect(effect, []), useIsFocused: () => true }));
@@ -81,6 +82,31 @@ describe("in the Story editor", () => {
     expect(enqueue.mock.calls[0]![1]).toBe("file:///tmp/framed.jpg");
     expect(enqueue.mock.calls[0]![3]).toBe("image/jpeg");
     expect(enqueue.mock.calls[0]![4]).toMatchObject({ crop: { zoom: 1, offsetX: 0, offsetY: 0 } });
+  });
+
+  it("a filter covers the whole Story in the editor, the blurred surroundings of a moved photo too", async () => {
+    jest.spyOn(filterPhoto, "filteredPhotoUri").mockResolvedValue("file:///cache/filtered.jpg");
+    await open();
+    // Make the photo smaller than the frame, so its blurred copy shows around it.
+    await act(async () => {
+      canvas().props.onResponderGrant(touches([[150, 400]]));
+      canvas().props.onResponderMove(touches([[150, 400], [250, 400]]));
+      canvas().props.onResponderMove(touches([[180, 400], [220, 400]]));
+      canvas().props.onResponderRelease(touches([]));
+    });
+    // Then swipe to the next filter and let it settle.
+    await act(async () => {
+      canvas().props.onResponderGrant(touches([[300, 400]]));
+      canvas().props.onResponderMove(touches([[240, 402]]));
+      canvas().props.onResponderRelease(touches([[240, 402]]));
+    });
+    await act(async () => { await new Promise((r) => setTimeout(r, 400)); });
+    await flush();
+    const filtered = tree.root.findByProps({ testID: "filtered-photo" });
+    const surroundings = filtered.findByProps({ testID: "filtered-surroundings" });
+    const blurred = surroundings.findAll((n: ReactTestInstance) => n.props.blurRadius === 40);
+    expect(blurred.length).toBeGreaterThan(0);
+    expect(blurred[0]!.props.source).toEqual({ uri: "file:///cache/filtered.jpg" });
   });
 
   it("an untouched photo is sent as it is, without saving a copy", async () => {

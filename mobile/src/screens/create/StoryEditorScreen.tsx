@@ -809,20 +809,30 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               </Animated.View>
             </View>
             {processedPhoto && processedPhoto.filter === draft.filter ? (
-              <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, frameTransform]}>
-                <Image
-                  key={processedPhoto.uri}
-                  source={{ uri: processedPhoto.uri }}
-                  onLoad={() => setShownProcessedFilter(processedPhoto.filter)}
-                  fadeDuration={0}
-                  style={[
-                    photoStyle,
-                    mediaTransformStyle(draft.crop, containerSize.width, containerSize.height),
-                    shownProcessedFilter === processedPhoto.filter ? null : styles.hidden,
-                  ]}
-                  resizeMode="cover"
-                />
-              </Animated.View>
+              // The whole Story filtered, as it's published (the server filters the saved frame):
+              // a photo that doesn't fill the frame has its blurred surroundings filtered too.
+              <View
+                pointerEvents="none"
+                testID="filtered-photo"
+                style={[StyleSheet.absoluteFill, shownProcessedFilter === processedPhoto.filter ? null : styles.hidden]}
+              >
+                {isFramed(photoFrame) ? (
+                  <View style={[StyleSheet.absoluteFill, styles.photoShot]} testID="filtered-surroundings">
+                    <Image source={{ uri: processedPhoto.uri }} blurRadius={40} fadeDuration={0} style={StyleSheet.absoluteFill} resizeMode="cover" accessible={false} />
+                    <View style={[StyleSheet.absoluteFill, styles.blurShade]} />
+                  </View>
+                ) : null}
+                <Animated.View style={[StyleSheet.absoluteFill, frameTransform]}>
+                  <Image
+                    key={processedPhoto.uri}
+                    source={{ uri: processedPhoto.uri }}
+                    onLoad={() => setShownProcessedFilter(processedPhoto.filter)}
+                    fadeDuration={0}
+                    style={[photoStyle, mediaTransformStyle(draft.crop, containerSize.width, containerSize.height)]}
+                    resizeMode="cover"
+                  />
+                </Animated.View>
+              </View>
             ) : null}
           </>
         ) : (
