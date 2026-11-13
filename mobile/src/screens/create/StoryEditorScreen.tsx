@@ -835,6 +835,8 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             muted={boomerang || draft.audioMuted}
             rate={boomerang ? 1.5 : 1}
             paused={false}
+            // The song (MusicPlayer) holds the audio focus; asking for it too paused this video (StoryFeed).
+            disableFocus={!!music}
             onLoad={(meta) => {
               setVideoDurationMs(Math.round(meta.duration * 1000));
               if (draft.trim) videoRef.current?.seek(draft.trim.startMs / 1000);

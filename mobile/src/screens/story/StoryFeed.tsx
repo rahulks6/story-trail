@@ -893,6 +893,10 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
           resizeMode="cover"
           muted={creatorMuted || muted}
           paused={!playbackActive}
+          // With a song, the song's player holds the phone's audio focus. Without this the video asked
+          // for it too, lost it to the song and Android paused it on its first frame: a video with
+          // music looked like a photo.
+          disableFocus={!!currentStory.music}
           onLoad={(meta) => { setVideoDurationMs(Math.max(meta.duration * 1000, 1000)); if(videoResume.current?.id===currentStory.id&&videoResume.current.seconds>0)videoRef.current?.seek(Math.min(videoResume.current.seconds,Math.max(0,meta.duration-0.1))); setMediaReady(true); }}
           onProgress={({ currentTime }) => { videoResume.current={id:currentStory.id,seconds:currentTime}; if (videoDurationMs) { progressValue.current = Math.min(1, currentTime * 1000 / videoDurationMs); progress.setValue(progressValue.current); } }}
           onBuffer={({ isBuffering }) => setBuffering(isBuffering)}

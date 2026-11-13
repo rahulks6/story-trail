@@ -346,6 +346,40 @@ test("your own Story that's no longer active opens from your Archive", async () 
   expect(onOpenArchived).toHaveBeenCalledWith("a-expired");
 });
 
+test("a video Story with a song keeps playing: the video never asks for the audio focus the song holds", async () => {
+  const music = { trackId: "t1", title: "Sunny Walk", artist: "Artist", attribution: "Sunny Walk by Artist (CC BY 4.0)", license: "CC BY 4.0", licenseUrl: "https://creativecommons.org/licenses/by/4.0/", url: "https://cdn.test/m/t1/audio.mp3", startMs: 0, durationMs: 12_000 };
+  const list = storiesApi.getUserActiveStories as jest.Mock;
+  const original = list.getMockImplementation()!;
+  const prefetch = jest.spyOn(Image, "prefetch").mockResolvedValue(true);
+  const video = (id: string) => ({
+    status: "ready", kind: "video", width: 1080, height: 1920, durationMs: 8000, thumbnailUrl: null, imageUrl: `https://cdn.test/${id}/poster`,
+    videos: [{ variant: "video_720", url: `https://cdn.test/${id}/720`, width: 720, height: 1280, bitrate: null }],
+    urlsExpireAt: new Date(Date.now() + 3_600_000).toISOString(),
+  });
+  // a1 has a song, a2 doesn't.
+  list.mockImplementation(async (username: string) => {
+    const result = await original(username);
+    return { stories: result.stories.map((st: { id: string }) => ({ ...st, media: video(st.id), ...(st.id === "a1" ? { music } : {}) })) };
+  });
+  try {
+    mockSession.user.username = "viewer";
+    await act(async () => {
+      tree = create(<SafeAreaProvider initialMetrics={metrics}><StoryFeed creators={["alice"]} startIndex={0} onOpenDM={jest.fn()} onOpenProfile={jest.fn()} /></SafeAreaProvider>);
+    });
+    await settle();
+    const storyVideo = () => tree.root.find((n) => (n.type as unknown) === "Video" && typeof n.props.onBuffer === "function");
+    expect(storyVideo().props.disableFocus).toBe(true);
+    await act(async () => storyVideo().props.onLoad({ duration: 8 }));
+    await act(async () => storyVideo().props.onEnd());
+    await settle();
+    expect(storyVideo().props.source.uri).toBe("https://cdn.test/a2/720");
+    expect(storyVideo().props.disableFocus).toBe(false);
+  } finally {
+    list.mockImplementation(original);
+    prefetch.mockRestore();
+  }
+});
+
 test("a video Story shows its first frame at once, spins while buffering, and drops to 480p when 720p fails or is slow", async () => {
   const list = storiesApi.getUserActiveStories as jest.Mock;
   const original = list.getMockImplementation()!;

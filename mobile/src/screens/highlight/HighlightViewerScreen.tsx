@@ -278,6 +278,8 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
           onLoad={(meta) => setVideoDurationMs(Math.max(1000, meta.duration * 1000))}
           paused={!active}
           muted={detail?.audioMuted ?? false}
+          // The song's player holds the audio focus; asking for it too paused the video (StoryFeed).
+          disableFocus={!!detail?.music}
         />
       ) : mediaKind === "photo" ? (
         <Image
