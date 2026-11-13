@@ -747,6 +747,8 @@ export const ar: Partial<Catalogue> = {
   "login.accountRestrictedRequestAReview": "حسابك مقيّد؟ اطلب مراجعة",
   "login.dontHaveAnAccount": "ليس لديك حساب؟",
   "login.forgotPassword": "نسيت كلمة المرور؟",
+  "providerEntry.continueWithGoogle": "المتابعة باستخدام Google",
+  "login.orLogInWithEmail": "أو سجّل الدخول بالبريد الإلكتروني",
   "login.yourPassword": "كلمة المرور",
   "login.youExampleCom": "you@example.com",
   "media.theUploadResponseIsIncomplete": "استجابة الرفع غير مكتملة. يُرجى المحاولة مرة أخرى.",

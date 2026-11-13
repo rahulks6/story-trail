@@ -210,7 +210,7 @@ describe("Google or phone onboarding", () => {
     // appear here (appleSignIn.test.tsx covers a configured build).
     providers.methods.mockResolvedValue({ google: true, phone: true, countries: ["IN"], codeLength: 6 });
     await render(<ProviderEntry />);
-    expect(tree.root.findAll((n: ReactTestInstance) => String(n.type) === "GoogleSigninButton")).toHaveLength(0);
+    expect(tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && n.props.testID === "google-sign-in")).toHaveLength(0);
     expect(texts().some((t) => /phone/i.test(t))).toBe(true);
   });
 });

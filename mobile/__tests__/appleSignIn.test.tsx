@@ -1,6 +1,6 @@
 import React from "react";
 import { act, create, type ReactTestInstance, type ReactTestRenderer } from "react-test-renderer";
-import { Platform, Text } from "react-native";
+import { Platform, StyleSheet, Text } from "react-native";
 import * as Keychain from "react-native-keychain";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { appleAuth } from "@invertase/react-native-apple-authentication";
@@ -33,18 +33,20 @@ async function render(element: React.ReactElement): Promise<void> {
 const ofType = (name: string) => tree.root.findAll((n: ReactTestInstance) => String(n.type) === name);
 const texts = () => tree.root.findAllByType(Text).map((t) => String(t.props.children));
 const methods = (apple: boolean) => providers.methods.mockResolvedValue({ google: true, apple, phone: false, countries: [], codeLength: 6 });
+// Katkee's own "Continue with Google" button (components/GoogleButton.tsx).
+const googleButtons = () => tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && n.props.testID === "google-sign-in");
 const pressApple = async () => { await act(async () => ofType("AppleButton")[0]!.props.onPress()); await flush(); };
 
 test("on iPhone, Apple's button comes first; Google shows only beside it", async () => {
   methods(true);
   await render(<ProviderEntry />);
-  const [apple] = ofType("AppleButton"), [google] = ofType("GoogleSigninButton");
+  const [apple] = ofType("AppleButton"), [google] = googleButtons();
   expect(apple).toBeDefined();
   expect(google).toBeDefined();
   // Above Google and the same size (Human Interface Guidelines).
-  const order = tree.root.findAll((n: ReactTestInstance) => ["AppleButton", "GoogleSigninButton"].includes(String(n.type))).map((n) => String(n.type));
-  expect(order).toEqual(["AppleButton", "GoogleSigninButton"]);
-  expect(apple!.props.style.height).toBe(google!.props.style.height);
+  const order = tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && (n.type === "AppleButton" || n.props.testID === "google-sign-in")).map((n) => (n.type === "AppleButton" ? "Apple" : "Google"));
+  expect(order).toEqual(["Apple", "Google"]);
+  expect(StyleSheet.flatten(apple!.props.style).height).toBe(StyleSheet.flatten(google!.props.style).height);
   expect(apple!.props.buttonType).toBe("Continue");
   await act(async () => tree.unmount());
 
@@ -52,7 +54,7 @@ test("on iPhone, Apple's button comes first; Google shows only beside it", async
   methods(false);
   await render(<ProviderEntry />);
   expect(ofType("AppleButton")).toHaveLength(0);
-  expect(ofType("GoogleSigninButton")).toHaveLength(0);
+  expect(googleButtons()).toHaveLength(0);
 });
 
 test("on Android there is no Apple button, and Google needs no Apple", async () => {
@@ -62,7 +64,7 @@ test("on Android there is no Apple button, and Google needs no Apple", async () 
     methods(true);
     await render(<ProviderEntry />);
     expect(ofType("AppleButton")).toHaveLength(0);
-    expect(ofType("GoogleSigninButton")).toHaveLength(1);
+    expect(googleButtons()).toHaveLength(1);
   } finally {
     (Platform as { OS: string }).OS = os;
   }

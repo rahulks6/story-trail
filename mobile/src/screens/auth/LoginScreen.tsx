@@ -46,7 +46,7 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
         {/* Simple, like Instagram: the logo, two fields, Log in; everything else is small, below. */}
         <View style={styles.top}>
           <View style={styles.mark}>
-            <BrandMark height={56} />
+            <BrandMark height={72} />
           </View>
           {/* Mixed-case wordmark, "Kat" off-white + "kee" amber — matches the brand logo (see ../../../BRAND.md). */}
           <Text style={styles.brand} accessibilityRole="header">
@@ -54,6 +54,11 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
             <Text style={styles.brandKee}>kee</Text>
           </Text>
           <Text style={styles.subtitle}>{t("common.storyThatConnects")}</Text>
+
+          {/* The quick way in first: one tap with Google; email below for accounts made with one. */}
+          <View style={styles.providers}>
+            <ProviderEntry separator={t("login.orLogInWithEmail")} />
+          </View>
 
           {error ? <Banner text={error} /> : null}
 
@@ -103,8 +108,6 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
           >
             <Text style={styles.forgotText}>{t("login.forgotPassword")}</Text>
           </Pressable>
-
-          <ProviderEntry />
         </View>
 
         <View style={styles.bottom}>
@@ -127,10 +130,11 @@ const styles = StyleSheet.create({
   top: { flexGrow: 1, justifyContent: "center", gap: spacing.md },
   mark: { alignItems: "center" },
   // The system's own font at ordinary weights: easy to read, nothing decorative.
-  brand: { textAlign: "center", fontSize: 30, fontWeight: "700", marginTop: -spacing.xs },
+  brand: { textAlign: "center", fontSize: 34, fontWeight: "800", marginTop: -spacing.xs, letterSpacing: -0.5 },
   brandKat: { color: colors.textPrimary },
   brandKee: { color: colors.accentText },
-  subtitle: { textAlign: "center", color: colors.textSecondary, fontSize: 15, fontWeight: "400", marginBottom: spacing.sm },
+  subtitle: { textAlign: "center", color: colors.textSecondary, fontSize: 16, lineHeight: 22, fontWeight: "400", marginBottom: spacing.md, paddingHorizontal: spacing.md },
+  providers: { marginBottom: spacing.xs },
   loginButton: { marginTop: spacing.xs },
   forgot: { alignSelf: "center", minHeight: 44, justifyContent: "center" },
   forgotText: { color: colors.textPrimary, fontSize: 14, fontWeight: "500" },

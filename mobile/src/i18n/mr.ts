@@ -806,6 +806,8 @@ export const mr: Catalogue = {
   "login.accountRestrictedRequestAReview": "अकाउंटवर निर्बंध आहेत? रिव्ह्यूची विनंती करा",
   "login.dontHaveAnAccount": "अकाउंट नाही?",
   "login.forgotPassword": "पासवर्ड विसरलात?",
+  "providerEntry.continueWithGoogle": "Google सह सुरू ठेवा",
+  "login.orLogInWithEmail": "किंवा ईमेलने लॉग इन करा",
   "login.yourPassword": "तुमचा पासवर्ड",
   "login.youExampleCom": "you@example.com",
   // media

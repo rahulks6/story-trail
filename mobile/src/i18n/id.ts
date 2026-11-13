@@ -747,6 +747,8 @@ export const id: Partial<Catalogue> = {
   "login.accountRestrictedRequestAReview": "Akun dibatasi? Minta peninjauan",
   "login.dontHaveAnAccount": "Belum punya akun?",
   "login.forgotPassword": "Lupa kata sandi?",
+  "providerEntry.continueWithGoogle": "Lanjutkan dengan Google",
+  "login.orLogInWithEmail": "atau masuk dengan email",
   "login.yourPassword": "Kata sandimu",
   "login.youExampleCom": "kamu@contoh.com",
   "media.theUploadResponseIsIncomplete": "Respons unggahan tidak lengkap. Silakan coba lagi.",

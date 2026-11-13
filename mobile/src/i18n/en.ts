@@ -865,6 +865,8 @@ export const en = {
   "login.accountRestrictedRequestAReview": "Account restricted? Request a review",
   "login.dontHaveAnAccount": "Don't have an account?",
   "login.forgotPassword": "Forgot password?",
+  "providerEntry.continueWithGoogle": "Continue with Google",
+  "login.orLogInWithEmail": "or log in with email",
   "login.yourPassword": "Your password",
   "login.youExampleCom": "you@example.com",
 

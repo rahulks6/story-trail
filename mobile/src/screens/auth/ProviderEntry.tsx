@@ -2,7 +2,8 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 ﻿import React,{useEffect,useState} from 'react';
 import { ActivityIndicator, Alert, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Pressable } from "../../components/Pressable";
-import {GoogleSignin,GoogleSigninButton,isSuccessResponse,isErrorWithCode,statusCodes} from '@react-native-google-signin/google-signin';
+import {GoogleSignin,isSuccessResponse,isErrorWithCode,statusCodes} from '@react-native-google-signin/google-signin';
+import {GoogleButton} from '../../components/GoogleButton';
 import {AppleButton,appleAuth} from '@invertase/react-native-apple-authentication';
 import * as Keychain from 'react-native-keychain';
 import * as api from '../../api/providers';
@@ -21,7 +22,8 @@ import { t } from "../../i18n";
  */
 const googleReady=!!providerBuild.googleWebClientId&&(Platform.OS!=='ios'||!!providerBuild.googleIosClientId);
 const PENDING_SERVICE='com.katkee.provider-onboarding.v1';
-export function ProviderEntry({onProof}:{onProof?:(proof:string)=>Promise<void>}):React.JSX.Element {
+/** `separator`: a line ("or") shown under the buttons when there are any, before what follows on the screen. */
+export function ProviderEntry({onProof,separator}:{onProof?:(proof:string)=>Promise<void>;separator?:string}):React.JSX.Element {
  // Full-screen modals draw under both system bars (edge-to-edge): pad by the real insets.
  const insets=useSafeAreaInsets();
  const {acceptSession}=useAuth();const [methods,setMethods]=useState<api.AuthMethods|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false);
@@ -72,10 +74,11 @@ export function ProviderEntry({onProof}:{onProof?:(proof:string)=>Promise<void>}
  const showApple=!!methods?.apple&&Platform.OS==='ios'&&appleAuth.isSupported;
  const showGoogle=!!methods?.google&&googleReady&&(Platform.OS!=='ios'||showApple);
  return <View>
-  {showApple&&<AppleButton style={styles.apple} cornerRadius={8} buttonStyle={colorScheme()==='dark'?AppleButton.Style.WHITE:AppleButton.Style.BLACK} buttonType={AppleButton.Type.CONTINUE} onPress={()=>void apple()}/>}
-  {showGoogle&&<GoogleSigninButton style={styles.google} size={GoogleSigninButton.Size.Wide} color={GoogleSigninButton.Color.Dark} disabled={busy} onPress={()=>void google()}/>}
+  {showApple&&<AppleButton style={styles.apple} cornerRadius={27} buttonStyle={colorScheme()==='dark'?AppleButton.Style.WHITE:AppleButton.Style.BLACK} buttonType={AppleButton.Type.CONTINUE} onPress={()=>void apple()}/>}
+  {showGoogle&&<GoogleButton busy={busy&&stage==='closed'} onPress={()=>void google()}/>}
   {methods?.phone&&<Pressable style={styles.button} disabled={busy} accessibilityRole="button" onPress={()=>{setError('');setStage('phone');}}><Text style={styles.buttonText}>{t("providerEntry.continueWithPhone")}</Text></Pressable>}
   {stage==='closed'&&error?<Text accessibilityRole="alert" style={styles.error}>{error}</Text>:null}
+  {separator&&(showApple||showGoogle||methods?.phone)?<View style={styles.separator} accessibilityElementsHidden importantForAccessibility='no-hide-descendants'><View style={styles.rule}/><Text style={styles.separatorText}>{separator}</Text><View style={styles.rule}/></View>:null}
   <Modal visible={stage!=='closed'} animationType="slide" onRequestClose={close}>
    <KeyboardAvoider style={styles.fill}><ScrollView contentContainerStyle={[styles.modal,{paddingTop:insets.top+24,paddingBottom:insets.bottom+24}]} keyboardShouldPersistTaps="handled">
     <Text style={styles.heading}>{stage==='username'?t("common.createYourAccount"):stage==='code'?t("providerEntry.enterVerificationCode"):t("providerEntry.continueWithPhone")}</Text>
@@ -88,4 +91,4 @@ export function ProviderEntry({onProof}:{onProof?:(proof:string)=>Promise<void>}
   </Modal>
  </View>;
 }
-const styles=StyleSheet.create({fill:{flex:1,backgroundColor:colors.background},apple:{width:'100%',height:48,marginBottom:8},google:{width:'100%',height:48},button:{minHeight:48,padding:14,borderRadius:10,backgroundColor:colors.surfaceElevated,marginVertical:5,alignItems:'center'},buttonText:{color:colors.textPrimary,fontWeight:'600'},modal:{flexGrow:1,padding:24,paddingTop:60,backgroundColor:colors.background,gap:16,width:'100%',maxWidth:FORM_MAX_WIDTH,alignSelf:'center'},heading:{color:colors.textPrimary,fontSize:26,fontWeight:'700'},label:{color:colors.textSecondary},input:{minHeight:48,borderWidth:1,borderColor:colors.border,padding:14,color:colors.textPrimary,borderRadius:8},inputError:{borderColor:colors.danger},error:{color:colors.danger,paddingVertical:8},available:{color:colors.success},countries:{flexDirection:'row',flexWrap:'wrap',gap:8},country:{padding:14,borderWidth:1,borderColor:colors.border,borderRadius:8},selected:{borderColor:colors.accentText}});
+const styles=StyleSheet.create({fill:{flex:1,backgroundColor:colors.background},apple:{width:'100%',height:54,marginBottom:10},separator:{flexDirection:'row',alignItems:'center',gap:12,marginTop:18},rule:{flex:1,height:StyleSheet.hairlineWidth,backgroundColor:colors.border},separatorText:{color:colors.textSecondary,fontSize:13},button:{minHeight:48,padding:14,borderRadius:10,backgroundColor:colors.surfaceElevated,marginVertical:5,alignItems:'center'},buttonText:{color:colors.textPrimary,fontWeight:'600'},modal:{flexGrow:1,padding:24,paddingTop:60,backgroundColor:colors.background,gap:16,width:'100%',maxWidth:FORM_MAX_WIDTH,alignSelf:'center'},heading:{color:colors.textPrimary,fontSize:26,fontWeight:'700'},label:{color:colors.textSecondary},input:{minHeight:48,borderWidth:1,borderColor:colors.border,padding:14,color:colors.textPrimary,borderRadius:8},inputError:{borderColor:colors.danger},error:{color:colors.danger,paddingVertical:8},available:{color:colors.success},countries:{flexDirection:'row',flexWrap:'wrap',gap:8},country:{padding:14,borderWidth:1,borderColor:colors.border,borderRadius:8},selected:{borderColor:colors.accentText}});

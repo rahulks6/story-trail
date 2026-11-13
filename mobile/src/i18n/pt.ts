@@ -747,6 +747,8 @@ export const pt: Partial<Catalogue> = {
   "login.accountRestrictedRequestAReview": "Conta restrita? Peça uma revisão",
   "login.dontHaveAnAccount": "Não tem uma conta?",
   "login.forgotPassword": "Esqueceu a senha?",
+  "providerEntry.continueWithGoogle": "Continuar com o Google",
+  "login.orLogInWithEmail": "ou entre com e-mail",
   "login.yourPassword": "Sua senha",
   "login.youExampleCom": "voce@exemplo.com",
   "media.theUploadResponseIsIncomplete": "A resposta do envio está incompleta. Tente de novo.",
