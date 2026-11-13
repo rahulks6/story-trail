@@ -59,6 +59,17 @@ keytool -genkeypair -v -storetype PKCS12 -keystore ~/katkee-upload.p12 \
   -alias katkee-upload -keyalg RSA -keysize 4096 -validity 10000
 ```
 
+**Where Katkee's key is now.** The first upload key was lost with a temporary build machine, and
+a new one was made on 13 November 2026 for an upload key reset (its SHA-1 starts `A6:6F:DF:21`).
+It is kept in AWS Secrets Manager (ap-south-1), so any build machine with AWS access can sign:
+
+```sh
+aws secretsmanager get-secret-value --secret-id katkee/android/UPLOAD_KEYSTORE_P12_BASE64 \
+  --query SecretString --output text | base64 -d > ~/katkee-upload.p12
+aws secretsmanager get-secret-value --secret-id katkee/android/UPLOAD_KEYSTORE_PASSWORD \
+  --query SecretString --output text   # both the store and the key password
+```
+
 Never put the key or its passwords in the repository. The build reads them from the
 environment:
 
