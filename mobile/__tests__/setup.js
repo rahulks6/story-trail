@@ -40,7 +40,7 @@ jest.mock("react-native-video", () => {
     return React.createElement("Video", props);
   });
   Video.displayName = "Video";
-  return { __esModule: true, default: Video };
+  return { __esModule: true, default: Video, ViewType: { TEXTURE: 0, SURFACE: 1, SURFACE_SECURE: 2 } };
 });
 
 // Camera: permission and device state are set per test through global.__camera.

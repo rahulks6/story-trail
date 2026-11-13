@@ -1,12 +1,16 @@
 import React from "react";
-import { Alert, BackHandler, Modal, StyleSheet, Text } from "react-native";
+import { Alert, BackHandler, Modal, NativeModules, Platform, StyleSheet, Text } from "react-native";
+import Video, { ViewType } from "react-native-video";
 import * as uploadQueue from "../src/state/uploadQueue";
 import * as usersApi from "../src/api/users";
 import { snapToCentre } from "../src/components/DraggableCanvasObject";
 import { PlacedOverlay } from "../src/components/PlacedOverlay";
 import { act, create, type ReactTestInstance, type ReactTestRenderer } from "react-test-renderer";
 import { StoryEditorScreen } from "../src/screens/create/StoryEditorScreen";
-import { FILTER_PREVIEWS } from "../src/models/filterPreviews";
+import { FILTER_PREVIEWS, RECIPES, colorTransform, type FilterKey } from "../src/models/filterPreviews";
+import { filterKey } from "../src/models/storyDraft";
+import * as videoFilter from "../src/utils/videoFilter";
+import { androidColorMatrix } from "../src/utils/videoFilter";
 
 jest.mock("../src/state/AuthContext", () => ({ useAuth: () => ({ accessToken: "token", user: { id: "me", username: "rahul" } }) }));
 jest.mock("@react-navigation/native", () => ({ ...jest.requireActual("@react-navigation/native"), useNavigation: () => ({ reset: jest.fn(), navigate: jest.fn() }), useFocusEffect: (effect: () => () => void) => require("react").useEffect(effect, []), useIsFocused: () => true }));
@@ -249,5 +253,41 @@ describe("the text tool over the editor", () => {
     expect(textModalOpen()).toBe(true);
     expect(visible("Close editor")).toBe(false);
     expect(visible("Share to Close Friends")).toBe(false);
+  });
+});
+
+describe("filters on a video", () => {
+  const tint = () => tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && n.props.pointerEvents === "none" && [n.props.style].flat(3).some((st: { backgroundColor?: string } | undefined) => st?.backgroundColor === FILTER_PREVIEWS[1]!.overlayColor));
+  const swipeOne = () => {
+    act(() => canvas().props.onResponderGrant(touchEvent([[300, 400]], 1)));
+    act(() => canvas().props.onResponderMove(touchEvent([[240, 402]], 2)));
+    act(() => canvas().props.onResponderRelease(touchEvent([[240, 402]], 3)));
+  };
+  afterEach(() => { delete (NativeModules as Record<string, unknown>).KatkeeColorFilter; jest.restoreAllMocks(); });
+
+  it("on Android, the exact filter goes on the playing video (on a TextureView), with no tint", async () => {
+    jest.replaceProperty(Platform, "OS", "android");
+    // The test renderer has no native views; on a phone this is the View around the video.
+    jest.spyOn(videoFilter, "viewTag").mockReturnValue(42);
+    const setColorMatrix = jest.fn().mockResolvedValue(true);
+    (NativeModules as Record<string, unknown>).KatkeeColorFilter = { setColorMatrix };
+    await open();
+    expect(tree.root.findAll((n: ReactTestInstance) => n.type === Video)[0]!.props.viewType).toBe(ViewType.TEXTURE);
+    swipeOne();
+    await flush();
+    const [tag, matrix] = setColorMatrix.mock.calls.at(-1)!;
+    expect(tag).toBe(42);
+    expect(matrix).toEqual(androidColorMatrix(colorTransform(RECIPES[filterKey(FILTER_PREVIEWS[1]!.name) as FilterKey])));
+    expect(tint()).toHaveLength(0);
+  });
+
+  it("without it (or if it fails), the tint stands in, as before", async () => {
+    jest.replaceProperty(Platform, "OS", "android");
+    jest.spyOn(videoFilter, "viewTag").mockReturnValue(42);
+    (NativeModules as Record<string, unknown>).KatkeeColorFilter = { setColorMatrix: jest.fn().mockResolvedValue(false) };
+    await open();
+    swipeOne();
+    await flush();
+    expect(tint()).toHaveLength(1);
   });
 });

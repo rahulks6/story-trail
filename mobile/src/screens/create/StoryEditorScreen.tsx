@@ -4,7 +4,7 @@ import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Alert, Animated, BackHandler, Dimensions, Image, Keyboard, PanResponder, PixelRatio, StyleSheet, Text, TextInput, View, useWindowDimensions, type GestureResponderEvent, type LayoutChangeEvent } from "react-native";
 import { Pressable } from "../../components/Pressable";
-import Video, { type VideoRef } from "react-native-video";
+import Video, { ViewType, type VideoRef } from "react-native-video";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
 import type { CreateStackParamList, RootStackParamList } from "../../navigation/types";
@@ -17,6 +17,7 @@ import { ApiError } from "../../api/client";
 import { FILTER_PREVIEWS, type FilterKey } from "../../models/filterPreviews";
 import { tapFeedback } from "../../utils/haptics";
 import { filteredPhotoUri, forgetFilteredPhoto } from "../../utils/filterPhoto";
+import { canFilterVideo, setVideoFilter, viewTag } from "../../utils/videoFilter";
 import { filterSwipeStep, pinchPlacement, TAP_SLOP, type Placement, type Touch } from "../../models/canvasGestures";
 import { coverBox, framePhoto, initialFrame, isFramed, UNFRAMED, type PhotoFrame } from "../../models/photoFrame";
 import { captureRef } from "react-native-view-shot";
@@ -262,6 +263,16 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   // arithmetic (utils/filterPhoto.ts). It takes a moment per filter, so while it is worked out
   // the photo shows the filter's light tint at once and the exact picture fades in over it.
   const [processedPhoto, setProcessedPhoto] = useState<{ filter: string; uri: string } | null>(null);
+  // A video shows the exact filter while it plays where the phone can (utils/videoFilter.ts):
+  // the filter the server will apply, on the view around the video. Elsewhere, the tint.
+  const videoBox = useRef<React.ComponentRef<typeof View>>(null);
+  const [videoFilterShown, setVideoFilterShown] = useState<string | null>(null);
+  const applyVideoFilter = useCallback(() => {
+    if (kind !== "video" || !canFilterVideo()) return;
+    const filter = draft.filter;
+    void setVideoFilter(viewTag(videoBox.current), filterKey(filter) as FilterKey).then((shown) => setVideoFilterShown(shown ? filter : null));
+  }, [kind, draft.filter]);
+  useEffect(() => { applyVideoFilter(); }, [applyVideoFilter]);
   const [shownProcessedFilter, setShownProcessedFilter] = useState<string | null>(null);
 
   const nextZIndex = useRef(1);
@@ -836,9 +847,12 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             ) : null}
           </>
         ) : (
+          <View ref={videoBox} collapsable={false} style={StyleSheet.absoluteFill} onLayout={applyVideoFilter} testID="video-filter-box">
           <Video
             ref={videoRef}
             source={{ uri: mediaUri }}
+            // A TextureView, so the filter on the view around it (videoBox) colours the video too.
+            viewType={ViewType.TEXTURE}
             style={[StyleSheet.absoluteFill, mediaTransformStyle(draft.crop, containerSize.width, containerSize.height)]}
             resizeMode="cover"
             repeat
@@ -859,9 +873,10 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               if (trim && (ms >= trim.endMs || ms < trim.startMs - 250)) videoRef.current?.seek(trim.startMs / 1000);
             }}
           />
+          </View>
         )}
 
-        {activeFilter.overlayOpacity > 0 && (kind === "video" || shownProcessedFilter !== draft.filter) ? (
+        {activeFilter.overlayOpacity > 0 && (kind === "video" ? videoFilterShown !== draft.filter : shownProcessedFilter !== draft.filter) ? (
           <View
             pointerEvents="none"
             style={[StyleSheet.absoluteFill, { backgroundColor: activeFilter.overlayColor, opacity: activeFilter.overlayOpacity }]}

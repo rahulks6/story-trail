@@ -6,6 +6,7 @@ import { FilterStrip } from "../src/components/FilterStrip";
 import { FILTER_PREVIEWS, RECIPES, applyToPixels, colorTransform, type FilterKey } from "../src/models/filterPreviews";
 import { exifOrientation, uprightSteps } from "../src/utils/exifOrientation";
 import { filteredPhotoUri, forgetFilteredPhoto } from "../src/utils/filterPhoto";
+import { androidColorMatrix } from "../src/utils/videoFilter";
 
 const g = globalThis as unknown as {
   __nitroImage: { size: { width: number; height: number }; colour: number[]; saved: Array<{ steps: unknown[]; width: number; height: number; pixels?: Uint8Array }>; fail: boolean };
@@ -46,6 +47,19 @@ beforeEach(() => {
 });
 
 describe("filter maths", () => {
+  it("gives Android's colour matrix (for a playing video) exactly the server's colours", () => {
+    for (const key of Object.keys(RECIPES) as FilterKey[]) {
+      const m = androidColorMatrix(colorTransform(RECIPES[key]));
+      expect(m).toHaveLength(20);
+      // Android: each channel = row . [R, G, B, A, 1] on 0-255 values, then clamped and rounded.
+      const rgb = [200, 120, 90];
+      const got = [0, 1, 2].map((r) => Math.round(Math.min(255, Math.max(0, m[r * 5]! * rgb[0]! + m[r * 5 + 1]! * rgb[1]! + m[r * 5 + 2]! * rgb[2]! + m[r * 5 + 3]! * 255 + m[r * 5 + 4]!))));
+      expect(got).toEqual(expected(key, rgb));
+      expect(m.slice(15)).toEqual([0, 0, 0, 1, 0]);
+    }
+  });
+
+
   it("leaves the picture alone for Original, and makes Mono grey", () => {
     expect(colorTransform(RECIPES.original)).toEqual({ matrix: [1, 0, 0, 0, 1, 0, 0, 0, 1], offset: [0, 0, 0] });
     const [r, gr, b] = expected("mono", [200, 120, 90]);

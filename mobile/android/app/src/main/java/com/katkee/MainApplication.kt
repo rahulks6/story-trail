@@ -32,6 +32,8 @@ class MainApplication : Application(), ReactApplication {
           add(InAppReviewPackage())
           // Google Play's in-app update page (InAppUpdatePackage.kt).
           add(InAppUpdatePackage())
+          // The exact Story filter on a playing video in the editor (ColorFilterPackage.kt).
+          add(ColorFilterPackage())
           // The build number for About, feedback and analytics (AppInfoPackage.kt).
           add(AppInfoPackage())
           // OngoingCallPackage() (OngoingCallService.kt) comes back with calls; see the manifest.
