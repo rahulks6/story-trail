@@ -351,6 +351,7 @@ details p { margin: 0; padding: 0 20px 18px; color: var(--text-2); }
 .ov-style-soft { font-family: "Snell Roundhand", Pacifico, "Brush Script MT", cursive; }
 .ov-emoji, .ov-sticker { line-height: 1; }
 .ov-sticker { color: var(--accent); }
+.ov-gif { display: block; object-fit: contain; pointer-events: none; }
 .ov-chip { padding: 0.36em 0.72em; border-radius: 999px; background: var(--accent); color: var(--on-accent); font-weight: 700; white-space: nowrap; }
 a.ov-chip { pointer-events: auto; }
 a.ov-chip:hover { text-decoration: none; filter: brightness(1.06); }

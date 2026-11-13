@@ -16,6 +16,8 @@
  * then hand over a short-lived signed CDN URL, the way the API delivers media to the app.
  */
 import { query, queryOne, type Row } from "../../db/psql";
+import { katkeeSticker } from "../gifs/pack";
+import { giphyMediaUrl } from "../gifs/giphy";
 import { verifiedSql } from "../../shared/verified";
 import * as mediaRepo from "../media/media.repository";
 import type { MediaRecord } from "../media/media.repository";
@@ -197,6 +199,11 @@ function webOverlay(raw: unknown, mentioned: Map<string, { username: string; ver
     }
     case "emoji": return { type: "emoji", ...place, emoji: text(p.emoji, 16) };
     case "sticker": return { type: "sticker", ...place, sticker: text(p.stickerId, 20) };
+    case "gif": {
+      const url = p.source === "katkee" ? katkeeSticker(text(p.id, 40))?.url ?? null : p.source === "giphy" ? giphyMediaUrl(text(p.url, 600)) : null;
+      if (!url) return null;
+      return { type: "gif", ...place, url, aspect: clamp(finite(p.width, 1) / Math.max(1, finite(p.height, 1)), 1 / 6, 6) };
+    }
     case "location": return { type: "location", ...place, label: text(p.label, 80) };
     case "datetime": return { type: "datetime", ...place, label: text(p.display, 80) };
     case "mention": {

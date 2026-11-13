@@ -3,6 +3,8 @@ import type { Audience, CommentSetting } from "./stories.repository";
 import type { StoryOverlay, DrawStroke, StoryCrop } from "./overlays";
 import { canonicalTopic, TOPICS, type Topic } from "../../shared/topics";
 import { allowedArtworkUrl, parseSongUrl, songText } from "./song-links";
+import { giphyMediaUrl, GIPHY_ID } from "../gifs/giphy";
+import { katkeeSticker } from "../gifs/pack";
 import { OVERLAY_TYPES, TEXT_STYLES, STICKER_IDS, DATETIME_MODES, DRAW_TOOLS, FILTER_NAMES, MAX_CROP_ZOOM } from "./overlays";
 import {
   INTERACTIVE_TYPES,
@@ -175,6 +177,21 @@ function parseOverlay(raw: unknown, index: number): StoryOverlay | null {
       const stickerId = typeof properties.stickerId === "string" ? properties.stickerId : "";
       if (!STICKER_IDS.includes(stickerId as (typeof STICKER_IDS)[number])) return null;
       return { id, type: "sticker", x, y, scale, rotation, zIndex, properties: { stickerId: stickerId as (typeof STICKER_IDS)[number] } };
+    }
+    case "gif": {
+      const gifId = typeof properties.id === "string" ? properties.id : "";
+      if (properties.source === "katkee") {
+        const sticker = katkeeSticker(gifId);
+        if (!sticker) return null;
+        return { id, type: "gif", x, y, scale, rotation, zIndex, properties: { source: "katkee", id: sticker.id, url: sticker.url, width: sticker.size, height: sticker.size } };
+      }
+      if (properties.source !== "giphy" || !GIPHY_ID.test(gifId)) return null;
+      const url = typeof properties.url === "string" ? giphyMediaUrl(properties.url) : null;
+      if (!url) return null;
+      const width = isFiniteNumber(properties.width) ? Math.round(clamp(properties.width, 1, 2000)) : 200;
+      const height = isFiniteNumber(properties.height) ? Math.round(clamp(properties.height, 1, 2000)) : 200;
+      if (width / height > 6 || height / width > 6) return null;
+      return { id, type: "gif", x, y, scale, rotation, zIndex, properties: { source: "giphy", id: gifId, url, width, height } };
     }
     // Interactive stickers: only what the creator chose is kept. Anything a reader sees later
     // (results, counts, who reminded) is attached per viewer on read, never stored from input.

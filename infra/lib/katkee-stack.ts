@@ -98,6 +98,8 @@ export interface KatkeeSettings {
     apns?: { bundleId: string } | undefined;
     phone?: { verifyServiceSid: string; countries: string[] } | undefined;
     safeBrowsing: boolean;
+    /** GIPHY stickers in the GIF tab (backend gifs/giphy.ts): the API alone gets the key. */
+    giphy?: boolean;
     /** Story understanding with Claude (backend stories/story-ai.ts): the worker alone gets the key. */
     storyAi: boolean;
     /** Which Claude model reads Stories; unset keeps the backend's default. */
@@ -132,6 +134,9 @@ export const PROVIDER_CREDENTIALS = {
   // The Sign in with Apple key (.p8): signs the client secret for Apple's token and revoke endpoints.
   apple: ["APPLE_TEAM_ID", "APPLE_KEY_ID", "APPLE_PRIVATE_KEY"],
   safeBrowsing: ["SAFE_BROWSING_API_KEY"],
+  // A GIPHY API key (developers.giphy.com). Until it replaces the placeholder, GIPHY stays off and
+  // the GIF tab shows Katkee's own stickers.
+  giphy: ["GIPHY_API_KEY"],
   // An Anthropic API key (sk-ant-...). Only the worker reads it; until it's replaced the worker
   // leaves Stories un-understood (the backend checks the sk-ant- prefix).
   storyAi: ["ANTHROPIC_API_KEY"],
@@ -457,7 +462,12 @@ export class KatkeeStack extends Stack {
     const apiContainer = apiTask.addContainer("api", {
       image: ecs.ContainerImage.fromEcrRepository(apiRepo, s.imageTag),
       environment: { ...appEnvironment, PORT: String(API_PORT), ADMIN_CONSOLE_ENABLED: String(s.adminConsoleEnabled) },
-      secrets: { ...appSecrets, ...(s.adminConsoleEnabled ? { ADMIN_MFA_ENCRYPTION_KEY: ecs.Secret.fromSecretsManager(adminMfaKey) } : {}) },
+      secrets: {
+        ...appSecrets,
+        ...(s.adminConsoleEnabled ? { ADMIN_MFA_ENCRYPTION_KEY: ecs.Secret.fromSecretsManager(adminMfaKey) } : {}),
+        // GIPHY search goes through the API only (the worker never calls GIPHY).
+        ...(s.providers.giphy ? { GIPHY_API_KEY: fromSecret("GIPHY_API_KEY") } : {}),
+      },
       portMappings: [{ containerPort: API_PORT }],
       readonlyRootFilesystem: true,
       // The API drains for 3 s and waits up to 20 s for in-flight requests (backend/src/http/lifecycle.ts).

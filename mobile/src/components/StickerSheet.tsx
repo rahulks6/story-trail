@@ -19,12 +19,14 @@ import {
   type LocationOverlayProperties,
   type DateTimeOverlayProperties,
   type StickerOverlayProperties,
+  type GifOverlayProperties,
   type TextOverlayProperties,
   type InteractiveProperties,
   type InteractiveType,
   isInteractive,
 } from "../models/storyDraft";
 import { InteractiveStickerForm } from "./InteractiveStickerForm";
+import { GifPicker } from "./GifPicker";
 import { localeTag, t } from "../i18n";
 
 /** Location was turned off for Katkee for good: only Settings can turn it back on. */
@@ -35,11 +37,13 @@ function offerLocationSettings(): void {
   ]);
 }
 
-export type StickerTab = "interactive" | "emoji" | "mention" | "location" | "datetime" | "stickers";
+export type StickerTab = "interactive" | "gifs" | "emoji" | "mention" | "location" | "datetime" | "stickers";
 
 const TABS: { key: StickerTab; label: string }[] = [
   // Polls, quizzes, questions, countdowns, links and Add Yours (InteractiveStickerForm).
   { key: "interactive", get label() { return t("stickerSheet.interactive"); } },
+  // Moving stickers: Katkee's own, then GIPHY (GifPicker).
+  { key: "gifs", get label() { return t("stickerSheet.gifs"); } },
   { key: "emoji", get label() { return t("stickerSheet.emoji"); } },
   { key: "mention", get label() { return t("stickerSheet.mention"); } },
   { key: "location", get label() { return t("stickerSheet.location2"); } },
@@ -67,6 +71,7 @@ export type StickerAddPayload =
   | { type: "location"; properties: LocationOverlayProperties }
   | { type: "datetime"; properties: DateTimeOverlayProperties }
   | { type: "sticker"; properties: StickerOverlayProperties }
+  | { type: "gif"; properties: GifOverlayProperties }
   | { type: InteractiveType; properties: InteractiveProperties };
 
 interface Props {
@@ -297,6 +302,14 @@ export function StickerSheet({ visible, onClose, onAdd, festival, editingOverlay
               onDone={(type, properties) => {
                 if (editingOverlay && onEditDone) onEditDone(editingOverlay.id, properties);
                 else onAdd({ type, properties });
+                close();
+              }}
+            />
+          ) : null}
+          {tab === "gifs" ? (
+            <GifPicker
+              onPick={(properties) => {
+                onAdd({ type: "gif", properties });
                 close();
               }}
             />

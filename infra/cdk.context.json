@@ -1,5 +1,5 @@
 {
-  "providers": "fcm,storyAi",
+  "providers": "fcm,storyAi,giphy",
   "imageTag": "r54",
   "apiDomainName": "api.katkee.com",
   "apiCertificateArn": "arn:aws:acm:ap-south-1:249101171547:certificate/34b3ab43-8595-40f0-9ff4-7c6c3bebcebb",

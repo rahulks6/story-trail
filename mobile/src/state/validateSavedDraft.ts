@@ -30,6 +30,7 @@ export function isSavedDraft(value: unknown, mediaUri: string): value is SavedDr
       case "location": return text(p.label);
       case "datetime": return member(p.mode, ["date", "time", "datetime"]) && text(p.value) && text(p.display);
       case "sticker": return member(p.stickerId, ["spark", "heart-line", "star-outline", "wave", "flame", "confetti", "ring", "bolt"]);
+      case "gif": return member(p.source, ["katkee", "giphy"]) && text(p.id) && text(p.url) && (p.url.startsWith("/stickers/") || /^https:\/\//i.test(p.url)) && number(p.width) && p.width > 0 && number(p.height) && p.height > 0;
       case "poll": return text(p.question) && options(p.options);
       case "quiz": return text(p.question) && options(p.options) && number(p.correctIndex) && Number.isInteger(p.correctIndex) && p.correctIndex >= 0 && p.correctIndex < (p.options as unknown[]).length;
       case "question": return text(p.prompt);

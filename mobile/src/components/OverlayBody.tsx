@@ -1,6 +1,7 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import type { Overlay, TextOverlayProperties } from "../models/storyDraft";
+import { Image, StyleSheet, Text, View } from "react-native";
+import { GIF_WIDTH, type Overlay, type TextOverlayProperties } from "../models/storyDraft";
+import { stickerImageUrl } from "../api/gifs";
 import { contrastOn, neonCore, neonRadius, textStyleLook, tightTextFits } from "./textLook";
 import { mediaColors as colors, radii } from "../theme";
 import { InteractiveSticker, type StickerInteraction } from "./InteractiveSticker";
@@ -62,6 +63,13 @@ export function OverlayBody({
       return <Text allowFontScaling={false} style={{ fontSize: 0.09 * containerHeight }}>{overlay.properties.emoji}</Text>;
     case "sticker":
       return <Text allowFontScaling={false} style={[styles.sticker, { fontSize: 0.08 * containerHeight }]}>{STICKER_GLYPHS[overlay.properties.stickerId] ?? "✦"}</Text>;
+    case "gif": {
+      // A moving sticker (animated WebP or GIF), at its own shape.
+      const { width, height, url } = overlay.properties;
+      const w = GIF_WIDTH * containerWidth;
+      const h = w * (height > 0 && width > 0 ? Math.min(6, Math.max(1 / 6, height / width)) : 1);
+      return <Image source={{ uri: stickerImageUrl(url) }} style={{ width: w, height: h }} resizeMode="contain" accessible={false} testID="gif-sticker" />;
+    }
     case "mention":
       return (
         <Text

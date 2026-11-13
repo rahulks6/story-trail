@@ -408,6 +408,14 @@ describe("the Admin API", () => {
     }
   });
 
+  it("Katkee's moving stickers are public files, served only by their sticker ids", async () => {
+    for (const method of ["GET", "HEAD"]) {
+      const reply = await attempt(`${method} /stickers/:file`, "/stickers/..%2F..%2Fpackage.json", null);
+      refused(reply, `sticker traversal (${method})`, [404]);
+      assert.ok(!reply.text.includes("\"dependencies\""), "no file from outside the sticker pack");
+    }
+  });
+
   it("a shared link's page (katkee.com/u/, /s/) says nothing about a private account or its Story", async () => {
     // The same page as for an account and a Story that don't exist, apart from the link itself.
     const strip = (html: string) => html.replace(/(katkee:\/\/|katkee\.com\/)[^"]+/g, "");

@@ -32,6 +32,8 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 COPY --from=builder /app/dist ./dist
 COPY migrations ./migrations
+# Katkee's own moving stickers (brand/stickers/make-stickers.cjs), served at /stickers/<id>.webp.
+COPY assets ./assets
 # CA bundle for verified TLS to Amazon RDS (PGSSLMODE=verify-full, PGSSLROOTCERT=/app/certs/...).
 COPY certs ./certs
 RUN mkdir -p /app/data/media && chown -R node:node /app

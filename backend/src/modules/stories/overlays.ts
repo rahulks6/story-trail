@@ -9,6 +9,8 @@
 
 export const OVERLAY_TYPES = [
   "text", "emoji", "mention", "location", "datetime", "sticker",
+  // A moving sticker: one of Katkee's own (assets/stickers) or a GIPHY sticker (modules/gifs).
+  "gif",
   // Interactive stickers (stickers.service.ts): what viewers do with them is stored apart
   // from the Story (migration 0062), and attached for each viewer on every read.
   "poll", "quiz", "question", "countdown", "link", "addYours", "song",
@@ -116,6 +118,15 @@ export interface StickerOverlay extends OverlayBase {
 }
 
 /**
+ * A moving sticker. Katkee's own are served by this server at /stickers/<id>.webp (url is that
+ * path); GIPHY's are shown from GIPHY's own servers, as GIPHY requires (url is theirs).
+ */
+export interface GifOverlay extends OverlayBase {
+  type: "gif";
+  properties: { source: "katkee" | "giphy"; id: string; url: string; width: number; height: number };
+}
+
+/**
  * What a poll or quiz looks like to one viewer. Only attached once they have answered (or for
  * the owner): the counts aren't shown before you vote, and a quiz never gives its answer away.
  */
@@ -189,6 +200,7 @@ export type StoryOverlay =
   | LocationOverlay
   | DateTimeOverlay
   | StickerOverlay
+  | GifOverlay
   | PollOverlay
   | QuizOverlay
   | QuestionOverlay

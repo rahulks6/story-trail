@@ -237,6 +237,7 @@ function overlayDescription(overlay: Overlay): string {
     case "datetime":
       return overlay.properties.display;
     case "sticker":
+    case "gif":
       return t("draggableCanvasObject.sticker");
     default:
       return t("draggableCanvasObject.storyObject");

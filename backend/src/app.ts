@@ -16,6 +16,7 @@ import { registerFestivalRoutes } from "./modules/festivals/festivals";
 import { registerStreakRoutes } from "./modules/reminders/return-reasons";
 import { registerMediaRoutes } from "./modules/media/media.routes";
 import { registerMusicRoutes } from "./modules/music/music.routes";
+import { registerGifRoutes } from "./modules/gifs/gifs.routes";
 import { registerStoriesRoutes } from "./modules/stories/stories.routes";
 import { registerEngagementRoutes } from "./modules/stories/engagement.routes";
 import { registerStickerRoutes } from "./modules/stories/stickers.routes";
@@ -108,6 +109,7 @@ export function buildApp(providers?:ProviderGateway): KatkeeServer {
   registerStreakRoutes(router);
   registerMediaRoutes(router);
   registerMusicRoutes(router);
+  registerGifRoutes(router);
   registerStoriesRoutes(router);
   registerEngagementRoutes(router);
   registerStickerRoutes(router);

@@ -113,6 +113,10 @@ dependencies {
     implementation("com.google.android.play:review:2.0.2")
     // Google Play's in-app update: "Update available" over the app (InAppUpdatePackage.kt).
     implementation("com.google.android.play:app-update:2.1.0")
+    // Moving stickers (GIF tab): animated WebP (Katkee's pack, GIPHY) and GIF, at React Native's Fresco version.
+    implementation("com.facebook.fresco:animated-webp:3.7.0")
+    implementation("com.facebook.fresco:webpsupport:3.7.0")
+    implementation("com.facebook.fresco:animated-gif:3.7.0")
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")

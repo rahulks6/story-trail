@@ -68,6 +68,21 @@ export interface StickerOverlayProperties {
 }
 
 /**
+ * A moving sticker from the GIF tab: one of Katkee's own (url is a path on Katkee's server,
+ * /stickers/<id>.webp) or a GIPHY sticker (url is GIPHY's). Shown 40% of the Story's width wide
+ * at scale 1, at its own shape (width/height).
+ */
+export interface GifOverlayProperties {
+  source: "katkee" | "giphy";
+  id: string;
+  url: string;
+  width: number;
+  height: number;
+}
+/** How wide a moving sticker is, as a share of the Story's width, before its own scale. */
+export const GIF_WIDTH = 0.4;
+
+/**
  * Interactive stickers (backend stories/stickers.service.ts). The creator sets what's before
  * the `?` fields; the optional ones are attached by the server for each viewer on read (results
  * once you've answered, whether you asked to be reminded, the chain's size) and never sent.
@@ -179,6 +194,7 @@ export type Overlay =
   | (OverlayBase & { type: "location"; properties: LocationOverlayProperties })
   | (OverlayBase & { type: "datetime"; properties: DateTimeOverlayProperties })
   | (OverlayBase & { type: "sticker"; properties: StickerOverlayProperties })
+  | (OverlayBase & { type: "gif"; properties: GifOverlayProperties })
   | (OverlayBase & { type: "poll"; properties: PollOverlayProperties })
   | (OverlayBase & { type: "quiz"; properties: QuizOverlayProperties })
   | (OverlayBase & { type: "question"; properties: QuestionOverlayProperties })

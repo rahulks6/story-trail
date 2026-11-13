@@ -62,7 +62,8 @@ export const WEBSITE_CSP = [
 export function webProfileCsp(): string {
   const cdn = config.media.cdn.domain ? ` https://${config.media.cdn.domain}` : "";
   return [
-    "default-src 'none'", `img-src 'self'${cdn}`, `media-src 'self'${cdn}`, "style-src 'self'", "script-src 'self'",
+    // GIPHY stickers on Stories are shown from GIPHY's own servers (modules/gifs/giphy.ts).
+    "default-src 'none'", `img-src 'self'${cdn} https://media.giphy.com https://media0.giphy.com https://media1.giphy.com https://media2.giphy.com https://media3.giphy.com https://media4.giphy.com https://i.giphy.com`, `media-src 'self'${cdn}`, "style-src 'self'", "script-src 'self'",
     "base-uri 'none'", "form-action 'none'", "frame-ancestors 'none'",
   ].join("; ");
 }

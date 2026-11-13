@@ -205,6 +205,11 @@ export const config = {
       },
     },
   },
+  giphy: {
+    // GIPHY stickers in the GIF tab (modules/gifs/giphy.ts): on only with a real key.
+    apiKey: process.env.GIPHY_API_KEY ?? "",
+    endpoint: process.env.GIPHY_ENDPOINT ?? "https://api.giphy.com",
+  },
   safety: {
     // Per-account action budgets (src/modules/safety/limits.ts); JSON overrides per action, e.g.
     // {"comment":{"perMinute":5}}. Tests raise them, like the other rate limits.

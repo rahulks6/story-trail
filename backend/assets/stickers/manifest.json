@@ -1,0 +1,664 @@
+{
+ "size": 320,
+ "categories": [
+  "birthday",
+  "festivals",
+  "love",
+  "reactions",
+  "greetings",
+  "food",
+  "travel",
+  "cricket"
+ ],
+ "stickers": [
+  {
+   "id": "happy-birthday",
+   "category": "birthday",
+   "tags": [
+    "happy",
+    "birthday",
+    "bday"
+   ]
+  },
+  {
+   "id": "cake",
+   "category": "birthday",
+   "tags": [
+    "cake",
+    "birthday"
+   ]
+  },
+  {
+   "id": "balloons",
+   "category": "birthday",
+   "tags": [
+    "balloons",
+    "party",
+    "birthday"
+   ]
+  },
+  {
+   "id": "party-popper",
+   "category": "birthday",
+   "tags": [
+    "party",
+    "celebrate",
+    "congrats"
+   ]
+  },
+  {
+   "id": "gift",
+   "category": "birthday",
+   "tags": [
+    "gift",
+    "present",
+    "surprise"
+   ]
+  },
+  {
+   "id": "party-face",
+   "category": "birthday",
+   "tags": [
+    "party",
+    "yay",
+    "celebrate"
+   ]
+  },
+  {
+   "id": "janamdin-mubarak",
+   "category": "birthday",
+   "tags": [
+    "birthday",
+    "hindi",
+    "janamdin",
+    "mubarak",
+    "जन्मदिन"
+   ]
+  },
+  {
+   "id": "vadhdivas",
+   "category": "birthday",
+   "tags": [
+    "birthday",
+    "marathi",
+    "vadhdivas",
+    "वाढदिवस",
+    "shubhechha"
+   ]
+  },
+  {
+   "id": "congrats",
+   "category": "birthday",
+   "tags": [
+    "congrats",
+    "congratulations",
+    "badhai"
+   ]
+  },
+  {
+   "id": "happy-diwali",
+   "category": "festivals",
+   "tags": [
+    "diwali",
+    "deepavali",
+    "festival",
+    "lights"
+   ]
+  },
+  {
+   "id": "shubh-deepavali",
+   "category": "festivals",
+   "tags": [
+    "diwali",
+    "deepavali",
+    "hindi",
+    "marathi",
+    "शुभ",
+    "दीपावली"
+   ]
+  },
+  {
+   "id": "diya",
+   "category": "festivals",
+   "tags": [
+    "diya",
+    "lamp",
+    "diwali"
+   ]
+  },
+  {
+   "id": "fireworks",
+   "category": "festivals",
+   "tags": [
+    "fireworks",
+    "diwali",
+    "new",
+    "year",
+    "celebrate"
+   ]
+  },
+  {
+   "id": "happy-holi",
+   "category": "festivals",
+   "tags": [
+    "holi",
+    "colours",
+    "festival",
+    "rang"
+   ]
+  },
+  {
+   "id": "ganpati-bappa",
+   "category": "festivals",
+   "tags": [
+    "ganpati",
+    "ganesh",
+    "bappa",
+    "morya",
+    "ganeshotsav",
+    "गणपती"
+   ]
+  },
+  {
+   "id": "namaste",
+   "category": "festivals",
+   "tags": [
+    "namaste",
+    "pray",
+    "thanks",
+    "folded",
+    "hands"
+   ]
+  },
+  {
+   "id": "eid-mubarak",
+   "category": "festivals",
+   "tags": [
+    "eid",
+    "mubarak",
+    "ramadan"
+   ]
+  },
+  {
+   "id": "merry-christmas",
+   "category": "festivals",
+   "tags": [
+    "christmas",
+    "xmas"
+   ]
+  },
+  {
+   "id": "happy-navratri",
+   "category": "festivals",
+   "tags": [
+    "navratri",
+    "garba",
+    "dandiya",
+    "durga"
+   ]
+  },
+  {
+   "id": "kite",
+   "category": "festivals",
+   "tags": [
+    "kite",
+    "sankranti",
+    "uttarayan",
+    "patang"
+   ]
+  },
+  {
+   "id": "happy-new-year",
+   "category": "festivals",
+   "tags": [
+    "new",
+    "year",
+    "2027",
+    "celebrate"
+   ]
+  },
+  {
+   "id": "heart",
+   "category": "love",
+   "tags": [
+    "heart",
+    "love"
+   ]
+  },
+  {
+   "id": "hearts",
+   "category": "love",
+   "tags": [
+    "hearts",
+    "love",
+    "cute"
+   ]
+  },
+  {
+   "id": "heart-eyes",
+   "category": "love",
+   "tags": [
+    "love",
+    "crush",
+    "heart",
+    "eyes"
+   ]
+  },
+  {
+   "id": "sparkle-heart",
+   "category": "love",
+   "tags": [
+    "heart",
+    "sparkle",
+    "love"
+   ]
+  },
+  {
+   "id": "heart-hands",
+   "category": "love",
+   "tags": [
+    "heart",
+    "hands",
+    "love",
+    "you"
+   ]
+  },
+  {
+   "id": "love-you",
+   "category": "love",
+   "tags": [
+    "love",
+    "you",
+    "i",
+    "love",
+    "you"
+   ]
+  },
+  {
+   "id": "pyaar",
+   "category": "love",
+   "tags": [
+    "pyaar",
+    "love",
+    "hindi",
+    "प्यार"
+   ]
+  },
+  {
+   "id": "miss-you",
+   "category": "love",
+   "tags": [
+    "miss",
+    "you"
+   ]
+  },
+  {
+   "id": "bestie",
+   "category": "love",
+   "tags": [
+    "bestie",
+    "best",
+    "friend",
+    "bff",
+    "dost"
+   ]
+  },
+  {
+   "id": "lol",
+   "category": "reactions",
+   "tags": [
+    "lol",
+    "laugh",
+    "haha",
+    "funny"
+   ]
+  },
+  {
+   "id": "fire",
+   "category": "reactions",
+   "tags": [
+    "fire",
+    "lit",
+    "hot"
+   ]
+  },
+  {
+   "id": "hundred",
+   "category": "reactions",
+   "tags": [
+    "100",
+    "hundred",
+    "perfect"
+   ]
+  },
+  {
+   "id": "clap",
+   "category": "reactions",
+   "tags": [
+    "clap",
+    "applause",
+    "well",
+    "done"
+   ]
+  },
+  {
+   "id": "cool",
+   "category": "reactions",
+   "tags": [
+    "cool",
+    "sunglasses",
+    "swag"
+   ]
+  },
+  {
+   "id": "mind-blown",
+   "category": "reactions",
+   "tags": [
+    "mind",
+    "blown",
+    "wow",
+    "shocked"
+   ]
+  },
+  {
+   "id": "omg",
+   "category": "reactions",
+   "tags": [
+    "omg",
+    "wow",
+    "shocked"
+   ]
+  },
+  {
+   "id": "wow",
+   "category": "reactions",
+   "tags": [
+    "wow",
+    "amazing"
+   ]
+  },
+  {
+   "id": "arre-wah",
+   "category": "reactions",
+   "tags": [
+    "arre",
+    "wah",
+    "wow",
+    "great",
+    "hindi"
+   ]
+  },
+  {
+   "id": "bas-kar",
+   "category": "reactions",
+   "tags": [
+    "bas",
+    "kar",
+    "stop",
+    "enough",
+    "funny",
+    "hindi"
+   ]
+  },
+  {
+   "id": "kya-baat",
+   "category": "reactions",
+   "tags": [
+    "kya",
+    "baat",
+    "hai",
+    "great",
+    "wow"
+   ]
+  },
+  {
+   "id": "good-morning",
+   "category": "greetings",
+   "tags": [
+    "good",
+    "morning",
+    "gm"
+   ]
+  },
+  {
+   "id": "suprabhat",
+   "category": "greetings",
+   "tags": [
+    "suprabhat",
+    "good",
+    "morning",
+    "hindi",
+    "marathi",
+    "सुप्रभात"
+   ]
+  },
+  {
+   "id": "good-night",
+   "category": "greetings",
+   "tags": [
+    "good",
+    "night",
+    "gn",
+    "sleep"
+   ]
+  },
+  {
+   "id": "shubh-ratri",
+   "category": "greetings",
+   "tags": [
+    "shubh",
+    "ratri",
+    "good",
+    "night",
+    "hindi",
+    "marathi",
+    "शुभ",
+    "रात्री"
+   ]
+  },
+  {
+   "id": "thank-you",
+   "category": "greetings",
+   "tags": [
+    "thank",
+    "you",
+    "thanks"
+   ]
+  },
+  {
+   "id": "dhanyavad",
+   "category": "greetings",
+   "tags": [
+    "dhanyavad",
+    "thanks",
+    "hindi",
+    "marathi",
+    "धन्यवाद"
+   ]
+  },
+  {
+   "id": "hello",
+   "category": "greetings",
+   "tags": [
+    "hello",
+    "hi",
+    "hey"
+   ]
+  },
+  {
+   "id": "waving",
+   "category": "greetings",
+   "tags": [
+    "hi",
+    "bye",
+    "wave"
+   ]
+  },
+  {
+   "id": "chai-time",
+   "category": "food",
+   "tags": [
+    "chai",
+    "tea",
+    "coffee",
+    "time"
+   ]
+  },
+  {
+   "id": "chai",
+   "category": "food",
+   "tags": [
+    "chai",
+    "tea",
+    "coffee",
+    "cup"
+   ]
+  },
+  {
+   "id": "pizza",
+   "category": "food",
+   "tags": [
+    "pizza",
+    "food"
+   ]
+  },
+  {
+   "id": "burger",
+   "category": "food",
+   "tags": [
+    "burger",
+    "food"
+   ]
+  },
+  {
+   "id": "mango",
+   "category": "food",
+   "tags": [
+    "mango",
+    "aam",
+    "fruit",
+    "summer"
+   ]
+  },
+  {
+   "id": "foodie",
+   "category": "food",
+   "tags": [
+    "foodie",
+    "food",
+    "yum"
+   ]
+  },
+  {
+   "id": "yum",
+   "category": "food",
+   "tags": [
+    "yum",
+    "tasty",
+    "delicious"
+   ]
+  },
+  {
+   "id": "travel-mode",
+   "category": "travel",
+   "tags": [
+    "travel",
+    "trip",
+    "vacation",
+    "flight"
+   ]
+  },
+  {
+   "id": "plane",
+   "category": "travel",
+   "tags": [
+    "plane",
+    "flight",
+    "travel"
+   ]
+  },
+  {
+   "id": "beach",
+   "category": "travel",
+   "tags": [
+    "beach",
+    "goa",
+    "holiday"
+   ]
+  },
+  {
+   "id": "weekend-vibes",
+   "category": "travel",
+   "tags": [
+    "weekend",
+    "vibes",
+    "saturday",
+    "sunday"
+   ]
+  },
+  {
+   "id": "camera",
+   "category": "travel",
+   "tags": [
+    "camera",
+    "photo",
+    "click"
+   ]
+  },
+  {
+   "id": "music",
+   "category": "travel",
+   "tags": [
+    "music",
+    "song",
+    "vibe",
+    "headphones"
+   ]
+  },
+  {
+   "id": "monday",
+   "category": "travel",
+   "tags": [
+    "monday",
+    "tired",
+    "office"
+   ]
+  },
+  {
+   "id": "cricket",
+   "category": "cricket",
+   "tags": [
+    "cricket",
+    "bat",
+    "match"
+   ]
+  },
+  {
+   "id": "six",
+   "category": "cricket",
+   "tags": [
+    "six",
+    "cricket",
+    "sixer"
+   ]
+  },
+  {
+   "id": "trophy",
+   "category": "cricket",
+   "tags": [
+    "trophy",
+    "win",
+    "champion"
+   ]
+  },
+  {
+   "id": "india",
+   "category": "cricket",
+   "tags": [
+    "india",
+    "flag",
+    "cheer"
+   ]
+  }
+ ]
+}

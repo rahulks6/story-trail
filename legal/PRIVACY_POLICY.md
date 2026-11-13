@@ -1,6 +1,6 @@
 # Katkee Privacy Policy
 
-**Last updated:** 12 November 2026
+**Last updated:** 13 November 2026
 
 This policy explains what Katkee collects, how we use it, who can see it, how long we keep it
 and the choices you have. It covers the Katkee apps for iPhone and Android, the website at
@@ -79,6 +79,15 @@ Collab Story, or are invited, we keep the invitation and whether it was
 accepted. When you open a link sticker the app tells us a link was opened,
 never which one; link stickers are checked against our link-safety rules and,
 when it's configured, Google Safe Browsing.
+
+### Moving stickers (GIFs)
+The GIF tab shows Katkee's own moving stickers and stickers from GIPHY. When
+you search for one, your words go to our servers, which ask GIPHY on your
+behalf: GIPHY gets the search words and your app language, never your
+account, name or network address, and we don't keep your searches. A GIPHY
+sticker is then shown from GIPHY's servers, so your phone, and the phone or
+browser of anyone who sees it on your Story, loads it from GIPHY, which sees
+that device's network address as it would for any picture on the web.
 
 When you change your profile photo, the app cuts out the square you choose
 on your phone and uploads only that square. Your cover photo works the same
@@ -331,10 +340,12 @@ message is kept as evidence for the moderator.
 - **Anthropic**: its AI service, Claude, works out each Story's topic and
   writes a description of its picture (see "How Katkee understands your
   Stories" above).
+- **GIPHY**: sticker search in the GIF tab, and the GIPHY stickers people
+  put on Stories (see "Moving stickers (GIFs)" above).
 
 They process data only to provide these services to us. Our servers,
 database and files are in India (Amazon Web Services, Mumbai); Twilio,
-Google, Apple and Anthropic may process the data they handle for us outside
+Google, Apple, Anthropic and GIPHY may process the data they handle for us outside
 India.
 
 **Wherever you use Katkee from, your data is stored and processed in India.**

@@ -419,6 +419,17 @@
         node = el('div', 'ov ov-sticker', STICKER_GLYPHS[o.sticker] || '✦');
         node.style.fontSize = (0.08 * h) + 'px';
         break;
+      case 'gif': {
+        // A moving sticker, 40% of the Story's width before its own scale (as in the app).
+        node = el('img', 'ov ov-gif');
+        node.src = o.url;
+        node.alt = '';
+        node.decoding = 'async';
+        node.referrerPolicy = 'no-referrer';
+        node.style.width = (0.4 * w) + 'px';
+        node.style.height = (0.4 * w / (o.aspect || 1)) + 'px';
+        break;
+      }
       case 'mention':
         node = el('a', 'ov ov-chip', '@' + o.username);
         node.href = '/u/' + o.username;
