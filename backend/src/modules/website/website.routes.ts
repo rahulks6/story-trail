@@ -497,7 +497,9 @@ export function websiteGate(req: IncomingMessage, res: ServerResponse): boolean 
       res.end();
       return true;
     }
-    const known = site.pages.has(pathname) || site.files.has(pathname) || pathname.startsWith("/assets/") || (!!site.openInApp && sharedLink(target) !== null)
+    const known = site.pages.has(pathname) || site.files.has(pathname) || pathname.startsWith("/assets/")
+      // Katkee's moving stickers on Stories shown on the website (modules/gifs).
+      || /^\/stickers\/[a-z0-9-]{2,40}\.webp$/.test(pathname) || (!!site.openInApp && sharedLink(target) !== null)
       || (!!site.invite && inviteLinkTarget(target) !== null) || (!!site.webProfile && (webMediaTarget(target) !== null || pathname === "/sitemap-profiles.xml"));
     if (known && readOnly) return false;
     if (known) {

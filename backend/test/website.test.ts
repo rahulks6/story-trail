@@ -262,6 +262,11 @@ describe("with WEBSITE_HOST, as in production", () => {
     }
     assert.equal((await get("/assets/" + Object.keys(manifest.assets)[0], { Host: "katkee.test" })).status, 200);
     assert.equal((await get("/favicon.ico", { Host: "katkee.test" })).status, 200);
+    // Moving stickers on Stories shown on the website; anything else under /stickers is the 404 page.
+    const sticker = await get("/stickers/cake.webp", { Host: "katkee.test" });
+    assert.equal(sticker.status, 200);
+    assert.equal(sticker.headers["content-type"], "image/webp");
+    assert.equal((await get("/stickers/manifest.json", { Host: "katkee.test" })).status, 404);
   });
 
   it("never exposes the API or the Admin console on the website's host", async () => {
