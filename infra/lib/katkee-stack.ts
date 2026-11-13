@@ -81,6 +81,11 @@ export interface KatkeeSettings {
   /** CloudWatch Container Insights (per-task metrics, about $19 a month); the alarms don't need it. */
   containerInsights?: boolean;
   /**
+   * The media worker's vCPUs: 1 (default) or 2. Decoding a phone's 4K video is most of the work,
+   * and on 1 vCPU a 14-second 4K clip took about 100 seconds; 2 roughly halves that.
+   */
+  workerVcpu?: 1 | 2;
+  /**
    * Recovery only: the endpoint of a restored instance (docs/BACKUP_AND_RESTORE.md) for the
    * services and migrations to use instead of the stack's own database.
    */
@@ -472,7 +477,8 @@ export class KatkeeStack extends Stack {
     apiTask.addToTaskRolePolicy(new iam.PolicyStatement({ sid: "SendEmail", actions: ["ses:SendEmail"], resources: [sesIdentityArn] }));
 
     // Media worker (ffmpeg), push delivery and retention.
-    const workerTask = new ecs.FargateTaskDefinition(this, "WorkerTask", { cpu: 1024, memoryLimitMiB: 2048, ephemeralStorageGiB: 50, runtimePlatform });
+    const workerVcpu = s.workerVcpu ?? 1;
+    const workerTask = new ecs.FargateTaskDefinition(this, "WorkerTask", { cpu: 1024 * workerVcpu, memoryLimitMiB: 2048 * workerVcpu, ephemeralStorageGiB: 50, runtimePlatform });
     const workerContainer = workerTask.addContainer("worker", {
       image: ecs.ContainerImage.fromEcrRepository(workerRepo, s.imageTag),
       environment: {

@@ -45,6 +45,7 @@ const settings: KatkeeSettings = {
   apiMinTasks: get("apiMinTasks") === undefined ? undefined : Number(get("apiMinTasks")),
   workerSpot: get("workerSpot") === "true",
   containerInsights: get("containerInsights") === undefined ? undefined : get("containerInsights") === "true",
+  workerVcpu: get("workerVcpu") === "2" ? 2 : 1,
   databaseHost: get("databaseHost"),
   analyticsTimeZone: get("analyticsTimeZone") ?? "Asia/Kolkata",
   providers: {

@@ -442,4 +442,13 @@ describe("lean setup while the audience is small", () => {
     // The database stays private.
     assert.equal(resources(bare, "AWS::RDS::DBInstance")[0]![1].Properties.PubliclyAccessible, false);
   });
+
+  it("the media worker can have 2 vCPUs for faster video", () => {
+    const sizeOf = (t: ReturnType<typeof synth>["template"]) => resources(t, "AWS::ECS::TaskDefinition")
+      .map(([, d]) => d.Properties).find((p) => p.ContainerDefinitions[0].Name === "worker");
+    const one = sizeOf(synth(everything()).template);
+    assert.deepEqual([one!.Cpu, one!.Memory], ["1024", "2048"]);
+    const two = sizeOf(synth({ ...everything(), workerVcpu: 2 }).template);
+    assert.deepEqual([two!.Cpu, two!.Memory], ["2048", "4096"]);
+  });
 });
