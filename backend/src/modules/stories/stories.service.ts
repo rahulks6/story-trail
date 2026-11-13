@@ -433,6 +433,20 @@ export async function getStoryForHighlightViewer(storyId: string, viewerId: stri
   return checkStoryAccess(storyId, viewerId, { ignoreExpiry: true });
 }
 
+/**
+ * Who may like, comment on or share a Story: anyone who can see it now, or, once it has expired,
+ * anyone who can see it in a Highlight it's kept in (the same audience, block and private-account
+ * rules, without the 24 hours).
+ */
+export async function getStoryForEngagement(storyId: string, viewerId: string): Promise<PublicStory> {
+  try {
+    return await getStoryForViewer(storyId, viewerId);
+  } catch (error) {
+    if (!(await highlightsRepo.storyIsInAnyHighlight(storyId))) throw error;
+    return getStoryForHighlightViewer(storyId, viewerId);
+  }
+}
+
 export interface StoryDetail extends PublicStory {
   likeCount: number;
   commentCount: number;

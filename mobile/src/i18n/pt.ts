@@ -665,6 +665,7 @@ export const pt: Partial<Catalogue> = {
   "highlightsRow.theStoriesInItStay": "Os stories dele continuam no seu arquivo.",
   "highlightsRow.deleteTitle": "Excluir “{title}”?",
   "highlightViewer.removeThisStoryFromThe": "Remover este story do destaque",
+  "highlightViewer.shareMessage": "{title}, o Destaque de @{username} no Katkee: {url}",
   "highlightViewer.nextItem": "Próximo",
   "highlightViewer.previousItem": "Anterior",
   "highlightViewer.highlightOptions": "Opções do destaque",

@@ -665,6 +665,7 @@ export const id: Partial<Catalogue> = {
   "highlightsRow.theStoriesInItStay": "Story di dalamnya tetap ada di Arsipmu.",
   "highlightsRow.deleteTitle": "Hapus \"{title}\"?",
   "highlightViewer.removeThisStoryFromThe": "Hapus Story ini dari Sorotan",
+  "highlightViewer.shareMessage": "{title}, Sorotan @{username} di Katkee: {url}",
   "highlightViewer.nextItem": "Item berikutnya",
   "highlightViewer.previousItem": "Item sebelumnya",
   "highlightViewer.highlightOptions": "Opsi Sorotan",

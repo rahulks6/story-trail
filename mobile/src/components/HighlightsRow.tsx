@@ -193,7 +193,7 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
         itemAccessibilityLabel={(highlight) => t("highlightsRow.titleHighlight", { title: highlight.title })}
         // Tapping a card opens it, except mid-reorder — nothing should
         // navigate away while you're in the middle of dragging cards around.
-        onPress={reordering ? undefined : (highlight) => navigation.navigate("HighlightViewer", { highlightId: highlight.id, title: highlight.title })}
+        onPress={reordering ? undefined : (highlight) => navigation.navigate("HighlightViewer", { highlightId: highlight.id, title: highlight.title, ownerUsername: username })}
         onLongPress={isOwner && !reordering ? (highlight) => { tapFeedback("select"); setOptions(highlight); } : undefined}
         leadingChildren={
           isOwner ? (

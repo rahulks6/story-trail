@@ -7,14 +7,14 @@ import * as commentsRepo from "./comments.repository";
 import * as sharesRepo from "./shares.repository";
 import * as notificationsService from "../notifications/notifications.service";
 import type { CommentRecord } from "./comments.repository";
-import { getStoryForViewer } from "./stories.service";
+import { getStoryForEngagement } from "./stories.service";
 import { enforceAction } from "../safety/limits";
 import { assertLinksAllowed } from "../safety/links";
 import { queryOne } from "../../db/psql";
 import { learnQuietly } from "../recommendations/events.service";
 
 export async function likeStory(viewerId: string, storyId: string): Promise<void> {
-  const story = await getStoryForViewer(storyId, viewerId); // access check — reused, not re-implemented
+  const story = await getStoryForEngagement(storyId, viewerId); // access check — reused, not re-implemented
   await enforceAction(viewerId, "like"); // mass-like protection
   const isNewLike = await likesRepo.likeStory(storyId, viewerId);
   if (isNewLike) {
@@ -25,12 +25,12 @@ export async function likeStory(viewerId: string, storyId: string): Promise<void
 }
 
 export async function unlikeStory(viewerId: string, storyId: string): Promise<void> {
-  await getStoryForViewer(storyId, viewerId);
+  await getStoryForEngagement(storyId, viewerId);
   await likesRepo.unlikeStory(storyId, viewerId);
 }
 
 async function assertCanComment(storyId: string, viewerId: string): Promise<storiesRepo.StoryRecord> {
-  await getStoryForViewer(storyId, viewerId); // must be able to view it at all
+  await getStoryForEngagement(storyId, viewerId); // must be able to view it at all
   const story = await storiesRepo.findStoryById(storyId);
   if (!story) throw new HttpError(404, "Story not found.");
 
@@ -78,7 +78,7 @@ export async function listComments(
   limit: number,
   offset: number,
 ): Promise<CommentRecord[]> {
-  await getStoryForViewer(storyId, viewerId); // reading comments only needs Story view access, not comment-post permission
+  await getStoryForEngagement(storyId, viewerId); // reading comments only needs Story view access, not comment-post permission
   return commentsRepo.listComments(storyId, limit, offset, viewerId);
 }
 
@@ -99,7 +99,7 @@ export async function moderatorDeleteComment(commentId: string): Promise<void> {
 }
 
 export async function shareStory(viewerId: string, storyId: string): Promise<void> {
-  await getStoryForViewer(storyId, viewerId);
+  await getStoryForEngagement(storyId, viewerId);
   const story = await storiesRepo.findStoryById(storyId);
   if (!story) throw new HttpError(404, "Story not found.");
   if (!story.allowSharing) {

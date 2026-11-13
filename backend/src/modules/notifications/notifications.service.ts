@@ -1,7 +1,7 @@
 import { HttpError } from "../../http/errors";
 import * as usersRepo from "../users/users.repository";
 import * as notificationsRepo from "./notifications.repository";
-import { getStoryForViewer } from "../stories/stories.service";
+import { getStoryForEngagement, getStoryForViewer } from "../stories/stories.service";
 import * as storiesRepo from "../stories/stories.repository";
 import type { NotificationRecord, NotificationPreferences } from "./notifications.repository";
 import type { UpdateNotificationPreferencesInput } from "./dto";
@@ -80,7 +80,8 @@ export async function notifyMentions(actorId: string, storyId: string, commentId
     // Only someone who can see the Story hears about it: a mention never reveals a followers-only
     // or Close Friends Story to a person outside its audience.
     try {
-      await getStoryForViewer(storyId, user.id);
+      // A comment on a Story kept in a Highlight counts too.
+      await getStoryForEngagement(storyId, user.id);
     } catch {
       continue;
     }

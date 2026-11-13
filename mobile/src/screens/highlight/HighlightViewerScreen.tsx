@@ -1,7 +1,7 @@
 import { useMediaStatusBar } from "../../hooks/useMediaStatusBar";
 import { Icon } from "../../components/Icon";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Animated, Image, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Animated, Image, Share, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "../../components/Pressable";
 import Video from "react-native-video";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -22,7 +22,9 @@ import { EmptyState } from "../../components/EmptyState";
 import { StoryOverlayLayer, useContainerLayout } from "../../components/StoryOverlayLayer";
 import { filterNameFromKey } from "../../models/filterPreviews";
 import { mediaTransformStyle, DEFAULT_CROP } from "../../models/storyDraft";
-import type { StoryDetail } from "../../api/engagement";
+import { likeStory, shareStory, unlikeStory, type StoryDetail } from "../../api/engagement";
+import { CommentsSheet } from "../../components/CommentsSheet";
+import { profileShareLink } from "../../navigation/profileLinks";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
 import { t } from "../../i18n";
 
@@ -31,22 +33,15 @@ type Props = NativeStackScreenProps<RootStackParamList, "HighlightViewer">;
 const PHOTO_DURATION_MS = 5000;
 
 /**
- * Sequential, view-only playback of a Highlight's items. Deliberately a
- * separate, simpler screen from StoryViewerScreen rather than a mode
- * switch on it: StoryViewerScreen's fetches (getStoryDetail, recordView,
- * like/comment/share) all go through the *normal* per-Story endpoints,
- * which enforce the 24h expiry a Highlight exists specifically to
- * outlive. Reusing it here would mean threading an expiry-bypass through
- * every one of those calls; a Highlight is about persisting visibility,
- * not full interactive parity with a live Story, so this pass keeps
- * Highlight playback intentionally read-only — no like/comment/share,
- * no view recording (the normal view-record endpoint would 404 an
- * expired Story for a non-owner the same way the old fetch did) — see
- * mobile/README.md's "Phase 9 specifically" for this tradeoff spelled out.
+ * Playback of a Highlight's items, a separate, simpler screen from StoryViewerScreen. Each Story
+ * can be liked, commented on and shared like a live one: the server allows that for a Story kept
+ * in a Highlight after its 24 hours (stories.service getStoryForEngagement), with the same
+ * audience, block and comment rules. Share sends the person's profile on katkee.com, where their
+ * Highlights are. Views aren't recorded here.
  */
 export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.Element {
   useMediaStatusBar();
-  const { highlightId, title } = route.params;
+  const { highlightId, title, ownerUsername } = route.params;
   const { accessToken, user } = useAuth();
   const insets = useScreenInsets();
   const rootNavigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -67,13 +62,15 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
   const countedView = useRef(false);
 
   const [optionsOpen, setOptionsOpen] = useState(false);
+  const [commentsOpen, setCommentsOpen] = useState(false);
+  const [sharing, setSharing] = useState(false);
   // Plays only while on screen: with the editor pushed on top, or the app in the background, the
   // video and song pause and the timer stops (so it can't move on, or close the screen above it).
   const focused = useIsFocused();
   const foreground = useAppForeground();
   // Holding a finger on the Story pauses it, as on a live Story.
   const [held, setHeld] = useState(false);
-  const active = focused && foreground && !optionsOpen && !held;
+  const active = focused && foreground && !optionsOpen && !held && !commentsOpen && !sharing;
   const currentItem = items?.[index] ?? null;
   const showingRef = useRef<string | null>(null);
   showingRef.current = currentItem?.storyId ?? null;
@@ -260,6 +257,34 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
 
   if (!currentItem) return <View style={styles.container} />;
 
+  const isOwn = ownerId === user?.id;
+  const commentsAllowed = isOwn || (detail?.allowComments ?? "disabled") !== "disabled";
+  const shareable = !!ownerUsername && detail?.audience === "public" && detail.allowSharing;
+  const toggleLike = () => {
+    if (!detail || !accessToken) return;
+    const liked = !detail.viewerHasLiked;
+    // At once on screen; put back if the server says no.
+    setDetail((d) => (d && d.id === detail.id ? { ...d, viewerHasLiked: liked, likeCount: Math.max(0, d.likeCount + (liked ? 1 : -1)) } : d));
+    tapFeedback("select");
+    (liked ? likeStory(detail.id, accessToken) : unlikeStory(detail.id, accessToken)).catch(() => {
+      setDetail((d) => (d && d.id === detail.id ? { ...d, viewerHasLiked: !liked, likeCount: Math.max(0, d.likeCount + (liked ? -1 : 1)) } : d));
+    });
+  };
+  const share = async () => {
+    if (!detail || !ownerUsername || !accessToken) return;
+    setSharing(true);
+    try {
+      // Their profile link (opens the app where it's installed), which keeps working after a rename.
+      const url = profileShareLink(ownerUsername, detail.ownerId);
+      const result = await Share.share({ message: t("highlightViewer.shareMessage", { title: shownTitle, username: ownerUsername, url }) });
+      if (result.action === Share.sharedAction) void shareStory(detail.id, accessToken).catch(() => undefined);
+    } catch {
+      // Closed, or nothing to share with: nothing to say.
+    } finally {
+      setSharing(false);
+    }
+  };
+
   // Processed variants: 720p video (poster first) or the display-size photo.
   const mediaUrl = mediaFileUrl(currentItem.mediaId, mediaKind === "video" ? "video_720" : "display");
   const authHeaders = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
@@ -341,6 +366,38 @@ export function HighlightViewerScreen({ route, navigation }: Props): React.JSX.E
           }
         />
       ) : null}
+      {/* Like, comment and share, as on a live Story. */}
+      {detail ? (
+        <View style={[styles.actionRail, { bottom: insets.bottom + spacing.xl }]} testID="highlight-actions">
+          <Pressable onPress={toggleLike} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel={detail.viewerHasLiked ? t("storyFeed.unlike") : t("storyFeed.like")}>
+            <Icon style={[styles.actionIcon, detail.viewerHasLiked && styles.actionIconLiked]} name={detail.viewerHasLiked ? ICONS.liked : ICONS.like} />
+            {detail.likeCount ? <Text style={styles.actionCount} maxFontSizeMultiplier={1.3}>{detail.likeCount}</Text> : null}
+          </Pressable>
+          {commentsAllowed ? (
+            <Pressable onPress={() => setCommentsOpen(true)} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel={isOwn ? t("common.comments") : t("storyFeed.addAComment")}>
+              <Icon style={styles.actionIcon} name={ICONS.comment} />
+              {detail.commentCount ? <Text style={styles.actionCount} maxFontSizeMultiplier={1.3}>{detail.commentCount}</Text> : null}
+            </Pressable>
+          ) : null}
+          {shareable ? (
+            <Pressable onPress={() => void share()} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel={t("common.share")}>
+              <Icon style={styles.actionIcon} name={ICONS.share} />
+            </Pressable>
+          ) : null}
+        </View>
+      ) : null}
+      {detail ? (
+        <CommentsSheet
+          visible={commentsOpen}
+          storyId={detail.id}
+          storyOwnerId={detail.ownerId}
+          commentsDisabled={detail.allowComments === "disabled"}
+          autoFocus={!isOwn}
+          onOpenProfile={(username) => rootNavigation.navigate("Main", { screen: "Search", params: { screen: "UserProfile", initial: false, params: { username } } })}
+          onClose={() => setCommentsOpen(false)}
+          onCommentCountChange={(delta) => setDetail((d) => (d ? { ...d, commentCount: Math.max(0, d.commentCount + delta) } : d))}
+        />
+      ) : null}
       {ownerId === user?.id ? (
         <ActionSheet
           visible={optionsOpen}
@@ -389,5 +446,11 @@ const styles = StyleSheet.create({
   editButton: { position: "absolute", top: spacing.xl + 10, right: spacing.xxl + spacing.sm, padding: spacing.xs, zIndex: 10, elevation: 10 },
   editIcon: { color: "#fff", fontSize: 20 },
   tapZones: { ...StyleSheet.absoluteFill, flexDirection: "row" },
+  // The same column as on a live Story (StoryFeed).
+  actionRail: { position: "absolute", right: spacing.sm, alignItems: "center", gap: spacing.lg, zIndex: 5, elevation: 5 },
+  actionButton: { alignItems: "center", gap: 3, minWidth: 44 },
+  actionIcon: { color: "#fff", fontSize: 28, textShadowColor: "rgba(0,0,0,0.5)", textShadowRadius: 4, textShadowOffset: { width: 0, height: 1 } },
+  actionIconLiked: { color: colors.like },
+  actionCount: { color: "#fff", fontSize: 14, fontWeight: "700", textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 3, textShadowOffset: { width: 0, height: 1 } },
   tapZone: { flex: 1 },
 });

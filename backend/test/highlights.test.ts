@@ -269,6 +269,41 @@ describe("Highlights survive a Story's normal 24h expiry", () => {
     assert.equal(mediaFile.status, 200, "media access via a Highlight also bypasses expiry, the same rule extended one level deeper");
   });
 
+  it("lets a Story kept in a Highlight be liked, commented on and shared after its 24 hours; one that isn't stays closed", async () => {
+    const owner = await signupUser();
+    const viewer = await signupUser();
+    const stranger = await signupUser();
+    const me = await client.get("/api/v1/auth/me", authHeader(owner.accessToken));
+    const expiring = async (audience: "public" | "followers") => {
+      const mediaId = await uploadPhoto(owner.accessToken);
+      return (await storiesService.publishStory(
+        me.body.user.id,
+        { mediaId, caption: "", audience, allowComments: "everyone", allowSharing: true, overlays: [], drawing: [], filter: "original", audioMuted: false, crop: { zoom: 1, offsetX: 0, offsetY: 0 } },
+        { ttlSecondsOverride: 1 },
+      )).id;
+    };
+    const kept = await expiring("public");
+    const followersOnly = await expiring("followers");
+    const gone = await expiring("public");
+    await client.post("/api/v1/highlights", { title: "Goa", storyIds: [kept, followersOnly] }, authHeader(owner.accessToken));
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+
+    const auth = authHeader(viewer.accessToken);
+    assert.equal((await client.post(`/api/v1/stories/${kept}/like`, undefined, auth)).status, 204);
+    const comment = await client.post(`/api/v1/stories/${kept}/comments`, { body: "Beautiful 😍" }, auth);
+    assert.equal(comment.status, 201, JSON.stringify(comment.body));
+    assert.equal((await client.get(`/api/v1/stories/${kept}/comments`, auth)).status, 200);
+    assert.equal((await client.post(`/api/v1/stories/${kept}/share`, undefined, auth)).status, 204);
+    const detail = await client.get(`/api/v1/highlights/${(await client.get(`/api/v1/users/${owner.input.username}/highlights`, auth)).body.highlights[0].id}/items/${kept}`, auth);
+    assert.equal(detail.body.story.likeCount, 1);
+    assert.equal(detail.body.story.commentCount, 1);
+
+    // The Story's own audience still holds: a followers-only one stays closed to a non-follower.
+    assert.ok([403, 404].includes((await client.post(`/api/v1/stories/${followersOnly}/like`, undefined, authHeader(stranger.accessToken))).status));
+    // And an expired Story in no Highlight can't be liked any more.
+    assert.equal((await client.post(`/api/v1/stories/${gone}/like`, undefined, auth)).status, 404);
+  });
+
   it("refuses the Highlight-item endpoint for a real Story that isn't actually a member of that Highlight", async () => {
     const owner = await signupUser();
     const storyInHighlight = await publishStory(owner.accessToken);

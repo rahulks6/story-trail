@@ -84,7 +84,8 @@ export type RootStackParamList = {
   /** katkee.com/s/<id> (Share sheet links) and katkee://story/<id>: resolves the owner, then opens StoryViewer. */
   StoryLink: { storyId: string };
   /** Sequential, view-only playback of one Highlight's items — see HighlightViewerScreen.tsx for why it's a separate, simpler viewer from StoryViewer. */
-  HighlightViewer: { highlightId: string; title: string };
+  /** `ownerUsername`: for the link Share sends (their profile on katkee.com, which shows Highlights). */
+  HighlightViewer: { highlightId: string; title: string; ownerUsername?: string };
   /**
    * Create when `highlightId` is omitted, edit (rename/replace items/delete)
    * when it's given. Always the caller's own Highlight. `initialStoryIds`

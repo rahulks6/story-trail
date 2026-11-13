@@ -771,6 +771,7 @@ export const en = {
 
   // screens/highlight/HighlightViewerScreen.tsx
   "highlightViewer.removeThisStoryFromThe": "Remove this Story from the Highlight",
+  "highlightViewer.shareMessage": "{title}, @{username}'s Highlight on Katkee: {url}",
   "highlightViewer.nextItem": "Next item",
   "highlightViewer.previousItem": "Previous item",
   "highlightViewer.highlightOptions": "Highlight options",

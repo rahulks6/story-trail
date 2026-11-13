@@ -67,6 +67,12 @@ export function storyUrlsExpired(story: PublicStory | null | undefined, now = Da
 export interface StoryFeedProps {
   creators: string[];
   startIndex: number;
+  /**
+   * Home: one Story per place in `creators`, by id (creators then repeat, one Story each time).
+   * Each swipe or finished Story moves one place on; taps don't move between Stories. Without it
+   * (a profile's circle, a notification), each place is a person and taps step through their Stories.
+   */
+  slotStoryIds?: string[];
   initialStoryId?: string;
   onRefresh?: () => void;
   onNeedMore?: () => void;
@@ -123,7 +129,7 @@ let viewerMuted = false;
 /** The comment box (or your Story's Activity button) along the bottom. */
 const BOTTOM_BAR_HEIGHT = 46;
 
-export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpenDM, onOpenProfile, onOpenArchived, onRefresh, onNeedMore, onCreate, onFindPeople, onInvite, discover, onOpenCreate, onOpenStory, sponsored = [], following, verified }: StoryFeedProps): React.JSX.Element {
+export function StoryFeed({ creators, startIndex, slotStoryIds, initialStoryId, onClose, onOpenDM, onOpenProfile, onOpenArchived, onRefresh, onNeedMore, onCreate, onFindPeople, onInvite, discover, onOpenCreate, onOpenStory, sponsored = [], following, verified }: StoryFeedProps): React.JSX.Element {
   // Overlays clear the status bar / notch; the bottom ones also the home indicator when no tab bar is below.
   const insets = useScreenInsets();
   const { user: authUser, accessToken } = useAuth();
@@ -207,10 +213,13 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
 
   const currentUsername = creators[creatorIndex];
   const currentStories = currentUsername ? storiesByCreator[currentUsername] : undefined;
-  const currentStoryIndex = currentUsername ? (storyIndexByCreator[currentUsername] ?? 0) : 0;
+  const oneStoryEach = !!slotStoryIds;
+  const slotStoryId = oneStoryEach ? slotStoryIds![creatorIndex] : undefined;
+  const slotIndex = oneStoryEach && currentStories ? (slotStoryId ? currentStories.findIndex((s) => s.id === slotStoryId) : 0) : -1;
+  const currentStoryIndex = oneStoryEach ? Math.max(0, slotIndex) : currentUsername ? (storyIndexByCreator[currentUsername] ?? 0) : 0;
   const listedStory = currentStories?.[currentStoryIndex] ?? null;
   // "2/3" beside the name when someone has more than one Story (the bars alone are easy to miss).
-  const storyCounter = currentStories && currentStories.length > 1
+  const storyCounter = !oneStoryEach && currentStories && currentStories.length > 1
     ? <Text style={styles.storyCounter} accessible={false}>{`${currentStoryIndex + 1}/${currentStories.length}`}</Text>
     : null;
   // When each creator's list was last fetched again for expired links.
@@ -489,7 +498,8 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
 
   const goNextStory = useCallback(() => {
     if (!currentUsername || !currentStories) return;
-    if (currentStoryIndex >= currentStories.length - 1) {
+    // Home: every Story is its own place, so the next Story is the next place.
+    if (oneStoryEach || currentStoryIndex >= currentStories.length - 1) {
       if (currentStory) emit("creator_sequence_completed", { creatorId: currentStory.ownerId });
       goNextCreator(); // spec section 4: a right tap past the last Story moves to the next creator
       // On to the next person in this feed: their Stories glide up into place, as after a swipe.
@@ -498,7 +508,7 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
     }
     if (currentStory) emit("creator_sequence_continued", { creatorId: currentStory.ownerId });
     setStoryIndexByCreator((prev) => ({ ...prev, [currentUsername]: currentStoryIndex + 1 }));
-  }, [currentUsername, currentStories, currentStoryIndex, currentStory, goNextCreator, emit, creatorIndex, creators.length, slideIn]);
+  }, [currentUsername, currentStories, currentStoryIndex, currentStory, goNextCreator, emit, creatorIndex, creators.length, slideIn, oneStoryEach]);
 
   const goPreviousStory = useCallback(() => {
     if (!currentUsername) return;
@@ -507,6 +517,12 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
     }
     setStoryIndexByCreator((prev) => ({ ...prev, [currentUsername]: Math.max(0, currentStoryIndex - 1) }));
   }, [currentUsername, currentStoryIndex, currentStory, emit]);
+
+  // Home: a Story deleted or expired since the feed loaded isn't in its owner's list any more; skip
+  // its place rather than show one of their other Stories twice.
+  useEffect(() => {
+    if (oneStoryEach && currentStories && currentStories.length > 0 && slotIndex === -1) goNextCreator();
+  }, [oneStoryEach, currentStories, slotIndex, goNextCreator]);
 
   // Auto-advance progress bar.
   useEffect(() => {
@@ -578,8 +594,8 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
   // The handlers are created once and call the latest functions through this ref: rebuilding them
   // on a re-render (pausing re-renders) lost the gesture in progress, so letting go of a hold
   // could count as a tap and skip a Story.
-  const g = useRef({ goNextStory, goPreviousStory, goNextCreator, goPreviousCreator, ensureLiked, currentStory, emit, reducedMotion });
-  g.current = { goNextStory, goPreviousStory, goNextCreator, goPreviousCreator, ensureLiked, currentStory, emit, reducedMotion };
+  const g = useRef({ goNextStory, goPreviousStory, goNextCreator, goPreviousCreator, ensureLiked, currentStory, emit, reducedMotion, oneStoryEach });
+  g.current = { goNextStory, goPreviousStory, goNextCreator, goPreviousCreator, ensureLiked, currentStory, emit, reducedMotion, oneStoryEach };
   const gesture = useMemo(() => {
     const screenWidth = Dimensions.get("window").width;
     let startX = 0;
@@ -669,6 +685,8 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         pendingTapTimer = setTimeout(() => {
           pendingTapTimer = null;
           if (!g.current.currentStory) return;
+          // Home moves only by swiping, one Story at a time: a tap does nothing there.
+          if (g.current.oneStoryEach) return;
           // Like Instagram: the left third goes back, the rest goes forward.
           if (tapX < screenWidth / 3) {
             g.current.emit("story_previous", { storyId: g.current.currentStory.id, creatorId: g.current.currentStory.ownerId });
@@ -1012,15 +1030,15 @@ export function StoryFeed({ creators, startIndex, initialStoryId, onClose, onOpe
         style={[styles.progressRow, chrome, { top: insets.top + spacing.sm }]}
         accessible
         accessibilityRole="progressbar"
-        accessibilityLabel={t("storyFeed.storyValueOfLength", { value: currentStoryIndex + 1, length: currentStories?.length ?? 1 })}
+        accessibilityLabel={t("storyFeed.storyValueOfLength", { value: oneStoryEach ? 1 : currentStoryIndex + 1, length: oneStoryEach ? 1 : currentStories?.length ?? 1 })}
       >
-        {currentStories?.map((s, i) => (
+        {(oneStoryEach ? (currentStories ?? []).slice(currentStoryIndex, currentStoryIndex + 1) : currentStories)?.map((s, i) => (
           <View key={s.id} style={styles.progressTrack}>
             {/* Scaled from the left on the native side, not a width laid out every frame. */}
             <Animated.View
               style={[
                 styles.progressFill,
-                { transform: [{ scaleX: i < currentStoryIndex ? 1 : i > currentStoryIndex ? 0 : progress }] },
+                { transform: [{ scaleX: oneStoryEach ? progress : i < currentStoryIndex ? 1 : i > currentStoryIndex ? 0 : progress }] },
               ]}
             />
           </View>

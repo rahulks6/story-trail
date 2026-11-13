@@ -71,13 +71,13 @@ async function settle(): Promise<void> {
   for (let i = 0; i < 5; i++) await act(async () => { await Promise.resolve(); });
 }
 const openProfile = jest.fn();
-async function renderFeed(username = "viewer", creators = ["alice", "bob"]): Promise<void> {
+async function renderFeed(username = "viewer", creators = ["alice", "bob"], slotStoryIds?: string[]): Promise<void> {
   openProfile.mockClear();
   mockSession.user.username = username;
   await act(async () => {
     tree = create(
       <SafeAreaProvider initialMetrics={metrics}>
-        <StoryFeed creators={creators} startIndex={0} onOpenDM={jest.fn()} onOpenProfile={openProfile} />
+        <StoryFeed creators={creators} startIndex={0} slotStoryIds={slotStoryIds} onOpenDM={jest.fn()} onOpenProfile={openProfile} />
       </SafeAreaProvider>,
     );
   });
@@ -160,6 +160,31 @@ test("tap right and left move within a creator; a double-tap likes instead of mo
   await settle();
   expect(engagementApi.likeStory).toHaveBeenCalledWith("a1", "token");
   expect(sequence()).toBe("Story 1 of 2");
+});
+
+test("Home: one Story per swipe, taking turns between people; taps don't move", async () => {
+  // alice's first, bob's first, then alice's second (as Home lays them out).
+  await renderFeed("viewer", ["alice", "bob", "alice"], ["a1", "b1", "a2"]);
+  const width = Dimensions.get("window").width;
+  expect(texts()).toContain("Caption a1");
+  expect(sequence()).toBe("Story 1 of 1");
+  // A tap on either side does nothing here.
+  await gesture([width * 0.8, 400], [width * 0.8, 400]);
+  await act(async () => { jest.advanceTimersByTime(300); });
+  await settle();
+  expect(texts()).toContain("Caption a1");
+  // Swipe up: bob's Story, then alice's second.
+  await gesture([200, 600], [200, 400]);
+  await settle();
+  await act(async () => storyImage().props.onLoad());
+  await settle();
+  expect(texts()).toContain("Caption b1");
+  await gesture([200, 600], [200, 400]);
+  await settle();
+  await act(async () => storyImage().props.onLoad());
+  await settle();
+  expect(texts()).toContain("Caption a2");
+  expect(sequence()).toBe("Story 1 of 1");
 });
 
 test("swipe up moves to the next creator, swipe down back; holding pauses without moving", async () => {

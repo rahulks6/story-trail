@@ -718,6 +718,7 @@ export const mr: Catalogue = {
   "highlightsRow.deleteTitle": "\"{title}\" डिलीट करायचा?",
   // highlightViewer
   "highlightViewer.removeThisStoryFromThe": "ही स्टोरी हायलाइटमधून काढा",
+  "highlightViewer.shareMessage": "{title}, Katkee वर @{username} ची हायलाइट: {url}",
   "highlightViewer.nextItem": "पुढील",
   "highlightViewer.previousItem": "मागील",
   "highlightViewer.highlightOptions": "हायलाइटचे पर्याय",

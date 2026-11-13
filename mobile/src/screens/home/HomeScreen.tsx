@@ -16,6 +16,7 @@ import {onProfileChanged,onStoryPublished} from '../../state/storyChanges';
 import {getRankedHomeFeed,type RankedFeedEntry} from '../../api/stories';
 import {EmptyState} from '../../components/EmptyState';
 import {StoryFeed} from '../story/StoryFeed';
+import {extendSlots,type HomeSlot} from '../../models/homeSlots';
 import {HomeDiscover} from '../../components/HomeDiscover';
 import {getAdPlacements,type SponsoredPlacement} from '../../api/ads';
 import {useFestival} from '../../hooks/useFestival';
@@ -74,7 +75,11 @@ export function HomeScreen():React.JSX.Element {
   if(next!=='active'){awaySince.current??=Date.now();return;}
   if(!focusedRef.current)return;const since=awaySince.current;awaySince.current=null;if(since!==null&&Date.now()-since>HOME_STALE_MS)reloadQuietly();
  });return()=>subscription.remove();},[reloadQuietly]);
- const creators=useMemo(()=>feed?.map(e=>e.owner.username)??[],[feed]);
+ // One Story at a time, taking turns between people (models/homeSlots.ts); a next page adds to the end.
+ const slotsRef=useRef<{feed:RankedFeedEntry[]|null;slots:HomeSlot[]}>({feed:null,slots:[]});
+ const slots=useMemo(()=>{const next=feed?extendSlots(feed,slotsRef.current.feed,slotsRef.current.slots):[];slotsRef.current={feed,slots:next};return next;},[feed]);
+ const creators=useMemo(()=>slots.map(slot=>slot.username),[slots]);
+ const slotStoryIds=useMemo(()=>slots.map(slot=>slot.storyId),[slots]);
  const following=useMemo(()=>Object.fromEntries((feed??[]).map(e=>[e.owner.username,e.isFollowing])),[feed]);
  const verified=useMemo(()=>Object.fromEntries((feed??[]).map(e=>[e.owner.username,!!e.owner.verified])),[feed]);
  // initial:false keeps Search's own first screen under the profile, so the Search tab still works after.
@@ -110,7 +115,7 @@ export function HomeScreen():React.JSX.Element {
    <Pressable onPress={reloadQuietly} disabled={refreshing} style={styles.emptyButton} accessibilityRole="button" accessibilityLabel={t("home.refreshStories")}><Text style={styles.emptyButtonLabel}>{refreshing?t("home.refreshing"):t("common.refresh")}</Text></Pressable>
   </View>
  </ScrollView>{festivalButton}{activityButton}{uploads}{contactsJoined}</View>;
- return <View style={styles.root}><StoryFeed key={`${user?.id}:${retry}:${version}`} creators={creators} following={following} verified={verified} startIndex={0} sponsored={sponsored} onNeedMore={more} onRefresh={refresh}
+ return <View style={styles.root}><StoryFeed key={`${user?.id}:${retry}:${version}`} creators={creators} slotStoryIds={slotStoryIds} following={following} verified={verified} startIndex={0} sponsored={sponsored} onNeedMore={more} onRefresh={refresh}
   onCreate={()=>navigation.navigate('Create')} onFindPeople={()=>navigation.navigate('Search',{screen:'SearchHome'})} onInvite={invite} discover={discover}
   onOpenDM={openDM} onOpenProfile={openProfile}
   onOpenCreate={()=>navigation.navigate('Create')} onOpenStory={(username,storyId)=>navigation.navigate('StoryViewer',{creators:[username],startIndex:0,initialStoryId:storyId})}/>

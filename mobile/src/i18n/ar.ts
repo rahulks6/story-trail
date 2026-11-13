@@ -665,6 +665,7 @@ export const ar: Partial<Catalogue> = {
   "highlightsRow.theStoriesInItStay": "تبقى القصص التي فيها في أرشيفك.",
   "highlightsRow.deleteTitle": "حذف «{title}»؟",
   "highlightViewer.removeThisStoryFromThe": "إزالة هذه القصة من اللحظة البارزة",
+  "highlightViewer.shareMessage": "{title}، أبرز لحظات @{username} على Katkee: {url}",
   "highlightViewer.nextItem": "العنصر التالي",
   "highlightViewer.previousItem": "العنصر السابق",
   "highlightViewer.highlightOptions": "خيارات اللحظة البارزة",
