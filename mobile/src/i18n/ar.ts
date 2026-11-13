@@ -1185,6 +1185,7 @@ export const ar: Partial<Catalogue> = {
   "storyEditor.collabStoriesGoToYour": "القصص المشتركة تذهب إلى «قصتك»",
   "storyEditor.yourStory": "قصتك",
   "storyEditor.inviteCollaborator": "دعوة متعاون",
+  "storyEditor.collab": "تعاون",
   "storyEditor.withUsername": "مع @{username}",
   "storyEditor.schedule": "جدولة",
   "storyEditor.writeACaption": "اكتب تعليقًا توضيحيًا…",

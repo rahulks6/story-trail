@@ -2,7 +2,7 @@ import React from "react";
 import { AppState } from "react-native";
 import { act, create, type ReactTestInstance, type ReactTestRenderer } from "react-test-renderer";
 import { BOOMERANG_RECORD_MS, shutterLabel, shutterTap } from "../src/models/captureModes";
-import { CameraScreen } from "../src/screens/create/CameraScreen";
+import { CameraScreen, normalZoomOf } from "../src/screens/create/CameraScreen";
 
 jest.mock("@react-navigation/native", () => ({ ...jest.requireActual("@react-navigation/native"), useIsFocused: () => true }));
 
@@ -181,5 +181,27 @@ describe("steadier video", () => {
     g.__camera.device = { ...original, supportsVideoStabilizationMode: () => false };
     await render();
     expect(cam().props.constraints).toEqual([]);
+  });
+});
+
+describe("the camera's lens", () => {
+  it("opens on the normal lens at 1x, never the ultra-wide", async () => {
+    const before = g.__camera.device;
+    g.__camera.device = { id: "back", position: "back", minZoom: 0.6, maxZoom: 10, zoomLensSwitchFactors: [], physicalDevices: [{ type: "wide-angle" }, { type: "ultra-wide-angle" }] };
+    await render();
+    expect(g.__camera.lastFilter).toEqual({ physicalDevices: ["wide-angle"] });
+    const camera = tree.root.find((n: ReactTestInstance) => n.type === "Camera");
+    expect(camera.props.zoom).toBe(1);
+    g.__camera.device = before;
+  });
+
+  it("knows each kind of camera's 1x", () => {
+    expect(normalZoomOf(undefined)).toBe(1);
+    // Android: a zoom ratio; a camera with an ultra-wide goes below 1, and 1 is the main lens.
+    expect(normalZoomOf({ minZoom: 0.5, zoomLensSwitchFactors: [1, 3], physicalDevices: [{ type: "ultra-wide-angle" }, { type: "wide-angle" }] })).toBe(1);
+    // iPhone: an ultra-wide + wide camera starts at 1 (0.5x); 1x is where it switches to the wide lens.
+    expect(normalZoomOf({ minZoom: 1, zoomLensSwitchFactors: [2, 6], physicalDevices: [{ type: "ultra-wide-angle" }, { type: "wide-angle" }, { type: "telephoto" }] })).toBe(2);
+    // One plain lens.
+    expect(normalZoomOf({ minZoom: 1, zoomLensSwitchFactors: [], physicalDevices: [{ type: "wide-angle" }] })).toBe(1);
   });
 });

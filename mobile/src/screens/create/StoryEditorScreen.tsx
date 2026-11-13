@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { ActivityIndicator, Alert, Animated, BackHandler, Dimensions, Image, Keyboard, PanResponder, PixelRatio, StyleSheet, Text, TextInput, View, useWindowDimensions, type GestureResponderEvent, type LayoutChangeEvent } from "react-native";
 import { Pressable } from "../../components/Pressable";
 import Video, { ViewType, type VideoRef } from "react-native-video";
+import Svg, { Defs, LinearGradient as SvgGradient, Rect, Stop } from "react-native-svg";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
 import type { CreateStackParamList, RootStackParamList } from "../../navigation/types";
@@ -425,9 +426,9 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
     setTextModalVisible(false);
   };
 
-  // Today's festival: a greeting in the sticker sheet, and public Stories can join its ring.
+  // Today's festival: its greeting in the sticker sheet. Whether a Story joins the festival's ring
+  // on Home is decided by the server from the Story itself (story-ai.ts), never asked here.
   const festival = useFestival().current?.festival ?? null;
-  const [joinFestival, setJoinFestival] = useState(true);
 
   const addSticker = useCallback((payload: StickerAddPayload, place: { y?: number } = {}) => {
     const overlay = {
@@ -764,8 +765,6 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
           audioMuted: draft.audioMuted,
           crop: sendCrop,
           ...(music ? { music: { trackId: music.track.id, startMs: music.startMs, durationMs: music.durationMs } } : {}),
-          // Public festival Stories join the festival's ring on Home.
-          ...(festival && joinFestival && target === "public" ? { festival: festival.slug } : {}),
           ...(publishAt ? { publishAt: publishAt.toISOString() } : {}),
           ...(collaborator && target !== "close_friends" ? { collaboratorId: collaborator.id } : {}),
         },
@@ -1114,6 +1113,17 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
       ) : null}
 
       {!drawMode && !cropMode && !trimMode && !isDraggingOverlay && !textModalVisible ? (
+        <Svg pointerEvents="none" style={[styles.bottomShade, { height: 260 + insets.bottom }]} width="100%" height={260 + insets.bottom} testID="bottom-shade">
+          <Defs>
+            <SvgGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+              <Stop offset="0" stopColor="#000000" stopOpacity="0" />
+              <Stop offset="1" stopColor="#000000" stopOpacity="0.7" />
+            </SvgGradient>
+          </Defs>
+          <Rect x="0" y="0" width="100%" height="100%" fill="url(#shade)" />
+        </Svg>
+      ) : null}
+      {!drawMode && !cropMode && !trimMode && !isDraggingOverlay && !textModalVisible ? (
         // Lifted above the keyboard while the caption is typed (the canvas behind stays put).
         <KeyboardAvoider
           behavior="position"
@@ -1157,41 +1167,43 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
             ) : null}
           </View>
 
-          {/* One quiet line for who can see, comment and share (the choices are in a sheet), and when it posts. */}
+          {/* One row of small chips: who can see it (the rest of the settings are in that sheet),
+              when it posts, and a collaborator. */}
           <View style={styles.optionsRow}>
             <Pressable
               onPress={() => setSettingsOpen(true)}
-              hitSlop={8}
-              style={[styles.visibility, styles.visibilityShrink]}
+              hitSlop={6}
+              style={[styles.chip, styles.chipShrink]}
               accessibilityRole="button"
-              accessibilityLabel={t("storyEditor.storySettingsSummary", { summary: storySettingsSummary({ ...settings, visibility: storyAudience }, festival && joinFestival && storyAudience === "public" ? festival.name : null) })}
+              accessibilityLabel={t("storyEditor.storySettingsSummary", { summary: storySettingsSummary({ ...settings, visibility: storyAudience }) })}
+              testID="story-settings-chip"
             >
-              <Text style={styles.visibilityLabel} numberOfLines={1}>{storySettingsSummary({ ...settings, visibility: storyAudience }, festival && joinFestival && storyAudience === "public" ? festival.name : null)}</Text>
-              <Icon name={ICONS.chevron} size={14} color={colors.textPrimary} />
+              <Icon name={ICONS.viewers} size={15} color={colors.textPrimary} />
+              <Text style={styles.chipLabel} numberOfLines={1}>{storyAudience === "public" ? t("common.everyone") : t("storySettingsSheet.followersOnly")}</Text>
+              <Icon name={ICONS.down} size={12} color="rgba(255,255,255,0.75)" />
             </Pressable>
             <Pressable
               onPress={() => setScheduleOpen(true)}
-              hitSlop={8}
-              style={[styles.visibility, publishAt && styles.scheduleOn]}
+              hitSlop={6}
+              style={[styles.chip, styles.chipShrink, publishAt && styles.chipOn]}
               accessibilityRole="button"
               accessibilityLabel={publishAt ? t("storyEditor.scheduledForPublishatChangeOr", { publishAt: scheduleText(publishAt) }) : t("storyEditor.scheduleChooseWhenThisStory")}
             >
-              <Icon name={ICONS.timer} size={14} color={publishAt ? colors.onAccent : colors.textPrimary} />
-              <Text style={[styles.visibilityLabel, publishAt && styles.scheduleOnLabel]} numberOfLines={1}>{publishAt ? scheduleText(publishAt) : t("storyEditor.schedule")}</Text>
+              <Icon name={ICONS.timer} size={15} color={publishAt ? colors.onAccent : colors.textPrimary} />
+              <Text style={[styles.chipLabel, publishAt && styles.chipOnLabel]} numberOfLines={1}>{publishAt ? scheduleText(publishAt) : t("storyEditor.schedule")}</Text>
+            </Pressable>
+            {/* Collab: one person who'll share this Story with their followers once they accept. */}
+            <Pressable
+              onPress={() => setCollabOpen(true)}
+              hitSlop={6}
+              style={[styles.chip, styles.chipShrink, collaborator && styles.chipOutlined]}
+              accessibilityRole="button"
+              accessibilityLabel={collaborator ? t("storyEditor.collabWithUsernameChange", { username: collaborator.username }) : t("storyEditor.inviteACollaborator")}
+            >
+              {collaborator ? <Avatar username={collaborator.username} avatarMediaId={collaborator.avatarMediaId} size={16} /> : <Icon name={ICONS.add} size={15} color={colors.textPrimary} />}
+              <Text style={styles.chipLabel} numberOfLines={1}>{collaborator ? `@${collaborator.username}` : t("storyEditor.collab")}</Text>
             </Pressable>
           </View>
-
-          {/* Collab: one person who'll share this Story with their followers once they accept. */}
-          <Pressable
-            onPress={() => setCollabOpen(true)}
-            hitSlop={8}
-            style={[styles.visibility, collaborator && styles.collabOn]}
-            accessibilityRole="button"
-            accessibilityLabel={collaborator ? t("storyEditor.collabWithUsernameChange", { username: collaborator.username }) : t("storyEditor.inviteACollaborator")}
-          >
-            {collaborator ? <Avatar username={collaborator.username} avatarMediaId={collaborator.avatarMediaId} size={18} /> : <Icon name={ICONS.add} size={14} color={colors.textPrimary} />}
-            <Text style={styles.visibilityLabel} numberOfLines={1}>{collaborator ? t("storyEditor.withUsername", { username: collaborator.username }) : t("storyEditor.inviteCollaborator")}</Text>
-          </Pressable>
 
           {uploadError ? (
             <View>
@@ -1214,7 +1226,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               accessibilityState={{ busy: uploadState === "uploading" && audience !== "close_friends" }}
             >
               {uploadState === "uploading" && audience !== "close_friends" ? (
-                <ActivityIndicator color={colors.background} />
+                <ActivityIndicator color={colors.textPrimary} />
               ) : (
                 <>
                   <Avatar username={user?.username ?? ""} avatarMediaId={user?.avatarMediaId} size={24} />
@@ -1281,8 +1293,6 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         onChange={changeSettings}
         onClose={() => setSettingsOpen(false)}
         festival={festival}
-        joinFestival={joinFestival}
-        onJoinFestival={setJoinFestival}
       />
       <TextToolModal
         // Starts fresh each time it opens: new text, or the text being edited.
@@ -1402,19 +1412,25 @@ const styles = StyleSheet.create({
   filterButtons: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.md },
   filterButton: { padding: spacing.sm, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.35)" },
   filterName: { color: colors.textPrimary, fontWeight: "700", minWidth: 90, textAlign: "center" },
-  visibility: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: spacing.sm, paddingVertical: 4, borderRadius: radii.pill, backgroundColor: "rgba(0,0,0,0.35)" },
-  visibilityLabel: { color: colors.textPrimary, fontSize: 13, fontWeight: "600" },
-  optionsRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
-  visibilityShrink: { flexShrink: 1 },
-  scheduleOn: { backgroundColor: colors.accent },
-  scheduleOnLabel: { color: colors.onAccent },
-  collabOn: { borderWidth: 1, borderColor: colors.accent },
-  shareRow: { flexDirection: "row", gap: spacing.sm },
-  shareButton: { flex: 1, minHeight: 48, paddingVertical: spacing.sm, paddingHorizontal: spacing.sm, borderRadius: radii.pill, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm },
-  shareYourStory: { backgroundColor: colors.textPrimary },
-  shareYourStoryLabel: { color: colors.background, fontWeight: "700", fontSize: 15, flexShrink: 1 },
+  optionsRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
+  chip: {
+    flexDirection: "row", alignItems: "center", gap: 5, height: 32, paddingHorizontal: 11, borderRadius: radii.pill,
+    backgroundColor: "rgba(255,255,255,0.14)", borderWidth: StyleSheet.hairlineWidth, borderColor: "rgba(255,255,255,0.18)",
+  },
+  chipShrink: { flexShrink: 1 },
+  chipLabel: { color: colors.textPrimary, fontSize: 13, fontWeight: "600", flexShrink: 1 },
+  chipOn: { backgroundColor: colors.accent, borderColor: colors.accent },
+  chipOnLabel: { color: colors.onAccent },
+  chipOutlined: { borderColor: colors.accent, borderWidth: 1 },
+  shareRow: { flexDirection: "row", gap: spacing.sm, marginTop: 2 },
+  shareButton: { flex: 1, height: 50, paddingHorizontal: spacing.md, borderRadius: radii.pill, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm },
+  // Glass, like the rest of the controls over the photo, rather than a white block.
+  shareYourStory: { backgroundColor: "rgba(255,255,255,0.18)", borderWidth: StyleSheet.hairlineWidth, borderColor: "rgba(255,255,255,0.32)" },
+  shareYourStoryLabel: { color: colors.textPrimary, fontWeight: "700", fontSize: 15, flexShrink: 1 },
   shareCloseFriends: { backgroundColor: colors.success },
   shareCloseFriendsLabel: { color: colors.onAccent, fontWeight: "700", fontSize: 15, flexShrink: 1 },
+  // A soft dark fade behind the caption and buttons, so they read over any photo.
+  bottomShade: { position: "absolute", left: 0, right: 0, bottom: 0 },
   boomerangLabel: { color: colors.textPrimary, fontWeight: "700" },
   filterToastLabel: { color: colors.textPrimary, fontSize: 18, fontWeight: "700" },
   bottomArea: { position: "absolute", bottom: spacing.xl, left: 0, right: 0 },

@@ -1285,6 +1285,7 @@ export const hi: Catalogue = {
   "storyEditor.collabStoriesGoToYour": "कोलैब स्टोरीज़ \"आपकी स्टोरी\" में जाती हैं",
   "storyEditor.yourStory": "आपकी स्टोरी",
   "storyEditor.inviteCollaborator": "कोलैबोरेटर को इनवाइट करें",
+  "storyEditor.collab": "कोलैब",
   "storyEditor.withUsername": "@{username} के साथ",
   "storyEditor.schedule": "शेड्यूल करें",
   "storyEditor.writeACaption": "कैप्शन लिखें…",

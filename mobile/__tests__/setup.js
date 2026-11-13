@@ -56,7 +56,7 @@ jest.mock("react-native-vision-camera", () => {
   return {
     __esModule: true,
     Camera,
-    useCameraDevice: () => global.__camera.device,
+    useCameraDevice: (position, filter) => { global.__camera.lastFilter = filter; return global.__camera.device; },
     useCameraPermission: permission("permission"),
     useMicrophonePermission: permission("microphone"),
     usePhotoOutput: () => ({ capturePhoto: jest.fn() }),

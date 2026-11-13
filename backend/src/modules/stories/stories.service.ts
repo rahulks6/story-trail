@@ -4,6 +4,16 @@ import { assertLinksAllowed } from "../safety/links";
 import { config } from "../../config/env";
 import {createHash} from 'node:crypto';
 import { taggableFestival } from "../festivals/festivals";
+import { storyAiActive } from "./story-ai";
+
+/**
+ * Which festival ring a new Story joins straight away. With Story understanding on, none: the AI
+ * decides from the Story itself (story-ai.ts), so what an older app sends (its "Add to the
+ * festival" switch) is ignored. Without it, the app's choice, as before.
+ */
+async function chosenFestival(sent: string | undefined): Promise<string | undefined> {
+  return storyAiActive() ? undefined : taggableFestival(sent);
+}
 import { queueNewStoryPushes } from "../reminders/return-reasons";
 import {DatabaseError} from '../../db/psql';
 import { assertCanContribute } from "../admin/account-policy";
@@ -215,7 +225,7 @@ export async function publishStory(
     audioMuted: input.audioMuted,
     crop: input.crop,
     music: input.music ?? null,
-    festival: (await taggableFestival(input.festival)) ?? null,
+    festival: (await chosenFestival(input.festival)) ?? null,
     topic: input.topic ?? null,
   });
   // The media worker's publish adds the invitation in SQL (migration 0063); this path, here.
@@ -304,7 +314,7 @@ export async function requestPublish(ownerId: string, input: PublishStoryInput, 
   if (input.music) input = { ...input, music: await validateStoryMusic(input.music) };
   // The hash is of what the app sent, so a retry after a festival ends still matches its request.
   const hash = createHash("sha256").update(JSON.stringify(input)).digest("hex");
-  const festival = await taggableFestival(input.festival);
+  const festival = await chosenFestival(input.festival);
   const { festival: _sent, ...rest } = input;
   const payload: PublishStoryInput = festival ? { ...rest, festival } : rest;
   let outcome: storiesRepo.PublishRequestOutcome;

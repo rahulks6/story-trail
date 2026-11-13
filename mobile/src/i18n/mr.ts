@@ -1285,6 +1285,7 @@ export const mr: Catalogue = {
   "storyEditor.collabStoriesGoToYour": "कोलॅब स्टोरीज \"तुमची स्टोरी\" मध्ये जातात",
   "storyEditor.yourStory": "तुमची स्टोरी",
   "storyEditor.inviteCollaborator": "कोलॅबोरेटरला आमंत्रित करा",
+  "storyEditor.collab": "कोलॅब",
   "storyEditor.withUsername": "@{username} सोबत",
   "storyEditor.schedule": "शेड्यूल करा",
   "storyEditor.writeACaption": "कॅप्शन लिहा…",

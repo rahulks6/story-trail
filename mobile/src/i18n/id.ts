@@ -1185,6 +1185,7 @@ export const id: Partial<Catalogue> = {
   "storyEditor.collabStoriesGoToYour": "Story kolaborasi masuk ke Story-mu",
   "storyEditor.yourStory": "Story-mu",
   "storyEditor.inviteCollaborator": "Undang kolaborator",
+  "storyEditor.collab": "Kolab",
   "storyEditor.withUsername": "Bersama @{username}",
   "storyEditor.schedule": "Jadwalkan",
   "storyEditor.writeACaption": "Tulis keterangan…",

@@ -8,7 +8,7 @@ import http from "node:http";
 import type { AddressInfo } from "node:net";
 import { buildApp } from "../src/app";
 import { config } from "../src/config/env";
-import { queryOne } from "../src/db/psql";
+import { query, queryOne } from "../src/db/psql";
 import { mediaStorage } from "../src/modules/media/instance";
 import {
   ClaudeStoryAi, MAX_AI_ALT_TEXT, StoryAiWorker, claimStories, parseUnderstanding, storyAiActive, storyWords, supportsServerFallback, understandStory,
@@ -66,7 +66,7 @@ function fakeAi(answer: StoryUnderstanding | "refused" | Error): StoryAiClient &
 describe("understanding a new Story", () => {
   it("gives it the AI's topic, picture description and safety reading", async () => {
     const id = await postStory();
-    const ai = fakeAi({ topic: "Cricket", altText: "A crowd cheering at a cricket ground.", safety: "ok" });
+    const ai = fakeAi({ topic: "Cricket", altText: "A crowd cheering at a cricket ground.", safety: "ok", festival: false });
     const [claimed] = await claimStories(5, [id]);
     assert.ok(claimed);
     assert.equal(await understandStory(claimed, ai, mediaStorage), "understood");
@@ -89,7 +89,7 @@ describe("understanding a new Story", () => {
   it("keeps a topic and description the person chose themselves", async () => {
     const id = await postStory({ topic: "Food", altText: "My mother's poha" });
     const [claimed] = await claimStories(5, [id]);
-    await understandStory(claimed!, fakeAi({ topic: "Travel", altText: "A plate of food.", safety: "ok" }), mediaStorage);
+    await understandStory(claimed!, fakeAi({ topic: "Travel", altText: "A plate of food.", safety: "ok", festival: false }), mediaStorage);
     const after = await row(id);
     assert.equal(after.topic, "Food");
     assert.equal(after.alt_text, "My mother's poha");
@@ -153,6 +153,50 @@ async function rejectedKeyError(): Promise<Error> {
   }
 }
 
+describe("festival rings, decided by the AI", () => {
+  const settings = config.storyAi as { enabled: boolean; apiKey: string };
+  const saved = { ...settings };
+  const slug = `ai-fest-${Date.now()}`;
+  before(async () => {
+    await query(
+      `INSERT INTO festivals (slug, name, emoji, greeting, starts_on, ends_on)
+       VALUES (:'slug', 'Chhath Puja', '🌅', 'Happy Chhath Puja', (now() AT TIME ZONE 'Asia/Kolkata')::date, (now() AT TIME ZONE 'Asia/Kolkata')::date)`,
+      { slug },
+    );
+    settings.enabled = true;
+    settings.apiKey = "sk-ant-test";
+  });
+  after(async () => {
+    Object.assign(settings, saved);
+    await query(`UPDATE stories SET festival = NULL WHERE festival = :'slug'`, { slug });
+    await query(`DELETE FROM festivals WHERE slug = :'slug'`, { slug });
+  });
+  const festivalOf = async (id: string) => (await queryOne(`SELECT festival FROM stories WHERE id = :'id'`, { id }))!.festival ?? null;
+
+  it("ignores the festival an older app sends, and asks the AI about the day's festival", async () => {
+    const id = await postStory({ festival: slug });
+    assert.equal(await festivalOf(id), null, "nobody chooses the ring");
+    const [claimed] = await claimStories(1, [id]);
+    assert.deepEqual(claimed!.festivalOfDay, { slug, name: "Chhath Puja" });
+    const ai = fakeAi({ topic: "Festivals", altText: "Women offering prayers to the setting sun at a river.", safety: "ok", festival: true });
+    await understandStory(claimed!, ai, mediaStorage);
+    assert.equal(ai.seen[0]!.festival, "Chhath Puja");
+    assert.equal(await festivalOf(id), slug);
+  });
+
+  it("an ordinary Story on the festival day, or an unsafe one, stays out of the ring", async () => {
+    for (const answer of [
+      { topic: "Food" as const, altText: "A plate of poha.", safety: "ok" as const, festival: false },
+      { topic: null, altText: null, safety: "violence" as const, festival: true },
+    ]) {
+      const id = await postStory();
+      const [claimed] = await claimStories(1, [id]);
+      await understandStory(claimed!, fakeAi(answer), mediaStorage);
+      assert.equal(await festivalOf(id), null, JSON.stringify(answer));
+    }
+  });
+});
+
 describe("the request to Claude", () => {
   it("sends the picture, the Story's words and the fixed topic list, and reads the answer", async () => {
     let body: Record<string, any> = {};
@@ -175,7 +219,7 @@ describe("the request to Claude", () => {
     try {
       const claude = new ClaudeStoryAi("sk-ant-test", "claude-opus-5-5", { baseURL: `http://127.0.0.1:${(api.address() as AddressInfo).port}`, maxRetries: 0 });
       const result = await claude.understand({ image: { data: "AAAA", mediaType: "image/jpeg" }, caption: "Shubh Dhanteras", words: ["Happy Diwali"], song: "Bright Wish by Kevin MacLeod", festival: "diwali" });
-      assert.deepEqual(result, { topic: "Devotional", altText: "A diya lit in front of a small shrine.", safety: "ok" });
+      assert.deepEqual(result, { topic: "Devotional", altText: "A diya lit in front of a small shrine.", safety: "ok", festival: false });
       assert.equal(headers.authorization, "Bearer sk-ant-test");
       assert.match(String(headers["anthropic-beta"]), /server-side-fallback-2026-07-01/);
       assert.equal(body.model, "claude-opus-5-5");
@@ -222,7 +266,7 @@ describe("the request to Haiku", () => {
     try {
       const claude = new ClaudeStoryAi("sk-ant-test", "claude-haiku-5-5", { baseURL: `http://127.0.0.1:${(api.address() as AddressInfo).port}`, maxRetries: 0 });
       const result = await claude.understand({ image: { data: "AAAA", mediaType: "image/jpeg" }, caption: "", words: [], song: null, festival: null });
-      assert.deepEqual(result, { topic: "Food", altText: "A plate of poha.", safety: "ok" });
+      assert.deepEqual(result, { topic: "Food", altText: "A plate of poha.", safety: "ok", festival: false });
       assert.equal(body.model, "claude-haiku-5-5");
       assert.equal("fallbacks" in body, false);
       assert.doesNotMatch(String(headers["anthropic-beta"] ?? ""), /server-side-fallback/);
@@ -236,7 +280,8 @@ describe("the request to Haiku", () => {
 describe("reading the answer", () => {
   it("keeps only listed topics and safety readings, and tidies the description", () => {
     assert.deepEqual(parseUnderstanding(JSON.stringify({ topic: "cricket", alt_text: "  Two  friends\nat a match. ", safety: "ok" })),
-      { topic: "Cricket", altText: "Two friends at a match.", safety: "ok" });
+      { topic: "Cricket", altText: "Two friends at a match.", safety: "ok", festival: false });
+    assert.equal(parseUnderstanding(JSON.stringify({ topic: "Festivals", alt_text: "x", safety: "ok", festival: true }))!.festival, true);
     assert.equal(parseUnderstanding(JSON.stringify({ topic: "none", alt_text: "x", safety: "ok" }))!.topic, null);
     assert.equal(parseUnderstanding(JSON.stringify({ topic: "Astrology", alt_text: "x", safety: "ok" }))!.topic, null);
     assert.equal(parseUnderstanding(JSON.stringify({ topic: "Food", alt_text: "", safety: "ok" }))!.altText, null);

@@ -1385,6 +1385,7 @@ export const en = {
   "storyEditor.collabStoriesGoToYour": "Collab Stories go to Your story",
   "storyEditor.yourStory": "Your story",
   "storyEditor.inviteCollaborator": "Invite collaborator",
+  "storyEditor.collab": "Collab",
   "storyEditor.withUsername": "With @{username}",
   "storyEditor.schedule": "Schedule",
   "storyEditor.writeACaption": "Write a caption…",

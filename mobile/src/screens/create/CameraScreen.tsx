@@ -63,6 +63,18 @@ function clamp(n: number, min: number, max: number): number {
 }
 
 /**
+ * The zoom at which a camera shows what the eye sees (1x): on Android a zoom ratio, where a camera
+ * with an ultra-wide lens goes below 1; on iPhone a multi-lens camera's 1x is where it switches
+ * from the ultra-wide to the normal lens.
+ */
+export function normalZoomOf(device: { minZoom: number; zoomLensSwitchFactors?: number[]; physicalDevices?: { type: string }[] } | undefined): number {
+  if (!device) return 1;
+  if (device.minZoom < 1) return 1;
+  const hasUltraWide = (device.physicalDevices ?? []).some((d) => d.type === "ultra-wide-angle");
+  return hasUltraWide && device.zoomLensSwitchFactors?.length ? device.zoomLensSwitchFactors[0]! : 1;
+}
+
+/**
  * Full-screen camera capture (spec section 17): tap for a photo,
  * press-and-hold for video, two-finger pinch-zoom on the preview AND
  * one-finger drag-to-zoom while holding the capture button (spec section
@@ -107,7 +119,9 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   modeRef.current = mode;
   const boomerangTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const device = useCameraDevice(position);
+  // The normal lens, as Instagram opens: a phone's "default" back camera is often a multi-lens
+  // camera that starts on the ultra-wide (0.5x), which people found far too wide.
+  const device = useCameraDevice(position, { physicalDevices: ["wide-angle"] });
   // Cameras are listed a moment after the screen opens: wait before saying there's none.
   const [cameraSearchOver, setCameraSearchOver] = useState(false);
   useEffect(() => {
@@ -147,14 +161,17 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   const recordingTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const zoomIndicatorTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const zoomRef = useRef(1);
+  const normalZoomRef = useRef(1);
   // The preview's own measured size, so the accessible "Focus" action (below)
   // has a real point to focus at — the center of the actual preview, not a
   // guessed constant that would be wrong on a differently-sized device.
   const previewSize = useRef({ width: 0, height: 0 });
   const minZoom = device?.minZoom ?? 1;
   const maxZoom = Math.min(device?.maxZoom ?? 4, MAX_USEFUL_ZOOM);
-  // A different camera starts at its normal zoom.
-  useEffect(()=>{zoomRef.current=clamp(1,minZoom,maxZoom);if(!device?.hasFlash)setFlash('off');},[device?.id,minZoom,maxZoom]);
+  // Each camera starts at its normal (1x) zoom, never zoomed out to an ultra-wide lens.
+  const normalZoom = useMemo(() => clamp(normalZoomOf(device), minZoom, maxZoom), [device, minZoom, maxZoom]);
+  normalZoomRef.current = normalZoom;
+  useEffect(()=>{zoomRef.current=normalZoom;if(!device?.hasFlash)setFlash('off');},[device?.id,normalZoom]);
 
   // One question at a time (Android shows one permission prompt at a time): camera, then microphone.
   useEffect(() => {
@@ -212,7 +229,8 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
   }, []);
 
   const flashZoomIndicator = useCallback((z: number) => {
-    setZoomIndicator({ visible: true, label: `${z.toFixed(1)}x` });
+    // Shown against the normal lens, so 1x is what the eye sees on every phone.
+    setZoomIndicator({ visible: true, label: `${(z / normalZoomRef.current).toFixed(1)}x` });
     if (zoomIndicatorTimer.current) clearTimeout(zoomIndicatorTimer.current);
     zoomIndicatorTimer.current = setTimeout(() => setZoomIndicator((v) => ({ ...v, visible: false })), ZOOM_INDICATOR_HOLD_MS);
   }, []);
@@ -607,6 +625,7 @@ export function CameraScreen({ navigation }: Props): React.JSX.Element {
           ref={camera}
           style={StyleSheet.absoluteFill}
           device={device}
+          zoom={normalZoom}
           isActive={focused&&foreground}
           outputs={outputs}
           constraints={constraints}
