@@ -39,21 +39,18 @@ afterEach(async () => {
   mounted = null;
 });
 
-test("the tab bar is exactly Today | Explore | Post | Chats | Me, with unread counts", async () => {
+test("the tab bar is exactly Home | Search | Create | Messages | Profile, with unread counts", async () => {
   const tree = (mounted = await renderTabs());
   // Activity opens from the heart at the top of Home.
-  expect(tabs(tree)).toEqual(["Today", "Explore", "Create a Story", "Chats, 120 unread", "Me"]);
+  expect(tabs(tree)).toEqual(["Home", "Search", "Create a Story", "Messages, 120 unread", "Profile"]);
   expect(JSON.stringify(tree.toJSON())).not.toMatch(/Discover|Reels|Admin|Ads Manager/);
-  // Every tab has its name under it, the Post button too.
-  const post = tree.root.find((n) => typeof n.type === "string" && n.props.accessibilityRole === "tab" && n.props.accessibilityLabel === "Create a Story");
-  expect(post.findAll((n) => typeof n.type === "string" && n.props.children === "Post").length).toBeGreaterThan(0);
 });
 
 test("screen readers get a tab list with the current tab selected, above the home indicator", async () => {
   const tree = (mounted = await renderTabs());
   const list = tree.root.find((n) => typeof n.type === "string" && n.props.accessibilityRole === "tablist");
   const selected = tree.root.findAll((n) => typeof n.type === "string" && n.props.accessibilityRole === "tab" && n.props.accessibilityState?.selected);
-  expect(selected.map((n) => n.props.accessibilityLabel)).toEqual(["Today"]);
+  expect(selected.map((n) => n.props.accessibilityLabel)).toEqual(["Home"]);
   const style = Object.assign({}, ...[list.props.style].flat(Infinity).filter(Boolean));
   expect(style.paddingBottom).toBe(34);
 });

@@ -125,12 +125,8 @@ appId: com.katkee.app
 - takeScreenshot: v06-after-text-b
 - tapOn: "Your story"
 - extendedWaitUntil:
-    visible: "Today"
+    visible: "Home"
     timeout: 30000
-# The one-time card explaining Today (TodayIntro).
-- tapOn:
-    text: "Got it"
-    optional: true
 - takeScreenshot: v07-posting
 # Wait for the server to finish the video, then open it.
 - repeat:
@@ -138,11 +134,11 @@ appId: com.katkee.app
     while:
       notVisible: "Open your Story"
     commands:
-      - tapOn: "Today"
-      - tapOn: "Me"
+      - tapOn: "Home"
+      - tapOn: "Profile"
       - waitForAnimationToEnd:
           timeout: 5000
-- tapOn: "Me"
+- tapOn: "Profile"
 - extendedWaitUntil:
     visible: "Open your Story"
     timeout: 60000

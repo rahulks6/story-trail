@@ -1,18 +1,10 @@
-import { Platform } from "react-native";
 import { colors, mediaColors, type Palette } from "./colors";
-import { fonts } from "./fonts";
-
-/**
- * Headings in Baloo 2 (the Postcard look) where it's bundled (Android). The font file is already
- * extra-bold, so no extra weight is asked for (Android would fake one on top); iPhone keeps a bold system font.
- */
-const heading = Platform.OS === "android" ? { fontFamily: fonts.display, fontWeight: "normal" as const } : { fontWeight: "700" as const };
 
 function typographyFor(p: Palette) {
   return {
     // Large bold headings read better a touch tighter.
-    displayLarge: { fontSize: 28, ...heading, letterSpacing: -0.4, color: p.textPrimary },
-    title: { fontSize: 20, ...heading, letterSpacing: -0.2, color: p.textPrimary },
+    displayLarge: { fontSize: 28, fontWeight: "700" as const, letterSpacing: -0.4, color: p.textPrimary },
+    title: { fontSize: 20, fontWeight: "700" as const, letterSpacing: -0.2, color: p.textPrimary },
     body: { fontSize: 15, fontWeight: "400" as const, color: p.textPrimary },
     bodyStrong: { fontSize: 15, fontWeight: "600" as const, color: p.textPrimary },
     caption: { fontSize: 13, fontWeight: "400" as const, color: p.textSecondary },

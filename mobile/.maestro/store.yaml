@@ -25,7 +25,7 @@ appId: com.katkee.app
 
 # Onboarding: a few interests, then into the app.
 - extendedWaitUntil:
-    visible: "(What are you into\\?|People to follow|Today)"
+    visible: "(What are you into\\?|People to follow|Home)"
     timeout: 45000
 - tapOn:
     text: "Travel"
@@ -63,11 +63,6 @@ appId: com.katkee.app
     text: "Not now"
     optional: true
     waitToSettleTimeoutMs: 300
-# The one-time card explaining Today (TodayIntro).
-- tapOn:
-    text: "Got it"
-    optional: true
-    waitToSettleTimeoutMs: 300
 
 # 1. Home: friends' Stories. A photo Story moves on after a few seconds, so capture at once.
 # The Story's header shows the username (arjun.beaches): match those, so the screenshot is taken
@@ -82,22 +77,21 @@ appId: com.katkee.app
     optional: true
     waitToSettleTimeoutMs: 300
 - takeScreenshot: s01b-home-liked
-# Today moves to the next Story with a swipe up.
 - swipe:
-    direction: UP
+    direction: LEFT
     duration: 300
     optional: true
     waitToSettleTimeoutMs: 300
 - takeScreenshot: s01c-home-next
 - swipe:
-    direction: UP
+    direction: LEFT
     duration: 300
     optional: true
     waitToSettleTimeoutMs: 300
 - takeScreenshot: s01d-home-next
 
 # 2. Chats: the inbox, then Sofia's chat.
-- tapOn: "Chats.*"  # the tab: "Chats", or "Chats, 2 unread"
+- tapOn: "Messages.*"
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: s02-inbox
@@ -117,13 +111,13 @@ appId: com.katkee.app
 - runFlow: back-to-tabs.yaml
 
 # 3. Profile, with Highlights and a cover photo.
-- tapOn: "Me"
+- tapOn: "Profile"
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: s04-profile
 
 # 4. Activity: likes, comments and follows.
-- tapOn: "Today"
+- tapOn: "Home"
 - tapOn:
     text: "Activity.*"
     optional: true

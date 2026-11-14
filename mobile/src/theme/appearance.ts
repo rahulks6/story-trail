@@ -2,11 +2,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Appearance, NativeModules, Platform } from "react-native";
 import { applyColorScheme, type ColorScheme } from "./colors";
 
-/** Automatic follows the phone's own light or dark setting. Katkee starts in light (the Postcard look). */
+/** Automatic follows the phone's own light or dark setting. */
 export type AppearanceChoice = "system" | "light" | "dark";
 
 const KEY = "katkee.appearance.v1";
-let choice: AppearanceChoice = "light";
+let choice: AppearanceChoice = "system";
 
 function resolve(c: AppearanceChoice): ColorScheme {
   if (c === "light" || c === "dark") return c;
@@ -19,7 +19,7 @@ export async function loadAppearance(): Promise<void> {
     const saved = await AsyncStorage.getItem(KEY);
     if (saved === "light" || saved === "dark" || saved === "system") choice = saved;
   } catch {
-    // First launch or storage unavailable: light, the Postcard look.
+    // First launch or storage unavailable: Automatic.
   }
   applyColorScheme(resolve(choice));
 }

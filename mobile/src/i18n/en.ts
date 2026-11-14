@@ -302,11 +302,6 @@ export const en = {
 
   // navigation/BottomTabBar.tsx
   "bottomTabBar.createAStory": "Create a Story",
-  "bottomTabBar.today": "Today",
-  "bottomTabBar.explore": "Explore",
-  "bottomTabBar.post": "Post",
-  "bottomTabBar.chats": "Chats",
-  "bottomTabBar.me": "Me",
   "bottomTabBar.profile": "Profile",
   "bottomTabBar.home": "Home",
 
@@ -767,7 +762,7 @@ export const en = {
   "highlightsRow.new": "New",
   "highlightsRow.titleHighlight": "{title}, Highlight",
   "highlightsRow.reorder": "Reorder",
-  "highlightsRow.highlights": "Memories",
+  "highlightsRow.highlights": "Highlights",
   "highlightsRow.emptyTitle": "Keep your best Stories",
   "highlightsRow.emptyBody": "Highlights stay on your profile after your Stories end.",
   "highlightsRow.checkYourConnectionAndTry": "Check your connection and try again.",
@@ -790,18 +785,6 @@ export const en = {
 
   // screens/home/HomeScreen.tsx
   "home.refreshing": "Refreshing…",
-  "home.watchNameStories": "Watch {name}'s Stories",
-  "home.you": "You",
-  "home.yourStory": "Your Story",
-  "todayIntro.newLook": "Katkee has a new look",
-  "todayIntro.welcome": "Welcome to Today",
-  "todayIntro.swipeUp": "Swipe up for the next friend's Story",
-  "todayIntro.tapAFriend": "Tap a friend's circle to watch only theirs",
-  "todayIntro.memories": "Your Highlights are now Memories, on your profile",
-  "todayIntro.gotIt": "Got it",
-  "firstStory.title": "Share your first Story",
-  "firstStory.body": "Your friends see it right here on Today",
-  "firstStory.post": "Post",
   "home.refreshStories": "Refresh Stories",
   "home.storiesFromPeopleYouFollow": "Stories from people you follow and eligible new creators will appear here.",
   "home.noActiveStoriesYet": "No active Stories yet",
@@ -1399,8 +1382,6 @@ export const en = {
 
   // screens/create/StoryEditorScreen.tsx
   "storyEditor.longPressToEditYour": "Long press to edit your Close Friends list",
-  "storyEditor.postToMyDay": "Post to my day",
-  "storyEditor.onlyCloseFriends": "Only close friends",
   "storyEditor.addPeopleToYourClose": "Add people to your Close Friends list, then share to them.",
   "storyEditor.shareWithoutCollab": "Share without collab",
   "storyEditor.sharingWithCloseFriendsLeaves": "Sharing with Close Friends leaves out @{username}.",
@@ -1532,7 +1513,6 @@ export const en = {
 
   // screens/story/StoryFeed.tsx
   "storyFeed.replySent": "Reply sent",
-  "storyFeed.reply": "Reply",
   "storyFeed.reactionSent": "Reaction sent",
   "storyFeed.answerSent": "Answer sent",
   "storyFeed.usernameInvitedYouToCollab": "@{username} invited you to collab. It shows to your followers too, with both names.",
@@ -1541,7 +1521,6 @@ export const en = {
   "storyFeed.addAComment": "Add a comment",
   "storyFeed.sendAMessage": "Send a message…",
   "storyFeed.sharedWithCloseFriends": "Shared with Close Friends",
-  "storyFeed.showsTheWholeCaption": "Shows the whole caption",
   "storyFeed.showsTheSongsCredit": "Shows the song's credit",
   "storyFeed.attributionLicenceLicenseLicenseurl": "{attribution}\n\nLicence: {license}\n{licenseUrl}",
   "storyFeed.more": "More",

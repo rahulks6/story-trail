@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 // The Google Play screenshots: each real app screen (captured by the emulator workflow with
-// flow=store, saved in raw/) in a device frame under one short headline, in the Postcard look:
-// cream paper, dark ink, Baloo 2 headings and an amber highlight, like the app itself.
+// flow=store, saved in raw/) in a device frame under one short headline, in Katkee's colours.
 // Phone: 1080 x 1920 (9:16). Tablet: 1920 x 1080 (16:9), from the landscape tablet captures.
 // Run: node brand/store/screenshots/make.cjs [en|hi|mr]   (needs Playwright, pre-installed in the dev container)
 const fs = require("node:fs");
@@ -19,7 +18,7 @@ const TEXT = {
     ["Share your day<br>in <em>Stories</em>", "Photos and videos with the people who matter"],
     ["Make every Story<br><em>yours</em>", "Text, music, stickers and filters"],
     ["Chat with<br><em>your people</em>", "Messages, voice notes and video calls"],
-    ["Keep the best as<br><em>Memories</em>", "Your favourite Stories, on your profile"],
+    ["Keep the best as<br><em>Highlights</em>", "Your favourite Stories, on your profile"],
     ["Your photos,<br><em>one Story</em>", "Up to six photos in one Layout"],
     ["See who<br><em>loved it</em>", "Likes, comments and new followers"],
     ["Plans with<br><em>your crew</em>", "Group chats with up to 32 friends"],
@@ -29,7 +28,7 @@ const TEXT = {
     ["अपना दिन<br><em>स्टोरीज़</em> में", "अपनों के साथ फ़ोटो और वीडियो"],
     ["हर स्टोरी को<br><em>अपना</em> बनाएँ", "टेक्स्ट, म्यूज़िक, स्टिकर और फ़िल्टर"],
     ["<em>अपनों</em> से<br>बातें करें", "मैसेज, वॉइस नोट और वीडियो कॉल"],
-    ["ख़ास पल<br><em>यादों</em> में", "पसंदीदा स्टोरीज़, आपकी प्रोफ़ाइल पर"],
+    ["ख़ास पल<br><em>हाइलाइट्स</em> में", "पसंदीदा स्टोरीज़, आपकी प्रोफ़ाइल पर"],
     ["कई फ़ोटो,<br><em>एक स्टोरी</em>", "एक लेआउट में छह फ़ोटो तक"],
     ["देखें किसे<br><em>पसंद आया</em>", "लाइक, कमेंट और नए फ़ॉलोअर"],
     ["दोस्तों के साथ<br><em>प्लान</em>", "32 लोगों तक के ग्रुप चैट"],
@@ -39,7 +38,7 @@ const TEXT = {
     ["तुमचा दिवस<br><em>स्टोरीज</em>मध्ये", "आपल्या माणसांसोबत फोटो आणि व्हिडिओ"],
     ["प्रत्येक स्टोरी<br><em>तुमची</em>", "टेक्स्ट, संगीत, स्टिकर आणि फिल्टर"],
     ["<em>आपल्या माणसांशी</em><br>गप्पा", "मेसेज, व्हॉइस नोट आणि व्हिडिओ कॉल"],
-    ["खास क्षण<br><em>आठवणीं</em>मध्ये", "आवडत्या स्टोरीज, तुमच्या प्रोफाइलवर"],
+    ["खास क्षण<br><em>हायलाइट्स</em>मध्ये", "आवडत्या स्टोरीज, तुमच्या प्रोफाइलवर"],
     ["अनेक फोटो,<br><em>एक स्टोरी</em>", "एका लेआउटमध्ये सहा फोटोपर्यंत"],
     ["पाहा कोणाला<br><em>आवडलं</em>", "लाइक, कमेंट आणि नवीन फॉलोअर"],
     ["मित्रांसोबत<br><em>प्लॅन</em>", "32 लोकांपर्यंतचे ग्रुप चॅट"],
@@ -53,28 +52,29 @@ const TABLET = PHONE.map((s) => ({ ...s, raw: s.raw.replace("phone-", "tablet-")
 
 const css = `
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #FBF6EC; font-family: Inter, 'Noto Sans Devanagari', sans-serif; color: #1E1A16; }
+  body { background: #0B0B0B; font-family: Inter, 'Noto Sans Devanagari', sans-serif; color: #fff; }
   .slide { position: relative; overflow: hidden;
-    background: radial-gradient(ellipse 70% 40% at 50% 100%, rgba(255,200,0,0.20), transparent 70%), #FBF6EC; }
-  h1 { font-family: 'Baloo 2', 'Noto Sans Devanagari', sans-serif; font-weight: 800; letter-spacing: -0.01em; line-height: 1.0; }
-  /* The amber marker stroke behind the key words. */
-  h1 em { font-style: normal; background: linear-gradient(transparent 58%, #FFC800 62%, #FFC800 88%, transparent 88%); padding: 0 6px; margin: 0 -6px; }
-  .sub { color: #6B6155; font-weight: 500; }
-  .brand { display: flex; align-items: center; gap: 14px; font-family: 'Baloo 2', sans-serif; font-weight: 800; }
+    background: radial-gradient(ellipse 70% 45% at 50% 100%, rgba(255,200,0,0.22), transparent 70%),
+                radial-gradient(ellipse 60% 35% at 0% 0%, rgba(255,61,110,0.12), transparent 70%), #0B0B0B; }
+  h1 { font-weight: 900; letter-spacing: -0.03em; line-height: 1.04; }
+  h1 em { font-style: normal; background: linear-gradient(90deg, #FFC800, #FF8A00 55%, #FF3D6E);
+    -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sub { color: rgba(255,255,255,0.72); font-weight: 500; }
+  .brand { display: flex; align-items: center; gap: 14px; font-weight: 800; letter-spacing: -0.02em; }
   .brand svg { display: block; }
-  .brand span { color: #7F5600; }
-  .device { position: absolute; background: #1E1A16;
-    box-shadow: 0 40px 90px rgba(80,56,0,0.28), 0 6px 18px rgba(30,26,22,0.18); }
-  .device .screen { width: 100%; height: 100%; overflow: hidden; background: #FBF6EC; }
+  .brand span { color: #FFC800; }
+  .device { position: absolute; background: linear-gradient(160deg, #2a2d34, #121418);
+    box-shadow: 0 50px 120px rgba(0,0,0,0.7), inset 0 0 0 2px rgba(255,255,255,0.09); }
+  .device .screen { width: 100%; height: 100%; overflow: hidden; background: #000; }
   .device img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
 `;
 
 function phoneHtml(s, img) {
   return `<div class="slide" style="width:1080px;height:1920px">
     <div class="brand" style="position:absolute;left:96px;top:92px;font-size:40px">${MARK.replace("<svg", '<svg height="48"')}<div>Kat<span>kee</span></div></div>
-    <h1 style="position:absolute;left:96px;right:96px;top:176px;font-size:100px">${s.title}</h1>
-    <div class="sub" style="position:absolute;left:96px;right:96px;top:424px;font-size:38px">${s.sub}</div>
-    <div class="device" style="left:224px;top:516px;width:632px;height:1350px;border-radius:76px;padding:16px">
+    <h1 style="position:absolute;left:96px;right:96px;top:180px;font-size:92px">${s.title}</h1>
+    <div class="sub" style="position:absolute;left:96px;right:96px;top:390px;font-size:38px">${s.sub}</div>
+    <div class="device" style="left:217px;top:490px;width:646px;height:1380px;border-radius:76px;padding:16px">
       <div class="screen" style="border-radius:62px"><img src="${img}"></div></div>
   </div>`;
 }
@@ -104,7 +104,7 @@ function tabletHtml(s, img) {
       const page = await browser.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
       const img = `data:image/png;base64,${fs.readFileSync(raw).toString("base64")}`;
       await page.setContent(`<!doctype html><html><head><meta charset="utf-8">
-        <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&family=Inter:wght@500;800;900&family=Noto+Sans+Devanagari:wght@500;800;900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;800;900&family=Noto+Sans+Devanagari:wght@500;800;900&display=swap" rel="stylesheet">
         <style>${css}</style></head><body>${html(s, img)}</body></html>`, { waitUntil: "networkidle" }).catch(() => {});
       await page.evaluate(() => document.fonts.ready);
       const file = path.join(out, `${String(n).padStart(2, "0")}-${s.raw.replace(/^(phone|tablet)-/, "")}.png`);

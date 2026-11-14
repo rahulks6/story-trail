@@ -5,7 +5,7 @@ import { Pressable } from "./Pressable";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../navigation/types";
-import { colors, fonts, radii, spacing, typography, ICONS } from "../theme";
+import { colors, radii, spacing, typography, ICONS } from "../theme";
 import { useAuth } from "../state/AuthContext";
 import { deleteHighlight, listHighlightsForUser, reorderHighlights, type HighlightSummary } from "../api/highlights";
 import { ActionSheet } from "./ActionSheet";
@@ -211,9 +211,8 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
           ) : null
         }
         renderItem={(highlight) => (
-          // A small polaroid (the Postcard look): white frame, a slight lean, the title handwritten.
-          <View style={[styles.slot, styles.polaroid, { transform: [{ rotate: `${leanOf(highlight.id)}deg` }] }]}>
-            <View style={[styles.card, { height: coverHeight - POLAROID_PAD }]}>
+          <View style={styles.slot}>
+            <View style={[styles.card, { height: coverHeight }]}>
               {/* The title's first letter sits under the cover, so a cover still loading (or that
                   can't load) shows that rather than an empty dark card. */}
               <View style={styles.coverFallback}>
@@ -231,7 +230,7 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
                 />
               ) : null}
             </View>
-            <Text style={[styles.label, styles.handLabel, { fontFamily: fonts.hand }]} numberOfLines={1}>
+            <Text style={styles.label} numberOfLines={1}>
               {highlight.title}
             </Text>
           </View>
@@ -256,28 +255,7 @@ export function HighlightsRow({ username, isOwner, onReorderModeChange, onCountC
   );
 }
 
-/** The polaroid's white border. */
-const POLAROID_PAD = 5;
-/** Each Memory leans a little, one way or the other, always the same for the same one. */
-function leanOf(id: string): number {
-  let sum = 0;
-  for (let i = 0; i < id.length; i++) sum += id.charCodeAt(i);
-  return sum % 2 === 0 ? -2 : 2;
-}
-
 const styles = StyleSheet.create({
-  polaroid: {
-    backgroundColor: "#FFFFFF",
-    padding: POLAROID_PAD,
-    paddingBottom: 0,
-    borderRadius: 4,
-    shadowColor: "#3C280A",
-    shadowOpacity: 0.16,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 3,
-  },
-  handLabel: { color: "#1E1A16", fontSize: 15, fontWeight: "normal" },
   wrapper: { width: "100%", marginTop: spacing.md },
   empty: { alignItems: "center", paddingTop: spacing.xl, paddingBottom: spacing.lg, gap: spacing.sm },
   emptyIcon: { width: 72, height: 72, borderRadius: 36, borderWidth: 1.5, borderColor: colors.textPrimary, alignItems: "center", justifyContent: "center", marginBottom: spacing.xs },
@@ -292,7 +270,7 @@ const styles = StyleSheet.create({
   slot: { flex: 1 },
   card: {
     width: "100%",
-    borderRadius: 2,
+    borderRadius: radii.md,
     overflow: "hidden",
     backgroundColor: colors.surface,
     borderWidth: StyleSheet.hairlineWidth,

@@ -152,39 +152,19 @@ test("with no active Stories, Home can be pulled to refresh, and offers Find peo
 const diwali = { slug: "diwali-2026", name: "Diwali", emoji: "🪔", greeting: "Happy Diwali", startsOn: "2026-11-06", endsOn: "2026-11-11" };
 const pressByLabel = (label: string) => tree.root.find((n) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === label);
 
-test("on a festival day, Today shows its Stories from everyone, in the heading beside Activity", async () => {
+test("on a festival day, Home shows its Stories from everyone, top right beside Activity", async () => {
   mockNavigation.navigate.mockClear();
   stories.getRankedHomeFeed.mockResolvedValueOnce({ feed: [feedEntry("asha")], nextCursor: null } as never);
   festivals.getCurrentFestival.mockResolvedValueOnce({ festival: diwali, next: null, creators: ["asha", "dev"], storyCount: 5 });
   await act(async () => { tree = create(<HomeScreen />); });
   await flush();
-  // In Today's heading row, just left of Activity.
-  const header = tree.root.find((n) => n.props.testID === "today-header");
-  const order = header.findAll((n) => typeof n.type === "string" && ["Diwali Stories, 5", "Activity"].includes(n.props.accessibilityLabel)).map((n) => n.props.accessibilityLabel);
-  expect(order).toEqual(["Diwali Stories, 5", "Activity"]);
+  // A round button at the top right, left of Activity: the top left is the Story's own name and music.
+  const { StyleSheet } = jest.requireActual("react-native");
+  const style = (label: string) => StyleSheet.flatten(tree.root.find((n) => n.props.accessibilityLabel === label && n.props.style).props.style);
+  expect(style("Diwali Stories, 5").right).toBeGreaterThan(style("Activity").right);
+  expect(style("Diwali Stories, 5").top).toBe(style("Activity").top);
   await act(async () => pressByLabel("Diwali Stories, 5").props.onPress());
   expect(mockNavigation.navigate).toHaveBeenCalledWith("StoryViewer", { creators: ["asha", "dev"], startIndex: 0 });
-  await act(async () => tree.unmount());
-});
-
-test("Today: a heading, who has Stories (tap to watch just theirs), and the Stories in a polaroid", async () => {
-  mockNavigation.navigate.mockClear();
-  stories.getRankedHomeFeed.mockResolvedValueOnce({ feed: [feedEntry("asha"), feedEntry("dev")], nextCursor: null } as never);
-  await act(async () => { tree = create(<HomeScreen />); });
-  await flush();
-  const header = tree.root.find((n) => n.props.testID === "today-header");
-  expect(header.findAll((n) => typeof n.type === "string" && n.props.accessibilityRole === "header").map((n) => n.props.children)).toEqual(["Today"]);
-  const friends = tree.root.find((n) => n.props.testID === "today-friends");
-  const people = friends.findAll((n) => typeof n.props.onPress === "function" && /Stories$/.test(String(n.props.accessibilityLabel)));
-  expect(people.map((n) => n.props.accessibilityLabel)).toEqual(["Watch asha's Stories", "Watch dev's Stories"]);
-  await act(async () => people[1]!.props.onPress());
-  expect(mockNavigation.navigate).toHaveBeenCalledWith("StoryViewer", { creators: ["dev"], startIndex: 0 });
-  // The feed is told to draw polaroids below the heading.
-  expect(feedProps().postcard).toEqual({ top: expect.any(Number) });
-  // No Story of yours up: your own circle comes first, with a +, to the camera.
-  const yours = friends.find((n) => n.props.testID === "today-add-yours");
-  await act(async () => yours.props.onPress());
-  expect(mockNavigation.navigate).toHaveBeenCalledWith("Create");
   await act(async () => tree.unmount());
 });
 

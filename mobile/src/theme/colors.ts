@@ -33,28 +33,27 @@ export const darkPalette = {
 };
 
 export const lightPalette: Palette = {
-  // Postcard (the light look, Katkee's default): cream paper, white cards, warm ink.
-  background: "#FBF6EC",
-  surface: "#FFFFFF",
-  surfaceElevated: "#F3ECDD",
-  border: "#E9DFCC",
+  background: "#FFFFFF",
+  surface: "#F7F7F8",
+  surfaceElevated: "#EDEDF0",
+  border: "#DADCE0",
 
-  textPrimary: "#1E1A16",
-  textSecondary: "#6B6155",
-  textDisabled: "#A89C8B",
+  textPrimary: "#0B0B0B",
+  textSecondary: "#5C5F66",
+  textDisabled: "#A0A4AB",
 
   // Buttons are filled with Katkee's own amber and black text in both modes (deep gold fills read
   // as brown); text and icons use the deep gold below.
   accent: "#FFC800",
   accentPressed: "#EDB900",
-  onAccent: "#1E1A16",
-  accentText: "#7F5600", // deep gold: Katkee's amber, dark enough to read on cream
+  onAccent: "#0B0B0B",
+  accentText: "#8A5E00", // deep gold: Katkee's amber, dark enough to read on white
   onAccentText: "#FFFFFF",
 
   danger: "#C5221F",
   onDanger: "#FFFFFF",
   success: "#137333",
-  like: "#E2483D", // a warm red that holds up on cream
+  like: "#E0245E", // a deeper red that holds up on white
 
   overlayScrimStart: "rgba(0,0,0,0)",
   overlayScrimEnd: "rgba(0,0,0,0.65)",

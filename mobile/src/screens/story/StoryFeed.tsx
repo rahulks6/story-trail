@@ -6,7 +6,7 @@ import { Pressable } from "../../components/Pressable";
 import { isLongCaption, StoryBottomScrim, StoryCaption, StoryTopScrim } from "../../components/StoryCaption";
 import { useIsFocused } from "@react-navigation/native";
 import Video, {type VideoRef} from "react-native-video";
-import { mediaColors as colors, colors as themeColors, fonts, radii, spacing, mediaTypography as typography, ICONS } from "../../theme";
+import { mediaColors as colors, radii, spacing, mediaTypography as typography, ICONS } from "../../theme";
 import { useAuth } from "../../state/AuthContext";
 import { takeWarmStories } from "../../state/warmStories";
 import { StoryRing } from "../../components/StoryRing";
@@ -27,7 +27,7 @@ import { useReducedMotion } from "../../hooks/useReducedMotion";
 import { SponsoredStory } from "../ads/SponsoredStory";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
 import type { SponsoredPlacement } from "../../api/ads";
-import { Avatar, squircleRadius } from "../../components/Avatar";
+import { Avatar } from "../../components/Avatar";
 import { ReplySheet } from "../../components/ReplySheet";
 import { tapFeedback } from "../../utils/haptics";
 import { serverTimeMs, timeAgo } from "../../utils/serverTime";
@@ -73,12 +73,6 @@ export interface StoryFeedProps {
    * (a profile's circle, a notification), each place is a person and taps step through their Stories.
    */
   slotStoryIds?: string[];
-  /**
-   * Today (Home) in the Postcard look: each Story in a white polaroid below `top` (room the screen
-   * keeps for its own header), its caption handwritten and Like, Comment, Reply and Share in the
-   * frame's strip. Without it, the full-screen viewer.
-   */
-  postcard?: { top: number };
   initialStoryId?: string;
   onRefresh?: () => void;
   onNeedMore?: () => void;
@@ -135,7 +129,7 @@ let viewerMuted = false;
 /** The comment box (or your Story's Activity button) along the bottom. */
 const BOTTOM_BAR_HEIGHT = 46;
 
-export function StoryFeed({ creators, startIndex, slotStoryIds, postcard, initialStoryId, onClose, onOpenDM, onOpenProfile, onOpenArchived, onRefresh, onNeedMore, onCreate, onFindPeople, onInvite, discover, onOpenCreate, onOpenStory, sponsored = [], following, verified }: StoryFeedProps): React.JSX.Element {
+export function StoryFeed({ creators, startIndex, slotStoryIds, initialStoryId, onClose, onOpenDM, onOpenProfile, onOpenArchived, onRefresh, onNeedMore, onCreate, onFindPeople, onInvite, discover, onOpenCreate, onOpenStory, sponsored = [], following, verified }: StoryFeedProps): React.JSX.Element {
   // Overlays clear the status bar / notch; the bottom ones also the home indicator when no tab bar is below.
   const insets = useScreenInsets();
   const { user: authUser, accessToken } = useAuth();
@@ -147,8 +141,6 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, postcard, initia
     return () => subscription.remove();
   }, []);
   const [containerSize, onContainerLayout] = useContainerLayout();
-  // The whole screen's size, for laying out the polaroid (postcard): the photo window is containerSize.
-  const [rootSize, setRootSize] = useState({ width: 0, height: 0 });
 
   const [creatorIndex, setCreatorIndex] = useState(startIndex);
   const [storiesByCreator, setStoriesByCreator] = useState<Record<string, PublicStory[]>>({});
@@ -895,149 +887,8 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, postcard, initia
   // Holding to pause shows just the Story, like Instagram.
   const chrome = paused ? styles.chromeHidden : null;
 
-  // Postcard (Today): the photo window keeps the Story's own tall shape (9:16), so nothing the
-  // creator placed is cut off; the white frame's strip below holds the caption and the actions.
-  const topEdge = postcard ? spacing.sm : insets.top;
-  const pcWindow = (() => {
-    if (!postcard || rootSize.width === 0) return { width: 0, height: 0 };
-    const room = Math.max(0, rootSize.height - postcard.top - PC_PAD * 2 - PC_STRIP - spacing.md);
-    const width = Math.max(0, Math.min(rootSize.width - PC_SIDE * 2 - PC_PAD * 2, (room * 9) / 16));
-    return { width, height: (width * 16) / 9 };
-  })();
-  // Alternate polaroids lean a little each way; a swipe flicks the polaroid off, turning.
-  const pcLean = creatorIndex % 2 === 0 ? -1.2 : 1.2;
-  const pcTurn = dragY.interpolate({ inputRange: [-900, 0, 900], outputRange: [`${pcLean - 14}deg`, `${pcLean}deg`, `${pcLean + 14}deg`] });
-  const soundButton = (mediaKind === "video" && !creatorMuted) || currentStory.music ? (
-    <Pressable
-      onPress={() => {
-        viewerMuted = !muted;
-        setMuted(viewerMuted);
-      }}
-      hitSlop={10}
-      style={postcard ? styles.pcSound : styles.actionButton}
-      accessibilityRole="button"
-      accessibilityLabel={muted ? t("storyFeed.soundOffTapToTurn") : t("storyFeed.soundOnTapToMute")}
-    >
-      <Icon style={postcard ? styles.pcSoundIcon : styles.actionIcon} name={muted ? ICONS.audioMuted : ICONS.audioOn} />
-    </Pressable>
-  ) : null;
-  // The song's name and a collab invitation: over the photo, inside the polaroid on Today.
-  const musicLine = currentStory.music ? (
-          <View style={[styles.musicLine, chrome, { top: postcard ? spacing.sm + 48 : insets.top + spacing.lg + 40 }, postcard && styles.pcMusicLine]} pointerEvents={paused ? "none" : "box-none"}>
-            <Pressable
-              style={styles.musicPill}
-              hitSlop={6}
-              onPress={() => Alert.alert(currentStory.music!.title, t("storyFeed.attributionLicenceLicenseLicenseurl", { attribution: currentStory.music!.attribution, license: currentStory.music!.license, licenseUrl: currentStory.music!.licenseUrl }))}
-              accessibilityRole="button"
-              accessibilityLabel={t("storyFeed.musicTitleByArtist", { title: currentStory.music.title, artist: currentStory.music.artist })}
-              accessibilityHint={t("storyFeed.showsTheSongsCredit")}
-            >
-              <Icon name={ICONS.music} size={13} color="#FFFFFF" />
-              <Text style={styles.musicText} numberOfLines={1} maxFontSizeMultiplier={1.3}>{currentStory.music.title} · {currentStory.music.artist}</Text>
-            </Pressable>
-          </View>
-  ) : null;
-  const inviteBanner = invitedToCollab ? (
-        <View style={[styles.inviteBanner, chrome, { top: postcard ? spacing.sm + 52 : insets.top + spacing.lg + 52 }, postcard && styles.pcInvite]} pointerEvents={paused ? "none" : "auto"}>
-          <Text style={styles.inviteText} numberOfLines={2}>{t("storyFeed.usernameInvitedYouToCollab", { username: invitedToCollab.owner.username })}</Text>
-          <View style={styles.inviteButtons}>
-            <Pressable onPress={() => void respondToInvite(true)} disabled={collabBusy} style={[styles.inviteButton, styles.inviteAccept]} accessibilityRole="button" accessibilityLabel={t("storyFeed.acceptUsernameSCollabInvitation", { username: invitedToCollab.owner.username })}>
-              <Text style={styles.inviteAcceptLabel}>{t("common.accept")}</Text>
-            </Pressable>
-            <Pressable onPress={() => void respondToInvite(false)} disabled={collabBusy} style={styles.inviteButton} accessibilityRole="button" accessibilityLabel={t("storyFeed.declineUsernameSCollabInvitation", { username: invitedToCollab.owner.username })}>
-              <Text style={styles.inviteDeclineLabel}>{t("common.decline")}</Text>
-            </Pressable>
-          </View>
-        </View>
-  ) : null;
-  const pcStrip = postcard ? (
-    <View style={styles.pcStrip} testID="postcard-strip">
-      <View style={styles.pcTrack}>
-        <Animated.View style={[styles.pcFill, { transform: [{ scaleX: progress }] }]} />
-      </View>
-      <View style={styles.pcCaptionRow}>
-        {currentStory.caption ? (
-          <Text
-            style={[styles.pcCaption, { fontFamily: fonts.hand }]}
-            numberOfLines={1}
-            maxFontSizeMultiplier={1.2}
-            onPress={() => setCaptionExpanded((open) => !open)}
-            accessibilityRole="button"
-            accessibilityHint={t("storyFeed.showsTheWholeCaption")}
-          >
-            {currentStory.caption}
-          </Text>
-        ) : <View style={styles.pcCaptionSpacer} />}
-        {currentStory.audience === "close_friends" ? (
-          <View style={styles.closeFriendsBadge} accessible accessibilityLabel={t("storyFeed.sharedWithCloseFriends")} testID="postcard-close-friends">
-            <Icon name={ICONS.starFilled} size={11} color={colors.onAccent} />
-            <Text style={styles.closeFriendsBadgeText}>{t("common.closeFriends")}</Text>
-          </View>
-        ) : null}
-      </View>
-      <View style={styles.pcActions}>
-        <Pressable onPress={toggleLike} hitSlop={8} style={styles.pcAction} accessibilityRole="button" accessibilityLabel={detail?.viewerHasLiked ? t("storyFeed.unlike") : t("storyFeed.like")}>
-          <Icon style={[styles.pcActionIcon, detail?.viewerHasLiked && styles.pcLiked]} name={detail?.viewerHasLiked ? ICONS.liked : ICONS.like} />
-          {detail?.likeCount ? <Text style={styles.pcActionLabel} maxFontSizeMultiplier={1.2}>{detail.likeCount}</Text> : null}
-        </Pressable>
-        {isOwnStory || commentsAllowed ? (
-          <Pressable
-            onPress={() => {
-              emit("comment_open", { storyId: currentStory.id, creatorId: currentStory.ownerId });
-              if (!isOwnStory) setCommentFocus(true);
-              setCommentsOpen(true);
-            }}
-            hitSlop={8}
-            style={styles.pcAction}
-            accessibilityRole="button"
-            accessibilityLabel={isOwnStory ? t("common.comments") : t("storyFeed.addAComment")}
-          >
-            <Icon style={styles.pcActionIcon} name={ICONS.comment} />
-            {detail?.commentCount ? <Text style={styles.pcActionLabel} maxFontSizeMultiplier={1.2}>{detail.commentCount}</Text> : null}
-          </Pressable>
-        ) : null}
-        {isOwnStory ? (
-          <Pressable onPress={() => setInsightsOpen(true)} hitSlop={8} style={styles.pcAction} accessibilityRole="button" accessibilityLabel={t("storyFeed.activityViewcountViewsOpenViewers", { viewCount: viewCount ?? 0 })}>
-            <Icon style={styles.pcActionIcon} name={ICONS.viewers} />
-            <Text style={styles.pcActionLabel} maxFontSizeMultiplier={1.2}>{viewCount ?? 0}</Text>
-          </Pressable>
-        ) : (
-          <Pressable onPress={() => setReplyOpen(true)} hitSlop={8} style={styles.pcAction} accessibilityRole="button" accessibilityLabel={t("storyFeed.sendAMessageToCurrentusername", { currentUsername: currentUsername ?? "" })}>
-            <Icon style={styles.pcActionIcon} name={ICONS.send} />
-            <Text style={styles.pcActionLabel} maxFontSizeMultiplier={1.2}>{t("storyFeed.reply")}</Text>
-          </Pressable>
-        )}
-        <Pressable onPress={() => setShareOpen(true)} hitSlop={8} style={styles.pcAction} accessibilityRole="button" accessibilityLabel={t("common.share")}>
-          <Icon style={styles.pcActionIcon} name={ICONS.share} />
-        </Pressable>
-        {isOwnStory ? (
-          <Pressable onPress={() => setHighlightOpen(true)} hitSlop={8} style={styles.pcAction} accessibilityRole="button" accessibilityLabel={t("storyFeed.addThisStoryToA")}>
-            <Icon style={styles.pcActionIcon} name={highlightAdded ? ICONS.check : ICONS.add} />
-          </Pressable>
-        ) : null}
-        <Pressable onPress={() => setMoreOpen(true)} hitSlop={8} style={styles.pcAction} accessibilityRole="button" accessibilityLabel={t("storyFeed.more")}>
-          <Icon style={styles.pcActionIcon} name={ICONS.more} />
-        </Pressable>
-      </View>
-    </View>
-  ) : null;
-  /** The photo and everything on it: full screen, or the polaroid's window and strip (postcard). */
-  const framed = (content: React.ReactNode) => (postcard ? (
-    <Animated.View
-      style={[styles.pcFrame, { top: postcard.top, left: Math.max(0, (rootSize.width - pcWindow.width - PC_PAD * 2) / 2), transform: [{ translateY: dragY }, { rotate: pcTurn }] }]}
-      testID="postcard-frame"
-    >
-      <View style={[styles.pcWindow, { width: pcWindow.width, height: pcWindow.height }]} onLayout={onContainerLayout}>{content}</View>
-      {pcStrip}
-    </Animated.View>
-  ) : content);
-
   return (
-    <Animated.View
-      style={[styles.container, postcard ? { backgroundColor: themeColors.background } : { transform: [{ translateY: dragY }] }]}
-      onLayout={postcard ? (e) => setRootSize({ width: e.nativeEvent.layout.width, height: e.nativeEvent.layout.height }) : onContainerLayout}
-    >
-      {framed(<>
+    <Animated.View style={[styles.container, { transform: [{ translateY: dragY }] }]} onLayout={onContainerLayout}>
       {/* A video's first frame shows at once, instead of black until the video itself has loaded. */}
       {mediaKind === "video" && !mediaReady ? (
         <Image
@@ -1092,7 +943,7 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, postcard, initia
 
       {/* Over the photo but under the creator's text and stickers, so the caption and comment bar
           read on any photo while what the creator placed keeps its own colours. */}
-      {postcard ? null : <StoryBottomScrim height={BOTTOM_BAR_HEIGHT + insets.bottom + (currentStory.caption ? 180 : 110)} deep={captionExpanded} style={chrome} />}
+      <StoryBottomScrim height={BOTTOM_BAR_HEIGHT + insets.bottom + (currentStory.caption ? 180 : 110)} deep={captionExpanded} style={chrome} />
 
       {/*
         The tap/double-tap/hold/swipe recognizer, as its own layer rather
@@ -1174,8 +1025,8 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, postcard, initia
         <Icon style={styles.heartBurstIcon} name={ICONS.liked} />
       </Animated.View>
 
-      {postcard ? null : <StoryTopScrim height={insets.top + 120} style={chrome} />}
-      {postcard ? null : <View
+      <StoryTopScrim height={insets.top + 120} style={chrome} />
+      <View
         style={[styles.progressRow, chrome, { top: insets.top + spacing.sm }]}
         accessible
         accessibilityRole="progressbar"
@@ -1192,10 +1043,23 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, postcard, initia
             />
           </View>
         ))}
-      </View>}
+      </View>
 
-      {postcard ? null : <View style={[styles.actionRail, chrome, { bottom: railBottom, gap: railGap, maxHeight: Math.max(0, railRoom) }]} pointerEvents={paused ? "none" : "auto"}>
-        {soundButton}
+      <View style={[styles.actionRail, chrome, { bottom: railBottom, gap: railGap, maxHeight: Math.max(0, railRoom) }]} pointerEvents={paused ? "none" : "auto"}>
+        {(mediaKind === "video" && !creatorMuted) || currentStory.music ? (
+          <Pressable
+            onPress={() => {
+              viewerMuted = !muted;
+              setMuted(viewerMuted);
+            }}
+            hitSlop={10}
+            style={styles.actionButton}
+            accessibilityRole="button"
+            accessibilityLabel={muted ? t("storyFeed.soundOffTapToTurn") : t("storyFeed.soundOnTapToMute")}
+          >
+            <Icon style={styles.actionIcon} name={muted ? ICONS.audioMuted : ICONS.audioOn} />
+          </Pressable>
+        ) : null}
         <Pressable onPress={toggleLike} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel={detail?.viewerHasLiked ? t("storyFeed.unlike") : t("storyFeed.like")}>
           <Icon style={[styles.actionIcon, detail?.viewerHasLiked && styles.actionIconLiked]} name={detail?.viewerHasLiked ? ICONS.liked : ICONS.like} />
           {/* A count only once there is one, as Instagram does: no "0" or dash on a fresh Story. */}
@@ -1231,10 +1095,10 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, postcard, initia
         <Pressable onPress={() => setMoreOpen(true)} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel={t("storyFeed.more")}>
           <Icon style={styles.actionIcon} name={ICONS.more} />
         </Pressable>
-      </View>}
+      </View>
 
       {/* Who posted it and when, at the top like Instagram; tap to open their profile. */}
-      <View style={[styles.header, chrome, { top: topEdge + (postcard ? 0 : spacing.lg) }, postcard && styles.pcHeader]} pointerEvents={paused ? "none" : "box-none"}>
+      <View style={[styles.header, chrome, { top: insets.top + spacing.lg }]} pointerEvents={paused ? "none" : "box-none"}>
         {liveCollab ? (
           // A Collab Story: both creators, the owner first, each name opening their profile.
           <View style={styles.headerWho}>
@@ -1268,16 +1132,7 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, postcard, initia
             <Text style={styles.followLabel}>{followState === "requested" ? t("common.requested") : followed ? t("common.following") : t("common.follow")}</Text>
           </Pressable>
         ) : null}
-        {postcard ? soundButton : null}
       </View>
-      {postcard && currentStory.music ? musicLine : null}
-      {postcard && invitedToCollab ? inviteBanner : null}
-      {postcard && captionExpanded && currentStory.caption ? (
-        <View style={styles.pcCaptionCard} testID="postcard-caption-open">
-          <StoryCaption text={currentStory.caption} expanded onToggle={() => setCaptionExpanded(false)} />
-        </View>
-      ) : null}
-      </>)}
 
       {currentStory.music ? (
         <>
@@ -1290,11 +1145,23 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, postcard, initia
             paused={!playbackActive || !mediaReady}
             muted={muted}
           />
-          {postcard ? null : musicLine}
+          <View style={[styles.musicLine, chrome, { top: insets.top + spacing.lg + 40 }]} pointerEvents={paused ? "none" : "box-none"}>
+            <Pressable
+              style={styles.musicPill}
+              hitSlop={6}
+              onPress={() => Alert.alert(currentStory.music!.title, t("storyFeed.attributionLicenceLicenseLicenseurl", { attribution: currentStory.music!.attribution, license: currentStory.music!.license, licenseUrl: currentStory.music!.licenseUrl }))}
+              accessibilityRole="button"
+              accessibilityLabel={t("storyFeed.musicTitleByArtist", { title: currentStory.music.title, artist: currentStory.music.artist })}
+              accessibilityHint={t("storyFeed.showsTheSongsCredit")}
+            >
+              <Icon name={ICONS.music} size={13} color="#FFFFFF" />
+              <Text style={styles.musicText} numberOfLines={1} maxFontSizeMultiplier={1.3}>{currentStory.music.title} · {currentStory.music.artist}</Text>
+            </Pressable>
+          </View>
         </>
       ) : null}
 
-      {!postcard && (currentStory.caption || currentStory.audience === "close_friends") ? (
+      {currentStory.caption || currentStory.audience === "close_friends" ? (
         <View style={[styles.footer, chrome, { bottom: bottomBarRoom + spacing.lg + insets.bottom }]} pointerEvents={longCaption && !paused ? "box-none" : "none"}>
           {currentStory.audience === "close_friends" ? (
             <View style={styles.closeFriendsBadge} accessible accessibilityLabel={t("storyFeed.sharedWithCloseFriends")}>
@@ -1309,7 +1176,7 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, postcard, initia
       ) : null}
 
       {/* Your own Story: who has seen it, and keeping it in a Highlight. */}
-      {isOwnStory && !postcard ? (
+      {isOwnStory ? (
         <View style={[styles.bottomBar, chrome, { bottom: spacing.md + insets.bottom }]} pointerEvents={paused ? "none" : "auto"}>
           <Pressable onPress={() => setInsightsOpen(true)} style={styles.activityButton} accessibilityRole="button" accessibilityLabel={t("storyFeed.activityViewcountViewsOpenViewers", { viewCount: viewCount ?? 0 })}>
             <Icon name={ICONS.viewers} size={18} color={colors.textPrimary} />
@@ -1331,7 +1198,20 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, postcard, initia
         </Pressable>
       ) : null}
 
-      {invitedToCollab && !postcard ? inviteBanner : null}
+      {invitedToCollab ? (
+        // You were invited to share this Story: answer right here, as well as in Activity.
+        <View style={[styles.inviteBanner, chrome, { top: insets.top + spacing.lg + 52 }]} pointerEvents={paused ? "none" : "auto"}>
+          <Text style={styles.inviteText} numberOfLines={2}>{t("storyFeed.usernameInvitedYouToCollab", { username: invitedToCollab.owner.username })}</Text>
+          <View style={styles.inviteButtons}>
+            <Pressable onPress={() => void respondToInvite(true)} disabled={collabBusy} style={[styles.inviteButton, styles.inviteAccept]} accessibilityRole="button" accessibilityLabel={t("storyFeed.acceptUsernameSCollabInvitation", { username: invitedToCollab.owner.username })}>
+              <Text style={styles.inviteAcceptLabel}>{t("common.accept")}</Text>
+            </Pressable>
+            <Pressable onPress={() => void respondToInvite(false)} disabled={collabBusy} style={styles.inviteButton} accessibilityRole="button" accessibilityLabel={t("storyFeed.declineUsernameSCollabInvitation", { username: invitedToCollab.owner.username })}>
+              <Text style={styles.inviteDeclineLabel}>{t("common.decline")}</Text>
+            </Pressable>
+          </View>
+        </View>
+      ) : null}
 
       <QuestionAnswerSheet
         visible={!!answering}
@@ -1463,44 +1343,7 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, postcard, initia
   );
 }
 
-/** The polaroid (postcard): white border, strip under the photo, room at the sides. */
-const PC_PAD = 10;
-const PC_STRIP = 96;
-const PC_SIDE = 16;
-const PC_INK = "#1E1A16";
-
 const styles = StyleSheet.create({
-  pcFrame: {
-    position: "absolute",
-    padding: PC_PAD,
-    paddingBottom: 0,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 6,
-    shadowColor: "#3C280A",
-    shadowOpacity: 0.22,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 8,
-  },
-  pcWindow: { borderRadius: 3, overflow: "hidden", backgroundColor: "#EDE6D8" },
-  pcHeader: { left: spacing.sm, right: spacing.sm },
-  pcMusicLine: { left: spacing.sm, right: spacing.sm },
-  pcSound: { marginLeft: "auto", width: 34, height: 34, borderRadius: 11, backgroundColor: "rgba(255,255,255,0.92)", alignItems: "center", justifyContent: "center" },
-  pcSoundIcon: { color: PC_INK, fontSize: 18 },
-  pcStrip: { height: PC_STRIP, paddingTop: 8, paddingHorizontal: 2, gap: 4 },
-  pcTrack: { height: 3, borderRadius: 2, backgroundColor: "#E9DFCC", overflow: "hidden" },
-  pcFill: { height: "100%", width: "100%", backgroundColor: "#F2B200", transformOrigin: "left" },
-  pcCaptionRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
-  pcCaption: { color: PC_INK, fontSize: 19, lineHeight: 28, flexShrink: 1 },
-  pcCaptionSpacer: { flex: 1 },
-  // The whole caption, opened from the strip, over the bottom of the photo.
-  pcCaptionCard: { position: "absolute", left: 0, right: 0, bottom: 0, padding: spacing.md, backgroundColor: "rgba(0,0,0,0.72)" },
-  pcInvite: { left: spacing.sm, right: spacing.sm },
-  pcActions: { marginTop: "auto", marginBottom: 8, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  pcAction: { flexDirection: "row", alignItems: "center", gap: 5, minHeight: 36, minWidth: 36, justifyContent: "center" },
-  pcActionIcon: { color: PC_INK, fontSize: 22 },
-  pcLiked: { color: "#E2483D" },
-  pcActionLabel: { color: PC_INK, fontSize: 14, fontWeight: "700" },
   musicLine: { position: "absolute", left: spacing.md, right: spacing.md, flexDirection: "row" },
   musicPill: { flexDirection: "row", alignItems: "center", gap: 5, maxWidth: "80%", paddingHorizontal: 10, paddingVertical: 3, minHeight: 26, borderRadius: 13, backgroundColor: "rgba(0,0,0,0.35)" },
   musicText: { color: "#FFFFFF", fontSize: 12, fontWeight: "600", flexShrink: 1 },
@@ -1573,11 +1416,11 @@ const styles = StyleSheet.create({
   followingButton: { borderColor: "rgba(255,255,255,0.5)" },
   followLabel: { color: colors.textPrimary, fontWeight: "700", fontSize: 13 },
   chromeHidden: { opacity: 0 },
-  // The creator's photo inside Katkee's amber Story ring (StoryRing), round-cornered like it.
+  // The creator's photo inside Katkee's gradient Story ring (StoryRing).
   avatarRing: {
     width: 36,
     height: 36,
-    borderRadius: squircleRadius(36),
+    borderRadius: radii.pill,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.surface,

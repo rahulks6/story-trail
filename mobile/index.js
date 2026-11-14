@@ -24,7 +24,7 @@ function Root() {
   useEffect(() => {
     void loadAppearance().then(() => setApp(() => require("./App").default));
   }, []);
-  return App ? React.createElement(App) : React.createElement(View, { style: { flex: 1, backgroundColor: "#FBF6EC" } });
+  return App ? React.createElement(App) : React.createElement(View, { style: { flex: 1, backgroundColor: "#0B0B0B" } });
 }
 
 AppRegistry.registerComponent(appName, () => Root);
