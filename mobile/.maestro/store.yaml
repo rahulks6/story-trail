@@ -25,7 +25,7 @@ appId: com.katkee.app
 
 # Onboarding: a few interests, then into the app.
 - extendedWaitUntil:
-    visible: "(What are you into\\?|Home)"
+    visible: "(What are you into\\?|Today)"
     timeout: 45000
 - tapOn:
     text: "Travel"
@@ -77,21 +77,22 @@ appId: com.katkee.app
     optional: true
     waitToSettleTimeoutMs: 300
 - takeScreenshot: s01b-home-liked
+# Today moves to the next Story with a swipe up.
 - swipe:
-    direction: LEFT
+    direction: UP
     duration: 300
     optional: true
     waitToSettleTimeoutMs: 300
 - takeScreenshot: s01c-home-next
 - swipe:
-    direction: LEFT
+    direction: UP
     duration: 300
     optional: true
     waitToSettleTimeoutMs: 300
 - takeScreenshot: s01d-home-next
 
 # 2. Chats: the inbox, then Sofia's chat.
-- tapOn: "Messages.*"
+- tapOn: "Chats.*"  # the tab: "Chats", or "Chats, 2 unread"
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: s02-inbox
@@ -111,13 +112,13 @@ appId: com.katkee.app
 - runFlow: back-to-tabs.yaml
 
 # 3. Profile, with Highlights and a cover photo.
-- tapOn: "Profile"
+- tapOn: "Me"
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: s04-profile
 
 # 4. Activity: likes, comments and follows.
-- tapOn: "Home"
+- tapOn: "Today"
 - tapOn:
     text: "Activity.*"
     optional: true

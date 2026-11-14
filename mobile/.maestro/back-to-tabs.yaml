@@ -4,7 +4,7 @@ appId: com.katkee.app
 - repeat:
     times: 4
     while:
-      notVisible: "Messages.*"  # the tab, with or without an unread count
+      notVisible: "Chats.*"  # the tab, with or without an unread count
     commands:
       - pressKey: Back
       - waitForAnimationToEnd:

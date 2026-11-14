@@ -125,7 +125,7 @@ appId: com.katkee.app
 - takeScreenshot: v06-after-text-b
 - tapOn: "Your story"
 - extendedWaitUntil:
-    visible: "Home"
+    visible: "Today"
     timeout: 30000
 - takeScreenshot: v07-posting
 # Wait for the server to finish the video, then open it.
@@ -134,11 +134,11 @@ appId: com.katkee.app
     while:
       notVisible: "Open your Story"
     commands:
-      - tapOn: "Home"
-      - tapOn: "Profile"
+      - tapOn: "Today"
+      - tapOn: "Me"
       - waitForAnimationToEnd:
           timeout: 5000
-- tapOn: "Profile"
+- tapOn: "Me"
 - extendedWaitUntil:
     visible: "Open your Story"
     timeout: 60000
