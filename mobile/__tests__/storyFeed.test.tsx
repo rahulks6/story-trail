@@ -201,6 +201,42 @@ test("Today (postcard): the Story sits in a polaroid, its caption and actions in
   expect(tree.root.findAll((n) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === "More")).toHaveLength(1);
 });
 
+test("Today (postcard): tapping the caption opens it in full over the photo, and taps close it", async () => {
+  await renderFeed("viewer", ["alice", "bob"], ["a1", "b1"], { top: 150 });
+  expect(tree.root.findAll((n) => n.props.testID === "postcard-caption-open")).toHaveLength(0);
+  const caption = tree.root.find((n) => n.props.testID === "postcard-strip").findAll((n) => n.type === Text && typeof n.props.onPress === "function")[0]!;
+  await act(async () => caption.props.onPress());
+  const open = tree.root.find((n) => n.props.testID === "postcard-caption-open");
+  expect(open.findAllByType(Text).map((t) => [t.props.children].flat().join(""))).toContain("Caption a1");
+  // It sits inside the polaroid, not over the page.
+  expect(tree.root.find((n) => n.props.testID === "postcard-frame").findAll((n) => n.props.testID === "postcard-caption-open").length).toBeGreaterThan(0);
+  await act(async () => caption.props.onPress());
+  expect(tree.root.findAll((n) => n.props.testID === "postcard-caption-open")).toHaveLength(0);
+});
+
+test("Today (postcard): a Close Friends Story says so in the strip", async () => {
+  const detail = engagementApi.getStoryDetail as jest.Mock;
+  const usual = detail.getMockImplementation();
+  detail.mockImplementation(async (id: string) => ({
+    story: {
+      id, ownerId: id.startsWith("a") ? "u-alice" : "u-bob", mediaId: `m-${id}`, caption: `Caption ${id}`, audience: "close_friends",
+      allowComments: "everyone", allowSharing: true, createdAt: "2026-10-06 08:00:00+00", expiresAt: "2026-10-07 08:00:00+00",
+      likeCount: 0, commentCount: 0, viewCount: 0, viewerHasLiked: false, overlays: [], drawing: [], filter: "original",
+      audioMuted: false, crop: { zoom: 1, offsetX: 0, offsetY: 0 },
+    },
+  }));
+  const stories = jest.requireMock("../src/api/stories") as { getUserActiveStories: jest.Mock };
+  stories.getUserActiveStories.mockImplementationOnce(async () => ({ stories: [{
+    id: "a1", ownerId: "u-alice", mediaId: "m-a1", caption: "Caption a1", audience: "close_friends", allowComments: "everyone", allowSharing: true,
+    createdAt: "2026-10-06 08:00:00+00", expiresAt: "2026-10-07 08:00:00+00", overlays: [], drawing: [], filter: "original",
+    audioMuted: false, crop: { zoom: 1, offsetX: 0, offsetY: 0 }, media: null,
+  }] }));
+  await renderFeed("viewer", ["alice", "bob"], ["a1", "b1"], { top: 150 });
+  const strip = tree.root.find((n) => n.props.testID === "postcard-strip");
+  expect(strip.findAll((n) => n.props.testID === "postcard-close-friends").length).toBeGreaterThan(0);
+  detail.mockImplementation(usual);
+});
+
 test("swipe up moves to the next creator, swipe down back; holding pauses without moving", async () => {
   await renderFeed();
   await gesture([200, 600], [200, 400]);

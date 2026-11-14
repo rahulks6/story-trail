@@ -1329,6 +1329,7 @@ export const es: Partial<Catalogue> = {
   "storyFeed.addAComment": "Añadir un comentario",
   "storyFeed.sendAMessage": "Enviar un mensaje…",
   "storyFeed.sharedWithCloseFriends": "Compartida con Mejores amigos",
+  "storyFeed.showsTheWholeCaption": "Muestra el texto completo",
   "storyFeed.showsTheSongsCredit": "Muestra los créditos de la canción",
   "storyFeed.attributionLicenceLicenseLicenseurl": "{attribution}\n\nLicencia: {license}\n{licenseUrl}",
   "storyFeed.more": "Más",

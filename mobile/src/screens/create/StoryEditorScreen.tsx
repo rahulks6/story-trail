@@ -2,7 +2,7 @@ import { useMediaStatusBar } from "../../hooks/useMediaStatusBar";
 import { Icon } from "../../components/Icon";
 import { KeyboardAvoider } from "../../components/KeyboardAvoider";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Animated, BackHandler, Dimensions, Image, Keyboard, PanResponder, PixelRatio, StyleSheet, Text, TextInput, View, useWindowDimensions, type GestureResponderEvent, type LayoutChangeEvent } from "react-native";
+import { ActivityIndicator, Alert, Animated, BackHandler, Dimensions, Image, Keyboard, PanResponder, PixelRatio, Platform, StyleSheet, Text, TextInput, View, useWindowDimensions, type GestureResponderEvent, type LayoutChangeEvent } from "react-native";
 import { Pressable } from "../../components/Pressable";
 import Video, { ViewType, type VideoRef } from "react-native-video";
 import Svg, { Defs, LinearGradient as SvgGradient, Rect, Stop } from "react-native-svg";
@@ -1429,7 +1429,7 @@ const styles = StyleSheet.create({
   shareButton: { flex: 1, height: 50, paddingHorizontal: spacing.md, borderRadius: radii.pill, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm },
   // The Postcard look: a solid paper-white "Post to my day", and "Only close friends" outlined in green.
   shareYourStory: { backgroundColor: "#FFFFFF" },
-  shareYourStoryLabel: { color: "#1E1A16", fontFamily: fonts.display, fontSize: 17, flexShrink: 1 },
+  shareYourStoryLabel: { color: "#1E1A16", fontFamily: fonts.display, fontSize: 17, flexShrink: 1, ...(Platform.OS === "ios" ? { fontWeight: "700" as const } : {}) },
   shareCloseFriends: { backgroundColor: "rgba(0,0,0,0.35)", borderWidth: 1.5, borderColor: CLOSE_FRIENDS_GREEN },
   shareCloseFriendsLabel: { color: CLOSE_FRIENDS_GREEN, fontWeight: "700", fontSize: 15, flexShrink: 1 },
   // A soft dark fade behind the caption and buttons, so they read over any photo.

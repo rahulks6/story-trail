@@ -1531,6 +1531,7 @@ export const en = {
   "storyFeed.addAComment": "Add a comment",
   "storyFeed.sendAMessage": "Send a message…",
   "storyFeed.sharedWithCloseFriends": "Shared with Close Friends",
+  "storyFeed.showsTheWholeCaption": "Shows the whole caption",
   "storyFeed.showsTheSongsCredit": "Shows the song's credit",
   "storyFeed.attributionLicenceLicenseLicenseurl": "{attribution}\n\nLicence: {license}\n{licenseUrl}",
   "storyFeed.more": "More",

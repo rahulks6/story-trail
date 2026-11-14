@@ -921,14 +921,60 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, postcard, initia
       <Icon style={postcard ? styles.pcSoundIcon : styles.actionIcon} name={muted ? ICONS.audioMuted : ICONS.audioOn} />
     </Pressable>
   ) : null;
+  // The song's name and a collab invitation: over the photo, inside the polaroid on Today.
+  const musicLine = currentStory.music ? (
+          <View style={[styles.musicLine, chrome, { top: postcard ? spacing.sm + 48 : insets.top + spacing.lg + 40 }, postcard && styles.pcMusicLine]} pointerEvents={paused ? "none" : "box-none"}>
+            <Pressable
+              style={styles.musicPill}
+              hitSlop={6}
+              onPress={() => Alert.alert(currentStory.music!.title, t("storyFeed.attributionLicenceLicenseLicenseurl", { attribution: currentStory.music!.attribution, license: currentStory.music!.license, licenseUrl: currentStory.music!.licenseUrl }))}
+              accessibilityRole="button"
+              accessibilityLabel={t("storyFeed.musicTitleByArtist", { title: currentStory.music.title, artist: currentStory.music.artist })}
+              accessibilityHint={t("storyFeed.showsTheSongsCredit")}
+            >
+              <Icon name={ICONS.music} size={13} color="#FFFFFF" />
+              <Text style={styles.musicText} numberOfLines={1} maxFontSizeMultiplier={1.3}>{currentStory.music.title} · {currentStory.music.artist}</Text>
+            </Pressable>
+          </View>
+  ) : null;
+  const inviteBanner = invitedToCollab ? (
+        <View style={[styles.inviteBanner, chrome, { top: postcard ? spacing.sm + 52 : insets.top + spacing.lg + 52 }, postcard && styles.pcInvite]} pointerEvents={paused ? "none" : "auto"}>
+          <Text style={styles.inviteText} numberOfLines={2}>{t("storyFeed.usernameInvitedYouToCollab", { username: invitedToCollab.owner.username })}</Text>
+          <View style={styles.inviteButtons}>
+            <Pressable onPress={() => void respondToInvite(true)} disabled={collabBusy} style={[styles.inviteButton, styles.inviteAccept]} accessibilityRole="button" accessibilityLabel={t("storyFeed.acceptUsernameSCollabInvitation", { username: invitedToCollab.owner.username })}>
+              <Text style={styles.inviteAcceptLabel}>{t("common.accept")}</Text>
+            </Pressable>
+            <Pressable onPress={() => void respondToInvite(false)} disabled={collabBusy} style={styles.inviteButton} accessibilityRole="button" accessibilityLabel={t("storyFeed.declineUsernameSCollabInvitation", { username: invitedToCollab.owner.username })}>
+              <Text style={styles.inviteDeclineLabel}>{t("common.decline")}</Text>
+            </Pressable>
+          </View>
+        </View>
+  ) : null;
   const pcStrip = postcard ? (
     <View style={styles.pcStrip} testID="postcard-strip">
       <View style={styles.pcTrack}>
         <Animated.View style={[styles.pcFill, { transform: [{ scaleX: progress }] }]} />
       </View>
-      {currentStory.caption ? (
-        <Text style={[styles.pcCaption, { fontFamily: fonts.hand }]} numberOfLines={1} maxFontSizeMultiplier={1.2}>{currentStory.caption}</Text>
-      ) : null}
+      <View style={styles.pcCaptionRow}>
+        {currentStory.caption ? (
+          <Text
+            style={[styles.pcCaption, { fontFamily: fonts.hand }]}
+            numberOfLines={1}
+            maxFontSizeMultiplier={1.2}
+            onPress={() => setCaptionExpanded((open) => !open)}
+            accessibilityRole="button"
+            accessibilityHint={t("storyFeed.showsTheWholeCaption")}
+          >
+            {currentStory.caption}
+          </Text>
+        ) : <View style={styles.pcCaptionSpacer} />}
+        {currentStory.audience === "close_friends" ? (
+          <View style={styles.closeFriendsBadge} accessible accessibilityLabel={t("storyFeed.sharedWithCloseFriends")} testID="postcard-close-friends">
+            <Icon name={ICONS.starFilled} size={11} color={colors.onAccent} />
+            <Text style={styles.closeFriendsBadgeText}>{t("common.closeFriends")}</Text>
+          </View>
+        ) : null}
+      </View>
       <View style={styles.pcActions}>
         <Pressable onPress={toggleLike} hitSlop={8} style={styles.pcAction} accessibilityRole="button" accessibilityLabel={detail?.viewerHasLiked ? t("storyFeed.unlike") : t("storyFeed.like")}>
           <Icon style={[styles.pcActionIcon, detail?.viewerHasLiked && styles.pcLiked]} name={detail?.viewerHasLiked ? ICONS.liked : ICONS.like} />
@@ -1224,6 +1270,13 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, postcard, initia
         ) : null}
         {postcard ? soundButton : null}
       </View>
+      {postcard && currentStory.music ? musicLine : null}
+      {postcard && invitedToCollab ? inviteBanner : null}
+      {postcard && captionExpanded && currentStory.caption ? (
+        <View style={styles.pcCaptionCard} testID="postcard-caption-open">
+          <StoryCaption text={currentStory.caption} expanded onToggle={() => setCaptionExpanded(false)} />
+        </View>
+      ) : null}
       </>)}
 
       {currentStory.music ? (
@@ -1237,19 +1290,7 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, postcard, initia
             paused={!playbackActive || !mediaReady}
             muted={muted}
           />
-          <View style={[styles.musicLine, chrome, { top: postcard ? postcard.top + PC_PAD + 54 : insets.top + spacing.lg + 40 }, postcard && styles.pcMusicLine]} pointerEvents={paused ? "none" : "box-none"}>
-            <Pressable
-              style={styles.musicPill}
-              hitSlop={6}
-              onPress={() => Alert.alert(currentStory.music!.title, t("storyFeed.attributionLicenceLicenseLicenseurl", { attribution: currentStory.music!.attribution, license: currentStory.music!.license, licenseUrl: currentStory.music!.licenseUrl }))}
-              accessibilityRole="button"
-              accessibilityLabel={t("storyFeed.musicTitleByArtist", { title: currentStory.music.title, artist: currentStory.music.artist })}
-              accessibilityHint={t("storyFeed.showsTheSongsCredit")}
-            >
-              <Icon name={ICONS.music} size={13} color="#FFFFFF" />
-              <Text style={styles.musicText} numberOfLines={1} maxFontSizeMultiplier={1.3}>{currentStory.music.title} · {currentStory.music.artist}</Text>
-            </Pressable>
-          </View>
+          {postcard ? null : musicLine}
         </>
       ) : null}
 
@@ -1290,20 +1331,7 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, postcard, initia
         </Pressable>
       ) : null}
 
-      {invitedToCollab ? (
-        // You were invited to share this Story: answer right here, as well as in Activity.
-        <View style={[styles.inviteBanner, chrome, { top: postcard ? postcard.top + 60 : insets.top + spacing.lg + 52 }]} pointerEvents={paused ? "none" : "auto"}>
-          <Text style={styles.inviteText} numberOfLines={2}>{t("storyFeed.usernameInvitedYouToCollab", { username: invitedToCollab.owner.username })}</Text>
-          <View style={styles.inviteButtons}>
-            <Pressable onPress={() => void respondToInvite(true)} disabled={collabBusy} style={[styles.inviteButton, styles.inviteAccept]} accessibilityRole="button" accessibilityLabel={t("storyFeed.acceptUsernameSCollabInvitation", { username: invitedToCollab.owner.username })}>
-              <Text style={styles.inviteAcceptLabel}>{t("common.accept")}</Text>
-            </Pressable>
-            <Pressable onPress={() => void respondToInvite(false)} disabled={collabBusy} style={styles.inviteButton} accessibilityRole="button" accessibilityLabel={t("storyFeed.declineUsernameSCollabInvitation", { username: invitedToCollab.owner.username })}>
-              <Text style={styles.inviteDeclineLabel}>{t("common.decline")}</Text>
-            </Pressable>
-          </View>
-        </View>
-      ) : null}
+      {invitedToCollab && !postcard ? inviteBanner : null}
 
       <QuestionAnswerSheet
         visible={!!answering}
@@ -1456,13 +1484,18 @@ const styles = StyleSheet.create({
   },
   pcWindow: { borderRadius: 3, overflow: "hidden", backgroundColor: "#EDE6D8" },
   pcHeader: { left: spacing.sm, right: spacing.sm },
-  pcMusicLine: { left: PC_SIDE + PC_PAD + spacing.sm, right: PC_SIDE + PC_PAD + spacing.sm },
+  pcMusicLine: { left: spacing.sm, right: spacing.sm },
   pcSound: { marginLeft: "auto", width: 34, height: 34, borderRadius: 11, backgroundColor: "rgba(255,255,255,0.92)", alignItems: "center", justifyContent: "center" },
   pcSoundIcon: { color: PC_INK, fontSize: 18 },
   pcStrip: { height: PC_STRIP, paddingTop: 8, paddingHorizontal: 2, gap: 4 },
   pcTrack: { height: 3, borderRadius: 2, backgroundColor: "#E9DFCC", overflow: "hidden" },
   pcFill: { height: "100%", width: "100%", backgroundColor: "#F2B200", transformOrigin: "left" },
-  pcCaption: { color: PC_INK, fontSize: 19, lineHeight: 28 },
+  pcCaptionRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
+  pcCaption: { color: PC_INK, fontSize: 19, lineHeight: 28, flexShrink: 1 },
+  pcCaptionSpacer: { flex: 1 },
+  // The whole caption, opened from the strip, over the bottom of the photo.
+  pcCaptionCard: { position: "absolute", left: 0, right: 0, bottom: 0, padding: spacing.md, backgroundColor: "rgba(0,0,0,0.72)" },
+  pcInvite: { left: spacing.sm, right: spacing.sm },
   pcActions: { marginTop: "auto", marginBottom: 8, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   pcAction: { flexDirection: "row", alignItems: "center", gap: 5, minHeight: 36, minWidth: 36, justifyContent: "center" },
   pcActionIcon: { color: PC_INK, fontSize: 22 },

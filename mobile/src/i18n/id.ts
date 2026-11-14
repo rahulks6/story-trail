@@ -1329,6 +1329,7 @@ export const id: Partial<Catalogue> = {
   "storyFeed.addAComment": "Tambahkan komentar",
   "storyFeed.sendAMessage": "Kirim pesan…",
   "storyFeed.sharedWithCloseFriends": "Dibagikan ke Teman Dekat",
+  "storyFeed.showsTheWholeCaption": "Menampilkan seluruh keterangan",
   "storyFeed.showsTheSongsCredit": "Menampilkan kredit lagu",
   "storyFeed.attributionLicenceLicenseLicenseurl": "{attribution}\n\nLisensi: {license}\n{licenseUrl}",
   "storyFeed.more": "Lainnya",

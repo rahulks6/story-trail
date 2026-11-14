@@ -37,6 +37,7 @@ export function HomeScreen():React.JSX.Element {
   <Icon name={ICONS.notifications} size={24} color={colors.textPrimary}/>{unreadCount>0?<View style={styles.activityDot}/>:null}
  </Pressable>;
  const uploads=<UploadStatusPill top={insets.top+spacing.xl+spacing.sm}/>;
+ const [headerHeight,setHeaderHeight]=useState(0);
  const [feed,setFeed]=useState<RankedFeedEntry[]|null>(null),[retry,setRetry]=useState(0),[error,setError]=useState(''),[cursor,setCursor]=useState<string|null>(null),[sponsored,setSponsored]=useState<SponsoredPlacement[]>([]);
  // On a festival day: its emoji in a round button beside Activity opens everyone's festival Stories (or the camera),
  // so the top left stays the Story's own name, time and music.
@@ -117,14 +118,15 @@ export function HomeScreen():React.JSX.Element {
   </View>
  </ScrollView>{festivalButton}{activityButton}{uploads}{contactsJoined}</View>;
  // Today: the heading and date, who has Stories (tap one to watch just theirs), then the polaroids.
- const todayTop=insets.top+TODAY_HEADER;
+ // Measured, so larger text never runs into the polaroid.
+ const todayTop=Math.max(insets.top+TODAY_HEADER,headerHeight);
  const friends=(feed??[]).slice(0,30);
- const today=<View style={[styles.today,{paddingTop:insets.top+spacing.sm}]} pointerEvents="box-none" testID="today-header">
+ const today=<View style={[styles.today,{paddingTop:insets.top+spacing.sm}]} pointerEvents="box-none" testID="today-header" onLayout={e=>{const h=Math.ceil(e.nativeEvent.layout.height)+spacing.sm;if(Math.abs(h-headerHeight)>1)setHeaderHeight(h);}}>
   <View style={styles.todayRow}>
-   <Text style={typography.displayLarge} accessibilityRole="header">{t("bottomTabBar.today")}</Text>
-   <Text style={styles.todayDate}>{new Date().toLocaleDateString(localeTag(),{weekday:'short',day:'numeric',month:'short'})}</Text>
+   <Text style={typography.displayLarge} accessibilityRole="header" maxFontSizeMultiplier={1.4}>{t("bottomTabBar.today")}</Text>
+   <Text style={styles.todayDate} maxFontSizeMultiplier={1.4}>{new Date().toLocaleDateString(localeTag(),{weekday:'short',day:'numeric',month:'short'})}</Text>
    <View style={styles.todaySpacer}/>
-   {festival?<Pressable onPress={openFestival} hitSlop={8} style={styles.todayButton} accessibilityRole="button" accessibilityLabel={festivalCreators.length?t("home.nameStoriesStorycount", { name: festival.name, storyCount: festivalInfo?.storyCount??0 }):t("home.postYourNameStory", { name: festival.name })}><Text style={styles.festivalEmoji}>{festival.emoji}</Text></Pressable>:null}
+   {festival?<Pressable onPress={openFestival} hitSlop={8} style={styles.todayButton} accessibilityRole="button" accessibilityLabel={festivalCreators.length?t("home.nameStoriesStorycount", { name: festival.name, storyCount: festivalInfo?.storyCount??0 }):t("home.postYourNameStory", { name: festival.name })}><Text style={styles.festivalEmoji}>{festival.emoji}</Text>{festivalCreators.length?<View style={styles.festivalCount}><Text style={styles.festivalCountLabel}>{festivalInfo!.storyCount>99?'99+':festivalInfo!.storyCount}</Text></View>:null}</Pressable>:null}
    <Pressable onPress={()=>navigation.navigate('Activity')} hitSlop={8} style={styles.todayButton} accessibilityRole="button" accessibilityLabel={unreadCount>0?t("home.activityUnreadcountNew", { unreadCount }):t("common.activity")}>
     <Icon name={ICONS.notifications} size={22} color={colors.textPrimary}/>{unreadCount>0?<View style={styles.activityDot}/>:null}
    </Pressable>
@@ -132,7 +134,7 @@ export function HomeScreen():React.JSX.Element {
   <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.friends} testID="today-friends">
    {friends.map(entry=><Pressable key={entry.owner.id} style={styles.friend} onPress={()=>navigation.navigate('StoryViewer',{creators:[entry.owner.username],startIndex:0,...(entry.owner.verified?{verifiedCreators:[entry.owner.username]}:{})})} accessibilityRole="button" accessibilityLabel={t("home.watchNameStories",{name:entry.owner.displayName||entry.owner.username})}>
     <View style={styles.friendRing}><StoryRing size={FRIEND_SIZE} width={2.5}/><Avatar username={entry.owner.username} avatarMediaId={entry.owner.avatarMediaId??null} size={FRIEND_SIZE-10}/></View>
-    <Text style={styles.friendName} numberOfLines={1}>{entry.owner.id===user?.id?t("home.you"):(entry.owner.displayName||entry.owner.username).split(' ')[0]}</Text>
+    <Text style={styles.friendName} numberOfLines={1} maxFontSizeMultiplier={1.3}>{entry.owner.id===user?.id?t("home.you"):(entry.owner.displayName||entry.owner.username).split(' ')[0]}</Text>
    </Pressable>)}
   </ScrollView>
  </View>;
@@ -141,8 +143,8 @@ export function HomeScreen():React.JSX.Element {
   onOpenDM={openDM} onOpenProfile={openProfile}
   onOpenCreate={()=>navigation.navigate('Create')} onOpenStory={(username,storyId)=>navigation.navigate('StoryViewer',{creators:[username],startIndex:0,initialStoryId:storyId})}/>
   {today}
-  {!!error&&<View style={[styles.error,{top:insets.top+spacing.xl+40}]}><Text style={typography.caption}>{error}</Text><Pressable onPress={more} accessibilityRole="button"><Text style={typography.body}>{t("common.retry")}</Text></Pressable><Pressable onPress={refresh} accessibilityRole="button"><Text style={typography.body}>{t("common.refresh")}</Text></Pressable></View>}
-  {uploads}{contactsJoined}
+  {!!error&&<View style={[styles.error,{top:todayTop}]}><Text style={typography.caption}>{error}</Text><Pressable onPress={more} accessibilityRole="button"><Text style={typography.body}>{t("common.retry")}</Text></Pressable><Pressable onPress={refresh} accessibilityRole="button"><Text style={typography.body}>{t("common.refresh")}</Text></Pressable></View>}
+  <UploadStatusPill top={todayTop+spacing.xs}/>{contactsJoined}
  </View>;
 }
 /** Room above the polaroid for Today's heading and the row of friends. */

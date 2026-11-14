@@ -1430,6 +1430,7 @@ export const mr: Catalogue = {
   "storyFeed.addAComment": "कमेंट करा",
   "storyFeed.sendAMessage": "मेसेज पाठवा…",
   "storyFeed.sharedWithCloseFriends": "क्लोज फ्रेंड्ससोबत शेअर केलेली",
+  "storyFeed.showsTheWholeCaption": "पूर्ण कॅप्शन दाखवते",
   "storyFeed.showsTheSongsCredit": "गाण्याचे क्रेडिट दाखवते",
   "storyFeed.attributionLicenceLicenseLicenseurl": "{attribution}\n\nपरवाना: {license}\n{licenseUrl}",
   "storyFeed.more": "आणखी",

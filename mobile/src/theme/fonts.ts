@@ -8,8 +8,6 @@ import { Platform } from "react-native";
 export const fonts = {
   /** Big headings: "Today", names on profiles, sheet titles. */
   display: Platform.select({ android: "Baloo2-ExtraBold", default: "System" }) as string,
-  /** Smaller headings and labels that want the same voice. */
-  displaySemi: Platform.select({ android: "Baloo2-SemiBold", default: "System" }) as string,
   /** Handwritten captions on polaroids. */
   hand: Platform.select({ android: "Pacifico-Regular", default: "SnellRoundhand-Bold" }) as string,
 };

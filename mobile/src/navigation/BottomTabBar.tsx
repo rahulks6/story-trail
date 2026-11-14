@@ -54,13 +54,12 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
     if (hidden) reportHeight?.(0);
   }, [hidden, reportHeight]);
   if (hidden) return <View />;
-  // Today is cream like every other tab now (the Postcard look): no dark bar on Home.
-  const onMedia = false;
-  const ink = onMedia ? mediaColors.textPrimary : colors.textPrimary;
+  // Today is cream like every other tab (the Postcard look), so the bar is the same everywhere.
+  const ink = colors.textPrimary;
 
   return (
     <View
-      style={[styles.container, onMedia && styles.containerOnMedia, { paddingBottom: Math.max(bottom, spacing.xs) }]}
+      style={[styles.container, { paddingBottom: Math.max(bottom, spacing.xs) }]}
       onLayout={(e) => reportHeight?.(e.nativeEvent.layout.height)}
       accessibilityRole="tablist"
     >
@@ -91,8 +90,9 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
               style={styles.tabItem}
             >
               <View style={[styles.postButton, { backgroundColor: ink }]} testID="tab-post">
-                <Icon name={ICONS.add} size={22} color={onMedia ? mediaColors.background : colors.background} />
+                <Icon name={ICONS.add} size={22} color={colors.background} />
               </View>
+              <Text style={[styles.tabLabel, { color: ink }, !isFocused && styles.tabLabelIdle]} numberOfLines={1} maxFontSizeMultiplier={1.2} accessible={false}>{label}</Text>
             </Pressable>
           );
         }
@@ -120,7 +120,7 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
                 <TabIcon focused={isFocused} name={TAB_ICONS[route.name] ?? "home"} color={ink} />
               )}
               {showUnreadBadge ? (
-                <View style={[styles.unreadBadge, { borderColor: onMedia ? mediaColors.background : colors.background }]}>
+                <View style={[styles.unreadBadge, { borderColor: colors.background }]}>
                   <Text style={styles.unreadBadgeText} maxFontSizeMultiplier={1.2}>{badgeCount > 99 ? "99+" : badgeCount}</Text>
                 </View>
               ) : null}
@@ -173,7 +173,6 @@ const styles = StyleSheet.create({
     borderTopColor: colors.border,
     paddingTop: spacing.xs,
   },
-  containerOnMedia: { backgroundColor: mediaColors.background, borderTopColor: "rgba(255,255,255,0.08)" },
   tabItem: {
     minHeight: 50,
     flex: 1,

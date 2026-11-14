@@ -1329,6 +1329,7 @@ export const ar: Partial<Catalogue> = {
   "storyFeed.addAComment": "إضافة تعليق",
   "storyFeed.sendAMessage": "إرسال رسالة…",
   "storyFeed.sharedWithCloseFriends": "تمت المشاركة مع الأصدقاء المقربين",
+  "storyFeed.showsTheWholeCaption": "يعرض التعليق كاملًا",
   "storyFeed.showsTheSongsCredit": "يعرض حقوق الأغنية",
   "storyFeed.attributionLicenceLicenseLicenseurl": "{attribution}\n\nالترخيص: {license}\n{licenseUrl}",
   "storyFeed.more": "المزيد",

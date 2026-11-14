@@ -44,6 +44,9 @@ test("the tab bar is exactly Today | Explore | Post | Chats | Me, with unread co
   // Activity opens from the heart at the top of Home.
   expect(tabs(tree)).toEqual(["Today", "Explore", "Create a Story", "Chats, 120 unread", "Me"]);
   expect(JSON.stringify(tree.toJSON())).not.toMatch(/Discover|Reels|Admin|Ads Manager/);
+  // Every tab has its name under it, the Post button too.
+  const post = tree.root.find((n) => typeof n.type === "string" && n.props.accessibilityRole === "tab" && n.props.accessibilityLabel === "Create a Story");
+  expect(post.findAll((n) => typeof n.type === "string" && n.props.children === "Post").length).toBeGreaterThan(0);
 });
 
 test("screen readers get a tab list with the current tab selected, above the home indicator", async () => {

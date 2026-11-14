@@ -1430,6 +1430,7 @@ export const hi: Catalogue = {
   "storyFeed.addAComment": "कमेंट करें",
   "storyFeed.sendAMessage": "मैसेज भेजें…",
   "storyFeed.sharedWithCloseFriends": "क्लोज़ फ़्रेंड्स के साथ शेयर की गई",
+  "storyFeed.showsTheWholeCaption": "पूरा कैप्शन दिखाता है",
   "storyFeed.showsTheSongsCredit": "गाने का क्रेडिट दिखाता है",
   "storyFeed.attributionLicenceLicenseLicenseurl": "{attribution}\n\nलाइसेंस: {license}\n{licenseUrl}",
   "storyFeed.more": "और",
