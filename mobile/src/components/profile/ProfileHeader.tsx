@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Pressable } from "../Pressable";
 import { StoryRing } from "../StoryRing";
-import { Avatar } from "../Avatar";
+import { Avatar, squircleRadius } from "../Avatar";
 import { FadeInImage } from "../FadeInImage";
 import { coverFileUrl } from "../../api/users";
 import { useAuth } from "../../state/AuthContext";
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   ring: {
     width: RING_SIZE,
     height: RING_SIZE,
-    borderRadius: RING_SIZE / 2,
+    borderRadius: squircleRadius(RING_SIZE),
     // The ring is drawn (StoryRing) over the whole box; the photo sits in the middle.
     alignItems: "center",
     justifyContent: "center",

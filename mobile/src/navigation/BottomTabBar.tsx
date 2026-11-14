@@ -8,16 +8,17 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, mediaColors, radii, spacing, ICONS } from "../theme";
 import { useDM } from "../state/DMContext";
 import { useAuth } from "../state/AuthContext";
-import { Avatar } from "../components/Avatar";
+import { Avatar, squircleRadius } from "../components/Avatar";
 import { tapFeedback } from "../utils/haptics";
 import { t } from "../i18n";
 
+// Named the Postcard way: Today, Explore, Post, Chats, Me.
 const TAB_LABELS: Record<string, string> = {
-  get Home() { return t("bottomTabBar.home"); },
-  get Search() { return t("common.search"); },
-  Create: "",
-  get DM() { return t("common.messages"); },
-  get Profile() { return t("bottomTabBar.profile"); },
+  get Home() { return t("bottomTabBar.today"); },
+  get Search() { return t("bottomTabBar.explore"); },
+  get Create() { return t("bottomTabBar.post"); },
+  get DM() { return t("bottomTabBar.chats"); },
+  get Profile() { return t("bottomTabBar.me"); },
 };
 
 const TAB_ICONS: Record<string, import("../theme/icons").IconName> = {
@@ -28,9 +29,9 @@ const TAB_ICONS: Record<string, import("../theme/icons").IconName> = {
 };
 
 /**
- * Custom bottom tab bar: HOME | SEARCH | + | DM | PROFILE, as Instagram draws it: icons only (each
- * tab still has its name for screen readers), the current one solid, Create a + in a rounded
- * square, and Profile your own photo. Black on Home, where Stories fill the screen behind it.
+ * Custom bottom tab bar (the Postcard look): Today | Explore | Post | Chats | Me, each icon with its
+ * name under it, the current one solid and darker, Post a solid ink button with a +, and Me your
+ * own photo. Black on Home, where Stories fill the screen behind it.
  * Hidden where the screen needs all of it: the camera and Story editor, and an open chat.
  */
 export function tabBarHidden(state: BottomTabBarProps["state"]): boolean {
@@ -88,7 +89,9 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
               onPress={onPress}
               style={styles.tabItem}
             >
-              <Icon name={ICONS.create} framed size={26} color={ink} />
+              <View style={[styles.postButton, { backgroundColor: ink }]} testID="tab-post">
+                <Icon name={ICONS.add} size={22} color={onMedia ? mediaColors.background : colors.background} />
+              </View>
             </Pressable>
           );
         }
@@ -121,6 +124,7 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
                 </View>
               ) : null}
             </View>
+            <Text style={[styles.tabLabel, { color: ink }, !isFocused && styles.tabLabelIdle]} numberOfLines={1} maxFontSizeMultiplier={1.2} accessible={false}>{label}</Text>
           </Pressable>
         );
       })}
@@ -176,7 +180,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   tabContent: { alignItems: "center", justifyContent: "center" },
-  profileRing: { width: 30, height: 30, borderRadius: 15, borderWidth: 1.5, borderColor: "transparent", alignItems: "center", justifyContent: "center" },
+  tabLabel: { fontSize: 11, fontWeight: "700", marginTop: 2 },
+  tabLabelIdle: { fontWeight: "500", opacity: 0.6 },
+  postButton: { width: 46, height: 32, borderRadius: 11, alignItems: "center", justifyContent: "center" },
+  profileRing: { width: 30, height: 30, borderRadius: squircleRadius(30), borderWidth: 1.5, borderColor: "transparent", alignItems: "center", justifyContent: "center" },
   unreadBadge: {
     position: "absolute",
     top: -5,

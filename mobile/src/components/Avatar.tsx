@@ -4,7 +4,6 @@ import Svg, { Circle, Path } from "react-native-svg";
 import { avatarFileUrl } from "../api/users";
 import { useAuth } from "../state/AuthContext";
 import { useProfilePhotoSource } from "../hooks/useProfilePhotoSource";
-import { radii } from "../theme";
 import { colorScheme } from "../theme/colors";
 import { FadeInImage } from "./FadeInImage";
 
@@ -33,7 +32,8 @@ interface Props {
 export function Avatar({ username, displayName, avatarMediaId, size = 44, style }: Props): React.JSX.Element {
   const { accessToken } = useAuth();
   const photo = useProfilePhotoSource(avatarMediaId === null ? null : avatarFileUrl(username, avatarMediaId), avatarMediaId, accessToken);
-  const round = { width: size, height: size, borderRadius: size / 2 };
+  // Katkee rounded square (the Postcard look), not a circle.
+  const round = { width: size, height: size, borderRadius: squircleRadius(size) };
   const dark = colorScheme() === "dark";
   return (
     <View style={[styles.circle, round, { backgroundColor: dark ? PLACEHOLDER.dark.fill : PLACEHOLDER.light.fill }, style]} accessible={false} importantForAccessibility="no-hide-descendants">
@@ -41,6 +41,11 @@ export function Avatar({ username, displayName, avatarMediaId, size = 44, style 
       {photo.source ? <FadeInImage source={photo.source} style={[StyleSheet.absoluteFill, round]} onError={photo.onError} /> : null}
     </View>
   );
+}
+
+/** Corner radius of Katkee's rounded-square photos and Story rings, for a box `size` wide. */
+export function squircleRadius(size: number): number {
+  return Math.round(size * 0.3);
 }
 
 /** The placeholder's colours: a soft grey disc with a lighter (dark mode) or white (light mode) person. */
@@ -60,5 +65,5 @@ function PersonShape({ size, color }: { size: number; color: string }): React.JS
 }
 
 const styles = StyleSheet.create({
-  circle: { borderRadius: radii.pill, alignItems: "center", justifyContent: "center", overflow: "hidden" },
+  circle: { alignItems: "center", justifyContent: "center", overflow: "hidden" },
 });

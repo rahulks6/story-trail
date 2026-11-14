@@ -288,6 +288,11 @@ export const hi: Catalogue = {
   "blockedAccounts.couldntLoadYourBlockedAccounts": "ब्लॉक किए गए अकाउंट लोड नहीं हो सके। अपना कनेक्शन देखें और फिर से कोशिश करें।",
   // bottomTabBar
   "bottomTabBar.createAStory": "स्टोरी बनाएँ",
+  "bottomTabBar.today": "आज",
+  "bottomTabBar.explore": "खोजें",
+  "bottomTabBar.post": "पोस्ट",
+  "bottomTabBar.chats": "चैट",
+  "bottomTabBar.me": "मैं",
   "bottomTabBar.profile": "प्रोफ़ाइल",
   "bottomTabBar.home": "होम",
   // call

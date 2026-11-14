@@ -27,7 +27,7 @@ import { useReducedMotion } from "../../hooks/useReducedMotion";
 import { SponsoredStory } from "../ads/SponsoredStory";
 import { useScreenInsets } from "../../hooks/useScreenInsets";
 import type { SponsoredPlacement } from "../../api/ads";
-import { Avatar } from "../../components/Avatar";
+import { Avatar, squircleRadius } from "../../components/Avatar";
 import { ReplySheet } from "../../components/ReplySheet";
 import { tapFeedback } from "../../utils/haptics";
 import { serverTimeMs, timeAgo } from "../../utils/serverTime";
@@ -1416,11 +1416,11 @@ const styles = StyleSheet.create({
   followingButton: { borderColor: "rgba(255,255,255,0.5)" },
   followLabel: { color: colors.textPrimary, fontWeight: "700", fontSize: 13 },
   chromeHidden: { opacity: 0 },
-  // The creator's photo inside Katkee's gradient Story ring (StoryRing).
+  // The creator's photo inside Katkee's amber Story ring (StoryRing), round-cornered like it.
   avatarRing: {
     width: 36,
     height: 36,
-    borderRadius: radii.pill,
+    borderRadius: squircleRadius(36),
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.surface,

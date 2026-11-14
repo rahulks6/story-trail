@@ -302,6 +302,11 @@ export const en = {
 
   // navigation/BottomTabBar.tsx
   "bottomTabBar.createAStory": "Create a Story",
+  "bottomTabBar.today": "Today",
+  "bottomTabBar.explore": "Explore",
+  "bottomTabBar.post": "Post",
+  "bottomTabBar.chats": "Chats",
+  "bottomTabBar.me": "Me",
   "bottomTabBar.profile": "Profile",
   "bottomTabBar.home": "Home",
 

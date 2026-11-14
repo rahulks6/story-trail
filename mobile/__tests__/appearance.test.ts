@@ -8,11 +8,17 @@ afterEach(async () => {
   jest.restoreAllMocks();
 });
 
-test("Automatic follows the phone; a saved choice wins; Story screens stay dark", async () => {
-  jest.spyOn(Appearance, "getColorScheme").mockReturnValue("light");
+test("Katkee starts light (the Postcard look); Automatic follows the phone; a saved choice wins; Story screens stay dark", async () => {
+  // Nothing chosen yet: light, even on a phone set to dark.
+  jest.spyOn(Appearance, "getColorScheme").mockReturnValue("dark");
   await loadAppearance();
-  expect([appearanceChoice(), colorScheme(), colors.background]).toEqual(["system", "light", lightPalette.background]);
+  expect([appearanceChoice(), colorScheme(), colors.background]).toEqual(["light", "light", lightPalette.background]);
+  expect(lightPalette.background).toBe("#FBF6EC");
   expect(mediaColors.background).toBe(darkPalette.background);
+
+  await AsyncStorage.setItem("katkee.appearance.v1", "system");
+  await loadAppearance();
+  expect([appearanceChoice(), colorScheme()]).toEqual(["system", "dark"]);
 
   await AsyncStorage.setItem("katkee.appearance.v1", "dark");
   await loadAppearance();
