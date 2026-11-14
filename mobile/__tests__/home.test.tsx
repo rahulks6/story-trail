@@ -181,6 +181,10 @@ test("Today: a heading, who has Stories (tap to watch just theirs), and the Stor
   expect(mockNavigation.navigate).toHaveBeenCalledWith("StoryViewer", { creators: ["dev"], startIndex: 0 });
   // The feed is told to draw polaroids below the heading.
   expect(feedProps().postcard).toEqual({ top: expect.any(Number) });
+  // No Story of yours up: your own circle comes first, with a +, to the camera.
+  const yours = friends.find((n) => n.props.testID === "today-add-yours");
+  await act(async () => yours.props.onPress());
+  expect(mockNavigation.navigate).toHaveBeenCalledWith("Create");
   await act(async () => tree.unmount());
 });
 

@@ -63,6 +63,11 @@ appId: com.katkee.app
     text: "Not now"
     optional: true
     waitToSettleTimeoutMs: 300
+# The one-time card explaining Today (TodayIntro).
+- tapOn:
+    text: "Got it"
+    optional: true
+    waitToSettleTimeoutMs: 300
 
 # 1. Home: friends' Stories. A photo Story moves on after a few seconds, so capture at once.
 # The Story's header shows the username (arjun.beaches): match those, so the screenshot is taken

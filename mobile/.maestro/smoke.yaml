@@ -175,7 +175,7 @@ appId: com.katkee.app
       - stopApp
       - launchApp
       - extendedWaitUntil:
-          visible: "(Home|Forgot password\\?)"
+          visible: "(Today|Forgot password\\?)"
           timeout: 30000
       - runFlow: login-if-needed.yaml
       - extendedWaitUntil:

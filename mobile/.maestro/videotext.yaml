@@ -127,6 +127,10 @@ appId: com.katkee.app
 - extendedWaitUntil:
     visible: "Today"
     timeout: 30000
+# The one-time card explaining Today (TodayIntro).
+- tapOn:
+    text: "Got it"
+    optional: true
 - takeScreenshot: v07-posting
 # Wait for the server to finish the video, then open it.
 - repeat:
