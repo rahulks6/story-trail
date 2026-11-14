@@ -767,7 +767,7 @@ export const en = {
   "highlightsRow.new": "New",
   "highlightsRow.titleHighlight": "{title}, Highlight",
   "highlightsRow.reorder": "Reorder",
-  "highlightsRow.highlights": "Highlights",
+  "highlightsRow.highlights": "Memories",
   "highlightsRow.emptyTitle": "Keep your best Stories",
   "highlightsRow.emptyBody": "Highlights stay on your profile after your Stories end.",
   "highlightsRow.checkYourConnectionAndTry": "Check your connection and try again.",
@@ -1389,6 +1389,8 @@ export const en = {
 
   // screens/create/StoryEditorScreen.tsx
   "storyEditor.longPressToEditYour": "Long press to edit your Close Friends list",
+  "storyEditor.postToMyDay": "Post to my day",
+  "storyEditor.onlyCloseFriends": "Only close friends",
   "storyEditor.addPeopleToYourClose": "Add people to your Close Friends list, then share to them.",
   "storyEditor.shareWithoutCollab": "Share without collab",
   "storyEditor.sharingWithCloseFriendsLeaves": "Sharing with Close Friends leaves out @{username}.",

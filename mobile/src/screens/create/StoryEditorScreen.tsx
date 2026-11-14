@@ -9,7 +9,7 @@ import Svg, { Defs, LinearGradient as SvgGradient, Rect, Stop } from "react-nati
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
 import type { CreateStackParamList, RootStackParamList } from "../../navigation/types";
-import { mediaColors as colors, radii, spacing, mediaTypography as typography, ICONS } from "../../theme";
+import { mediaColors as colors, fonts, radii, spacing, mediaTypography as typography, ICONS } from "../../theme";
 import { useFestival } from "../../hooks/useFestival";
 import { useAuth } from "../../state/AuthContext";
 import {enqueueUpload} from '../../state/uploadQueue';
@@ -1226,11 +1226,11 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               accessibilityState={{ busy: uploadState === "uploading" && audience !== "close_friends" }}
             >
               {uploadState === "uploading" && audience !== "close_friends" ? (
-                <ActivityIndicator color={colors.textPrimary} />
+                <ActivityIndicator color="#1E1A16" />
               ) : (
                 <>
                   <Avatar username={user?.username ?? ""} avatarMediaId={user?.avatarMediaId} size={24} />
-                  <Text style={styles.shareYourStoryLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{t("storyEditor.yourStory")}</Text>
+                  <Text style={styles.shareYourStoryLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{t("storyEditor.postToMyDay")}</Text>
                 </>
               )}
             </Pressable>
@@ -1262,11 +1262,11 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
               accessibilityState={{ busy: uploadState === "uploading" && audience === "close_friends" }}
             >
               {uploadState === "uploading" && audience === "close_friends" ? (
-                <ActivityIndicator color={colors.onAccent} />
+                <ActivityIndicator color={CLOSE_FRIENDS_GREEN} />
               ) : (
                 <>
-                  <Icon name={ICONS.starFilled} size={18} color={colors.onAccent} />
-                  <Text style={styles.shareCloseFriendsLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{t("common.closeFriends")}</Text>
+                  <Icon name={ICONS.starFilled} size={18} color={CLOSE_FRIENDS_GREEN} />
+                  <Text style={styles.shareCloseFriendsLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{t("storyEditor.onlyCloseFriends")}</Text>
                 </>
               )}
             </Pressable>
@@ -1337,6 +1337,9 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
     </View>
   );
 }
+
+/** Close Friends green, bright enough to read on a photo. */
+const CLOSE_FRIENDS_GREEN = "#5BD38E";
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#000" },
@@ -1424,11 +1427,11 @@ const styles = StyleSheet.create({
   chipOutlined: { borderColor: colors.accent, borderWidth: 1 },
   shareRow: { flexDirection: "row", gap: spacing.sm, marginTop: 2 },
   shareButton: { flex: 1, height: 50, paddingHorizontal: spacing.md, borderRadius: radii.pill, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm },
-  // Glass, like the rest of the controls over the photo, rather than a white block.
-  shareYourStory: { backgroundColor: "rgba(255,255,255,0.18)", borderWidth: StyleSheet.hairlineWidth, borderColor: "rgba(255,255,255,0.32)" },
-  shareYourStoryLabel: { color: colors.textPrimary, fontWeight: "700", fontSize: 15, flexShrink: 1 },
-  shareCloseFriends: { backgroundColor: colors.success },
-  shareCloseFriendsLabel: { color: colors.onAccent, fontWeight: "700", fontSize: 15, flexShrink: 1 },
+  // The Postcard look: a solid paper-white "Post to my day", and "Only close friends" outlined in green.
+  shareYourStory: { backgroundColor: "#FFFFFF" },
+  shareYourStoryLabel: { color: "#1E1A16", fontFamily: fonts.display, fontSize: 17, flexShrink: 1 },
+  shareCloseFriends: { backgroundColor: "rgba(0,0,0,0.35)", borderWidth: 1.5, borderColor: CLOSE_FRIENDS_GREEN },
+  shareCloseFriendsLabel: { color: CLOSE_FRIENDS_GREEN, fontWeight: "700", fontSize: 15, flexShrink: 1 },
   // A soft dark fade behind the caption and buttons, so they read over any photo.
   bottomShade: { position: "absolute", left: 0, right: 0, bottom: 0 },
   boomerangLabel: { color: colors.textPrimary, fontWeight: "700" },

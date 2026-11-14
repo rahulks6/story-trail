@@ -715,7 +715,7 @@ export const mr: Catalogue = {
   "highlightsRow.new": "नवीन",
   "highlightsRow.titleHighlight": "{title}, हायलाइट",
   "highlightsRow.reorder": "क्रम बदला",
-  "highlightsRow.highlights": "हायलाइट्स",
+  "highlightsRow.highlights": "आठवणी",
   "highlightsRow.emptyTitle": "तुमच्या सर्वोत्तम स्टोरीज जपून ठेवा",
   "highlightsRow.emptyBody": "स्टोरीज संपल्यानंतरही हायलाइट्स तुमच्या प्रोफाइलवर राहतात.",
   "highlightsRow.checkYourConnectionAndTry": "तुमचे कनेक्शन तपासा आणि पुन्हा प्रयत्न करा.",
@@ -1289,6 +1289,8 @@ export const mr: Catalogue = {
   "storyCaption.less": "कमी",
   // storyEditor
   "storyEditor.longPressToEditYour": "तुमची क्लोज फ्रेंड्स यादी एडिट करण्यासाठी दाबून ठेवा",
+  "storyEditor.postToMyDay": "माझ्या दिवसात पोस्ट करा",
+  "storyEditor.onlyCloseFriends": "फक्त जवळचे मित्र",
   "storyEditor.addPeopleToYourClose": "तुमच्या क्लोज फ्रेंड्स यादीत लोकांना जोडा, मग त्यांच्याशी शेअर करा.",
   "storyEditor.shareWithoutCollab": "कोलॅबशिवाय शेअर करा",
   "storyEditor.sharingWithCloseFriendsLeaves": "क्लोज फ्रेंड्ससोबत शेअर केल्यास @{username} त्यात नसतील.",
