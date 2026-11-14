@@ -25,7 +25,7 @@ appId: com.katkee.app
 
 # Onboarding: a few interests, then into the app.
 - extendedWaitUntil:
-    visible: "(What are you into\\?|Today)"
+    visible: "(What are you into\\?|People to follow|Today)"
     timeout: 45000
 - tapOn:
     text: "Travel"
