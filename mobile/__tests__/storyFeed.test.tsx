@@ -71,13 +71,13 @@ async function settle(): Promise<void> {
   for (let i = 0; i < 5; i++) await act(async () => { await Promise.resolve(); });
 }
 const openProfile = jest.fn();
-async function renderFeed(username = "viewer", creators = ["alice", "bob"], slotStoryIds?: string[]): Promise<void> {
+async function renderFeed(username = "viewer", creators = ["alice", "bob"], slotStoryIds?: string[], postcard?: { top: number }): Promise<void> {
   openProfile.mockClear();
   mockSession.user.username = username;
   await act(async () => {
     tree = create(
       <SafeAreaProvider initialMetrics={metrics}>
-        <StoryFeed creators={creators} startIndex={0} slotStoryIds={slotStoryIds} onOpenDM={jest.fn()} onOpenProfile={openProfile} />
+        <StoryFeed creators={creators} startIndex={0} slotStoryIds={slotStoryIds} postcard={postcard} onOpenDM={jest.fn()} onOpenProfile={openProfile} />
       </SafeAreaProvider>,
     );
   });
@@ -185,6 +185,20 @@ test("Home: one Story per swipe, taking turns between people; taps don't move", 
   await settle();
   expect(texts()).toContain("Caption a2");
   expect(sequence()).toBe("Story 1 of 1");
+});
+
+test("Today (postcard): the Story sits in a polaroid, its caption and actions in the strip, no side column", async () => {
+  await renderFeed("viewer", ["alice", "bob"], ["a1", "b1"], { top: 150 });
+  const frame = tree.root.find((n) => n.props.testID === "postcard-frame");
+  const strip = frame.find((n) => n.props.testID === "postcard-strip");
+  expect(strip.findAllByType(Text).map((t) => [t.props.children].flat().join(""))).toContain("Caption a1");
+  // Like, Comment, Reply, Share and More are in the strip.
+  const labels = strip.findAll((n) => typeof n.props.onPress === "function").map((n) => n.props.accessibilityLabel);
+  expect(labels).toEqual(expect.arrayContaining(["Like", "Share", "More"]));
+  await act(async () => strip.find((n) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === "Like").props.onPress());
+  expect(engagementApi.likeStory).toHaveBeenCalledWith("a1", "token");
+  // Nothing of the full-screen viewer's right-hand column.
+  expect(tree.root.findAll((n) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === "More")).toHaveLength(1);
 });
 
 test("swipe up moves to the next creator, swipe down back; holding pauses without moving", async () => {

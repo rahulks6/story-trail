@@ -790,6 +790,8 @@ export const en = {
 
   // screens/home/HomeScreen.tsx
   "home.refreshing": "Refreshing…",
+  "home.watchNameStories": "Watch {name}'s Stories",
+  "home.you": "You",
   "home.refreshStories": "Refresh Stories",
   "home.storiesFromPeopleYouFollow": "Stories from people you follow and eligible new creators will appear here.",
   "home.noActiveStoriesYet": "No active Stories yet",
@@ -1518,6 +1520,7 @@ export const en = {
 
   // screens/story/StoryFeed.tsx
   "storyFeed.replySent": "Reply sent",
+  "storyFeed.reply": "Reply",
   "storyFeed.reactionSent": "Reaction sent",
   "storyFeed.answerSent": "Answer sent",
   "storyFeed.usernameInvitedYouToCollab": "@{username} invited you to collab. It shows to your followers too, with both names.",

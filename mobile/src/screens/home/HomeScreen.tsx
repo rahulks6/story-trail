@@ -1,4 +1,3 @@
-import { useMediaStatusBar } from "../../hooks/useMediaStatusBar";
 import React,{useCallback,useEffect,useMemo,useRef,useState} from 'react';
 import {StorySkeleton} from '../../components/Skeleton';
 import { AppState, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -6,7 +5,10 @@ import { Pressable } from "../../components/Pressable";
 import {useIsFocused,useNavigation,type CompositeNavigationProp} from '@react-navigation/native';
 import type {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import { mediaColors as colors, spacing, mediaTypography as typography, ICONS } from '../../theme';
+// Today is cream paper (the Postcard look), in the app's own light or dark colours.
+import { colors, spacing, typography, ICONS } from '../../theme';
+import {Avatar} from '../../components/Avatar';
+import {StoryRing} from '../../components/StoryRing';
 import {Icon} from '../../components/Icon';
 import {useNotifications} from '../../state/NotificationsContext';
 import {useScreenInsets} from '../../hooks/useScreenInsets';
@@ -23,12 +25,11 @@ import {useFestival} from '../../hooks/useFestival';
 import type {MainTabParamList,RootStackParamList} from '../../navigation/types';
 import {shareInvite} from '../../state/invites';
 import {ContactsJoinedSheet} from '../../components/ContactsJoinedSheet';
-import { t } from "../../i18n";
+import { localeTag, t } from "../../i18n";
 /** Away from Home (another tab, a screen on top, the app in the background) this long: the feed is reloaded on return. */
 export const HOME_STALE_MS=3*60*1000;
 type HomeNavigationProp=CompositeNavigationProp<BottomTabNavigationProp<MainTabParamList,'Home'>,NativeStackNavigationProp<RootStackParamList>>;
 export function HomeScreen():React.JSX.Element {
-  useMediaStatusBar();
  const {accessToken,user}=useAuth();const navigation=useNavigation<HomeNavigationProp>();
  const {unreadCount}=useNotifications();const insets=useScreenInsets();
  // Activity (likes, comments, follows) is the bell at the top right: a heart there would sit beside the Story's own like.
@@ -115,12 +116,45 @@ export function HomeScreen():React.JSX.Element {
    <Pressable onPress={reloadQuietly} disabled={refreshing} style={styles.emptyButton} accessibilityRole="button" accessibilityLabel={t("home.refreshStories")}><Text style={styles.emptyButtonLabel}>{refreshing?t("home.refreshing"):t("common.refresh")}</Text></Pressable>
   </View>
  </ScrollView>{festivalButton}{activityButton}{uploads}{contactsJoined}</View>;
- return <View style={styles.root}><StoryFeed key={`${user?.id}:${retry}:${version}`} creators={creators} slotStoryIds={slotStoryIds} following={following} verified={verified} startIndex={0} sponsored={sponsored} onNeedMore={more} onRefresh={refresh}
+ // Today: the heading and date, who has Stories (tap one to watch just theirs), then the polaroids.
+ const todayTop=insets.top+TODAY_HEADER;
+ const friends=(feed??[]).slice(0,30);
+ const today=<View style={[styles.today,{paddingTop:insets.top+spacing.sm}]} pointerEvents="box-none" testID="today-header">
+  <View style={styles.todayRow}>
+   <Text style={typography.displayLarge} accessibilityRole="header">{t("bottomTabBar.today")}</Text>
+   <Text style={styles.todayDate}>{new Date().toLocaleDateString(localeTag(),{weekday:'short',day:'numeric',month:'short'})}</Text>
+   <View style={styles.todaySpacer}/>
+   {festival?<Pressable onPress={openFestival} hitSlop={8} style={styles.todayButton} accessibilityRole="button" accessibilityLabel={festivalCreators.length?t("home.nameStoriesStorycount", { name: festival.name, storyCount: festivalInfo?.storyCount??0 }):t("home.postYourNameStory", { name: festival.name })}><Text style={styles.festivalEmoji}>{festival.emoji}</Text></Pressable>:null}
+   <Pressable onPress={()=>navigation.navigate('Activity')} hitSlop={8} style={styles.todayButton} accessibilityRole="button" accessibilityLabel={unreadCount>0?t("home.activityUnreadcountNew", { unreadCount }):t("common.activity")}>
+    <Icon name={ICONS.notifications} size={22} color={colors.textPrimary}/>{unreadCount>0?<View style={styles.activityDot}/>:null}
+   </Pressable>
+  </View>
+  <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.friends} testID="today-friends">
+   {friends.map(entry=><Pressable key={entry.owner.id} style={styles.friend} onPress={()=>navigation.navigate('StoryViewer',{creators:[entry.owner.username],startIndex:0,...(entry.owner.verified?{verifiedCreators:[entry.owner.username]}:{})})} accessibilityRole="button" accessibilityLabel={t("home.watchNameStories",{name:entry.owner.displayName||entry.owner.username})}>
+    <View style={styles.friendRing}><StoryRing size={FRIEND_SIZE} width={2.5}/><Avatar username={entry.owner.username} avatarMediaId={entry.owner.avatarMediaId??null} size={FRIEND_SIZE-10}/></View>
+    <Text style={styles.friendName} numberOfLines={1}>{entry.owner.id===user?.id?t("home.you"):(entry.owner.displayName||entry.owner.username).split(' ')[0]}</Text>
+   </Pressable>)}
+  </ScrollView>
+ </View>;
+ return <View style={styles.root}><StoryFeed key={`${user?.id}:${retry}:${version}`} postcard={{top:todayTop}} creators={creators} slotStoryIds={slotStoryIds} following={following} verified={verified} startIndex={0} sponsored={sponsored} onNeedMore={more} onRefresh={refresh}
   onCreate={()=>navigation.navigate('Create')} onFindPeople={()=>navigation.navigate('Search',{screen:'SearchHome'})} onInvite={invite} discover={discover}
   onOpenDM={openDM} onOpenProfile={openProfile}
   onOpenCreate={()=>navigation.navigate('Create')} onOpenStory={(username,storyId)=>navigation.navigate('StoryViewer',{creators:[username],startIndex:0,initialStoryId:storyId})}/>
+  {today}
   {!!error&&<View style={[styles.error,{top:insets.top+spacing.xl+40}]}><Text style={typography.caption}>{error}</Text><Pressable onPress={more} accessibilityRole="button"><Text style={typography.body}>{t("common.retry")}</Text></Pressable><Pressable onPress={refresh} accessibilityRole="button"><Text style={typography.body}>{t("common.refresh")}</Text></Pressable></View>}
-  {festivalButton}{activityButton}{uploads}{contactsJoined}
+  {uploads}{contactsJoined}
  </View>;
 }
-const styles=StyleSheet.create({root:{flex:1,backgroundColor:colors.background},festival:{position:'absolute',right:spacing.md+44,width:36,height:36,borderRadius:18,alignItems:'center',justifyContent:'center',backgroundColor:'rgba(0,0,0,0.3)'},festivalEmoji:{fontSize:20},festivalCount:{position:'absolute',top:-4,right:-6,minWidth:18,height:18,borderRadius:9,paddingHorizontal:4,alignItems:'center',justifyContent:'center',backgroundColor:colors.accent},festivalCountLabel:{fontSize:11,fontWeight:'800',color:colors.onAccent},festivalCard:{alignItems:'center',gap:spacing.md,paddingTop:spacing.xxl*2,paddingHorizontal:spacing.xl},festivalCardEmoji:{fontSize:56},festivalCardTitle:{...typography.title,textAlign:'center'},festivalCardButton:{paddingHorizontal:spacing.lg,paddingVertical:spacing.sm,borderRadius:20,backgroundColor:colors.accent},festivalCardButtonLabel:{...typography.body,fontWeight:'700',color:colors.onAccent},activity:{position:'absolute',right:spacing.md,width:36,height:36,borderRadius:18,alignItems:'center',justifyContent:'center',backgroundColor:'rgba(0,0,0,0.3)'},activityDot:{position:'absolute',top:6,right:7,width:9,height:9,borderRadius:5,backgroundColor:colors.like,borderWidth:1.5,borderColor:colors.background},empty:{flex:1,backgroundColor:colors.background,alignItems:'center',justifyContent:'center'},error:{position:'absolute',left:16,right:16,padding:12,gap:8,backgroundColor:colors.surfaceElevated},emptyScroll:{flexGrow:1},emptyActions:{flexDirection:'row',flexWrap:'wrap',justifyContent:'center',gap:spacing.md,paddingHorizontal:spacing.md,paddingBottom:spacing.xxl*2},emptyButton:{paddingHorizontal:spacing.lg,paddingVertical:spacing.sm,borderRadius:20,borderWidth:1,borderColor:colors.textPrimary},emptyButtonLabel:{...typography.body,fontWeight:'700'},emptyButtonStrong:{backgroundColor:colors.accent,borderColor:colors.accent},emptyButtonLabelStrong:{color:colors.onAccent},welcome:{paddingHorizontal:spacing.md,gap:spacing.xs},welcomeTitle:{...typography.title},welcomeText:{...typography.body,color:colors.textSecondary}});
+/** Room above the polaroid for Today's heading and the row of friends. */
+const FRIEND_SIZE=60;
+const TODAY_HEADER=150;
+const styles=StyleSheet.create({root:{flex:1,backgroundColor:colors.background},
+ today:{position:'absolute',top:0,left:0,right:0,paddingHorizontal:spacing.md,gap:spacing.sm},
+ todayRow:{flexDirection:'row',alignItems:'center',gap:spacing.sm},
+ todayDate:{...typography.caption,fontWeight:'600',marginTop:4},
+ todaySpacer:{flex:1},
+ todayButton:{width:38,height:38,borderRadius:12,alignItems:'center',justifyContent:'center',backgroundColor:colors.surface,borderWidth:StyleSheet.hairlineWidth,borderColor:colors.border},
+ friends:{gap:spacing.md,paddingRight:spacing.md},
+ friend:{width:FRIEND_SIZE+8,alignItems:'center',gap:4},
+ friendRing:{width:FRIEND_SIZE,height:FRIEND_SIZE,alignItems:'center',justifyContent:'center'},
+ friendName:{...typography.caption,color:colors.textPrimary,fontWeight:'600',fontSize:12},festival:{position:'absolute',right:spacing.md+44,width:36,height:36,borderRadius:18,alignItems:'center',justifyContent:'center',backgroundColor:colors.surface,borderWidth:StyleSheet.hairlineWidth,borderColor:colors.border},festivalEmoji:{fontSize:20},festivalCount:{position:'absolute',top:-4,right:-6,minWidth:18,height:18,borderRadius:9,paddingHorizontal:4,alignItems:'center',justifyContent:'center',backgroundColor:colors.accent},festivalCountLabel:{fontSize:11,fontWeight:'800',color:colors.onAccent},festivalCard:{alignItems:'center',gap:spacing.md,paddingTop:spacing.xxl*2,paddingHorizontal:spacing.xl},festivalCardEmoji:{fontSize:56},festivalCardTitle:{...typography.title,textAlign:'center'},festivalCardButton:{paddingHorizontal:spacing.lg,paddingVertical:spacing.sm,borderRadius:20,backgroundColor:colors.accent},festivalCardButtonLabel:{...typography.body,fontWeight:'700',color:colors.onAccent},activity:{position:'absolute',right:spacing.md,width:36,height:36,borderRadius:18,alignItems:'center',justifyContent:'center',backgroundColor:colors.surface,borderWidth:StyleSheet.hairlineWidth,borderColor:colors.border},activityDot:{position:'absolute',top:6,right:7,width:9,height:9,borderRadius:5,backgroundColor:colors.like,borderWidth:1.5,borderColor:colors.background},empty:{flex:1,backgroundColor:colors.background,alignItems:'center',justifyContent:'center'},error:{position:'absolute',left:16,right:16,padding:12,gap:8,backgroundColor:colors.surfaceElevated},emptyScroll:{flexGrow:1},emptyActions:{flexDirection:'row',flexWrap:'wrap',justifyContent:'center',gap:spacing.md,paddingHorizontal:spacing.md,paddingBottom:spacing.xxl*2},emptyButton:{paddingHorizontal:spacing.lg,paddingVertical:spacing.sm,borderRadius:20,borderWidth:1,borderColor:colors.textPrimary},emptyButtonLabel:{...typography.body,fontWeight:'700'},emptyButtonStrong:{backgroundColor:colors.accent,borderColor:colors.accent},emptyButtonLabelStrong:{color:colors.onAccent},welcome:{paddingHorizontal:spacing.md,gap:spacing.xs},welcomeTitle:{...typography.title},welcomeText:{...typography.body,color:colors.textSecondary}});

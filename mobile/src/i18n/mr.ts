@@ -736,6 +736,8 @@ export const mr: Catalogue = {
   "highlightViewer.thisIsTheOnlyStory": "यात ही एकच स्टोरी आहे, त्यामुळे ती काढल्यास हायलाइट डिलीट होईल. स्टोरी तुमच्या आर्काइव्हमध्ये राहील.",
   // home
   "home.refreshing": "रिफ्रेश होत आहे…",
+  "home.watchNameStories": "{name} यांच्या स्टोरीज पहा",
+  "home.you": "तुम्ही",
   "home.refreshStories": "स्टोरीज रिफ्रेश करा",
   "home.storiesFromPeopleYouFollow": "तुम्ही फॉलो करता त्यांच्या आणि नवीन क्रिएटर्सच्या स्टोरीज इथे दिसतील.",
   "home.noActiveStoriesYet": "अजून कोणतीही स्टोरी नाही",
@@ -1417,6 +1419,7 @@ export const mr: Catalogue = {
   "storyEditor.sharingFailedCheckYourConnection": "शेअर करता आले नाही — तुमचे कनेक्शन तपासा आणि पुन्हा प्रयत्न करा.",
   // storyFeed
   "storyFeed.replySent": "उत्तर पाठवले",
+  "storyFeed.reply": "उत्तर",
   "storyFeed.reactionSent": "रिॲक्शन पाठवली",
   "storyFeed.answerSent": "उत्तर पाठवले",
   "storyFeed.usernameInvitedYouToCollab": "@{username} यांनी तुम्हाला कोलॅबसाठी आमंत्रित केले आहे. ती तुमच्या फॉलोअर्सनाही दिसेल, दोन्ही नावांसह.",

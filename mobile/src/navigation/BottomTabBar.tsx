@@ -54,7 +54,8 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
     if (hidden) reportHeight?.(0);
   }, [hidden, reportHeight]);
   if (hidden) return <View />;
-  const onMedia = state.routes[state.index]?.name === "Home";
+  // Today is cream like every other tab now (the Postcard look): no dark bar on Home.
+  const onMedia = false;
   const ink = onMedia ? mediaColors.textPrimary : colors.textPrimary;
 
   return (
