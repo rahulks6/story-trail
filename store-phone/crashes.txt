@@ -1,0 +1,97 @@
+11-14 16:04:19.851 D/AndroidRuntime( 4013): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 16:04:19.854 I/AndroidRuntime( 4013): Using default boot image
+11-14 16:04:19.854 I/AndroidRuntime( 4013): Leaving lock profiling enabled
+11-14 16:04:19.859 I/app_process( 4013): Core platform API reporting enabled, enforcing=false
+11-14 16:04:19.860 I/app_process( 4013): Using CollectorTypeCMC GC.
+11-14 16:04:19.886 D/ControlsListingControllerImpl(  906): ServiceConfig reloaded, count: 0
+11-14 16:04:19.886 D/ControlsListingControllerImpl(  906): ServiceConfig reloaded, count: 0
+11-14 16:04:19.886 D/ControlsListingControllerImpl(  906): ServiceConfig reloaded, count: 0
+11-14 16:04:19.886 D/ControlsListingControllerImpl(  906): ServiceConfig reloaded, count: 0
+11-14 16:04:19.887 I/GsaVoiceInteractionSrv( 1525): (REDACTED) O received %s
+11-14 16:04:19.893 D/SessionCommitReceiver( 1223): Removing PromiseIcon for package: dev.mobile.maestro.test, install reason: 0, alreadyAddedPromiseIcon: false
+11-14 16:04:19.918 I/GsaVoiceInteractionSrv( 1525): (REDACTED) O received %s
+11-14 16:04:19.921 I/Fitness ( 1175): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-14 16:04:19.936 D/ActivityManager(  562): sync unfroze 1572 com.google.android.googlequicksearchbox:search for 6
+11-14 16:04:19.943 D/ConnectivityService(  562): releasing NetworkRequest [ REQUEST id=104, [ Transports: CELLULAR Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Forbidden: LOCAL_NETWORK Uid: 10144 RequestorUid: 10144 RequestorPkg: com.google.android.googlequicksearchbox UnderlyingNetworks: Null] ] (release request)
+11-14 16:04:19.943 I/ConnectivityService(  562): Update capabilities for net 101 : -FOREGROUND
+11-14 16:04:19.949 I/netd    (  362): networkSetPermissionForNetwork(101, 1) <6.43ms>
+11-14 16:04:19.950 I/resolv  (  362): GetAddrInfoHandler::run: {100 786532 100 983140 10143 0}
+11-14 16:04:19.951 I/resolv  (  362): res_nmkquery: (QUERY, IN, AAAA)
+11-14 16:04:19.951 I/resolv  (  362): res_nmkquery: (QUERY, IN, A)
+11-14 16:04:19.964 I/hbox:interactor( 1525): JIT allocated 54KB for compiled code of java.lang.Object com.google.android.apps.gsa.binaries.velvet.app.arq.r()
+11-14 16:04:19.964 I/hbox:interactor( 1525): Compiler allocated 5672KB to compile java.lang.Object com.google.android.apps.gsa.binaries.velvet.app.arq.r()
+11-14 16:04:19.976 I/resolv  (  362): res_nsend: used send_dg 176 terrno: 0
+11-14 16:04:19.976 I/resolv  (  362): doQuery: rcode=0, ancount=8, return value=176
+11-14 16:04:19.976 I/resolv  (  362): res_nsend: used send_dg 272 terrno: 0
+11-14 16:04:19.977 I/resolv  (  362): doQuery: rcode=0, ancount=8, return value=272
+11-14 16:04:19.978 I/AiAiTextClassifier( 1517): [VisualCortexAdapter]: provideRegistration: Registered Prominent Screen Entities for updates.
+11-14 16:04:19.986 D/TrafficStats( 1313): tagSocket(109) with statsTag=0x30004901, statsUid=10143
+11-14 16:04:19.996 I/Fitness ( 1175): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+11-14 16:04:19.996 D/nativeloader( 4013): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+11-14 16:04:20.012 I/Auth    ( 1313): [SupervisedAccountIntentOperation] onHandleIntent(): android.intent.action.PACKAGE_ADDED
+11-14 16:04:20.013 V/Backup  ( 1313): [PhotosPackagedAddedIO] Flag is disabled.
+11-14 16:04:20.014 I/Fitness ( 1175): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+--
+11-14 16:04:20.093 D/AndroidRuntime( 4013): Calling main entry com.android.commands.am.Am
+11-14 16:04:20.095 D/UiAutomationConnection( 4013): Created on user UserHandle{0}
+11-14 16:04:20.095 I/Fitness ( 1175): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+11-14 16:04:20.095 I/ActivityManager(  562): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+11-14 16:04:20.096 V/GrammaticalInflectionUtils(  562): AttributionSource: AttributionSource { uid = 10210, packageName = null, attributionTag = null, token = android.os.Binder@89ed896, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+11-14 16:04:20.098 I/AppsFilter(  562): interaction: PackageSetting{812c7f9 com.android.microdroid.empty_payload/10188} -> PackageSetting{317672b dev.mobile.maestro/10210} BLOCKED
+11-14 16:04:20.102 I/AppWidgetServiceImpl(  562): Received broadcast: android.intent.action.PACKAGE_UNSTOPPED on user 0
+11-14 16:04:20.102 I/AppWidgetServiceImpl(  562): Updating package stopped masked state for uid 10210 package dev.mobile.maestro isStopped false
+11-14 16:04:20.103 I/Zygote  (  363): Entering forkRepeatedly native zygote loop
+11-14 16:04:20.111 I/Fitness ( 1175): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-14 16:04:20.112 I/ProximityAuth( 1175): [RecentAppsMediator] Package added: (user=UserHandle{0}) dev.mobile.maestro.test
+11-14 16:04:20.113 W/GCM     ( 1175): Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package: flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
+11-14 16:04:20.115 D/Zygote  (  363): Forked child process 4059
+11-14 16:04:20.117 W/NetworkScheduler( 1175): Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package: flg=0x4000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
+11-14 16:04:20.119 I/ActivityManager(  562): Start proc 4059:dev.mobile.maestro/u0a210 for added application dev.mobile.maestro
+11-14 16:04:20.120 I/Auth    ( 1313): [SupervisedAccountIntentOperation] onHandleIntent(): android.intent.action.PACKAGE_ADDED
+11-14 16:04:20.120 V/Backup  ( 1313): [PhotosPackagedAddedIO] Flag is disabled.
+11-14 16:04:20.121 I/Fitness ( 1175): FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_CHANGED [CONTEXT service_id=17 ]
+11-14 16:04:20.121 I/Dck     ( 1313): disableDckSupport: false [CONTEXT service_id=289 ]
+11-14 16:04:20.122 I/Blockstore( 1313): [DataStoreImpl] Clearing Blockstore Data for package dev.mobile.maestro.test [CONTEXT service_id=258 ]
+11-14 16:04:20.122 I/Blockstore( 1313): [DataStoreImpl] Keyless data not found or its IsLastInstallationData = false. [CONTEXT service_id=258 ]
+11-14 16:04:20.123 I/Dck     ( 1313): doesDeviceHaveSupportedWirelessCapabilities: wccSysProp:0, wccMendel:3, deviceWccOverride:false [CONTEXT service_id=289 ]
+11-14 16:04:20.123 I/Dck     ( 1313): Dck module condition - hasWccSupport: false [CONTEXT service_id=289 ]
+11-14 16:04:20.123 I/Dck     ( 1313): Dck module condition - downloadAllowed: false [CONTEXT service_id=289 ]
+11-14 16:04:20.123 W/Dck     ( 1313): Dck module not eligible for asynchronous downloading [CONTEXT service_id=289 ]
+11-14 16:04:20.124 I/.mobile.maestro( 4059): Late-enabling -Xcheck:jni
+11-14 16:04:20.138 I/.mobile.maestro( 4059): Using CollectorTypeCMC GC.
+11-14 16:04:20.138 I/Fitness ( 1175): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-14 16:04:20.138 W/.mobile.maestro( 4059): Unexpected CPU variant for x86: x86_64.
+11-14 16:04:20.138 W/.mobile.maestro( 4059): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
+11-14 16:04:20.146 I/adbd    (  442): jdwp connection from 4059
+--
+11-14 16:05:38.803 I/AndroidRuntime( 4013): VM exiting with result code 0.
+11-14 16:05:38.931 I/servicemanager(    0): Caller(pid=562,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+11-14 16:05:38.943 I/init    (    0): starting service 'artd'...
+11-14 16:05:38.812 W/.apps.wellbeing( 1412): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/YouTube/YouTube.apk' with 1 weak references
+11-14 16:05:38.813 W/.apps.wellbeing( 1412): ApkAssets: Deleting an ApkAssets object '<empty> and /product/overlay/DisplayCutoutEmulationCorner/DisplayCutoutEmulationCornerOverlay.apk' with 1 weak references
+11-14 16:05:38.813 W/.apps.wellbeing( 1412): ApkAssets: Deleting an ApkAssets object '<empty> and /apex/com.android.extservices/priv-app/GoogleExtServices@350820300/GoogleExtServices.apk' with 1 weak references
+11-14 16:05:38.813 W/.apps.wellbeing( 1412): ApkAssets: Deleting an ApkAssets object '<empty> and /product/overlay/DisplayCutoutEmulationDouble/DisplayCutoutEmulationDoubleOverlay.apk' with 1 weak references
+11-14 16:05:38.813 W/.apps.wellbeing( 1412): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/TelephonyProvider/TelephonyProvider.apk' with 1 weak references
+11-14 16:05:38.813 W/.apps.wellbeing( 1412): ApkAssets: Deleting an ApkAssets object '/product/overlay/TelephonyProvider__sdk_gphone64_x86_64__auto_generated_rro_product.apk' with 1 weak references
+11-14 16:05:38.813 W/.apps.wellbeing( 1412): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/DynamicSystemInstallationService/DynamicSystemInstallationService.apk' with 1 weak references
+11-14 16:05:38.813 W/.apps.wellbeing( 1412): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/Velvet/Velvet.apk' with 1 weak references
+11-14 16:05:38.814 W/.apps.wellbeing( 1412): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/CalendarProvider/CalendarProvider.apk' with 1 weak references
+11-14 16:05:38.814 W/.apps.wellbeing( 1412): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/GoogleOneTimeInitializer/GoogleOneTimeInitializer.apk' with 1 weak references
+11-14 16:05:38.814 W/.apps.wellbeing( 1412): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/GoogleExtShared/GoogleExtShared.apk' with 1 weak references
+11-14 16:05:38.814 W/.apps.wellbeing( 1412): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/ExternalStorageProvider/ExternalStorageProvider.apk' with 1 weak references
+11-14 16:05:38.814 W/.apps.wellbeing( 1412): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/HTMLViewer/HTMLViewer.apk' with 1 weak references
+11-14 16:05:38.814 W/.apps.wellbeing( 1412): ApkAssets: Deleting an ApkAssets object '<empty> and /system/app/CompanionDeviceManager/CompanionDeviceManager.apk' with 1 weak references
+11-14 16:05:38.814 W/.apps.wellbeing( 1412): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/DownloadProvider/DownloadProvider.apk' with 1 weak references
+11-14 16:05:38.814 W/.apps.wellbeing( 1412): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/PrebuiltBugle/PrebuiltBugle.apk' with 1 weak references
+11-14 16:05:38.815 V/ActivityManager(  562): Got obituary of 4059:dev.mobile.maestro
+11-14 16:05:38.815 I/adbd    (  442): Remote process closed the socket (on MSG_PEEK)
+11-14 16:05:38.815 W/ActivityManager(  562): pid 562 system sent binder code 1 with flags 1 to frozen apps and got error -32
+11-14 16:05:38.816 W/MagnificationConnectionManager(  562): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-14 16:05:38.816 W/MagnificationConnectionManager(  562): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-14 16:05:38.816 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-14 16:05:38.816 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-14 16:05:38.816 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-14 16:05:38.816 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-14 16:05:38.816 W/IPCThreadState(  562): Sending oneway calls to frozen process.
+11-14 16:05:38.817 W/.apps.wellbeing( 1412): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/SoundPickerPrebuilt/SoundPickerPrebuilt.apk' with 1 weak references
+11-14 16:05:38.817 W/IPCThreadState(  562): Sending oneway calls to frozen process.
