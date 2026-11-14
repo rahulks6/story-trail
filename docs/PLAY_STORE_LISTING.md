@@ -4,7 +4,8 @@ The text to paste into Play Console (Grow users > Store presence > Main store li
 search: the words people type when they look for an app like Katkee ("stories", "share stories",
 "chat", "video call", "friends", "private") sit in the title, the short description and the first
 lines of the full description, where Play weighs them most, and are repeated naturally (never
-stuffed: Google demotes keyword lists). Everything described is in the app today.
+stuffed: Google demotes keyword lists). Everything described is in the app from release 84 (the
+Postcard design: Today, polaroid Stories, Memories), so publish this text with release 84.
 `scripts/check-store-listing.cjs` checks each field against Play's limits.
 
 Katkee is available worldwide. English is the default listing; Hindi, Marathi, Spanish, Portuguese,
@@ -16,7 +17,7 @@ use those languages see the listing in theirs.
 | Field | Value |
 | --- | --- |
 | App category | Social |
-| Tags (up to 5) | Social, Photo & video sharing, Messaging, Video calling, Friends |
+| Tags (up to 5) | Social, Communication, Photography, Text messaging, Video call |
 | Contact email | support@katkee.com |
 | Website | https://katkee.com |
 | Privacy policy | https://katkee.com/privacy |
@@ -53,7 +54,7 @@ Play can show two versions of the listing to different visitors and report which
 installs (Grow users, Store presence, Store listing experiments). Run one at a time, 50/50, for
 at least 7 days, and keep a winner only when Play marks it as better with confidence.
 
-1. **First screenshot**: Home (palm beach Story) against the editor (street photo with
+1. **First screenshot**: Today (a polaroid Story) against the editor (street photo with
    "Golden hour"). The first screenshot decides most installs.
 2. **Short description**: the current one against "Share your day in Stories. Chat, send voice notes and
    video call your friends."
@@ -84,28 +85,32 @@ Katkee: Stories, Status & Chat
 
 ### Short description (80 characters max)
 <!-- field:short:en -->
-Post photo & video Stories with music. Chat and video call friends, privately.
+Your day as postcard Stories with music. Chat and video call your friends.
 <!-- /field -->
 
 ### Full description (4,000 characters max)
 <!-- field:full:en -->
-Katkee is a Stories app and a private chat app in one. Share your day as photo and video Stories that stay up for 24 hours, like a status, with music, text and stickers. Then chat, send voice notes and video call your friends. No endless feed of strangers: just the people who matter.
+Katkee turns your day into Stories that feel like postcards. Share photo and video Stories that stay up for 24 hours, like a status, with music, text and animated stickers. Then chat, send voice notes and video call your friends. No endless feed of strangers, no copying anyone's look: just your people, your day.
 
 Why people choose Katkee
-• Stories first: Home shows your friends' Stories, not an endless feed
+• Today: your friends' Stories, one postcard at a time. Swipe up for the next
+• Nothing cropped: every Story shows whole, in a polaroid frame, with its caption handwritten underneath
 • Private by design: you choose who sees every Story
 • Free to use, with no ad tracking, and we never sell your data
 
-Create beautiful Stories
+Make Stories that look like you
 • Post photo and video Stories that last 24 hours, like a status update
-• Story maker tools: text styles, stickers, emoji, drawing and filters
+• Story maker tools: text styles, animated stickers, emoji, drawing and filters
+• Filters cover the whole photo or video, edge to edge
 • Add music to your Story from Katkee's song library
-• Photo editing built in: pinch to zoom, rotate and move your photo
-• Video Stories: trim any video from your gallery
 • Layouts: a photo collage of up to six photos in one Story
 • Polls, quizzes, questions, countdowns and links make Stories interactive
 • Close Friends: share some Stories only with your inner circle
-• Highlights keep your best Stories on your profile, forever
+• Festival Stories: Katkee spots the festival in your Story and adds it for you
+
+Keep your best days as Memories
+• Save your favourite Stories to Memories on your profile, forever
+• Friends can like, comment on and share your Memories
 
 Chat and video call
 • Private messages and group chats with up to 32 friends
@@ -115,10 +120,9 @@ Chat and video call
 • See when your messages are sent, delivered and seen
 
 Discover Stories you'll love
-• Katkee understands what each Story is about, so no hashtags or tagging needed
-• Your Home fills with Stories from friends and the topics you enjoy
+• Katkee understands what each Story is about, so no hashtags needed
 • Explore popular Stories and find new people to follow
-• Festival Stories: celebrate every festival together
+• Follow anyone in one tap from their profile or their Story
 
 Safe and private social app
 • Private account: approve who follows you
@@ -128,8 +132,8 @@ Safe and private social app
 • Download a copy of your data, or delete your account whenever you like
 
 Made for everyone
-• In English, Hindi and Marathi
-• Light and dark mode
+• In English, Hindi, Marathi, Spanish, Portuguese, Indonesian, French, German and Arabic
+• A warm light look, or dark mode if you prefer
 • Several accounts on one phone, switch in one tap
 • Picture descriptions for people who use a screen reader
 
@@ -147,53 +151,61 @@ Katkee: स्टोरीज़, चैट और कॉल
 
 ### Short description
 <!-- field:short:hi -->
-अपना दिन स्टोरीज़ में शेयर करें। दोस्तों से चैट, वॉइस नोट और वीडियो कॉल करें।
+अपना दिन पोस्टकार्ड जैसी स्टोरीज़ में। दोस्तों से चैट और वीडियो कॉल करें।
 <!-- /field -->
 
 ### Full description
 <!-- field:full:hi -->
-Katkee स्टोरीज़ ऐप है, जिससे आप अपना दिन उन लोगों के साथ शेयर करते हैं जो आपके लिए मायने रखते हैं। फ़ोटो और वीडियो स्टोरीज़ के रूप में पोस्ट करें, म्यूज़िक, टेक्स्ट और स्टिकर जोड़ें, फिर दोस्तों से चैट करें, वॉइस नोट भेजें और वीडियो कॉल करें, सब एक शांत और निजी जगह पर।
+Katkee आपके दिन को पोस्टकार्ड जैसी स्टोरीज़ में बदल देता है। फ़ोटो और वीडियो स्टोरीज़ शेयर करें जो स्टेटस की तरह 24 घंटे रहती हैं, म्यूज़िक, टेक्स्ट और एनिमेटेड स्टिकर के साथ। फिर दोस्तों से चैट करें, वॉइस नोट भेजें और वीडियो कॉल करें। अनजान लोगों की अंतहीन फ़ीड नहीं: बस आपके अपने लोग, आपका दिन।
 
-कोई अंतहीन फ़ीड नहीं। लाइक के पीछे भागना नहीं। बस असली पल, शेयर किए हुए।
+लोग Katkee क्यों चुनते हैं
+• आज (Today): दोस्तों की स्टोरीज़, एक बार में एक पोस्टकार्ड। अगली के लिए ऊपर स्वाइप करें
+• कुछ भी कटता नहीं: हर स्टोरी पूरी दिखती है, पोलेरॉइड फ़्रेम में, नीचे हाथ से लिखा कैप्शन
+• प्राइवेसी पहले: हर स्टोरी कौन देखे, आप तय करते हैं
+• मुफ़्त, कोई ऐड ट्रैकिंग नहीं, और हम आपका डेटा कभी नहीं बेचते
 
-ख़ूबसूरत स्टोरीज़
-• फ़ोटो और वीडियो स्टोरीज़ शेयर करें, जो 24 घंटे तक रहती हैं
-• सुंदर स्टाइल में टेक्स्ट, स्टिकर, इमोजी, ड्रॉइंग और फ़िल्टर जोड़ें
-• Katkee की म्यूज़िक लाइब्रेरी से अपनी स्टोरी के लिए गाना चुनें
-• फ़ोटो को ज़ूम करें, घुमाएँ और सही जगह पर रखें
-• वीडियो ट्रिम करें, और एक स्टोरी में छह फ़ोटो तक के लेआउट बनाएँ
-• पोल, क्विज़, सवाल, काउंटडाउन और लिंक से स्टोरीज़ को इंटरैक्टिव बनाएँ
-• क्लोज़ फ़्रेंड्स: कुछ स्टोरीज़ सिर्फ़ अपने सबसे क़रीबी लोगों के साथ शेयर करें
-• पसंदीदा स्टोरीज़ को हाइलाइट्स के रूप में हमेशा अपनी प्रोफ़ाइल पर रखें
+अपने अंदाज़ की स्टोरीज़ बनाएँ
+• फ़ोटो और वीडियो स्टोरीज़ जो स्टेटस की तरह 24 घंटे रहती हैं
+• टेक्स्ट स्टाइल, एनिमेटेड स्टिकर, इमोजी, ड्रॉइंग और फ़िल्टर
+• फ़िल्टर पूरी फ़ोटो या वीडियो पर, किनारे से किनारे तक
+• Katkee की म्यूज़िक लाइब्रेरी से स्टोरी में गाना जोड़ें
+• लेआउट: एक स्टोरी में छह फ़ोटो तक का कोलाज
+• पोल, क्विज़, सवाल, काउंटडाउन और लिंक
+• क्लोज़ फ़्रेंड्स: कुछ स्टोरीज़ सिर्फ़ ख़ास लोगों के लिए
+• त्योहार स्टोरीज़: Katkee आपकी स्टोरी में त्योहार पहचानकर ख़ुद जोड़ देता है
 
-आपको पसंद आने वाली स्टोरीज़
-• Katkee समझता है कि हर स्टोरी किस बारे में है, टैग करने की ज़रूरत नहीं
-• आपका होम दोस्तों और आपके पसंदीदा विषयों की स्टोरीज़ से भरता है
-• लोकप्रिय स्टोरीज़ देखें और फ़ॉलो करने के लिए नए लोग खोजें
-• त्योहारों की स्टोरीज़ के साथ सब मिलकर त्योहार मनाएँ
+ख़ास दिन यादों (Memories) में
+• पसंदीदा स्टोरीज़ अपनी प्रोफ़ाइल पर यादों में हमेशा के लिए रखें
+• दोस्त आपकी यादों को लाइक, कमेंट और शेयर कर सकते हैं
 
-दोस्तों से चैट और कॉल
-• निजी मैसेज और 32 लोगों तक के ग्रुप चैट
-• चैट में वॉइस नोट, फ़ोटो और वीडियो
-• वॉइस और वीडियो कॉल
-• किसी स्टोरी का निजी जवाब दें, इमोजी से रिएक्ट करें या डबल टैप से लाइक करें
+चैट और वीडियो कॉल
+• प्राइवेट मैसेज और 32 दोस्तों तक के ग्रुप चैट
+• हर चैट में वॉइस नोट, फ़ोटो और वीडियो
+• दोस्तों से वॉइस कॉल और वीडियो कॉल
+• स्टोरी का जवाब दें, इमोजी से रिएक्ट करें या डबल टैप से लाइक करें
+• देखें मैसेज कब भेजा गया, पहुँचा और देखा गया
 
-निजी और सुरक्षित
-• हम आपका डेटा कभी नहीं बेचते, और कोई विज्ञापन ट्रैकिंग नहीं
-• हर स्टोरी के लिए चुनें कि कौन देखे: सब, सिर्फ़ फ़ॉलोअर या क्लोज़ फ़्रेंड्स
-• प्राइवेट अकाउंट, और फ़ॉलो करने वालों को आप मंज़ूरी दें
-• टू-स्टेप लॉगिन से अकाउंट सुरक्षित रखें
+पसंद की स्टोरीज़ खोजें
+• Katkee समझता है कि हर स्टोरी किस बारे में है, हैशटैग की ज़रूरत नहीं
+• लोकप्रिय स्टोरीज़ देखें और नए लोगों को फ़ॉलो करें
+• किसी की प्रोफ़ाइल या स्टोरी से एक टैप में फ़ॉलो करें
+
+सुरक्षित और प्राइवेट
+• प्राइवेट अकाउंट: तय करें कौन आपको फ़ॉलो करे
+• हर स्टोरी के लिए चुनें: सब, फ़ॉलोअर या क्लोज़ फ़्रेंड्स
+• टू-स्टेप लॉगिन से अकाउंट सुरक्षित
 • किसी को भी ब्लॉक, म्यूट या रिपोर्ट करें
-• अपने डेटा की कॉपी डाउनलोड करें या अकाउंट कभी भी डिलीट करें
+• अपने डेटा की कॉपी डाउनलोड करें, या जब चाहें अकाउंट डिलीट करें
 
-सभी के लिए
-• पूरी दुनिया में उपलब्ध, अंग्रेज़ी, हिंदी और मराठी में
-• लाइट और डार्क मोड
+सबके लिए
+• हिंदी, मराठी, अंग्रेज़ी और छह और भाषाओं में
+• हल्का गर्म लुक, या पसंद हो तो डार्क मोड
 • एक फ़ोन पर कई अकाउंट, एक टैप में बदलें
+• स्क्रीन रीडर इस्तेमाल करने वालों के लिए तस्वीरों का विवरण
 
 Katkee 18 साल और उससे ज़्यादा उम्र के लोगों के लिए है।
-
-सवाल या सुझाव? support@katkee.com पर लिखें या katkee.com/support पर जाएँ।
+सवाल या सुझाव? support@katkee.com · katkee.com/support
+प्राइवेसी पॉलिसी: katkee.com/privacy · शर्तें: katkee.com/terms
 <!-- /field -->
 
 ## Marathi (mr-IN)
@@ -205,270 +217,361 @@ Katkee: स्टोरीज, चॅट आणि कॉल
 
 ### Short description
 <!-- field:short:mr -->
-तुमचा दिवस स्टोरीजमध्ये शेअर करा. मित्रांशी चॅट, व्हॉइस नोट आणि व्हिडिओ कॉल करा.
+तुमचा दिवस पोस्टकार्डसारख्या स्टोरीजमध्ये. मित्रांशी चॅट आणि व्हिडिओ कॉल करा.
 <!-- /field -->
 
 ### Full description
 <!-- field:full:mr -->
-Katkee हे स्टोरीज ॲप आहे, ज्यातून तुम्ही तुमचा दिवस तुमच्यासाठी महत्त्वाच्या लोकांसोबत शेअर करता. फोटो आणि व्हिडिओ स्टोरीज म्हणून पोस्ट करा, संगीत, टेक्स्ट आणि स्टिकर जोडा, मग मित्रांशी चॅट करा, व्हॉइस नोट पाठवा आणि व्हिडिओ कॉल करा, सगळं एका शांत आणि खाजगी ठिकाणी.
+Katkee तुमचा दिवस पोस्टकार्डसारख्या स्टोरीजमध्ये बदलतो. स्टेटससारख्या 24 तास राहणाऱ्या फोटो आणि व्हिडिओ स्टोरीज शेअर करा, संगीत, टेक्स्ट आणि ॲनिमेटेड स्टिकरसोबत. मग मित्रांशी चॅट करा, व्हॉइस नोट पाठवा आणि व्हिडिओ कॉल करा. अनोळखी लोकांची न संपणारी फीड नाही: फक्त तुमची माणसं, तुमचा दिवस.
 
-अंतहीन फीड नाही. लाइकच्या मागे धावणं नाही. फक्त खरे क्षण, शेअर केलेले.
+लोक Katkee का निवडतात
+• आज (Today): मित्रांच्या स्टोरीज, एका वेळी एक पोस्टकार्ड. पुढच्यासाठी वर स्वाइप करा
+• काहीही कापलं जात नाही: प्रत्येक स्टोरी पूर्ण दिसते, पोलरॉइड फ्रेममध्ये, खाली हाताने लिहिलेलं कॅप्शन
+• प्रायव्हसी आधी: प्रत्येक स्टोरी कोण पाहील, हे तुम्ही ठरवता
+• मोफत, कोणतंही ॲड ट्रॅकिंग नाही, आणि आम्ही तुमचा डेटा कधीच विकत नाही
 
-सुंदर स्टोरीज
-• फोटो आणि व्हिडिओ स्टोरीज शेअर करा, ज्या 24 तास राहतात
-• सुंदर शैलीत टेक्स्ट, स्टिकर, इमोजी, ड्रॉइंग आणि फिल्टर जोडा
-• Katkee च्या संगीत लायब्ररीतून तुमच्या स्टोरीसाठी गाणं निवडा
-• फोटो झूम करा, फिरवा आणि हवा तसा ठेवा
-• व्हिडिओ ट्रिम करा, आणि एका स्टोरीत सहा फोटोपर्यंतचे लेआउट बनवा
-• पोल, क्विझ, प्रश्न, काउंटडाउन आणि लिंकने स्टोरीज इंटरॅक्टिव्ह बनवा
-• क्लोज फ्रेंड्स: काही स्टोरीज फक्त जवळच्या लोकांसोबत शेअर करा
-• आवडत्या स्टोरीज हायलाइट्स म्हणून कायम प्रोफाइलवर ठेवा
+तुमच्या पद्धतीच्या स्टोरीज बनवा
+• स्टेटससारख्या 24 तास राहणाऱ्या फोटो आणि व्हिडिओ स्टोरीज
+• टेक्स्ट स्टाइल, ॲनिमेटेड स्टिकर, इमोजी, ड्रॉइंग आणि फिल्टर
+• फिल्टर संपूर्ण फोटो किंवा व्हिडिओवर, कडेपासून कडेपर्यंत
+• Katkee च्या संगीत लायब्ररीतून स्टोरीत गाणं जोडा
+• लेआउट: एका स्टोरीत सहा फोटोपर्यंतचा कोलाज
+• पोल, क्विझ, प्रश्न, काउंटडाउन आणि लिंक
+• क्लोज फ्रेंड्स: काही स्टोरीज फक्त खास लोकांसाठी
+• सणांच्या स्टोरीज: Katkee तुमच्या स्टोरीतला सण ओळखून आपोआप जोडतो
 
-तुम्हाला आवडतील अशा स्टोरीज
-• Katkee प्रत्येक स्टोरी कशाबद्दल आहे हे समजतं, टॅग करायची गरज नाही
-• तुमचं होम मित्रांच्या आणि आवडत्या विषयांच्या स्टोरीजने भरतं
-• लोकप्रिय स्टोरीज पाहा आणि फॉलो करण्यासाठी नवीन लोक शोधा
-• सणांच्या स्टोरीजसह सगळे मिळून सण साजरे करा
+खास दिवस आठवणींमध्ये (Memories)
+• आवडत्या स्टोरीज तुमच्या प्रोफाइलवर आठवणींमध्ये कायमच्या ठेवा
+• मित्र तुमच्या आठवणी लाइक, कमेंट आणि शेअर करू शकतात
 
-मित्रांशी चॅट आणि कॉल
-• खाजगी मेसेज आणि 32 लोकांपर्यंतचे ग्रुप चॅट
-• चॅटमध्ये व्हॉइस नोट, फोटो आणि व्हिडिओ
-• व्हॉइस आणि व्हिडिओ कॉल
-• स्टोरीला खाजगी उत्तर द्या, इमोजीने रिॲक्ट करा किंवा डबल टॅपने लाइक करा
+चॅट आणि व्हिडिओ कॉल
+• प्रायव्हेट मेसेज आणि 32 मित्रांपर्यंतचे ग्रुप चॅट
+• प्रत्येक चॅटमध्ये व्हॉइस नोट, फोटो आणि व्हिडिओ
+• मित्रांशी व्हॉइस कॉल आणि व्हिडिओ कॉल
+• स्टोरीला उत्तर द्या, इमोजीने रिॲक्ट करा किंवा डबल टॅपने लाइक करा
+• मेसेज कधी पाठवला, पोहोचला आणि पाहिला ते पाहा
 
-खाजगी आणि सुरक्षित
-• आम्ही तुमचा डेटा कधीही विकत नाही, आणि जाहिरात ट्रॅकिंग नाही
-• प्रत्येक स्टोरी कोण पाहील ते निवडा: सगळे, फक्त फॉलोअर किंवा क्लोज फ्रेंड्स
-• प्रायव्हेट अकाउंट, आणि फॉलो करणाऱ्यांना तुम्ही मंजुरी द्या
-• टू-स्टेप लॉगिनने अकाउंट सुरक्षित ठेवा
+आवडतील अशा स्टोरीज शोधा
+• Katkee ला प्रत्येक स्टोरी कशाबद्दल आहे ते समजतं, हॅशटॅगची गरज नाही
+• लोकप्रिय स्टोरीज पाहा आणि नवीन लोकांना फॉलो करा
+• कोणाच्याही प्रोफाइलवरून किंवा स्टोरीतून एका टॅपमध्ये फॉलो करा
+
+सुरक्षित आणि प्रायव्हेट
+• प्रायव्हेट अकाउंट: तुम्हाला कोण फॉलो करेल ते ठरवा
+• प्रत्येक स्टोरीसाठी निवडा: सगळे, फॉलोअर किंवा क्लोज फ्रेंड्स
+• टू-स्टेप लॉगिनने अकाउंट सुरक्षित
 • कोणालाही ब्लॉक, म्यूट किंवा रिपोर्ट करा
-• तुमच्या डेटाची कॉपी डाउनलोड करा किंवा अकाउंट कधीही डिलीट करा
+• तुमच्या डेटाची कॉपी डाउनलोड करा, किंवा हवं तेव्हा अकाउंट डिलीट करा
 
-सर्वांसाठी
-• जगभर उपलब्ध, इंग्रजी, हिंदी आणि मराठीत
-• लाइट आणि डार्क मोड
+सगळ्यांसाठी
+• मराठी, हिंदी, इंग्रजी आणि आणखी सहा भाषांमध्ये
+• उबदार हलका लुक, किंवा आवडत असल्यास डार्क मोड
 • एका फोनवर अनेक अकाउंट, एका टॅपमध्ये बदला
+• स्क्रीन रीडर वापरणाऱ्यांसाठी चित्रांचं वर्णन
 
 Katkee 18 वर्षे आणि त्याहून अधिक वयाच्या लोकांसाठी आहे.
-
-प्रश्न किंवा कल्पना? support@katkee.com वर लिहा किंवा katkee.com/support ला भेट द्या.
+प्रश्न किंवा कल्पना? support@katkee.com · katkee.com/support
+प्रायव्हसी पॉलिसी: katkee.com/privacy · अटी: katkee.com/terms
 <!-- /field -->
 
 ## More languages (worldwide)
 
 Play shows people the listing in their phone's language when there is one, and search matches
 the words of that language. These six cover most of Android's largest markets outside India.
-The app itself is in English, Hindi and Marathi; each description says so, so nobody expects
-the app in their language.
+The app itself is in all nine languages, and each description says so.
 
 ### Spanish, Latin America (es-419)
 <!-- field:title:es -->
-Katkee: Historias y Chat
+Katkee: Historias y chat
 <!-- /field -->
 <!-- field:short:es -->
-Comparte tu día en Historias. Chatea, envía notas de voz y haz videollamadas.
+Tu día en Historias como postales, con música. Chatea y videollama a tus amigos.
 <!-- /field -->
 <!-- field:full:es -->
-Katkee es la app de Historias para compartir tu día con las personas que importan. Publica fotos y videos como Historias con música, texto y stickers, y luego chatea, envía notas de voz y haz videollamadas con tus amigos, todo en un lugar tranquilo y privado.
+Katkee convierte tu día en Historias que parecen postales. Comparte Historias de fotos y videos que duran 24 horas, como un estado, con música, texto y stickers animados. Luego chatea, envía notas de voz y haz videollamadas con tus amigos. Sin un feed infinito de desconocidos: solo tu gente, tu día.
 
-Sin feed infinito. Sin perseguir likes. Solo momentos reales.
+Por qué Katkee
+• Hoy: las Historias de tus amigos, una postal a la vez. Desliza hacia arriba para la siguiente
+• Nada recortado: cada Historia se ve completa, en un marco de polaroid, con el texto escrito a mano debajo
+• Privado por diseño: tú eliges quién ve cada Historia
+• Gratis, sin rastreo publicitario, y nunca vendemos tus datos
 
-HISTORIAS QUE SE VEN INCREÍBLES
+Crea Historias a tu estilo
 • Historias de fotos y videos que duran 24 horas
-• Texto, stickers, emojis, dibujos, filtros y música
-• Acerca, gira y mueve tu foto hasta que quede perfecta
-• Recorta videos y crea Layouts con hasta seis fotos
-• Encuestas, preguntas, cuentas regresivas y enlaces
+• Estilos de texto, stickers animados, emojis, dibujo y filtros que cubren toda la imagen
+• Añade música de la biblioteca de Katkee
+• Layouts: un collage de hasta seis fotos en una Historia
+• Encuestas, cuestionarios, preguntas, cuentas regresivas y enlaces
 • Mejores amigos: comparte algunas Historias solo con tu círculo cercano
-• Guarda tus favoritas como Destacadas en tu perfil
+• Historias de festividades: Katkee reconoce la festividad y la añade por ti
 
-CHATEA Y LLAMA
-• Mensajes privados y chats grupales de hasta 32 personas
-• Notas de voz, fotos y videos
+Guarda tus mejores días en Recuerdos
+• Guarda tus Historias favoritas en Recuerdos, en tu perfil, para siempre
+• Tus amigos pueden dar me gusta, comentar y compartir tus Recuerdos
+
+Chat y videollamadas
+• Mensajes privados y grupos de hasta 32 amigos
+• Notas de voz, fotos y videos en cada chat
 • Llamadas de voz y videollamadas
+• Responde a una Historia o reacciona con un emoji
 
-PRIVADA Y SEGURA
-• Nunca vendemos tus datos, sin rastreo publicitario
-• Tú eliges quién ve cada Historia
-• Cuenta privada, inicio de sesión en dos pasos, bloquear y reportar
+Seguro y privado
+• Cuenta privada: aprueba quién te sigue
+• Elige quién ve cada Historia: todos, seguidores o Mejores amigos
+• Inicio de sesión en dos pasos
+• Bloquea, silencia y denuncia a quien quieras
+• Descarga tus datos o elimina tu cuenta cuando quieras
 
-La app está en inglés, hindi y maratí. Para mayores de 18 años.
-Ayuda: support@katkee.com · Privacidad: katkee.com/privacy
+En 9 idiomas, con un aspecto claro y cálido o modo oscuro, y varias cuentas en un teléfono.
+
+Katkee es para mayores de 18 años.
+¿Preguntas? support@katkee.com · katkee.com/support
+Privacidad: katkee.com/privacy · Términos: katkee.com/terms
 <!-- /field -->
 
 ### Portuguese, Brazil (pt-BR)
 <!-- field:title:pt -->
-Katkee: Stories, Chat e Vídeo
+Katkee: Stories e chat
 <!-- /field -->
 <!-- field:short:pt -->
-Compartilhe seu dia em Stories. Converse, mande áudios e faça chamadas de vídeo.
+Seu dia em Stories como cartões-postais, com música. Chat e videochamadas.
 <!-- /field -->
 <!-- field:full:pt -->
-Katkee é o app de Stories para compartilhar seu dia com quem importa. Publique fotos e vídeos como Stories com música, texto e figurinhas, depois converse, mande áudios e faça chamadas de vídeo com seus amigos, tudo em um lugar tranquilo e privado.
+O Katkee transforma seu dia em Stories que parecem cartões-postais. Compartilhe Stories de fotos e vídeos que ficam 24 horas no ar, como um status, com música, texto e figurinhas animadas. Depois converse, mande áudios e faça videochamadas com seus amigos. Sem um feed infinito de desconhecidos: só a sua turma, o seu dia.
 
-Sem feed infinito. Sem correr atrás de curtidas. Só momentos reais.
+Por que o Katkee
+• Hoje: os Stories dos seus amigos, um cartão-postal por vez. Deslize para cima para o próximo
+• Nada cortado: cada Story aparece inteiro, numa moldura de polaroid, com a legenda escrita à mão embaixo
+• Privacidade em primeiro lugar: você escolhe quem vê cada Story
+• Grátis, sem rastreamento de anúncios, e nunca vendemos seus dados
 
-STORIES LINDOS
+Crie Stories do seu jeito
 • Stories de fotos e vídeos que duram 24 horas
-• Texto, figurinhas, emojis, desenhos, filtros e música
-• Aproxime, gire e mova sua foto até ficar perfeita
-• Corte vídeos e crie Layouts com até seis fotos
-• Enquetes, perguntas, contagens regressivas e links
-• Melhores Amigos: alguns Stories só para quem é mais próximo
-• Guarde os favoritos como Destaques no seu perfil
+• Estilos de texto, figurinhas animadas, emojis, desenho e filtros na imagem inteira
+• Adicione música da biblioteca do Katkee
+• Layouts: uma colagem de até seis fotos em um Story
+• Enquetes, quizzes, perguntas, contagens regressivas e links
+• Melhores amigos: alguns Stories só para o seu círculo
+• Stories de datas especiais: o Katkee reconhece a festa e adiciona para você
 
-CONVERSE E LIGUE
-• Mensagens privadas e grupos de até 32 pessoas
-• Áudios, fotos e vídeos
+Guarde seus melhores dias em Memórias
+• Salve seus Stories favoritos em Memórias, no seu perfil, para sempre
+• Amigos podem curtir, comentar e compartilhar suas Memórias
+
+Chat e videochamadas
+• Mensagens privadas e grupos com até 32 amigos
+• Áudios, fotos e vídeos em cada conversa
 • Chamadas de voz e de vídeo
+• Responda a um Story ou reaja com um emoji
 
-PRIVADO E SEGURO
-• Nunca vendemos seus dados, sem rastreamento de anúncios
-• Você escolhe quem vê cada Story
-• Conta privada, login em duas etapas, bloquear e denunciar
+Seguro e privado
+• Conta privada: aprove quem segue você
+• Escolha quem vê cada Story: todos, seguidores ou Melhores amigos
+• Login em duas etapas
+• Bloqueie, silencie e denuncie quem quiser
+• Baixe seus dados ou exclua sua conta quando quiser
 
-O app está em inglês, hindi e marati. Para maiores de 18 anos.
-Ajuda: support@katkee.com · Privacidade: katkee.com/privacy
+Em 9 idiomas, com um visual claro e acolhedor ou modo escuro, e várias contas em um celular.
+
+O Katkee é para maiores de 18 anos.
+Dúvidas? support@katkee.com · katkee.com/support
+Privacidade: katkee.com/privacy · Termos: katkee.com/terms
 <!-- /field -->
 
 ### Indonesian (id)
 <!-- field:title:id -->
-Katkee: Stories & Chat Teman
+Katkee: Story & Chat
 <!-- /field -->
 <!-- field:short:id -->
-Bagikan harimu lewat Stories. Chat, kirim pesan suara, dan video call teman.
+Harimu jadi Story ala kartu pos, dengan musik. Chat dan video call temanmu.
 <!-- /field -->
 <!-- field:full:id -->
-Katkee adalah aplikasi Stories untuk berbagi harimu dengan orang-orang terdekat. Unggah foto dan video sebagai Stories dengan musik, teks, dan stiker, lalu chat, kirim pesan suara, dan video call dengan teman, semua di tempat yang tenang dan privat.
+Katkee mengubah harimu menjadi Story yang terasa seperti kartu pos. Bagikan Story foto dan video yang tampil 24 jam, seperti status, dengan musik, teks, dan stiker animasi. Lalu chat, kirim pesan suara, dan video call teman-temanmu. Tanpa feed orang asing yang tak ada habisnya: hanya orang-orangmu, harimu.
 
-Tanpa feed tanpa akhir. Tanpa mengejar like. Hanya momen nyata.
+Kenapa Katkee
+• Hari Ini: Story teman-temanmu, satu kartu pos setiap kali. Geser ke atas untuk berikutnya
+• Tidak ada yang terpotong: setiap Story tampil utuh dalam bingkai polaroid, dengan keterangan tulisan tangan di bawahnya
+• Privat sejak awal: kamu yang memilih siapa melihat setiap Story
+• Gratis, tanpa pelacakan iklan, dan kami tidak pernah menjual datamu
 
-STORIES YANG MEMUKAU
-• Stories foto dan video yang bertahan 24 jam
-• Teks, stiker, emoji, gambar, filter, dan musik
-• Perbesar, putar, dan geser foto sampai pas
-• Potong video dan buat Layout hingga enam foto
-• Polling, pertanyaan, hitung mundur, dan tautan
-• Teman Dekat: bagikan Stories tertentu hanya untuk orang terdekat
-• Simpan favoritmu sebagai Sorotan di profil
+Buat Story dengan gayamu
+• Story foto dan video yang bertahan 24 jam
+• Gaya teks, stiker animasi, emoji, gambar, dan filter untuk seluruh gambar
+• Tambahkan musik dari pustaka lagu Katkee
+• Layout: kolase hingga enam foto dalam satu Story
+• Polling, kuis, pertanyaan, hitung mundur, dan tautan
+• Teman Dekat: bagikan sebagian Story hanya untuk lingkaran terdekat
+• Story hari raya: Katkee mengenali hari rayanya dan menambahkannya untukmu
 
-CHAT DAN TELEPON
-• Pesan pribadi dan grup chat hingga 32 orang
-• Pesan suara, foto, dan video
-• Telepon suara dan video call
+Simpan hari terbaikmu di Kenangan
+• Simpan Story favorit di Kenangan, di profilmu, selamanya
+• Teman bisa menyukai, mengomentari, dan membagikan Kenanganmu
 
-PRIVAT DAN AMAN
-• Kami tidak pernah menjual datamu, tanpa pelacakan iklan
-• Kamu pilih siapa yang melihat setiap Story
-• Akun privat, login dua langkah, blokir dan laporkan
+Chat dan video call
+• Pesan pribadi dan grup hingga 32 teman
+• Pesan suara, foto, dan video di setiap chat
+• Panggilan suara dan video call
+• Balas Story atau beri reaksi emoji
 
-Aplikasi tersedia dalam bahasa Inggris, Hindi, dan Marathi. Untuk usia 18 tahun ke atas.
-Bantuan: support@katkee.com · Privasi: katkee.com/privacy
+Aman dan privat
+• Akun privat: setujui siapa yang mengikutimu
+• Pilih siapa melihat setiap Story: semua, pengikut, atau Teman Dekat
+• Login dua langkah
+• Blokir, bisukan, dan laporkan siapa pun
+• Unduh datamu atau hapus akunmu kapan saja
+
+Dalam 9 bahasa, dengan tampilan terang yang hangat atau mode gelap, dan beberapa akun di satu ponsel.
+
+Katkee untuk usia 18 tahun ke atas.
+Pertanyaan? support@katkee.com · katkee.com/support
+Privasi: katkee.com/privacy · Ketentuan: katkee.com/terms
 <!-- /field -->
 
 ### French (fr-FR)
 <!-- field:title:fr -->
-Katkee: Stories, Chat, Appels
+Katkee : Stories et chat
 <!-- /field -->
 <!-- field:short:fr -->
-Partagez votre journée en Stories. Discutez, vocaux et appels vidéo entre amis.
+Votre journée en Stories façon cartes postales. Chat et appels vidéo entre amis.
 <!-- /field -->
 <!-- field:full:fr -->
-Katkee est l'app de Stories pour partager votre journée avec ceux qui comptent. Publiez photos et vidéos en Stories avec musique, texte et stickers, puis discutez, envoyez des messages vocaux et passez des appels vidéo, dans un espace calme et privé.
+Katkee transforme votre journée en Stories qui ressemblent à des cartes postales. Partagez des Stories photo et vidéo visibles 24 heures, comme un statut, avec musique, texte et stickers animés. Puis discutez, envoyez des messages vocaux et passez des appels vidéo à vos amis. Pas de fil infini d'inconnus : juste vos proches, votre journée.
 
-Pas de fil sans fin. Pas de course aux likes. Juste de vrais moments.
+Pourquoi Katkee
+• Aujourd'hui : les Stories de vos amis, une carte postale à la fois. Glissez vers le haut pour la suivante
+• Rien n'est coupé : chaque Story s'affiche en entier, dans un cadre polaroid, avec sa légende manuscrite dessous
+• Privé par conception : vous choisissez qui voit chaque Story
+• Gratuit, sans pistage publicitaire, et nous ne vendons jamais vos données
 
-DES STORIES QUI EN JETTENT
-• Stories photo et vidéo qui durent 24 heures
-• Texte, stickers, emojis, dessins, filtres et musique
-• Zoomez, tournez et déplacez votre photo
-• Coupez vos vidéos et créez des Layouts jusqu'à six photos
-• Sondages, questions, comptes à rebours et liens
-• Amis proches : certaines Stories pour vos proches seulement
-• Gardez vos préférées à la une sur votre profil
+Des Stories à votre image
+• Stories photo et vidéo visibles 24 heures
+• Styles de texte, stickers animés, emoji, dessin et filtres sur toute l'image
+• Ajoutez de la musique depuis la bibliothèque de Katkee
+• Mises en page : un collage jusqu'à six photos dans une Story
+• Sondages, quiz, questions, comptes à rebours et liens
+• Amis proches : certaines Stories pour votre cercle seulement
+• Stories de fête : Katkee reconnaît la fête et l'ajoute pour vous
 
-DISCUTER ET APPELER
-• Messages privés et groupes jusqu'à 32 personnes
-• Vocaux, photos et vidéos
-• Appels audio et vidéo
+Gardez vos plus beaux jours en Souvenirs
+• Enregistrez vos Stories préférées dans Souvenirs, sur votre profil, pour toujours
+• Vos amis peuvent aimer, commenter et partager vos Souvenirs
 
-PRIVÉE ET SÛRE
-• Nous ne vendons jamais vos données, aucun pistage publicitaire
-• Vous choisissez qui voit chaque Story
-• Compte privé, connexion en deux étapes, bloquer et signaler
+Chat et appels vidéo
+• Messages privés et groupes jusqu'à 32 amis
+• Messages vocaux, photos et vidéos dans chaque discussion
+• Appels vocaux et vidéo
+• Répondez à une Story ou réagissez avec un emoji
 
-L'app est en anglais, hindi et marathi. Réservée aux plus de 18 ans.
-Aide : support@katkee.com · Confidentialité : katkee.com/privacy
+Sûr et privé
+• Compte privé : approuvez qui vous suit
+• Choisissez qui voit chaque Story : tout le monde, abonnés ou Amis proches
+• Connexion en deux étapes
+• Bloquez, masquez et signalez qui vous voulez
+• Téléchargez vos données ou supprimez votre compte quand vous voulez
+
+En 9 langues, avec un thème clair et chaleureux ou un mode sombre, et plusieurs comptes sur un téléphone.
+
+Katkee est réservé aux 18 ans et plus.
+Des questions ? support@katkee.com · katkee.com/support
+Confidentialité : katkee.com/privacy · Conditions : katkee.com/terms
 <!-- /field -->
 
 ### German (de-DE)
 <!-- field:title:de -->
-Katkee: Stories, Chat & Anrufe
+Katkee: Stories & Chat
 <!-- /field -->
 <!-- field:short:de -->
-Teile deinen Tag in Stories. Chatte, sende Sprachnachrichten, mach Videoanrufe.
+Dein Tag in Stories wie Postkarten, mit Musik. Chatte und videotelefoniere.
 <!-- /field -->
 <!-- field:full:de -->
-Katkee ist die Stories-App, um deinen Tag mit den Menschen zu teilen, die dir wichtig sind. Poste Fotos und Videos als Stories mit Musik, Text und Stickern, dann chatte, sende Sprachnachrichten und führe Videoanrufe, alles an einem ruhigen, privaten Ort.
+Katkee macht aus deinem Tag Stories, die sich wie Postkarten anfühlen. Teile Foto- und Video-Stories, die 24 Stunden sichtbar bleiben, wie ein Status, mit Musik, Text und animierten Stickern. Dann chatte, schick Sprachnachrichten und telefoniere per Video mit deinen Freunden. Kein endloser Feed von Fremden: nur deine Leute, dein Tag.
 
-Kein endloser Feed. Keine Jagd nach Likes. Nur echte Momente.
+Warum Katkee
+• Heute: die Stories deiner Freunde, eine Postkarte nach der anderen. Wisch nach oben für die nächste
+• Nichts wird abgeschnitten: jede Story ganz, im Polaroid-Rahmen, mit handgeschriebener Bildunterschrift
+• Privat von Anfang an: du bestimmst, wer jede Story sieht
+• Kostenlos, ohne Werbe-Tracking, und wir verkaufen deine Daten nie
 
-STORIES, DIE BEGEISTERN
+Stories in deinem Stil
 • Foto- und Video-Stories, die 24 Stunden bleiben
-• Text, Sticker, Emojis, Zeichnungen, Filter und Musik
-• Zoomen, drehen und verschieben, bis dein Foto passt
-• Videos kürzen und Layouts mit bis zu sechs Fotos
-• Umfragen, Fragen, Countdowns und Links
-• Enge Freunde: manche Stories nur für die Liebsten
-• Lieblings-Stories als Highlights im Profil
+• Textstile, animierte Sticker, Emojis, Zeichnen und Filter fürs ganze Bild
+• Musik aus der Katkee-Bibliothek hinzufügen
+• Layouts: eine Collage aus bis zu sechs Fotos in einer Story
+• Umfragen, Quiz, Fragen, Countdowns und Links
+• Enge Freunde: manche Stories nur für deinen engsten Kreis
+• Feiertags-Stories: Katkee erkennt den Feiertag und fügt ihn für dich hinzu
 
-CHATTEN UND ANRUFEN
-• Private Nachrichten und Gruppenchats mit bis zu 32 Personen
-• Sprachnachrichten, Fotos und Videos
+Deine besten Tage als Erinnerungen
+• Speichere Lieblings-Stories für immer als Erinnerungen in deinem Profil
+• Freunde können deine Erinnerungen liken, kommentieren und teilen
+
+Chat und Videoanrufe
+• Private Nachrichten und Gruppen mit bis zu 32 Freunden
+• Sprachnachrichten, Fotos und Videos in jedem Chat
 • Sprach- und Videoanrufe
+• Auf eine Story antworten oder mit einem Emoji reagieren
 
-PRIVAT UND SICHER
-• Wir verkaufen nie deine Daten, kein Werbe-Tracking
-• Du entscheidest, wer jede Story sieht
-• Privates Konto, Anmeldung in zwei Schritten, blockieren und melden
+Sicher und privat
+• Privates Konto: bestätige, wer dir folgt
+• Wähle für jede Story: alle, Follower oder Enge Freunde
+• Anmeldung in zwei Schritten
+• Blockiere, stummschalte und melde jeden
+• Lade deine Daten herunter oder lösche dein Konto, wann du willst
 
-Die App ist auf Englisch, Hindi und Marathi. Ab 18 Jahren.
-Hilfe: support@katkee.com · Datenschutz: katkee.com/privacy
+In 9 Sprachen, mit warmem hellem Design oder Dunkelmodus, und mehreren Konten auf einem Handy.
+
+Katkee ist für Menschen ab 18 Jahren.
+Fragen? support@katkee.com · katkee.com/support
+Datenschutz: katkee.com/privacy · Bedingungen: katkee.com/terms
 <!-- /field -->
 
 ### Arabic (ar)
 <!-- field:title:ar -->
-Katkee: قصص ودردشة ومكالمات
+Katkee: قصص ودردشة
 <!-- /field -->
 <!-- field:short:ar -->
-شارك يومك في القصص. دردش، أرسل رسائل صوتية، واتصل بأصدقائك بالفيديو.
+يومك في قصص كأنها بطاقات بريدية مع موسيقى. دردش واتصل بالفيديو مع أصدقائك.
 <!-- /field -->
 <!-- field:full:ar -->
-Katkee هو تطبيق القصص لمشاركة يومك مع الأشخاص المهمين لك. انشر الصور والفيديوهات كقصص مع الموسيقى والنص والملصقات، ثم دردش وأرسل رسائل صوتية واتصل بأصدقائك بالفيديو، في مكان هادئ وخاص.
+يحوّل Katkee يومك إلى قصص تبدو كبطاقات بريدية. شارك قصص الصور والفيديو التي تبقى 24 ساعة، مثل الحالة، مع الموسيقى والنص والملصقات المتحركة. ثم دردش وأرسل رسائل صوتية واتصل بالفيديو مع أصدقائك. لا خلاصة لا نهائية من الغرباء: فقط ناسك، ويومك.
 
-بلا خلاصة لا تنتهي. بلا سباق على الإعجابات. لحظات حقيقية فقط.
+لماذا Katkee
+• اليوم: قصص أصدقائك، بطاقة بريدية في كل مرة. اسحب للأعلى للقصة التالية
+• لا شيء يُقص: تظهر كل قصة كاملة داخل إطار بولارويد، مع تعليق مكتوب بخط اليد أسفلها
+• الخصوصية أولاً: أنت تختار من يرى كل قصة
+• مجاني، بلا تتبع إعلاني، ولا نبيع بياناتك أبداً
 
-قصص رائعة
+اصنع قصصاً بأسلوبك
 • قصص صور وفيديو تبقى 24 ساعة
-• نص وملصقات ورموز تعبيرية ورسم وفلاتر وموسيقى
-• كبّر صورتك وأدرها وحرّكها حتى تصبح مثالية
-• قصّ الفيديو وأنشئ تنسيقات تضم حتى ست صور
-• استطلاعات وأسئلة وعدّ تنازلي وروابط
-• الأصدقاء المقربون: شارك بعض القصص مع المقربين فقط
-• احتفظ بقصصك المفضلة كأبرز اللحظات في ملفك
+• أنماط نص وملصقات متحركة ورموز تعبيرية ورسم وفلاتر تغطي الصورة كلها
+• أضف موسيقى من مكتبة Katkee
+• التخطيطات: مجموعة حتى ست صور في قصة واحدة
+• استطلاعات واختبارات وأسئلة وعدّ تنازلي وروابط
+• الأصدقاء المقربون: بعض القصص لدائرتك القريبة فقط
+• قصص المناسبات: يتعرّف Katkee على المناسبة ويضيفها لك
 
-دردشة ومكالمات
-• رسائل خاصة ومجموعات حتى 32 شخصًا
-• رسائل صوتية وصور وفيديو
-• مكالمات صوتية ومرئية
+احتفظ بأجمل أيامك في الذكريات
+• احفظ قصصك المفضلة في الذكريات على ملفك الشخصي، للأبد
+• يمكن لأصدقائك الإعجاب بذكرياتك والتعليق عليها ومشاركتها
 
-خاص وآمن
-• لا نبيع بياناتك أبدًا، ولا تتبع إعلاني
-• أنت تختار من يرى كل قصة
-• حساب خاص، تسجيل دخول بخطوتين، الحظر والإبلاغ
+الدردشة ومكالمات الفيديو
+• رسائل خاصة ومجموعات حتى 32 صديقاً
+• رسائل صوتية وصور وفيديو في كل دردشة
+• مكالمات صوتية ومكالمات فيديو
+• رُدّ على قصة أو تفاعل برمز تعبيري
 
-التطبيق متاح بالإنجليزية والهندية والماراثية. لمن هم في سن 18 عامًا فأكثر.
-المساعدة: support@katkee.com · الخصوصية: katkee.com/privacy
+آمن وخاص
+• حساب خاص: وافق على من يتابعك
+• اختر من يرى كل قصة: الجميع أو المتابعون أو الأصدقاء المقربون
+• تسجيل دخول بخطوتين
+• احظر أو اكتم أو أبلغ عن أي شخص
+• نزّل بياناتك أو احذف حسابك متى شئت
+
+بـ 9 لغات، بمظهر فاتح دافئ أو وضع داكن، وعدة حسابات على هاتف واحد.
+
+Katkee لمن هم في الثامنة عشرة فما فوق.
+أسئلة؟ support@katkee.com · katkee.com/support
+الخصوصية: katkee.com/privacy · الشروط: katkee.com/terms
 <!-- /field -->
 
 ## Graphics (ready to upload)
