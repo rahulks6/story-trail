@@ -1,6 +1,6 @@
 # Katkee Privacy Policy
 
-**Last updated:** 13 November 2026
+**Last updated:** 15 November 2026
 
 This policy explains what Katkee collects, how we use it, who can see it, how long we keep it
 and the choices you have. It covers the Katkee apps for iPhone and Android, the website at
@@ -159,6 +159,25 @@ shown to anyone, never used for ads, and deleted:
 - after 30 days without a refresh;
 - at once when you turn Nearby Stories off (the area) or delete your
   account (both).
+
+### Crossed paths (optional)
+Only if you turn on **Crossed paths**, after a screen that explains it. Each
+time you open Katkee (at most every half hour), the app reads an approximate
+location, turns it into a neighbourhood-sized area (about 5 x 5 km) on your
+phone, and sends only that area, never your coordinates. Nothing is read
+while the app is closed.
+
+If someone else who also turned on Crossed paths was in the same area within
+a few hours of you, we tell you both, at least two hours later, in Activity
+and with a notification: "You crossed paths with @name today". We never say
+where or exactly when. We only ever name people whose accounts are public, we
+never name someone you've blocked, who blocked you or whom you've muted, we
+never tell you about the same person twice in a week, and you hear about at
+most three people a day. Your areas are never shown to anyone and never used
+for ads. We delete:
+- your areas after two days, and at once when you turn Crossed paths off or
+  delete your account;
+- the record of who was told about whom after 30 days.
 
 If you add a location sticker to a Story, the approximate place you choose
 is shown on that Story.
@@ -419,6 +438,7 @@ In the app you can:
 - edit your profile;
 - make your account private;
 - turn Nearby Stories on or off (Settings, then Privacy);
+- turn Crossed paths on or off (Settings, then Privacy);
 - choose whether people can find you from their contacts (Settings, then
   Privacy);
 - choose whether your public profile shows on the web (Settings, then
@@ -465,7 +485,7 @@ time. The legal bases we rely on:
   and our own analytics, which identify nobody once counted
   (Article 6(1)(f)). You can object to any of these; for Sponsored Stories,
   removing your interests in Edit Profile stops them being used.
-- **Consent**: Nearby Stories (your area), a location sticker, and Contacts
+- **Consent**: Nearby Stories (your area), Crossed paths, a location sticker, and Contacts
   on Katkee (checked once each time you choose it, and not kept); you can
   turn them off at any time.
 - **Legal obligation**: keeping server logs and the details of deleted
@@ -477,7 +497,7 @@ You can complain to the data protection authority where you live or work
 ### United States (California and other states)
 In the last 12 months we collected the categories in section 2 (identifiers,
 account details, your content and activity on Katkee, approximate area if you
-turned it on, and device information), from you and your use of Katkee, for
+turned on Nearby Stories or Crossed paths, and device information), from you and your use of Katkee, for
 the purposes in section 3. **We don't sell your personal information or share
 it for cross-context behavioural advertising**, and we don't use sensitive
 personal information to infer things about you. You have the right to know,

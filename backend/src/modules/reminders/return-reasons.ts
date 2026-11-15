@@ -4,6 +4,7 @@ import type { Router } from "../../http/router";
 import { requireAuth } from "../../http/middleware/auth.middleware";
 import { sendJson } from "../../http/respond";
 import { FESTIVAL_TIME_ZONE } from "../festivals/festivals";
+import { runCrossedPaths } from "../crossed-paths/crossed-paths";
 
 /**
  * Reasons to open Katkee each day (migration 0051), each with a limit so nobody is spammed:
@@ -179,6 +180,8 @@ export async function runReturnReasons(now = new Date()): Promise<Record<string,
   const hour = hourInIndia(now);
   const result: Record<string, number> = { milestones: await queueViewMilestones() };
   if (hour >= 8 && hour < 22) result.festival = await queueFestivalGreetings();
+  // Crossed paths: daytime only, never a late-night ping about someone nearby.
+  if (hour >= 9 && hour < 22) result.crossed = await runCrossedPaths();
   if (hour >= 18 && hour < 21) {
     result.streak = await queueStreakReminders();
     result.nudge = await queueNudges();

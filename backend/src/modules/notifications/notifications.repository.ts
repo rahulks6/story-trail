@@ -5,7 +5,9 @@ export type NotificationType =
   | "like" | "comment" | "follow" | "follow_request" | "follow_accepted" | "mention" | "verification"
   /** Collab Stories (migration 0063): an invitation to answer, and the owner told it was accepted. */
   | "collab_invite" | "collab_accepted"
-  | "invite_joined";
+  | "invite_joined"
+  /** Crossed paths (migration 0078): two people who both turned it on were in the same area. */
+  | "crossed_paths";
 
 /** What happened to the recipient's own verified badge (modules/verification). */
 export type VerificationOutcome = "approved" | "denied" | "removed" | "restored";

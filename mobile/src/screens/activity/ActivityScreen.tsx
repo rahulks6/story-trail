@@ -45,7 +45,7 @@ const TABS: Array<{ key: ActivityTab; label: string }> = [
 /** A `follow_request` reads as the same relationship-y thing a `follow` does — the "Follows" tab covers both rather than needing a 5th tab. */
 function matchesTab(notification: NotificationRecord, tab: ActivityTab): boolean {
   if (tab === "all") return true;
-  if (tab === "follow") return notification.type === "follow" || notification.type === "follow_request" || notification.type === "follow_accepted" || notification.type === "invite_joined";
+  if (tab === "follow") return notification.type === "follow" || notification.type === "follow_request" || notification.type === "follow_accepted" || notification.type === "invite_joined" || notification.type === "crossed_paths";
   // Collab invitations are people bringing you into their Story, like a mention.
   if (tab === "comment") return notification.type === "comment" || notification.type === "mention" || notification.type === "collab_invite" || notification.type === "collab_accepted";
   return notification.type === tab;
@@ -97,6 +97,8 @@ function messageFor(notification: NotificationRecord): string {
       return t("activity.nameAcceptedYourFollowRequest", { name });
     case "invite_joined":
       return t("activity.nameJoinedKatkeeFromYour", { name });
+    case "crossed_paths":
+      return t("activity.youCrossedPathsWithName", { name });
     case "mention":
       // A mention sticker on their Story, or @you in a comment.
       return notification.comment ? t("activity.nameMentionedYouInA", { name }) : t("activity.nameMentionedYouInTheir", { name });
@@ -369,6 +371,12 @@ export function ActivityScreen(): React.JSX.Element {
       }
     }
 
+    // Crossed paths: their newest public Story when they have one, else their profile below.
+    if (notification.type === "crossed_paths" && notification.story && notification.actor) {
+      navigation.navigate("StoryViewer", { creators: [notification.actor.username], startIndex: 0, initialStoryId: notification.story.id });
+      return;
+    }
+
     if (notification.type === "verification") {
       navigation.navigate("Verification");
       return;
@@ -470,15 +478,16 @@ export function ActivityScreen(): React.JSX.Element {
       );
     }
     // Someone who joined from your invite gets a Follow button too: they're new and know you.
-    if ((n.type === "follow" || n.type === "follow_accepted" || n.type === "invite_joined") && n.actor) {
+    if ((n.type === "follow" || n.type === "follow_accepted" || n.type === "invite_joined" || n.type === "crossed_paths") && n.actor) {
       const state = followedBack[n.actor.username];
       if (n.actor.followedByYou && !state) return null;
       const username = n.actor.username;
-      const label = n.type === "invite_joined" ? t("common.follow") : t("common.followBack");
+      const fresh = n.type === "invite_joined" || n.type === "crossed_paths";
+      const label = fresh ? t("common.follow") : t("common.followBack");
       return state ? (
         <Text style={styles.trailingNote}>{state === "requested" ? t("common.requested") : t("common.following")}</Text>
       ) : (
-        <Pressable onPress={() => void followBack(username)} style={[styles.smallButton, styles.smallButtonPrimary]} accessibilityRole="button" accessibilityLabel={n.type === "invite_joined" ? t("activity.followUsername", { username }) : t("activity.followUsernameBack", { username })}>
+        <Pressable onPress={() => void followBack(username)} style={[styles.smallButton, styles.smallButtonPrimary]} accessibilityRole="button" accessibilityLabel={fresh ? t("activity.followUsername", { username }) : t("activity.followUsernameBack", { username })}>
           <Text style={styles.smallButtonPrimaryText}>{label}</Text>
         </Pressable>
       );

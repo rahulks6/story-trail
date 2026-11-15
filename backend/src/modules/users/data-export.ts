@@ -161,7 +161,7 @@ async function build(userId: string, store: ObjectStore, file: string, workDir: 
 
   const user = await queryOne(
     `SELECT id, username, email, display_name, bio, is_private, created_at, birth_date, email_verified_at, interests_json, locale,
-            verified_at, verified_category, professional_category, findable_by_contacts, show_on_web
+            verified_at, verified_category, professional_category, findable_by_contacts, show_on_web, crossed_paths_enabled
        FROM users WHERE id = :'id'`,
     { id: userId },
   );
@@ -171,7 +171,7 @@ async function build(userId: string, store: ObjectStore, file: string, workDir: 
     privateAccount: user.is_private === "t", joinedAt: at(user.created_at), birthDate: user.birth_date,
     emailVerifiedAt: at(user.email_verified_at), interests: JSON.parse((user.interests_json as string) || "[]"), language: user.locale,
     verifiedAt: at(user.verified_at), verifiedCategory: user.verified_category, professionalCategory: user.professional_category,
-    findableByContacts: user.findable_by_contacts === "t", profileOnTheWeb: user.show_on_web === "t",
+    findableByContacts: user.findable_by_contacts === "t", profileOnTheWeb: user.show_on_web === "t", crossedPaths: user.crossed_paths_enabled === "t",
   }));
 
   const stories = await query(

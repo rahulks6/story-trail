@@ -39,7 +39,7 @@ export function deviceTimeZone(): string | null {
 }
 
 /** Approximate location only. `ask` false never shows a system prompt on Android. */
-async function locationAllowed(ask: boolean): Promise<boolean> {
+export async function locationAllowed(ask: boolean): Promise<boolean> {
   if (Platform.OS === "android") {
     const permission = PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION;
     if (await PermissionsAndroid.check(permission)) return true;
@@ -56,16 +56,16 @@ async function locationAllowed(ask: boolean): Promise<boolean> {
   });
 }
 
-type Reading = { cell: string } | { error: "denied" | "unavailable" };
+export type Reading = { cell: string } | { error: "denied" | "unavailable" };
 
-/** One low-accuracy reading, turned into a cell straight away. */
-function currentCell(): Promise<Reading> {
+/** One low-accuracy reading, turned into a cell straight away (city-sized unless asked for finer). */
+export function currentCell(precision: number = AREA_CELL_LENGTH): Promise<Reading> {
   return new Promise((resolve) => {
     try {
       Geolocation.getCurrentPosition(
         (position) => {
           try {
-            resolve({ cell: encodeGeohash(position.coords.latitude, position.coords.longitude, AREA_CELL_LENGTH) });
+            resolve({ cell: encodeGeohash(position.coords.latitude, position.coords.longitude, precision) });
           } catch {
             resolve({ error: "unavailable" });
           }

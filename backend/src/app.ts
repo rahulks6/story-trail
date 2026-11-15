@@ -23,6 +23,7 @@ import { registerStickerRoutes } from "./modules/stories/stickers.routes";
 import { registerEventsRoutes } from "./modules/recommendations/events.routes";
 import { registerRecommendationRoutes } from "./modules/recommendations/recommendation.routes";
 import { registerAreaRoutes } from "./modules/recommendations/area.routes";
+import { registerCrossedPathsRoutes } from "./modules/crossed-paths/crossed-paths";
 import { registerInterestsRoutes } from "./modules/recommendations/interests.routes";
 import { registerNotificationsRoutes } from "./modules/notifications/notifications.routes";
 import { registerConversationsRoutes } from "./modules/conversations/conversations.routes";
@@ -116,6 +117,7 @@ export function buildApp(providers?:ProviderGateway): KatkeeServer {
   registerEventsRoutes(router);
   registerRecommendationRoutes(router);
   registerAreaRoutes(router);
+  registerCrossedPathsRoutes(router);
   registerInterestsRoutes(router);
   registerNotificationsRoutes(router);
   registerConversationsRoutes(router);

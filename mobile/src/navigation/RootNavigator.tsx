@@ -12,6 +12,7 @@ import { useCallsIfAvailable } from "../calls/CallContext";
 import { usePushRegistration } from "../push/usePushRegistration";
 import { useLocaleSync } from "../state/localeSync";
 import { useAreaSync } from "../state/nearby";
+import { useCrossedPathsSync } from "../state/crossedPaths";
 import { NearbyPrompt } from "../components/NearbyPrompt";
 import { InviteAfterStory } from "../components/InviteAfterStory";
 import { useAnalytics } from "../analytics/useAnalytics";
@@ -356,6 +357,7 @@ export function RootNavigator(): React.JSX.Element {
   usePushRegistration();
   useLocaleSync();
   useAreaSync();
+  useCrossedPathsSync();
   useAnalytics();
   // An invite opened before signing up is redeemed once someone signs in (state/invites.ts).
   useInviteRedemption();

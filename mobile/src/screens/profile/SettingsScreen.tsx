@@ -13,6 +13,7 @@ import { ListRow } from "../../components/ListRow";
 import { ActionSheet } from "../../components/ActionSheet";
 import { appearanceChoice, setAppearance, type AppearanceChoice } from "../../theme/appearance";
 import { nearbyChoice, turnNearbyOff, turnNearbyOn } from "../../state/nearby";
+import { crossedPathsOn, turnCrossedPathsOff, turnCrossedPathsOn } from "../../state/crossedPaths";
 import { professionalCategoryLabel } from "../../api/professional";
 import { shareInvite } from "../../state/invites";
 import { READY_LANGUAGES, LANGUAGE_NAMES, needsRestartForDirection, setLanguage, t, useLanguage } from "../../i18n";
@@ -56,6 +57,8 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
   const [pendingRequestCount, setPendingRequestCount] = useState<number | null>(null);
   const [nearbyOn, setNearbyOn] = useState<boolean | null>(null);
   const [togglingNearby, setTogglingNearby] = useState(false);
+  const [crossedOn, setCrossedOn] = useState<boolean | null>(null);
+  const [togglingCrossed, setTogglingCrossed] = useState(false);
 
   useEffect(() => {
     setIsPrivate(user?.isPrivate ?? false);
@@ -71,6 +74,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
     useCallback(() => {
       if (user) void countPendingDrafts(user.id).then(setDraftCount);
       if (user) void nearbyChoice(user.id).then((choice) => setNearbyOn(choice === "on"));
+      if (user) void crossedPathsOn(user.id).then(setCrossedOn);
       if (accessToken) {
         // A count-only fetch, capped at one page — this only needs to show
         // a badge, not the full list (FollowRequestsScreen does that).
@@ -156,6 +160,36 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
     } finally {
       setTogglingNearby(false);
     }
+  };
+
+  // Crossed paths: opt-in. Turning it on explains exactly what's shared and asks for approximate
+  // location; off forgets your visits on the server at once.
+  const setCrossed = async (next: boolean) => {
+    if (!user || !accessToken || togglingCrossed) return;
+    setTogglingCrossed(true);
+    setCrossedOn(next);
+    try {
+      if (!next) { await turnCrossedPathsOff(user.id, accessToken); return; }
+      const result = await turnCrossedPathsOn(user.id, accessToken);
+      if (result === "on") return;
+      setCrossedOn(false);
+      Alert.alert(t("settings.allowLocationForCrossedPaths"), t("settings.katkeeNeedsYourApproximateLocation"), [
+        { text: t("common.notNow"), style: "cancel" },
+        { text: t("common.openSettings"), onPress: () => void Linking.openSettings().catch(() => undefined) },
+      ]);
+    } catch {
+      setCrossedOn(!next);
+      Alert.alert(t("common.couldntUpdate"), t("common.tryAgain2"));
+    } finally {
+      setTogglingCrossed(false);
+    }
+  };
+  const onToggleCrossed = (next: boolean) => {
+    if (!next) { void setCrossed(false); return; }
+    Alert.alert(t("settings.turnOnCrossedPaths"), t("settings.crossedPathsExplainer"), [
+      { text: t("common.notNow"), style: "cancel" },
+      { text: t("settings.turnOn"), onPress: () => void setCrossed(true) },
+    ]);
   };
 
   const onClearData = () => {
@@ -252,6 +286,17 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
             <ActivityIndicator color={colors.accentText} />
           ) : (
             <Toggle value={nearbyOn} onValueChange={(next) => void onToggleNearby(next)} accessibilityLabel={t("settings.nearbyStories")} />
+          )}
+        </View>
+        <View style={styles.switchRow}>
+          <View style={styles.switchLabelGroup}>
+            <Text style={typography.body}>{t("settings.crossedPaths")}</Text>
+            <Text style={styles.switchHint}>{t("settings.crossedPathsHint")}</Text>
+          </View>
+          {togglingCrossed || crossedOn === null ? (
+            <ActivityIndicator color={colors.accentText} />
+          ) : (
+            <Toggle value={crossedOn} onValueChange={onToggleCrossed} accessibilityLabel={t("settings.crossedPaths")} />
           )}
         </View>
         <View style={styles.switchRow}>
