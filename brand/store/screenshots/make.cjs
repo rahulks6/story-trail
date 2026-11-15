@@ -16,7 +16,7 @@ const SCREENS = ["home", "editor", "settings", "chat", "profile", "layout", "gro
 const TEXT = {
   en: [
     ["Stories for<br><em>your people</em>", "Share your day with the friends who matter"],
-    ["Add <em>music</em>,<br>text &amp; stickers", "Animated stickers, filters and any song"],
+    ["Add any <em>song</em><br>to your Story", "Pick the best part, then add text and stickers"],
     ["You choose<br><em>who sees it</em>", "Everyone, followers or Close Friends"],
     ["Chat &amp; <em>video call</em><br>your friends", "Messages, voice notes and calls"],
     ["<em>Highlights</em><br>that last", "Friends can like, comment and share"],
@@ -26,7 +26,7 @@ const TEXT = {
   ],
   hi: [
     ["स्टोरीज़<br><em>अपनों</em> के लिए", "अपना दिन ख़ास दोस्तों के साथ शेयर करें"],
-    ["<em>म्यूज़िक</em>, टेक्स्ट<br>और स्टिकर", "एनिमेटेड स्टिकर, फ़िल्टर और कोई भी गाना"],
+    ["स्टोरी में कोई भी<br><em>गाना</em>", "बेस्ट हिस्सा चुनें, फिर टेक्स्ट और स्टिकर"],
     ["आप तय करें<br><em>कौन देखे</em>", "सब, फ़ॉलोअर या क्लोज़ फ़्रेंड्स"],
     ["दोस्तों से चैट और<br><em>वीडियो कॉल</em>", "मैसेज, वॉइस नोट और कॉल"],
     ["हमेशा रहने वाली<br><em>हाइलाइट्स</em>", "दोस्त लाइक, कमेंट और शेयर कर सकते हैं"],
@@ -36,7 +36,7 @@ const TEXT = {
   ],
   mr: [
     ["स्टोरीज<br><em>आपल्या माणसांसाठी</em>", "तुमचा दिवस खास मित्रांसोबत शेअर करा"],
-    ["<em>संगीत</em>, टेक्स्ट<br>आणि स्टिकर", "ॲनिमेटेड स्टिकर, फिल्टर आणि कोणतंही गाणं"],
+    ["स्टोरीत कोणतंही<br><em>गाणं</em>", "बेस्ट भाग निवडा, मग टेक्स्ट आणि स्टिकर"],
     ["तुम्ही ठरवा<br><em>कोण पाहील</em>", "सगळे, फॉलोअर किंवा क्लोज फ्रेंड्स"],
     ["मित्रांशी चॅट आणि<br><em>व्हिडिओ कॉल</em>", "मेसेज, व्हॉइस नोट आणि कॉल"],
     ["कायम राहणाऱ्या<br><em>हायलाइट्स</em>", "मित्र लाइक, कमेंट आणि शेअर करू शकतात"],
