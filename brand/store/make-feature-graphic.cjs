@@ -31,8 +31,8 @@ const html = `<!doctype html><html><head><meta charset="utf-8">
   .front { left: 600px; top: 40px; transform: rotate(-4deg); }
 </style></head><body>
   <div class="brand">${MARK.replace("<svg", '<svg height="46"')}<div>Kat<span>kee</span></div></div>
-  <h1>Your day,<br>in <em>Stories.</em></h1>
-  <div class="sub">Share moments, chat and call the people who matter.</div>
+  <h1>Stories for<br><em>your people.</em></h1>
+  <div class="sub">Close Friends, music, chats and video calls. Free on Android.</div>
   <div class="phone back"><div><img src="${img(BACK)}"></div></div>
   <div class="phone front"><div><img src="${img(FRONT)}"></div></div>
 </body></html>`;

@@ -12,37 +12,37 @@ const MARK = fs.readFileSync(path.join(DIR, "../../katkee-mark.svg"), "utf8").re
 
 // In the order Play shows them: the first three carry the listing. One set per listing language
 // (Play shows each country's people the screenshots of their language): node make.cjs [lang].
-const SCREENS = ["home", "editor", "chat", "profile", "layout", "activity", "group", "settings"];
+const SCREENS = ["home", "editor", "settings", "chat", "profile", "layout", "group", "activity"];
 const TEXT = {
   en: [
-    ["Share your day<br>in <em>Stories</em>", "Photos and videos with the people who matter"],
-    ["Make every Story<br><em>yours</em>", "Text, music, stickers and filters"],
-    ["Chat with<br><em>your people</em>", "Messages, voice notes and video calls"],
-    ["Keep the best as<br><em>Highlights</em>", "Your favourite Stories, on your profile"],
-    ["Your photos,<br><em>one Story</em>", "Up to six photos in one Layout"],
-    ["See who<br><em>loved it</em>", "Likes, comments and new followers"],
-    ["Plans with<br><em>your crew</em>", "Group chats with up to 32 friends"],
+    ["Stories for<br><em>your people</em>", "Share your day with the friends who matter"],
+    ["Add <em>music</em>,<br>text &amp; stickers", "Animated stickers, filters and any song"],
     ["You choose<br><em>who sees it</em>", "Everyone, followers or Close Friends"],
+    ["Chat &amp; <em>video call</em><br>your friends", "Messages, voice notes and calls"],
+    ["<em>Highlights</em><br>that last", "Friends can like, comment and share"],
+    ["Six photos,<br><em>one Story</em>", "A collage in one tap"],
+    ["Plans with<br><em>your crew</em>", "Group chats with up to 32 friends"],
+    ["See who<br><em>loved it</em>", "Likes, comments and new followers"],
   ],
   hi: [
-    ["अपना दिन<br><em>स्टोरीज़</em> में", "अपनों के साथ फ़ोटो और वीडियो"],
-    ["हर स्टोरी को<br><em>अपना</em> बनाएँ", "टेक्स्ट, म्यूज़िक, स्टिकर और फ़िल्टर"],
-    ["<em>अपनों</em> से<br>बातें करें", "मैसेज, वॉइस नोट और वीडियो कॉल"],
-    ["ख़ास पल<br><em>हाइलाइट्स</em> में", "पसंदीदा स्टोरीज़, आपकी प्रोफ़ाइल पर"],
-    ["कई फ़ोटो,<br><em>एक स्टोरी</em>", "एक लेआउट में छह फ़ोटो तक"],
-    ["देखें किसे<br><em>पसंद आया</em>", "लाइक, कमेंट और नए फ़ॉलोअर"],
-    ["दोस्तों के साथ<br><em>प्लान</em>", "32 लोगों तक के ग्रुप चैट"],
+    ["स्टोरीज़<br><em>अपनों</em> के लिए", "अपना दिन ख़ास दोस्तों के साथ शेयर करें"],
+    ["<em>म्यूज़िक</em>, टेक्स्ट<br>और स्टिकर", "एनिमेटेड स्टिकर, फ़िल्टर और कोई भी गाना"],
     ["आप तय करें<br><em>कौन देखे</em>", "सब, फ़ॉलोअर या क्लोज़ फ़्रेंड्स"],
+    ["दोस्तों से चैट और<br><em>वीडियो कॉल</em>", "मैसेज, वॉइस नोट और कॉल"],
+    ["हमेशा रहने वाली<br><em>हाइलाइट्स</em>", "दोस्त लाइक, कमेंट और शेयर कर सकते हैं"],
+    ["छह फ़ोटो,<br><em>एक स्टोरी</em>", "एक टैप में कोलाज"],
+    ["दोस्तों के साथ<br><em>प्लान</em>", "32 लोगों तक के ग्रुप चैट"],
+    ["देखें किसे<br><em>पसंद आया</em>", "लाइक, कमेंट और नए फ़ॉलोअर"],
   ],
   mr: [
-    ["तुमचा दिवस<br><em>स्टोरीज</em>मध्ये", "आपल्या माणसांसोबत फोटो आणि व्हिडिओ"],
-    ["प्रत्येक स्टोरी<br><em>तुमची</em>", "टेक्स्ट, संगीत, स्टिकर आणि फिल्टर"],
-    ["<em>आपल्या माणसांशी</em><br>गप्पा", "मेसेज, व्हॉइस नोट आणि व्हिडिओ कॉल"],
-    ["खास क्षण<br><em>हायलाइट्स</em>मध्ये", "आवडत्या स्टोरीज, तुमच्या प्रोफाइलवर"],
-    ["अनेक फोटो,<br><em>एक स्टोरी</em>", "एका लेआउटमध्ये सहा फोटोपर्यंत"],
-    ["पाहा कोणाला<br><em>आवडलं</em>", "लाइक, कमेंट आणि नवीन फॉलोअर"],
-    ["मित्रांसोबत<br><em>प्लॅन</em>", "32 लोकांपर्यंतचे ग्रुप चॅट"],
+    ["स्टोरीज<br><em>आपल्या माणसांसाठी</em>", "तुमचा दिवस खास मित्रांसोबत शेअर करा"],
+    ["<em>संगीत</em>, टेक्स्ट<br>आणि स्टिकर", "ॲनिमेटेड स्टिकर, फिल्टर आणि कोणतंही गाणं"],
     ["तुम्ही ठरवा<br><em>कोण पाहील</em>", "सगळे, फॉलोअर किंवा क्लोज फ्रेंड्स"],
+    ["मित्रांशी चॅट आणि<br><em>व्हिडिओ कॉल</em>", "मेसेज, व्हॉइस नोट आणि कॉल"],
+    ["कायम राहणाऱ्या<br><em>हायलाइट्स</em>", "मित्र लाइक, कमेंट आणि शेअर करू शकतात"],
+    ["सहा फोटो,<br><em>एक स्टोरी</em>", "एका टॅपमध्ये कोलाज"],
+    ["मित्रांसोबत<br><em>प्लॅन</em>", "32 लोकांपर्यंतचे ग्रुप चॅट"],
+    ["पाहा कोणाला<br><em>आवडलं</em>", "लाइक, कमेंट आणि नवीन फॉलोअर"],
   ],
 };
 const LANG = process.argv[2] ?? "en";
