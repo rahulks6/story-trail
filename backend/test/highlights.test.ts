@@ -458,7 +458,7 @@ describe("Highlights to explore at the end of Home", () => {
 });
 
 describe("store-screenshot test accounts stay out of sight", () => {
-  it("a test account's Highlights aren't offered to real people, only to other test accounts", async () => {
+  it("test accounts and real people never see each other's Highlights or suggestions", async () => {
     const tag = Math.random().toString(36).slice(2, 10);
     const testSignup = async (n: string) => {
       const input = { ...uniqueUser(), email: `support+e2e-${tag}-${n}@katkee.com` };
@@ -476,5 +476,9 @@ describe("store-screenshot test accounts stay out of sight", () => {
     assert.ok(forDemo.body.highlights.some((h: { id: string }) => h.id === id), "still there for the screenshot run");
     const suggestions = await client.get("/api/v1/search/suggestions", authHeader(real.accessToken));
     assert.ok(!(suggestions.body.suggestions ?? []).some((p: { username: string }) => p.username === demo.input.username));
+    // And the other way: a real person's Highlight never shows up for a screenshot account.
+    const realHl = await client.post("/api/v1/highlights", { title: "Real", storyIds: [await publishStory(real.accessToken)] }, authHeader(real.accessToken));
+    const demoSees = await client.get("/api/v1/highlights/discover", authHeader(otherDemo.accessToken));
+    assert.ok(!demoSees.body.highlights.some((h: { id: string }) => h.id === realHl.body.highlight.id), "real people stay out of screenshots");
   });
 });

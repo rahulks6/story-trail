@@ -138,6 +138,10 @@ appId: com.katkee.app
     text: "Photo taken.*"
     index: 0
     optional: true
+# The newer picker ticks the photo and waits for "Add".
+- tapOn:
+    text: "Add.*"
+    optional: true
 - extendedWaitUntil:
     visible: "Your story"
     timeout: 20000
