@@ -546,7 +546,7 @@ Katkee تطبيق قصص لأصدقائك الحقيقيين. شارك قصص ا
 | --- | --- | --- |
 | App icon | 512 x 512 PNG | `brand/store/google-play-icon-512.png` |
 | Feature graphic | 1024 x 500 PNG | `brand/store/google-play-feature-graphic-1024x500.png` |
-| Phone screenshots (8) | 1080 x 1920 PNG | `brand/store/screenshots/phone/01-home.png` … `08-settings.png` (English and the six other languages); `phone-hi/`, `phone-mr/` for Hindi and Marathi |
+| Phone screenshots (8) | 1080 x 1920 PNG | `brand/store/screenshots/phone/01-home.png` … `08-activity.png` (01 Stories, 02 music and stickers, 03 who sees it, 04 chat and calls, 05 Highlights, 06 Layout, 07 groups, 08 Activity) (English and the six other languages); `phone-hi/`, `phone-mr/` for Hindi and Marathi |
 | 7-inch and 10-inch tablet screenshots (8) | 1920 x 1080 PNG | `brand/store/screenshots/tablet/…`; `tablet-hi/`, `tablet-mr/` |
 
 Upload them in their numbered order: Play shows the first three without scrolling. They are the
