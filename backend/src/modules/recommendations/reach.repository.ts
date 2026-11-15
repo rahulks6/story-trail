@@ -1,3 +1,4 @@
+import { shownToViewerSql } from "../../shared/testAccounts";
 import { query, queryOne } from "../../db/psql";
 import { AREA_CELL_LENGTH, cellsAround } from "./geohash";
 import { decideReach, type ReachSettings, type ReachStage, type StageStats } from "./reach";
@@ -78,6 +79,7 @@ export async function listDiscoveryCandidates(viewerId: string, settings: ReachS
        LEFT JOIN user_areas oa ON oa.user_id = s.owner_id AND oa.updated_at > now() - ${AREA_FRESH}
        WHERE s.deleted_at IS NULL AND s.expires_at > now() AND s.audience = 'public' AND s.moderation_removed_at IS NULL
          AND u.deleted_at IS NULL AND u.is_active AND NOT u.is_private AND u.moderation_state = 'ACTIVE'
+         AND ${shownToViewerSql("u")}
          AND s.owner_id <> :'viewer'
          AND NOT COALESCE(r.held, false)
          AND (COALESCE(r.stage, 1) = 4 OR COALESCE(r.stage_impressions, 0) < (:'caps'::jsonb ->> (COALESCE(r.stage, 1) - 1))::integer)

@@ -1,3 +1,4 @@
+import { shownToViewerSql } from "../../shared/testAccounts";
 import { containsPattern, escapeLike } from "../../shared/validation";
 import { nullable, query, queryOne } from "../../db/psql";
 import { verifiedSql } from "../../shared/verified";
@@ -449,6 +450,7 @@ export async function suggestPeople(viewerId: string, limit: number): Promise<Su
      LEFT JOIN fresh f ON f.id = u.id
      LEFT JOIN invited inv ON inv.id = u.id
      WHERE u.id <> :'viewer' AND u.deleted_at IS NULL AND u.is_active AND u.moderation_state = 'ACTIVE'
+       AND ${shownToViewerSql("u")}
        AND NOT EXISTS (SELECT 1 FROM follows WHERE follower_id = :'viewer' AND followee_id = u.id)
        AND NOT EXISTS (SELECT 1 FROM follow_requests WHERE requester_id = :'viewer' AND target_id = u.id AND status = 'pending')
        AND NOT EXISTS (SELECT 1 FROM blocks

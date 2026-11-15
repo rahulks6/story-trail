@@ -456,3 +456,25 @@ describe("Highlights to explore at the end of Home", () => {
     assert.equal(detail.status, 200);
   });
 });
+
+describe("store-screenshot test accounts stay out of sight", () => {
+  it("a test account's Highlights aren't offered to real people, only to other test accounts", async () => {
+    const tag = Math.random().toString(36).slice(2, 10);
+    const testSignup = async (n: string) => {
+      const input = { ...uniqueUser(), email: `support+e2e-${tag}-${n}@katkee.com` };
+      const res = await client.post("/api/v1/auth/signup", input);
+      return { input, accessToken: res.body.tokens.accessToken as string };
+    };
+    const demo = await testSignup("maya");
+    const otherDemo = await testSignup("arjun");
+    const real = await signupUser();
+    const created = await client.post("/api/v1/highlights", { title: "Demo", storyIds: [await publishStory(demo.accessToken)] }, authHeader(demo.accessToken));
+    const id = created.body.highlight.id;
+    const forReal = await client.get("/api/v1/highlights/discover", authHeader(real.accessToken));
+    assert.ok(!forReal.body.highlights.some((h: { id: string }) => h.id === id), "hidden from a real person");
+    const forDemo = await client.get("/api/v1/highlights/discover", authHeader(otherDemo.accessToken));
+    assert.ok(forDemo.body.highlights.some((h: { id: string }) => h.id === id), "still there for the screenshot run");
+    const suggestions = await client.get("/api/v1/search/suggestions", authHeader(real.accessToken));
+    assert.ok(!(suggestions.body.suggestions ?? []).some((p: { username: string }) => p.username === demo.input.username));
+  });
+});
