@@ -37,6 +37,20 @@ export function listHighlightsForUser(username: string, accessToken: string): Pr
   return apiGet(`/api/v1/users/${encodeURIComponent(username)}/highlights`, accessToken);
 }
 
+/** Another public account's Highlight, for the end of Home (backend listDiscoverHighlights). */
+export interface DiscoverHighlight {
+  id: string;
+  title: string;
+  coverMediaId: string;
+  itemCount: number;
+  latestAt: string;
+  owner: { id: string; username: string; displayName: string; avatarMediaId: string | null };
+}
+
+export function discoverHighlights(accessToken: string, signal?: AbortSignal): Promise<{ highlights: DiscoverHighlight[] }> {
+  return apiGet("/api/v1/highlights/discover", accessToken, signal);
+}
+
 export function getHighlightDetail(highlightId: string, accessToken: string): Promise<{ highlight: HighlightDetail }> {
   return apiGet(`/api/v1/highlights/${highlightId}`, accessToken);
 }

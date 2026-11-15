@@ -3,7 +3,7 @@ import { act, create, type ReactTestInstance, type ReactTestRenderer } from "rea
 import { ActivityIndicator, AppState, Dimensions, Image, StyleSheet, Text } from "react-native";
 import * as usersApi from "../src/api/users";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { StoryFeed } from "../src/screens/story/StoryFeed";
+import { FOLLOW_PROMPT_AFTER_MS, StoryFeed } from "../src/screens/story/StoryFeed";
 import * as storiesApi from "../src/api/stories";
 import * as engagementApi from "../src/api/engagement";
 import { timeNativeAnimations } from "./helpers/nativeAnimations";
@@ -224,6 +224,45 @@ test("the top shows who posted it and when, with Follow for a creator you don't 
   await act(async () => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === "Follow @alice").props.onPress());
   expect(follow).toHaveBeenCalledWith("alice", "token");
   expect(texts()).toContain("Following");
+});
+
+test("a few seconds into the Stories of someone you don't follow, a card offers Follow; nothing happens unless you tap it", async () => {
+  const follow = jest.spyOn(usersApi, "followUser").mockResolvedValue({ status: "following" } as never);
+  follow.mockClear();
+  mockSession.user.username = "viewer";
+  await act(async () => {
+    tree = create(
+      <SafeAreaProvider initialMetrics={metrics}>
+        <StoryFeed creators={["alice"]} following={{ alice: false }} startIndex={0} onOpenDM={jest.fn()} onOpenProfile={openProfile} />
+      </SafeAreaProvider>,
+    );
+  });
+  await settle();
+  await act(async () => storyImage().props.onLoad());
+  await settle();
+  const card = () => tree.root.findAll((n: ReactTestInstance) => n.props.testID === "follow-prompt");
+  expect(card()).toHaveLength(0);
+  await act(async () => { jest.advanceTimersByTime(FOLLOW_PROMPT_AFTER_MS); });
+  expect(card().length).toBeGreaterThan(0);
+  expect(texts()).toContain("Enjoying alice's Stories?");
+  expect(follow).not.toHaveBeenCalled();
+  await act(async () => tree.root.find((n: ReactTestInstance) => n.props.testID === "follow-prompt-button").props.onPress());
+  expect(follow).toHaveBeenCalledWith("alice", "token");
+});
+
+test("no follow card for someone you already follow", async () => {
+  mockSession.user.username = "viewer";
+  await act(async () => {
+    tree = create(
+      <SafeAreaProvider initialMetrics={metrics}>
+        <StoryFeed creators={["alice"]} following={{ alice: true }} startIndex={0} onOpenDM={jest.fn()} onOpenProfile={openProfile} />
+      </SafeAreaProvider>,
+    );
+  });
+  await settle();
+  await act(async () => storyImage().props.onLoad());
+  await act(async () => { jest.advanceTimersByTime(FOLLOW_PROMPT_AFTER_MS + 100); });
+  expect(tree.root.findAll((n: ReactTestInstance) => n.props.testID === "follow-prompt")).toHaveLength(0);
 });
 
 test("holding a Story clears the screen to just the Story", async () => {

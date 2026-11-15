@@ -214,3 +214,9 @@ export async function getHighlightItemDetail(highlightId: string, storyId: strin
   return storiesService.getStoryDetailForHighlightViewer(storyId, viewerId);
 }
 
+
+/** Highlights to explore at the end of Home (highlights.repository.ts listDiscoverable). */
+export const DISCOVER_HIGHLIGHTS_LIMIT = 12;
+export async function listDiscoverHighlights(viewerId: string): Promise<highlightsRepo.DiscoverableHighlightRow[]> {
+  return highlightsRepo.listDiscoverable(viewerId, DISCOVER_HIGHLIGHTS_LIMIT);
+}

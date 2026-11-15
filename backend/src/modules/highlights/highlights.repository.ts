@@ -192,3 +192,53 @@ export async function storyIsInAnyHighlight(storyId: string): Promise<boolean> {
 export async function removeStoryFromAllHighlights(storyId: string): Promise<void> {
   await query(`DELETE FROM highlight_items WHERE story_id = :'story_id'`, { story_id: storyId });
 }
+
+export interface DiscoverableHighlightRow {
+  id: string;
+  title: string;
+  coverMediaId: string;
+  itemCount: number;
+  latestAt: string;
+  owner: { id: string; username: string; displayName: string; avatarMediaId: string | null };
+}
+
+/**
+ * Highlights anyone may see, for the end of Home: public accounts only (active, not suspended),
+ * never the viewer's own, nobody blocked either way or muted by the viewer, and only the public
+ * Stories inside them (a followers-only or Close Friends item never counts or shows). The newest
+ * first, at most two per person.
+ */
+export async function listDiscoverable(viewerId: string, limit: number): Promise<DiscoverableHighlightRow[]> {
+  const rows = await query(
+    `WITH visible AS (
+       SELECT h.id, h.owner_id, h.title, h.cover_story_id, hi.story_id, hi.position, hi.added_at, s.media_id
+       FROM highlights h
+       JOIN users u ON u.id = h.owner_id
+       JOIN highlight_items hi ON hi.highlight_id = h.id
+       JOIN stories s ON s.id = hi.story_id AND s.deleted_at IS NULL AND s.moderation_removed_at IS NULL AND s.audience = 'public'
+       WHERE h.owner_id <> :'viewer' AND u.deleted_at IS NULL AND u.is_active AND NOT u.is_private AND u.moderation_state = 'ACTIVE'
+         AND NOT EXISTS (SELECT 1 FROM blocks b WHERE (b.blocker_id = :'viewer' AND b.blocked_id = h.owner_id) OR (b.blocker_id = h.owner_id AND b.blocked_id = :'viewer'))
+         AND NOT EXISTS (SELECT 1 FROM mutes m WHERE m.muter_id = :'viewer' AND m.muted_id = h.owner_id)
+     ), per_highlight AS (
+       SELECT id, owner_id, title, count(*)::int AS item_count, max(added_at) AS latest_at,
+              COALESCE((array_agg(media_id) FILTER (WHERE story_id = cover_story_id))[1], (array_agg(media_id ORDER BY position))[1]) AS cover_media_id
+       FROM visible GROUP BY id, owner_id, title
+     ), ranked AS (
+       SELECT p.*, row_number() OVER (PARTITION BY owner_id ORDER BY latest_at DESC) AS n FROM per_highlight p
+     )
+     SELECT r.id, r.title, r.item_count, r.latest_at, r.cover_media_id, u.id AS owner_id, u.username, u.display_name, u.avatar_media_id
+     FROM ranked r JOIN users u ON u.id = r.owner_id
+     WHERE r.n <= 2
+     ORDER BY r.latest_at DESC
+     LIMIT :'limit'`,
+    { viewer: viewerId, limit },
+  );
+  return rows.map((row) => ({
+    id: row.id as string,
+    title: row.title as string,
+    coverMediaId: row.cover_media_id as string,
+    itemCount: Number(row.item_count),
+    latestAt: row.latest_at as string,
+    owner: { id: row.owner_id as string, username: row.username as string, displayName: (row.display_name as string) ?? (row.username as string), avatarMediaId: (row.avatar_media_id as string | null) ?? null },
+  }));
+}

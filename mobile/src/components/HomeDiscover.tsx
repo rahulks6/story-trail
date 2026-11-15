@@ -4,9 +4,13 @@ import { Pressable } from "./Pressable";
 import { Avatar } from "./Avatar";
 import { ExploreGrid } from "./ExploreGrid";
 import { ProfilePhotoNudge } from "./ProfilePhotoNudge";
+import { FirstStoryNudge } from "./FirstStoryNudge";
 import { useAuth } from "../state/AuthContext";
 import { getExplore, type ExploreTile } from "../api/stories";
 import { followUser, getSuggestions, unfollowUser, type SuggestedPerson } from "../api/users";
+import { discoverHighlights, type DiscoverHighlight } from "../api/highlights";
+import { mediaFileUrl } from "../api/stories";
+import { FadeInImage } from "./FadeInImage";
 import { mediaColors as colors, spacing, mediaTypography as typography } from "../theme";
 import { t } from "../i18n";
 
@@ -15,14 +19,19 @@ import { t } from "../i18n";
  * each, and popular Stories to watch, so Home is never an empty screen. Following someone tells
  * Home to load again, so their Stories appear at once.
  */
-export function HomeDiscover({ accessToken, onFollowed, onOpenStories, onOpenProfile }: {
+export function HomeDiscover({ accessToken, onFollowed, onOpenStories, onOpenProfile, onOpenHighlight, onPost }: {
   accessToken: string | null;
+  /** A public Highlight to watch (people's Stories kept for good, so there's always more to see). */
+  onOpenHighlight?: (highlight: DiscoverHighlight) => void;
+  /** To the camera, for someone who hasn't posted yet (FirstStoryNudge). */
+  onPost?: () => void;
   onFollowed: () => void;
   onOpenStories: (tiles: ExploreTile[], index: number) => void;
   onOpenProfile: (username: string) => void;
 }): React.JSX.Element | null {
   const [people, setPeople] = useState<SuggestedPerson[]>([]);
   const [tiles, setTiles] = useState<ExploreTile[]>([]);
+  const [highlights, setHighlights] = useState<DiscoverHighlight[]>([]);
   const [busy, setBusy] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -30,6 +39,7 @@ export function HomeDiscover({ accessToken, onFollowed, onOpenStories, onOpenPro
     const controller = new AbortController();
     getSuggestions(accessToken, controller.signal).then(({ suggestions }) => setPeople(suggestions.slice(0, 12))).catch(() => undefined);
     getExplore(accessToken, controller.signal).then(({ explore }) => setTiles(explore.slice(0, 9))).catch(() => undefined);
+    if (onOpenHighlight) discoverHighlights(accessToken, controller.signal).then(({ highlights: list }) => setHighlights(list)).catch(() => undefined);
     return () => controller.abort();
   }, [accessToken]);
 
@@ -52,9 +62,11 @@ export function HomeDiscover({ accessToken, onFollowed, onOpenStories, onOpenPro
   }, [accessToken, busy, onFollowed]);
 
   const { user } = useAuth();
-  if (!people.length && !tiles.length && user?.avatarMediaId) return null;
+  if (!people.length && !tiles.length && !highlights.length && user?.avatarMediaId && !onPost) return null;
+  const authHeaders = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
   return (
     <View style={styles.root}>
+      {onPost ? <FirstStoryNudge onPost={onPost} /> : null}
       <ProfilePhotoNudge />
       {people.length ? (
         <>
@@ -86,6 +98,22 @@ export function HomeDiscover({ accessToken, onFollowed, onOpenStories, onOpenPro
           </ScrollView>
         </>
       ) : null}
+      {highlights.length && onOpenHighlight ? (
+        <>
+          <Text style={[styles.heading, styles.headingSpaced]} accessibilityRole="header">{t("homeDiscover.highlightsToExplore")}</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.people} testID="discover-highlights">
+            {highlights.map((h) => (
+              <Pressable key={h.id} onPress={() => onOpenHighlight(h)} style={styles.highlight} accessibilityRole="button" accessibilityLabel={t("homeDiscover.watchTitleByName", { title: h.title, name: h.owner.displayName })}>
+                <View style={styles.highlightCover}>
+                  <FadeInImage source={{ uri: mediaFileUrl(h.coverMediaId, "thumbnail"), headers: authHeaders }} style={StyleSheet.absoluteFill} resizeMode="cover" />
+                </View>
+                <Text style={styles.highlightTitle} numberOfLines={1}>{h.title}</Text>
+                <Text style={styles.username} numberOfLines={1}>@{h.owner.username}</Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+        </>
+      ) : null}
       {tiles.length ? (
         <View style={styles.grid}>
           <ExploreGrid tiles={tiles} accessToken={accessToken} title={t("homeDiscover.popularStories")} titleColor={colors.textPrimary} onOpen={(index) => onOpenStories(tiles, index)} />
@@ -108,4 +136,8 @@ const styles = StyleSheet.create({
   followLabel: { fontSize: 14, fontWeight: "800", color: colors.onAccent },
   followLabelQuiet: { color: colors.textPrimary },
   grid: { paddingHorizontal: spacing.md, marginTop: spacing.md },
+  headingSpaced: { marginTop: spacing.lg },
+  highlight: { width: 112, gap: 4 },
+  highlightCover: { width: 112, height: 168, borderRadius: 14, overflow: "hidden", backgroundColor: "rgba(255,255,255,0.07)" },
+  highlightTitle: { ...typography.body, fontWeight: "700", maxWidth: 112 },
 });

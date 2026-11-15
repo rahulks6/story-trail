@@ -19,6 +19,7 @@ jest.mock("../src/api/ads", () => ({ getAdPlacements: jest.fn(async () => ({ pla
 jest.mock("../src/api/stories", () => ({
   getRankedHomeFeed: jest.fn(async () => ({ feed: [{ owner: { id: "u-me", username: "me" }, isFollowing: false, stories: [], score: 1 }], nextCursor: null })),
   getExplore: jest.fn(async () => ({ explore: [] })),
+  mediaFileUrl: (id: string, variant: string) => `https://api.test/media/${id}/${variant}`,
 }));
 // An empty Home suggests people to follow (HomeDiscover).
 jest.mock("../src/api/users", () => ({
@@ -28,6 +29,13 @@ jest.mock("../src/api/users", () => ({
   ] })),
   followUser: jest.fn(async () => ({ state: "following" })),
   unfollowUser: jest.fn(async () => undefined),
+}));
+
+// Public Highlights to keep watching once Home's Stories run out.
+jest.mock("../src/api/highlights", () => ({
+  discoverHighlights: jest.fn(async () => ({ highlights: [
+    { id: "h-goa", title: "Goa", coverMediaId: "m-goa", itemCount: 3, latestAt: "2026-11-10T10:00:00Z", owner: { id: "u-leo", username: "leo.waves", displayName: "Leo", avatarMediaId: null } },
+  ] })),
 }));
 
 jest.mock("../src/api/festivals", () => ({
@@ -194,6 +202,10 @@ test("an empty Home is never blank: people to follow, and following one loads th
   expect(users.followUser).toHaveBeenCalledWith("sofia.cooks", "token");
   expect(stories.getRankedHomeFeed).toHaveBeenCalledTimes(2);
   expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Following @sofia.cooks").length).toBeGreaterThan(0);
+  // Public Highlights keep it going, and open in the Highlight viewer.
+  expect(texts).toEqual(expect.arrayContaining(["Highlights to explore", "Goa"]));
+  await act(async () => pressByLabel("Watch Goa by Leo").props.onPress());
+  expect(mockNavigation.navigate).toHaveBeenCalledWith("HighlightViewer", { highlightId: "h-goa", title: "Goa", ownerUsername: "leo.waves" });
   await act(async () => tree.unmount());
 });
 

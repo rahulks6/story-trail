@@ -129,6 +129,10 @@ let viewerMuted = false;
 /** The comment box (or your Story's Activity button) along the bottom. */
 const BOTTOM_BAR_HEIGHT = 46;
 
+/** How long into someone's Stories the follow card appears, and how long it stays. */
+export const FOLLOW_PROMPT_AFTER_MS = 3000;
+export const FOLLOW_PROMPT_FOR_MS = 7000;
+
 export function StoryFeed({ creators, startIndex, slotStoryIds, initialStoryId, onClose, onOpenDM, onOpenProfile, onOpenArchived, onRefresh, onNeedMore, onCreate, onFindPeople, onInvite, discover, onOpenCreate, onOpenStory, sponsored = [], following, verified }: StoryFeedProps): React.JSX.Element {
   // Overlays clear the status bar / notch; the bottom ones also the home indicator when no tab bar is below.
   const insets = useScreenInsets();
@@ -708,6 +712,19 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, initialStoryId, 
   }, [dragY]);
 
   useEffect(() => () => gesture.dispose(), [gesture]);
+
+  // A few seconds into the Stories of someone you don't follow, a card asks once (per person, per
+  // visit) whether you'd like to follow them. Nothing happens unless you tap Follow.
+  const [followPrompt, setFollowPrompt] = useState<string | null>(null);
+  const promptedFor = useRef(new Set<string>());
+  useEffect(() => {
+    setFollowPrompt(null);
+    const username = currentUsername;
+    if (!username || following?.[username] !== false || promptedFor.current.has(username) || username === authUser?.username) return;
+    const show = setTimeout(() => { promptedFor.current.add(username); setFollowPrompt(username); }, FOLLOW_PROMPT_AFTER_MS);
+    const hide = setTimeout(() => setFollowPrompt((p) => (p === username ? null : p)), FOLLOW_PROMPT_AFTER_MS + FOLLOW_PROMPT_FOR_MS);
+    return () => { clearTimeout(show); clearTimeout(hide); };
+  }, [currentUsername, following, authUser?.username]);
   useEffect(() => {
     if (!focused || !foreground) {
       gesture.dispose();
@@ -1236,6 +1253,21 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, initialStoryId, 
         }}
       />
 
+      {followPrompt && followPrompt === currentUsername && showFollow && !isOwnStory ? (
+        <View style={[styles.followPrompt, { bottom: insets.bottom + spacing.xl * 3 }]} testID="follow-prompt">
+          <View style={styles.followPromptText}>
+            <Text style={styles.followPromptTitle} numberOfLines={1} maxFontSizeMultiplier={1.3}>{t("storyFeed.enjoyingNameSStories", { name: currentUsername })}</Text>
+            <Text style={styles.followPromptBody} numberOfLines={2} maxFontSizeMultiplier={1.3}>{followed ? t("storyFeed.youllSeeThemOnHome") : t("storyFeed.followToSeeThemEveryDay")}</Text>
+          </View>
+          <Pressable onPress={followed ? undefined : () => { void follow(); setTimeout(() => setFollowPrompt(null), 1500); }} disabled={followed} style={[styles.followPromptButton, followed && styles.followPromptButtonDone]} accessibilityRole="button" accessibilityLabel={t("storyFeed.followCurrentusername", { currentUsername })} testID="follow-prompt-button">
+            <Text style={[styles.followPromptButtonLabel, followed && { color: "#fff" }]}>{followState === "requested" ? t("common.requested") : followed ? t("common.following") : t("common.follow")}</Text>
+          </Pressable>
+          <Pressable onPress={() => setFollowPrompt(null)} hitSlop={10} accessibilityRole="button" accessibilityLabel={t("common.notNow")} testID="follow-prompt-close">
+            <Icon name={ICONS.close} size={18} color="#fff" />
+          </Pressable>
+        </View>
+      ) : null}
+
       {replySent ? (
         <View style={styles.replyToast} pointerEvents="none" accessibilityLiveRegion="polite">
           <Text style={styles.replyToastText}>{replySent}</Text>
@@ -1439,6 +1471,13 @@ const styles = StyleSheet.create({
   closeButton: { position: "absolute", top: spacing.xl, right: spacing.md },
   closeFriendsBadge: { flexDirection: "row", alignItems: "center", gap: 3, alignSelf: "flex-start", backgroundColor: colors.success, borderRadius: radii.pill, paddingHorizontal: spacing.sm, paddingVertical: 2, marginTop: 4 },
   closeFriendsBadgeText: { color: colors.onAccent, fontSize: 11, fontWeight: "700" },
+  followPrompt: { position: "absolute", left: spacing.md, right: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.sm, padding: spacing.md, borderRadius: 18, backgroundColor: "rgba(12,12,14,0.86)", borderWidth: StyleSheet.hairlineWidth, borderColor: "rgba(255,255,255,0.18)" },
+  followPromptText: { flex: 1 },
+  followPromptTitle: { color: "#fff", fontSize: 15, fontWeight: "800" },
+  followPromptBody: { color: "rgba(255,255,255,0.78)", fontSize: 13, marginTop: 2 },
+  followPromptButton: { paddingHorizontal: spacing.md, paddingVertical: 8, borderRadius: radii.pill, backgroundColor: colors.accent },
+  followPromptButtonDone: { backgroundColor: "rgba(255,255,255,0.2)" },
+  followPromptButtonLabel: { color: colors.onAccent, fontSize: 14, fontWeight: "800" },
   replyToast: {
     position: "absolute",
     alignSelf: "center",

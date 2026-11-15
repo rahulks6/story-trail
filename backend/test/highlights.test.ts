@@ -421,3 +421,38 @@ describe("a profile's Story count", () => {
     assert.deepEqual(updated.body.highlight.items.map((i: { storyId: string }) => i.storyId), [a, b]);
   });
 });
+
+describe("Highlights to explore at the end of Home", () => {
+  it("lists other public accounts' Highlights with only their public items, never private, blocked or your own", async () => {
+    const viewer = await signupUser();
+    const open = await signupUser();
+    const locked = await signupUser();
+    const blocker = await signupUser();
+
+    const pub = await publishStory(open.accessToken);
+    const followersOnly = await publishStory(open.accessToken, { audience: "followers" });
+    const openHl = await client.post("/api/v1/highlights", { title: "Goa", storyIds: [pub, followersOnly] }, authHeader(open.accessToken));
+    const onlyHidden = await client.post("/api/v1/highlights", { title: "Hidden", storyIds: [await publishStory(open.accessToken, { audience: "followers" })] }, authHeader(open.accessToken));
+
+    await client.patch("/api/v1/users/me", { isPrivate: true }, authHeader(locked.accessToken));
+    await client.post("/api/v1/highlights", { title: "Private", storyIds: [await publishStory(locked.accessToken)] }, authHeader(locked.accessToken));
+    await client.post("/api/v1/highlights", { title: "Blocked", storyIds: [await publishStory(blocker.accessToken)] }, authHeader(blocker.accessToken));
+    await client.post(`/api/v1/users/${viewer.input.username}/block`, undefined, authHeader(blocker.accessToken));
+    await client.post("/api/v1/highlights", { title: "Mine", storyIds: [await publishStory(viewer.accessToken)] }, authHeader(viewer.accessToken));
+
+    const res = await client.get("/api/v1/highlights/discover", authHeader(viewer.accessToken));
+    assert.equal(res.status, 200);
+    const ids = res.body.highlights.map((h: { id: string }) => h.id);
+    assert.ok(ids.includes(openHl.body.highlight.id));
+    const goa = res.body.highlights.find((h: { id: string }) => h.id === openHl.body.highlight.id);
+    assert.equal(goa.itemCount, 1, "the followers-only item doesn't count for a non-follower");
+    assert.equal(goa.owner.username, open.input.username);
+    assert.ok(goa.coverMediaId);
+    assert.ok(!ids.includes(onlyHidden.body.highlight.id), "a Highlight with no public item isn't listed");
+    const titles = res.body.highlights.map((h: { title: string }) => h.title);
+    for (const hidden of ["Private", "Blocked", "Mine"]) assert.ok(!titles.includes(hidden), `${hidden} isn't listed`);
+    // Opening it works for this viewer.
+    const detail = await client.get(`/api/v1/highlights/${goa.id}`, authHeader(viewer.accessToken));
+    assert.equal(detail.status, 200);
+  });
+});

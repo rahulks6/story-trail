@@ -6,6 +6,13 @@ import { parseCreateHighlightInput, parseReorderHighlightsInput, parseUpdateHigh
 import * as highlightsService from "./highlights.service";
 
 export function registerHighlightsRoutes(router: Router): void {
+  // Before /:id, so "discover" isn't read as an id.
+  router.get("/api/v1/highlights/discover", async (req, res) => {
+    requireAuth(req);
+    const highlights = await highlightsService.listDiscoverHighlights(req.userId as string);
+    sendJson(res, 200, { highlights });
+  });
+
   router.post("/api/v1/highlights", async (req, res) => {
     requireAuth(req);
     const input = parseCreateHighlightInput(req.body);

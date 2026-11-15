@@ -89,6 +89,8 @@ export function HomeScreen():React.JSX.Element {
  // "Priya joined Katkee": for people who turned on "Tell me when more contacts join".
  const contactsJoined=<ContactsJoinedSheet onOpenProfile={openProfile} onFollowed={reloadQuietly}/>;
  const discover=<HomeDiscover accessToken={accessToken} onFollowed={reloadQuietly} onOpenProfile={openProfile}
+  onOpenHighlight={h=>navigation.navigate('HighlightViewer',{highlightId:h.id,title:h.title,ownerUsername:h.owner.username})}
+  onPost={()=>navigation.navigate('Create')}
   onOpenStories={(tiles,index)=>navigation.navigate('StoryViewer',{creators:tiles.map(tile=>tile.owner.username),startIndex:index,initialStoryId:tiles[index]?.story.id,verifiedCreators:tiles.filter(tile=>tile.owner.verified).map(tile=>tile.owner.username)})}/>;
  if(feed===null&&!error)return <View style={styles.root}><StorySkeleton/>{festivalButton}{activityButton}{uploads}</View>;
  if(feed===null)return <View style={styles.empty}><EmptyState variant="media" title={t("home.couldntLoadStories")} message={t("home.checkYourConnectionAndTry")}>
