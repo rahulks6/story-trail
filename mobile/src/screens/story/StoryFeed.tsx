@@ -1067,20 +1067,6 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, initialStoryId, 
       </View>
 
       <View style={[styles.actionRail, chrome, { bottom: railBottom, gap: railGap, maxHeight: Math.max(0, railRoom) }]} pointerEvents={paused ? "none" : "auto"}>
-        {(mediaKind === "video" && !creatorMuted) || currentStory.music ? (
-          <Pressable
-            onPress={() => {
-              viewerMuted = !muted;
-              setMuted(viewerMuted);
-            }}
-            hitSlop={10}
-            style={styles.actionButton}
-            accessibilityRole="button"
-            accessibilityLabel={muted ? t("storyFeed.soundOffTapToTurn") : t("storyFeed.soundOnTapToMute")}
-          >
-            <Icon style={styles.actionIcon} name={muted ? ICONS.audioMuted : ICONS.audioOn} />
-          </Pressable>
-        ) : null}
         <Pressable onPress={toggleLike} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel={detail?.viewerHasLiked ? t("storyFeed.unlike") : t("storyFeed.like")}>
           <Icon style={[styles.actionIcon, detail?.viewerHasLiked && styles.actionIconLiked]} name={detail?.viewerHasLiked ? ICONS.liked : ICONS.like} />
           {/* A count only once there is one, as Instagram does: no "0" or dash on a fresh Story. */}
@@ -1116,6 +1102,21 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, initialStoryId, 
         <Pressable onPress={() => setMoreOpen(true)} hitSlop={10} style={styles.actionButton} accessibilityRole="button" accessibilityLabel={t("storyFeed.more")}>
           <Icon style={styles.actionIcon} name={ICONS.more} />
         </Pressable>
+        {/* Sound last, so Like, Comment and Share stay in the same place with or without a song. */}
+        {(mediaKind === "video" && !creatorMuted) || currentStory.music ? (
+          <Pressable
+            onPress={() => {
+              viewerMuted = !muted;
+              setMuted(viewerMuted);
+            }}
+            hitSlop={10}
+            style={styles.actionButton}
+            accessibilityRole="button"
+            accessibilityLabel={muted ? t("storyFeed.soundOffTapToTurn") : t("storyFeed.soundOnTapToMute")}
+          >
+            <Icon style={styles.actionIcon} name={muted ? ICONS.audioMuted : ICONS.audioOn} />
+          </Pressable>
+        ) : null}
       </View>
 
       {/* Who posted it and when, at the top like Instagram; tap to open their profile. */}

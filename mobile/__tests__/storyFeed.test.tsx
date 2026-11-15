@@ -320,6 +320,13 @@ test("a Story with a song plays that part of it, credits it, and keeps a photo u
   expect(player).toHaveLength(1);
   expect(player[0]!.props.paused).toBe(false);
   expect(tree.root.findAll((n) => n.props.accessibilityLabel === "Music: Sunny Walk by Artist" && typeof n.props.onPress === "function")).toHaveLength(1);
+  // The right-hand buttons: Like, Comment and Share first, the sound button last.
+  const rail = [...new Set(tree.root.findAll((n) => typeof n.props.onPress === "function" && typeof n.props.accessibilityLabel === "string")
+    .map((n) => n.props.accessibilityLabel as string)
+    .filter((label) => /^(Like|Share|More|Sound .*)$/.test(label)))];
+  expect(rail.some((label) => label.startsWith("Sound"))).toBe(true);
+  expect(rail.indexOf("Like")).toBeLessThan(rail.findIndex((label) => label.startsWith("Sound")));
+  expect(rail.indexOf("Share")).toBeLessThan(rail.findIndex((label) => label.startsWith("Sound")));
   // Not moved on at the usual 5 seconds; moved on after the song's 12.
   await act(async () => { jest.advanceTimersByTime(6_000); });
   expect(sequence()).toBe("Story 1 of 2");
