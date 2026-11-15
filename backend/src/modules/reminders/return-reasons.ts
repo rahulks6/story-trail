@@ -180,8 +180,8 @@ export async function runReturnReasons(now = new Date()): Promise<Record<string,
   const hour = hourInIndia(now);
   const result: Record<string, number> = { milestones: await queueViewMilestones() };
   if (hour >= 8 && hour < 22) result.festival = await queueFestivalGreetings();
-  // Crossed paths: daytime only, never a late-night ping about someone nearby.
-  if (hour >= 9 && hour < 22) result.crossed = await runCrossedPaths();
+  // Crossed paths: every round; it only tells people during the day where they are.
+  result.crossed = await runCrossedPaths();
   if (hour >= 18 && hour < 21) {
     result.streak = await queueStreakReminders();
     result.nudge = await queueNudges();

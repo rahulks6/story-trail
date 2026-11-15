@@ -212,7 +212,7 @@ export const fr: Partial<Catalogue> = {
   "activity.nameMentionedYouInTheir": "{name} t'a mentionné(e) dans sa story.",
   "activity.nameMentionedYouInA": "{name} t'a mentionné(e) dans un commentaire.",
   "activity.nameJoinedKatkeeFromYour": "{name} a rejoint Katkee grâce à ton invitation.",
-  "activity.youCrossedPathsWithName": "Aujourd'hui, vous avez croisé {name} 👋",
+  "activity.youCrossedPathsWithName": "Vous avez croisé {name} 👋",
   "activity.nameAcceptedYourFollowRequest": "{name} a accepté ta demande d'abonnement.",
   "activity.nameRequestedToFollowYou": "{name} souhaite te suivre.",
   "activity.nameStartedFollowingYou": "{name} a commencé à te suivre.",

@@ -220,7 +220,7 @@ export const en = {
   "activity.nameMentionedYouInTheir": "{name} mentioned you in their Story.",
   "activity.nameMentionedYouInA": "{name} mentioned you in a comment.",
   "activity.nameJoinedKatkeeFromYour": "{name} joined Katkee from your invite.",
-  "activity.youCrossedPathsWithName": "You crossed paths with {name} today 👋",
+  "activity.youCrossedPathsWithName": "You crossed paths with {name} 👋",
   "activity.nameAcceptedYourFollowRequest": "{name} accepted your follow request.",
   "activity.nameRequestedToFollowYou": "{name} requested to follow you.",
   "activity.nameStartedFollowingYou": "{name} started following you.",

@@ -168,9 +168,12 @@ phone, and sends only that area, never your coordinates. Nothing is read
 while the app is closed.
 
 If someone else who also turned on Crossed paths was in the same area within
-a few hours of you, we tell you both, at least two hours later, in Activity
-and with a notification: "You crossed paths with @name today". We never say
-where or exactly when. We only ever name people whose accounts are public, we
+a few hours of you, we tell you both, in Activity and with a notification
+("You crossed paths with @name"), only once you've both been away from that
+area for at least two hours, and only during the day where you are. We never
+say where or exactly when. To stop the feature being used to work out where
+someone is, the app can report at most six different areas a day, and not
+one right after another. We only ever name people whose accounts are public, we
 never name someone you've blocked, who blocked you or whom you've muted, we
 never tell you about the same person twice in a week, and you hear about at
 most three people a day. Your areas are never shown to anyone and never used

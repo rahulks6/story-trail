@@ -226,7 +226,9 @@ export async function softDeleteUser(id: string): Promise<void> {
   // The approximate area (Phase 9) and learned interests aren't evidence of anything, so they go at once.
   await query(
     `WITH u AS (UPDATE users SET deleted_at = now() WHERE id = :'id' RETURNING id),
-     t AS (DELETE FROM viewer_topic_affinity WHERE viewer_id IN (SELECT id FROM u))
+     t AS (DELETE FROM viewer_topic_affinity WHERE viewer_id IN (SELECT id FROM u)),
+     -- Crossed paths: the areas go at once, as the privacy policy says.
+     cv AS (DELETE FROM crossed_visits WHERE user_id IN (SELECT id FROM u))
      DELETE FROM user_areas WHERE user_id IN (SELECT id FROM u)`,
     { id },
   );

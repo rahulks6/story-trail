@@ -717,14 +717,18 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, initialStoryId, 
   // visit) whether you'd like to follow them. Nothing happens unless you tap Follow.
   const [followPrompt, setFollowPrompt] = useState<string | null>(null);
   const promptedFor = useRef(new Set<string>());
+  // Read through a ref: Home rebuilds `following` as more of the feed loads, which mustn't hide
+  // the card or restart its timer.
+  const followingRef = useRef(following);
+  followingRef.current = following;
   useEffect(() => {
     setFollowPrompt(null);
     const username = currentUsername;
-    if (!username || following?.[username] !== false || promptedFor.current.has(username) || username === authUser?.username) return;
+    if (!username || followingRef.current?.[username] !== false || promptedFor.current.has(username) || username === authUser?.username) return;
     const show = setTimeout(() => { promptedFor.current.add(username); setFollowPrompt(username); }, FOLLOW_PROMPT_AFTER_MS);
     const hide = setTimeout(() => setFollowPrompt((p) => (p === username ? null : p)), FOLLOW_PROMPT_AFTER_MS + FOLLOW_PROMPT_FOR_MS);
     return () => { clearTimeout(show); clearTimeout(hide); };
-  }, [currentUsername, following, authUser?.username]);
+  }, [currentUsername, authUser?.username]);
   useEffect(() => {
     if (!focused || !foreground) {
       gesture.dispose();

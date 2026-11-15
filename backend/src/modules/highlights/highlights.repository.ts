@@ -1,5 +1,6 @@
 import { nullable, query, queryOne, type Row } from "../../db/psql";
 import type { Audience } from "../stories/stories.repository";
+import { COLLAB_BLOCKS_SQL } from "../stories/audience";
 
 export interface HighlightRow {
   id: string;
@@ -216,6 +217,7 @@ export async function listDiscoverable(viewerId: string, limit: number): Promise
        JOIN users u ON u.id = h.owner_id
        JOIN highlight_items hi ON hi.highlight_id = h.id
        JOIN stories s ON s.id = hi.story_id AND s.deleted_at IS NULL AND s.moderation_removed_at IS NULL AND s.audience = 'public'
+                     AND ${COLLAB_BLOCKS_SQL}
        WHERE h.owner_id <> :'viewer' AND u.deleted_at IS NULL AND u.is_active AND NOT u.is_private AND u.moderation_state = 'ACTIVE'
          AND NOT EXISTS (SELECT 1 FROM blocks b WHERE (b.blocker_id = :'viewer' AND b.blocked_id = h.owner_id) OR (b.blocker_id = h.owner_id AND b.blocked_id = :'viewer'))
          AND NOT EXISTS (SELECT 1 FROM mutes m WHERE m.muter_id = :'viewer' AND m.muted_id = h.owner_id)

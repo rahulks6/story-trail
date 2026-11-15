@@ -273,9 +273,10 @@ describe("reasons to come back", () => {
   it("runs festival greetings by day and reminders only in the evening, India time", async () => {
     assert.equal(hourInIndia(new Date("2026-10-20T03:30:00Z")), 9);
     const night = await runReturnReasons(new Date("2026-10-20T18:00:00Z")); // 23:30 in India
-    assert.deepEqual(Object.keys(night), ["milestones"]);
+    // Crossed paths runs every round: it checks the daytime where each person is itself.
+    assert.deepEqual(Object.keys(night).sort(), ["crossed", "milestones"]);
     const evening = await runReturnReasons(new Date("2026-10-20T13:30:00Z")); // 19:00
-    assert.deepEqual(Object.keys(evening).sort(), ["festival", "milestones", "nudge", "streak"]);
+    assert.deepEqual(Object.keys(evening).sort(), ["crossed", "festival", "milestones", "nudge", "streak"]);
   });
 
   it("the new switches are saved with the others", async () => {

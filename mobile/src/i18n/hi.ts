@@ -216,7 +216,7 @@ export const hi: Catalogue = {
   "activity.nameMentionedYouInTheir": "{name} ने अपनी स्टोरी में आपको मेंशन किया।",
   "activity.nameMentionedYouInA": "{name} ने एक कमेंट में आपको मेंशन किया।",
   "activity.nameJoinedKatkeeFromYour": "{name} आपके इनवाइट से Katkee पर आए।",
-  "activity.youCrossedPathsWithName": "आज आपके रास्ते {name} से टकराए 👋",
+  "activity.youCrossedPathsWithName": "आपके रास्ते {name} से टकराए 👋",
   "activity.nameAcceptedYourFollowRequest": "{name} ने आपकी फ़ॉलो रिक्वेस्ट स्वीकार की।",
   "activity.nameRequestedToFollowYou": "{name} आपको फ़ॉलो करना चाहते हैं।",
   "activity.nameStartedFollowingYou": "{name} ने आपको फ़ॉलो करना शुरू किया।",

@@ -212,7 +212,7 @@ export const ar: Partial<Catalogue> = {
   "activity.nameMentionedYouInTheir": "أشار إليك {name} في قصته.",
   "activity.nameMentionedYouInA": "أشار إليك {name} في تعليق.",
   "activity.nameJoinedKatkeeFromYour": "انضم {name} إلى Katkee من دعوتك.",
-  "activity.youCrossedPathsWithName": "مررت اليوم بالقرب من {name} 👋",
+  "activity.youCrossedPathsWithName": "مررت بالقرب من {name} 👋",
   "activity.nameAcceptedYourFollowRequest": "قبل {name} طلب متابعتك.",
   "activity.nameRequestedToFollowYou": "طلب {name} متابعتك.",
   "activity.nameStartedFollowingYou": "بدأ {name} متابعتك.",

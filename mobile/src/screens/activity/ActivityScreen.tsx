@@ -371,8 +371,10 @@ export function ActivityScreen(): React.JSX.Element {
       }
     }
 
-    // Crossed paths: their newest public Story when they have one, else their profile below.
-    if (notification.type === "crossed_paths" && notification.story && notification.actor) {
+    // Crossed paths: their newest public Story when they have one and it can still be live (a
+    // Story lasts 24 hours), else their profile below.
+    const storyMayBeLive = Date.now() - new Date(notification.createdAt).getTime() < 20 * 60 * 60 * 1000;
+    if (notification.type === "crossed_paths" && notification.story && notification.actor && storyMayBeLive) {
       navigation.navigate("StoryViewer", { creators: [notification.actor.username], startIndex: 0, initialStoryId: notification.story.id });
       return;
     }

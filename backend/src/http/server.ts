@@ -111,6 +111,10 @@ export function createServer(router: Router, lifecycle?: Lifecycle, gate?: Gate)
     const startedAt = Date.now();
     const requestId = requestIdFor(req);
     res.setHeader("X-Request-Id", requestId);
+    // Every response, the API's JSON included: never sniffed as another type, and HTTPS only in
+    // production (the website's own pages set these and more, website.routes.ts).
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    if (process.env.NODE_ENV === "production") res.setHeader("Strict-Transport-Security", "max-age=31536000");
     lifecycle?.track(res);
     // Draining: finish this request, then let the client reconnect to another instance.
     if (lifecycle?.draining) res.setHeader("Connection", "close");
