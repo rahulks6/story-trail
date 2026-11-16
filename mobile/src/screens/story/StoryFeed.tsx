@@ -1369,6 +1369,7 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, initialStoryId, 
           storyId={currentStory.id}
           overlays={(detail ?? currentStory).overlays}
           onClose={() => setInsightsOpen(false)}
+          onOpenProfile={(username) => { setInsightsOpen(false); onOpenProfile(username); }}
           onShareAnswer={onOpenCreate ? (prompt, answer) => {
             setInsightsOpen(false);
             setCreateSeed({ kind: "answer", prompt, answer });

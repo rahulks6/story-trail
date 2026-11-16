@@ -20,6 +20,8 @@ interface Props {
   overlays?: Overlay[];
   /** Shares an answer to a question sticker to a new Story (the question and answer, not who sent it). */
   onShareAnswer?: (prompt: string, answer: string) => void;
+  /** Tapping someone who viewed it opens their profile (the sheet closes first). */
+  onOpenProfile?: (username: string) => void;
 }
 
 function StatRow({ label, value }: { label: string; value: string }): React.JSX.Element {
@@ -43,7 +45,7 @@ function StatRow({ label, value }: { label: string; value: string }): React.JSX.
  * function's own comment on "following" meaning *current* relationship,
  * not relationship-at-view-time).
  */
-export function StoryInsightsSheet({ visible, storyId, onClose, overlays = [], onShareAnswer }: Props): React.JSX.Element {
+export function StoryInsightsSheet({ visible, storyId, onClose, overlays = [], onShareAnswer, onOpenProfile }: Props): React.JSX.Element {
   const stickers = <StickerResults storyId={storyId} overlays={overlays} onShareAnswer={onShareAnswer} />;
   // Clears Android's navigation bar and the iPhone home indicator.
   const bottomInset = useSafeAreaInsets().bottom;
@@ -129,11 +131,18 @@ export function StoryInsightsSheet({ visible, storyId, onClose, overlays = [], o
               // Poll and quiz results, answers, reminders: above who watched, like Instagram's activity.
               ListHeaderComponent={stickers}
               renderItem={({ item }) => (
-                <View style={styles.row}>
+                <Pressable
+                  style={styles.row}
+                  onPress={onOpenProfile ? () => { onClose(); onOpenProfile(item.username); } : undefined}
+                  disabled={!onOpenProfile}
+                  accessibilityRole={onOpenProfile ? "button" : undefined}
+                  accessibilityLabel={t("storyFeed.openUsernameSProfile", { username: item.username })}
+                  testID={`viewer-${item.username}`}
+                >
                   <Avatar username={item.username} displayName={item.displayName} avatarMediaId={item.avatarMediaId} size={28} />
                   <VerifiedName name={`@${item.username}`} verified={item.verified} style={typography.bodyStrong} containerStyle={styles.viewerName} />
                   <Text style={[typography.caption, styles.viewedAt]}>{timeAgo(item.viewedAt)}</Text>
-                </View>
+                </Pressable>
               )}
             />
           </>
