@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Share } from "react-native";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { useAuth } from "../state/AuthContext";
@@ -8,6 +8,8 @@ import { ActionSheet, type SheetAction } from "./ActionSheet";
 import { ExternalShareModal } from "./ExternalShareModal";
 import type { ShareCardStory } from "./StoryShareCard";
 import { showToast } from "./Toast";
+import { myInviteUrl } from "../state/invites";
+import type { ShareTarget } from "../utils/shareStoryExternally";
 import { t } from "../i18n";
 
 interface Props {
@@ -33,13 +35,23 @@ interface Props {
  * Share via… and Copy link record the share (Send records it when the message is sent).
  */
 export function ShareSheet({ visible, storyId, ownerUsername, isPublic, onClose, onSendToUser, ownStory, onExternalShareChange }: Props): React.JSX.Element {
-  const { accessToken } = useAuth();
+  const { accessToken, user } = useAuth();
   const link = storyShareLink(storyId);
-  const [exporting, setExportingState] = useState(false);
-  const setExporting = (active: boolean) => {
-    setExportingState(active);
-    onExternalShareChange?.(active);
+  const [exporting, setExportingState] = useState<ShareTarget | null>(null);
+  const setExporting = (target: ShareTarget | null) => {
+    setExportingState(target);
+    onExternalShareChange?.(target !== null);
   };
+  // Your invite link goes with whatever you share outside Katkee, so friends who install from it
+  // are credited to you and offered your Stories first (state/invites.ts).
+  const [inviteUrl, setInviteUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (!visible || !accessToken || inviteUrl) return;
+    let alive = true;
+    myInviteUrl(accessToken, user?.id).then((url) => { if (alive) setInviteUrl(url); }).catch(() => undefined);
+    return () => { alive = false; };
+  }, [visible, accessToken, user?.id, inviteUrl]);
+  const joinLine = inviteUrl ? t("shareSheet.madeOnKatkeeJoinMe", { url: inviteUrl }) : null;
 
   const recordShare = async () => {
     if (!accessToken) return;
@@ -52,17 +64,21 @@ export function ShareSheet({ visible, storyId, ownerUsername, isPublic, onClose,
 
   // With the picture: your profile, and the Story itself when anyone can open it.
   const fileMessage = ownStory
-    ? [t("shareSheet.ownerusernameOnKatkeeOwnerusername2", { ownerUsername, ownerUsername2: profileShareLink(ownerUsername, ownStory.ownerId) }), ...(isPublic ? [link] : [])].join("\n")
+    ? [joinLine ?? t("shareSheet.ownerusernameOnKatkeeOwnerusername2", { ownerUsername, ownerUsername2: profileShareLink(ownerUsername, ownStory.ownerId) }), ...(isPublic ? [link] : [])].join("\n")
     : "";
 
   const actions: SheetAction[] = [
     { label: t("shareSheet.sendInKatkee"), onPress: onSendToUser },
-    ...(ownStory ? [{ label: t("shareSheet.shareToOtherApps"), onPress: () => setExporting(true) }] : []),
+    ...(ownStory ? [
+      { label: t("shareSheet.shareToWhatsApp"), onPress: () => setExporting("whatsapp") },
+      { label: t("shareSheet.shareToOtherApps"), onPress: () => setExporting("any") },
+    ] : []),
     {
       label: t("shareSheet.shareVia"),
       onPress: () => {
         void recordShare();
-        Share.share({ message: t("shareSheet.ownerusernameOnKatkeeLink", { ownerUsername, link }) }).catch(() => undefined); // cancelling isn't an error
+        const message = [t("shareSheet.ownerusernameOnKatkeeLink", { ownerUsername, link }), ...(joinLine ? [joinLine] : [])].join("\n");
+        Share.share({ message }).catch(() => undefined); // cancelling isn't an error
       },
     },
     ...(isPublic
@@ -80,7 +96,7 @@ export function ShareSheet({ visible, storyId, ownerUsername, isPublic, onClose,
   return (
     <>
       <ActionSheet visible={visible} title={t("common.share")} groups={[actions]} onClose={onClose} />
-      {ownStory && exporting ? (
+      {ownStory && exporting !== null ? (
         <ExternalShareModal
           visible
           storyId={storyId}
@@ -88,8 +104,9 @@ export function ShareSheet({ visible, storyId, ownerUsername, isPublic, onClose,
           username={ownerUsername}
           message={fileMessage}
           accessToken={accessToken}
+          target={exporting}
           onShared={(sent) => { if (sent) void recordShare(); }}
-          onClose={() => setExporting(false)}
+          onClose={() => setExporting(null)}
         />
       ) : null}
     </>

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Modal, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "./Pressable";
 import { colors, radii, spacing } from "../theme";
-import { ShareCancelled, ShareFailed, sharePhotoStory, shareVideoStory } from "../utils/shareStoryExternally";
+import { ShareCancelled, ShareFailed, sharePhotoStory, shareVideoStory, type ShareTarget } from "../utils/shareStoryExternally";
 import { StoryShareCard, type ShareCardHandle, type ShareCardStory } from "./StoryShareCard";
 import { t } from "../i18n";
 
@@ -13,6 +13,8 @@ interface Props {
   username: string;
   message: string;
   accessToken: string | null;
+  /** Straight to WhatsApp instead of the system share sheet. */
+  target?: ShareTarget;
   /** Called once the share sheet was used (true) or closed without sharing (false). */
   onShared?: (sent: boolean) => void;
   onClose: () => void;
@@ -26,7 +28,7 @@ const PHOTO_LOAD_TIMEOUT_MS = 15_000;
  * little while on the server, so the panel says so and offers Cancel; a failure says what
  * happened, calmly, with Try again.
  */
-export function ExternalShareModal({ visible, storyId, story, username, message, accessToken, onShared, onClose }: Props): React.JSX.Element {
+export function ExternalShareModal({ visible, storyId, story, username, message, accessToken, target = "any", onShared, onClose }: Props): React.JSX.Element {
   const card = useRef<ShareCardHandle>(null);
   const [attempt, setAttempt] = useState(0);
   /** Bumped to load the photo again after it failed to load. */
@@ -56,8 +58,8 @@ export function ExternalShareModal({ visible, storyId, story, username, message,
     // One frame for the card's text and stickers to lay out before it's captured.
     const timer = setTimeout(() => {
       const work = isPhoto
-        ? sharePhotoStory(card, { storyId, message, signal: abort.signal })
-        : shareVideoStory(card, { storyId, message, signal: abort.signal, accessToken: accessToken ?? "" });
+        ? sharePhotoStory(card, { storyId, message, signal: abort.signal, target })
+        : shareVideoStory(card, { storyId, message, signal: abort.signal, accessToken: accessToken ?? "", target });
       work.then(
         (sent) => {
           if (!live || abort.signal.aborted) return;

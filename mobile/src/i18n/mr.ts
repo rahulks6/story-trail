@@ -1159,6 +1159,8 @@ export const mr: Catalogue = {
   "shareSheet.ownerusernameOnKatkeeLink": "Katkee वर @{ownerUsername}: {link}",
   "shareSheet.shareVia": "याद्वारे शेअर करा…",
   "shareSheet.shareToOtherApps": "इतर ॲप्सवर शेअर करा",
+  "shareSheet.shareToWhatsApp": "WhatsApp वर शेअर करा",
+  "shareSheet.madeOnKatkeeJoinMe": "Katkee वर बनवलं 💛 माझ्यासोबत या: {url}",
   "shareSheet.sendInKatkee": "Katkee मध्ये पाठवा",
   "shareSheet.ownerusernameOnKatkeeOwnerusername2": "Katkee वर @{ownerUsername}: {ownerUsername2}",
   // shareStoryExternally
@@ -1376,6 +1378,9 @@ export const mr: Catalogue = {
   "explore.title": "एक्सप्लोर करा",
   "inviteAfterStory.title": "तुमची स्टोरी लाइव्ह आहे",
   "inviteAfterStory.lead": "Katkee मित्रांसोबत अजून छान आहे. त्यांना बोलवा, म्हणजे ते तुमच्या स्टोरीज पाहतील आणि त्यांच्या शेअर करतील.",
+  "inviteAfterStory.leadWhatsApp": "हे WhatsApp वर शेअर करा, म्हणजे मित्र ते पाहू शकतील आणि Katkee वर तुमच्यासोबत येतील.",
+  "inviteAfterStory.shareOnWhatsApp": "WhatsApp वर शेअर करा",
+  "inviteAfterStory.whatsAppMessage": "मी आत्ताच Katkee वर स्टोरी पोस्ट केली 💛 येऊन बघ आणि जॉइन हो: {url}",
   "homeDiscover.welcomeTitle": "Katkee मध्ये स्वागत आहे",
   "homeDiscover.welcomeText": "काही लोकांना फॉलो करा आणि तुमचं होम स्टोरीजने भरा.",
   "homeDiscover.peopleToFollow": "फॉलो करण्यासाठी लोक",

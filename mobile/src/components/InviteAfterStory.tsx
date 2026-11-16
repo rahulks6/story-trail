@@ -7,17 +7,21 @@ import { Icon } from "./Icon";
 import { colors, radii, spacing, typography, ICONS } from "../theme";
 import { useAuth } from "../state/AuthContext";
 import { onStoryPublished } from "../state/storyChanges";
-import { shareInvite } from "../state/invites";
+import { myInviteUrl, shareInvite, shareTextToWhatsApp } from "../state/invites";
+import { track } from "../analytics/analytics";
 import { t } from "../i18n";
 
-const askedKey = (userId: string) => `katkee.invite.afterStory.${userId}`;
+const askedKey = (userId: string) => `katkee.invite.afterStory.count.v2.${userId}`;
+/** Asked after each of someone's first few Stories on a phone, then never again. */
+export const ASK_AFTER_STORIES = 3;
 /** After the "Story shared" moment has been seen. */
 const DELAY_MS = 2500;
 
 /**
- * Right after a Story posts, once per account on a phone: "Your Story is live. Invite friends to
- * see it". The moment someone has just shared something is when they most want friends there.
- * "Not now" is an answer too: it never asks again.
+ * Right after a Story posts (someone's first few, on this phone): "Your Story is live. Share it on
+ * WhatsApp", with their invite link, or Invite friends. The moment someone has just shared
+ * something is when they most want friends there; whoever installs from the link is credited to
+ * them. "Not now" just closes it.
  */
 export function InviteAfterStory(): React.JSX.Element | null {
   const { status, user, accessToken } = useAuth();
@@ -34,8 +38,9 @@ export function InviteAfterStory(): React.JSX.Element | null {
       timer = setTimeout(() => {
         timer = null;
         void AsyncStorage.getItem(askedKey(userId)).then((asked) => {
-          if (asked || AppState.currentState === "background") return;
-          void AsyncStorage.setItem(askedKey(userId), String(Date.now()));
+          const times = Number(asked) || 0;
+          if (times >= ASK_AFTER_STORIES || AppState.currentState === "background") return;
+          void AsyncStorage.setItem(askedKey(userId), String(times + 1));
           setVisible(true);
         }).catch(() => undefined);
       }, DELAY_MS);
@@ -52,6 +57,14 @@ export function InviteAfterStory(): React.JSX.Element | null {
     setVisible(false);
     void shareInvite("after_story", accessToken, userId);
   };
+  const whatsApp = () => {
+    setVisible(false);
+    if (!accessToken) return;
+    void myInviteUrl(accessToken, userId)
+      .then((url) => shareTextToWhatsApp(t("inviteAfterStory.whatsAppMessage", { url })))
+      .then((sent) => { if (sent) track("invite_shared", { from: "after_story" }); })
+      .catch(() => undefined);
+  };
 
   return (
     <Modal visible transparent animationType="slide" onRequestClose={close}>
@@ -61,8 +74,11 @@ export function InviteAfterStory(): React.JSX.Element | null {
           <View style={styles.handle} />
           <View style={styles.badge}><Icon name={ICONS.send} size={30} color={colors.onAccent} /></View>
           <Text style={[typography.title, styles.title]} accessibilityRole="header">{t("inviteAfterStory.title")}</Text>
-          <Text style={[typography.body, styles.lead]}>{t("inviteAfterStory.lead")}</Text>
-          <Pressable style={({ pressed }) => [styles.primary, pressed && styles.primaryPressed]} onPress={invite} accessibilityRole="button">
+          <Text style={[typography.body, styles.lead]}>{t("inviteAfterStory.leadWhatsApp")}</Text>
+          <Pressable style={({ pressed }) => [styles.primary, styles.whatsApp, pressed && styles.primaryPressed]} onPress={whatsApp} accessibilityRole="button">
+            <Text style={[styles.primaryLabel, styles.whatsAppLabel]}>{t("inviteAfterStory.shareOnWhatsApp")}</Text>
+          </Pressable>
+          <Pressable style={({ pressed }) => [styles.primary, styles.secondaryButton, pressed && styles.primaryPressed]} onPress={invite} accessibilityRole="button">
             <Text style={styles.primaryLabel}>{t("common.inviteFriends")}</Text>
           </Pressable>
           <Pressable style={styles.secondary} onPress={close} accessibilityRole="button" accessibilityLabel={t("common.notNow")}>
@@ -85,5 +101,8 @@ const styles = StyleSheet.create({
   primary: { minHeight: 50, borderRadius: radii.pill, alignItems: "center", justifyContent: "center", backgroundColor: colors.accent },
   primaryPressed: { opacity: 0.85 },
   primaryLabel: { ...typography.bodyStrong, color: colors.onAccent },
+  whatsApp: { backgroundColor: "#25D366" },
+  whatsAppLabel: { color: "#0B1F14" },
+  secondaryButton: { marginTop: spacing.sm },
   secondary: { minHeight: 48, alignItems: "center", justifyContent: "center", marginTop: spacing.xs },
 });

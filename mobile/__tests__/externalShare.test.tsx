@@ -13,6 +13,7 @@ import { API_BASE_URL } from "../src/api/client";
 import { uploadStoryOverlay } from "../src/api/media";
 import { getStoryExport, startStoryExport } from "../src/api/stories";
 import { track } from "../src/analytics/analytics";
+import * as invites from "../src/state/invites";
 
 jest.mock("../src/state/AuthContext", () => ({ useAuth: () => ({ accessToken: "token" }) }));
 jest.mock("../src/api/engagement", () => ({ shareStory: jest.fn().mockResolvedValue(undefined) }));
@@ -71,7 +72,7 @@ test("Share to other apps is offered on your own Story only", async () => {
   const other = await render();
   expect(actions(other).map((a) => a.label)).toEqual(["Send in Katkee", "Share via…", "Copy link"]);
   const own = await render({ ownStory: { story: story("photo"), ownerId: OWNER } });
-  expect(actions(own).map((a) => a.label)).toEqual(["Send in Katkee", "Share to other apps", "Share via…", "Copy link"]);
+  expect(actions(own).map((a) => a.label)).toEqual(["Send in Katkee", "Share to WhatsApp", "Share to other apps", "Share via…", "Copy link"]);
 });
 
 test("the share card carries the Story's text and the Katkee mark with your username and link", async () => {
@@ -173,4 +174,20 @@ test("Cancel stops waiting for the video and shares nothing", async () => {
   expect((getStoryExport as jest.Mock).mock.calls.length).toBe(polls);
   expect(Share.open).not.toHaveBeenCalled();
   expect(texts(tree)).not.toContain("Preparing video…");
+});
+
+test("Share to WhatsApp sends the picture straight to WhatsApp, with your invite link so friends who join are yours", async () => {
+  const spy = jest.spyOn(invites, "myInviteUrl").mockResolvedValue("https://katkee.com/i/asha123");
+  (Share.shareSingle as jest.Mock).mockClear();
+  const tree = await render({ ownStory: { story: story("photo"), ownerId: OWNER } });
+  for (let k = 0; k < 4; k++) await act(async () => { await Promise.resolve(); });
+  await press(tree, "Share to WhatsApp");
+  await act(async () => tree.root.findByProps({ testID: "share-card-image" }).props.onLoad());
+  await advance(200);
+  expect(Share.shareSingle).toHaveBeenCalledWith(expect.objectContaining({
+    social: "whatsapp",
+    type: "image/jpeg",
+    message: `Made on Katkee 💛 Join me: https://katkee.com/i/asha123\nhttps://katkee.com/s/${STORY}`,
+  }));
+  spy.mockRestore();
 });

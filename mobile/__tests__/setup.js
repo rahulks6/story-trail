@@ -135,7 +135,7 @@ jest.mock("@dr.pogodin/react-native-fs", () => ({
 
 // Sharing a file to other apps: the system share sheet, and the capture of a view to a file.
 jest.mock("react-native-in-app-review", () => ({ __esModule: true, default: { isAvailable: jest.fn(() => true), RequestInAppReview: jest.fn(async () => true) } }));
-jest.mock("react-native-share", () => ({ __esModule: true, default: { open: jest.fn(async () => ({ success: true, message: "" })) } }));
+jest.mock("react-native-share", () => ({ __esModule: true, Social: { Whatsapp: "whatsapp" }, default: { open: jest.fn(async () => ({ success: true, message: "" })), shareSingle: jest.fn(async () => ({ success: true, message: "" })), Social: { WHATSAPP: "whatsapp" } } }));
 jest.mock("react-native-view-shot", () => ({ __esModule: true, captureRef: jest.fn(async (_ref, options) => `file:///tmp/capture.${options?.format ?? "png"}`) }));
 
 jest.mock("react-native-keychain", () => {

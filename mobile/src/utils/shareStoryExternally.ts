@@ -1,5 +1,5 @@
 import * as RNFS from "@dr.pogodin/react-native-fs";
-import Share from "react-native-share";
+import Share, { Social } from "react-native-share";
 import { captureRef } from "react-native-view-shot";
 import type { ShareCardHandle } from "../components/StoryShareCard";
 import { API_BASE_URL, ApiError } from "../api/client";
@@ -54,17 +54,32 @@ async function remove(paths: (string | null)[]): Promise<void> {
   for (const file of paths) if (file) await RNFS.unlink(stripScheme(file)).catch(() => undefined);
 }
 
-/** The system share sheet with the file, and the links as the message. True when it was sent. */
-async function openShareSheet(file: string, type: string, message: string): Promise<boolean> {
+/** Where the picture or video goes: the system share sheet, or straight to WhatsApp. */
+export type ShareTarget = "any" | "whatsapp";
+
+/**
+ * The file with the links as the message: straight to WhatsApp when asked (falling back to the
+ * system sheet when it isn't installed), otherwise the system share sheet. True when it was sent.
+ */
+async function openShareSheet(file: string, type: string, message: string, target: ShareTarget = "any"): Promise<boolean> {
+  if (target === "whatsapp") {
+    try {
+      await Share.shareSingle({ social: Social.Whatsapp, url: `file://${file}`, type, message });
+      return true;
+    } catch {
+      // Not installed, or it refused the file: the usual sheet instead.
+    }
+  }
   const result = await Share.open({ url: `file://${file}`, type, message, failOnCancel: false });
   return !result?.dismissedAction;
 }
 
 interface Common {
   storyId: string;
-  /** The text that goes with the file: the profile link (and the Story's, when it's public). */
+  /** The text that goes with the file: the invite link (and the Story's, when it's public). */
   message: string;
   signal: AbortSignal;
+  target?: ShareTarget;
 }
 
 /** A photo Story: the card (photo, text, stickers, mark) saved as a JPEG and shared. */
@@ -75,7 +90,7 @@ export async function sharePhotoStory(card: React.RefObject<ShareCardHandle | nu
     if (input.signal.aborted) throw new ShareCancelled();
     file = await intoCache(captured, "jpg");
     captured = null;
-    const sent = await openShareSheet(file, "image/jpeg", input.message);
+    const sent = await openShareSheet(file, "image/jpeg", input.message, input.target);
     if (sent) track("story_shared_external", { kind: "photo" });
     return sent;
   } finally {
@@ -128,7 +143,7 @@ export async function shareVideoStory(card: React.RefObject<ShareCardHandle | nu
     }
     if (signal.aborted) throw new ShareCancelled();
     if (status !== 200) throw new ShareFailed(offline());
-    const sent = await openShareSheet(file, "video/mp4", input.message);
+    const sent = await openShareSheet(file, "video/mp4", input.message, input.target);
     if (sent) track("story_shared_external", { kind: "video" });
     return sent;
   } catch (error) {

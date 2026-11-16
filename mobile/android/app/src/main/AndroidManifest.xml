@@ -36,6 +36,13 @@
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <!-- Cleartext is allowed only in debuggable builds (the React Native Gradle
          plugin sets the placeholder); release builds are HTTPS-only. -->
+    <!-- "Share to WhatsApp" (utils/shareStoryExternally.ts, state/invites.ts) opens WhatsApp
+         directly; Android 11+ only lets an app see the apps it names here. -->
+    <queries>
+        <package android:name="com.whatsapp" />
+        <package android:name="com.whatsapp.w4b" />
+    </queries>
+
     <application android:usesCleartextTraffic="${usesCleartextTraffic}"
       android:name=".MainApplication"
       android:label="@string/app_name"

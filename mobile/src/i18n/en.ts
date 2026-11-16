@@ -1251,6 +1251,8 @@ export const en = {
   "shareSheet.ownerusernameOnKatkeeLink": "@{ownerUsername} on Katkee: {link}",
   "shareSheet.shareVia": "Share via…",
   "shareSheet.shareToOtherApps": "Share to other apps",
+  "shareSheet.shareToWhatsApp": "Share to WhatsApp",
+  "shareSheet.madeOnKatkeeJoinMe": "Made on Katkee 💛 Join me: {url}",
   "shareSheet.sendInKatkee": "Send in Katkee",
   "shareSheet.ownerusernameOnKatkeeOwnerusername2": "@{ownerUsername} on Katkee: {ownerUsername2}",
 
@@ -1476,6 +1478,9 @@ export const en = {
   "explore.title": "Explore",
   "inviteAfterStory.title": "Your Story is live",
   "inviteAfterStory.lead": "Katkee is better with friends. Invite them to see your Stories and share theirs.",
+  "inviteAfterStory.leadWhatsApp": "Share it on WhatsApp so your friends can see it, and join you on Katkee.",
+  "inviteAfterStory.shareOnWhatsApp": "Share on WhatsApp",
+  "inviteAfterStory.whatsAppMessage": "I just posted a Story on Katkee 💛 Come see it and join me: {url}",
   "homeDiscover.welcomeTitle": "Welcome to Katkee",
   "homeDiscover.welcomeText": "Follow a few people to fill your Home with Stories.",
   "homeDiscover.peopleToFollow": "People to follow",

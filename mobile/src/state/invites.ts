@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Alert, Share } from "react-native";
+import RNShare, { Social } from "react-native-share";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ApiError } from "../api/client";
 import { getInviter, getMyInvite, redeemInvite, type Inviter } from "../api/growth";
@@ -30,18 +31,41 @@ export function inviteMessage(url: string): string {
 
 let cached: { userId: string; url: string } | null = null;
 
+/** The person's own invite link (made on first use, then remembered). Throws when offline. */
+export async function myInviteUrl(accessToken: string, userId?: string | null): Promise<string> {
+  if (cached && cached.userId === userId) return cached.url;
+  const url = (await getMyInvite(accessToken)).invite.url;
+  if (userId) cached = { userId, url };
+  return url;
+}
+
+/**
+ * Straight to WhatsApp (a chat, a group or your status) with `message`; the system share sheet
+ * when WhatsApp isn't there. True when something was shared.
+ */
+export async function shareTextToWhatsApp(message: string): Promise<boolean> {
+  try {
+    await RNShare.shareSingle({ social: Social.Whatsapp, message });
+    return true;
+  } catch {
+    try {
+      const result = await Share.share({ message });
+      return result.action !== Share.dismissedAction;
+    } catch {
+      return false;
+    }
+  }
+}
+
 /**
  * Opens the share sheet with the person's own invite link (made on first use). Errors are shown,
  * not thrown: every caller is a button.
  */
 export async function shareInvite(from: InviteSource, accessToken: string | null, userId?: string | null): Promise<void> {
   if (!accessToken) return;
-  let url = cached && cached.userId === userId ? cached.url : null;
+  let url: string;
   try {
-    if (!url) {
-      url = (await getMyInvite(accessToken)).invite.url;
-      if (userId) cached = { userId, url };
-    }
+    url = await myInviteUrl(accessToken, userId);
   } catch {
     Alert.alert(t("invites.couldntGetYourInviteLink"), t("invites.checkYourConnectionAndTry"));
     return;
