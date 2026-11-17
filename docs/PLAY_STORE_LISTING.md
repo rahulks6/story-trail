@@ -24,28 +24,45 @@ use those languages see the listing in theirs.
 | Ads | No (Sponsored Stories are off) |
 | Target audience | 18 and over |
 
-## Keyword plan
+## Keyword plan (researched November 2026)
 
-Play reads the app name, short description and full description for search; there is no
-keyword field. Weight goes title > short description > first lines of the full description >
-the rest, and repeating a word naturally 3 to 5 times in the full description helps; lists of
-keywords get the listing demoted. Search volumes below are judgement, not Play data: after
-launch, Play Console, Grow users, Store performance, Store analysis ("Search terms") shows the
-words people really used, and the plan should follow that.
+Play reads the title (strongest), the short description (next) and the full description; there
+is no keyword field. Play doesn't publish search volumes, and ASO tools only estimate them from
+Play's search suggestions, so these priorities come from what ranks in India today: the "status"
+category (video status, status with song, Hindi and festival status) is one of the most crowded
+and most searched in India, and "close friends" is the space Katkee owns (the nearest rival,
+Locket, sells a home-screen widget, not Stories with chat). Repeat a keyword naturally, about
+once per 250 characters; never stuff.
 
-| Keyword | Why | Where it is |
+| Priority | Keyword | Where it is |
 | --- | --- | --- |
-| stories, share stories | Katkee's core; the words people search for Story apps | Title, short, full (opening line and 8 more times) |
-| chat, messages | The second reason to open the app every day | Title, short, full |
-| status | In India people search "status" for 24-hour photo and video posts; a generic word, used plainly | Title, full ("like a status") |
-| story maker, photo collage, add music to story | Creation searches with clear intent | Full |
-| video call, voice notes | Strong intent, less crowded than "stories" | Title (Calls), short, full |
-| friends, private, close friends | What sets Katkee apart from public feeds | Short, full |
-| music, stickers, filters, photo, video | Story-making searches | Full |
-| Hindi / Marathi: स्टोरी, चैट, वीडियो कॉल | Many Indian users search in their own script | The hi and mr listings |
+| 1 | stories, story | Title, short, full (12+ times) |
+| 1 | status | Title, short, full ("status with music", "video status", "festival status") |
+| 1 | close friends | Short, full (opening line and 4 more) |
+| 1 | chat | Title, short, full |
+| 2 | status with song / music, story with music | Short, full |
+| 2 | video status, photo status, story maker | Full |
+| 2 | voice notes, video call, group chat | Short, full |
+| 3 | private, friends only, inner circle | Full |
+| 3 | festival status (Diwali, Holi, Eid, Christmas) | Full; seasonal Custom store listings |
+| 3 | share to WhatsApp | Full |
+| Hindi | स्टोरी, स्टेटस, चैट, वीडियो कॉल, क्लोज़ फ़्रेंड्स | The hi listing (title has स्टेटस) |
 
-Brand searches ("katkee") match the title; the website and social posts should always say
-"Katkee on Google Play" with the Play link once the app is live.
+After the listing has been live 2-3 weeks, Play Console → Grow users → Store performance →
+Store analysis → Search terms shows the words that really bring visitors and installers: move
+the best of them up (title or short description) and drop what brings nothing.
+
+## Custom store listing: India (country-based)
+
+Play Console → Grow users → Store presence → Custom store listings → Create → Country/region:
+India. English speakers in India then see this text instead of the main listing (Hindi and
+Marathi phones keep their translations). Same screenshots.
+
+- **Short description (80):** `Status & Stories with songs for close friends. Chat, voice notes, video calls.`
+- **Full description:** the English one above, with the first line changed to: "Katkee is a
+  made-in-India Stories and status app for your close friends: photo status, video status with
+  songs, festival status for Diwali, Holi and Eid, and chats, voice notes and video calls with
+  the people who matter."
 
 ## Experiments after launch (Store listing experiments)
 
@@ -84,56 +101,55 @@ Katkee: Stories, Status & Chat
 
 ### Short description (80 characters max)
 <!-- field:short:en -->
-Stories for your close friends. Add music, chat, voice notes and video calls.
+Close friends Stories & status with music. Chat, voice notes and video calls.
 <!-- /field -->
 
 ### Full description (4,000 characters max)
 <!-- field:full:en -->
-Katkee is a Stories app for your real friends. Share photo and video Stories that last 24 hours, like a status, with music, text and animated stickers, and choose exactly who sees each one. Then chat, send voice notes and video call your friends. Post for your people, not for strangers.
+Katkee is a Stories and status app for your close friends. Post your day as photo and video Stories that last 24 hours, like a status, add a song, text and animated stickers, and choose exactly who sees it: everyone, followers or only your Close Friends. Then chat, send voice notes and video call your friends, all in one app.
 
 Why people choose Katkee
-• Close Friends first: share some Stories only with your inner circle
-• You choose who sees every Story: everyone, followers or Close Friends
-• Stories from friends on Home, one swipe at a time
-• Free to use, with no ad tracking, and we never sell your data
+• Close Friends Stories: share some moments only with your inner circle
+• You choose who sees every Story and status update
+• Stories from your friends on Home, one swipe at a time
+• Free, with no ad tracking, and we never sell your data
 
-Make Stories that look like you
-• Post photo and video Stories that last 24 hours, like a status update
-• Story maker tools: text styles, animated stickers, emoji, drawing and filters
-• Filters cover the whole photo or video, edge to edge
-• Add music to your Story from Katkee's song library and pick the best part
+Status with music, made in seconds
+• Photo status and video status that last 24 hours
+• Add a song to your Story and pick the best part of it
+• Story maker tools: text styles, animated stickers, emoji, drawing and filters that cover the whole photo or video
 • Layouts: a photo collage of up to six photos in one Story
-• Polls, quizzes, questions, countdowns and links make Stories interactive
-• Festival Stories: Katkee spots the festival in your Story and adds it to the festival ring for you
+• Polls, quizzes, questions, countdowns and links
+• Festival status: Katkee spots Diwali, Holi, Eid, Christmas and more in your Story and adds it to the festival ring
 
 Highlights that last
 • Keep your best Stories on your profile as Highlights, forever
 • Friends can like, comment on and share your Highlights
-• Explore other people's Highlights when you've seen every new Story
+• Explore other people's Highlights after you've seen every new Story
 
-Chat and video call
-• Private messages and group chats with up to 32 friends
+Chat, voice notes and video calls
+• Private chats and group chats with up to 32 friends
 • Voice notes, photos and videos in every chat
-• Voice calls and video calls with friends
-• Reply to a Story, react with an emoji, or double tap to like
-• See when your messages are sent, delivered and seen
+• Voice calls and video calls
+• Reply to a Story, react with an emoji or double tap to like
+• Share your Story to WhatsApp in one tap
 
 Meet your people
-• Crossed paths (optional, off until you turn it on): find out when you were in the same area as someone else who turned it on, then see their public Stories. It never shows where or when
+• Crossed paths (optional, off until you turn it on): find out when you were in the same area as someone else who turned it on. It never shows where or when
 • Katkee understands what each Story is about, so no hashtags needed
-• Explore popular Stories and follow new people in one tap
+• Follow new people in one tap from their Stories
 
 Safe and private social app
 • Private account: approve who follows you
 • Two-step login protects your account
 • Block, mute and report anyone, any time
-• Download a copy of your data, or delete your account whenever you like
+• Download your data, or delete your account whenever you like
 
-Made for everyone
+Made in India, for everyone
 • In English, Hindi, Marathi, Spanish, Portuguese, Indonesian, French, German and Arabic
 • Light and dark mode
-• Several accounts on one phone, switch in one tap
-• Picture descriptions for people who use a screen reader
+• Several accounts on one phone
+• Picture descriptions for screen reader users
 
 Katkee is for people aged 18 and over.
 Questions or ideas? support@katkee.com · katkee.com/support
