@@ -1,6 +1,6 @@
 # Katkee Privacy Policy
 
-**Last updated:** 15 November 2026
+**Last updated:** 18 November 2026
 
 This policy explains what Katkee collects, how we use it, who can see it, how long we keep it
 and the choices you have. It covers the Katkee apps for iPhone and Android, the website at
@@ -143,8 +143,15 @@ number.
 Your personal invite link (katkee.com/i/...) shows your display name to
 whoever opens it. If someone creates an account after opening your link, we
 record that they joined from your invite, tell you, and suggest you to each
-other. We don't track installs through the app stores and don't use any
-attribution service.
+other.
+
+### Where you installed Katkee from
+On Android, when the app is first opened, it asks Google Play where the
+install came from and keeps only one broad answer: a Katkee invite, a
+Katkee ad on Google, the Play Store, another link, or unknown. That answer
+is counted once, with our other app analytics, so we know which of our
+ads and invites work. We never keep the ad click id or the full referrer,
+don't use any attribution service, and don't share it with anyone.
 
 ### Your approximate area (Nearby Stories, optional)
 Only if you turn on **Nearby Stories**. The app reads an approximate

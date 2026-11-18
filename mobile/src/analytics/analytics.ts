@@ -23,7 +23,9 @@ export type AnalyticsEventName =
   | "story_link_opened" | "add_yours_tapped"
   // Invite friends (where it was tapped), an invite link opened, and how many contacts were found.
   | "invite_shared" | "invite_link_opened" | "contacts_checked"
-  | "professional_dashboard_viewed";
+  | "professional_dashboard_viewed"
+  // Where this install came from (Google ads, an invite, the Play Store), once per install.
+  | "install_source";
 export type AnalyticsProperties = Record<string, string | number | boolean>;
 
 interface QueuedEvent {
@@ -126,6 +128,11 @@ function enqueue(event: QueuedEvent): void {
   if (queue.length > MAX_QUEUED) queue.splice(0, queue.length - MAX_QUEUED);
   saveSoon();
   schedule(queue.length >= FLUSH_AT ? FLUSH_SOON_MS : FLUSH_DELAY_MS);
+}
+
+/** True while someone is signed in and events are being collected. */
+export function analyticsActive(): boolean {
+  return active !== null;
 }
 
 /** Records one event for the signed-in person. Never throws, never waits. */

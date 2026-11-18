@@ -15,6 +15,7 @@ export const ANALYTICS_EVENTS = [
   "story_link_opened", "add_yours_tapped",
   "invite_shared", "invite_link_opened", "contacts_checked",
   "professional_dashboard_viewed",
+  "install_source",
 ] as const;
 export type AnalyticsEventName = (typeof ANALYTICS_EVENTS)[number];
 
@@ -58,6 +59,8 @@ const PROPERTIES: Record<AnalyticsEventName, Record<string, PropertyRule>> = {
   contacts_checked: { found: { kind: "int", min: 0, max: 10_000 } },
   // The professional dashboard opened, and for which period; nothing about what it showed.
   professional_dashboard_viewed: { range: { kind: "enum", values: ["7d", "30d"] } },
+  // Where an install came from, once per install: never the referrer or the ad click id.
+  install_source: { source: { kind: "enum", values: ["google_ads", "invite", "play_organic", "play_other", "unknown"] } },
 };
 
 export const MAX_EVENTS_PER_BATCH = 50;
