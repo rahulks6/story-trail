@@ -1291,6 +1291,7 @@ export const ar: Partial<Catalogue> = {
   "homeDiscover.welcomeTitle": "مرحبًا بك في Katkee",
   "homeDiscover.welcomeText": "تابِع بعض الأشخاص لتمتلئ الرئيسية بالقصص.",
   "homeDiscover.peopleToFollow": "أشخاص للمتابعة",
+  "homeDiscover.watchNewStories": {"zero": "لا قصص جديدة", "one": "شاهد قصص شخص جديد", "two": "شاهد قصص شخصين جديدين", "few": "شاهد قصص {count} أشخاص جدد", "many": "شاهد قصص {count} شخصًا جديدًا", "other": "شاهد قصص {count} شخص جديد"},
   "homeDiscover.popularStories": "قصص رائجة",
   "homeDiscover.highlightsToExplore": "قصص مميزة لاستكشافها",
   "homeDiscover.watchTitleByName": "شاهد {title} من {name}",

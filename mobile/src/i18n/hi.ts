@@ -1391,6 +1391,7 @@ export const hi: Catalogue = {
   "homeDiscover.welcomeTitle": "Katkee में आपका स्वागत है",
   "homeDiscover.welcomeText": "कुछ लोगों को फ़ॉलो करें और अपना होम स्टोरीज़ से भरें।",
   "homeDiscover.peopleToFollow": "फ़ॉलो करने के लिए लोग",
+  "homeDiscover.watchNewStories": {"one": "1 नए व्यक्ति की स्टोरीज़ देखें", "other": "{count} नए लोगों की स्टोरीज़ देखें"},
   "homeDiscover.popularStories": "लोकप्रिय स्टोरीज़",
   "homeDiscover.highlightsToExplore": "देखने लायक हाइलाइट्स",
   "homeDiscover.watchTitleByName": "{name} की {title} देखें",

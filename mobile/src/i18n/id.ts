@@ -1291,6 +1291,7 @@ export const id: Partial<Catalogue> = {
   "homeDiscover.welcomeTitle": "Selamat datang di Katkee",
   "homeDiscover.welcomeText": "Ikuti beberapa orang untuk mengisi Berandamu dengan Story.",
   "homeDiscover.peopleToFollow": "Orang untuk diikuti",
+  "homeDiscover.watchNewStories": {"other": "Tonton Story dari {count} orang baru"},
   "homeDiscover.popularStories": "Story Populer",
   "homeDiscover.highlightsToExplore": "Sorotan untuk dijelajahi",
   "homeDiscover.watchTitleByName": "Tonton {title} dari {name}",

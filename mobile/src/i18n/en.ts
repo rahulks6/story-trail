@@ -1491,6 +1491,7 @@ export const en = {
   "homeDiscover.welcomeTitle": "Welcome to Katkee",
   "homeDiscover.welcomeText": "Follow a few people to fill your Home with Stories.",
   "homeDiscover.peopleToFollow": "People to follow",
+  "homeDiscover.watchNewStories": {"one": "Watch Stories from 1 new person", "other": "Watch Stories from {count} new people"},
   "homeDiscover.popularStories": "Popular Stories",
   "homeDiscover.highlightsToExplore": "Highlights to explore",
   "homeDiscover.watchTitleByName": "Watch {title} by {name}",

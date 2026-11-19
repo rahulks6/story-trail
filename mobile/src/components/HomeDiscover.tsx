@@ -20,8 +20,10 @@ import { t } from "../i18n";
  * each, and popular Stories to watch, so Home is never an empty screen. Following someone tells
  * Home to load again, so their Stories appear at once.
  */
-export function HomeDiscover({ accessToken, onFollowed, onOpenStories, onOpenProfile, onOpenHighlight, onPost }: {
+export function HomeDiscover({ accessToken, onFollowed, onOpenStories, onOpenProfile, onOpenHighlight, onPost, header }: {
   accessToken: string | null;
+  /** Above everything (Home's "Watch new Stories" after following people here). */
+  header?: React.ReactNode;
   /** A public Highlight to watch (people's Stories kept for good, so there's always more to see). */
   onOpenHighlight?: (highlight: DiscoverHighlight) => void;
   /** To the camera, for someone who hasn't posted yet (FirstStoryNudge). */
@@ -67,6 +69,7 @@ export function HomeDiscover({ accessToken, onFollowed, onOpenStories, onOpenPro
   const authHeaders = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
   return (
     <View style={styles.root}>
+      {header}
       {onPost ? <FirstStoryNudge onPost={onPost} /> : null}
       {onPost ? <DailyThemeCard onPost={onPost} /> : null}
       <ProfilePhotoNudge />

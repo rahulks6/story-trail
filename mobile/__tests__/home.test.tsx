@@ -15,6 +15,8 @@ const mockNavigation = { navigate: jest.fn() };
 let mockFocused = true;
 jest.mock("@react-navigation/native", () => ({ ...jest.requireActual("@react-navigation/native"), useNavigation: () => mockNavigation, useIsFocused: () => mockFocused }));
 jest.mock("../src/screens/story/StoryFeed", () => ({ StoryFeed: (props: object) => require("react").createElement("StoryFeed", props) }));
+// Tested on its own (growthCards.test.tsx); its delayed check would outlive these tests.
+jest.mock("../src/components/FoundingWelcome", () => ({ FoundingWelcome: () => null }));
 jest.mock("../src/api/ads", () => ({ getAdPlacements: jest.fn(async () => ({ placements: [] })) }));
 jest.mock("../src/api/stories", () => ({
   getRankedHomeFeed: jest.fn(async () => ({ feed: [{ owner: { id: "u-me", username: "me" }, isFollowing: false, stories: [], score: 1 }], nextCursor: null })),
@@ -213,5 +215,33 @@ test("no festival today: no festival button", async () => {
   await act(async () => { tree = create(<HomeScreen />); });
   await flush();
   expect(tree.root.findAll((n) => typeof n.props.accessibilityLabel === "string" && /Stories, \d|Post your/.test(n.props.accessibilityLabel))).toHaveLength(0);
+  await act(async () => tree.unmount());
+});
+
+test("following people at the end of the feed doesn't start the feed again: their Stories come after, on request", async () => {
+  const withStory = (username: string, id: string) => ({ owner: { id: `u-${username}`, username }, isFollowing: true, stories: [{ id }], score: 1 });
+  stories.getRankedHomeFeed.mockResolvedValueOnce({ feed: [withStory("asha", "s1")], nextCursor: null } as never);
+  await act(async () => { tree = create(<HomeScreen />); });
+  await flush();
+  const viewer = tree.root.findByType("StoryFeed" as never);
+  type EndProps = { creators: string[]; slotStoryIds: string[]; resume: { index: number } | null; discover: React.ReactElement<{ onFollowed: () => void; header: React.ReactElement<{ onPress: () => void }> | null }> };
+  const props = () => tree.root.findByType("StoryFeed" as never).props as EndProps;
+  expect(props().creators).toEqual(["asha"]);
+
+  // Followed Ravi from "People to follow" under "You're all caught up".
+  stories.getRankedHomeFeed.mockResolvedValueOnce({ feed: [withStory("asha", "s1"), withStory("ravi", "s2")], nextCursor: null } as never);
+  await act(async () => props().discover.props.onFollowed());
+  await flush();
+  expect(tree.root.findByType("StoryFeed" as never)).toBe(viewer); // same viewer: nothing restarted
+  expect(props().creators).toEqual(["asha"]);
+  expect(props().discover.props.header).toBeTruthy(); // "Watch Stories from 1 new person"
+
+  await act(async () => props().discover.props.header!.props.onPress());
+  await flush();
+  expect(tree.root.findByType("StoryFeed" as never)).toBe(viewer);
+  expect(props().creators).toEqual(["asha", "ravi"]);
+  expect(props().slotStoryIds).toEqual(["s1", "s2"]);
+  expect(props().resume?.index).toBe(1); // goes on from Ravi's Story, not from the start
+  expect(props().discover.props.header).toBeNull();
   await act(async () => tree.unmount());
 });

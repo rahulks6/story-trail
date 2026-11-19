@@ -83,6 +83,12 @@ export interface StoryFeedProps {
   onInvite?: () => void;
   /** Shown under "You're all caught up" (Home: people to follow and popular Stories). */
   discover?: React.ReactNode;
+  /**
+   * Go on from this place (a new `nonce` each time): Home, after people followed at the end of the
+   * feed, adds their Stories after what's there and continues with the first of them, instead of
+   * starting the feed again.
+   */
+  resume?: { index: number; nonce: number } | null;
   sponsored?: SponsoredPlacement[];
   /**
    * Present only when this feed was pushed on top of something to return
@@ -133,7 +139,7 @@ const BOTTOM_BAR_HEIGHT = 46;
 export const FOLLOW_PROMPT_AFTER_MS = 3000;
 export const FOLLOW_PROMPT_FOR_MS = 7000;
 
-export function StoryFeed({ creators, startIndex, slotStoryIds, initialStoryId, onClose, onOpenDM, onOpenProfile, onOpenArchived, onRefresh, onNeedMore, onCreate, onFindPeople, onInvite, discover, onOpenCreate, onOpenStory, sponsored = [], following, verified }: StoryFeedProps): React.JSX.Element {
+export function StoryFeed({ creators, startIndex, slotStoryIds, initialStoryId, onClose, onOpenDM, onOpenProfile, onOpenArchived, onRefresh, onNeedMore, onCreate, onFindPeople, onInvite, discover, resume, onOpenCreate, onOpenStory, sponsored = [], following, verified }: StoryFeedProps): React.JSX.Element {
   // Overlays clear the status bar / notch; the bottom ones also the home indicator when no tab bar is below.
   const insets = useScreenInsets();
   const { user: authUser, accessToken } = useAuth();
@@ -154,6 +160,8 @@ export function StoryFeed({ creators, startIndex, slotStoryIds, initialStoryId, 
   const [caughtUp, setCaughtUp] = useState(false);
   useEffect(()=>{if(creatorIndex>=creators.length-3)onNeedMore?.();},[creatorIndex,creators.length,onNeedMore]);
   useEffect(()=>{if(creatorIndex<creators.length-1)setCaughtUp(false);},[creators.length,creatorIndex]);
+  // Home's "Watch new Stories" (people followed at the end of the feed): on from the first of them.
+  useEffect(()=>{if(resume&&resume.index<creators.length){setCurrentAd(null);setCreatorIndex(resume.index);setCaughtUp(false);}},[resume?.nonce]);
   const [currentAd, setCurrentAd] = useState<SponsoredPlacement | null>(null);
   const hiddenAds = useRef(new Set<string>());
   const visitedAds = useRef(new Set<string>());

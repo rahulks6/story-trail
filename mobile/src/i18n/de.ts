@@ -1291,6 +1291,7 @@ export const de: Partial<Catalogue> = {
   "homeDiscover.welcomeTitle": "Willkommen bei Katkee",
   "homeDiscover.welcomeText": "Folge ein paar Personen, um deine Startseite mit Storys zu füllen.",
   "homeDiscover.peopleToFollow": "Personen zum Folgen",
+  "homeDiscover.watchNewStories": {"one": "Storys von 1 neuen Person ansehen", "other": "Storys von {count} neuen Personen ansehen"},
   "homeDiscover.popularStories": "Beliebte Storys",
   "homeDiscover.highlightsToExplore": "Highlights zum Entdecken",
   "homeDiscover.watchTitleByName": "{title} von {name} ansehen",
