@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Alert, Share } from "react-native";
+import { Alert, Linking, Platform, Share } from "react-native";
 import RNShare, { Social } from "react-native-share";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ApiError } from "../api/client";
@@ -7,6 +7,7 @@ import { getInviter, getMyInvite, redeemInvite, type Inviter } from "../api/grow
 import { track } from "../analytics/analytics";
 import { useAuth } from "./AuthContext";
 import { t } from "../i18n";
+import { contactHash } from "../utils/contactHashes";
 
 /**
  * Invite friends. Everyone's link is https://katkee.com/i/<code> (backend growth/invites.ts).
@@ -77,6 +78,73 @@ export async function shareInvite(from: InviteSource, accessToken: string | null
   } catch {
     // The share sheet closing with an error is nothing to report.
   }
+}
+
+/** Contacts already sent an invite, as hashes of their numbers, kept only on the phone. */
+const invitedKey = (userId: string) => `katkee.contactInvites.v1.${userId}`;
+
+export async function invitedContacts(userId: string): Promise<Set<string>> {
+  try {
+    const raw = await AsyncStorage.getItem(invitedKey(userId));
+    const list: unknown = raw ? JSON.parse(raw) : [];
+    return new Set(Array.isArray(list) ? list.filter((h): h is string => typeof h === "string") : []);
+  } catch {
+    return new Set();
+  }
+}
+
+/** The key invitedContacts() uses for a number (E.164). */
+export function invitedId(phone: string): string {
+  return contactHash("phone", phone);
+}
+
+/**
+ * Sends the person's invite to one contact (`phone` in E.164): a WhatsApp chat with them, the
+ * text already written, or a text message when WhatsApp isn't there, or the share sheet when
+ * neither opens. The number goes only to the app that sends it, never to Katkee's servers. True
+ * when something opened.
+ */
+export async function inviteContact(phone: string, accessToken: string | null, userId?: string | null): Promise<boolean> {
+  if (!accessToken) return false;
+  let url: string;
+  try {
+    url = await myInviteUrl(accessToken, userId);
+  } catch {
+    Alert.alert(t("invites.couldntGetYourInviteLink"), t("invites.checkYourConnectionAndTry"));
+    return false;
+  }
+  const text = encodeURIComponent(inviteMessage(url));
+  const targets = [
+    `whatsapp://send?phone=${phone.slice(1)}&text=${text}`,
+    // iPhone's Messages reads the body after "&", Android's after "?".
+    `sms:${phone}${Platform.OS === "ios" ? "&" : "?"}body=${text}`,
+  ];
+  let opened = false;
+  for (const target of targets) {
+    try {
+      await Linking.openURL(target);
+      opened = true;
+      break;
+    } catch {
+      // Not installed: try the next way.
+    }
+  }
+  if (!opened) {
+    try {
+      const result = await Share.share({ message: inviteMessage(url) });
+      opened = result.action !== Share.dismissedAction;
+    } catch {
+      return false;
+    }
+  }
+  if (!opened) return false;
+  track("invite_shared", { from: "contacts" });
+  if (userId) {
+    const invited = await invitedContacts(userId);
+    invited.add(invitedId(phone));
+    await AsyncStorage.setItem(invitedKey(userId), JSON.stringify([...invited].slice(-2000))).catch(() => undefined);
+  }
+  return true;
 }
 
 /** The code just opened, before storage has it: Sign up can show "Invited by" straight away. */

@@ -1,6 +1,6 @@
 import { PermissionsAndroid, Platform } from "react-native";
 import { matchContacts, type ContactMatch } from "../api/growth";
-import { batches, hashesForContacts, type DeviceContact } from "../utils/contactHashes";
+import { batches, hashesForContacts, normalizePhone, type DeviceContact } from "../utils/contactHashes";
 import { track } from "../analytics/analytics";
 
 /**
@@ -16,7 +16,10 @@ import { track } from "../analytics/analytics";
 interface NativeContacts {
   checkPermission(): Promise<"authorized" | "denied" | "undefined" | "limited">;
   requestPermission(): Promise<"authorized" | "denied" | "undefined" | "limited">;
-  getAllWithoutPhotos(): Promise<Array<{ emailAddresses?: Array<{ email?: string }>; phoneNumbers?: Array<{ number?: string }> }>>;
+  getAllWithoutPhotos(): Promise<Array<{
+    displayName?: string; givenName?: string; familyName?: string;
+    emailAddresses?: Array<{ email?: string }>; phoneNumbers?: Array<{ number?: string }>;
+  }>>;
 }
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Contacts: NativeContacts = require("react-native-contacts").default ?? require("react-native-contacts");
@@ -57,22 +60,60 @@ export async function requestContactsAccess(): Promise<ContactsAccess> {
   }
 }
 
-/** Only the emails and numbers; everything else about a contact stays where it is. */
+/**
+ * The emails and numbers (hashed before anything is sent), and the name, which never leaves the
+ * phone: it only labels the invite list. Everything else about a contact stays where it is.
+ */
 export async function readDeviceContacts(): Promise<DeviceContact[]> {
   const all = await Contacts.getAllWithoutPhotos();
   return all.map((c) => ({
+    name: (c.displayName || [c.givenName, c.familyName].filter(Boolean).join(" ")).trim(),
     emails: (c.emailAddresses ?? []).map((e) => e.email ?? "").filter(Boolean),
     phones: (c.phoneNumbers ?? []).map((p) => p.number ?? "").filter(Boolean),
   }));
 }
 
+/** Someone in the address book who can be sent an invite: a name and one number (E.164). */
+export interface InvitableContact {
+  name: string;
+  phone: string;
+}
+
+/**
+ * Contacts to offer "Invite" for, worked out on the phone and never sent anywhere: each named
+ * contact once, with their first number that can be placed (an Indian one must be a mobile, the
+ * only kind WhatsApp and texts reach), each number once, sorted by name.
+ */
+export function invitableContacts(contacts: DeviceContact[]): InvitableContact[] {
+  const seen = new Set<string>();
+  const out: InvitableContact[] = [];
+  for (const contact of contacts) {
+    const name = (contact.name ?? "").trim();
+    if (!name || !/\p{L}/u.test(name)) continue;
+    for (const raw of contact.phones) {
+      const phone = normalizePhone(raw);
+      if (!phone || (phone.startsWith("+91") && !/^\+91[6-9]\d{9}$/.test(phone))) continue;
+      if (!seen.has(phone)) {
+        seen.add(phone);
+        out.push({ name, phone });
+      }
+      break;
+    }
+  }
+  return out.sort((a, b) => a.name.localeCompare(b.name));
+}
+
 /**
  * Hashes the address book and asks the server who's on Katkee, a batch at a time. Results from
  * every batch are merged (one person can match by email and by phone). The hashes exist only
- * while this runs.
+ * while this runs. Also returns who can be invited, from the same read.
  */
-export async function findContactsOnKatkee(accessToken: string, onProgress?: (done: number, total: number) => void): Promise<ContactMatch[]> {
-  const hashes = hashesForContacts(await readDeviceContacts());
+export async function checkContacts(
+  accessToken: string,
+  onProgress?: (done: number, total: number) => void,
+): Promise<{ people: ContactMatch[]; invitable: InvitableContact[] }> {
+  const contacts = await readDeviceContacts();
+  const hashes = hashesForContacts(contacts);
   const found = new Map<string, ContactMatch>();
   const parts = batches(hashes);
   for (let i = 0; i < parts.length; i++) {
@@ -84,5 +125,10 @@ export async function findContactsOnKatkee(accessToken: string, onProgress?: (do
   // Not yet followed first, then by name: who you might want to follow is at the top.
   people.sort((a, b) => Number(a.viewer.isFollowing) - Number(b.viewer.isFollowing) || a.displayName.localeCompare(b.displayName));
   track("contacts_checked", { found: Math.min(people.length, 10_000) });
-  return people;
+  return { people, invitable: invitableContacts(contacts) };
+}
+
+/** Who's on Katkee from the address book (see checkContacts). */
+export async function findContactsOnKatkee(accessToken: string, onProgress?: (done: number, total: number) => void): Promise<ContactMatch[]> {
+  return (await checkContacts(accessToken, onProgress)).people;
 }

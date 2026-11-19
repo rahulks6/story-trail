@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Linking, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, Linking, ScrollView, SectionList, StyleSheet, Switch, Text, TextInput, View } from "react-native";
 import { contactsWatchEnabled, disableContactsWatch, enableContactsWatch } from "../state/contactsWatch";
 import { Pressable } from "./Pressable";
 import { colors, radii, spacing, typography } from "../theme";
 import { useAuth } from "../state/AuthContext";
-import { findContactsOnKatkee, requestContactsAccess } from "../state/contacts";
-import { shareInvite, type InviteSource } from "../state/invites";
+import { checkContacts, requestContactsAccess, type InvitableContact } from "../state/contacts";
+import { inviteContact, invitedContacts, invitedId, shareInvite, type InviteSource } from "../state/invites";
 import { followUser, unfollowUser } from "../api/users";
 import type { ContactMatch } from "../api/growth";
 import { ApiError } from "../api/client";
@@ -30,6 +30,14 @@ interface Props {
   onOpenProfile?: (username: string) => void;
 }
 
+/** A number as people write it: "+91 98765 43210" for India, as stored for anywhere else. */
+export function displayPhone(phone: string): string {
+  const india = /^\+91(\d{5})(\d{5})$/.exec(phone);
+  return india ? `+91 ${india[1]} ${india[2]}` : phone;
+}
+
+type Row = { kind: "person"; person: ContactMatch } | { kind: "contact"; contact: InvitableContact };
+
 /** What happens, said before the system prompt: the explainer every entry point shows first. */
 export function contactsExplainer(): string[] {
   return [t("contactsFinder.explainerChecks"), t("contactsFinder.explainerHashed"), t("contactsFinder.explainerForgotten"), t("contactsFinder.explainerOptOut")];
@@ -46,6 +54,10 @@ export function ContactsFinder({ header, footer, source, onOpenProfile }: Props)
   const [progress, setProgress] = useState<string | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
   const [follows, setFollows] = useState<Record<string, FollowState>>({});
+  // Contacts to invite, worked out on the phone (state/contacts.ts), and who was already sent one.
+  const [invitable, setInvitable] = useState<InvitableContact[]>([]);
+  const [invited, setInvited] = useState<Set<string>>(new Set());
+  const [search, setSearch] = useState("");
   // "Tell me when more contacts join" (state/contactsWatch.ts): off until switched on here.
   const [watching, setWatching] = useState(false);
   useEffect(() => {
@@ -70,10 +82,12 @@ export function ContactsFinder({ header, footer, source, onOpenProfile }: Props)
     setPhase("checking");
     setProgress(null);
     try {
-      const found = await findContactsOnKatkee(accessToken, (done, total) => {
+      const { people: found, invitable: others } = await checkContacts(accessToken, (done, total) => {
         if (total > 1) setProgress(t("contactsFinder.checkingDoneOfTotal", { done, total }));
       });
       setPeople(found);
+      setInvitable(others);
+      if (user) setInvited(await invitedContacts(user.id));
       setFollows(Object.fromEntries(found.map((p) => [p.username, p.viewer.isFollowing ? "following" : p.viewer.hasPendingRequestFromViewer ? "requested" : "none"])));
       setPhase("results");
     } catch (error) {
@@ -100,6 +114,25 @@ export function ContactsFinder({ header, footer, source, onOpenProfile }: Props)
       setFollows((f) => ({ ...f, [person.username]: state }));
     }
   };
+
+  const sendInvite = async (contact: InvitableContact) => {
+    if (await inviteContact(contact.phone, accessToken, user?.id)) {
+      tapFeedback("success");
+      setInvited((before) => new Set(before).add(invitedId(contact.phone)));
+    }
+  };
+
+  const shownContacts = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return invitable;
+    const digits = q.replace(/\D/g, "");
+    return invitable.filter((c) => c.name.toLowerCase().includes(q) || (digits.length >= 3 && c.phone.includes(digits)));
+  }, [invitable, search]);
+
+  const sections = useMemo(() => [
+    { key: "people", data: people.map((person): Row => ({ kind: "person", person })) },
+    ...(invitable.length > 0 ? [{ key: "invite", data: shownContacts.map((contact): Row => ({ kind: "contact", contact })) }] : []),
+  ], [people, invitable.length, shownContacts]);
 
   const invite = <Button label={t("common.inviteFriends")} variant="secondary" onPress={() => void shareInvite(source === "onboarding" ? "onboarding" : "contacts", accessToken, user?.id)} />;
 
@@ -179,10 +212,12 @@ export function ContactsFinder({ header, footer, source, onOpenProfile }: Props)
 
   return (
     <View style={styles.root}>
-      <FlatList
-        data={people}
-        keyExtractor={(p) => p.id}
+      <SectionList<Row>
+        sections={sections}
+        keyExtractor={(row) => (row.kind === "person" ? row.person.id : row.contact.phone)}
         contentContainerStyle={styles.content}
+        stickySectionHeadersEnabled={false}
+        keyboardShouldPersistTaps="handled"
         ListHeaderComponent={
           <View style={styles.listHeader}>
             {header}
@@ -193,14 +228,60 @@ export function ContactsFinder({ header, footer, source, onOpenProfile }: Props)
             {watchRow}
           </View>
         }
-        ListEmptyComponent={
-          <View style={styles.empty}>
-            <Text style={styles.body}>{t("contactsFinder.inviteThemAndTheirStories")}</Text>
-            {invite}
-          </View>
+        renderSectionHeader={({ section }) =>
+          section.key === "invite" ? (
+            <View style={styles.inviteHeader} testID="contacts-invite-section">
+              <Text style={typography.title} accessibilityRole="header">{t("contactsFinder.inviteFriendsToKatkee")}</Text>
+              <Text style={styles.body}>{t("contactsFinder.inviteFriendsToKatkeeBody")}</Text>
+              {invitable.length > 8 ? (
+                <TextInput
+                  value={search}
+                  onChangeText={setSearch}
+                  placeholder={t("contactsFinder.searchContacts")}
+                  placeholderTextColor={colors.textSecondary}
+                  style={styles.search}
+                  autoCorrect={false}
+                  accessibilityLabel={t("contactsFinder.searchContacts")}
+                  testID="contacts-invite-search"
+                />
+              ) : null}
+              {shownContacts.length === 0 ? <Text style={styles.body}>{t("contactsFinder.noContactsMatch")}</Text> : null}
+            </View>
+          ) : people.length === 0 && invitable.length === 0 ? (
+            <View style={styles.empty}>
+              <Text style={styles.body}>{t("contactsFinder.inviteThemAndTheirStories")}</Text>
+            </View>
+          ) : null
         }
-        ListFooterComponent={people.length > 0 ? <View style={styles.listFooter}>{invite}</View> : undefined}
-        renderItem={({ item }) => {
+        ListFooterComponent={<View style={styles.listFooter}>{invite}</View>}
+        renderItem={({ item: row }) => {
+          if (row.kind === "contact") {
+            const { contact } = row;
+            const sent = invited.has(invitedId(contact.phone));
+            return (
+              <View style={styles.row}>
+                <View style={styles.rowMain}>
+                  <View style={styles.initial} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+                    <Text style={styles.initialText}>{[...contact.name][0]?.toUpperCase()}</Text>
+                  </View>
+                  <View style={styles.rowText}>
+                    <Text style={styles.name} numberOfLines={1}>{contact.name}</Text>
+                    <Text style={styles.username} numberOfLines={1}>{displayPhone(contact.phone)}</Text>
+                  </View>
+                </View>
+                <Pressable
+                  onPress={() => void sendInvite(contact)}
+                  style={[styles.follow, sent ? styles.followQuiet : styles.followStrong]}
+                  accessibilityRole="button"
+                  accessibilityLabel={t("contactsFinder.inviteName", { name: contact.name })}
+                  testID={`contact-invite-${contact.phone}`}
+                >
+                  <Text style={[styles.followLabel, sent && styles.followLabelQuiet]}>{sent ? t("contactsFinder.invited") : t("contactsFinder.invite")}</Text>
+                </Pressable>
+              </View>
+            );
+          }
+          const item = row.person;
           const state = follows[item.username] ?? "none";
           const label = state === "following" ? t("common.following") : state === "requested" ? t("common.requested") : t("common.follow");
           const active = state === "following" || state === "requested";
@@ -266,6 +347,19 @@ const styles = StyleSheet.create({
   listHeader: { gap: spacing.sm, marginBottom: spacing.sm },
   listFooter: { marginTop: spacing.lg },
   empty: { gap: spacing.md },
+  inviteHeader: { gap: spacing.sm, marginTop: spacing.lg, marginBottom: spacing.xs },
+  search: {
+    ...typography.body,
+    color: colors.textPrimary,
+    minHeight: 44,
+    paddingHorizontal: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+  },
+  initial: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center", backgroundColor: colors.surfaceElevated },
+  initialText: { ...typography.body, color: colors.textPrimary, fontWeight: "700" },
   row: { flexDirection: "row", alignItems: "center", gap: spacing.md, paddingVertical: spacing.xs },
   rowMain: { flex: 1, flexDirection: "row", alignItems: "center", gap: spacing.md, minHeight: 44 },
   rowText: { flex: 1 },

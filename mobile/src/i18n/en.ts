@@ -460,6 +460,13 @@ export const en = {
   "contactsFinder.findFriendsFromYourContacts": "Find friends from your contacts",
   "contactsFinder.checkYourConnectionAndTry": "Check your connection and try again.",
   "contactsFinder.checkingDoneOfTotal": "Checking {done} of {total}…",
+  "contactsFinder.inviteFriendsToKatkee": "Invite friends to Katkee",
+  "contactsFinder.inviteFriendsToKatkeeBody": "Your invite opens in WhatsApp, ready to send. These numbers stay on your phone.",
+  "contactsFinder.searchContacts": "Search contacts",
+  "contactsFinder.noContactsMatch": "No contacts match.",
+  "contactsFinder.invite": "Invite",
+  "contactsFinder.invited": "Invited",
+  "contactsFinder.inviteName": "Invite {name}",
 
   // screens/dm/ConversationScreen.tsx
   "conversation.unpin": "Unpin",

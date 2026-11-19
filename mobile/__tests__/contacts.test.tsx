@@ -2,7 +2,8 @@ import React from "react";
 import { act, create, type ReactTestInstance, type ReactTestRenderer } from "react-test-renderer";
 import { Linking, PermissionsAndroid, Platform, Text } from "react-native";
 import { batches, contactHash, hashesForContacts, normalizeEmail, normalizePhone, sha256Hex, HASH_BATCH_SIZE } from "../src/utils/contactHashes";
-import { ContactsFinder, contactsExplainer } from "../src/components/ContactsFinder";
+import { ContactsFinder, contactsExplainer, displayPhone } from "../src/components/ContactsFinder";
+import { invitableContacts } from "../src/state/contacts";
 import * as growthApi from "../src/api/growth";
 import * as usersApi from "../src/api/users";
 import { track } from "../src/analytics/analytics";
@@ -61,6 +62,30 @@ describe("what leaves the phone", () => {
     expect(hashes).toEqual([serverHash("email", "asha@example.com"), serverHash("phone", "+919876543210")]);
     expect(hashes.every((h) => /^[0-9a-f]{64}$/.test(h))).toBe(true);
     expect(batches(Array.from({ length: 1001 }, (_, i) => i)).map((b) => b.length)).toEqual([500, 500, 1]);
+  });
+});
+
+describe("contacts to invite, worked out on the phone", () => {
+  test("each named contact once, a mobile number each, every number once, by name", () => {
+    expect(invitableContacts([
+      { name: "Ravi", emails: [], phones: ["022 2345 6789", "98765 43210"] },
+      { name: "Asha", emails: [], phones: ["+91 98111 22233"] },
+      { name: "Asha (work)", emails: [], phones: ["9811122233"] },
+      { name: "  ", emails: [], phones: ["9000000001"] },
+      { name: "12345", emails: [], phones: ["9000000002"] },
+      { name: "Bank", emails: [], phones: ["*123#", "121"] },
+      { name: "Sam", emails: [], phones: ["+1 202 555 0123"] },
+      { emails: ["x@example.com"], phones: ["9000000003"] },
+    ])).toEqual([
+      { name: "Asha", phone: "+919811122233" },
+      { name: "Ravi", phone: "+919876543210" },
+      { name: "Sam", phone: "+12025550123" },
+    ]);
+  });
+
+  test("numbers are shown the way people write them", () => {
+    expect(displayPhone("+919876543210")).toBe("+91 98765 43210");
+    expect(displayPhone("+12025550123")).toBe("+12025550123");
   });
 });
 
@@ -159,5 +184,57 @@ describe("Contacts on Katkee", () => {
     await settle();
     expect(texts()).toContain("None of your contacts are on Katkee yet.");
     expect(pressable("Invite friends")).toBeTruthy();
+  });
+
+  test("contacts not found can be invited on WhatsApp, one tap each, and their numbers never reach Katkee", async () => {
+    contacts.list = [
+      { givenName: "Ravi", familyName: "Kumar", emailAddresses: [], phoneNumbers: [{ number: "98765 43210" }] },
+      { displayName: "Asha", emailAddresses: [], phoneNumbers: [{ number: "+91 98111 22233" }] },
+    ];
+    growth.matchContacts.mockResolvedValueOnce({ matches: [] });
+    growth.getMyInvite.mockResolvedValue({ invite: { url: "https://katkee.com/i/abcd2345" } } as never);
+    const open = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
+    await press("Continue");
+    await settle();
+    expect(texts()).toEqual(expect.arrayContaining(["Invite friends to Katkee", "Asha", "Ravi Kumar", "+91 98765 43210"]));
+    expect(JSON.stringify(growth.matchContacts.mock.calls)).not.toMatch(/Ravi|Asha|98765|98111/);
+
+    await press("Invite Ravi Kumar");
+    await settle();
+    expect(open).toHaveBeenCalledTimes(1);
+    const url = open.mock.calls[0]![0] as string;
+    expect(url.startsWith("whatsapp://send?phone=919876543210&text=")).toBe(true);
+    expect(decodeURIComponent(url.split("text=")[1]!)).toContain("https://katkee.com/i/abcd2345");
+    expect(track).toHaveBeenCalledWith("invite_shared", { from: "contacts" });
+    expect(texts()).toContain("Invited");
+  });
+
+  test("without WhatsApp the invite goes as a text message", async () => {
+    contacts.list = [{ givenName: "Ravi", emailAddresses: [], phoneNumbers: [{ number: "98765 43210" }] }];
+    growth.matchContacts.mockResolvedValueOnce({ matches: [] });
+    growth.getMyInvite.mockResolvedValue({ invite: { url: "https://katkee.com/i/abcd2345" } } as never);
+    const open = jest.spyOn(Linking, "openURL").mockRejectedValueOnce(new Error("no WhatsApp")).mockResolvedValue(true);
+    await press("Continue");
+    await settle();
+    await press("Invite Ravi");
+    await settle();
+    expect(open).toHaveBeenCalledTimes(2);
+    expect((open.mock.calls[1]![0] as string).startsWith("sms:+919876543210&body=")).toBe(true);
+  });
+
+  test("a long address book can be searched by name or number", async () => {
+    contacts.list = Array.from({ length: 12 }, (_, i) => ({ givenName: `Friend ${i}`, emailAddresses: [], phoneNumbers: [{ number: `98${String(i).padStart(8, "0")}` }] }));
+    contacts.list.push({ givenName: "Zoya", emailAddresses: [], phoneNumbers: [{ number: "97777 12345" }] });
+    growth.matchContacts.mockResolvedValueOnce({ matches: [] });
+    await press("Continue");
+    await settle();
+    const search = tree.root.find((n: ReactTestInstance) => n.props.testID === "contacts-invite-search" && typeof n.props.onChangeText === "function");
+    await act(async () => search.props.onChangeText("zoy"));
+    expect(texts()).toContain("Zoya");
+    expect(texts()).not.toContain("Friend 1");
+    await act(async () => search.props.onChangeText("12345"));
+    expect(texts()).toContain("Zoya");
+    await act(async () => search.props.onChangeText("nobody"));
+    expect(texts()).toContain("No contacts match.");
   });
 });

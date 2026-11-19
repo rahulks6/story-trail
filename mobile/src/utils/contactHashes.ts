@@ -52,6 +52,8 @@ export function contactHash(kind: "email" | "phone", value: string): string {
 }
 
 export interface DeviceContact {
+  /** Only for the invite list on the phone; never hashed or sent. */
+  name?: string;
   emails: string[];
   phones: string[];
 }

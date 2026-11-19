@@ -435,6 +435,13 @@ export const hi: Catalogue = {
   "contactsFinder.findFriendsFromYourContacts": "कॉन्टैक्ट्स से दोस्त ढूँढें",
   "contactsFinder.checkYourConnectionAndTry": "अपना कनेक्शन देखें और फिर से कोशिश करें।",
   "contactsFinder.checkingDoneOfTotal": "{total} में से {done} चेक हुए…",
+  "contactsFinder.inviteFriendsToKatkee": "दोस्तों को Katkee पर बुलाएं",
+  "contactsFinder.inviteFriendsToKatkeeBody": "आपका इनवाइट WhatsApp में भेजने के लिए तैयार खुलेगा। ये नंबर आपके फ़ोन पर ही रहते हैं।",
+  "contactsFinder.searchContacts": "कॉन्टैक्ट खोजें",
+  "contactsFinder.noContactsMatch": "कोई कॉन्टैक्ट नहीं मिला।",
+  "contactsFinder.invite": "बुलाएं",
+  "contactsFinder.invited": "बुलाया",
+  "contactsFinder.inviteName": "{name} को बुलाएं",
   // conversation
   "conversation.unpin": "अनपिन करें",
   "conversation.showsItInTheChat": "लोड होने पर इसे चैट में दिखाता है",

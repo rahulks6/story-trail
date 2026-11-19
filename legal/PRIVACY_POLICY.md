@@ -1,6 +1,6 @@
 # Katkee Privacy Policy
 
-**Last updated:** 18 November 2026
+**Last updated:** 19 November 2026
 
 This policy explains what Katkee collects, how we use it, who can see it, how long we keep it
 and the choices you have. It covers the Katkee apps for iPhone and Android, the website at
@@ -124,6 +124,13 @@ The codes are not encryption: someone who had one could work out the
 phone number behind it by trying every number. That is why we don't keep
 them. You can run the check again or never; turning off contacts for
 Katkee in your phone's settings stops it.
+
+**Invite from your contacts.** After a check, the app also lists your
+contacts' names and mobile numbers, on your phone only, so you can invite
+them. Tapping **Invite** opens WhatsApp (or your text messages) with that
+person and your invite link, and you send it yourself. Katkee's servers
+never receive these names or numbers; the app only remembers on your
+phone whom you've already invited.
 
 **Tell me when more contacts join (optional, off unless you turn it on).**
 If you switch this on after a check, the app runs the same check again
