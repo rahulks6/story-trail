@@ -15,10 +15,10 @@ const MARK = fs.readFileSync(path.join(DIR, "../../katkee-mark.svg"), "utf8").re
 const SCREENS = ["home", "editor", "settings", "chat", "profile", "layout", "group", "activity"];
 const TEXT = {
   en: [
-    ["Stories for<br><em>your people</em>", "Share your day with the friends who matter"],
+    ["Stories for your<br><em>close friends</em>", "Status with songs, not for strangers"],
     ["Add any <em>song</em><br>to your Story", "Pick the best part, then add text and stickers"],
     ["You choose<br><em>who sees it</em>", "Everyone, followers or Close Friends"],
-    ["Chat &amp; <em>video call</em><br>your friends", "Messages, voice notes and calls"],
+    ["Chat &amp; <em>video call</em><br>your gang", "Messages, voice notes and group chats"],
     ["<em>Highlights</em><br>that last", "Friends can like, comment and share"],
     ["Six photos,<br><em>one Story</em>", "A collage in one tap"],
     ["Plans with<br><em>your crew</em>", "Group chats with up to 32 friends"],

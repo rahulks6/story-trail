@@ -101,12 +101,14 @@ Katkee: Stories, Status & Chat
 
 ### Short description (80 characters max)
 <!-- field:short:en -->
-Close friends Stories & status with music. Chat, voice notes and video calls.
+Stories & status with songs, just for your close friends. Chat and video call.
 <!-- /field -->
 
 ### Full description (4,000 characters max)
 <!-- field:full:en -->
-Katkee is a Stories and status app for your close friends. Post your day as photo and video Stories that last 24 hours, like a status, add a song, text and animated stickers, and choose exactly who sees it: everyone, followers or only your Close Friends. Then chat, send voice notes and video call your friends, all in one app.
+Stories for your close friends, not for strangers. Post your day as a photo or video Story with a song, and choose exactly who sees it. Then chat, send voice notes and video call the same friends, all in one app.
+
+Katkee is a Stories and status app for the people you actually know. Stories last 24 hours, like a status: add a song, text and animated stickers, and share with everyone, your followers or only your Close Friends.
 
 Why people choose Katkee
 • Close Friends Stories: share some moments only with your inner circle
@@ -133,6 +135,7 @@ Chat, voice notes and video calls
 • Voice calls and video calls
 • Reply to a Story, react with an emoji or double tap to like
 • Share your Story to WhatsApp in one tap
+• Invite friends from your contacts: one tap opens WhatsApp with your invite
 
 Meet your people
 • Crossed paths (optional, off until you turn it on): find out when you were in the same area as someone else who turned it on. It never shows where or when
