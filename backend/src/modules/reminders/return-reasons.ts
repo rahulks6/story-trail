@@ -5,6 +5,8 @@ import { requireAuth } from "../../http/middleware/auth.middleware";
 import { sendJson } from "../../http/respond";
 import { FESTIVAL_TIME_ZONE } from "../festivals/festivals";
 import { runCrossedPaths } from "../crossed-paths/crossed-paths";
+import { queueDailyThemePushes } from "../themes/daily-themes";
+import { welcomeNewPeople } from "../growth/official";
 
 /**
  * Reasons to open Katkee each day (migration 0051), each with a limit so nobody is spammed:
@@ -175,16 +177,24 @@ export function hourInIndia(now = new Date()): number {
   return Number(new Intl.DateTimeFormat("en-GB", { timeZone: FESTIVAL_TIME_ZONE, hour: "2-digit", hourCycle: "h23" }).format(now));
 }
 
-/** One pass: milestones always; festival greetings 8am-10pm; streaks and nudges 6-9pm (India). */
+/**
+ * One pass: milestones always; festival greetings and Katkee's welcome follows 8am-10pm; streaks
+ * and nudges 6-9pm, then today's theme for those who heard neither (India).
+ */
 export async function runReturnReasons(now = new Date()): Promise<Record<string, number>> {
   const hour = hourInIndia(now);
   const result: Record<string, number> = { milestones: await queueViewMilestones() };
-  if (hour >= 8 && hour < 22) result.festival = await queueFestivalGreetings();
+  if (hour >= 8 && hour < 22) {
+    result.festival = await queueFestivalGreetings();
+    result.welcomed = await welcomeNewPeople();
+  }
   // Crossed paths: every round; it only tells people during the day where they are.
   result.crossed = await runCrossedPaths();
   if (hour >= 18 && hour < 21) {
     result.streak = await queueStreakReminders();
     result.nudge = await queueNudges();
+    // From 7pm, after the streak and nudge pushes, which it never adds to.
+    if (hour >= 19) result.theme = await queueDailyThemePushes(now);
   }
   return result;
 }

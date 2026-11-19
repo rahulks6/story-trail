@@ -370,7 +370,9 @@ export type SuggestionReason =
   | { kind: "follows_you" }
   | { kind: "followed_by"; username: string; others: number }
   | { kind: "shared_interest"; interest: string }
-  | { kind: "new" };
+  | { kind: "new" }
+  // Katkee's own account (growth/official.ts).
+  | { kind: "official" };
 
 export interface SuggestedPerson {
   id: string;
@@ -436,12 +438,15 @@ export async function suggestPeople(viewerId: string, limit: number): Promise<Su
        SELECT DISTINCT s.owner_id AS id FROM stories s
        WHERE s.deleted_at IS NULL AND s.moderation_removed_at IS NULL AND s.audience = 'public' AND s.expires_at > now()
      ),
+     -- Katkee's own account (growth/official.ts), first for anyone who doesn't follow it yet.
+     official AS (SELECT id FROM users WHERE is_official),
      candidates AS (
        SELECT id FROM invited UNION SELECT id FROM follows_you UNION SELECT id FROM mutual UNION SELECT id FROM shared UNION SELECT id FROM fresh
+       UNION SELECT id FROM official
      )
      SELECT u.id, u.username, u.display_name, u.avatar_media_id, ${verifiedSql("u")} AS verified, u.is_private,
             (fy.id IS NOT NULL) AS follows_viewer, m.n AS mutual_count, m.via AS mutual_via,
-            s.n AS shared_count, s.via AS shared_via, inv.kind AS invite_kind
+            s.n AS shared_count, s.via AS shared_via, inv.kind AS invite_kind, (o.id IS NOT NULL) AS official
      FROM candidates c
      JOIN users u ON u.id = c.id
      LEFT JOIN follows_you fy ON fy.id = u.id
@@ -449,6 +454,7 @@ export async function suggestPeople(viewerId: string, limit: number): Promise<Su
      LEFT JOIN shared s ON s.id = u.id
      LEFT JOIN fresh f ON f.id = u.id
      LEFT JOIN invited inv ON inv.id = u.id
+     LEFT JOIN official o ON o.id = u.id
      WHERE u.id <> :'viewer' AND u.deleted_at IS NULL AND u.is_active AND u.moderation_state = 'ACTIVE'
        AND ${shownToViewerSql("u")}
        AND NOT EXISTS (SELECT 1 FROM follows WHERE follower_id = :'viewer' AND followee_id = u.id)
@@ -457,16 +463,17 @@ export async function suggestPeople(viewerId: string, limit: number): Promise<Su
                        WHERE (blocker_id = :'viewer' AND blocked_id = u.id) OR (blocker_id = u.id AND blocked_id = :'viewer'))
        AND NOT EXISTS (SELECT 1 FROM mutes WHERE muter_id = :'viewer' AND muted_id = u.id)
        AND NOT EXISTS (SELECT 1 FROM creator_not_interested WHERE viewer_id = :'viewer' AND creator_id = u.id)
-       AND (inv.id IS NOT NULL OR fy.id IS NOT NULL OR m.id IS NOT NULL OR s.id IS NOT NULL
+       AND (o.id IS NOT NULL OR inv.id IS NOT NULL OR fy.id IS NOT NULL OR m.id IS NOT NULL OR s.id IS NOT NULL
             OR (f.id IS NOT NULL AND NOT u.is_private AND u.created_at > now() - interval '30 days'))
-     ORDER BY CASE WHEN inv.id IS NOT NULL THEN -1 WHEN fy.id IS NOT NULL THEN 0 WHEN m.id IS NOT NULL THEN 1 WHEN s.id IS NOT NULL THEN 2 ELSE 3 END,
+     ORDER BY CASE WHEN o.id IS NOT NULL THEN -2 WHEN inv.id IS NOT NULL THEN -1 WHEN fy.id IS NOT NULL THEN 0 WHEN m.id IS NOT NULL THEN 1 WHEN s.id IS NOT NULL THEN 2 ELSE 3 END,
               m.n DESC NULLS LAST, s.n DESC NULLS LAST, fy.created_at DESC NULLS LAST, u.created_at DESC, u.username
      LIMIT :'limit'`,
     { viewer: viewerId, limit },
   );
   return rows.map((row) => {
     const mutual = Number(row.mutual_count ?? 0);
-    const reason: SuggestionReason = row.invite_kind === "invited_you" ? { kind: "invited_you" }
+    const reason: SuggestionReason = row.official === "t" ? { kind: "official" }
+      : row.invite_kind === "invited_you" ? { kind: "invited_you" }
       : row.invite_kind === "joined_from_your_invite" ? { kind: "joined_from_your_invite" }
       : row.follows_viewer === "t" ? { kind: "follows_you" }
       : mutual > 0 ? { kind: "followed_by", username: row.mutual_via as string, others: mutual - 1 }

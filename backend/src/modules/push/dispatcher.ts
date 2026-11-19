@@ -71,6 +71,7 @@ const SWITCH: Record<string, "stories_enabled" | "milestones_enabled" | "reminde
   festival: "reminders_enabled",
   streak: "reminders_enabled",
   nudge: "reminders_enabled",
+  daily_theme: "reminders_enabled",
 };
 
 type Rendered = { message: PushMessage } | { skip: string };

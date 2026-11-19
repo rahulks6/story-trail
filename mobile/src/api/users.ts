@@ -66,7 +66,9 @@ export type SuggestionReason =
   | { kind: "follows_you" }
   | { kind: "followed_by"; username: string; others: number }
   | { kind: "shared_interest"; interest: string }
-  | { kind: "new" };
+  | { kind: "new" }
+  // Katkee's own account.
+  | { kind: "official" };
 
 export interface SuggestedPerson {
   id: string;

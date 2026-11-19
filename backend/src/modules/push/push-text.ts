@@ -5,6 +5,7 @@
  */
 import { formatCount, type Locale } from "../../shared/locale";
 import { ar, de, es, fr, id, pt } from "./push-text-world";
+import { themeBySlug } from "../themes/daily-themes";
 
 export type VerificationOutcome = "approved" | "denied" | "removed" | "restored";
 
@@ -27,6 +28,8 @@ export interface PushText {
   reaction: (actor: string, emoji: string) => string;
   /** Someone's very first Story: worth a hello, so it says so. */
   firstStory: (actor: string) => string;
+  /** The evening reminder with today's theme (modules/themes); the title is already translated. */
+  dailyTheme: (emoji: string, title: string) => string;
 }
 
 const en: PushText = {
@@ -46,6 +49,7 @@ const en: PushText = {
     collab_accepted: (a) => `@${a} accepted your collab Story`,
   },
   firstStory: (a) => `@${a} posted their first Story on Katkee 👋 Say hi`,
+  dailyTheme: (e, title) => `${e} Today's theme: ${title}. Share yours on Katkee`,
   someone: "someone",
   call: (a, video) => (video ? `@${a} is video calling you` : `@${a} is calling you`),
   missedCall: (a, video) => `Missed ${video ? "video" : "voice"} call from @${a}`,
@@ -83,6 +87,7 @@ const hi: PushText = {
     collab_accepted: (a) => `@${a} ने आपकी कोलैब स्टोरी स्वीकार की`,
   },
   firstStory: (a) => `@${a} ने Katkee पर अपनी पहली स्टोरी पोस्ट की 👋 हाय कहें`,
+  dailyTheme: (e, title) => `${e} आज की थीम: ${title}। Katkee पर अपनी स्टोरी शेयर करें`,
   someone: "कोई",
   call: (a, video) => (video ? `@${a} आपको वीडियो कॉल कर रहे हैं` : `@${a} आपको कॉल कर रहे हैं`),
   missedCall: (a, video) => `@${a} की मिस्ड ${video ? "वीडियो" : "वॉइस"} कॉल`,
@@ -120,6 +125,7 @@ const mr: PushText = {
     collab_accepted: (a) => `@${a} यांनी तुमची कोलॅब स्टोरी स्वीकारली`,
   },
   firstStory: (a) => `@${a} यांनी Katkee वर पहिली स्टोरी पोस्ट केली 👋 हाय म्हणा`,
+  dailyTheme: (e, title) => `${e} आजची थीम: ${title}. Katkee वर तुमची स्टोरी शेअर करा`,
   someone: "कोणीतरी",
   call: (a, video) => (video ? `@${a} तुम्हाला व्हिडिओ कॉल करत आहेत` : `@${a} तुम्हाला कॉल करत आहेत`),
   missedCall: (a, video) => `@${a} यांचा मिस्ड ${video ? "व्हिडिओ" : "व्हॉइस"} कॉल`,
@@ -169,6 +175,10 @@ export function pushOnlyText(kind: string, params: Params | null, locale: Locale
     case "streak": {
       const days = num(params.days);
       return days === null ? null : t.streak(days);
+    }
+    case "daily_theme": {
+      const theme = themeBySlug(params.slug);
+      return theme ? t.dailyTheme(theme.emoji, theme.title[locale]) : null;
     }
     case "nudge":
       return params.variant === "first" ? t.nudgeFirst : params.variant === "back" ? t.nudgeBack : null;

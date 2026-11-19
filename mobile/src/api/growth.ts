@@ -48,3 +48,21 @@ export function redeemInvite(code: string, accessToken: string): Promise<{ statu
 export function getInviter(code: string, signal?: AbortSignal): Promise<{ inviter: Inviter }> {
   return apiGet(`/api/v1/invites/${encodeURIComponent(code)}`, null, signal);
 }
+
+/** Today's theme (backend themes/daily-themes.ts): the same for everyone, in your language. */
+export interface TodayTheme {
+  date: string;
+  slug: string;
+  emoji: string;
+  title: string;
+  postedToday: boolean;
+}
+
+export function getTodayTheme(accessToken: string, signal?: AbortSignal): Promise<TodayTheme> {
+  return apiGet("/api/v1/themes/today", accessToken, signal);
+}
+
+/** Founding member spots: how many of the first 1,000 accounts are taken (growth/official.ts). */
+export function getFoundingSpots(accessToken: string, signal?: AbortSignal): Promise<{ total: number; taken: number; left: number }> {
+  return apiGet("/api/v1/founding", accessToken, signal);
+}

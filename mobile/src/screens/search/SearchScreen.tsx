@@ -50,6 +50,8 @@ export function suggestionReasonText(reason: SuggestionReason): string {
       return t("search.alsoIntoInterest", { interest: topicLabel(reason.interest) });
     case "new":
       return t("search.newToKatkee");
+    case "official":
+      return t("search.katkeesOfficialAccount");
   }
 }
 

@@ -5,6 +5,7 @@ import { Avatar } from "./Avatar";
 import { ExploreGrid } from "./ExploreGrid";
 import { ProfilePhotoNudge } from "./ProfilePhotoNudge";
 import { FirstStoryNudge } from "./FirstStoryNudge";
+import { DailyThemeCard } from "./DailyThemeCard";
 import { useAuth } from "../state/AuthContext";
 import { getExplore, type ExploreTile } from "../api/stories";
 import { followUser, getSuggestions, unfollowUser, type SuggestedPerson } from "../api/users";
@@ -67,6 +68,7 @@ export function HomeDiscover({ accessToken, onFollowed, onOpenStories, onOpenPro
   return (
     <View style={styles.root}>
       {onPost ? <FirstStoryNudge onPost={onPost} /> : null}
+      {onPost ? <DailyThemeCard onPost={onPost} /> : null}
       <ProfilePhotoNudge />
       {people.length ? (
         <>

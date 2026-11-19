@@ -24,6 +24,8 @@ import { registerEventsRoutes } from "./modules/recommendations/events.routes";
 import { registerRecommendationRoutes } from "./modules/recommendations/recommendation.routes";
 import { registerAreaRoutes } from "./modules/recommendations/area.routes";
 import { registerCrossedPathsRoutes } from "./modules/crossed-paths/crossed-paths";
+import { registerDailyThemeRoutes } from "./modules/themes/daily-themes";
+import { registerOfficialRoutes } from "./modules/growth/official";
 import { registerInterestsRoutes } from "./modules/recommendations/interests.routes";
 import { registerNotificationsRoutes } from "./modules/notifications/notifications.routes";
 import { registerConversationsRoutes } from "./modules/conversations/conversations.routes";
@@ -118,6 +120,8 @@ export function buildApp(providers?:ProviderGateway): KatkeeServer {
   registerRecommendationRoutes(router);
   registerAreaRoutes(router);
   registerCrossedPathsRoutes(router);
+  registerDailyThemeRoutes(router);
+  registerOfficialRoutes(router);
   registerInterestsRoutes(router);
   registerNotificationsRoutes(router);
   registerConversationsRoutes(router);

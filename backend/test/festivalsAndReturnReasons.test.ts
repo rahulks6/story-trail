@@ -275,8 +275,10 @@ describe("reasons to come back", () => {
     const night = await runReturnReasons(new Date("2026-10-20T18:00:00Z")); // 23:30 in India
     // Crossed paths runs every round: it checks the daytime where each person is itself.
     assert.deepEqual(Object.keys(night).sort(), ["crossed", "milestones"]);
-    const evening = await runReturnReasons(new Date("2026-10-20T13:30:00Z")); // 19:00
-    assert.deepEqual(Object.keys(evening).sort(), ["crossed", "festival", "milestones", "nudge", "streak"]);
+    const early = await runReturnReasons(new Date("2026-10-20T12:30:00Z")); // 18:00: streaks and nudges first
+    assert.deepEqual(Object.keys(early).sort(), ["crossed", "festival", "milestones", "nudge", "streak", "welcomed"]);
+    const evening = await runReturnReasons(new Date("2026-10-20T13:30:00Z")); // 19:00: then today's theme
+    assert.deepEqual(Object.keys(evening).sort(), ["crossed", "festival", "milestones", "nudge", "streak", "theme", "welcomed"]);
   });
 
   it("the new switches are saved with the others", async () => {
