@@ -123,6 +123,45 @@ appId: com.katkee.app
     timeout: 3000
 - takeScreenshot: v05-after-text-a
 - takeScreenshot: v06-after-text-b
+# Removing things from a video Story: a second text, then an emoji, each dragged onto the trash
+# (bottom centre). Each is placed in the middle, on top of the first text, so the drag picks it up.
+- tapOn: "Add text"
+- inputText: "Remove me"
+- tapOn: "Done"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: r01-two-texts
+- swipe:
+    start: "50%, 50%"
+    end: "50%, 89%"
+    duration: 1500
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: r02-text-dragged-to-trash
+- assertNotVisible:
+    text: "Remove me"
+    optional: true
+- tapOn: "Add sticker, emoji, mention, location, or date and time"
+- waitForAnimationToEnd:
+    timeout: 3000
+- tapOn:
+    text: "Emoji"
+    optional: true
+- takeScreenshot: r03-emoji-tab
+- tapOn:
+    text: "Add .* emoji"
+    index: 0
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: r04-emoji-added
+- swipe:
+    start: "50%, 50%"
+    end: "50%, 89%"
+    duration: 1500
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: r05-emoji-dragged-to-trash
 - tapOn: "Your story"
 - extendedWaitUntil:
     visible: "Home"
