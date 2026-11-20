@@ -137,10 +137,10 @@ Chat, voice notes and video calls
 • Share your Story to WhatsApp in one tap
 • Invite friends from your contacts: one tap opens WhatsApp with your invite
 
-Meet your people
-• Crossed paths (optional, off until you turn it on): find out when you were in the same area as someone else who turned it on. It never shows where or when
+Stay close to your friends
+• Today's theme: an easy idea for your Story every day
 • Katkee understands what each Story is about, so no hashtags needed
-• Follow new people in one tap from their Stories
+• Follow your friends in one tap from their Stories
 
 Safe and private social app
 • Private account: approve who follows you
