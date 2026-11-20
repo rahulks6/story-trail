@@ -17,7 +17,10 @@ interface Props {
   onTouchStart: (id: string) => void;
   /** A clean tap (no movement): edit text, a location or a date. */
   onTap: (id: string) => void;
-  /** The screen reader's "activate": the buttons for moving, resizing, rotating and deleting. */
+  /**
+   * The buttons for moving, resizing, rotating and deleting: a long press, or the screen reader's
+   * "activate". The way to delete for anyone who finds dragging onto the trash hard.
+   */
   onOpenControls: (id: string) => void;
   onDragStateChange: (dragging: boolean) => void;
   /** While dragging: whether the finger is over the trash. */
@@ -43,6 +46,8 @@ export function snapToCentre(x: number, y: number, width: number, height: number
 }
 
 const HIT_SLOP = { top: 16, bottom: 16, left: 16, right: 16 };
+/** Holding a finger still on an object this long opens its controls (Delete among them). */
+export const LONG_PRESS_MS = 450;
 const ACCESSIBILITY_ACTIONS = [{ name: "activate", get label() { return t("draggableCanvasObject.openControls"); } }];
 
 const touchesOf = (evt: GestureResponderEvent): Touch[] => evt.nativeEvent.touches.map((touch) => ({ pageX: touch.pageX, pageY: touch.pageY }));
@@ -51,7 +56,7 @@ const touchesOf = (evt: GestureResponderEvent): Touch[] => evt.nativeEvent.touch
  * One gesture model for every object on a Story (text, emoji, mention, location, date, sticker),
  * like Instagram: touch and drag to move it with the finger; two fingers to resize, turn and move
  * it at once (a second finger can join at any time); tap text to edit it; drag onto the trash to
- * delete. The same OverlayBody renders it in the viewer, so it publishes exactly as placed.
+ * delete, or hold a finger on it for its controls, Delete among them. The same OverlayBody renders it in the viewer, so it publishes exactly as placed.
  *
  * The touch handlers are created once and read the latest values from a ref: recreating them
  * during a drag (as this did before) restarted the gesture on every movement.
@@ -71,6 +76,9 @@ function DraggableCanvasObjectImpl(props: Props): React.JSX.Element {
   }).current;
   const latest = useRef(props);
   latest.current = props;
+  // A long press that ends after the object is gone (deleted, the editor closed) does nothing.
+  const mounted = useRef(true);
+  useEffect(() => () => { mounted.current = false; }, []);
 
   const { registerLive } = props;
   useEffect(() => {
@@ -86,6 +94,12 @@ function DraggableCanvasObjectImpl(props: Props): React.JSX.Element {
     let moved = false;
     let pinched = false;
     let overTrash = false;
+    let held = false;
+    let holdTimer: ReturnType<typeof setTimeout> | null = null;
+    const cancelHold = () => {
+      if (holdTimer) clearTimeout(holdTimer);
+      holdTimer = null;
+    };
     let guides = { x: false, y: false };
     const setGuides = (next: { x: boolean; y: boolean }) => {
       if (next.x === guides.x && next.y === guides.y) return;
@@ -121,7 +135,11 @@ function DraggableCanvasObjectImpl(props: Props): React.JSX.Element {
     };
     const end = (deleteIfOverTrash: boolean) => {
       const p = latest.current;
-      if (moved && deleteIfOverTrash && overTrash) {
+      cancelHold();
+      if (held) {
+        // The long press already opened the controls: lifting the finger does nothing more.
+        showLive(null);
+      } else if (moved && deleteIfOverTrash && overTrash) {
         p.onDeleted(p.overlay.id);
         showLive(null);
       } else {
@@ -137,6 +155,7 @@ function DraggableCanvasObjectImpl(props: Props): React.JSX.Element {
       moved = false;
       pinched = false;
       overTrash = false;
+      held = false;
     };
 
     return PanResponder.create({
@@ -147,8 +166,17 @@ function DraggableCanvasObjectImpl(props: Props): React.JSX.Element {
         moved = false;
         pinched = false;
         overTrash = false;
+        held = false;
         latest.current.onTouchStart(latest.current.overlay.id);
         begin(touchesOf(evt));
+        cancelHold();
+        holdTimer = setTimeout(() => {
+          holdTimer = null;
+          if (moved || pinched || !mounted.current) return;
+          held = true;
+          tapFeedback("select");
+          latest.current.onOpenControls(latest.current.overlay.id);
+        }, LONG_PRESS_MS);
       },
       onPanResponderMove: (evt) => {
         const p = latest.current;
@@ -156,6 +184,8 @@ function DraggableCanvasObjectImpl(props: Props): React.JSX.Element {
         if (touches.length === 0) return;
         // A finger joined or left: carry on from where the object is now.
         if ((touches.length >= 2) !== (mode === "pinch")) begin(touches);
+        if (held) return;
+        if (mode === "pinch") cancelHold();
 
         if (mode === "pinch") {
           const next = pinchPlacement(start, [from[0]!, from[1]!], [touches[0]!, touches[1]!], p.containerWidth, p.containerHeight);
@@ -168,6 +198,7 @@ function DraggableCanvasObjectImpl(props: Props): React.JSX.Element {
         const dy = touches[0]!.pageY - from[0]!.pageY;
         if (!moved) {
           if (Math.hypot(dx, dy) < TAP_SLOP) return;
+          cancelHold();
           moved = true;
           setDragging(true);
           p.onDragStateChange(true);

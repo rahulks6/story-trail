@@ -1,7 +1,7 @@
 import React from "react";
 import { act, create, type ReactTestInstance, type ReactTestRenderer } from "react-test-renderer";
 import { DrawingCanvas } from "../src/components/DrawingCanvas";
-import { DraggableCanvasObject } from "../src/components/DraggableCanvasObject";
+import { DraggableCanvasObject, LONG_PRESS_MS } from "../src/components/DraggableCanvasObject";
 import { filterSwipeStep, pinchPlacement, strokePath } from "../src/models/canvasGestures";
 import type { DrawStroke, Overlay } from "../src/models/storyDraft";
 
@@ -153,6 +153,32 @@ describe("moving text and stickers", () => {
     gesture(view(), [[[100, 100]], [[200, 750]]]);
     expect(handlers.onOverTrashChange).toHaveBeenCalledWith(true);
     expect(handlers.onDeleted).toHaveBeenCalledWith("t1");
+  });
+
+  it("holding a finger still opens its controls, Delete among them; a drag or a tap doesn't", () => {
+    jest.useFakeTimers();
+    try {
+      act(() => view().props.onResponderGrant(touchEvent([[100, 100]], 1)));
+      act(() => { jest.advanceTimersByTime(LONG_PRESS_MS + 10); });
+      expect(handlers.onOpenControls).toHaveBeenCalledWith("t1");
+      act(() => view().props.onResponderRelease(touchEvent([[100, 100]], 9)));
+      expect(handlers.onTap).not.toHaveBeenCalled(); // the text tool doesn't open on top of the controls
+
+      handlers.onOpenControls.mockClear();
+      act(() => view().props.onResponderGrant(touchEvent([[100, 100]], 1)));
+      act(() => view().props.onResponderMove(touchEvent([[160, 160]], 2)));
+      act(() => { jest.advanceTimersByTime(LONG_PRESS_MS + 10); });
+      act(() => view().props.onResponderRelease(touchEvent([[160, 160]], 9)));
+      expect(handlers.onOpenControls).not.toHaveBeenCalled();
+
+      act(() => view().props.onResponderGrant(touchEvent([[100, 100]], 1)));
+      act(() => view().props.onResponderRelease(touchEvent([[100, 100]], 2)));
+      act(() => { jest.advanceTimersByTime(LONG_PRESS_MS + 10); });
+      expect(handlers.onOpenControls).not.toHaveBeenCalled();
+      expect(handlers.onTap).toHaveBeenCalledWith("t1");
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   it("offers button controls to a screen reader", () => {

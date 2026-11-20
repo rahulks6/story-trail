@@ -544,6 +544,10 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
         setTextModalVisible(true);
       } else if (o && (o.type === "location" || o.type === "datetime" || isInteractive(o))) {
         openStickerEditor(id);
+      } else if (o) {
+        // An emoji, a sticker, a GIF or a mention: its controls, with Delete, so removing it
+        // doesn't depend on dragging it onto the trash.
+        setSelectedOverlayId(id);
       }
     },
     [openStickerEditor],

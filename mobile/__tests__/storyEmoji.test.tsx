@@ -89,3 +89,33 @@ describe("a restored draft", () => {
     expect(overlays[3]!.zIndex).toBeGreaterThan(3);
   });
 });
+
+describe("removing an emoji from a video Story", () => {
+  it("a tap on the emoji opens its controls, and Delete takes it off the Story", async () => {
+    const mediaUri = "file:///v.mp4";
+    const enqueue = jest.spyOn(uploadQueue, "enqueueUpload").mockResolvedValue({} as never);
+    jest.spyOn(usersApi, "listCloseFriends").mockResolvedValue({ closeFriends: [], limit: 1, offset: 0 });
+    await act(async () => {
+      tree = create(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        <StoryEditorScreen navigation={{ reset: jest.fn() } as any} route={{ key: "e", name: "StoryEditor", params: { mediaUri, kind: "video", mimeType: "video/mp4", width: 1080, height: 1920 } } as any} />,
+      );
+    });
+    await flush();
+    const find = (label: string) => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === label);
+    const press = (label: string) => act(async () => find(label).props.onPress());
+    // The editor's canvas needs a size before objects are placed on it.
+    await act(async () => tree.root.find((n: ReactTestInstance) => typeof n.props.onLayout === "function" && n.props.style && StyleSheet.flatten(n.props.style).flex === 1).props.onLayout({ nativeEvent: { layout: { x: 0, y: 0, width: 400, height: 800 } } }));
+    await press("Add sticker, emoji, mention, location, or date and time");
+    await press("Add 😀 emoji");
+    const emoji = () => tree.root.findAll((n: ReactTestInstance) => typeof n.type === "string" && typeof n.props.onResponderGrant === "function" && n.props.accessibilityActions?.length);
+    expect(emoji()).toHaveLength(1);
+    // A tap: down and up without moving.
+    const touch = (x: number, y: number) => ({ nativeEvent: { pageX: x, pageY: y, touches: [{ pageX: x, pageY: y, identifier: 0 }], changedTouches: [] }, touchHistory: { numberActiveTouches: 1, indexOfSingleActiveTouch: 0, mostRecentTimeStamp: 1, touchBank: [{ touchActive: true, startPageX: x, startPageY: y, startTimeStamp: 1, currentPageX: x, currentPageY: y, currentTimeStamp: 1, previousPageX: x, previousPageY: y, previousTimeStamp: 1 }] } });
+    await act(async () => { emoji()[0]!.props.onResponderGrant(touch(200, 400)); emoji()[0]!.props.onResponderRelease(touch(200, 400)); });
+    await press("Delete");
+    expect(emoji()).toHaveLength(0);
+    await press("Share to Your story, everyone");
+    expect((enqueue.mock.calls[0]![4] as { overlays: Overlay[] }).overlays).toEqual([]);
+  });
+});
