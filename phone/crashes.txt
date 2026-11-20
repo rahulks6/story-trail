@@ -1,99 +1,97 @@
-11-20 11:02:14.998 D/AndroidRuntime( 3976): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-11-20 11:02:15.002 I/netd    (  358): bandwidthRemoveInterfaceQuota(eth0) <0.93ms>
-11-20 11:02:15.005 I/netd    (  358): bandwidthSetInterfaceQuota(eth0, 9223372036854775807) <1.02ms>
-11-20 11:02:15.012 I/AndroidRuntime( 3976): Using default boot image
-11-20 11:02:15.013 I/AndroidRuntime( 3976): Leaving lock profiling enabled
-11-20 11:02:15.023 D/CustomizableLockScreenUtils( 1080): is_custom_lock_screen_quick_affordances_feature_enabled=1
-11-20 11:02:15.027 I/app_process( 3976): Core platform API reporting enabled, enforcing=false
-11-20 11:02:15.027 I/app_process( 3976): Using CollectorTypeCMC GC.
-11-20 11:02:15.059 W/ParceledListSlice(  551): Element #190 is 21704 bytes.
-11-20 11:02:15.063 D/ShortcutService(  551): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=null
-11-20 11:02:15.086 W/ParceledListSlice(  551): Element #219 is 29204 bytes.
-11-20 11:02:15.089 D/OomAdjuster(  551): Not killing cached processes
-11-20 11:02:15.093 D/CustomizableLockScreenUtils( 1080): is_custom_lock_screen_quick_affordances_feature_enabled=1
-11-20 11:02:15.097 E/CellBroadcastUtils( 1070): getDefaultCellBroadcastReceiverPackageName: no package found
-11-20 11:02:15.113 W/AppOpService(  551): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_SMS, mode = allow, callingUid = 1001, oldMode = allow
-11-20 11:02:15.143 W/AppOpService(  551): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_SMS, mode = allow, callingUid = 1001, oldMode = allow
-11-20 11:02:15.145 D/CustomizableLockScreenUtils( 1080): is_custom_lock_screen_quick_affordances_feature_enabled=1
-11-20 11:02:15.148 W/AppOpService(  551): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_WAP_PUSH, mode = allow, callingUid = 1001, oldMode = allow
-11-20 11:02:15.162 W/AppOpService(  551): Ignored setUidMode call for runtime permission app op: uid = 1001, code = SEND_SMS, mode = allow, callingUid = 1001, oldMode = allow
-11-20 11:02:15.163 W/AppOpService(  551): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
-11-20 11:02:15.182 D/CustomizableLockScreenUtils( 1080): is_custom_lock_screen_quick_affordances_feature_enabled=1
-11-20 11:02:15.183 W/SettingsPrefController( 1080): Skipping updateNonIndexableKeys, key already in list. com.android.settings.gestures.TapScreenGesturePreferenceController@f1dd1b7
-11-20 11:02:15.183 W/SettingsPrefController( 1080): Skipping updateNonIndexableKeys, key already in list. com.android.settings.gestures.DoubleTapScreenPreferenceController@223d24
-11-20 11:02:15.183 W/SettingsPrefController( 1080): Skipping updateNonIndexableKeys, key already in list. com.android.settings.gestures.PickupGesturePreferenceController@b0d308d
-11-20 11:02:15.183 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.accessibility.AccessibilityTimeoutController
-11-20 11:02:15.183 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.accessibility.AccessibilityTimeoutController
-11-20 11:02:15.183 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.accessibility.AccessibilityTimeoutController
-11-20 11:02:15.183 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.accessibility.AccessibilityTimeoutController
-11-20 11:02:15.183 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.accessibility.AccessibilityTimeoutController
-11-20 11:02:15.183 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.accessibility.AccessibilityControlTimeoutFooterPreferenceController
-11-20 11:02:15.183 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.emergency.MoreSettingsPreferenceController
-11-20 11:02:15.183 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.emergency.EmergencyGestureEntrypointPreferenceController
-11-20 11:02:15.185 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.network.AdaptiveConnectivityTogglePreferenceController
-11-20 11:02:15.185 V/SettingsSearchProvider( 1080): com.android.settings.search.BaseSearchIndexProvider@69419f7 tried to add an empty non-indexable key
-11-20 11:02:15.186 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.development.featureflags.FeatureFlagsPreferenceController
+11-20 11:24:10.238 D/AndroidRuntime( 3878): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-20 11:24:10.241 I/AndroidRuntime( 3878): Using default boot image
+11-20 11:24:10.241 I/AndroidRuntime( 3878): Leaving lock profiling enabled
+11-20 11:24:10.248 I/app_process( 3878): Core platform API reporting enabled, enforcing=false
+11-20 11:24:10.248 I/app_process( 3878): Using CollectorTypeCMC GC.
+11-20 11:24:10.266 I/BugleTransport( 3231): onBuglePhenotypeFlagChanged: kicking off updateActiveTransport
+11-20 11:24:10.267 I/BuglePhenotype( 3231): Notify about updates in current package [CONTEXT current_package_name="com.google.android.ims.library" ]
+11-20 11:24:10.270 I/RoleService(  552): Granting default roles...
+11-20 11:24:10.273 W/ForegroundServiceTypeLoggerModule(  552): FGS stop call for: 10141 has no types!
+11-20 11:24:10.279 W/Role    (  552): Default holder doesn't have required signing certificate: com.google.android.retaildemo:6547c73dee150c103980bfdffe55cc9a011d785dd694a5f99afd8205bcaf1f80
+11-20 11:24:10.279 E/RoleControllerServiceImpl(  552): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION
+11-20 11:24:10.280 W/Role    (  552): Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58
+11-20 11:24:10.281 I/PhenotypeResourceReader( 1210): unable to find any Phenotype resource metadata for com.google.android.onetimeinitializer
+11-20 11:24:10.283 W/ModernMediaScanner( 1397): Failed to visit /data/data/com.android.providers.downloads/cache/en.model.metadata: java.nio.file.NoSuchFileException: /data/data/com.android.providers.downloads/cache/en.model.metadata
+11-20 11:24:10.298 I/ConfigUpdateInstallReceiver(  552): Installation successful
+11-20 11:24:10.309 W/Looper  (  552): Slow dispatch took 110ms main h=android.app.ActivityThread$H c=null m=113
+11-20 11:24:10.309 W/IPCThreadState(  552): Sending oneway calls to frozen process.
+11-20 11:24:10.310 W/Looper  (  552): Drained
+11-20 11:24:10.311 I/BugleRcsEngine( 3231): SystemBinding enabled: true [CONTEXT log_prefix="SystemBindingManager" thread_id=48 ]
+11-20 11:24:10.311 I/BugleRcsEngine( 3231): System Binding updated [CONTEXT thread_id=47 ]
+11-20 11:24:10.315 I/Icing   ( 1500): Indexing com.google.android.gms-apps from com.google.android.gms
+11-20 11:24:10.323 D/BufferPoolAccessor2.0(  503): bufferpool2 0x70b248c92bf8 : 1(3888000 size) total buffers - 0(0 size) used buffers - 3/4 (recycle/alloc) - 1/4 (fetch/transfer)
+11-20 11:24:10.323 D/BufferPoolAccessor2.0(  503): evictor expired: 1, evicted: 1
+11-20 11:24:10.336 D/MddListenableWorkerFactory( 3231): createWorker for class: com.google.android.apps.messaging.shared.datamodel.workqueue.WorkQueueWorkerShim
+11-20 11:24:10.351 I/BugleRcsProvisioning( 3231): RcsProvisioningTrigger: onCsLibPhenotypeUpdated, enableProvisioningTaskInBugle = true
+11-20 11:24:10.353 I/BugleRcsProvisioning( 3231): RcsProvisioningTrigger: updateAvailabilityForAllSimsAsync : hint = CSLIB_PHENOTYPE_UPDATE logTriggerEvent = true
+11-20 11:24:10.363 W/BugleRcsEngine( 3231): Unable to send diagnostic log [CONTEXT thread_id=96 ]
+11-20 11:24:10.364 I/BugleTransport( 3231): isChatAvailable: RcsAvailability is DISABLED_VIA_GSERVICES (RCS is disabled for this carrier by Google)
+11-20 11:24:10.364 W/BugleRcsEngine( 3231): Unable to send diagnostic log [CONTEXT thread_id=49 ]
+11-20 11:24:10.364 I/Bugle   ( 3231): RcsAvailabilityUtilForProvisioningEngineV2: updateAvailabilityForAllSimsAsync, hint: CSLIB_PHENOTYPE_UPDATE
+11-20 11:24:10.364 I/RcsAvailabilityUpdaterL( 3231): updateAvailabilityForAllSimsAsync: scheduling updateAvailabilityForRcsProvisioningId call. Hint: CSLIB_PHENOTYPE_UPDATE, enableWelcomePopupWithoutGoogleTos: false, reshowSuccessPopup: false
+11-20 11:24:10.364 W/BugleAction( 3231): Failed to get msisdn from Bugle
+11-20 11:24:10.365 I/RcsAvailabilityUpdaterL( 3231): updateRcsAvailabilityForDefaultCallSim: hint: CSLIB_PHENOTYPE_UPDATE, canReshowWelcomeMessage: false
 --
-11-20 11:02:15.726 D/AndroidRuntime( 3976): Calling main entry com.android.commands.am.Am
-11-20 11:02:15.729 D/ShortcutService(  551): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=com.google.android.apps.messaging
-11-20 11:02:15.738 D/UiAutomationConnection( 3976): Created on user UserHandle{0}
-11-20 11:02:15.739 D/ShortcutService(  551): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=com.google.android.as
-11-20 11:02:15.773 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.applications.specialaccess.premiumsms.PremiumSmsScreenPreferenceController
-11-20 11:02:15.773 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.accessibility.DaltonizerSaturationSeekbarPreferenceController
-11-20 11:02:15.823 I/ActivityManager(  551): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
-11-20 11:02:15.825 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.applications.specialaccess.vrlistener.VrListenerScreenPreferenceController
-11-20 11:02:15.842 V/SettingsSearchProvider( 1080): com.android.settings.notification.SoundWorkSettings$1@d61bfd5 tried to add an empty non-indexable key
-11-20 11:02:15.843 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.location.RecentLocationAccessSeeAllPreferenceController
-11-20 11:02:15.855 I/Icing   ( 1366): Indexing com.google.android.gms-apps from com.google.android.gms
-11-20 11:02:15.856 I/Icing   ( 1366): Indexing done com.google.android.gms-apps
-11-20 11:02:15.858 W/JobService( 1326): onNetworkChanged() not implemented in androidx.work.impl.background.systemjob.SystemJobService. Must override in a subclass.
-11-20 11:02:15.863 W/ParceledListSlice(  551): Element #140 is 59704 bytes.
-11-20 11:02:15.863 W/ParceledListSlice(  551): Overly large reply size: 108884
-11-20 11:02:15.865 W/ParceledListSlice(  551): Element #141 is 16980 bytes.
-11-20 11:02:15.877 W/JobService( 3251): onNetworkChanged() not implemented in androidx.work.impl.background.systemjob.SystemJobService. Must override in a subclass.
-11-20 11:02:15.883 W/JobService( 1413): onNetworkChanged() not implemented in com.google.android.apps.miphone.aiai.common.superpacks.impl.AiAiPersistentDownloadJobService. Must override in a subclass.
-11-20 11:02:15.884 I/.apps.messaging( 3251): Background concurrent mark compact GC freed 842KB AllocSpace bytes, 370(18MB) LOS objects, 49% free, 15MB/30MB, paused 1.550ms,10.492ms total 212.180ms
-11-20 11:02:15.885 W/JobService( 3251): onNetworkChanged() not implemented in androidx.work.impl.background.systemjob.SystemJobService. Must override in a subclass.
-11-20 11:02:15.890 I/Fitness ( 1203): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
-11-20 11:02:15.896 I/system_server(  551): Background concurrent mark compact GC freed 16MB AllocSpace bytes, 24(504KB) LOS objects, 46% free, 27MB/51MB, paused 6.944ms,8.141ms total 1.564s
-11-20 11:02:15.902 W/system_server(  551): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/Velvet/Velvet.apk' with 1 weak references
-11-20 11:02:15.904 W/system_server(  551): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/InputDevices/InputDevices.apk' with 1 weak references
-11-20 11:02:15.904 W/system_server(  551): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/LatinIMEGooglePrebuilt/LatinIMEGooglePrebuilt.apk' with 1 weak references
-11-20 11:02:15.905 W/system_server(  551): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk' with 1 weak references
-11-20 11:02:15.905 W/system_server(  551): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/PrebuiltGmail/PrebuiltGmail.apk' with 1 weak references
-11-20 11:02:15.905 W/ParceledListSlice(  551): Element #190 is 21704 bytes.
-11-20 11:02:15.906 W/system_server(  551): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/Drive/Drive.apk' with 1 weak references
-11-20 11:02:15.906 W/system_server(  551): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/GoogleTTS/GoogleTTS.apk' with 1 weak references
-11-20 11:02:15.906 W/system_server(  551): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/CalendarGooglePrebuilt/CalendarGooglePrebuilt.apk' with 1 weak references
+11-20 11:24:10.518 D/AndroidRuntime( 3878): Calling main entry com.android.commands.am.Am
+11-20 11:24:10.519 W/RcsClientLib( 3231): No CS.apk RCS service found. Is RCS running in Bugle?
+11-20 11:24:10.520 I/ExplicitHealthCheckController(  552): Explicit health check service is connected ComponentInfo{com.google.android.ext.services/android.ext.services.watchdog.ExplicitHealthCheckServiceImpl}
+11-20 11:24:10.520 I/ExplicitHealthCheckController(  552): Service initialized, syncing requests
+11-20 11:24:10.520 I/RcsClientLib( 3231): shouldUseCarrierServicesJibeService: false, CarrierServices rcs service found: false
+11-20 11:24:10.522 I/PackageWatchdog(  552): Syncing health check requests for packages: {com.google.android.as, com.google.android.as.oss}
+11-20 11:24:10.522 D/ExplicitHealthCheckController(  552): Getting health check supported packages
+11-20 11:24:10.523 I/ExplicitHealthCheckController(  552): Explicit health check supported packages [PackageConfig{com.google.android.networkstack, 86400000}]
+11-20 11:24:10.523 D/PackageWatchdog(  552): Received supported packages [PackageConfig{com.google.android.networkstack, 86400000}]
+11-20 11:24:10.523 I/PackageWatchdog(  552): Updated health check state for package com.google.android.as: INACTIVE -> PASSED
+11-20 11:24:10.523 I/PackageWatchdog(  552): Updated health check state for package com.google.android.as.oss: INACTIVE -> PASSED
+11-20 11:24:10.523 I/PackageWatchdog(  552): Syncing state, reason: updated health check supported packages [PackageConfig{com.google.android.networkstack, 86400000}]
+11-20 11:24:10.523 D/ExplicitHealthCheckController(  552): Getting health check requested packages
+11-20 11:24:10.524 I/PackageWatchdog(  552): Saving observer state to file
+11-20 11:24:10.524 D/UiAutomationConnection( 3878): Created on user UserHandle{0}
+11-20 11:24:10.526 I/ExplicitHealthCheckController(  552): Explicit health check requested packages []
+11-20 11:24:10.526 I/ExplicitHealthCheckController(  552): No more health check requests, unbinding...
+11-20 11:24:10.526 I/ExplicitHealthCheckController(  552): Explicit health check service is unbound
+11-20 11:24:10.527 I/PackageWatchdog(  552): Syncing health check requests for packages: {}
+11-20 11:24:10.527 I/ExplicitHealthCheckController(  552): Service not ready to get health check supported packages. Binding...
+11-20 11:24:10.534 I/Fitness ( 1210): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-20 11:24:10.534 I/RcsClientLib( 3231): com.google.android.rcs.client.lifecycle.RcsEngineLifecycleService connected
+11-20 11:24:10.542 I/BugleRcsEngine( 3421): triggerStopRcsStack for msisdn:redacted-pii:phone_number[chars:0,last2:] [CONTEXT log_prefix="RcsEngineImpl[DUAL_REG]:[8ed3cb99-4729]" thread_id=65 ]
+11-20 11:24:10.543 I/RcsClientLib( 3231): Disconnecting RcsEngineLifecycleService
+11-20 11:24:10.547 I/BugleRcsEngine( 3421): handleMessage processing message:[STOP_RCS_STACK] with [non-null]:RcsEngineImpl reference [CONTEXT log_prefix="RcsEngineImpl[DUAL_REG]:[8ed3cb99-4729]>Handler" thread_id=70 ]
+11-20 11:24:10.551 D/PhFileGroupPop( 3231): Added file groups nudge
+11-20 11:24:10.551 D/InetDiagMessage(  552): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+11-20 11:24:10.551 D/InetDiagMessage(  552): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+11-20 11:24:10.551 D/InetDiagMessage(  552): Destroyed live tcp sockets for uids={2000} in 1ms
+11-20 11:24:10.554 I/ExplicitHealthCheckController(  552): Explicit health check service is bound
+11-20 11:24:10.556 I/RcsClientLib( 3231): com.google.android.rcs.client.lifecycle.RcsEngineLifecycleService connected
 --
-11-20 11:04:11.377 I/AndroidRuntime( 3976): VM exiting with result code 0.
-11-20 11:04:11.378 I/netd    (  358): tetherGetStats() -> {[]} <0.33ms>
-11-20 11:04:11.515 I/servicemanager(    0): Caller(pid=551,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
-11-20 11:04:11.526 I/init    (    0): starting service 'artd'...
-11-20 11:04:11.387 V/ActivityManager(  551): Got obituary of 3988:dev.mobile.maestro
-11-20 11:04:11.388 W/ActivityManager(  551): pid 551 system sent binder code 1 with flags 1 to frozen apps and got error -32
-11-20 11:04:11.389 I/Zygote  (  361): Process 3988 exited due to signal 9 (Killed)
-11-20 11:04:11.389 W/MagnificationConnectionManager(  551): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
-11-20 11:04:11.389 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.389 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.389 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.389 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.391 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.391 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.391 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.391 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.391 W/IPCThreadState(  551): Sending oneway calls to frozen process.
-11-20 11:04:11.391 D/BatterySaverPolicy(  551): accessibility changed to false, updating policy.
-11-20 11:04:11.393 W/MagnificationConnectionManager(  551): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-20 11:26:16.921 I/AndroidRuntime( 3878): VM exiting with result code 0.
+11-20 11:26:16.922 D/InetDiagMessage(  552): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+11-20 11:26:16.922 D/InetDiagMessage(  552): Destroyed live tcp sockets for uids={10210} in 11ms
+11-20 11:26:16.922 D/InetDiagMessage(  552): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+11-20 11:26:16.923 D/InetDiagMessage(  552): Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+11-20 11:26:16.923 D/InetDiagMessage(  552): Destroyed live tcp sockets for uids={20210} in 1ms
+11-20 11:26:17.061 I/init    (    0): starting service 'artd'...
+11-20 11:26:16.929 I/netd    (  356): tetherGetStats() -> {[]} <2.97ms>
+11-20 11:26:17.074 I/init    (    0): ... started service 'artd' has pid 5517
+11-20 11:26:17.075 I/init    (    0): Control message: Processed ctl.interface_start for 'aidl/artd' from pid: 141 (/system/bin/servicemanager)
+11-20 11:26:16.948 V/ActivityManager(  552): Got obituary of 3896:dev.mobile.maestro
+11-20 11:26:16.949 I/libprocessgroup(  552): Removed cgroup /sys/fs/cgroup/uid_10210/pid_3896
+11-20 11:26:16.949 I/Zygote  (  362): Process 3896 exited due to signal 9 (Killed)
+11-20 11:26:16.950 W/ActivityManager(  552): pid 552 system sent binder code 1 with flags 1 to frozen apps and got error -32
+11-20 11:26:16.956 W/MagnificationConnectionManager(  552): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-20 11:26:16.956 W/MagnificationConnectionManager(  552): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-20 11:26:16.957 W/IPCThreadState(  552): Sending oneway calls to frozen process.
+11-20 11:26:16.957 W/IPCThreadState(  552): Sending oneway calls to frozen process.
+11-20 11:26:16.957 W/IPCThreadState(  552): Sending oneway calls to frozen process.
+11-20 11:26:16.957 W/IPCThreadState(  552): Sending oneway calls to frozen process.
+11-20 11:26:16.957 W/IPCThreadState(  552): Sending oneway calls to frozen process.
+11-20 11:26:16.958 W/IPCThreadState(  552): Sending oneway calls to frozen process.
+11-20 11:26:16.958 W/IPCThreadState(  552): Sending oneway calls to frozen process.
+11-20 11:26:16.958 W/IPCThreadState(  552): Sending oneway calls to frozen process.
+11-20 11:26:16.958 W/IPCThreadState(  552): Sending oneway calls to frozen process.
+11-20 11:26:16.958 W/IPCThreadState(  552): Sending oneway calls to frozen process.
+11-20 11:26:16.958 W/IPCThreadState(  552): Sending oneway calls to frozen process.
+11-20 11:26:16.958 W/IPCThreadState(  552): Sending oneway calls to frozen process.
+11-20 11:26:16.958 W/IPCThreadState(  552): Sending oneway calls to frozen process.
+11-20 11:26:16.958 W/IPCThreadState(  552): Sending oneway calls to frozen process.
+11-20 11:26:16.958 W/IPCThreadState(  552): Sending oneway calls to frozen process.
