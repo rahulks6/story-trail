@@ -174,6 +174,10 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
 
   const [draft, setDraft] = useState<StoryDraft>(() => ({ ...createEmptyDraft({ uri: mediaUri, kind, width: route.params.width, height: route.params.height }), trim: route.params.initialTrim ?? null }));
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+  // Where the editor sits on the screen: fingers report page coordinates, and on some phones the
+  // editor doesn't start at the very top (status bar, cut-out), so the trash is hit-tested there.
+  const mediaBox = useRef<React.ComponentRef<typeof View>>(null);
+  const containerOrigin = useRef({ x: 0, y: 0 });
   // A photo moved, resized or turned with two fingers (models/photoFrame.ts). It's shown live
   // through Animated values while the fingers move, and saved as it looks when shared (onShare).
   const [photoFrame, setPhotoFrame] = useState<PhotoFrame>(UNFRAMED);
@@ -387,17 +391,23 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
   const onContainerLayout = (e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
     setContainerSize({ width, height });
+    mediaBox.current?.measureInWindow?.((x, y) => {
+      if (Number.isFinite(x) && Number.isFinite(y)) containerOrigin.current = { x, y };
+    });
   };
 
   const isOverTrash = useCallback(
     (pageX: number, pageY: number) => {
       // The trash sits bottom-centre of the full-screen editor, above the home indicator; a little
       // extra room around it so a finger doesn't have to land exactly on it.
-      const slop = 24;
+      const slop = 40;
+      const x = pageX - containerOrigin.current.x;
+      const y = pageY - containerOrigin.current.y;
       const zoneLeft = containerSize.width / 2 - TRASH_ZONE_SIZE / 2 - slop;
       const zoneTop = containerSize.height - TRASH_ZONE_SIZE - spacing.xl - insets.bottom - slop;
       const size = TRASH_ZONE_SIZE + slop * 2;
-      return pageX >= zoneLeft && pageX <= zoneLeft + size && pageY >= zoneTop && pageY <= zoneTop + size;
+      // Down to the bottom edge too: a finger dragged past the trash still drops it there.
+      return x >= zoneLeft && x <= zoneLeft + size && y >= zoneTop;
     },
     [containerSize, insets.bottom],
   );
@@ -797,7 +807,7 @@ export function StoryEditorScreen({ route, navigation }: Props): React.JSX.Eleme
 
   return (
     <View style={styles.container}>
-      <View style={styles.mediaContainer} onLayout={onContainerLayout}>
+      <View ref={mediaBox} collapsable={false} style={styles.mediaContainer} onLayout={onContainerLayout}>
         {kind === "photo" ? (
           <>
             {/* The photo as it will be shared (photoShot is what's saved when it was moved or turned),
