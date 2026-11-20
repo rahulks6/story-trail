@@ -1,0 +1,99 @@
+11-20 11:02:14.998 D/AndroidRuntime( 3976): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-20 11:02:15.002 I/netd    (  358): bandwidthRemoveInterfaceQuota(eth0) <0.93ms>
+11-20 11:02:15.005 I/netd    (  358): bandwidthSetInterfaceQuota(eth0, 9223372036854775807) <1.02ms>
+11-20 11:02:15.012 I/AndroidRuntime( 3976): Using default boot image
+11-20 11:02:15.013 I/AndroidRuntime( 3976): Leaving lock profiling enabled
+11-20 11:02:15.023 D/CustomizableLockScreenUtils( 1080): is_custom_lock_screen_quick_affordances_feature_enabled=1
+11-20 11:02:15.027 I/app_process( 3976): Core platform API reporting enabled, enforcing=false
+11-20 11:02:15.027 I/app_process( 3976): Using CollectorTypeCMC GC.
+11-20 11:02:15.059 W/ParceledListSlice(  551): Element #190 is 21704 bytes.
+11-20 11:02:15.063 D/ShortcutService(  551): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=null
+11-20 11:02:15.086 W/ParceledListSlice(  551): Element #219 is 29204 bytes.
+11-20 11:02:15.089 D/OomAdjuster(  551): Not killing cached processes
+11-20 11:02:15.093 D/CustomizableLockScreenUtils( 1080): is_custom_lock_screen_quick_affordances_feature_enabled=1
+11-20 11:02:15.097 E/CellBroadcastUtils( 1070): getDefaultCellBroadcastReceiverPackageName: no package found
+11-20 11:02:15.113 W/AppOpService(  551): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-20 11:02:15.143 W/AppOpService(  551): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-20 11:02:15.145 D/CustomizableLockScreenUtils( 1080): is_custom_lock_screen_quick_affordances_feature_enabled=1
+11-20 11:02:15.148 W/AppOpService(  551): Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_WAP_PUSH, mode = allow, callingUid = 1001, oldMode = allow
+11-20 11:02:15.162 W/AppOpService(  551): Ignored setUidMode call for runtime permission app op: uid = 1001, code = SEND_SMS, mode = allow, callingUid = 1001, oldMode = allow
+11-20 11:02:15.163 W/AppOpService(  551): Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+11-20 11:02:15.182 D/CustomizableLockScreenUtils( 1080): is_custom_lock_screen_quick_affordances_feature_enabled=1
+11-20 11:02:15.183 W/SettingsPrefController( 1080): Skipping updateNonIndexableKeys, key already in list. com.android.settings.gestures.TapScreenGesturePreferenceController@f1dd1b7
+11-20 11:02:15.183 W/SettingsPrefController( 1080): Skipping updateNonIndexableKeys, key already in list. com.android.settings.gestures.DoubleTapScreenPreferenceController@223d24
+11-20 11:02:15.183 W/SettingsPrefController( 1080): Skipping updateNonIndexableKeys, key already in list. com.android.settings.gestures.PickupGesturePreferenceController@b0d308d
+11-20 11:02:15.183 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.accessibility.AccessibilityTimeoutController
+11-20 11:02:15.183 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.accessibility.AccessibilityTimeoutController
+11-20 11:02:15.183 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.accessibility.AccessibilityTimeoutController
+11-20 11:02:15.183 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.accessibility.AccessibilityTimeoutController
+11-20 11:02:15.183 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.accessibility.AccessibilityTimeoutController
+11-20 11:02:15.183 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.accessibility.AccessibilityControlTimeoutFooterPreferenceController
+11-20 11:02:15.183 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.emergency.MoreSettingsPreferenceController
+11-20 11:02:15.183 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.emergency.EmergencyGestureEntrypointPreferenceController
+11-20 11:02:15.185 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.network.AdaptiveConnectivityTogglePreferenceController
+11-20 11:02:15.185 V/SettingsSearchProvider( 1080): com.android.settings.search.BaseSearchIndexProvider@69419f7 tried to add an empty non-indexable key
+11-20 11:02:15.186 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.development.featureflags.FeatureFlagsPreferenceController
+--
+11-20 11:02:15.726 D/AndroidRuntime( 3976): Calling main entry com.android.commands.am.Am
+11-20 11:02:15.729 D/ShortcutService(  551): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=com.google.android.apps.messaging
+11-20 11:02:15.738 D/UiAutomationConnection( 3976): Created on user UserHandle{0}
+11-20 11:02:15.739 D/ShortcutService(  551): Getting shortcuts for launcher= com.google.android.asuser=0 pkg=com.google.android.as
+11-20 11:02:15.773 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.applications.specialaccess.premiumsms.PremiumSmsScreenPreferenceController
+11-20 11:02:15.773 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.accessibility.DaltonizerSaturationSeekbarPreferenceController
+11-20 11:02:15.823 I/ActivityManager(  551): Force stopping dev.mobile.maestro appid=10210 user=0: start instr
+11-20 11:02:15.825 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.applications.specialaccess.vrlistener.VrListenerScreenPreferenceController
+11-20 11:02:15.842 V/SettingsSearchProvider( 1080): com.android.settings.notification.SoundWorkSettings$1@d61bfd5 tried to add an empty non-indexable key
+11-20 11:02:15.843 D/PrefCtrlListHelper( 1080): Could not find Context-only controller for pref: com.android.settings.location.RecentLocationAccessSeeAllPreferenceController
+11-20 11:02:15.855 I/Icing   ( 1366): Indexing com.google.android.gms-apps from com.google.android.gms
+11-20 11:02:15.856 I/Icing   ( 1366): Indexing done com.google.android.gms-apps
+11-20 11:02:15.858 W/JobService( 1326): onNetworkChanged() not implemented in androidx.work.impl.background.systemjob.SystemJobService. Must override in a subclass.
+11-20 11:02:15.863 W/ParceledListSlice(  551): Element #140 is 59704 bytes.
+11-20 11:02:15.863 W/ParceledListSlice(  551): Overly large reply size: 108884
+11-20 11:02:15.865 W/ParceledListSlice(  551): Element #141 is 16980 bytes.
+11-20 11:02:15.877 W/JobService( 3251): onNetworkChanged() not implemented in androidx.work.impl.background.systemjob.SystemJobService. Must override in a subclass.
+11-20 11:02:15.883 W/JobService( 1413): onNetworkChanged() not implemented in com.google.android.apps.miphone.aiai.common.superpacks.impl.AiAiPersistentDownloadJobService. Must override in a subclass.
+11-20 11:02:15.884 I/.apps.messaging( 3251): Background concurrent mark compact GC freed 842KB AllocSpace bytes, 370(18MB) LOS objects, 49% free, 15MB/30MB, paused 1.550ms,10.492ms total 212.180ms
+11-20 11:02:15.885 W/JobService( 3251): onNetworkChanged() not implemented in androidx.work.impl.background.systemjob.SystemJobService. Must override in a subclass.
+11-20 11:02:15.890 I/Fitness ( 1203): OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x5000010 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-20 11:02:15.896 I/system_server(  551): Background concurrent mark compact GC freed 16MB AllocSpace bytes, 24(504KB) LOS objects, 46% free, 27MB/51MB, paused 6.944ms,8.141ms total 1.564s
+11-20 11:02:15.902 W/system_server(  551): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/Velvet/Velvet.apk' with 1 weak references
+11-20 11:02:15.904 W/system_server(  551): ApkAssets: Deleting an ApkAssets object '<empty> and /system/priv-app/InputDevices/InputDevices.apk' with 1 weak references
+11-20 11:02:15.904 W/system_server(  551): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/LatinIMEGooglePrebuilt/LatinIMEGooglePrebuilt.apk' with 1 weak references
+11-20 11:02:15.905 W/system_server(  551): ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk' with 1 weak references
+11-20 11:02:15.905 W/system_server(  551): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/PrebuiltGmail/PrebuiltGmail.apk' with 1 weak references
+11-20 11:02:15.905 W/ParceledListSlice(  551): Element #190 is 21704 bytes.
+11-20 11:02:15.906 W/system_server(  551): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/Drive/Drive.apk' with 1 weak references
+11-20 11:02:15.906 W/system_server(  551): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/GoogleTTS/GoogleTTS.apk' with 1 weak references
+11-20 11:02:15.906 W/system_server(  551): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/CalendarGooglePrebuilt/CalendarGooglePrebuilt.apk' with 1 weak references
+--
+11-20 11:04:11.377 I/AndroidRuntime( 3976): VM exiting with result code 0.
+11-20 11:04:11.378 I/netd    (  358): tetherGetStats() -> {[]} <0.33ms>
+11-20 11:04:11.515 I/servicemanager(    0): Caller(pid=551,uid=1000,sid=u:r:system_server:s0) Since 'artd' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+11-20 11:04:11.526 I/init    (    0): starting service 'artd'...
+11-20 11:04:11.387 V/ActivityManager(  551): Got obituary of 3988:dev.mobile.maestro
+11-20 11:04:11.388 W/ActivityManager(  551): pid 551 system sent binder code 1 with flags 1 to frozen apps and got error -32
+11-20 11:04:11.389 I/Zygote  (  361): Process 3988 exited due to signal 9 (Killed)
+11-20 11:04:11.389 W/MagnificationConnectionManager(  551): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+11-20 11:04:11.389 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.389 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.389 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.389 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.390 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.391 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.391 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.391 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.391 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.391 W/IPCThreadState(  551): Sending oneway calls to frozen process.
+11-20 11:04:11.391 D/BatterySaverPolicy(  551): accessibility changed to false, updating policy.
+11-20 11:04:11.393 W/MagnificationConnectionManager(  551): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
