@@ -49,19 +49,18 @@ appId: com.katkee.app
 - stopApp
 - launchApp
 - extendedWaitUntil:
-    visible: "(What are you into\\?|Forgot password\\?)"
+    visible: "(Add a profile photo|People to follow|Forgot password\\?)"
     timeout: 30000
 - runFlow: login-if-needed.yaml
 
-# Onboarding
+# Onboarding: a profile photo (skipped), people to follow, contacts.
 - extendedWaitUntil:
-    visible: "What are you into?"
+    visible: "(Add a profile photo|People to follow)"
     timeout: 30000
-- tapOn: "Cricket"
-- tapOn: "Food"
-- tapOn: "Festivals"
-- takeScreenshot: t04-interests
-- tapOn: "Next.*"
+- takeScreenshot: t04-photo-step
+- tapOn:
+    text: "Not now"
+    optional: true
 - extendedWaitUntil:
     visible: "People to follow"
     timeout: 20000
@@ -162,6 +161,32 @@ appId: com.katkee.app
 - waitForAnimationToEnd:
     timeout: 3000
 - takeScreenshot: r05-emoji-dragged-to-trash
+# And the other way: an emoji tapped opens its controls, and Delete removes it.
+- tapOn:
+    text: "Add sticker, emoji, mention, location, or date and time"
+- waitForAnimationToEnd:
+    timeout: 3000
+- tapOn:
+    text: "Emoji"
+    optional: true
+- tapOn:
+    text: "Add .* emoji"
+    index: 0
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: r06-emoji-again
+- tapOn:
+    point: "50%, 50%"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: r07-emoji-controls
+- tapOn:
+    text: "Delete"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: r08-emoji-deleted
 - tapOn: "Your story"
 - extendedWaitUntil:
     visible: "Home"
