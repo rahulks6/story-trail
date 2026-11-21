@@ -202,10 +202,9 @@ Katkee आपके असली दोस्तों के लिए स्�
 • स्टोरी का जवाब दें, इमोजी से रिएक्ट करें या डबल टैप से लाइक करें
 • देखें मैसेज कब भेजा गया, पहुँचा और देखा गया
 
-अपने लोगों से मिलें
-• रास्ते टकराए (वैकल्पिक, जब तक आप चालू न करें तब तक बंद): जानें कि आप उस इलाके में थे जहाँ इसे चालू करने वाला कोई और भी था, फिर उनकी पब्लिक स्टोरीज़ देखें। कहाँ या कब, कभी नहीं बताया जाता
+अपने दोस्तों से जुड़े रहें
 • Katkee समझता है कि हर स्टोरी किस बारे में है, हैशटैग की ज़रूरत नहीं
-• लोकप्रिय स्टोरीज़ देखें और एक टैप में नए लोगों को फ़ॉलो करें
+• एक टैप में अपने दोस्तों को फ़ॉलो करें
 
 सुरक्षित और प्राइवेट
 • प्राइवेट अकाउंट: तय करें कौन आपको फ़ॉलो करे
@@ -267,10 +266,9 @@ Katkee तुमच्या खऱ्या मित्रांसाठी �
 • स्टोरीला उत्तर द्या, इमोजीने रिॲक्ट करा किंवा डबल टॅपने लाइक करा
 • मेसेज कधी पाठवला, पोहोचला आणि पाहिला ते पाहा
 
-आपल्या माणसांना भेटा
-• रस्ते जुळले (ऐच्छिक, तुम्ही चालू करेपर्यंत बंद): हे चालू केलेलं कोणी आणि तुम्ही एकाच भागात होता का ते कळेल, मग त्यांच्या पब्लिक स्टोरीज पाहा. कुठे किंवा कधी, ते कधीच सांगितलं जात नाही
+मित्रांशी जोडलेले राहा
 • Katkee ला प्रत्येक स्टोरी कशाबद्दल आहे ते समजतं, हॅशटॅगची गरज नाही
-• लोकप्रिय स्टोरीज पाहा आणि एका टॅपमध्ये नवीन लोकांना फॉलो करा
+• एका टॅपमध्ये तुमच्या मित्रांना फॉलो करा
 
 सुरक्षित आणि प्रायव्हेट
 • प्रायव्हेट अकाउंट: तुम्हाला कोण फॉलो करेल ते ठरवा
@@ -325,9 +323,8 @@ Chat y videollamadas
 • Notas de voz, fotos y videos
 • Llamadas de voz y videollamadas
 
-Conoce a tu gente
-• Cruces (opcional, desactivado hasta que lo actives): entérate cuando estuviste en la misma zona que alguien que también lo activó. Nunca dónde ni cuándo
-• Explora Historias populares y sigue a gente nueva
+Cerca de tus amigos
+• Sigue a tus amigos con un toque
 
 Seguro y privado
 • Cuenta privada, inicio de sesión en dos pasos
@@ -369,9 +366,8 @@ Chat e videochamadas
 • Áudios, fotos e vídeos
 • Chamadas de voz e de vídeo
 
-Encontre sua turma
-• Caminhos cruzados (opcional, desativado até você ativar): saiba quando esteve na mesma região que alguém que também ativou. Nunca onde nem quando
-• Explore Stories populares e siga gente nova
+Perto dos seus amigos
+• Siga seus amigos com um toque
 
 Seguro e privado
 • Conta privada, login em duas etapas
@@ -413,9 +409,8 @@ Chat dan video call
 • Pesan suara, foto dan video
 • Panggilan suara dan video call
 
-Temukan orang-orangmu
-• Berpapasan (opsional, mati sampai kamu mengaktifkannya): ketahui saat kamu berada di area yang sama dengan seseorang yang juga mengaktifkannya. Tidak pernah di mana atau kapan
-• Jelajahi Story populer dan ikuti orang baru
+Tetap dekat dengan temanmu
+• Ikuti temanmu dengan sekali ketuk
 
 Aman dan privat
 • Akun privat, login dua langkah
@@ -457,9 +452,8 @@ Chat et appels vidéo
 • Messages vocaux, photos et vidéos
 • Appels vocaux et vidéo
 
-Retrouvez vos proches
-• Chemins croisés (facultatif, désactivé tant que vous ne l'activez pas) : sachez quand vous étiez dans le même coin que quelqu'un qui l'a aussi activé. Jamais où ni quand
-• Explorez les Stories populaires et suivez de nouvelles personnes
+Proche de vos amis
+• Suivez vos amis en un geste
 
 Sûr et privé
 • Compte privé, connexion en deux étapes
@@ -501,9 +495,8 @@ Chat und Videoanrufe
 • Sprachnachrichten, Fotos und Videos
 • Sprach- und Videoanrufe
 
-Finde deine Leute
-• Wege gekreuzt (optional, aus, bis du es einschaltest): erfahre, wann du in derselben Gegend warst wie jemand, der es auch eingeschaltet hat. Nie wo oder wann
-• Entdecke beliebte Stories und folge neuen Leuten
+Nah bei deinen Freunden
+• Folge deinen Freunden mit einem Tipp
 
 Sicher und privat
 • Privates Konto, Anmeldung in zwei Schritten
@@ -545,9 +538,8 @@ Katkee تطبيق قصص لأصدقائك الحقيقيين. شارك قصص ا
 • رسائل صوتية وصور وفيديو
 • مكالمات صوتية ومكالمات فيديو
 
-تعرّف على ناسك
-• تقاطع المسارات (اختياري، متوقف حتى تفعّله): اعرف متى كنت في نفس المنطقة مع شخص فعّله أيضًا. لا نذكر أين أو متى أبدًا
-• استكشف القصص الشائعة وتابع أشخاصًا جددًا
+قريب من أصدقائك
+• تابع أصدقاءك بلمسة واحدة
 
 آمن وخاص
 • حساب خاص وتسجيل دخول بخطوتين
