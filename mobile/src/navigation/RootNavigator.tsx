@@ -35,6 +35,7 @@ import { ArchivedStoryViewerScreen } from "../screens/profile/ArchivedStoryViewe
 import { EditProfileScreen } from "../screens/profile/EditProfileScreen";
 import { SettingsScreen } from "../screens/profile/SettingsScreen";
 import { NotificationSettingsScreen } from "../screens/profile/NotificationSettingsScreen";
+import { InviteContestScreen } from "../screens/profile/InviteContestScreen";
 import { HelpScreen } from "../screens/profile/HelpScreen";
 import { AboutScreen } from "../screens/profile/AboutScreen";
 import { FollowRequestsScreen } from "../screens/profile/FollowRequestsScreen";
@@ -186,6 +187,17 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
         options={{
           headerShown: true,
           title: t("common.settings"),
+          headerStyle: { backgroundColor: colors.background },
+          headerTintColor: colors.textPrimary,
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="InviteContest"
+        component={InviteContestScreen}
+        options={{
+          headerShown: true,
+          title: t("contest.title"),
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.textPrimary,
           headerShadowVisible: false,
@@ -431,6 +443,7 @@ export function RootNavigator(): React.JSX.Element {
       if (target?.kind === "followRequests") return { routes: [{ name: "Main" }, { name: "FollowRequests" }] };
       if (target?.kind === "verification") return { routes: [{ name: "Main" }, { name: "Settings" }, { name: "Verification" }] };
       if (target?.kind === "scheduled") return { routes: [{ name: "Main" }, { name: "Archive" }, { name: "ScheduledStories" }] };
+      if (target?.kind === "contest") return { routes: [{ name: "Main" }, { name: "InviteContest" }] };
       if (target?.kind === "invite") return { routes: [{ name: "Main" }, { name: "InviteLink", params: { code: target.code } }] };
       return undefined;
     },

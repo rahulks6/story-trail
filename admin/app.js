@@ -198,6 +198,30 @@ async function newUsersPage(c, version) {
         status(u),
     ])));
 }
+// The invite contest: everyone taking part, friend by friend, so the winner can be checked
+// before the voucher is sent (contest.ts counts a friend after 3 different days on Katkee).
+async function contestPage(c, version) {
+    const data = await api('contest');
+    if (version !== renderVersion) return;
+    c.replaceChildren();
+    if (!data.contest) { c.append(el('p', 'No invite contest is running.', 'muted')); return; }
+    const k = data.contest;
+    const day = v => new Date(v).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+    const head = card('₹' + (k.prizeMinor / 100).toLocaleString('en-IN') + ' Amazon voucher');
+    fields(head, { Contest: k.slug, 'Invites count from': day(k.startsAt), 'Last day to invite': day(new Date(Date.parse(k.endsAt) - 1)), 'Results final': day(k.countsUntil), 'A friend counts after': k.qualifyDays + ' different days on Katkee', Announced: k.announceAt ? day(k.announceAt) : 'Not yet' });
+    head.append(el('p', 'Before sending the prize, open the winner\'s friends below: real people have photos, follow others and use Katkee on several days. Many friends who joined minutes apart with no photo and nothing posted are a warning sign.', 'muted'));
+    c.append(head);
+    if (!data.people.length) { c.append(el('p', 'Nobody has joined from an invite link in this contest yet.', 'muted')); return; }
+    for (const p of data.people) {
+        const box = card((p.rank ? '#' + p.rank + ' ' : '') + '@' + p.username + (p.displayName && p.displayName !== p.username ? ' (' + p.displayName + ')' : ''));
+        box.append(el('p', `${count(p.counted)} counted · ${count(p.pending)} not yet · joined ${day(p.joinedAt)}`, 'muted'));
+        box.append(table(['Friend', 'Joined', 'Days on Katkee', 'Counts', 'Photo', 'Following', 'Stories', 'Came from'], p.friends.map(f => [
+            '@' + f.username, new Date(f.joinedAt).toLocaleString(undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }),
+            count(f.activeDays), f.counted ? 'Yes' : 'Not yet', f.hasAvatar ? 'Yes' : 'No', count(f.following), count(f.stories), SOURCES[f.source] || '—',
+        ])));
+        c.append(box);
+    }
+}
 async function analyticsPage(c) {
     let days = 30;
     try { days = Number(sessionStorage.getItem('katkee.analyticsDays')) || 30; } catch { /* storage unavailable */ }
@@ -341,7 +365,7 @@ async function verificationPage(c) {
         c.append(box);
     }
 }
-const sections = [['Dashboard', 'reports.read'], ['Analytics', 'analytics.read'], ['New users', 'users.view'], ['Crashes', 'crashes.read'], ['Feedback', 'feedback.read'], ['Verification', 'verification.review'], ['Reports', 'reports.read'], ['Moderation', 'moderation.history.read'], ['Users', 'users.view'], ['Ads', 'ads.analytics.read'], ['Appeals', 'reports.review'], ['Admins', 'admins.read'], ['Audit Logs', 'audit.read'], ['Security', 'security.alerts.read'], ['Link safety', 'safety.settings.manage'], ['Festivals', 'safety.settings.manage'], ['Settings', 'ads.analytics.read']];
+const sections = [['Dashboard', 'reports.read'], ['Analytics', 'analytics.read'], ['New users', 'users.view'], ['Invite contest', 'users.view'], ['Crashes', 'crashes.read'], ['Feedback', 'feedback.read'], ['Verification', 'verification.review'], ['Reports', 'reports.read'], ['Moderation', 'moderation.history.read'], ['Users', 'users.view'], ['Ads', 'ads.analytics.read'], ['Appeals', 'reports.review'], ['Admins', 'admins.read'], ['Audit Logs', 'audit.read'], ['Security', 'security.alerts.read'], ['Link safety', 'safety.settings.manage'], ['Festivals', 'safety.settings.manage'], ['Settings', 'ads.analytics.read']];
 async function render() { const version = ++renderVersion; for (const url of objectUrls)
     URL.revokeObjectURL(url); objectUrls = []; $('title').textContent = page; const c = $('content'); c.replaceChildren(el('p', 'Loading…', 'muted')); for (const n of $('navigation').children)
     n.setAttribute('aria-current', n.textContent === page ? 'page' : 'false'); try {
@@ -363,6 +387,10 @@ async function render() { const version = ++renderVersion; for (const url of obj
     }
     if (page === 'New users') {
         await newUsersPage(c, version);
+        return;
+    }
+    if (page === 'Invite contest') {
+        await contestPage(c, version);
         return;
     }
     if (page === 'Verification') {

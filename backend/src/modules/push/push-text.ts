@@ -30,6 +30,9 @@ export interface PushText {
   firstStory: (actor: string) => string;
   /** The evening reminder with today's theme (modules/themes); the title is already translated. */
   dailyTheme: (emoji: string, title: string) => string;
+  /** The invite contest (growth/contest.ts): the announcement, and a friend who now counts. */
+  contestStart: (prize: string) => string;
+  contestCounted: (actor: string, count: number) => string;
 }
 
 const en: PushText = {
@@ -50,6 +53,8 @@ const en: PushText = {
   },
   firstStory: (a) => `@${a} posted their first Story on Katkee 👋 Say hi`,
   dailyTheme: (e, title) => `${e} Today's theme: ${title}. Share yours on Katkee`,
+  contestStart: (p) => `🏆 Invite your friends to Katkee and win a ₹${p} Amazon voucher`,
+  contestCounted: (a, n) => `@${a} now counts for you in the invite contest 🏆 ${n} so far`,
   someone: "someone",
   call: (a, video) => (video ? `@${a} is video calling you` : `@${a} is calling you`),
   missedCall: (a, video) => `Missed ${video ? "video" : "voice"} call from @${a}`,
@@ -88,6 +93,8 @@ const hi: PushText = {
   },
   firstStory: (a) => `@${a} ने Katkee पर अपनी पहली स्टोरी पोस्ट की 👋 हाय कहें`,
   dailyTheme: (e, title) => `${e} आज की थीम: ${title}। Katkee पर अपनी स्टोरी शेयर करें`,
+  contestStart: (p) => `🏆 दोस्तों को Katkee पर बुलाएं और ₹${p} का Amazon वाउचर जीतें`,
+  contestCounted: (a, n) => `@${a} अब इनवाइट कॉन्टेस्ट में आपके लिए गिने जा रहे हैं 🏆 अब तक ${n}`,
   someone: "कोई",
   call: (a, video) => (video ? `@${a} आपको वीडियो कॉल कर रहे हैं` : `@${a} आपको कॉल कर रहे हैं`),
   missedCall: (a, video) => `@${a} की मिस्ड ${video ? "वीडियो" : "वॉइस"} कॉल`,
@@ -126,6 +133,8 @@ const mr: PushText = {
   },
   firstStory: (a) => `@${a} यांनी Katkee वर पहिली स्टोरी पोस्ट केली 👋 हाय म्हणा`,
   dailyTheme: (e, title) => `${e} आजची थीम: ${title}. Katkee वर तुमची स्टोरी शेअर करा`,
+  contestStart: (p) => `🏆 मित्रांना Katkee वर बोलवा आणि ₹${p} चे Amazon व्हाउचर जिंका`,
+  contestCounted: (a, n) => `@${a} आता इनव्हाइट कॉन्टेस्टमध्ये तुमच्यासाठी मोजले जात आहेत 🏆 आतापर्यंत ${n}`,
   someone: "कोणीतरी",
   call: (a, video) => (video ? `@${a} तुम्हाला व्हिडिओ कॉल करत आहेत` : `@${a} तुम्हाला कॉल करत आहेत`),
   missedCall: (a, video) => `@${a} यांचा मिस्ड ${video ? "व्हिडिओ" : "व्हॉइस"} कॉल`,
@@ -179,6 +188,14 @@ export function pushOnlyText(kind: string, params: Params | null, locale: Locale
     case "daily_theme": {
       const theme = themeBySlug(params.slug);
       return theme ? t.dailyTheme(theme.emoji, theme.title[locale]) : null;
+    }
+    case "invite_contest": {
+      const prize = num(params.prize);
+      return prize === null ? null : t.contestStart(formatCount(prize, locale));
+    }
+    case "contest_counted": {
+      const count = num(params.count);
+      return actor && count !== null ? t.contestCounted(actor, count) : null;
     }
     case "nudge":
       return params.variant === "first" ? t.nudgeFirst : params.variant === "back" ? t.nudgeBack : null;

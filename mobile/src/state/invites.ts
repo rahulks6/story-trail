@@ -19,7 +19,7 @@ import { contactHash } from "../utils/contactHashes";
  */
 
 /** Where Invite friends was tapped: the server's allowed values for invite_shared. */
-export type InviteSource = "settings" | "home" | "search" | "messages" | "onboarding" | "contacts" | "after_story";
+export type InviteSource = "settings" | "home" | "search" | "messages" | "onboarding" | "contacts" | "after_story" | "contest";
 
 const PENDING_KEY = "katkee.invite.pending.v1";
 /** An invite opened and never followed by a sign-up is forgotten after this long. */

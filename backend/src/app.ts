@@ -43,6 +43,7 @@ import { registerVerificationRoutes } from "./modules/verification/verification.
 import { registerProfessionalRoutes } from "./modules/professional/professional.routes";
 import { registerWebsiteRoutes, websiteGate } from "./modules/website/website.routes";
 import { registerGrowthRoutes } from "./modules/growth/growth.routes";
+import { registerContestRoutes } from "./modules/growth/contest";
 import { RealtimeHub } from "./realtime/hub";
 
 /** The API server, with its readiness/shutdown state (see http/lifecycle.ts) and its route table. */
@@ -135,6 +136,7 @@ export function buildApp(providers?:ProviderGateway): KatkeeServer {
   registerVerificationRoutes(router);
   registerProfessionalRoutes(router);
   registerGrowthRoutes(router);
+  registerContestRoutes(router);
   registerRealtimeRoutes(router);
   registerPushRoutes(router);
   registerCallsRoutes(router);

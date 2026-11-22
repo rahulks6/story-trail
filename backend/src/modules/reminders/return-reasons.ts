@@ -7,6 +7,7 @@ import { FESTIVAL_TIME_ZONE } from "../festivals/festivals";
 import { runCrossedPaths } from "../crossed-paths/crossed-paths";
 import { queueDailyThemePushes } from "../themes/daily-themes";
 import { welcomeNewPeople } from "../growth/official";
+import { queueContestPushes } from "../growth/contest";
 
 /**
  * Reasons to open Katkee each day (migration 0051), each with a limit so nobody is spammed:
@@ -188,6 +189,8 @@ export async function runReturnReasons(now = new Date()): Promise<Record<string,
     result.festival = await queueFestivalGreetings();
     result.welcomed = await welcomeNewPeople();
   }
+  // The invite contest: its announcement (daytime only) and "a friend now counts for you".
+  result.contest = await queueContestPushes(now);
   // Crossed paths: every round; it only tells people during the day where they are.
   result.crossed = await runCrossedPaths();
   if (hour >= 18 && hour < 21) {

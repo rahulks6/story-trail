@@ -35,6 +35,8 @@ export type DeepLinkTarget =
   | { kind: "followRequests" }
   | { kind: "verification" }
   | { kind: "scheduled" }
+  // The invite contest's pushes. katkee.com/contest is its rules page on the web, not the app.
+  | { kind: "contest" }
   // katkee.com/i/<code> (Invite friends) and the website's katkee://invite/<code> button.
   | { kind: "invite"; code: string }
   | { kind: "resetPassword"; email?: string; code?: string };
@@ -68,6 +70,7 @@ export function deepLinkTarget(path: string): DeepLinkTarget | null {
   if (/^verification\/?$/i.test(rawPath)) return { kind: "verification" };
   // A scheduled Story that couldn't be posted: Archive > Scheduled, where it says why.
   if (/^scheduled\/?$/i.test(rawPath)) return { kind: "scheduled" };
+  if (/^contest\/?$/i.test(rawPath)) return { kind: "contest" };
   const invite = /^(?:invite|i)\/([^/]+)\/?$/i.exec(rawPath)?.[1]?.toLowerCase();
   if (invite !== undefined) return INVITE_CODE_RE.test(invite) ? { kind: "invite", code: invite } : null;
   if (/^reset-password\/?$/i.test(rawPath)) {
@@ -91,7 +94,7 @@ export function opensInApp(url: string): boolean {
   const path = linkPath(url);
   const target = path === null ? null : deepLinkTarget(path);
   if (!target) return false;
-  return target.kind !== "verification" || url.toLowerCase().startsWith("katkee://");
+  return (target.kind !== "verification" && target.kind !== "contest") || url.toLowerCase().startsWith("katkee://");
 }
 
 /**

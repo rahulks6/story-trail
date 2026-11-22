@@ -24,6 +24,7 @@ import type {MainTabParamList,RootStackParamList} from '../../navigation/types';
 import {shareInvite} from '../../state/invites';
 import {ContactsJoinedSheet} from '../../components/ContactsJoinedSheet';
 import {FoundingWelcome} from '../../components/FoundingWelcome';
+import {ContestButton} from '../../components/ContestButton';
 import { t } from "../../i18n";
 /** Away from Home (another tab, a screen on top, the app in the background) this long: the feed is reloaded on return. */
 export const HOME_STALE_MS=3*60*1000;
@@ -45,6 +46,8 @@ export function HomeScreen():React.JSX.Element {
  const festivalButton=festival?<Pressable onPress={openFestival} hitSlop={8} style={[styles.festival,{top:insets.top+spacing.lg}]} accessibilityRole="button" accessibilityLabel={festivalCreators.length?t("home.nameStoriesStorycount", { name: festival.name, storyCount: festivalInfo?.storyCount??0 }):t("home.postYourNameStory", { name: festival.name })}>
   <Text style={styles.festivalEmoji}>{festival.emoji}</Text>{festivalCreators.length?<View style={styles.festivalCount}><Text style={styles.festivalCountLabel}>{festivalInfo!.storyCount>99?'99+':festivalInfo!.storyCount}</Text></View>:null}
  </Pressable>:null;
+ // The invite contest's 🏆, left of the festival button (or of Activity on other days).
+ const contestButton=<ContestButton onOpen={()=>navigation.navigate('InviteContest')} style={[styles.festival,{top:insets.top+spacing.lg,right:spacing.md+(festival?88:44)}]}/>;
  const token=useRef(accessToken);token.current=accessToken;const request=useRef(0),loadingMore=useRef(false);
  useEffect(()=>onStoryPublished(()=>{setRetry(n=>n+1);reloadFestival();}),[reloadFestival]);
  // Your own Story's name and photo come from the feed: reload after an Edit Profile save.
@@ -112,10 +115,10 @@ export function HomeScreen():React.JSX.Element {
   onOpenHighlight={h=>navigation.navigate('HighlightViewer',{highlightId:h.id,title:h.title,ownerUsername:h.owner.username})}
   onPost={()=>navigation.navigate('Create')}
   onOpenStories={(tiles,index)=>navigation.navigate('StoryViewer',{creators:tiles.map(tile=>tile.owner.username),startIndex:index,initialStoryId:tiles[index]?.story.id,verifiedCreators:tiles.filter(tile=>tile.owner.verified).map(tile=>tile.owner.username)})}/>;
- if(feed===null&&!error)return <View style={styles.root}><StorySkeleton/>{festivalButton}{activityButton}{uploads}</View>;
+ if(feed===null&&!error)return <View style={styles.root}><StorySkeleton/>{festivalButton}{contestButton}{activityButton}{uploads}</View>;
  if(feed===null)return <View style={styles.empty}><EmptyState variant="media" title={t("home.couldntLoadStories")} message={t("home.checkYourConnectionAndTry")}>
   <Pressable onPress={refresh} style={styles.emptyButton} accessibilityRole="button"><Text style={styles.emptyButtonLabel}>{t("common.tryAgain")}</Text></Pressable>
- </EmptyState>{festivalButton}{activityButton}</View>;
+ </EmptyState>{festivalButton}{contestButton}{activityButton}</View>;
  // Pull down (or tap Refresh) to look again; Find people for someone to follow.
  if(!feed.length)return <View style={styles.root}><ScrollView contentContainerStyle={styles.emptyScroll} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={reloadQuietly} tintColor={colors.textPrimary} colors={[colors.accentText]}/>}>
   {festival?<View style={styles.festivalCard}>
@@ -136,13 +139,13 @@ export function HomeScreen():React.JSX.Element {
    <Pressable onPress={invite} style={styles.emptyButton} accessibilityRole="button"><Text style={styles.emptyButtonLabel}>{t("common.inviteFriends")}</Text></Pressable>
    <Pressable onPress={reloadQuietly} disabled={refreshing} style={styles.emptyButton} accessibilityRole="button" accessibilityLabel={t("home.refreshStories")}><Text style={styles.emptyButtonLabel}>{refreshing?t("home.refreshing"):t("common.refresh")}</Text></Pressable>
   </View>
- </ScrollView>{festivalButton}{activityButton}{uploads}{contactsJoined}<FoundingWelcome/></View>;
+ </ScrollView>{festivalButton}{contestButton}{activityButton}{uploads}{contactsJoined}<FoundingWelcome/></View>;
  return <View style={styles.root}><StoryFeed key={`${user?.id}:${retry}:${version}`} creators={creators} slotStoryIds={slotStoryIds} following={following} verified={verified} startIndex={0} sponsored={sponsored} onNeedMore={more} onRefresh={refresh}
   onCreate={()=>navigation.navigate('Create')} onFindPeople={()=>navigation.navigate('Search',{screen:'SearchHome'})} onInvite={invite} discover={discoverAtEnd} resume={resume}
   onOpenDM={openDM} onOpenProfile={openProfile}
   onOpenCreate={()=>navigation.navigate('Create')} onOpenStory={(username,storyId)=>navigation.navigate('StoryViewer',{creators:[username],startIndex:0,initialStoryId:storyId})}/>
   {!!error&&<View style={[styles.error,{top:insets.top+spacing.xl+40}]}><Text style={typography.caption}>{error}</Text><Pressable onPress={more} accessibilityRole="button"><Text style={typography.body}>{t("common.retry")}</Text></Pressable><Pressable onPress={refresh} accessibilityRole="button"><Text style={typography.body}>{t("common.refresh")}</Text></Pressable></View>}
-  {festivalButton}{activityButton}{uploads}{contactsJoined}<FoundingWelcome/>
+  {festivalButton}{contestButton}{activityButton}{uploads}{contactsJoined}<FoundingWelcome/>
  </View>;
 }
 const styles=StyleSheet.create({root:{flex:1,backgroundColor:colors.background},freshButton:{alignSelf:'center',marginBottom:spacing.lg,paddingHorizontal:spacing.lg,paddingVertical:spacing.sm+2,borderRadius:22,backgroundColor:colors.accent},freshButtonLabel:{...typography.body,fontWeight:'800',color:colors.onAccent},festival:{position:'absolute',right:spacing.md+44,width:36,height:36,borderRadius:18,alignItems:'center',justifyContent:'center',backgroundColor:'rgba(0,0,0,0.3)'},festivalEmoji:{fontSize:20},festivalCount:{position:'absolute',top:-4,right:-6,minWidth:18,height:18,borderRadius:9,paddingHorizontal:4,alignItems:'center',justifyContent:'center',backgroundColor:colors.accent},festivalCountLabel:{fontSize:11,fontWeight:'800',color:colors.onAccent},festivalCard:{alignItems:'center',gap:spacing.md,paddingTop:spacing.xxl*2,paddingHorizontal:spacing.xl},festivalCardEmoji:{fontSize:56},festivalCardTitle:{...typography.title,textAlign:'center'},festivalCardButton:{paddingHorizontal:spacing.lg,paddingVertical:spacing.sm,borderRadius:20,backgroundColor:colors.accent},festivalCardButtonLabel:{...typography.body,fontWeight:'700',color:colors.onAccent},activity:{position:'absolute',right:spacing.md,width:36,height:36,borderRadius:18,alignItems:'center',justifyContent:'center',backgroundColor:'rgba(0,0,0,0.3)'},activityDot:{position:'absolute',top:6,right:7,width:9,height:9,borderRadius:5,backgroundColor:colors.like,borderWidth:1.5,borderColor:colors.background},empty:{flex:1,backgroundColor:colors.background,alignItems:'center',justifyContent:'center'},error:{position:'absolute',left:16,right:16,padding:12,gap:8,backgroundColor:colors.surfaceElevated},emptyScroll:{flexGrow:1},emptyActions:{flexDirection:'row',flexWrap:'wrap',justifyContent:'center',gap:spacing.md,paddingHorizontal:spacing.md,paddingBottom:spacing.xxl*2},emptyButton:{paddingHorizontal:spacing.lg,paddingVertical:spacing.sm,borderRadius:20,borderWidth:1,borderColor:colors.textPrimary},emptyButtonLabel:{...typography.body,fontWeight:'700'},emptyButtonStrong:{backgroundColor:colors.accent,borderColor:colors.accent},emptyButtonLabelStrong:{color:colors.onAccent},welcome:{paddingHorizontal:spacing.md,gap:spacing.xs},welcomeTitle:{...typography.title},welcomeText:{...typography.body,color:colors.textSecondary}});

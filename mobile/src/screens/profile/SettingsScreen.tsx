@@ -16,6 +16,7 @@ import { nearbyChoice, turnNearbyOff, turnNearbyOn } from "../../state/nearby";
 import { crossedPathsOn, turnCrossedPathsOff, turnCrossedPathsOn } from "../../state/crossedPaths";
 import { professionalCategoryLabel } from "../../api/professional";
 import { shareInvite } from "../../state/invites";
+import { useContest } from "../../state/contest";
 import { READY_LANGUAGES, LANGUAGE_NAMES, needsRestartForDirection, setLanguage, t, useLanguage } from "../../i18n";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Settings">;
@@ -34,6 +35,7 @@ const REQUEST_COUNT_CAP = 50;
  */
 export function SettingsScreen({ navigation }: Props): React.JSX.Element {
   const { user, accessToken, logout, applyProfile } = useAuth();
+  const { contest } = useContest();
   const [isPrivate, setIsPrivate] = useState(user?.isPrivate ?? false);
   const [appearanceOpen, setAppearanceOpen] = useState(false);
   const language = useLanguage();
@@ -340,6 +342,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
       <View style={styles.card}>
         <ListRow label={t("common.contactsOnKatkee")} icon={ICONS.following} onPress={() => navigation.navigate("ContactsOnKatkee", { from: "settings" })} />
         <ListRow label={t("common.inviteFriends")} icon={ICONS.share} onPress={() => void shareInvite("settings", accessToken, user?.id)} />
+        {contest ? <ListRow label={`🏆 ${t("contest.title")}`} onPress={() => navigation.navigate("InviteContest")} /> : null}
       </View>
 
       <Text style={styles.sectionHeader}>{t("common.stories")}</Text>

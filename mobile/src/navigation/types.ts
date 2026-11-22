@@ -116,6 +116,8 @@ export type RootStackParamList = {
   Appeals: undefined;
   /** Per-type (like/comment/follow/mention) notification toggles, backed by migration 0018's real preferences table. */
   NotificationSettings: undefined;
+  /** The invite contest: Home's 🏆, Settings, and katkee://contest (backend growth/contest.ts). */
+  InviteContest: undefined;
   Help: undefined;
   /** Settings > Help > Send feedback, with an optional screenshot. */
   Feedback: undefined;

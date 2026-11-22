@@ -66,3 +66,35 @@ export function getTodayTheme(accessToken: string, signal?: AbortSignal): Promis
 export function getFoundingSpots(accessToken: string, signal?: AbortSignal): Promise<{ total: number; taken: number; left: number }> {
   return apiGet("/api/v1/founding", accessToken, signal);
 }
+
+/** The invite contest (backend growth/contest.ts); null when none is on, or not in this language. */
+export interface ContestLeader {
+  rank: number;
+  userId: string;
+  username: string;
+  displayName: string;
+  avatarMediaId: string | null;
+  counted: number;
+}
+export interface ContestFriend {
+  username: string;
+  displayName: string;
+  activeDays: number;
+  counted: boolean;
+}
+export interface Contest {
+  slug: string;
+  prize: { amountMinor: number; currency: "INR"; kind: "amazon_voucher" };
+  startsAt: string;
+  endsAt: string;
+  countsUntil: string;
+  qualifyDays: number;
+  state: "running" | "counting" | "final";
+  rulesUrl: string;
+  winner: { username: string; displayName: string } | null;
+  me: { counted: number; pending: number; rank: number | null; toFirst: number | null; friends: ContestFriend[] };
+  leaders: ContestLeader[];
+}
+export function getContest(accessToken: string, signal?: AbortSignal): Promise<{ contest: Contest | null }> {
+  return apiGet("/api/v1/contest", accessToken, signal);
+}

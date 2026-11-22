@@ -1,6 +1,6 @@
 # Katkee Privacy Policy
 
-**Last updated:** 22 November 2026
+**Last updated:** 23 November 2026
 
 This policy explains what Katkee collects, how we use it, who can see it, how long we keep it
 and the choices you have. It covers the Katkee apps for iPhone and Android, the website at
@@ -158,6 +158,14 @@ Your personal invite link (katkee.com/i/...) shows your display name to
 whoever opens it. If someone creates an account after opening your link, we
 record that they joined from your invite, tell you, and suggest you to each
 other.
+
+During an invite contest (see [katkee.com/contest](https://katkee.com/contest)),
+we count, for each person who joined from your link, on how many different
+days they used Katkee, from the days our servers already record for
+everyone. The app's leaderboard shows the top inviters' display names,
+usernames, profile photos and how many friends counted for them; the
+friends you invited are shown only to you. We look at the winner's
+invited accounts before sending the prize, to keep the contest fair.
 
 ### Where you installed Katkee from
 On Android, when the app is first opened, it asks Google Play where the
