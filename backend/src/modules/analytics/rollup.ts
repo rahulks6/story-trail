@@ -129,10 +129,12 @@ export async function analyticsOverview(days: number): Promise<Record<string, un
      SELECT jsonb_build_object(
        'today', (SELECT d FROM today),
        'live', (SELECT jsonb_build_object(
-           'dau', count(DISTINCT user_id) FILTER (WHERE day = (SELECT d FROM today)),
-           'wau', count(DISTINCT user_id) FILTER (WHERE day > (SELECT d FROM today) - 7),
-           'mau', count(DISTINCT user_id))
-         FROM analytics_active_days WHERE day > (SELECT d FROM today) - 30 AND day <= (SELECT d FROM today)),
+           'dau', count(DISTINCT a.user_id) FILTER (WHERE a.day = (SELECT d FROM today)),
+           'wau', count(DISTINCT a.user_id) FILTER (WHERE a.day > (SELECT d FROM today) - 7),
+           'mau', count(DISTINCT a.user_id))
+         FROM analytics_active_days a JOIN users u ON u.id = a.user_id
+         WHERE a.day > (SELECT d FROM today) - 30 AND a.day <= (SELECT d FROM today)
+           AND u.deleted_at IS NULL AND coalesce(u.email, '') !~* '^support\\+e2e-'),
        'backlog', jsonb_build_object(
          'open', (SELECT count(*) FROM reports WHERE status = 'OPEN'),
          'underReview', (SELECT count(*) FROM reports WHERE status = 'UNDER_REVIEW'),

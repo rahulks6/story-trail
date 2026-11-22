@@ -374,6 +374,17 @@ describe("product analytics", () => {
     assert.equal((await request("/api/v1/admin/analytics/invites", "GET", undefined, ch)).status, 403);
   });
 
+  it("counts only accounts that still exist and aren't test accounts: test runs that delete themselves don't inflate it", async () => {
+    const day = "2001-03-15";
+    const [real, gone, tester] = [await account(), await account(), await account()];
+    await query(`UPDATE users SET created_at = :'at'::timestamptz WHERE id IN (:'a', :'b', :'c')`, { at: `${day}T10:00:00Z`, a: real.id, b: gone.id, c: tester.id });
+    await query(`UPDATE users SET deleted_at = now() WHERE id = :'id'`, { id: gone.id });
+    await query(`UPDATE users SET email = :'e' WHERE id = :'id'`, { id: tester.id, e: `support+e2e-${randomUUID().slice(0, 8)}@katkee.com` });
+    for (const p of [real, gone, tester]) await query(`INSERT INTO analytics_active_days (day, platform, user_id) VALUES (:'d'::date, 'android', :'u')`, { d: day, u: p.id });
+    const metrics = JSON.parse(String((await queryOne(`SELECT analytics_rollup_day(:'d'::date, 'UTC')::text AS m`, { d: day }))?.m));
+    assert.deepEqual([metrics.users.dau, metrics.users.registrations], [1, 1]);
+  });
+
   it("the worker fills in today and purges raw data past retention, keeping the daily totals", async () => {
     const person = await account();
     await appEvent(person.id, "app_session_started", new Date(Date.now() - 100 * 86_400_000).toISOString(), randomUUID());
