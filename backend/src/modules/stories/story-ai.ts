@@ -26,7 +26,7 @@ import path from "node:path";
 import { pipeline } from "node:stream/promises";
 import Anthropic from "@anthropic-ai/sdk";
 import { config } from "../../config/env";
-import { query } from "../../db/psql";
+import { query, queryOne } from "../../db/psql";
 import { TOPICS, canonicalTopic, type Topic } from "../../shared/topics";
 import * as mediaRepo from "../media/media.repository";
 import { checkPhotos } from "./photo-check";
@@ -232,6 +232,7 @@ export const AUTO_REMOVAL_REASON = "Automatic check: nudity or sexual content";
 /**
  * Takes a Story down at once, as a moderator would: gone from everywhere, kept as evidence, the
  * owner told (moderation_notices) and able to appeal. No person is behind it (actor_id empty).
+ * An account with repeated removals is suspended (suspendRepeatOffender).
  * Nothing happens to a Story that is already deleted.
  */
 export async function autoRemoveStory(storyId: string): Promise<boolean> {
@@ -249,7 +250,36 @@ export async function autoRemoveStory(storyId: string): Promise<boolean> {
      RETURNING user_id`,
     { id: storyId, reason: AUTO_REMOVAL_REASON },
   );
+  if (rows.length > 0) await suspendRepeatOffender(rows[0]!.user_id as string);
   return rows.length > 0;
+}
+
+/** Automatic removals in a day that suspend an account: someone posting this again and again. */
+export const REMOVALS_BEFORE_SUSPENSION = 2;
+export const SUSPENSION_REASON = "Automatic: nudity or sexual content removed repeatedly";
+
+/**
+ * Suspends an account once REMOVALS_BEFORE_SUSPENSION of its uploads (Stories, profile or cover
+ * photos) have been taken down by the automatic check within a day, through the same moderation
+ * function admins use: it can't log in, its profile and Stories disappear, its sessions end, and it
+ * can appeal. Never an admin's account, and nothing for one already suspended. True if suspended.
+ */
+export async function suspendRepeatOffender(userId: string): Promise<boolean> {
+  const row = await queryOne(
+    `SELECT count(*) AS n FROM moderation_actions a
+     WHERE a.actor_id IS NULL AND a.created_at > now() - interval '1 day'
+       AND a.action IN ('remove', 'remove_profile_photo', 'remove_cover_photo')
+       AND ((a.target_type = 'user' AND a.target_id = :'user')
+         OR (a.target_type = 'story' AND EXISTS (SELECT 1 FROM stories s WHERE s.id = a.target_id AND s.owner_id = :'user')))`,
+    { user: userId },
+  );
+  if (Number(row?.n ?? 0) < REMOVALS_BEFORE_SUSPENSION) return false;
+  try {
+    await query(`SELECT admin_moderate(NULL, NULL, NULL, 'user', :'user', 'suspend', :'reason')`, { user: userId, reason: SUSPENSION_REASON });
+    return true;
+  } catch {
+    return false; // already suspended, or an admin's account (never suspended automatically)
+  }
 }
 
 /** Lets another round pick the Story up again (the API was busy, or the network failed). */

@@ -15,6 +15,7 @@ import {
   type StoryAiClient, type StoryForAi, type StoryUnderstanding,
 } from "../src/modules/stories/story-ai";
 import { PHOTO_REMOVAL_REASON, checkPhotos } from "../src/modules/stories/photo-check";
+import { SUSPENSION_REASON } from "../src/modules/stories/story-ai";
 import { aiClearedSql } from "../src/shared/aiCleared";
 import { execFileSync } from "node:child_process";
 import os from "node:os";
@@ -402,5 +403,36 @@ describe("nudity and sexual content", () => {
     assert.deepEqual(await checkPhotos(fine, mediaStorage, 5, [good.id]), { checked: 1, removed: 0 });
     assert.equal((await queryOne(`SELECT avatar_media_id FROM users WHERE id = :'id'`, { id: good.id }))!.avatar_media_id, good.mediaId);
     assert.deepEqual(await checkPhotos(fine, mediaStorage, 5, [good.id]), { checked: 0, removed: 0 });
+  });
+
+  it("an account whose uploads are taken down twice in a day is suspended; once is a warning", async () => {
+    const input = uniqueUser();
+    const signup = await client.post("/api/v1/auth/signup", input);
+    const auth = authHeader(signup.body.tokens.accessToken as string);
+    const userId = signup.body.user.id as string;
+    const post = async () => {
+      const up = await fetch(`${baseUrl}/api/v1/media/photos`, { method: "POST", headers: { "Content-Type": "image/png", ...auth }, body: buildTestPng(8, 8) });
+      const mediaId = ((await up.json()) as { media: { id: string } }).media.id;
+      const res = await client.post("/api/v1/stories", { mediaId, caption: "", audience: "public", allowComments: "everyone", allowSharing: true }, auth);
+      return res.body.story.id as string;
+    };
+    const unsafe = fakeAi({ topic: null, altText: null, safety: "sexual", festival: false });
+    const state = async () => (await queryOne(`SELECT moderation_state, is_active FROM users WHERE id = :'id'`, { id: userId }))!;
+    const first = await post();
+    const second = await post();
+    const [a] = await claimStories(5, [first]);
+    await understandStory(a!, unsafe, mediaStorage);
+    assert.equal((await state()).moderation_state, "ACTIVE", "one removal: the account stays");
+    const [b] = await claimStories(5, [second]);
+    await understandStory(b!, unsafe, mediaStorage);
+    const after = await state();
+    assert.equal(after.moderation_state, "SUSPENDED");
+    assert.equal(after.is_active, "f");
+    const action = await queryOne(`SELECT action, reason, actor_id FROM moderation_actions WHERE target_type = 'user' AND target_id = :'id'`, { id: userId });
+    assert.equal(action?.action, "suspend");
+    assert.equal(action?.reason, SUSPENSION_REASON);
+    assert.equal(action?.actor_id, null);
+    // Its sessions end at once.
+    assert.equal((await client.get("/api/v1/users/me", auth)).status >= 400, true);
   });
 });

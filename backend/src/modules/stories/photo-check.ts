@@ -1,7 +1,7 @@
 import { query } from "../../db/psql";
 import * as mediaRepo from "../media/media.repository";
 import type { ObjectStore } from "../media/storage";
-import { pictureOf, type StoryAiClient } from "./story-ai";
+import { pictureOf, suspendRepeatOffender, type StoryAiClient } from "./story-ai";
 
 /**
  * Profile and cover photos get the same automatic check as Stories (story-ai.ts): a new photo is
@@ -63,6 +63,7 @@ export async function removePhoto(photo: PendingPhoto): Promise<boolean> {
      INSERT INTO moderation_notices (user_id, action_id) SELECT :'user', id FROM action RETURNING user_id`,
     { user: photo.userId, media: photo.mediaId, action: photo.slot === "avatar" ? "remove_profile_photo" : "remove_cover_photo", reason: PHOTO_REMOVAL_REASON },
   );
+  if (rows.length > 0) await suspendRepeatOffender(photo.userId);
   return rows.length > 0;
 }
 
