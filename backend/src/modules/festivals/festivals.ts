@@ -1,3 +1,4 @@
+import { aiClearedSql } from "../../shared/aiCleared";
 import type { Router } from "../../http/router";
 import { requireAuth } from "../../http/middleware/auth.middleware";
 import { sendJson } from "../../http/respond";
@@ -67,7 +68,7 @@ export async function festivalCreators(slug: string, viewerId: string, limit = 5
   const rows = await query(
     `SELECT u.username, count(*) AS stories, max(s.created_at) AS latest, bool_or(u.id = :'viewer') AS mine
      FROM stories s JOIN users u ON u.id = s.owner_id
-     WHERE s.festival = :'slug' AND s.audience = 'public' AND s.deleted_at IS NULL AND s.moderation_removed_at IS NULL
+     WHERE s.festival = :'slug' AND s.audience = 'public' AND s.deleted_at IS NULL AND s.moderation_removed_at IS NULL AND ${aiClearedSql("s")}
        AND s.expires_at > now() AND u.is_active AND u.deleted_at IS NULL
        AND (NOT u.is_private OR u.id = :'viewer')
        AND NOT EXISTS (SELECT 1 FROM blocks b WHERE (b.blocker_id = :'viewer' AND b.blocked_id = u.id) OR (b.blocker_id = u.id AND b.blocked_id = :'viewer'))

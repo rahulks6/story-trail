@@ -1,3 +1,4 @@
+import { aiClearedSql } from "../../shared/aiCleared";
 import { shownToViewerSql } from "../../shared/testAccounts";
 import { query, queryOne } from "../../db/psql";
 import { AREA_CELL_LENGTH, cellsAround } from "./geohash";
@@ -77,7 +78,7 @@ export async function listDiscoveryCandidates(viewerId: string, settings: ReachS
        JOIN users u ON u.id = s.owner_id
        LEFT JOIN story_reach r ON r.story_id = s.id
        LEFT JOIN user_areas oa ON oa.user_id = s.owner_id AND oa.updated_at > now() - ${AREA_FRESH}
-       WHERE s.deleted_at IS NULL AND s.expires_at > now() AND s.audience = 'public' AND s.moderation_removed_at IS NULL
+       WHERE s.deleted_at IS NULL AND s.expires_at > now() AND s.audience = 'public' AND s.moderation_removed_at IS NULL AND ${aiClearedSql("s")}
          AND u.deleted_at IS NULL AND u.is_active AND NOT u.is_private AND u.moderation_state = 'ACTIVE'
          AND ${shownToViewerSql("u")}
          AND s.owner_id <> :'viewer'
@@ -131,7 +132,7 @@ export async function evaluateReachBatch(settings: ReachSettings, batch: number,
        FROM stories s
        JOIN users u ON u.id = s.owner_id
        LEFT JOIN story_reach r ON r.story_id = s.id
-       WHERE s.deleted_at IS NULL AND s.expires_at > now() AND s.audience = 'public' AND s.moderation_removed_at IS NULL
+       WHERE s.deleted_at IS NULL AND s.expires_at > now() AND s.audience = 'public' AND s.moderation_removed_at IS NULL AND ${aiClearedSql("s")}
          AND u.deleted_at IS NULL AND u.is_active AND NOT u.is_private
          AND COALESCE(r.stage, 1) < 4 AND NOT COALESCE(r.held, false)
        ORDER BY COALESCE(r.evaluated_at, s.created_at)

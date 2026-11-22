@@ -15,6 +15,7 @@
  * (/u/<username>/photo, /s/<id>/image, ...), which check the rule again on every request and
  * then hand over a short-lived signed CDN URL, the way the API delivers media to the app.
  */
+import { aiClearedSql } from "../../shared/aiCleared";
 import { query, queryOne, type Row } from "../../db/psql";
 import { katkeeSticker } from "../gifs/pack";
 import { giphyMediaUrl } from "../gifs/giphy";
@@ -27,7 +28,8 @@ import * as socialRepo from "../social/social.repository";
 /** The account rule, for a users row `u`. */
 const WEB_ACCOUNT_SQL = `u.deleted_at IS NULL AND u.is_active AND u.moderation_state = 'ACTIVE' AND NOT u.is_private AND u.show_on_web`;
 /** The Story rule, for a stories row `s` (expiry is the caller's: Highlights keep expired Stories). */
-const WEB_STORY_SQL = `s.audience = 'public' AND s.deleted_at IS NULL AND s.moderation_removed_at IS NULL`;
+/** Read when each query is built: the check can be switched on or off between deploys. */
+const webStorySql = (): string => `s.audience = 'public' AND s.deleted_at IS NULL AND s.moderation_removed_at IS NULL AND ${aiClearedSql("s")}`;
 const STORY_COLUMNS = "s.id, s.owner_id, s.media_id, s.caption, s.created_at, s.expires_at, s.overlays, s.drawing, s.audio_muted, s.crop, s.music";
 
 /** Enough for any real profile; a page never grows without bound. */
@@ -283,7 +285,7 @@ export async function webProfile(account: WebAccount): Promise<WebProfile> {
   const [active, highlightRows] = await Promise.all([
     query(
       `SELECT ${STORY_COLUMNS} FROM stories s
-       WHERE s.owner_id = :'owner' AND ${WEB_STORY_SQL} AND s.expires_at > now()
+       WHERE s.owner_id = :'owner' AND ${webStorySql()} AND s.expires_at > now()
        ORDER BY s.created_at ASC LIMIT ${MAX_STORIES}`,
       { owner: account.id },
     ),
@@ -292,7 +294,7 @@ export async function webProfile(account: WebAccount): Promise<WebProfile> {
        FROM (SELECT * FROM highlights WHERE owner_id = :'owner' ORDER BY position ASC, created_at ASC LIMIT ${MAX_HIGHLIGHTS}) h
        JOIN LATERAL (
          SELECT hi.story_id, hi.position FROM highlight_items hi JOIN stories s ON s.id = hi.story_id
-         WHERE hi.highlight_id = h.id AND s.owner_id = h.owner_id AND ${WEB_STORY_SQL}
+         WHERE hi.highlight_id = h.id AND s.owner_id = h.owner_id AND ${webStorySql()}
          ORDER BY hi.position ASC LIMIT ${MAX_HIGHLIGHT_ITEMS}
        ) items ON true
        JOIN stories s ON s.id = items.story_id
@@ -322,7 +324,7 @@ export async function webProfile(account: WebAccount): Promise<WebProfile> {
 export async function findWebStoryOwner(storyId: string): Promise<{ account: WebAccount; storyId: string } | null> {
   const row = await queryOne(
     `SELECT u.username, u.id FROM stories s JOIN users u ON u.id = s.owner_id
-     WHERE s.id = :'id' AND ${WEB_STORY_SQL} AND s.expires_at > now() AND ${WEB_ACCOUNT_SQL}`,
+     WHERE s.id = :'id' AND ${webStorySql()} AND s.expires_at > now() AND ${WEB_ACCOUNT_SQL}`,
     { id: storyId },
   );
   if (!row) return null;
@@ -337,7 +339,7 @@ export async function findWebStoryOwner(storyId: string): Promise<{ account: Web
 export async function webStoryMedia(storyId: string): Promise<MediaRecord | null> {
   const row = await queryOne(
     `SELECT s.media_id, s.owner_id FROM stories s JOIN users u ON u.id = s.owner_id
-     WHERE s.id = :'id' AND ${WEB_STORY_SQL} AND ${WEB_ACCOUNT_SQL}
+     WHERE s.id = :'id' AND ${webStorySql()} AND ${WEB_ACCOUNT_SQL}
        AND (s.expires_at > now() OR EXISTS (SELECT 1 FROM highlight_items hi JOIN highlights h ON h.id = hi.highlight_id
                                             WHERE hi.story_id = s.id AND h.owner_id = s.owner_id))`,
     { id: storyId },

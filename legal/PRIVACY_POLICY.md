@@ -1,6 +1,6 @@
 # Katkee Privacy Policy
 
-**Last updated:** 19 November 2026
+**Last updated:** 22 November 2026
 
 This policy explains what Katkee collects, how we use it, who can see it, how long we keep it
 and the choices you have. It covers the Katkee apps for iPhone and Android, the website at
@@ -48,16 +48,23 @@ can be opened only by you and the person you sent it to.
 ### How Katkee understands your Stories
 So that you don't have to tag your Stories, Katkee works out what each one is
 about. When you post a Story, our servers send its picture (for a video, its
-cover frame), its caption, the words written on it and the name of its song
-to Anthropic's Claude, an AI service. Claude gives back:
+cover frame and a few frames from the rest of it), its caption, the words
+written on it and the name of its song to Anthropic's Claude, an AI service.
+Claude gives back:
 
 - its **topic**, from the same list of topics as Your interests (such as Food
   or Cricket), which we store with the Story and use to show it to people who
   enjoy that topic;
 - a **description of the picture** for people who use a screen reader, which
   we keep with the Story unless you wrote your own;
-- whether it may show content that breaks our rules, which we keep with the
-  Story so our team can review it.
+- whether it may show content that breaks our rules. A Story showing nudity
+  or sexual content is removed at once, and you're told why and can ask for a
+  review (Settings, then Appeals). Until a public Story has been checked,
+  usually a few seconds, it is shown only to your followers, not to strangers
+  in Explore, suggestions, festival rings or on the web.
+
+New profile and cover photos are checked the same way (the photo only). One
+showing nudity or sexual content is taken off your profile, and you're told.
 
 Anthropic processes your Story only to give us this answer, under terms that
 don't allow it to train its AI models on it. Nothing else about you is sent:
@@ -373,8 +380,9 @@ message is kept as evidence for the moderator.
   network addresses of the two phones, never what's said or shown.
 - **Google**: Google sign-in, if you use it, and Safe Browsing checks of
   links posted in Katkee.
-- **Anthropic**: its AI service, Claude, works out each Story's topic and
-  writes a description of its picture (see "How Katkee understands your
+- **Anthropic**: its AI service, Claude, works out each Story's topic,
+  writes a description of its picture and checks Stories and profile photos
+  for content that breaks our rules (see "How Katkee understands your
   Stories" above).
 - **GIPHY**: sticker search in the GIF tab, and the GIPHY stickers people
   put on Stories (see "Moving stickers (GIFs)" above).

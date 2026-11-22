@@ -1,3 +1,4 @@
+import { aiClearedSql } from "../../shared/aiCleared";
 import { shownToViewerSql } from "../../shared/testAccounts";
 import { containsPattern, escapeLike } from "../../shared/validation";
 import { nullable, query, queryOne } from "../../db/psql";
@@ -436,7 +437,7 @@ export async function suggestPeople(viewerId: string, limit: number): Promise<Su
      ),
      fresh AS (
        SELECT DISTINCT s.owner_id AS id FROM stories s
-       WHERE s.deleted_at IS NULL AND s.moderation_removed_at IS NULL AND s.audience = 'public' AND s.expires_at > now()
+       WHERE s.deleted_at IS NULL AND s.moderation_removed_at IS NULL AND s.audience = 'public' AND s.expires_at > now() AND ${aiClearedSql("s")}
      ),
      -- Katkee's own account (growth/official.ts), first for anyone who doesn't follow it yet.
      official AS (SELECT id FROM users WHERE is_official),

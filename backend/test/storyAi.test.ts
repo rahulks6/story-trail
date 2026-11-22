@@ -11,9 +11,16 @@ import { config } from "../src/config/env";
 import { query, queryOne } from "../src/db/psql";
 import { mediaStorage } from "../src/modules/media/instance";
 import {
-  ClaudeStoryAi, MAX_AI_ALT_TEXT, StoryAiWorker, claimStories, parseUnderstanding, storyAiActive, storyWords, supportsServerFallback, understandStory,
+  AUTO_REMOVAL_REASON, ClaudeStoryAi, FRAME_POINTS, MAX_AI_ALT_TEXT, StoryAiWorker, claimStories, parseUnderstanding, storyAiActive, storyWords, supportsServerFallback, understandStory, videoFrames,
   type StoryAiClient, type StoryForAi, type StoryUnderstanding,
 } from "../src/modules/stories/story-ai";
+import { PHOTO_REMOVAL_REASON, checkPhotos } from "../src/modules/stories/photo-check";
+import { aiClearedSql } from "../src/shared/aiCleared";
+import { execFileSync } from "node:child_process";
+import os from "node:os";
+import path from "node:path";
+import fs from "node:fs";
+import crypto from "node:crypto";
 import { buildTestPng } from "./fixtures";
 import { authHeader, makeClient, uniqueUser } from "./helpers";
 
@@ -96,14 +103,14 @@ describe("understanding a new Story", () => {
     assert.equal(after.ai_topic, "Travel");
   });
 
-  it("a refusal is still marked done, with nothing guessed", async () => {
+  it("a refusal is still marked done, with nothing guessed, and kept from strangers until a person looks", async () => {
     const id = await postStory();
     const [claimed] = await claimStories(5, [id]);
     assert.equal(await understandStory(claimed!, fakeAi("refused"), mediaStorage), "refused");
     const after = await row(id);
     assert.equal(after.checked, true);
     assert.equal(after.topic, null);
-    assert.equal(after.ai_safety, null);
+    assert.equal(after.ai_safety, "other");
   });
 
   it("a busy API puts the Story back for a later round, up to 3 tries", async () => {
@@ -312,5 +319,88 @@ describe("reading the answer", () => {
     } finally {
       Object.assign(config.storyAi, saved);
     }
+  });
+});
+
+describe("nudity and sexual content", () => {
+  it("a Story the check finds it in is taken down at once, and its owner told and able to appeal", async () => {
+    const id = await postStory();
+    const [claimed] = await claimStories(5, [id]);
+    assert.equal(await understandStory(claimed!, fakeAi({ topic: null, altText: "A person.", safety: "sexual", festival: false }), mediaStorage), "removed");
+    const story = (await queryOne(`SELECT owner_id, deleted_at IS NOT NULL AS gone, moderation_removed_at IS NOT NULL AS moderated FROM stories WHERE id = :'id'`, { id }))!;
+    assert.equal(story.gone, "t");
+    assert.equal(story.moderated, "t");
+    const notice = await queryOne(
+      `SELECT a.action, a.reason, a.actor_id, moderation_action_appealable(a.action) AS appealable
+       FROM moderation_notices n JOIN moderation_actions a ON a.id = n.action_id WHERE n.user_id = :'owner' AND a.target_id = :'id'`,
+      { owner: story.owner_id as string, id },
+    );
+    assert.ok(notice);
+    assert.equal(notice.action, "remove");
+    assert.equal(notice.reason, AUTO_REMOVAL_REASON);
+    assert.equal(notice.actor_id, null);
+    assert.equal(notice.appealable, "t");
+  });
+
+  it("strangers see a public Story only once the check found nothing unsafe; with the check off, as before", async () => {
+    const saved = { ...config.storyAi };
+    const cleared = async (id: string) => (await queryOne(`SELECT ${aiClearedSql("s")} AS ok FROM stories s WHERE s.id = :'id'`, { id }))!.ok === "t";
+    try {
+      Object.assign(config.storyAi, { enabled: true, apiKey: "sk-ant-api03-test" });
+      const waiting = await postStory();
+      assert.equal(await cleared(waiting), false, "not until it has been checked");
+      const [a] = await claimStories(5, [waiting]);
+      await understandStory(a!, fakeAi({ topic: null, altText: null, safety: "ok", festival: false }), mediaStorage);
+      assert.equal(await cleared(waiting), true);
+      const unsure = await postStory();
+      const [b] = await claimStories(5, [unsure]);
+      await understandStory(b!, fakeAi("refused"), mediaStorage);
+      assert.equal(await cleared(unsure), false, "a declined look stays away from strangers");
+      Object.assign(config.storyAi, { enabled: false });
+      assert.equal(aiClearedSql("s"), "true");
+    } finally {
+      Object.assign(config.storyAi, saved);
+    }
+  });
+
+  it("a video is judged by frames from all through it, not its cover alone", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "katkee-video-"));
+    const file = path.join(dir, "v.mp4");
+    execFileSync("ffmpeg", ["-hide_banner", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc=size=320x240:rate=10", "-t", "4", "-pix_fmt", "yuv420p", file]);
+    const key = `m/${crypto.randomUUID()}/video_480.mp4`;
+    await mediaStorage.putFile(key, file, "video/mp4");
+    const media = { kind: "video", durationMs: 4000, variants: { video_480: { key, byteSize: fs.statSync(file).size, mimeType: "video/mp4" } } } as never;
+    const frames = await videoFrames(media, mediaStorage);
+    assert.equal(frames.length, FRAME_POINTS.length);
+    assert.ok(frames.every((f) => f.mediaType === "image/jpeg" && f.data.length > 100));
+    // A photo has none; a rendition that can't be read gives none, and the cover is still checked.
+    assert.deepEqual(await videoFrames({ kind: "photo", variants: {} } as never, mediaStorage), []);
+    assert.deepEqual(await videoFrames({ kind: "video", durationMs: 4000, variants: { video_480: { key: `m/${crypto.randomUUID()}/video_480.mp4`, byteSize: 10, mimeType: "video/mp4" } } } as never, mediaStorage), []);
+    fs.rmSync(dir, { recursive: true, force: true });
+  });
+
+  it("a new profile photo showing it is taken off the profile, with a notice; a fine one stays, and each is looked at once", async () => {
+    const setPhoto = async () => {
+      const input = uniqueUser();
+      const signup = await client.post("/api/v1/auth/signup", input);
+      const auth = authHeader(signup.body.tokens.accessToken as string);
+      const up = await fetch(`${baseUrl}/api/v1/media/photos`, { method: "POST", headers: { "Content-Type": "image/png", ...auth }, body: buildTestPng(8, 8) });
+      const mediaId = ((await up.json()) as { media: { id: string } }).media.id;
+      const res = await client.patch("/api/v1/users/me", { avatarMediaId: mediaId }, auth);
+      assert.equal(res.status, 200, JSON.stringify(res.body));
+      return { id: signup.body.user.id as string, mediaId };
+    };
+    const bad = await setPhoto();
+    const good = await setPhoto();
+    const unsafe = fakeAi({ topic: null, altText: null, safety: "sexual", festival: false });
+    assert.deepEqual(await checkPhotos(unsafe, mediaStorage, 5, [bad.id]), { checked: 1, removed: 1 });
+    assert.equal((await queryOne(`SELECT avatar_media_id FROM users WHERE id = :'id'`, { id: bad.id }))!.avatar_media_id, null);
+    const notice = await queryOne(`SELECT a.action, a.reason FROM moderation_notices n JOIN moderation_actions a ON a.id = n.action_id WHERE n.user_id = :'id'`, { id: bad.id });
+    assert.equal(notice?.action, "remove_profile_photo");
+    assert.equal(notice?.reason, PHOTO_REMOVAL_REASON);
+    const fine = fakeAi({ topic: null, altText: null, safety: "ok", festival: false });
+    assert.deepEqual(await checkPhotos(fine, mediaStorage, 5, [good.id]), { checked: 1, removed: 0 });
+    assert.equal((await queryOne(`SELECT avatar_media_id FROM users WHERE id = :'id'`, { id: good.id }))!.avatar_media_id, good.mediaId);
+    assert.deepEqual(await checkPhotos(fine, mediaStorage, 5, [good.id]), { checked: 0, removed: 0 });
   });
 });

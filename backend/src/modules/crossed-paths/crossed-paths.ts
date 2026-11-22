@@ -1,3 +1,4 @@
+import { aiClearedSql } from "../../shared/aiCleared";
 import type { Router } from "../../http/router";
 import { requireAuth } from "../../http/middleware/auth.middleware";
 import { sendJson } from "../../http/respond";
@@ -97,7 +98,7 @@ export async function runCrossedPaths(options: { anyHour?: boolean } = {}): Prom
        SELECT uid, other FROM ranked WHERE n + today <= :'cap'
        RETURNING user_id, other_id)
      SELECT c.user_id, c.other_id,
-            (SELECT s.id FROM stories s WHERE s.owner_id = c.other_id AND s.audience = 'public' AND s.deleted_at IS NULL
+            (SELECT s.id FROM stories s WHERE s.owner_id = c.other_id AND s.audience = 'public' AND s.deleted_at IS NULL AND ${aiClearedSql("s")}
                AND s.moderation_removed_at IS NULL AND s.expires_at > now() ORDER BY s.created_at DESC LIMIT 1) AS story_id
      FROM chosen c`,
     { cap: CROSSINGS_PER_DAY, any_hour: options.anyHour === true },

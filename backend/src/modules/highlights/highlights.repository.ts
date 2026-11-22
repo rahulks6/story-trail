@@ -1,3 +1,4 @@
+import { aiClearedSql } from "../../shared/aiCleared";
 import { shownToViewerSql } from "../../shared/testAccounts";
 import { nullable, query, queryOne, type Row } from "../../db/psql";
 import type { Audience } from "../stories/stories.repository";
@@ -217,7 +218,7 @@ export async function listDiscoverable(viewerId: string, limit: number): Promise
        FROM highlights h
        JOIN users u ON u.id = h.owner_id
        JOIN highlight_items hi ON hi.highlight_id = h.id
-       JOIN stories s ON s.id = hi.story_id AND s.deleted_at IS NULL AND s.moderation_removed_at IS NULL AND s.audience = 'public'
+       JOIN stories s ON s.id = hi.story_id AND s.deleted_at IS NULL AND s.moderation_removed_at IS NULL AND s.audience = 'public' AND ${aiClearedSql("s")}
                      AND ${COLLAB_BLOCKS_SQL}
        WHERE h.owner_id <> :'viewer' AND u.deleted_at IS NULL AND u.is_active AND NOT u.is_private AND u.moderation_state = 'ACTIVE'
          AND ${shownToViewerSql("u")}
