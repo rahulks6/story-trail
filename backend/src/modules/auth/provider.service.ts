@@ -6,7 +6,7 @@ import {finishSignIn} from './two-step';
 import {recordLoginSuccess,type ClientContext} from './account-security';
 import {findUserById} from '../users/users.repository';
 import {providerConfig,type VerifiedGoogle} from './providers';
-import {USERNAME_MESSAGES,usernameProblem} from '../users/username-policy';
+import {USERNAME_MESSAGES,cleanUsername,usernameProblem} from '../users/username-policy';
 import {BIRTH_DATE_MESSAGES,birthDateProblem} from './age';
 import {CHECK_MARK_MESSAGE,hasCheckMark} from '../../shared/verified';
 import {GRANT_COLUMNS,grantOf,revokeQuietly,type AppleGrant,type VerifiedApple} from './apple';
@@ -40,7 +40,10 @@ export function identityError(e:unknown):never {
  throw e;
 }
 /** Finishes a Google, Apple or phone sign-in. A new account also needs a username and a date of birth (age.ts). */
-export async function complete(proof:string,username:unknown,name:unknown,birthDateInput:unknown,client:ClientContext){
+export async function complete(proof:string,usernameInput:unknown,name:unknown,birthDateInput:unknown,client:ClientContext){
+ // Cleaned exactly as the availability check cleans it (spaces a keyboard adds, capitals), so a
+ // name shown as available is never refused here.
+ const username=typeof usernameInput==='string'?cleanUsername(usernameInput):usernameInput;
  const birthDate=typeof birthDateInput==='string'?birthDateInput.trim():birthDateInput;
  if(username!==undefined){const problem=typeof username==='string'?usernameProblem(username):{message:USERNAME_MESSAGES.invalid};if(problem)throw new HttpError(422,problem.message);}
  if(name!==undefined&&(typeof name!=='string'||name.length>60))throw new HttpError(422,'Display name must be at most 60 characters.');

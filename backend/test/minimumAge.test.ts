@@ -175,6 +175,18 @@ describe("sign-up with Google (the same path as a phone number)", () => {
     assert.equal(retry.status, 401, "a different date needs a new sign-in");
   });
 
+  it("takes the username as the availability check saw it: spaces a keyboard added and capitals don't refuse it", async () => {
+    const proof = await pendingProof();
+    const name = `kb_${randomUUID().slice(0, 8)}`;
+    // Gboard adds a space after a word picked from its suggestions; the availability check
+    // ignores it, so the sign-up must too (it refused these, and people gave up).
+    const available = await client.get(`/api/v1/usernames/availability?username=${encodeURIComponent(` ${name.toUpperCase()} `)}`);
+    assert.equal(available.body.available, true, JSON.stringify(available.body));
+    const done = await finish(proof, { username: ` ${name.toUpperCase()} `, birthDate: ADULT_BIRTH_DATE });
+    assert.equal(done.status, 200, JSON.stringify(done.body));
+    assert.equal(done.body.user.username, name);
+  });
+
   it("asks nothing more of someone whose account already exists", async () => {
     const idToken = `verified-${randomUUID()}`;
     const first = await client.post("/api/v1/auth/google", { idToken });
