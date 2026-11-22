@@ -59,6 +59,10 @@ const ANYWHERE_WORDS = [
   "nigger", "nigga", "faggot", "retard", "tranny", "chink", "dickhead", "motherf", "hitler",
   // Common Hindi and Hinglish abuse, transliterated.
   "chutiya", "chutia", "madarchod", "maderchod", "behenchod", "bhenchod", "bhosdi", "bhosad", "gandu", "harami",
+  // Sexual content and adult sites (Hindi and English), and well-known adult performers: names
+  // like these exist to advertise porn.
+  "chudai", "chudakkad", "chodu", "nude", "naked", "hentai", "nsfw", "onlyfans", "milf", "xvideo", "xnxx",
+  "xhamster", "brazzers", "camgirl", "miakhalifa", "sunnyleone", "johnnysins", "alyxstar", "lanarhoades", "rileyreid",
 ] as const;
 
 // Offensive only as a whole part of the name: inside longer words these are usually innocent
@@ -66,6 +70,7 @@ const ANYWHERE_WORDS = [
 const WHOLE_PART_WORDS = [
   "ass", "arse", "boob", "boobs", "tits", "dick", "cock", "cum", "sex", "xxx", "rape", "rapist", "fag", "hoe",
   "coon", "spic", "kike", "paki", "nazi", "lavda", "chod",
+  "sexy", "horny", "escort", "randi", "lund", "lauda", "loda", "chut", "jhant", "gaand",
 ] as const;
 
 /** The word lists, for tests that check properties of every entry. */

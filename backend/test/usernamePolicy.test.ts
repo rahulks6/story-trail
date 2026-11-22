@@ -106,6 +106,16 @@ describe("the username rules", () => {
     }
   });
 
+  it("blocks names that advertise porn: sexual slang in Hindi and English, adult sites and performers", () => {
+    for (const name of ["chudai", "chudai_queen", "alyxstar_33k", "miakhalifa", "sunny.leone", "only_fans_girl", "onlyfans", "xnxx_videos", "nud3s", "naked.girl", "hot.milf", "sexy", "sexy_girl", "lund", "randi"]) {
+      assert.equal(usernameProblem(name)?.reason, "not_allowed", name);
+    }
+    // Ordinary names that contain the letters stay allowed.
+    for (const name of ["sunny", "leone", "mia", "khalifa", "randhir", "lundgren_fan", "escorts_club_member", "chutney.lover", "sexton"]) {
+      assert.equal(usernameProblem(name), null, name);
+    }
+  });
+
   it("can't be tripped by a random hex suffix, so generated names are always allowed", () => {
     // Letters that hex digits become once digits are read as letters.
     const hexLetters = new Set(normaliseUsername("0123456789abcdef"));
