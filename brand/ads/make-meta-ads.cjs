@@ -67,6 +67,20 @@ const IDEAS = {
     ${phone("phone-profile", l.cx, l.top, l.h, l.tilt)}
     <div style="position:absolute;left:${l.chip1[0]}px;top:${l.chip1[1]}px;padding:18px 30px;border-radius:24px;background:linear-gradient(135deg,#FFD84D,#FF9F1C);color:#0B0F17;font:900 38px Inter;box-shadow:0 16px 40px rgba(0,0,0,.4);white-space:nowrap">★ Founding member #57</div>
     ${badge(...l.badge)}`; },
+  // 5. The invite contest (23 Nov - 21 Dec 2026): rules at katkee.com/contest. No Amazon logo.
+  "5-invite-contest": (w, h, k) => { const l = L[k]; return `${bgDark(w, h)}
+    ${text(`Invite friends.<br>Win <span style="color:${Y}">₹1,000</span>. 🏆`, "Bring the most friends to Katkee by 21 Dec and win a ₹1,000 Amazon voucher. Rules: katkee.com/contest", k)}
+    ${phone("phone-home", l.cx, l.top, l.h, l.tilt)}
+    <div style="position:absolute;left:${l.chip1[0]}px;top:${l.chip1[1]}px;padding:18px 30px;border-radius:24px;background:linear-gradient(135deg,#FFD84D,#FF9F1C);color:#0B0F17;font:900 36px Inter;box-shadow:0 16px 40px rgba(0,0,0,.4);white-space:nowrap">🏆 You're #2 · 1 more to lead</div>
+    ${badge(...l.badge)}`; },
+  // 6. The first idea in Hindi (Devanagari), for the Hindi ad set.
+  "6-hindi-apne-log": (w, h, k) => { const l = L[k]; return `${bgDark(w, h)}
+    <div style="position:absolute;left:70px;top:${k === "story" ? 290 : 80}px;width:${k === "square" ? 560 : 940}px;font-family:'Noto Sans Devanagari',Inter">
+      <div style="font:800 ${k === "square" ? 70 : 90}px/1.2 'Noto Sans Devanagari',Inter;color:#fff">अपने <span style="color:${Y}">8</span> के लिए<br>Story डालो।</div>
+      <div style="font:600 ${k === "square" ? 30 : 38}px/1.45 'Noto Sans Devanagari',Inter;color:#C9D1DE;margin-top:22px">800 अनजान लोगों के लिए नहीं। हर Story कौन देखे, आप चुनें।</div></div>
+    ${phone("phone-home", l.cx, l.top, l.h, l.tilt)}
+    ${chip("★ Close Friends", `left:${l.chip1[0]}px;top:${l.chip1[1]}px;background:#2BB673;color:#fff`)}
+    ${badge(...l.badge)}`; },
 };
 
 (async () => {
@@ -75,7 +89,7 @@ const IDEAS = {
   for (const [idea, make] of Object.entries(IDEAS)) {
     for (const [kind, [w, h]] of Object.entries(SIZES)) {
       const page = await browser.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
-      await page.setContent(`<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
+      await page.setContent(`<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800;900&family=Noto+Sans+Devanagari:wght@600;800&display=swap" rel="stylesheet">
         <style>*{margin:0;padding:0;box-sizing:border-box}body{width:${w}px;height:${h}px;overflow:hidden;position:relative;font-family:Inter}</style></head><body>${make(w, h, kind)}</body></html>`, { waitUntil: "networkidle" }).catch(() => {});
       await page.evaluate(() => document.fonts.ready);
       const file = path.join(OUT, `katkee-${idea}-${kind}-${w}x${h}.png`);

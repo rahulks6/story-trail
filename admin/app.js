@@ -167,7 +167,7 @@ function table(headings, rows) {
 }
 // The newest real accounts, where each came from and what it has done so far: who to welcome,
 // who came from ads, and who is spamming.
-const SOURCES = { google_ads: 'Google ads', play_organic: 'Play Store', play_other: 'Other link', invite: 'Invite link', unknown: 'Unknown' };
+const SOURCES = { google_ads: 'Google ads', meta_ads: 'Meta ads', play_organic: 'Play Store', play_other: 'Other link', invite: 'Invite link', unknown: 'Unknown' };
 async function newUsersPage(c, version) {
     let period = 'today';
     try { period = sessionStorage.getItem('katkee.newUsersPeriod') || 'today'; } catch { /* storage unavailable */ }

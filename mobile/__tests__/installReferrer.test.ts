@@ -60,6 +60,8 @@ test("tells a Google ads install from an invite, the Play Store and anything els
   expect(installSourceFromReferrer("katkee_invite=abcd2345")).toBe("invite");
   expect(installSourceFromReferrer("utm_source=google-play&utm_medium=organic")).toBe("play_organic");
   expect(installSourceFromReferrer("utm_source=instagram&utm_medium=bio")).toBe("play_other");
+  expect(installSourceFromReferrer("utm_source%3Dmeta%26utm_medium%3Dpaid_social".replace(/%3D/g, "=").replace(/%26/g, "&"))).toBe("meta_ads");
+  expect(installSourceFromReferrer("utm_source=instagram&utm_medium=paid")).toBe("meta_ads");
   expect(installSourceFromReferrer("")).toBe("unknown");
   expect(installSourceFromReferrer(null)).toBe("unknown");
 });

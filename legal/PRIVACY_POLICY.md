@@ -170,7 +170,8 @@ invited accounts before sending the prize, to keep the contest fair.
 ### Where you installed Katkee from
 On Android, when the app is first opened, it asks Google Play where the
 install came from and keeps only one broad answer: a Katkee invite, a
-Katkee ad on Google, the Play Store, another link, or unknown. That answer
+Katkee ad on Google, a Katkee ad on Facebook or Instagram, the Play Store,
+another link, or unknown. That answer
 is counted once, with our other app analytics, so we know which of our
 ads and invites work. We never keep the ad click id or the full referrer,
 don't use any attribution service, and don't share it with anyone.

@@ -33,11 +33,12 @@ export function inviteCodeFromReferrer(referrer: string | null | undefined): str
   return null;
 }
 
-export type InstallSource = "google_ads" | "invite" | "play_organic" | "play_other" | "unknown";
+export type InstallSource = "google_ads" | "meta_ads" | "invite" | "play_organic" | "play_other" | "unknown";
 
 /**
  * Where an install came from, in broad strokes only: a Google Ads click (Play passes the click id
- * as gclid, gbraid or wbraid), a Katkee invite, an ordinary Play Store visit, some other campaign
+ * as gclid, gbraid or wbraid), a Katkee ad on Facebook or Instagram (its Play link says
+ * utm_source=meta, brand/ads/META_ADS.md), a Katkee invite, an ordinary Play Store visit, some other campaign
  * link, or not known. Never the referrer itself or the click id.
  */
 export function installSourceFromReferrer(referrer: string | null | undefined): InstallSource {
@@ -52,6 +53,9 @@ export function installSourceFromReferrer(referrer: string | null | undefined): 
   }
   if (["gclid", "gbraid", "wbraid"].some((k) => params.get(k))) return "google_ads";
   const medium = params.get("utm_medium");
+  const source = params.get("utm_source") ?? "";
+  // Paid links only: an unpaid link from an Instagram bio stays "another link".
+  if (source === "meta" || (["facebook", "fb", "instagram", "ig"].includes(source) && medium && ["paid", "paid_social", "cpc", "ppc"].includes(medium))) return "meta_ads";
   if (medium && ["cpc", "ppc", "paid"].includes(medium)) return "google_ads";
   if (medium === "organic" || (params.get("utm_source") === "google-play" && !medium)) return "play_organic";
   return params.size ? "play_other" : "unknown";
