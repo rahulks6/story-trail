@@ -165,6 +165,39 @@ function table(headings, rows) {
     wrap.append(t);
     return wrap;
 }
+// The newest real accounts, where each came from and what it has done so far: who to welcome,
+// who came from ads, and who is spamming.
+const SOURCES = { google_ads: 'Google ads', play_organic: 'Play Store', play_other: 'Other link', invite: 'Invite link', unknown: 'Unknown' };
+async function newUsersPage(c, version) {
+    let period = 'today';
+    try { period = sessionStorage.getItem('katkee.newUsersPeriod') || 'today'; } catch { /* storage unavailable */ }
+    const data = await api('users/new?period=' + encodeURIComponent(period));
+    if (version !== renderVersion) return;
+    c.replaceChildren();
+    const bar = el('div', undefined, 'card');
+    for (const [value, label] of [['today', 'Today'], ['7', 'Last 7 days'], ['30', 'Last 30 days']]) {
+        const b = button(label, () => { try { sessionStorage.setItem('katkee.newUsersPeriod', value); } catch { /* storage unavailable */ } return render(); }, value !== data.period);
+        b.setAttribute('aria-pressed', String(value === data.period));
+        bar.append(b);
+    }
+    const items = data.items;
+    const by = {};
+    for (const u of items) { const k = u.invitedBy ? 'invite' : (u.source || 'unknown'); by[k] = (by[k] || 0) + 1; }
+    const sources = Object.entries(by).sort((a, b) => b[1] - a[1]).map(([k, n]) => `${SOURCES[k] || k} ${n}`).join(' · ');
+    const noFollows = items.filter(u => Number(u.following) === 0 && u.active).length;
+    bar.append(el('p', `${count(items.length)} new ${items.length === 1 ? 'person' : 'people'}${sources ? ': ' + sources : ''}. ${count(noFollows)} follow nobody yet. Test accounts are left out; times are your browser's.`, 'muted'));
+    c.append(bar);
+    if (!items.length) { c.append(el('p', 'Nobody new in this period.', 'muted')); return; }
+    const status = u => u.state === 'SUSPENDED' ? 'Suspended' : u.state === 'RESTRICTED' ? 'Restricted' : u.removed > 0 ? `Active · ${u.removed} removed` : 'Active';
+    c.append(table(['Joined', 'Person', 'Came from', 'Visits', 'Following', 'Followers', 'Stories', 'Watched', 'App', 'Status'], items.map(u => [
+        new Date(u.joinedAt).toLocaleString(undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }),
+        `@${u.username}${u.displayName && u.displayName !== u.username ? ' (' + u.displayName + ')' : ''}${u.hasAvatar ? '' : ' · no photo'}`,
+        u.invitedBy ? `Invite from @${u.invitedBy}` : (SOURCES[u.source] || '—'),
+        count(u.sessions), count(u.following), count(u.followers), count(u.stories), count(u.watched),
+        (u.appVersion || '—').replace(/^1\.0\.0\+/, ''),
+        status(u),
+    ])));
+}
 async function analyticsPage(c) {
     let days = 30;
     try { days = Number(sessionStorage.getItem('katkee.analyticsDays')) || 30; } catch { /* storage unavailable */ }
@@ -308,7 +341,7 @@ async function verificationPage(c) {
         c.append(box);
     }
 }
-const sections = [['Dashboard', 'reports.read'], ['Analytics', 'analytics.read'], ['Crashes', 'crashes.read'], ['Feedback', 'feedback.read'], ['Verification', 'verification.review'], ['Reports', 'reports.read'], ['Moderation', 'moderation.history.read'], ['Users', 'users.view'], ['Ads', 'ads.analytics.read'], ['Appeals', 'reports.review'], ['Admins', 'admins.read'], ['Audit Logs', 'audit.read'], ['Security', 'security.alerts.read'], ['Link safety', 'safety.settings.manage'], ['Festivals', 'safety.settings.manage'], ['Settings', 'ads.analytics.read']];
+const sections = [['Dashboard', 'reports.read'], ['Analytics', 'analytics.read'], ['New users', 'users.view'], ['Crashes', 'crashes.read'], ['Feedback', 'feedback.read'], ['Verification', 'verification.review'], ['Reports', 'reports.read'], ['Moderation', 'moderation.history.read'], ['Users', 'users.view'], ['Ads', 'ads.analytics.read'], ['Appeals', 'reports.review'], ['Admins', 'admins.read'], ['Audit Logs', 'audit.read'], ['Security', 'security.alerts.read'], ['Link safety', 'safety.settings.manage'], ['Festivals', 'safety.settings.manage'], ['Settings', 'ads.analytics.read']];
 async function render() { const version = ++renderVersion; for (const url of objectUrls)
     URL.revokeObjectURL(url); objectUrls = []; $('title').textContent = page; const c = $('content'); c.replaceChildren(el('p', 'Loading…', 'muted')); for (const n of $('navigation').children)
     n.setAttribute('aria-current', n.textContent === page ? 'page' : 'false'); try {
@@ -326,6 +359,10 @@ async function render() { const version = ++renderVersion; for (const url of obj
     }
     if (page === 'Analytics') {
         await analyticsPage(c);
+        return;
+    }
+    if (page === 'New users') {
+        await newUsersPage(c, version);
         return;
     }
     if (page === 'Verification') {

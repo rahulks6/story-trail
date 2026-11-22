@@ -238,4 +238,23 @@ describe("moderation", () => {
     await file.arrayBuffer();
     assert.equal(file.status, 404);
   });
+  it("lists today's new people for admins with users.view, newest first", async () => {
+    const [viewerOnly, outsider] = [await signup(), await signup()];
+    const [bob, carol] = [await signup(), await signup()];
+    await query(`UPDATE users SET created_at = now() - interval '40 days' WHERE id = :'id'`, { id: viewerOnly.id });
+    await query(`INSERT INTO admin_grants(user_id, role, permissions) VALUES (:'id', 'ADMIN', '["users.view"]'::jsonb)`, { id: viewerOnly.id });
+    assert.equal((await client.post(`/api/v1/users/${carol.username}/follow`, {}, authHeader(bob.token))).status < 300, true);
+    const viewer = await adminSignIn(baseUrl, viewerOnly.email, viewerOnly.password);
+    const res = await fetch(`${baseUrl}/api/v1/admin/users/new?period=today`, { headers: viewer });
+    assert.equal(res.status, 200);
+    const body = (await res.json()) as { period: string; items: Array<{ username: string; following: number; followers: number }> };
+    assert.equal(body.period, "today");
+    const names = body.items.map(u => u.username);
+    assert.ok(names.indexOf(carol.username) < names.indexOf(bob.username), "newest first");
+    assert.ok(!names.includes(viewerOnly.username), "older accounts are left out");
+    assert.equal(body.items.find(u => u.username === bob.username)?.following, 1);
+    assert.equal(body.items.find(u => u.username === carol.username)?.followers, 1);
+    assert.equal((await (await fetch(`${baseUrl}/api/v1/admin/users/new?period=30`, { headers: viewer })).json() as { items: unknown[] }).items.some((u: any) => u.username === viewerOnly.username), false);
+    assert.equal((await fetch(`${baseUrl}/api/v1/admin/users/new`, { headers: authHeader(outsider.token) })).status >= 400, true);
+  });
 });

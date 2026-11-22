@@ -100,6 +100,32 @@ export function registerAdminRoutes(router: Router): void {
         throw new HttpError(409, 'Report already claimed or resolved. Refresh state.'); sendJson(res, 200, result); });
     router.post('/api/v1/admin/moderate', async (req, res) => { const p = await requireAdmin(req, undefined, false, true); sendJson(res, 200, await moderate(p, body(req.body))); });
     router.get('/api/v1/admin/users', async (req, res) => { await requireAdmin(req, 'users.view'); const q = parseQueryString(req.url ?? ''); const page = parsePagination(q); sendJson(res, 200, { items: await rows(`SELECT jsonb_build_object('id',id,'username',username,'displayName',display_name,'state',moderation_state,'active',is_active,'hasAvatar',avatar_media_id IS NOT NULL,'hasCover',cover_media_id IS NOT NULL) AS data FROM users WHERE deleted_at IS NULL AND (username::text ILIKE :'pattern' OR id::text=:'search') ORDER BY username LIMIT :'limit' OFFSET :'offset'`, { ...page, pattern: containsPattern((q.search ?? '').slice(0, 100)), search: (q.search ?? '').slice(0, 100) }), ...page }); });
+    // The newest real accounts (test accounts left out), each with where it came from and what
+    // it has done so far: for following up with new people. "today" starts at midnight in India.
+    router.get('/api/v1/admin/users/new', async (req, res) => {
+        await requireAdmin(req, 'users.view');
+        const q = parseQueryString(req.url ?? '');
+        const period = ['today', '7', '30'].includes(q.period ?? '') ? q.period! : 'today';
+        const since = period === 'today' ? `(date_trunc('day', now() AT TIME ZONE 'Asia/Kolkata') AT TIME ZONE 'Asia/Kolkata')` : `now() - interval '${period === '7' ? 7 : 30} days'`;
+        res.setHeader('Cache-Control', 'no-store');
+        sendJson(res, 200, { period, items: await rows(`SELECT jsonb_build_object(
+            'id', u.id, 'username', u.username, 'displayName', u.display_name, 'joinedAt', u.created_at,
+            'state', u.moderation_state, 'active', u.is_active, 'hasAvatar', u.avatar_media_id IS NOT NULL,
+            'verifiedEmail', u.email_verified_at IS NOT NULL,
+            'source', (SELECT e.properties->>'source' FROM analytics_events e WHERE e.user_id = u.id AND e.name = 'install_source' ORDER BY e.occurred_at LIMIT 1),
+            'invitedBy', (SELECT i.username FROM invite_redemptions r JOIN users i ON i.id = r.inviter_id WHERE r.invitee_id = u.id),
+            'appVersion', (SELECT e.app_version FROM analytics_events e WHERE e.user_id = u.id AND e.app_version IS NOT NULL ORDER BY e.occurred_at DESC LIMIT 1),
+            'sessions', (SELECT count(*) FROM analytics_events e WHERE e.user_id = u.id AND e.name = 'app_session_started'),
+            'following', (SELECT count(*) FROM follows f WHERE f.follower_id = u.id),
+            'followers', (SELECT count(*) FROM follows f WHERE f.followee_id = u.id),
+            'stories', (SELECT count(*) FROM stories s WHERE s.owner_id = u.id AND s.moderation_removed_at IS NULL),
+            'removed', (SELECT count(*) FROM stories s WHERE s.owner_id = u.id AND s.moderation_removed_at IS NOT NULL),
+            'watched', (SELECT count(*) FROM story_views v WHERE v.viewer_id = u.id)) AS data
+          FROM users u
+          WHERE u.deleted_at IS NULL AND u.created_at >= ${since}
+            AND coalesce(u.email, '') NOT ILIKE 'support+e2e-%@katkee.com'
+          ORDER BY u.created_at DESC LIMIT 300`, {}) });
+    });
     // A profile's photo and cover (part of the profile, so in scope when the account is reported).
     const sendProfilePhoto = async (req: Parameters<Parameters<Router['get']>[1]>[0], res: Parameters<Parameters<Router['get']>[1]>[1], which: ProfilePhoto) => { const p = await requireAdmin(req); const media = await profilePhotoForAdmin(p, req.params.id!, which); res.setHeader('Cache-Control', 'no-store'); await sendMediaFile(req, res, media, 'display', false, mediaStorage, { redirect: false }); };
     router.get('/api/v1/admin/users/:id/avatar', async (req, res) => sendProfilePhoto(req, res, 'avatar'));
