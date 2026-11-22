@@ -179,6 +179,23 @@ describe("Google or phone onboarding", () => {
     expect(providers.complete).toHaveBeenCalledWith("proof-1", "new_person", "", "1995-05-15");
   });
 
+  test("suggests a username from their name, adds digits when it's taken, and drops spaces a keyboard adds", async () => {
+    providers.methods.mockResolvedValue({ google: false, phone: false, countries: [], codeLength: 6 });
+    await Keychain.setGenericPassword("pending", JSON.stringify({ proof: "proof-2", expiresAt: Date.now() + 60_000, name: "Rahul Sharma" }), { service: "com.katkee.provider-onboarding.v1" });
+    api.checkUsername.mockImplementation(async (name: string) => (name === "rahul.sharma" ? answer(name, "taken", "That username is taken.") : answer(name, "available", "Available.")));
+    await render(<ProviderEntry />);
+    expect(input("Username").props.value).toBe("rahul.sharma");
+    expect(input("Display name").props.value).toBe("Rahul Sharma");
+    await settle();
+    await settle();
+    expect(input("Username").props.value).toMatch(/^rahul\.sharma\d{3}$/);
+    // Typed by hand, with the space Gboard adds after a suggested word: no space, and never replaced.
+    await type("Username", "Riya_K ");
+    expect(input("Username").props.value).toBe("riya_k");
+    await settle();
+    expect(input("Username").props.value).toBe("riya_k");
+  });
+
   test("someone under 18 can't continue, and a refusal from the server ends the sign-in", async () => {
     providers.methods.mockResolvedValue({ google: false, phone: false, countries: [], codeLength: 6 });
     await Keychain.setGenericPassword("pending", JSON.stringify({ proof: "proof-3", expiresAt: Date.now() + 60_000 }), { service: "com.katkee.provider-onboarding.v1" });

@@ -15,6 +15,7 @@ import { TermsNotice } from "../../components/TermsNotice";
 import { hasTickLikeCharacter, nameTickError } from "../../api/verification";
 import { usePendingInviter } from "../../state/invites";
 import { t } from "../../i18n";
+import { cleanUsernameInput } from "../../utils/usernameSuggestion";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Signup">;
 
@@ -101,7 +102,7 @@ export function SignupScreen({ navigation }: Props): React.JSX.Element {
           submitBehavior="submit"
           onSubmitEditing={() => emailInput.current?.focus()}
           value={username}
-          onChangeText={change((text) => setUsername(text.toLowerCase()))}
+          onChangeText={change((text) => setUsername(cleanUsernameInput(text)))}
         />
         <TextField
           ref={emailInput}
