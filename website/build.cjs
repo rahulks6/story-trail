@@ -72,7 +72,9 @@ function list(lines, start, indent, where) {
     break;
   }
   const tag = ordered ? 'ol' : 'ul';
-  return [`<${tag}>\n${items.map((it) => `<li>${inline(it.text.join(' '), where)}${it.children.join('')}</li>`).join('\n')}\n</${tag}>`, i];
+  // A numbered list that goes on from an earlier one (11. after a heading) keeps its numbers.
+  const first = ordered ? Number(/^ *(\d+)\. /.exec(lines[start])[1]) : 1;
+  return [`<${tag}${first !== 1 ? ` start="${first}"` : ''}>\n${items.map((it) => `<li>${inline(it.text.join(' '), where)}${it.children.join('')}</li>`).join('\n')}\n</${tag}>`, i];
 }
 
 function slug(text, used) {
@@ -262,12 +264,59 @@ ${doc.html}
 </div>
 </article>`;
 
+  // The blog (website/blog): posts.json lists the posts, newest first, each with its search
+  // description; <slug>.md holds the post, its "**Last updated:**" line read as the date it was
+  // published. Each post is /blog/<slug>, with Article data for search engines and the store button.
+  const posts = JSON.parse(read('blog/posts.json')).map((post) => {
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(post.slug)) throw new Error(`blog: bad slug ${post.slug}`);
+    if (!post.description || post.description.length > 170) throw new Error(`blog/${post.slug}: needs a description of at most 170 characters`);
+    const doc = markdown(read(`blog/${post.slug}.md`), `website/blog/${post.slug}.md`);
+    const iso = new Date(`${doc.updated} 12:00 UTC`).toISOString().slice(0, 10);
+    if (iso === 'Invalid Date' || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) throw new Error(`blog/${post.slug}: unreadable date ${doc.updated}`);
+    return { ...post, title: doc.title, date: doc.updated, iso, html: doc.html, lang: post.lang || 'en' };
+  });
+  const postLink = (post) => `<li class="post-item"><a href="/blog/${post.slug}"><span class="post-title">${escape(post.title)}</span></a><span class="post-desc">${escape(post.description)}</span><time datetime="${post.iso}">${escape(post.date)}</time></li>`;
+  const blogPages = posts.map((post) => {
+    const related = posts.filter((p) => p.slug !== post.slug).slice(0, 3);
+    const data = { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: post.title, description: post.description, datePublished: post.iso, dateModified: post.iso, inLanguage: post.lang,
+      mainEntityOfPage: `${site.origin}/blog/${post.slug}`, author: { '@type': 'Organization', name: site.name, url: site.origin }, publisher: { '@type': 'Organization', name: site.name, url: site.origin } };
+    return {
+      route: `/blog/${post.slug}`, file: `blog-${post.slug}.html`, title: `${post.title} · ${site.name}`, description: post.description, body: 'blog', ogType: 'article',
+      scripts: `\n<script type="application/ld+json">${JSON.stringify(data, null, 1).replace(/</g, '\\u003c')}</script>`,
+      content: `<article class="blog-post wrap-narrow"${post.lang !== 'en' ? ` lang="${post.lang}"` : ''}>
+<p class="eyebrow"><a href="/blog">Katkee blog</a></p>
+<h1>${escape(post.title)}</h1>
+<p class="post-meta"><time datetime="${post.iso}">${escape(post.date)}</time></p>
+<div class="prose">
+${post.html}
+</div>
+<aside class="post-cta" aria-labelledby="cta-${post.slug}">
+<h2 id="cta-${post.slug}">Try Katkee</h2>
+<p>Stories and status with music, just for the people you choose. Free on Android.</p>
+{{{storeButtons}}}
+</aside>
+${related.length ? `<nav class="post-related" aria-label="More from the blog"><h2>More from the blog</h2><ul class="post-list">${related.map(postLink).join('')}</ul></nav>` : ''}
+</article>`,
+    };
+  });
+  const blogIndex = {
+    route: '/blog', file: 'blog.html', title: `Blog · ${site.name}`, description: `Ideas for Stories and status, how-tos and news from ${site.name}.`, body: 'blog',
+    content: `<section class="page-head wrap-narrow">
+<p class="eyebrow">Blog</p>
+<h1>Katkee blog</h1>
+<p class="lead">Ideas for your Stories and status, simple how-tos, and news from the Katkee team.</p>
+</section>
+<div class="wrap-narrow"><ul class="post-list">${posts.map(postLink).join('')}</ul></div>`,
+  };
+
   const pages = [
     { route: '/', file: 'index.html', title: `${site.name}: ${site.tagline.replace(/\.$/, '')}`, description: site.description, content: read('src/pages/index.html'), body: 'home' },
     { route: '/support', file: 'support.html', title: `Help Center · ${site.name}`, description: `Answers to common questions about ${site.name}, and how to contact us.`, content: read('src/pages/support.html'), body: 'support' },
     { route: '/delete-account', file: 'delete-account.html', title: `Delete your account · ${site.name}`, description: `How to delete your ${site.name} account, in the app or by email, and what happens to your data.`, content: read('src/pages/delete-account.html'), body: 'delete' },
     { route: '/child-safety', file: 'child-safety.html', title: `Child Safety Standards · ${site.name}`, description: `${site.name}'s standards against child sexual abuse and exploitation: what isn't allowed, how to report it and what we do.`, content: read('src/pages/child-safety.html'), body: 'delete' },
     { route: '/contest', file: 'contest.html', title: `Invite contest · ${site.name}`, description: `Invite your friends to ${site.name} and win a ₹1,000 Amazon voucher: how it works and the rules.`, content: read('src/pages/contest.html'), body: 'delete' },
+    blogIndex,
+    ...blogPages,
     { route: '/privacy', file: 'privacy.html', title: `Privacy Policy · ${site.name}`, description: `What ${site.name} collects, how we use it, who can see it and the choices you have.`, content: legalPage(privacy), body: 'legal-page' },
     { route: '/terms', file: 'terms.html', title: `Terms of Service · ${site.name}`, description: `The terms for using ${site.name}.`, content: legalPage(terms), body: 'legal-page' },
     { route: null, file: '404.html', title: `Page not found · ${site.name}`, description: site.description, content: read('src/pages/404.html'), body: 'not-found' },
@@ -311,7 +360,8 @@ ${doc.html}
     const scriptless = page.file === 'profile.html'
       ? html.replace(`<script src="${assetUrl['player.js']}" defer></script>`, '').replace(`<script type="application/json" id="web-data">${WEB_MARKERS.data}</script>`, '')
       : html;
-    if (/<script|\son[a-z]+=|\sstyle=|javascript:/i.test(scriptless)) throw new Error(`${page.file}: scripts and inline styles are not allowed (the site's Content-Security-Policy blocks them)`);
+    // Blog posts carry one Article data block (not run as code) for search engines.
+    if (/<script|\son[a-z]+=|\sstyle=|javascript:/i.test(scriptless.replace(/<script type="application\/ld\+json">[^<]*<\/script>/, ''))) throw new Error(`${page.file}: scripts and inline styles are not allowed (the site's Content-Security-Policy blocks them)`);
     for (const [, href] of html.matchAll(/\shref="([^"]+)"/g)) {
       if (href.startsWith('#') || href.startsWith('mailto:')) continue;
       // The open and invite pages' own addresses and app links are filled in per request by the API.

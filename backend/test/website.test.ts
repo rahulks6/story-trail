@@ -67,7 +67,7 @@ after(async () => {
 
 describe("the website's pages", () => {
   it("serves the landing page, Help Center, policy, terms and deletion page the app and stores link to", async () => {
-    assert.deepEqual(Object.keys(manifest.pages).sort(), ["/", "/child-safety", "/contest", "/delete-account", "/privacy", "/support", "/terms"]);
+    assert.deepEqual(Object.keys(manifest.pages).sort(), ["/", "/blog", "/blog/add-song-to-story", "/blog/close-friends-story-ideas", "/blog/dosto-ke-liye-status", "/blog/new-year-status-ideas", "/blog/share-stories-with-close-friends", "/blog/status-ideas", "/blog/status-privacy", "/child-safety", "/contest", "/delete-account", "/privacy", "/support", "/terms"]);
     for (const [route, name] of Object.entries(manifest.pages)) {
       const reply = await get(route);
       assert.equal(reply.status, 200, route);

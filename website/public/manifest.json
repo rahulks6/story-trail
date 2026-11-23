@@ -7,6 +7,14 @@
     "/delete-account": "delete-account.html",
     "/child-safety": "child-safety.html",
     "/contest": "contest.html",
+    "/blog": "blog.html",
+    "/blog/new-year-status-ideas": "blog-new-year-status-ideas.html",
+    "/blog/status-ideas": "blog-status-ideas.html",
+    "/blog/add-song-to-story": "blog-add-song-to-story.html",
+    "/blog/close-friends-story-ideas": "blog-close-friends-story-ideas.html",
+    "/blog/share-stories-with-close-friends": "blog-share-stories-with-close-friends.html",
+    "/blog/status-privacy": "blog-status-privacy.html",
+    "/blog/dosto-ke-liye-status": "blog-dosto-ke-liye-status.html",
     "/privacy": "privacy.html",
     "/terms": "terms.html"
   },
@@ -53,7 +61,7 @@
     }
   },
   "assets": {
-    "site.499ab989fb.css": "text/css; charset=utf-8",
+    "site.89ec1528bb.css": "text/css; charset=utf-8",
     "katkee-icon.483d838bba.svg": "image/svg+xml",
     "social-card.5e7e0ce26c.png": "image/png",
     "player.135ed513f1.js": "text/javascript; charset=utf-8"

@@ -411,3 +411,28 @@ a.ov-chip:hover { text-decoration: none; filter: brightness(1.06); }
   .profile-head { margin-top: -52px; }
   .profile-stats { gap: 20px; }
 }
+
+/* Blog (website/blog): the list of posts, a post, its store box and related posts. */
+.post-list { list-style: none; margin: 0 0 64px; padding: 0; display: grid; gap: 14px; }
+.post-item { display: grid; gap: 6px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--surface-2); border-radius: 18px; }
+.post-item a { color: var(--text); }
+.post-item a:hover .post-title { color: var(--accent); }
+.post-title { font-size: 1.18rem; font-weight: 800; letter-spacing: -0.01em; text-wrap: balance; }
+.post-desc { color: var(--text-2); line-height: 1.55; }
+.post-item time { color: var(--text-2); font-size: 0.85rem; }
+.blog-post { padding-top: 56px; padding-bottom: 24px; }
+.blog-post h1 { font-size: clamp(2rem, 4.6vw, 2.9rem); font-weight: 800; letter-spacing: -0.025em; line-height: 1.12; margin: 0 0 12px; text-wrap: balance; }
+.blog-post .eyebrow a { color: inherit; }
+.post-meta { color: var(--text-2); font-size: 0.92rem; margin: 0 0 32px; }
+.post-cta { margin: 48px 0 40px; padding: 26px; background: var(--surface); border: 1px solid var(--surface-2); border-radius: 20px; }
+.post-cta h2 { margin: 0 0 6px; font-size: 1.35rem; }
+.post-cta p { color: var(--text-2); margin: 0 0 16px; }
+.post-related h2 { font-size: 1.2rem; margin: 0 0 14px; }
+/* Four menu links fit beside the logo on a phone: tighter links, and Safety (also on the home page) hides first. */
+@media (max-width: 480px) {
+  .site-nav { gap: 2px; }
+  .site-nav a { padding: 8px 8px; font-size: 0.9rem; }
+}
+@media (max-width: 400px) {
+  .site-nav a[href="/#safety"] { display: none; }
+}
