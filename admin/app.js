@@ -222,6 +222,40 @@ async function contestPage(c, version) {
         c.append(box);
     }
 }
+// What the automatic check removed or suspended, newest first: View what was removed (audit-logged)
+// and, when the check was wrong, Restore (automatic-review.ts).
+const AUTO_ACTIONS = { remove: 'Story removed', suspend: 'Account suspended', remove_profile_photo: 'Profile photo removed', remove_cover_photo: 'Cover photo removed' };
+async function automaticPage(c, version) {
+    const data = await api('automatic?limit=50&offset=' + offset);
+    if (version !== renderVersion) return;
+    c.replaceChildren(el('p', 'Everything the automatic check removed or suspended. Open View to see what was removed (each view is recorded in the audit log). If the check was wrong, Restore brings the Story back and, if the account was suspended automatically, the account too.', 'muted'));
+    if (!data.items.length) { c.append(el('p', 'The automatic check hasn\'t removed anything yet.', 'muted')); return; }
+    for (const a of data.items) {
+        const o = a.owner;
+        const box = card(`${AUTO_ACTIONS[a.action] || a.action} · @${o.username}${o.displayName && o.displayName !== o.username ? ' (' + o.displayName + ')' : ''}`);
+        box.append(el('p', `${new Date(a.createdAt).toLocaleString()} · ${a.reason || ''}`, 'muted'));
+        box.append(el('p', `Account: ${o.deleted ? 'deleted' : o.state === 'ACTIVE' ? 'active' : o.state.toLowerCase()} · joined ${new Date(o.joinedAt).toLocaleString()}${a.restored ? ' · restored by an admin' : ''}`, 'muted'));
+        const row = el('div', undefined, 'actions');
+        const shown = el('div');
+        if (a.media) row.append(button('View', async () => {
+            const r = await fetch('/api/v1/admin/automatic/' + a.id + '/media', { credentials: 'same-origin' });
+            if (!r.ok) throw Error('Not available any more.');
+            const blob = await r.blob(); const src = URL.createObjectURL(blob); objectUrls.push(src);
+            const m = el(blob.type.startsWith('video/') ? 'video' : 'img');
+            m.src = src; m.style.maxWidth = '320px'; m.style.maxHeight = '560px'; m.style.borderRadius = '12px';
+            if (m.tagName === 'VIDEO') { m.controls = true; m.muted = true; }
+            shown.replaceChildren(m);
+        }, true));
+        if (a.restorable) row.append(button('Restore', async () => {
+            if (!confirm(a.action === 'suspend' ? `Make @${o.username}'s account active again?` : `Restore this Story${o.state === 'SUSPENDED' ? ` and @${o.username}'s account` : ''}? Only do this if the automatic check was wrong.`)) return;
+            const done = await api('automatic/' + a.id + '/restore', 'POST', { confirmed: true, reason: 'Restored after review: the automatic check was wrong.' });
+            message('Restored: ' + done.restored.join(' and ') + '.');
+            await render();
+        }));
+        box.append(row, shown);
+        c.append(box);
+    }
+}
 async function analyticsPage(c) {
     let days = 30;
     try { days = Number(sessionStorage.getItem('katkee.analyticsDays')) || 30; } catch { /* storage unavailable */ }
@@ -365,7 +399,7 @@ async function verificationPage(c) {
         c.append(box);
     }
 }
-const sections = [['Dashboard', 'reports.read'], ['Analytics', 'analytics.read'], ['New users', 'users.view'], ['Invite contest', 'users.view'], ['Crashes', 'crashes.read'], ['Feedback', 'feedback.read'], ['Verification', 'verification.review'], ['Reports', 'reports.read'], ['Moderation', 'moderation.history.read'], ['Users', 'users.view'], ['Ads', 'ads.analytics.read'], ['Appeals', 'reports.review'], ['Admins', 'admins.read'], ['Audit Logs', 'audit.read'], ['Security', 'security.alerts.read'], ['Link safety', 'safety.settings.manage'], ['Festivals', 'safety.settings.manage'], ['Settings', 'ads.analytics.read']];
+const sections = [['Dashboard', 'reports.read'], ['Analytics', 'analytics.read'], ['New users', 'users.view'], ['Invite contest', 'users.view'], ['Automatic checks', 'moderation.history.read'], ['Crashes', 'crashes.read'], ['Feedback', 'feedback.read'], ['Verification', 'verification.review'], ['Reports', 'reports.read'], ['Moderation', 'moderation.history.read'], ['Users', 'users.view'], ['Ads', 'ads.analytics.read'], ['Appeals', 'reports.review'], ['Admins', 'admins.read'], ['Audit Logs', 'audit.read'], ['Security', 'security.alerts.read'], ['Link safety', 'safety.settings.manage'], ['Festivals', 'safety.settings.manage'], ['Settings', 'ads.analytics.read']];
 async function render() { const version = ++renderVersion; for (const url of objectUrls)
     URL.revokeObjectURL(url); objectUrls = []; $('title').textContent = page; const c = $('content'); c.replaceChildren(el('p', 'Loading…', 'muted')); for (const n of $('navigation').children)
     n.setAttribute('aria-current', n.textContent === page ? 'page' : 'false'); try {
@@ -391,6 +425,10 @@ async function render() { const version = ++renderVersion; for (const url of obj
     }
     if (page === 'Invite contest') {
         await contestPage(c, version);
+        return;
+    }
+    if (page === 'Automatic checks') {
+        await automaticPage(c, version);
         return;
     }
     if (page === 'Verification') {

@@ -166,6 +166,9 @@ describe("festival rings, decided by the AI", () => {
   const saved = { ...settings };
   const slug = `ai-fest-${Date.now()}`;
   before(async () => {
+    // This file's own database: a real festival in the calendar on the day the tests run
+    // (a festival counts from the day before to the day after: Guru Nanak Jayanti on 24 Nov 2026) would otherwise be the day's festival instead.
+    await query(`DELETE FROM festivals WHERE (now() AT TIME ZONE 'Asia/Kolkata')::date BETWEEN starts_on - 1 AND ends_on + 1`);
     await query(
       `INSERT INTO festivals (slug, name, emoji, greeting, starts_on, ends_on)
        VALUES (:'slug', 'Chhath Puja', '🌅', 'Happy Chhath Puja', (now() AT TIME ZONE 'Asia/Kolkata')::date, (now() AT TIME ZONE 'Asia/Kolkata')::date)`,

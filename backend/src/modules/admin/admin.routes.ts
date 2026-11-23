@@ -15,6 +15,7 @@ import { receiveUpload } from "../media/media.service";
 import { findMediaById } from "../media/media.repository";
 import { sendMediaFile } from "../media/delivery";
 import { sendPage, sendUnversionedAsset, sendVersionedAsset } from "./console-assets";
+import { automaticActionMedia, listAutomaticActions, restoreAutomaticAction } from "./automatic-review";
 /** "https://Evil.Example.com/path" → "evil.example.com"; anything that isn't a domain is refused. */
 function linkDomain(value: unknown): string {
     const raw = text(value, 300).toLowerCase().replace(/^[a-z]+:\/\//, '').split(/[/?#:]/)[0]!.replace(/\.$/, '');
@@ -132,6 +133,10 @@ export function registerAdminRoutes(router: Router): void {
     router.get('/api/v1/admin/users/:id/cover', async (req, res) => sendProfilePhoto(req, res, 'cover'));
     router.post('/api/v1/admin/users/:id/avatar/remove', async (req, res) => { const p = await requireAdmin(req, 'content.remove', false, true); sendJson(res, 200, await removeProfilePhoto(p, req.params.id!, 'avatar', body(req.body))); });
     router.post('/api/v1/admin/users/:id/cover/remove', async (req, res) => { const p = await requireAdmin(req, 'content.remove', false, true); sendJson(res, 200, await removeProfilePhoto(p, req.params.id!, 'cover', body(req.body))); });
+    // The automatic check's removals and suspensions, to see and, when it was wrong, undo (automatic-review.ts).
+    router.get('/api/v1/admin/automatic', async (req, res) => { await requireAdmin(req, 'moderation.history.read'); const page = parsePagination(parseQueryString(req.url ?? '')); res.setHeader('Cache-Control', 'no-store'); sendJson(res, 200, { items: await listAutomaticActions(page.limit, page.offset), ...page }); });
+    router.get('/api/v1/admin/automatic/:actionId/media', async (req, res) => { const p = await requireAdmin(req, 'moderation.history.read'); const media = await findMediaById(await automaticActionMedia(p, req.params.actionId!)); if (!media) throw new HttpError(404, 'Nothing to show for this action.'); await sendMediaFile(req, res, media, null, false, mediaStorage, { redirect: false }); });
+    router.post('/api/v1/admin/automatic/:actionId/restore', async (req, res) => { const p = await requireAdmin(req, 'moderation.history.read', false, true); sendJson(res, 200, await restoreAutomaticAction(p, req.params.actionId!, body(req.body))); });
     router.get('/api/v1/admin/history', async (req, res) => { await requireAdmin(req, 'moderation.history.read'); const q = parseQueryString(req.url ?? ''); const page = parsePagination(q); sendJson(res, 200, { items: await rows(`SELECT to_jsonb(a) AS data FROM moderation_actions a WHERE (:'target'='' OR target_id::text=:'target') ORDER BY created_at DESC LIMIT :'limit' OFFSET :'offset'`, { ...page, target: q.target ?? '' }), ...page }); });
     // Filterable by action (prefix match, e.g. MODERATION_), actor, target and time range.
     router.get('/api/v1/admin/audit', async (req, res) => {

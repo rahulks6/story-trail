@@ -270,7 +270,8 @@ export async function suspendRepeatOffender(userId: string): Promise<boolean> {
      WHERE a.actor_id IS NULL AND a.created_at > now() - interval '1 day'
        AND a.action IN ('remove', 'remove_profile_photo', 'remove_cover_photo')
        AND ((a.target_type = 'user' AND a.target_id = :'user')
-         OR (a.target_type = 'story' AND EXISTS (SELECT 1 FROM stories s WHERE s.id = a.target_id AND s.owner_id = :'user')))`,
+         -- A Story an admin restored (the check was wrong) doesn't count.
+         OR (a.target_type = 'story' AND EXISTS (SELECT 1 FROM stories s WHERE s.id = a.target_id AND s.owner_id = :'user' AND s.moderation_removed_at IS NOT NULL)))`,
     { user: userId },
   );
   if (Number(row?.n ?? 0) < REMOVALS_BEFORE_SUSPENSION) return false;

@@ -21,7 +21,9 @@ before(async () => {
   await new Promise<void>((resolve) => server.listen(0, resolve));
   baseUrl = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
   client = makeClient(baseUrl);
-  // A contest running now (the real one, from the migration, starts later).
+  // A contest running now, and only that one: the real one from the migration (from 23 Nov
+  // 2026) is left out of this file's own database so the dates don't depend on today.
+  await query(`DELETE FROM invite_contests`);
   contestId = (await queryOne(
     `INSERT INTO invite_contests (slug, prize_minor, starts_at, ends_at, counts_until)
      VALUES ('test-contest', 100000, now() - interval '10 days', now() + interval '10 days', now() + interval '13 days') RETURNING id`,
