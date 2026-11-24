@@ -144,20 +144,26 @@ function decoyHash(): Promise<string> {
   return timingDecoy;
 }
 
+/**
+ * The same words whether or not the account exists (never says which), with the way out for
+ * someone who signed up with Google and has no password.
+ */
+export const WRONG_LOGIN = "Wrong email, username or password. If you signed up with Google, tap Continue with Google.";
+
 export async function login(
   input: LoginInput,
   client: ClientContext,
 ): Promise<SignInResult> {
-  const user = await usersRepo.findUserByEmail(input.email);
+  const user = input.byUsername ? await usersRepo.findUserByUsername(input.email) : await usersRepo.findUserByEmail(input.email);
   if (!user || !user.isActive) {
     await verifyPassword(input.password, await decoyHash());
-    throw new AuthError("Invalid email or password.", 401);
+    throw new AuthError(WRONG_LOGIN, 401);
   }
   await assertLoginAllowed(user.id);
   const valid = await verifyPassword(input.password, user.passwordHash);
   if (!valid) {
     await recordLoginFailure(user.id, client);
-    throw new AuthError("Invalid email or password.", 401);
+    throw new AuthError(WRONG_LOGIN, 401);
   }
   // With two-step login on, a challenge instead: the code finishes the sign-in (two-step.ts).
   return finishSignIn(user.id, client, async () => {

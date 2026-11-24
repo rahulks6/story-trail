@@ -63,22 +63,27 @@ export function parseSignupInput(body: unknown): SignupInput {
 }
 
 export interface LoginInput {
+  /** An email address, or a username: the app's box takes either (sent as `email`). */
   email: string;
   password: string;
+  byUsername?: boolean;
 }
 
 export function parseLoginInput(body: unknown): LoginInput {
   const errors: Record<string, string> = {};
   const b = (typeof body === "object" && body !== null ? body : {}) as Record<string, unknown>;
 
-  const email = typeof b.email === "string" ? b.email.trim().toLowerCase() : "";
+  // People type their username, sometimes with an @, as often as their email.
+  const raw = typeof b.email === "string" ? b.email.trim().toLowerCase() : "";
   const password = typeof b.password === "string" ? b.password : "";
+  const username = raw.replace(/^@/, "");
+  const byUsername = !raw.includes("@") || (raw.startsWith("@") && !username.includes("@"));
 
-  if (!EMAIL_RE.test(email)) errors.email = "Must be a valid email address.";
+  if (byUsername ? !/^[a-z0-9_.]{3,30}$/.test(username) : !EMAIL_RE.test(raw)) errors.email = "Enter your email or username.";
   if (!password) errors.password = "Password is required.";
 
   if (Object.keys(errors).length > 0) throw new ValidationError(errors);
-  return { email, password };
+  return { email: byUsername ? username : raw, password, byUsername };
 }
 
 export interface RefreshInput {

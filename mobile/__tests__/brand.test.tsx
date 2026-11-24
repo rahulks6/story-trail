@@ -60,7 +60,7 @@ describe("sign in", () => {
     const tree = await render(<LoginScreen {...props} />);
     const order = hosts(tree, (n) => String(n.type) === "Svg" || (String(n.type) === "Text" && n.props.accessibilityRole === "header"));
     expect(order.map((n) => (String(n.type) === "Svg" ? n.props.testID : textOf(n)))).toEqual(["brand-mark", "Katkee"]);
-    expect(hosts(tree, (n) => String(n.type) === "Text").some((n) => textOf(n) === "Story that connects.")).toBe(true);
+    expect(hosts(tree, (n) => String(n.type) === "Text").some((n) => textOf(n) === "Stories and status with music, just for your close friends.")).toBe(true);
   });
 });
 

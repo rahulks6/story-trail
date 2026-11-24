@@ -47,8 +47,18 @@ const flatten = (style: unknown) => Object.assign({}, ...[style].flat(Infinity).
 describe("Log in", () => {
   const props = { navigation, route: { key: "Login", name: "Login" } } as unknown as React.ComponentProps<typeof LoginScreen>;
 
+  test("new people see the ways to join first; logging in opens on request", async () => {
+    const tree = await render(<LoginScreen {...props} />);
+    expect(tree.root.findAll((n) => n.props.onChangeText && String(n.props.accessibilityLabel).startsWith("Email")).length).toBe(0);
+    await press(tree, "Create account with email");
+    expect(navigation.navigate).toHaveBeenCalledWith("Signup");
+    await press(tree, "Log in with email or username");
+    expect(field(tree, "Email or username")).toBeTruthy();
+  });
+
   test("labelled fields with password-manager hints; Log in only when both are filled", async () => {
     const tree = await render(<LoginScreen {...props} />);
+    await press(tree, "Log in with email or username");
     const email = field(tree, "Email"), password = field(tree, "Password");
     expect([email.props.autoComplete, email.props.textContentType, email.props.keyboardType]).toEqual(["email", "username", "email-address"]);
     expect([password.props.secureTextEntry, password.props.autoComplete, password.props.textContentType]).toEqual([true, "current-password", "password"]);
@@ -67,7 +77,7 @@ describe("Log in", () => {
     const tree = await render(<LoginScreen {...props} />);
     const banner = host(tree, (n) => n.props.accessibilityRole === "alert");
     expect(banner.props.children).toBe("Incorrect email or password.");
-    expect(field(tree, "Email").props.accessibilityLabel).toBe("Email. Enter a valid email.");
+    expect(field(tree, "Email or username").props.accessibilityLabel).toBe("Email or username. Enter a valid email.");
     const scroll = host(tree, (n) => n.props.keyboardShouldPersistTaps === "handled");
     expect(flatten(scroll.props.contentContainerStyle)).toMatchObject({ paddingTop: 47 + 24, paddingBottom: 34 + 24 });
   });

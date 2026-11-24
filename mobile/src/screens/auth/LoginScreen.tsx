@@ -22,6 +22,9 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
   const insets = useScreenInsets();
   const passwordInput = useRef<React.ComponentRef<typeof TextInput>>(null);
   const canSubmit = !submitting && !!email && !!password;
+  // New people come here first: the ways to join lead, and the log-in form opens on request
+  // (or by itself when a log-in just failed).
+  const [showEmail, setShowEmail] = useState(!!error || !!fieldErrors);
 
   const onSubmit = async () => {
     if (!canSubmit) return;
@@ -43,7 +46,7 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
       >
-        {/* Simple, like Instagram: the logo, two fields, Log in; everything else is small, below. */}
+        {/* New people first: what Katkee is, then one tap to join. Logging in is a step away. */}
         <View style={styles.top}>
           <View style={styles.mark}>
             <BrandMark height={72} />
@@ -53,68 +56,78 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
             <Text style={styles.brandKat}>Kat</Text>
             <Text style={styles.brandKee}>kee</Text>
           </Text>
-          <Text style={styles.subtitle}>{t("common.storyThatConnects")}</Text>
+          <Text style={styles.subtitle}>{t("login.welcomeLine")}</Text>
 
-          {/* The quick way in first: one tap with Google; email below for accounts made with one. */}
+          {/* The quick way in: one tap with Google, for a new account or an existing one. */}
           <View style={styles.providers}>
-            <ProviderEntry separator={t("login.orLogInWithEmail")} />
+            <ProviderEntry />
           </View>
+          <Button label={t("login.createAccountWithEmail")} variant="secondary" onPress={() => navigation.navigate("Signup")} />
 
-          {error ? <Banner text={error} /> : null}
+          {showEmail ? (
+            <>
+              <View style={styles.separator} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+                <View style={styles.rule} /><Text style={styles.separatorText}>{t("login.alreadyHaveAnAccount")}</Text><View style={styles.rule} />
+              </View>
+              {error ? <Banner text={error} /> : null}
 
-          <TextField
-            label={t("common.email")}
-            placeholder={t("login.youExampleCom")}
-            error={fieldErrors?.email}
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType="email-address"
-            autoComplete="email"
-            textContentType="username"
-            returnKeyType="next"
-            submitBehavior="submit"
-            onSubmitEditing={() => passwordInput.current?.focus()}
-            value={email}
-            onChangeText={(text) => {
-              setEmail(text);
-              clearError();
-            }}
-          />
-          <TextField
-            ref={passwordInput}
-            label={t("common.password")}
-            placeholder={t("login.yourPassword")}
-            error={fieldErrors?.password}
-            secureTextEntry
-            autoComplete="current-password"
-            textContentType="password"
-            returnKeyType="go"
-            onSubmitEditing={() => void onSubmit()}
-            value={password}
-            onChangeText={(text) => {
-              setPassword(text);
-              clearError();
-            }}
-          />
+              <TextField
+                label={t("login.emailOrUsername")}
+                placeholder={t("login.youExampleCom")}
+                error={fieldErrors?.email}
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="email-address"
+                autoComplete="email"
+                textContentType="username"
+                returnKeyType="next"
+                submitBehavior="submit"
+                onSubmitEditing={() => passwordInput.current?.focus()}
+                value={email}
+                onChangeText={(text) => {
+                  setEmail(text);
+                  clearError();
+                }}
+              />
+              <TextField
+                ref={passwordInput}
+                label={t("common.password")}
+                placeholder={t("login.yourPassword")}
+                error={fieldErrors?.password}
+                secureTextEntry
+                autoComplete="current-password"
+                textContentType="password"
+                returnKeyType="go"
+                onSubmitEditing={() => void onSubmit()}
+                value={password}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  clearError();
+                }}
+              />
 
-          <View style={styles.loginButton}>
-            <Button label={t("common.logIn")} onPress={() => void onSubmit()} disabled={!email || !password} busy={submitting} />
-          </View>
-          <Pressable
-            style={styles.forgot}
-            onPress={() => navigation.navigate("ForgotPassword", email ? { email } : undefined)}
-            accessibilityRole="button"
-            hitSlop={8}
-          >
-            <Text style={styles.forgotText}>{t("login.forgotPassword")}</Text>
-          </Pressable>
+              <View style={styles.loginButton}>
+                <Button label={t("common.logIn")} onPress={() => void onSubmit()} disabled={!email || !password} busy={submitting} />
+              </View>
+              <Pressable
+                style={styles.forgot}
+                onPress={() => navigation.navigate("ForgotPassword", email ? { email } : undefined)}
+                accessibilityRole="button"
+                hitSlop={8}
+              >
+                <Text style={styles.forgotText}>{t("login.forgotPassword")}</Text>
+              </Pressable>
+            </>
+          ) : null}
         </View>
 
         <View style={styles.bottom}>
-          <Pressable style={styles.signup} onPress={() => navigation.navigate("Signup")} accessibilityRole="button">
-            <Text style={styles.signupText}>{t("login.dontHaveAnAccount")}{" "}<Text style={styles.linkAccent}>{t("common.signUp")}</Text>
-            </Text>
-          </Pressable>
+          {showEmail ? null : (
+            <Pressable style={styles.signup} onPress={() => setShowEmail(true)} accessibilityRole="button" accessibilityLabel={t("login.logInWithEmailOrUsername")} testID="show-email-login">
+              <Text style={styles.signupText}>{t("login.alreadyHaveAnAccount")}{" "}<Text style={styles.linkAccent}>{t("common.logIn")}</Text>
+              </Text>
+            </Pressable>
+          )}
           <Pressable style={styles.appeal} onPress={() => navigation.navigate("Appeals")} accessibilityRole="button" hitSlop={6}>
             <Text style={styles.appealText}>{t("login.accountRestrictedRequestAReview")}</Text>
           </Pressable>
@@ -144,4 +157,7 @@ const styles = StyleSheet.create({
   appeal: { minHeight: 36, justifyContent: "center" },
   appealText: { color: colors.textSecondary, fontSize: 12, fontWeight: "400" },
   linkAccent: { color: colors.accentText, fontWeight: "600" },
+  separator: { flexDirection: "row", alignItems: "center", gap: 12, marginTop: spacing.md },
+  rule: { flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: colors.border },
+  separatorText: { color: colors.textSecondary, fontSize: 13 },
 });

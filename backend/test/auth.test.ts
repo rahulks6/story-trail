@@ -120,6 +120,21 @@ describe("login", () => {
     assert.equal(res.status, 401);
   });
 
+  it("logs in with the username too, with or without @, in any case", async () => {
+    const input = uniqueUser();
+    await postJson("/api/v1/auth/signup", input);
+    for (const name of [input.username, `@${input.username}`, ` ${input.username.toUpperCase()} `]) {
+      const res = await postJson("/api/v1/auth/login", { email: name, password: input.password });
+      assert.equal(res.status, 200, `${name}: ${JSON.stringify(res.body)}`);
+    }
+    const wrong = await postJson("/api/v1/auth/login", { email: input.username, password: "wrong-password" });
+    assert.equal(wrong.status, 401);
+    const unknown = await postJson("/api/v1/auth/login", { email: "nobody_here_x", password: "whatever123" });
+    assert.equal(unknown.status, 401);
+    assert.equal(unknown.body.message, wrong.body.message, "the same words whether or not the account exists");
+    assert.match(String(wrong.body.message), /Continue with Google/);
+  });
+
   it("rejects an unknown email with 401 (not 404 — avoids user enumeration)", async () => {
     const res = await postJson("/api/v1/auth/login", { email: "nobody@example.com", password: "whatever123" });
     assert.equal(res.status, 401);
