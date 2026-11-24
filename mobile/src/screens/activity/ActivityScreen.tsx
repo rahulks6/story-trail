@@ -47,7 +47,7 @@ function matchesTab(notification: NotificationRecord, tab: ActivityTab): boolean
   if (tab === "all") return true;
   if (tab === "follow") return notification.type === "follow" || notification.type === "follow_request" || notification.type === "follow_accepted" || notification.type === "invite_joined" || notification.type === "crossed_paths";
   // Collab invitations are people bringing you into their Story, like a mention.
-  if (tab === "comment") return notification.type === "comment" || notification.type === "mention" || notification.type === "collab_invite" || notification.type === "collab_accepted";
+  if (tab === "comment") return notification.type === "comment" || notification.type === "comment_reply" || notification.type === "comment_like" || notification.type === "mention" || notification.type === "collab_invite" || notification.type === "collab_accepted";
   return notification.type === tab;
 }
 
@@ -89,6 +89,10 @@ function messageFor(notification: NotificationRecord): string {
       return t("activity.nameLikedYourStory", { name });
     case "comment":
       return t("activity.nameCommentedBody", { name, body: notification.comment?.body ?? "" });
+    case "comment_reply":
+      return t("activity.nameRepliedBody", { name, body: notification.comment?.body ?? "" });
+    case "comment_like":
+      return t("activity.nameLikedYourComment", { name, body: notification.comment?.body ?? "" });
     case "follow":
       return t("activity.nameStartedFollowingYou", { name });
     case "follow_request":
@@ -353,7 +357,8 @@ export function ActivityScreen(): React.JSX.Element {
       navigation.navigate("StoryViewer", { creators: [user.username], startIndex: 0, initialStoryId: notification.story.id });
       return;
     }
-    if ((notification.type === "mention" || notification.type === "collab_invite") && notification.story && accessToken) {
+    // A reply or a like on your comment can be on anyone's Story, like a mention.
+    if ((notification.type === "mention" || notification.type === "collab_invite" || notification.type === "comment_reply" || notification.type === "comment_like") && notification.story && accessToken) {
       // A mention's Story could belong to anyone, unlike like/comment —
       // resolve the real owner via GET /api/v1/stories/:id/owner rather
       // than guessing. Falls back to the actor's profile if that lookup

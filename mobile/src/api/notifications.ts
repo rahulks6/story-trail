@@ -8,7 +8,7 @@ import { apiGet, apiPatch, apiPost } from "./client";
 /** `verification`: your badge was approved, denied, removed or restored (no actor). */
 /** `collab_invite`: someone invited you to share their Story (Accept/Decline); `collab_accepted`: your invitation was accepted. */
 /** "invite_joined": someone joined Katkee from your invite link (backend growth/invites.ts). */
-export type NotificationType = "like" | "comment" | "follow" | "follow_request" | "follow_accepted" | "mention" | "verification" | "collab_invite" | "collab_accepted" | "invite_joined"
+export type NotificationType = "like" | "comment" | "comment_like" | "comment_reply" | "follow" | "follow_request" | "follow_accepted" | "mention" | "verification" | "collab_invite" | "collab_accepted" | "invite_joined"
   /** Crossed paths: you and this person, who both turned it on, were in the same area (backend modules/crossed-paths). */
   | "crossed_paths";
 

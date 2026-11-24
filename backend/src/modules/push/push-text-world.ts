@@ -11,6 +11,8 @@ export const es: PushText = {
   actor: {
     like: (a) => `A @${a} le gustó tu historia`,
     comment: (a) => `@${a} comentó tu historia`,
+    comment_like: (a) => `A @${a} le gustó tu comentario`,
+    comment_reply: (a) => `@${a} respondió a tu comentario`,
     mention: (a) => `@${a} te mencionó`,
     follow: (a) => `@${a} comenzó a seguirte`,
     follow_request: (a) => `@${a} quiere seguirte`,
@@ -51,6 +53,8 @@ export const pt: PushText = {
   actor: {
     like: (a) => `@${a} curtiu seu story`,
     comment: (a) => `@${a} comentou seu story`,
+    comment_like: (a) => `@${a} curtiu seu comentário`,
+    comment_reply: (a) => `@${a} respondeu ao seu comentário`,
     mention: (a) => `@${a} mencionou você`,
     follow: (a) => `@${a} começou a seguir você`,
     follow_request: (a) => `@${a} pediu para seguir você`,
@@ -91,6 +95,8 @@ export const id: PushText = {
   actor: {
     like: (a) => `@${a} menyukai Story kamu`,
     comment: (a) => `@${a} mengomentari Story kamu`,
+    comment_like: (a) => `@${a} menyukai komentarmu`,
+    comment_reply: (a) => `@${a} membalas komentarmu`,
     mention: (a) => `@${a} menyebut kamu`,
     follow: (a) => `@${a} mulai mengikuti kamu`,
     follow_request: (a) => `@${a} ingin mengikuti kamu`,
@@ -131,6 +137,8 @@ export const fr: PushText = {
   actor: {
     like: (a) => `@${a} a aimé ta story`,
     comment: (a) => `@${a} a commenté ta story`,
+    comment_like: (a) => `@${a} a aimé ton commentaire`,
+    comment_reply: (a) => `@${a} a répondu à ton commentaire`,
     mention: (a) => `@${a} t'a mentionné(e)`,
     follow: (a) => `@${a} a commencé à te suivre`,
     follow_request: (a) => `@${a} souhaite te suivre`,
@@ -171,6 +179,8 @@ export const de: PushText = {
   actor: {
     like: (a) => `@${a} gefällt deine Story`,
     comment: (a) => `@${a} hat deine Story kommentiert`,
+    comment_like: (a) => `@${a} gefällt dein Kommentar`,
+    comment_reply: (a) => `@${a} hat auf deinen Kommentar geantwortet`,
     mention: (a) => `@${a} hat dich erwähnt`,
     follow: (a) => `@${a} folgt dir jetzt`,
     follow_request: (a) => `@${a} möchte dir folgen`,
@@ -211,6 +221,8 @@ export const ar: PushText = {
   actor: {
     like: (a) => `أُعجب @${a} بقصتك`,
     comment: (a) => `علّق @${a} على قصتك`,
+    comment_like: (a) => `أعجب @${a} بتعليقك`,
+    comment_reply: (a) => `ردّ @${a} على تعليقك`,
     mention: (a) => `أشار إليك @${a}`,
     follow: (a) => `بدأ @${a} بمتابعتك`,
     follow_request: (a) => `يريد @${a} متابعتك`,

@@ -42,6 +42,16 @@ export async function notifyComment(actorId: string, storyOwnerId: string, story
   await notificationsRepo.createNotification({ recipientId: storyOwnerId, actorId, type: "comment", storyId, commentId });
 }
 
+/** Someone replied to your comment, on any Story you can see. */
+export async function notifyCommentReply(actorId: string, recipientId: string, storyId: string, commentId: string): Promise<void> {
+  await notificationsRepo.createNotification({ recipientId, actorId, type: "comment_reply", storyId, commentId });
+}
+
+/** Someone liked your comment. */
+export async function notifyCommentLike(actorId: string, recipientId: string, storyId: string, commentId: string): Promise<void> {
+  await notificationsRepo.createNotification({ recipientId, actorId, type: "comment_like", storyId, commentId });
+}
+
 export async function notifyFollow(actorId: string, followeeId: string): Promise<void> {
   await notificationsRepo.createNotification({ recipientId: followeeId, actorId, type: "follow" });
 }

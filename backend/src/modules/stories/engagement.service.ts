@@ -51,9 +51,15 @@ async function assertCanComment(storyId: string, viewerId: string): Promise<stor
 /** The same comment pasted onto several Stories within an hour is copy-paste spam. */
 const DUPLICATE_COMMENT_LIMIT = 3;
 
-export async function createComment(viewerId: string, storyId: string, body: string): Promise<CommentRecord> {
+/**
+ * A comment, or a reply when `replyTo` names a comment on the same Story: filed under that
+ * comment's top-level comment, and its author hears "@x replied to your comment".
+ */
+export async function createComment(viewerId: string, storyId: string, body: string, replyTo: string | null = null): Promise<CommentRecord> {
   await assertCanContribute(viewerId);
   const story = await assertCanComment(storyId, viewerId);
+  const answered = replyTo ? await commentsRepo.findCommentWithStoryOwner(replyTo) : null;
+  if (replyTo && (!answered || answered.storyId !== storyId)) throw new HttpError(404, "That comment isn't here any more.");
   await enforceAction(viewerId, "comment"); // mass-comment protection
   await assertLinksAllowed(body, "comment", viewerId);
   const repeats = await queryOne(
@@ -65,8 +71,12 @@ export async function createComment(viewerId: string, storyId: string, body: str
   if (Number(repeats?.n ?? 0) >= DUPLICATE_COMMENT_LIMIT) {
     throw new HttpError(429, "You've posted this comment several times recently. Try writing something new.");
   }
-  const comment = await commentsRepo.createComment(storyId, viewerId, body);
-  await notificationsService.notifyComment(viewerId, story.ownerId, storyId, comment.id);
+  const comment = await commentsRepo.createComment(storyId, viewerId, body, answered ? (answered.parentId ?? answered.id) : null);
+  if (answered && answered.userId !== viewerId) {
+    await notificationsService.notifyCommentReply(viewerId, answered.userId, storyId, comment.id);
+  }
+  // The Story's owner hears about every comment, unless they're the one just told about this reply.
+  if (!answered || answered.userId !== story.ownerId) await notificationsService.notifyComment(viewerId, story.ownerId, storyId, comment.id);
   await notificationsService.notifyMentions(viewerId, storyId, comment.id, body);
   if (story.ownerId !== viewerId) await learnQuietly(viewerId, "comment", { storyId });
   return comment;
@@ -96,6 +106,24 @@ export async function moderatorDeleteComment(commentId: string): Promise<void> {
   const comment = await commentsRepo.findCommentWithStoryOwner(commentId);
   if (!comment) throw new HttpError(404, "Comment not found.");
   await commentsRepo.softDeleteComment(commentId);
+}
+
+/** Anyone who can see the Story can like its comments; the comment's author is told once. */
+export async function likeComment(viewerId: string, commentId: string): Promise<void> {
+  const comment = await commentsRepo.findCommentWithStoryOwner(commentId);
+  if (!comment) throw new HttpError(404, "Comment not found.");
+  await getStoryForEngagement(comment.storyId, viewerId);
+  await enforceAction(viewerId, "like");
+  if (await commentsRepo.likeComment(commentId, viewerId)) {
+    await notificationsService.notifyCommentLike(viewerId, comment.userId, comment.storyId, commentId);
+  }
+}
+
+export async function unlikeComment(viewerId: string, commentId: string): Promise<void> {
+  const comment = await commentsRepo.findCommentWithStoryOwner(commentId);
+  if (!comment) throw new HttpError(404, "Comment not found.");
+  await getStoryForEngagement(comment.storyId, viewerId);
+  await commentsRepo.unlikeComment(commentId, viewerId);
 }
 
 export async function shareStory(viewerId: string, storyId: string): Promise<void> {

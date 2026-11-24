@@ -138,3 +138,79 @@ test("a timed-out comment the server doesn't have goes back into the box; Post i
   expect(tree.root.findByType(TextInput).props.value).toBe("Again"); // what they typed since is kept
   expect(texts()).toContain("Couldn't post that comment.");
 });
+
+describe("likes, replies and tags", () => {
+  const byId = (id: string) => tree.root.find((n: ReactTestInstance) => n.props.testID === id && typeof n.props.onPress === "function");
+  const withThread = () => [
+    { ...comment("c1", "u2", "asha", "Where is this?"), likeCount: 2, likedByMe: false },
+    { ...comment("r1", "owner", "maya", "@asha Lonavala!"), parentId: "c1", likeCount: 0, likedByMe: false },
+  ];
+
+  test("a like shows at once and is sent; tapping again takes it back", async () => {
+    jest.spyOn(engagement, "listComments").mockResolvedValue({ comments: withThread(), limit: 50, offset: 0 });
+    const like = jest.spyOn(engagement, "likeComment").mockResolvedValue();
+    const unlike = jest.spyOn(engagement, "unlikeComment").mockResolvedValue();
+    await open();
+    expect(texts()).toContain("2 likes");
+    await act(async () => byId("comment-like-c1").props.onPress());
+    expect(like).toHaveBeenCalledWith("c1", "token");
+    expect(texts()).toContain("3 likes");
+    await act(async () => byId("comment-like-c1").props.onPress());
+    expect(unlike).toHaveBeenCalledWith("c1", "token");
+    expect(texts()).toContain("2 likes");
+  });
+
+  test("replies sit under their comment behind 'View replies'; Reply starts the box with the name and sends a reply", async () => {
+    jest.spyOn(engagement, "listComments").mockResolvedValue({ comments: withThread(), limit: 50, offset: 0 });
+    const post = jest.spyOn(engagement, "postComment").mockResolvedValue({ comment: { ...comment("r2", "me", "rahul", "@asha same!"), parentId: "c1" } });
+    await open();
+    expect(texts()).toContain("View 1 reply");
+    expect(texts()).not.toContain("@asha Lonavala!");
+    await act(async () => byId("replies-c1").props.onPress());
+    expect(texts().join(" ")).toContain("Lonavala!");
+    expect(texts()).toContain("Hide replies");
+
+    await act(async () => byId("comment-reply-c1").props.onPress());
+    await flush();
+    expect(texts()).toContain("Replying to @asha");
+    expect(tree.root.findByType(TextInput).props.value).toBe("@asha ");
+    await act(async () => tree.root.findByType(TextInput).props.onChangeText("@asha same!"));
+    await press("Post comment");
+    await flush();
+    expect(post).toHaveBeenCalledWith("s1", "@asha same!", "token", "c1");
+    expect(texts()).not.toContain("Replying to @asha");
+  });
+
+  test("@names in a comment open that profile", async () => {
+    jest.spyOn(engagement, "listComments").mockResolvedValue({ comments: [comment("c1", "u2", "asha", "Look @ravi.k, it's you")], limit: 50, offset: 0 });
+    const onOpenProfile = jest.fn();
+    await open({ onOpenProfile });
+    const link = tree.root.find((n: ReactTestInstance) => n.props.accessibilityRole === "link" && typeof n.props.onPress === "function");
+    expect([link.props.children].flat().join("")).toBe("@ravi.k");
+    await act(async () => link.props.onPress());
+    expect(onOpenProfile).toHaveBeenCalledWith("ravi.k");
+  });
+
+  test("typing @ suggests people, and picking one fills in the name", async () => {
+    jest.useFakeTimers();
+    jest.spyOn(engagement, "listComments").mockResolvedValue({ comments: [], limit: 50, offset: 0 });
+    const users = require("../src/api/users");
+    jest.spyOn(users, "searchUsers").mockResolvedValue({ results: [{ id: "u9", username: "ravi.k", displayName: "Ravi", bio: "" }], limit: 5, offset: 0 });
+    await open();
+    await act(async () => tree.root.findByType(TextInput).props.onChangeText("Hey @ra"));
+    await act(async () => { jest.advanceTimersByTime(300); });
+    await flush();
+    expect(users.searchUsers).toHaveBeenCalledWith("ra", "token", expect.objectContaining({ limit: 5 }));
+    await act(async () => byId("mention-ravi.k").props.onPress());
+    expect(tree.root.findByType(TextInput).props.value).toBe("Hey @ravi.k ");
+    jest.useRealTimers();
+  });
+});
+
+test("mentionQuery reads the @word being typed at the end", () => {
+  const { mentionQuery } = require("../src/components/CommentsSheet");
+  expect(mentionQuery("hi @ra")).toBe("ra");
+  expect(mentionQuery("@Asha")).toBe("asha");
+  expect(mentionQuery("mail me@x")).toBeNull();
+  expect(mentionQuery("@asha ")).toBeNull();
+});

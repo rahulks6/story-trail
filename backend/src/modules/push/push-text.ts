@@ -39,6 +39,8 @@ const en: PushText = {
   actor: {
     like: (a) => `@${a} liked your Story`,
     comment: (a) => `@${a} commented on your Story`,
+    comment_like: (a) => `@${a} liked your comment`,
+    comment_reply: (a) => `@${a} replied to your comment`,
     mention: (a) => `@${a} mentioned you`,
     follow: (a) => `@${a} started following you`,
     follow_request: (a) => `@${a} requested to follow you`,
@@ -80,6 +82,8 @@ const hi: PushText = {
   actor: {
     like: (a) => `@${a} ने आपकी स्टोरी लाइक की`,
     comment: (a) => `@${a} ने आपकी स्टोरी पर कमेंट किया`,
+    comment_like: (a) => `@${a} ने आपका कमेंट लाइक किया`,
+    comment_reply: (a) => `@${a} ने आपके कमेंट का जवाब दिया`,
     mention: (a) => `@${a} ने आपको मेंशन किया`,
     follow: (a) => `@${a} ने आपको फ़ॉलो करना शुरू किया`,
     follow_request: (a) => `@${a} आपको फ़ॉलो करना चाहते हैं`,
@@ -120,6 +124,8 @@ const mr: PushText = {
   actor: {
     like: (a) => `@${a} यांनी तुमची स्टोरी लाईक केली`,
     comment: (a) => `@${a} यांनी तुमच्या स्टोरीवर कमेंट केली`,
+    comment_like: (a) => `@${a} यांनी तुमची कमेंट लाइक केली`,
+    comment_reply: (a) => `@${a} यांनी तुमच्या कमेंटला उत्तर दिले`,
     mention: (a) => `@${a} यांनी तुम्हाला मेंशन केले`,
     follow: (a) => `@${a} यांनी तुम्हाला फॉलो करायला सुरुवात केली`,
     follow_request: (a) => `@${a} तुम्हाला फॉलो करू इच्छितात`,

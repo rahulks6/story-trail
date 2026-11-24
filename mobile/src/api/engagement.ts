@@ -42,6 +42,10 @@ export interface Comment {
   verified?: boolean;
   body: string;
   createdAt: string;
+  /** The top-level comment this replies to (backend migration 0085); null or absent for a top-level one. */
+  parentId?: string | null;
+  likeCount?: number;
+  likedByMe?: boolean;
 }
 
 export function getStoryDetail(storyId: string, accessToken: string): Promise<{ story: StoryDetail }> {
@@ -68,8 +72,17 @@ export function listComments(
   return apiGet(`/api/v1/stories/${storyId}/comments${qs ? `?${qs}` : ""}`, accessToken);
 }
 
-export function postComment(storyId: string, body: string, accessToken: string): Promise<{ comment: Comment }> {
-  return apiPost(`/api/v1/stories/${storyId}/comments`, { body }, accessToken);
+/** `replyTo`: the comment being answered; the server files the reply under its top-level comment. */
+export function postComment(storyId: string, body: string, accessToken: string, replyTo?: string | null): Promise<{ comment: Comment }> {
+  return apiPost(`/api/v1/stories/${storyId}/comments`, replyTo ? { body, replyTo } : { body }, accessToken);
+}
+
+export function likeComment(commentId: string, accessToken: string): Promise<void> {
+  return apiPost(`/api/v1/comments/${commentId}/like`, undefined, accessToken);
+}
+
+export function unlikeComment(commentId: string, accessToken: string): Promise<void> {
+  return apiDelete(`/api/v1/comments/${commentId}/like`, accessToken);
 }
 
 export function deleteComment(commentId: string, accessToken: string): Promise<void> {

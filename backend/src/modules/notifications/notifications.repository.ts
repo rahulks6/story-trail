@@ -2,7 +2,7 @@ import { nullable, query, queryOne, type Row } from "../../db/psql";
 import { verifiedSql } from "../../shared/verified";
 
 export type NotificationType =
-  | "like" | "comment" | "follow" | "follow_request" | "follow_accepted" | "mention" | "verification"
+  | "like" | "comment" | "comment_like" | "comment_reply" | "follow" | "follow_request" | "follow_accepted" | "mention" | "verification"
   /** Collab Stories (migration 0063): an invitation to answer, and the owner told it was accepted. */
   | "collab_invite" | "collab_accepted"
   | "invite_joined"
@@ -159,8 +159,10 @@ async function isTypeEnabled(recipientId: string, type: NotificationType): Promi
   const prefs = await getPreferences(recipientId);
   switch (type) {
     case "like":
+    case "comment_like":
       return prefs.likesEnabled;
     case "comment":
+    case "comment_reply":
       return prefs.commentsEnabled;
     case "follow":
     case "follow_accepted":
@@ -205,6 +207,13 @@ export async function createNotification(input: {
            SELECT 1 FROM notifications o
            WHERE o.recipient_id = :'recipient_id' AND o.type = :'type'
              AND o.story_id IS NOT DISTINCT FROM ${nullable("story_id", "uuid")}))
+         -- Like/unlike on a comment, again and again, says so once a week.
+         AND NOT (:'type' = 'comment_like' AND EXISTS (
+           SELECT 1 FROM notifications o
+           WHERE o.recipient_id = :'recipient_id' AND o.type = 'comment_like'
+             AND o.actor_id IS NOT DISTINCT FROM ${nullable("actor_id", "uuid")}
+             AND o.comment_id IS NOT DISTINCT FROM ${nullable("comment_id", "uuid")}
+             AND o.created_at > now() - interval '7 days'))
          AND NOT (:'type' = 'mention' AND ${nullable("comment_id", "uuid")} IS NULL AND EXISTS (
            SELECT 1 FROM notifications o
            WHERE o.recipient_id = :'recipient_id' AND o.type = 'mention' AND o.comment_id IS NULL

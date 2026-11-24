@@ -177,6 +177,9 @@ describe("a private account's Story", () => {
     ))!.id!;
     refused(await attempt("GET /api/v1/users/me/data-export/:id/file", `/api/v1/users/me/data-export/${dataExportId}/file`, friend), "data export file");
     refused(await attempt("GET /api/v1/users/me/data-export/:id/file", `/api/v1/users/me/data-export/${dataExportId}/file`, stranger), "data export file");
+    refused(await attempt("POST /api/v1/comments/:id/like", `/api/v1/comments/${ids.comment}/like`, stranger), "like comment");
+    refused(await attempt("DELETE /api/v1/comments/:id/like", `/api/v1/comments/${ids.comment}/like`, stranger), "unlike comment");
+    refused(await attempt("POST /api/v1/stories/:id/comments", `${s}/comments`, stranger, { body: "hello", replyTo: ids.comment }), "reply");
     refused(await attempt("DELETE /api/v1/comments/:id", `/api/v1/comments/${ids.comment}`, stranger), "delete comment");
     refused(await attempt("DELETE /api/v1/stories/:id", s, stranger), "delete story");
 
@@ -184,6 +187,7 @@ describe("a private account's Story", () => {
     assert.equal(await count(`story_views WHERE story_id = :'story' AND viewer_id = :'stranger'`, p), 0, "no view recorded");
     assert.equal(await count(`story_likes WHERE story_id = :'story'`, p), 1, "the follower's like is intact, none added");
     assert.equal(await count(`story_comments WHERE story_id = :'story' AND deleted_at IS NULL`, p), 1, "the follower's comment is intact, none added");
+    assert.equal(await count(`comment_likes WHERE user_id = :'stranger'`, p), 0, "no comment like added");
     assert.equal((await request("GET", s, undefined, owner.auth)).status, 200, "the Story is still there");
     assert.equal((await request("GET", s, undefined, friend.auth)).status, 200, "and its follower still sees it");
   });
