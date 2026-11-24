@@ -436,3 +436,8 @@ a.ov-chip:hover { text-decoration: none; filter: brightness(1.06); }
 @media (max-width: 400px) {
   .site-nav a[href="/#safety"] { display: none; }
 }
+
+/* Home: the latest blog posts. */
+.home-blog { padding: 72px 0; border-top: 1px solid #161A22; }
+.home-posts { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin: 28px 0 18px; }
+.home-blog-all { margin: 0; font-weight: 700; }

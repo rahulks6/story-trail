@@ -310,7 +310,18 @@ ${related.length ? `<nav class="post-related" aria-label="More from the blog"><h
   };
 
   const pages = [
-    { route: '/', file: 'index.html', title: `${site.name}: ${site.tagline.replace(/\.$/, '')}`, description: site.description, content: read('src/pages/index.html'), body: 'home' },
+    {
+      route: '/', file: 'index.html', title: `${site.name}: Stories & Status With Music for Close Friends`,
+      description: `${site.name} is a free Stories app for your own people: post photos and videos with music, choose who sees each Story, and chat and video call. Made in India.`,
+      content: read('src/pages/index.html'), body: 'home',
+      // What the app is, for search results (one data block, like a blog post's).
+      scripts: `\n<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': [
+        { '@type': 'MobileApplication', name: site.name, operatingSystem: 'Android', applicationCategory: 'SocialNetworkingApplication', url: site.origin,
+          description: 'Stories and status with music for your close friends, with chats, voice notes and video calls.', installUrl: site.stores.googlePlay, inLanguage: ['en', 'hi', 'mr'],
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR' } },
+        { '@type': 'Organization', name: site.name, url: site.origin, logo: `${site.origin}/apple-touch-icon.png` },
+      ] }, null, 1).replace(/</g, '\\u003c')}</script>`,
+    },
     { route: '/support', file: 'support.html', title: `Help Center · ${site.name}`, description: `Answers to common questions about ${site.name}, and how to contact us.`, content: read('src/pages/support.html'), body: 'support' },
     { route: '/delete-account', file: 'delete-account.html', title: `Delete your account · ${site.name}`, description: `How to delete your ${site.name} account, in the app or by email, and what happens to your data.`, content: read('src/pages/delete-account.html'), body: 'delete' },
     { route: '/child-safety', file: 'child-safety.html', title: `Child Safety Standards · ${site.name}`, description: `${site.name}'s standards against child sexual abuse and exploitation: what isn't allowed, how to report it and what we do.`, content: read('src/pages/child-safety.html'), body: 'delete' },
@@ -335,7 +346,12 @@ ${related.length ? `<nav class="post-related" aria-label="More from the blog"><h
   const routes = new Set(pages.filter((p) => p.route).map((p) => p.route));
   const layout = read('src/layout.html');
 
-  const context = { site, contact: site.contact, origin: site.origin, storeButtons: storeButtons(site), getKatkee: getKatkee(site) };
+  // Search Console and Bing Webmaster ownership checks (site.json verification): on every page.
+  const verify = site.verification ?? {};
+  for (const code of Object.values(verify)) if (code && !/^[A-Za-z0-9_-]{10,100}$/.test(code)) throw new Error(`site.json: bad verification code ${code}`);
+  const verificationMeta = `${verify.google ? `\n<meta name="google-site-verification" content="${verify.google}">` : ''}${verify.bing ? `\n<meta name="msvalidate.01" content="${verify.bing}">` : ''}`;
+  const latestPosts = `<ul class="post-list home-posts">${posts.slice(0, 3).map(postLink).join('')}</ul>`;
+  const context = { site, contact: site.contact, origin: site.origin, storeButtons: storeButtons(site), getKatkee: getKatkee(site), verificationMeta, latestPosts };
   const lookup = (key, page) => {
     const value = key.split('.').reduce((v, k) => (v == null ? undefined : v[k]), { ...context, ...page });
     if (value === undefined || value === null) throw new Error(`${page.file}: unknown placeholder {{${key}}}`);

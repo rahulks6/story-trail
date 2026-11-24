@@ -32,5 +32,9 @@
     "form": "sole proprietorship",
     "country": "India"
   },
-  "grievanceOfficer": "Rahul Katakdhond"
+  "grievanceOfficer": "Rahul Katakdhond",
+  "verification": {
+    "google": "",
+    "bing": ""
+  }
 }
