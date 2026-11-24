@@ -25,6 +25,7 @@ import {shareInvite} from '../../state/invites';
 import {ContactsJoinedSheet} from '../../components/ContactsJoinedSheet';
 import {FoundingWelcome} from '../../components/FoundingWelcome';
 import {ContestButton} from '../../components/ContestButton';
+import {takeCreateAfterOnboarding} from '../../state/onboarding';
 import { t } from "../../i18n";
 /** Away from Home (another tab, a screen on top, the app in the background) this long: the feed is reloaded on return. */
 export const HOME_STALE_MS=3*60*1000;
@@ -42,6 +43,8 @@ export function HomeScreen():React.JSX.Element {
  // On a festival day: its emoji in a round button beside Activity opens everyone's festival Stories (or the camera),
  // so the top left stays the Story's own name, time and music.
  const {current:festivalInfo,reload:reloadFestival}=useFestival();const festival=festivalInfo?.festival??null;const festivalCreators=festivalInfo?.creators??[];
+ // "Open camera" on onboarding's last step: straight to Create once Home is up.
+ useEffect(()=>{if(takeCreateAfterOnboarding())navigation.navigate('Create');},[navigation]);
  const openFestival=useCallback(()=>{if(festivalCreators.length)navigation.navigate('StoryViewer',{creators:festivalCreators,startIndex:0});else navigation.navigate('Create');},[festivalCreators,navigation]);
  const festivalButton=festival?<Pressable onPress={openFestival} hitSlop={8} style={[styles.festival,{top:insets.top+spacing.lg}]} accessibilityRole="button" accessibilityLabel={festivalCreators.length?t("home.nameStoriesStorycount", { name: festival.name, storyCount: festivalInfo?.storyCount??0 }):t("home.postYourNameStory", { name: festival.name })}>
   <Text style={styles.festivalEmoji}>{festival.emoji}</Text>{festivalCreators.length?<View style={styles.festivalCount}><Text style={styles.festivalCountLabel}>{festivalInfo!.storyCount>99?'99+':festivalInfo!.storyCount}</Text></View>:null}

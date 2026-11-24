@@ -985,6 +985,17 @@ export const en = {
   "profile.saving": "Saving…",
   "onboarding.startUsingKatkee": "Start using Katkee",
   "onboarding.skip": "Skip",
+  "onboarding.followAtLeast": {"one": "Follow at least {count} person", "other": "Follow at least {count} people"},
+  "onboarding.theirStoriesFillYourHome": "Their Stories fill your Home. You can unfollow anytime.",
+  "onboarding.followingNOfGoal": "Following {n} of {goal}",
+  "onboarding.homeIsReady": "Your Home is ready ✓",
+  "onboarding.followAll": "Follow all",
+  "onboarding.followNMore": {"one": "Follow {count} more", "other": "Follow {count} more"},
+  "onboarding.skipForNow": "Skip for now",
+  "onboarding.shareYourFirstStory": "Share your first Story",
+  "onboarding.firstStoryWhy": "Say hi with a photo of your day. Your friends see it, and it disappears after 24 hours.",
+  "onboarding.openCamera": "Open camera",
+  "onboarding.maybeLater": "Maybe later",
 
   // components/OverlayAdjustSheet.tsx
   "overlayAdjustSheet.doneAdjusting": "Done adjusting",

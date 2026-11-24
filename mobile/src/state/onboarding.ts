@@ -19,6 +19,20 @@ export async function markOnboardingDone(userId: string): Promise<void> {
   await AsyncStorage.setItem(doneKey(userId), String(Date.now())).catch(() => undefined);
 }
 
+/**
+ * "Open camera" on onboarding's last step: Home takes this once it's up and opens Create, so a
+ * new person's first Story is one tap away.
+ */
+let createAfterOnboarding = false;
+export function requestCreateAfterOnboarding(): void {
+  createAfterOnboarding = true;
+}
+export function takeCreateAfterOnboarding(): boolean {
+  const asked = createAfterOnboarding;
+  createAfterOnboarding = false;
+  return asked;
+}
+
 /** Lets the onboarding screen tell the navigator it's finished. */
 export const OnboardingContext = createContext<{ finish: () => void }>({ finish: () => undefined });
 export const useOnboarding = () => useContext(OnboardingContext);

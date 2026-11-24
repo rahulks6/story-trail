@@ -4,7 +4,7 @@ import { act, create, type ReactTestInstance, type ReactTestRenderer } from "rea
 import { Text } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { OnboardingScreen } from "../src/screens/onboarding/OnboardingScreen";
-import { needsOnboarding, OnboardingProvider } from "../src/state/onboarding";
+import { needsOnboarding, OnboardingProvider, takeCreateAfterOnboarding } from "../src/state/onboarding";
 import * as usersApi from "../src/api/users";
 
 const me = { id: "u-new", username: "newbie", email: "n@example.com", displayName: "New", bio: "", avatarMediaId: null, interests: [] as string[], isPrivate: false };
@@ -18,6 +18,7 @@ jest.mock("../src/api/users", () => ({
 }));
 jest.mock("../src/components/Avatar", () => ({ Avatar: () => null }));
 jest.mock("../src/state/invites", () => ({ shareInvite: jest.fn() }));
+jest.mock("../src/api/growth", () => ({ getTodayTheme: jest.fn(async () => ({ date: "2026-11-24", slug: "chai", emoji: "☕", title: "Your chai or coffee moment", postedToday: false })) }));
 jest.mock("../src/api/media", () => ({ uploadPhoto: jest.fn(async () => ({ id: "media-1" })) }));
 jest.mock("react-native-image-picker", () => ({ launchImageLibrary: jest.fn(async () => ({ assets: [{ uri: "file:///me.jpg", width: 800, height: 800 }] })), launchCamera: jest.fn() }));
 // Placing the photo in the circle: done at once here (AvatarCropper has its own tests).
@@ -44,6 +45,7 @@ const finish = jest.fn();
 const texts = () => tree.root.findAllByType(Text).map((t) => [t.props.children].flat().join(""));
 const pressable = (label: string) => tree.root.find((n: ReactTestInstance) => typeof n.props.onPress === "function" && n.props.accessibilityLabel === label);
 const press = async (label: string) => { await act(async () => pressable(label).props.onPress()); };
+const byTestId = (id: string) => tree.root.find((n: ReactTestInstance) => n.props.testID === id && typeof n.props.onPress === "function");
 const settle = async () => { for (let i = 0; i < 4; i++) await act(async () => { await Promise.resolve(); }); };
 
 beforeEach(async () => {
@@ -65,33 +67,79 @@ const mount = async () => {
 };
 afterEach(async () => { if (tree) await act(async () => tree.unmount()); });
 
-test("starts with people to follow (no interests question), then contacts", async () => {
+test("photo, then a goal of people to follow, then contacts, then a first Story", async () => {
   api.getSuggestions.mockResolvedValueOnce({ suggestions: [person("asha", { kind: "shared_interest", interest: "Travel" }), person("dev", { kind: "new" })] });
   await mount();
   // First a profile photo, which can wait.
-  expect(texts()).toEqual(expect.arrayContaining(["Step 1 of 3", "Add a profile photo"]));
+  expect(texts()).toEqual(expect.arrayContaining(["Step 1 of 4", "Add a profile photo"]));
   await press("Not now");
   await settle();
   // Katkee learns interests from what people watch; onboarding no longer asks.
   expect(texts()).not.toContain("What are you into?");
-  expect(texts()).toEqual(expect.arrayContaining(["Step 2 of 3", "People to follow", "Also into Travel", "New to Katkee"]));
+  // Two suggested, so the goal is two.
+  expect(texts()).toEqual(expect.arrayContaining(["Step 2 of 4", "Follow at least 2 people", "Following 0 of 2", "Also into Travel", "New to Katkee"]));
   expect(api.updateMyProfile).not.toHaveBeenCalled();
 
-  api.followUser.mockResolvedValueOnce({ status: "following" });
+  api.followUser.mockResolvedValue({ status: "following" });
   await press("Follow @asha");
   await settle();
   expect(api.followUser).toHaveBeenCalledWith("asha", "token");
   expect(pressable("Following @asha")).toBeTruthy();
+  expect(texts()).toEqual(expect.arrayContaining(["Following 1 of 2", "Follow 1 more"]));
+  await press("Follow @dev");
+  await settle();
+  expect(texts()).toContain("Your Home is ready ✓");
 
   await press("Next");
   expect(finish).not.toHaveBeenCalled();
-  expect(texts()).toEqual(expect.arrayContaining(["Step 3 of 3", "Find friends from your contacts"]));
-  await press("Start using Katkee");
+  expect(texts()).toEqual(expect.arrayContaining(["Step 3 of 4", "Find friends from your contacts"]));
+  await press("Next");
+  await settle();
+  expect(texts()).toEqual(expect.arrayContaining(["Step 4 of 4", "Share your first Story", "Your chai or coffee moment"]));
+  await press("Maybe later");
   expect(finish).toHaveBeenCalled();
+  expect(takeCreateAfterOnboarding()).toBe(false);
   expect(await needsOnboarding(me)).toBe(false);
 });
 
-test("every step can be skipped, and with nobody to suggest it offers an invite", async () => {
+test("Follow all follows everyone suggested; Skip for now still moves on", async () => {
+  api.getSuggestions.mockResolvedValueOnce({ suggestions: ["a1", "a2", "a3", "a4"].map((u) => person(u, { kind: "new" })) });
+  api.followUser.mockResolvedValue({ status: "following" });
+  await mount();
+  await press("Not now");
+  await settle();
+  expect(texts()).toEqual(expect.arrayContaining(["Follow at least 3 people", "Follow 3 more"]));
+  await act(async () => byTestId("onboarding-follow-all").props.onPress());
+  await settle();
+  expect(api.followUser.mock.calls.map((c) => c[0])).toEqual(["a1", "a2", "a3", "a4"]);
+  expect(texts()).toContain("Your Home is ready ✓");
+  await act(async () => tree.unmount());
+
+  api.getSuggestions.mockResolvedValueOnce({ suggestions: ["b1", "b2", "b3"].map((u) => person(u, { kind: "new" })) });
+  await mount();
+  await press("Not now");
+  await settle();
+  await act(async () => byTestId("onboarding-skip").props.onPress());
+  expect(texts()).toContain("Find friends from your contacts");
+});
+
+test("Open camera on the last step asks Home to open Create", async () => {
+  mockAuth.user = { ...me, avatarMediaId: "has-one" } as never;
+  try {
+    await mount();
+    await press("Next");
+    await press("Next");
+    await settle();
+    await press("Open camera");
+    expect(finish).toHaveBeenCalled();
+    expect(takeCreateAfterOnboarding()).toBe(true);
+    expect(takeCreateAfterOnboarding()).toBe(false);
+  } finally {
+    mockAuth.user = me as never;
+  }
+});
+
+test("with nobody to suggest it offers an invite, and every step can be passed", async () => {
   api.getSuggestions.mockResolvedValueOnce({ suggestions: [] });
   await mount();
   await press("Not now");
@@ -101,8 +149,10 @@ test("every step can be skipped, and with nobody to suggest it offers an invite"
   const { shareInvite } = jest.requireMock("../src/state/invites") as { shareInvite: jest.Mock };
   await press("Invite friends");
   expect(shareInvite).toHaveBeenCalledWith("onboarding", "token", "u-new");
-  await press("Skip");
-  await press("Start using Katkee");
+  await press("Next");
+  await press("Next");
+  await settle();
+  await press("Maybe later");
   expect(finish).toHaveBeenCalled();
 });
 
@@ -125,7 +175,7 @@ test("someone who already has a photo skips that step", async () => {
   mockAuth.user = { ...me, avatarMediaId: "has-one" } as never;
   try {
     await mount();
-    expect(texts()).toEqual(expect.arrayContaining(["Step 1 of 2", "People to follow"]));
+    expect(texts()).toEqual(expect.arrayContaining(["Step 1 of 3", "People to follow"]));
   } finally {
     mockAuth.user = me as never;
   }
