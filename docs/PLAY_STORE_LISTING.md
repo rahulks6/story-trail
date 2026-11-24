@@ -24,33 +24,42 @@ use those languages see the listing in theirs.
 | Ads | No (Sponsored Stories are off) |
 | Target audience | 18 and over |
 
-## Keyword plan (researched November 2026)
+## Keyword plan (updated 24 November 2026)
 
 Play reads the title (strongest), the short description (next) and the full description; there
-is no keyword field. Play doesn't publish search volumes, and ASO tools only estimate them from
-Play's search suggestions, so these priorities come from what ranks in India today: the "status"
-category (video status, status with song, Hindi and festival status) is one of the most crowded
-and most searched in India, and "close friends" is the space Katkee owns (the nearest rival,
-Locket, sells a home-screen widget, not Stories with chat). Repeat a keyword naturally, about
-once per 250 characters; never stuff.
+is no keyword field. The priorities below come from Google's search suggestions for India (603
+real searches pulled for 60 seed phrases, 24 Nov 2026) and from what ranks on Play: "status" is
+searched far more than "stories" in India, so it now leads the title in English, Hindi and
+Marathi. Repeat a keyword naturally, about once per 250 characters; never stuff.
 
 | Priority | Keyword | Where it is |
 | --- | --- | --- |
-| 1 | stories, story | Title, short, full (12+ times) |
-| 1 | status | Title, short, full ("status with music", "video status", "festival status") |
-| 1 | close friends | Short, full (opening line and 4 more) |
-| 1 | chat | Title, short, full |
-| 2 | status with song / music, story with music | Short, full |
-| 2 | video status, photo status, story maker | Full |
-| 2 | voice notes, video call, group chat | Short, full |
-| 3 | private, friends only, inner circle | Full |
-| 3 | festival status (Diwali, Holi, Eid, Christmas) | Full; seasonal Custom store listings |
-| 3 | share to WhatsApp | Full |
-| Hindi | स्टोरी, स्टेटस, चैट, वीडियो कॉल, क्लोज़ फ़्रेंड्स | The hi listing (title has स्टेटस) |
+| 1 | status | Title (first word after Katkee), short, full ("photo status", "video status", "status with songs", "festival status") |
+| 1 | status with songs / with music | Short, full (opening line and a section heading) |
+| 1 | stories, story | Title, short, full |
+| 1 | close friends | Short, full (opening line and 3 more) |
+| 1 | chat, video call, voice notes | Title, short, full |
+| 2 | photo status, video status, story maker | Full |
+| 2 | private social app, friends only, no Reels feed | Full |
+| 2 | comments: like, reply, tag with @ | Full (new section) |
+| 3 | festival status (Diwali, Holi, Eid, Christmas; Ganeshotsav in Marathi) | Full; seasonal Custom store listings |
+| 3 | Hindi, Marathi (people search "Hindi status", "Marathi status") | Full |
+| Hindi | स्टेटस, गानों के साथ स्टेटस, फ़ोटो स्टेटस, वीडियो स्टेटस, स्टोरी, क्लोज़ फ़्रेंड्स | The hi listing |
+| Marathi | स्टेटस, गाण्यांसह स्टेटस, फोटो स्टेटस, व्हिडिओ स्टेटस, स्टोरी, क्लोज फ्रेंड्स | The mr listing |
 
 After the listing has been live 2-3 weeks, Play Console → Grow users → Store performance →
 Store analysis → Search terms shows the words that really bring visitors and installers: move
-the best of them up (title or short description) and drop what brings nothing.
+the best of them up and drop what brings nothing.
+
+## Do these in Play Console (once)
+
+1. **Target audience: 18 and over only** (Policy → App content → Target audience and content).
+   The listing showed "Rated for 12+", which brings teenagers who install and can't sign up.
+2. **Promo video:** upload the 15-second app demo (`brand/promo`, 16:9 version) to YouTube,
+   public or unlisted, with ads off, and paste the link in Store listing → Video.
+3. **Tags:** Social, Communication, Photography, Video call, Text messaging (Store settings).
+4. **Website:** https://katkee.com, so the listing links to the blog and guides.
+5. **Reply to every review** within a day.
 
 ## Custom store listing: India (country-based)
 
@@ -70,11 +79,10 @@ Play can show two versions of the listing to different visitors and report which
 installs (Grow users, Store presence, Store listing experiments). Run one at a time, 50/50, for
 at least 7 days, and keep a winner only when Play marks it as better with confidence.
 
-1. **First screenshot**: Home (palm beach Story) against the editor (street photo with
-   "Golden hour"). The first screenshot decides most installs.
-2. **Short description**: the current one against "Share your day in Stories. Chat, send voice notes and
-   video call your friends."
-3. **App name**: "Katkee: Stories, Status & Chat" against "Katkee: Stories, Chat & Calls".
+1. **Short description**: the current one against "Status with songs for your close friends.
+   Private Stories, chat and video calls." (78 characters).
+2. **First screenshot**: Home (a Story with a song) against the editor with the music picker open.
+3. **App name**: "Katkee: Status, Stories & Chat" against "Katkee: Status with Songs & Chat".
 4. **Feature graphic**: the current one against one with the editor screen in front.
 
 ## Custom store listing for India
@@ -96,60 +104,66 @@ friends." Worth doing for Diwali, Holi and other big festivals, when people sear
 
 ### App name (30 characters max)
 <!-- field:title:en -->
-Katkee: Stories, Status & Chat
+Katkee: Status, Stories & Chat
 <!-- /field -->
 
 ### Short description (80 characters max)
 <!-- field:short:en -->
-Stories & status with songs, just for your close friends. Chat and video call.
+Status with songs & Stories for close friends. Chat, voice notes, video calls.
 <!-- /field -->
 
 ### Full description (4,000 characters max)
 <!-- field:full:en -->
-Stories for your close friends, not for strangers. Post your day as a photo or video Story with a song, and choose exactly who sees it. Then chat, send voice notes and video call the same friends, all in one app.
+Status with songs and Stories for your close friends, not for strangers. Make a photo status or video status with music in seconds, choose exactly who sees it, then chat, send voice notes and video call the same friends. A private social app, made in India, in English, Hindi, Marathi and six more languages.
 
-Katkee is a Stories and status app for the people you actually know. Stories last 24 hours, like a status: add a song, text and animated stickers, and share with everyone, your followers or only your Close Friends.
+Katkee is a Stories and status app for the people you actually know. Every Story lasts 24 hours, like a status: add a song, text and animated stickers, and share it with everyone, your followers or only your Close Friends.
 
 Why people choose Katkee
-• Close Friends Stories: share some moments only with your inner circle
-• You choose who sees every Story and status update
-• Stories from your friends on Home, one swipe at a time
+• Close Friends: share some Stories only with your inner circle
+• You choose who sees every Story and status, each time you post
+• Your friends' Stories first on Home, one swipe at a time, with no public Reels feed
 • Free, with no ad tracking, and we never sell your data
 
 Status with music, made in seconds
 • Photo status and video status that last 24 hours
-• Add a song to your Story and pick the best part of it
-• Story maker tools: text styles, animated stickers, emoji, drawing and filters that cover the whole photo or video
+• Status with songs: add music from Katkee's library and pick the best part
+• Story maker: text styles, animated stickers, GIFs, emoji, drawing and filters
 • Layouts: a photo collage of up to six photos in one Story
-• Polls, quizzes, questions, countdowns and links
-• Festival status: Katkee spots Diwali, Holi, Eid, Christmas and more in your Story and adds it to the festival ring
+• Polls, quizzes, questions, countdowns, links and Add Yours chains
+• Festival status: Katkee spots Diwali, Holi, Eid, Christmas and more and adds your Story to the festival ring
+• Today's theme: an easy idea for your status every evening
+
+Comments, likes and replies
+• Like a Story with a double tap, or comment on it
+• Like comments, reply to them, and tag friends with @
+• Reply to a Story privately in chat, or react with an emoji
 
 Highlights that last
-• Keep your best Stories on your profile as Highlights, forever
+• Keep your best Stories on your profile as Highlights
 • Friends can like, comment on and share your Highlights
-• Explore other people's Highlights after you've seen every new Story
+• Your private Archive keeps every Story you've posted, only for you
 
 Chat, voice notes and video calls
 • Private chats and group chats with up to 32 friends
 • Voice notes, photos and videos in every chat
 • Voice calls and video calls
-• Reply to a Story, react with an emoji or double tap to like
 • Share your Story to WhatsApp in one tap
-• Invite friends from your contacts: one tap opens WhatsApp with your invite
+• Invite friends with your own link, and find friends from your contacts
 
-Stay close to your friends
-• Today's theme: an easy idea for your Story every day
-• Katkee understands what each Story is about, so no hashtags needed
-• Follow your friends in one tap from their Stories
+Easy to start
+• Join in one tap with Google
+• Follow friends in one tap, then share your first Story with a song
+• Log in with your email or your username
 
 Safe and private social app
 • Private account: approve who follows you
 • Two-step login protects your account
 • Block, mute and report anyone, any time
+• Stories and profile photos are checked for nudity automatically
 • Download your data, or delete your account whenever you like
 
 Made in India, for everyone
-• In English, Hindi, Marathi, Spanish, Portuguese, Indonesian, French, German and Arabic
+• Use Katkee in Hindi, Marathi, English, Spanish, Portuguese, Indonesian, French, German and Arabic
 • Light and dark mode
 • Several accounts on one phone
 • Picture descriptions for screen reader users
@@ -163,59 +177,68 @@ Privacy Policy: katkee.com/privacy · Terms: katkee.com/terms
 
 ### App name
 <!-- field:title:hi -->
-Katkee: स्टोरी, स्टेटस और चैट
+Katkee: स्टेटस, स्टोरी और चैट
 <!-- /field -->
 
 ### Short description
 <!-- field:short:hi -->
-क्लोज़ फ़्रेंड्स के लिए स्टोरीज़। म्यूज़िक, चैट, वॉइस नोट और वीडियो कॉल।
+गानों के साथ स्टेटस और स्टोरी, सिर्फ़ क्लोज़ फ़्रेंड्स के लिए। चैट, वीडियो कॉल।
 <!-- /field -->
 
 ### Full description
 <!-- field:full:hi -->
-Katkee आपके असली दोस्तों के लिए स्टोरीज़ ऐप है। फ़ोटो और वीडियो स्टोरीज़ शेयर करें जो स्टेटस की तरह 24 घंटे रहती हैं, म्यूज़िक, टेक्स्ट और एनिमेटेड स्टिकर के साथ, और हर स्टोरी कौन देखे यह आप तय करें। फिर दोस्तों से चैट करें, वॉइस नोट भेजें और वीडियो कॉल करें। अनजान लोगों के लिए नहीं, अपनों के लिए पोस्ट करें।
+गानों के साथ स्टेटस और स्टोरी, अनजान लोगों के लिए नहीं, आपके क्लोज़ फ़्रेंड्स के लिए। म्यूज़िक के साथ फ़ोटो स्टेटस या वीडियो स्टेटस सेकंडों में बनाएँ, तय करें कि उसे कौन देखे, और फिर उन्हीं दोस्तों से चैट करें, वॉइस नोट भेजें और वीडियो कॉल करें। भारत में बना एक प्राइवेट सोशल ऐप, हिंदी, मराठी, अंग्रेज़ी और छह और भाषाओं में।
+
+Katkee आपके अपने लोगों के लिए स्टोरी और स्टेटस ऐप है। हर स्टोरी स्टेटस की तरह 24 घंटे रहती है: गाना, टेक्स्ट और एनिमेटेड स्टिकर जोड़ें, और उसे सबके साथ, अपने फ़ॉलोअर्स के साथ या सिर्फ़ क्लोज़ फ़्रेंड्स के साथ शेयर करें।
 
 लोग Katkee क्यों चुनते हैं
-• क्लोज़ फ़्रेंड्स: कुछ स्टोरीज़ सिर्फ़ ख़ास लोगों के लिए
-• हर स्टोरी के लिए चुनें: सब, फ़ॉलोअर या क्लोज़ फ़्रेंड्स
-• होम पर दोस्तों की स्टोरीज़, एक बार में एक स्वाइप
+• क्लोज़ फ़्रेंड्स: कुछ स्टोरी सिर्फ़ ख़ास लोगों के लिए
+• हर स्टोरी और स्टेटस के लिए आप चुनें कि कौन देखे
+• होम पर पहले दोस्तों की स्टोरी, एक बार में एक स्वाइप, कोई पब्लिक रील्स फ़ीड नहीं
 • मुफ़्त, कोई ऐड ट्रैकिंग नहीं, और हम आपका डेटा कभी नहीं बेचते
 
-अपने अंदाज़ की स्टोरीज़ बनाएँ
-• फ़ोटो और वीडियो स्टोरीज़ जो स्टेटस की तरह 24 घंटे रहती हैं
-• टेक्स्ट स्टाइल, एनिमेटेड स्टिकर, इमोजी, ड्रॉइंग और फ़िल्टर
-• फ़िल्टर पूरी फ़ोटो या वीडियो पर, किनारे से किनारे तक
-• Katkee की म्यूज़िक लाइब्रेरी से गाना जोड़ें और उसका बेस्ट हिस्सा चुनें
+गानों के साथ स्टेटस, सेकंडों में
+• फ़ोटो स्टेटस और वीडियो स्टेटस जो 24 घंटे रहते हैं
+• गाने वाला स्टेटस: Katkee की म्यूज़िक लाइब्रेरी से गाना जोड़ें और उसका बेस्ट हिस्सा चुनें
+• स्टोरी मेकर: टेक्स्ट स्टाइल, एनिमेटेड स्टिकर, GIF, इमोजी, ड्रॉइंग और फ़िल्टर
 • लेआउट: एक स्टोरी में छह फ़ोटो तक का कोलाज
-• पोल, क्विज़, सवाल, काउंटडाउन और लिंक
-• त्योहार स्टोरीज़: Katkee आपकी स्टोरी में त्योहार पहचानकर उसे त्योहार रिंग में जोड़ देता है
+• पोल, क्विज़, सवाल, काउंटडाउन, लिंक और Add Yours
+• त्योहार स्टेटस: Katkee दिवाली, होली, ईद, क्रिसमस और दूसरे त्योहार पहचानकर आपकी स्टोरी त्योहार रिंग में जोड़ता है
+• आज की थीम: हर शाम स्टेटस के लिए एक आसान आइडिया
+
+कमेंट, लाइक और जवाब
+• डबल टैप से स्टोरी लाइक करें या कमेंट करें
+• कमेंट लाइक करें, उनका जवाब दें और @ से दोस्तों को टैग करें
+• चैट में स्टोरी का प्राइवेट जवाब दें या इमोजी से रिएक्ट करें
 
 हमेशा रहने वाली हाइलाइट्स
-• अपनी बेस्ट स्टोरीज़ प्रोफ़ाइल पर हाइलाइट्स में हमेशा के लिए रखें
-• दोस्त आपकी हाइलाइट्स को लाइक, कमेंट और शेयर कर सकते हैं
-• सारी नई स्टोरीज़ देख लीं? दूसरों की हाइलाइट्स देखें
+• अपनी बेस्ट स्टोरी प्रोफ़ाइल पर हाइलाइट्स में रखें
+• दोस्त आपकी हाइलाइट्स लाइक, कमेंट और शेयर कर सकते हैं
+• आपका प्राइवेट आर्काइव हर पुरानी स्टोरी सिर्फ़ आपके लिए रखता है
 
-चैट और वीडियो कॉल
-• प्राइवेट मैसेज और 32 दोस्तों तक के ग्रुप चैट
+चैट, वॉइस नोट और वीडियो कॉल
+• प्राइवेट चैट और 32 दोस्तों तक के ग्रुप चैट
 • हर चैट में वॉइस नोट, फ़ोटो और वीडियो
-• दोस्तों से वॉइस कॉल और वीडियो कॉल
-• स्टोरी का जवाब दें, इमोजी से रिएक्ट करें या डबल टैप से लाइक करें
-• देखें मैसेज कब भेजा गया, पहुँचा और देखा गया
+• वॉइस कॉल और वीडियो कॉल
+• एक टैप में अपनी स्टोरी WhatsApp पर शेयर करें
+• अपने इनवाइट लिंक से दोस्तों को बुलाएँ, और कॉन्टैक्ट्स से दोस्त ढूँढें
 
-अपने दोस्तों से जुड़े रहें
-• Katkee समझता है कि हर स्टोरी किस बारे में है, हैशटैग की ज़रूरत नहीं
-• एक टैप में अपने दोस्तों को फ़ॉलो करें
+शुरुआत आसान
+• Google से एक टैप में जुड़ें
+• एक टैप में दोस्तों को फ़ॉलो करें और गाने के साथ पहली स्टोरी शेयर करें
+• ईमेल या यूज़रनेम से लॉग इन करें
 
-सुरक्षित और प्राइवेट
+सुरक्षित और प्राइवेट सोशल ऐप
 • प्राइवेट अकाउंट: तय करें कौन आपको फ़ॉलो करे
 • टू-स्टेप लॉगिन से अकाउंट सुरक्षित
 • किसी को भी ब्लॉक, म्यूट या रिपोर्ट करें
+• स्टोरी और प्रोफ़ाइल फ़ोटो में न्यूडिटी अपने-आप जाँची जाती है
 • अपने डेटा की कॉपी डाउनलोड करें, या जब चाहें अकाउंट डिलीट करें
 
-सबके लिए
+भारत में बना, सबके लिए
 • हिंदी, मराठी, अंग्रेज़ी और छह और भाषाओं में
 • लाइट और डार्क मोड
-• एक फ़ोन पर कई अकाउंट, एक टैप में बदलें
+• एक फ़ोन पर कई अकाउंट
 • स्क्रीन रीडर इस्तेमाल करने वालों के लिए तस्वीरों का विवरण
 
 Katkee 18 साल और उससे ज़्यादा उम्र के लोगों के लिए है।
@@ -227,59 +250,68 @@ Katkee 18 साल और उससे ज़्यादा उम्र क�
 
 ### App name
 <!-- field:title:mr -->
-Katkee: स्टोरी, स्टेटस आणि चॅट
+Katkee: स्टेटस, स्टोरी आणि चॅट
 <!-- /field -->
 
 ### Short description
 <!-- field:short:mr -->
-क्लोज फ्रेंड्ससाठी स्टोरीज. संगीत, चॅट, व्हॉइस नोट आणि व्हिडिओ कॉल.
+गाण्यांसह स्टेटस आणि स्टोरी, फक्त क्लोज फ्रेंड्ससाठी. चॅट आणि व्हिडिओ कॉल.
 <!-- /field -->
 
 ### Full description
 <!-- field:full:mr -->
-Katkee तुमच्या खऱ्या मित्रांसाठी स्टोरीज ॲप आहे. स्टेटससारख्या 24 तास राहणाऱ्या फोटो आणि व्हिडिओ स्टोरीज शेअर करा, संगीत, टेक्स्ट आणि ॲनिमेटेड स्टिकरसोबत, आणि प्रत्येक स्टोरी कोण पाहील ते तुम्ही ठरवा. मग मित्रांशी चॅट करा, व्हॉइस नोट पाठवा आणि व्हिडिओ कॉल करा. अनोळखी लोकांसाठी नाही, आपल्या माणसांसाठी पोस्ट करा.
+गाण्यांसह स्टेटस आणि स्टोरी, अनोळखी लोकांसाठी नाही, तुमच्या क्लोज फ्रेंड्ससाठी. संगीतासह फोटो स्टेटस किंवा व्हिडिओ स्टेटस काही सेकंदांत बनवा, ते कोण पाहील ते ठरवा, आणि मग त्याच मित्रांशी चॅट करा, व्हॉइस नोट पाठवा आणि व्हिडिओ कॉल करा. भारतात बनलेले प्रायव्हेट सोशल ॲप, मराठी, हिंदी, इंग्रजी आणि आणखी सहा भाषांमध्ये.
+
+Katkee तुमच्या आपल्या माणसांसाठी स्टोरी आणि स्टेटस ॲप आहे. प्रत्येक स्टोरी स्टेटससारखी 24 तास राहते: गाणं, टेक्स्ट आणि ॲनिमेटेड स्टिकर जोडा, आणि ती सगळ्यांसोबत, तुमच्या फॉलोअर्ससोबत किंवा फक्त क्लोज फ्रेंड्ससोबत शेअर करा.
 
 लोक Katkee का निवडतात
 • क्लोज फ्रेंड्स: काही स्टोरीज फक्त खास लोकांसाठी
-• प्रत्येक स्टोरीसाठी निवडा: सगळे, फॉलोअर किंवा क्लोज फ्रेंड्स
-• होमवर मित्रांच्या स्टोरीज, एका वेळी एक स्वाइप
+• प्रत्येक स्टोरी आणि स्टेटससाठी कोण पाहील ते तुम्ही ठरवा
+• होमवर आधी मित्रांच्या स्टोरीज, एका वेळी एक स्वाइप, कोणताही पब्लिक रील्स फीड नाही
 • मोफत, कोणतंही ॲड ट्रॅकिंग नाही, आणि आम्ही तुमचा डेटा कधीच विकत नाही
 
-तुमच्या पद्धतीच्या स्टोरीज बनवा
-• स्टेटससारख्या 24 तास राहणाऱ्या फोटो आणि व्हिडिओ स्टोरीज
-• टेक्स्ट स्टाइल, ॲनिमेटेड स्टिकर, इमोजी, ड्रॉइंग आणि फिल्टर
-• फिल्टर संपूर्ण फोटो किंवा व्हिडिओवर, कडेपासून कडेपर्यंत
-• Katkee च्या संगीत लायब्ररीतून गाणं जोडा आणि त्याचा बेस्ट भाग निवडा
+गाण्यांसह स्टेटस, काही सेकंदांत
+• 24 तास राहणारे फोटो स्टेटस आणि व्हिडिओ स्टेटस
+• गाण्याचं स्टेटस: Katkee च्या संगीत लायब्ररीतून गाणं जोडा आणि त्याचा बेस्ट भाग निवडा
+• स्टोरी मेकर: टेक्स्ट स्टाइल, ॲनिमेटेड स्टिकर, GIF, इमोजी, ड्रॉइंग आणि फिल्टर
 • लेआउट: एका स्टोरीत सहा फोटोपर्यंतचा कोलाज
-• पोल, क्विझ, प्रश्न, काउंटडाउन आणि लिंक
-• सणांच्या स्टोरीज: Katkee तुमच्या स्टोरीतला सण ओळखून तो सणाच्या रिंगमध्ये जोडतो
+• पोल, क्विझ, प्रश्न, काउंटडाउन, लिंक आणि Add Yours
+• सणांचं स्टेटस: Katkee दिवाळी, होळी, गणेशोत्सव, ईद, ख्रिसमस ओळखून तुमची स्टोरी सणाच्या रिंगमध्ये जोडतो
+• आजची थीम: रोज संध्याकाळी स्टेटससाठी एक सोपी कल्पना
+
+कमेंट, लाइक आणि उत्तरं
+• डबल टॅपने स्टोरी लाइक करा किंवा कमेंट करा
+• कमेंट लाइक करा, उत्तर द्या आणि @ ने मित्रांना टॅग करा
+• चॅटमध्ये स्टोरीला प्रायव्हेट उत्तर द्या किंवा इमोजीने रिॲक्ट करा
 
 कायम राहणाऱ्या हायलाइट्स
-• तुमच्या बेस्ट स्टोरीज प्रोफाइलवर हायलाइट्समध्ये कायमच्या ठेवा
+• तुमच्या बेस्ट स्टोरीज प्रोफाइलवर हायलाइट्समध्ये ठेवा
 • मित्र तुमच्या हायलाइट्स लाइक, कमेंट आणि शेअर करू शकतात
-• सगळ्या नवीन स्टोरीज पाहिल्या? इतरांच्या हायलाइट्स पाहा
+• तुमचं प्रायव्हेट आर्काइव्ह प्रत्येक जुनी स्टोरी फक्त तुमच्यासाठी ठेवतं
 
-चॅट आणि व्हिडिओ कॉल
-• प्रायव्हेट मेसेज आणि 32 मित्रांपर्यंतचे ग्रुप चॅट
+चॅट, व्हॉइस नोट आणि व्हिडिओ कॉल
+• प्रायव्हेट चॅट आणि 32 मित्रांपर्यंतचे ग्रुप चॅट
 • प्रत्येक चॅटमध्ये व्हॉइस नोट, फोटो आणि व्हिडिओ
-• मित्रांशी व्हॉइस कॉल आणि व्हिडिओ कॉल
-• स्टोरीला उत्तर द्या, इमोजीने रिॲक्ट करा किंवा डबल टॅपने लाइक करा
-• मेसेज कधी पाठवला, पोहोचला आणि पाहिला ते पाहा
+• व्हॉइस कॉल आणि व्हिडिओ कॉल
+• एका टॅपमध्ये तुमची स्टोरी WhatsApp वर शेअर करा
+• तुमच्या इनव्हाइट लिंकने मित्रांना बोलवा, आणि कॉन्टॅक्ट्समधून मित्र शोधा
 
-मित्रांशी जोडलेले राहा
-• Katkee ला प्रत्येक स्टोरी कशाबद्दल आहे ते समजतं, हॅशटॅगची गरज नाही
-• एका टॅपमध्ये तुमच्या मित्रांना फॉलो करा
+सोपी सुरुवात
+• Google ने एका टॅपमध्ये जॉइन व्हा
+• एका टॅपमध्ये मित्रांना फॉलो करा आणि गाण्यासह पहिली स्टोरी शेअर करा
+• ईमेल किंवा यूज़रनेमने लॉग इन करा
 
-सुरक्षित आणि प्रायव्हेट
+सुरक्षित आणि प्रायव्हेट सोशल ॲप
 • प्रायव्हेट अकाउंट: तुम्हाला कोण फॉलो करेल ते ठरवा
 • टू-स्टेप लॉगिनने अकाउंट सुरक्षित
 • कोणालाही ब्लॉक, म्यूट किंवा रिपोर्ट करा
+• स्टोरी आणि प्रोफाइल फोटोमधली न्यूडिटी आपोआप तपासली जाते
 • तुमच्या डेटाची कॉपी डाउनलोड करा, किंवा हवं तेव्हा अकाउंट डिलीट करा
 
-सगळ्यांसाठी
+भारतात बनलेलं, सगळ्यांसाठी
 • मराठी, हिंदी, इंग्रजी आणि आणखी सहा भाषांमध्ये
 • लाइट आणि डार्क मोड
-• एका फोनवर अनेक अकाउंट, एका टॅपमध्ये बदला
+• एका फोनवर अनेक अकाउंट
 • स्क्रीन रीडर वापरणाऱ्यांसाठी चित्रांचं वर्णन
 
 Katkee 18 वर्षे आणि त्याहून अधिक वयाच्या लोकांसाठी आहे.
@@ -322,6 +354,7 @@ Chat y videollamadas
 • Mensajes privados y grupos de hasta 32 amigos
 • Notas de voz, fotos y videos
 • Llamadas de voz y videollamadas
+• Da me gusta a comentarios, respóndelos y etiqueta a amigos con @
 
 Cerca de tus amigos
 • Sigue a tus amigos con un toque
@@ -365,6 +398,7 @@ Chat e videochamadas
 • Mensagens privadas e grupos com até 32 amigos
 • Áudios, fotos e vídeos
 • Chamadas de voz e de vídeo
+• Curta comentários, responda e marque amigos com @
 
 Perto dos seus amigos
 • Siga seus amigos com um toque
@@ -408,6 +442,7 @@ Chat dan video call
 • Pesan pribadi dan grup hingga 32 teman
 • Pesan suara, foto dan video
 • Panggilan suara dan video call
+• Sukai komentar, balas, dan tandai teman dengan @
 
 Tetap dekat dengan temanmu
 • Ikuti temanmu dengan sekali ketuk
@@ -451,6 +486,7 @@ Chat et appels vidéo
 • Messages privés et groupes jusqu'à 32 amis
 • Messages vocaux, photos et vidéos
 • Appels vocaux et vidéo
+• Aimez les commentaires, répondez-y et identifiez vos amis avec @
 
 Proche de vos amis
 • Suivez vos amis en un geste
@@ -494,6 +530,7 @@ Chat und Videoanrufe
 • Private Nachrichten und Gruppen mit bis zu 32 Freunden
 • Sprachnachrichten, Fotos und Videos
 • Sprach- und Videoanrufe
+• Kommentare liken, beantworten und Freunde mit @ markieren
 
 Nah bei deinen Freunden
 • Folge deinen Freunden mit einem Tipp
@@ -537,6 +574,7 @@ Katkee تطبيق قصص لأصدقائك الحقيقيين. شارك قصص ا
 • رسائل خاصة ومجموعات حتى 32 صديقًا
 • رسائل صوتية وصور وفيديو
 • مكالمات صوتية ومكالمات فيديو
+• أعجب بالتعليقات ورُدّ عليها وأشر إلى أصدقائك بـ @
 
 قريب من أصدقائك
 • تابع أصدقاءك بلمسة واحدة
