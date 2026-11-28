@@ -29,8 +29,8 @@ const TAB_ICONS: Record<string, import("../theme/icons").IconName> = {
 
 /**
  * Custom bottom tab bar: HOME | SEARCH | + | DM | PROFILE, as Instagram draws it: icons only (each
- * tab still has its name for screen readers), the current one solid, Create a + in a rounded
- * square, and Profile your own photo. Black on Home, where Stories fill the screen behind it.
+ * tab still has its name for screen readers), the current one solid, Create a gold rounded button,
+ * and Profile your own photo, all on a rounded card. Black on Home, where Stories fill the screen.
  * Hidden where the screen needs all of it: the camera and Story editor, and an open chat.
  */
 export function tabBarHidden(state: BottomTabBarProps["state"]): boolean {
@@ -62,6 +62,7 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
       onLayout={(e) => reportHeight?.(e.nativeEvent.layout.height)}
       accessibilityRole="tablist"
     >
+      <View style={[styles.bar, onMedia && styles.barOnMedia]}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
@@ -88,7 +89,9 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
               onPress={onPress}
               style={styles.tabItem}
             >
-              <Icon name={ICONS.create} framed size={26} color={ink} />
+              <View style={styles.createButton}>
+                <Icon name={ICONS.create} size={24} color={colors.onAccent} />
+              </View>
             </Pressable>
           );
         }
@@ -124,6 +127,7 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
           </Pressable>
         );
       })}
+      </View>
     </View>
   );
 }
@@ -160,15 +164,20 @@ function ProfileTab({ focused, ring }: { focused: boolean; ring: string }): Reac
 }
 
 const styles = StyleSheet.create({
-  container: {
+  // The bar is a rounded card floating a little above the bottom edge, inset from the sides.
+  container: { backgroundColor: colors.background, paddingTop: spacing.xs, paddingHorizontal: spacing.md },
+  containerOnMedia: { backgroundColor: mediaColors.background },
+  bar: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.background,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.border,
-    paddingTop: spacing.xs,
+    backgroundColor: colors.surface,
+    borderRadius: 22,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+    paddingHorizontal: spacing.xs,
   },
-  containerOnMedia: { backgroundColor: mediaColors.background, borderTopColor: "rgba(255,255,255,0.08)" },
+  barOnMedia: { backgroundColor: "#161514", borderColor: "rgba(255,255,255,0.08)" },
+  createButton: { width: 44, height: 36, borderRadius: 14, backgroundColor: colors.accent, alignItems: "center", justifyContent: "center" },
   tabItem: {
     minHeight: 50,
     flex: 1,

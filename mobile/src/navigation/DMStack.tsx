@@ -4,7 +4,7 @@ import { Text } from "react-native";
 import { Pressable } from "../components/Pressable";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { DMStackParamList } from "./types";
-import { colors, spacing, ICONS } from "../theme";
+import { colors, spacing, ICONS, HEADER_TITLE } from "../theme";
 import { DMInboxScreen } from "../screens/dm/DMInboxScreen";
 import { ConversationScreen } from "../screens/dm/ConversationScreen";
 import { NewGroupScreen } from "../screens/dm/NewGroupScreen";
@@ -24,6 +24,7 @@ export function DMStack(): React.JSX.Element {
         headerTintColor: colors.textPrimary,
         headerShadowVisible: false,
         headerBackButtonDisplayMode: "minimal",
+        headerTitleStyle: HEADER_TITLE,
       }}
     >
       <Stack.Screen

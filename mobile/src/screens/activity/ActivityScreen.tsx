@@ -526,7 +526,7 @@ export function ActivityScreen(): React.JSX.Element {
             <Icon name={ICONS.back} size={24} color={colors.textPrimary} />
           </Pressable>
         ) : null}
-        <Text style={typography.title}>{t("common.activity")}</Text>
+        <Text style={typography.display} accessibilityRole="header">{t("common.activity")}</Text>
       </View>
       {unreadInList ? (
         <Pressable onPress={onMarkAllRead} hitSlop={8} accessibilityRole="button">
@@ -597,7 +597,9 @@ export function ActivityScreen(): React.JSX.Element {
           onEndReached={() => void loadMore()}
           contentContainerStyle={{ paddingBottom: insets.bottom + spacing.md }}
           renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
-          renderItem={({ item: row }) => {
+          renderItem={({ item: row, index, section }) => {
+            // Each section ("Today", "Earlier") is one rounded card.
+            const cardEdges = [index === 0 && styles.cardFirst, index === section.data.length - 1 && styles.cardLast];
             const actor = row.kind === "grouped-like" ? row.firstActor : row.notification.actor;
             const message = row.kind === "grouped-like" ? messageForGroup(row) : messageFor(row.notification);
             const aboutBadge = row.kind === "single" && row.notification.type === "verification";
@@ -608,7 +610,7 @@ export function ActivityScreen(): React.JSX.Element {
             const ago = timeAgo(createdAt);
             return (
               <Pressable
-                style={styles.row}
+                style={[styles.row, ...cardEdges]}
                 onPress={() => void onPressRow(row)}
                 accessibilityRole="button"
                 accessibilityLabel={[message.replace(/\.$/, ""), badgeAfter ? t("activity.displaynameIsVerified", { displayName: actor?.displayName ?? "" }) : "", ago, unread ? t("activity.unread") : ""].filter(Boolean).join(". ")}
@@ -670,7 +672,7 @@ const styles = StyleSheet.create({
   },
   headerStart: { flexDirection: "row", alignItems: "center", gap: spacing.md },
   markAllRead: { color: colors.accentText, fontSize: 13, fontWeight: "600" },
-  tabScroll: { flexGrow: 0, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border },
+  tabScroll: { flexGrow: 0 },
   tabBar: {
     flexDirection: "row",
     paddingHorizontal: spacing.md,
@@ -695,7 +697,14 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
+    marginHorizontal: spacing.md,
+    backgroundColor: colors.surface,
+    borderLeftWidth: StyleSheet.hairlineWidth,
+    borderRightWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
   },
+  cardFirst: { borderTopLeftRadius: 22, borderTopRightRadius: 22, borderTopWidth: StyleSheet.hairlineWidth, paddingTop: spacing.md },
+  cardLast: { borderBottomLeftRadius: 22, borderBottomRightRadius: 22, borderBottomWidth: StyleSheet.hairlineWidth, paddingBottom: spacing.md },
   rowText: { flex: 1, gap: 2 },
   // Same footprint as an Avatar, so the text lines up with the other rows.
   badgeIcon: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: colors.surfaceElevated },

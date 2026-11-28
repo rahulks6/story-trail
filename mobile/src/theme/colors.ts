@@ -4,14 +4,15 @@
  * as text on white (verification/contrast.cjs checks every text pair in both).
  */
 export const darkPalette = {
-  background: "#0B0B0B",
-  surface: "#141820",
-  surfaceElevated: "#1D212A",
-  border: "#282C36",
+  // "Midnight": a warm black, cards a step lighter, warm white text (aesthetic refresh, Nov 2026).
+  background: "#0D0C0B",
+  surface: "#171614",
+  surfaceElevated: "#201E1B",
+  border: "#2C2925",
 
-  textPrimary: "#FFFFFF",
-  textSecondary: "#A3A3A3",
-  textDisabled: "#5A5D61",
+  textPrimary: "#F5F2EC",
+  textSecondary: "#A39D94",
+  textDisabled: "#5E5A54",
 
   accent: "#FFC800", // Katkee amber — fills: primary CTA, Follow, Create, unread badges, my chat bubbles
   accentPressed: "#E0AF00",
@@ -20,6 +21,8 @@ export const darkPalette = {
   // where amber can't be read on white.
   accentText: "#FFC800",
   onAccentText: "#0B0B0B",
+  // A soft wash of the accent behind accent text: chips like "Founding member" and streaks.
+  accentTint: "rgba(255,200,0,0.12)",
 
   // Lightened from #E4483C (same hue) so red text reaches 4.5:1 on sheets and dark text on red
   // fills does too (verification/contrast.cjs). Story text/drawing colours are content and keep their red.
@@ -33,14 +36,15 @@ export const darkPalette = {
 };
 
 export const lightPalette: Palette = {
-  background: "#FFFFFF",
-  surface: "#F7F7F8",
-  surfaceElevated: "#EDEDF0",
-  border: "#DADCE0",
+  // "Daylight": a warm off-white page with white cards on it, warm near-black text.
+  background: "#F6F4F0",
+  surface: "#FFFFFF",
+  surfaceElevated: "#EEEAE3",
+  border: "#E2DDD4",
 
-  textPrimary: "#0B0B0B",
-  textSecondary: "#5C5F66",
-  textDisabled: "#A0A4AB",
+  textPrimary: "#17150F",
+  textSecondary: "#6B655D",
+  textDisabled: "#A39D94",
 
   // Buttons are filled with Katkee's own amber and black text in both modes (deep gold fills read
   // as brown); text and icons use the deep gold below.
@@ -49,8 +53,9 @@ export const lightPalette: Palette = {
   onAccent: "#0B0B0B",
   accentText: "#8A5E00", // deep gold: Katkee's amber, dark enough to read on white
   onAccentText: "#FFFFFF",
+  accentTint: "rgba(255,200,0,0.16)",
 
-  danger: "#C5221F",
+  danger: "#B71F1C",
   onDanger: "#FFFFFF",
   success: "#137333",
   like: "#E0245E", // a deeper red that holds up on white

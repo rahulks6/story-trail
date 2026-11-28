@@ -19,7 +19,7 @@ import { useAnalytics } from "../analytics/useAnalytics";
 import { StoryLinkScreen } from "../screens/story/StoryLinkScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { AuthStackParamList, RootStackParamList } from "./types";
-import { colors } from "../theme";
+import { colors, HEADER_TITLE } from "../theme";
 import { useAuth } from "../state/AuthContext";
 import { AuthNavigator } from "./AuthNavigator";
 import { MainTabs } from "./MainTabs";
@@ -105,7 +105,7 @@ function SignedInNavigator({ onboarding }: { onboarding: boolean }): React.JSX.E
   }
   const verifyFirst = justSignedUp && !!user?.email && user.emailVerified === false;
   return (
-    <Stack.Navigator initialRouteName={verifyFirst ? "VerifyEmail" : "Main"} screenOptions={{ ...PUSH_TRANSITION, headerShown: false, freezeOnBlur: true, headerBackButtonDisplayMode: "minimal" }}>
+    <Stack.Navigator initialRouteName={verifyFirst ? "VerifyEmail" : "Main"} screenOptions={{ ...PUSH_TRANSITION, headerShown: false, freezeOnBlur: true, headerBackButtonDisplayMode: "minimal", headerTitleStyle: HEADER_TITLE, headerShadowVisible: false }}>
       <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
       <Stack.Screen name="AccountSecurity" component={AccountSecurityScreen} options={{headerShown:true,title:t("rootNavigator.accountSecurity"),headerStyle:{backgroundColor:colors.background},headerTintColor:colors.textPrimary}}/>
       <Stack.Screen name="Main" component={MainTabs} />

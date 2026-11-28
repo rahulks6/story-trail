@@ -12,7 +12,7 @@ import { useProfilePhotoSource } from "../../hooks/useProfilePhotoSource";
 import { COVER_ASPECT } from "../../models/avatarCrop";
 import { Icon } from "../Icon";
 import { VerifiedBadgeSheet, VerifiedName } from "../VerifiedBadge";
-import { colors, radii, spacing, ICONS } from "../../theme";
+import { colors, radii, spacing, ICONS, SERIF } from "../../theme";
 import { formatCount } from "../../utils/formatCount";
 import { professionalCategoryLabel } from "../../api/professional";
 import { t } from "../../i18n";
@@ -283,10 +283,10 @@ const styles = StyleSheet.create({
   statValue: { color: colors.textPrimary, fontSize: 18, fontWeight: "700" },
   statLabel: { color: colors.textSecondary, fontSize: 13 },
   identity: { gap: spacing.xs },
-  displayName: { color: colors.textPrimary, fontSize: 16, fontWeight: "700" },
+  displayName: { color: colors.textPrimary, fontSize: 22, fontFamily: SERIF },
   // Like a byline: there, but quieter than the name.
   category: { color: colors.textSecondary, fontSize: 13, marginTop: -2 },
-  founding: { flexDirection: "row", alignItems: "center", alignSelf: "flex-start", gap: 4, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, borderWidth: StyleSheet.hairlineWidth, borderColor: colors.accentText },
+  founding: { flexDirection: "row", alignItems: "center", alignSelf: "flex-start", gap: 4, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999, backgroundColor: colors.accentTint },
   foundingLabel: { color: colors.accentText, fontSize: 12, fontWeight: "700" },
   handleRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs, flexWrap: "wrap" },
   handle: { color: colors.textSecondary, fontSize: 14, flexShrink: 1 },
@@ -306,7 +306,9 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     fontSize: 12,
     fontWeight: "600",
-    backgroundColor: colors.surfaceElevated,
+    backgroundColor: colors.surface,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
     borderRadius: radii.pill,
     paddingHorizontal: spacing.sm + 2,
     paddingVertical: 5,

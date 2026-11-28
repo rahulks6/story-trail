@@ -1842,9 +1842,10 @@ const styles = StyleSheet.create({
   bubbleColumn: { maxWidth: "78%" },
   bubbleColumnMine: { alignItems: "flex-end" },
   bubbleColumnTheirs: { alignItems: "flex-start" },
-  bubble: { borderRadius: radii.md, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, gap: 2 },
-  bubbleMine: { backgroundColor: colors.accent },
-  bubbleTheirs: { backgroundColor: colors.surfaceElevated },
+  // Soft, round bubbles with a small "tail" corner on the sender's side.
+  bubble: { borderRadius: 20, paddingHorizontal: spacing.sm + 4, paddingVertical: spacing.xs + 2, gap: 2 },
+  bubbleMine: { backgroundColor: colors.accent, borderBottomRightRadius: 6 },
+  bubbleTheirs: { backgroundColor: colors.surface, borderWidth: StyleSheet.hairlineWidth, borderColor: colors.border, borderBottomLeftRadius: 6 },
   bubblePending: { opacity: 0.75 },
   // A failed message keeps its colours (readable) with a red edge; "Not sent · Tap to retry" says the rest.
   bubbleFailed: { borderWidth: 1.5, borderColor: colors.danger, opacity: 1 },

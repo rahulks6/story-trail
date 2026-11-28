@@ -1,7 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { SearchStackParamList } from "./types";
-import { colors } from "../theme";
+import { colors, HEADER_TITLE } from "../theme";
 import { SearchScreen } from "../screens/search/SearchScreen";
 import { UserProfileScreen } from "../screens/profile/UserProfileScreen";
 import { PUSH_TRANSITION } from "./transitions";
@@ -18,6 +18,7 @@ export function SearchStack(): React.JSX.Element {
         headerTintColor: colors.textPrimary,
         headerShadowVisible: false,
         headerBackButtonDisplayMode: "minimal",
+        headerTitleStyle: HEADER_TITLE,
       }}
     >
       <Stack.Screen name="SearchHome" component={SearchScreen} options={{ title: t("common.search") }} />
